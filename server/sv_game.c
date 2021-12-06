@@ -224,7 +224,8 @@ void PF_Configstring (int index, char *val)
 
 	// catch overflow of indvidual configstrings
 	len = strlen(val);
-	maxlen = CS_SIZE(index);
+//	maxlen = CS_SIZE(index);
+	maxlen = GetConfigstringSize(index);
 	if (len >= maxlen) {
 		Com_Printf(S_COLOR_YELLOW"PF_Configstring: index %d overflowed: %d > %d\n", index, len, maxlen);
 		len = maxlen - 1;
@@ -235,7 +236,7 @@ void PF_Configstring (int index, char *val)
 //	strncpy (sv.configstrings[index], val);
 	dest = sv.configstrings[index];
 	memcpy(dest, val, len);
-	dest[len] = 0;
+	dest[len] = 0;	// null terminate string
 	
 	if (sv.state != ss_loading)
 	{	// send the update to everyone

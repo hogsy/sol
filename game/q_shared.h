@@ -1536,6 +1536,18 @@ ROGUE - VERSIONS
     ((cs) >= CS_STATUSBAR && (cs) < CS_AIRACCEL ? \
       MAX_QPATH * (CS_AIRACCEL - (cs)) : MAX_QPATH)
 
+// inline version handles both CS_STATUSBAR and CS_GENERAL cleanly
+__inline size_t GetConfigstringSize (int cs) {
+	size_t ret;
+	if ( (cs >= CS_STATUSBAR) && (cs < CS_AIRACCEL) )
+	{	ret = MAX_QPATH * (CS_AIRACCEL - cs);	}
+	else if ( (cs >= CS_GENERAL) && (cs < CS_HUDVARIANT) )
+	{	ret = MAX_QPATH * (CS_HUDVARIANT - cs);	}
+	else
+	{	ret = MAX_QPATH;	}
+	return ret;
+}
+
 //==============================================
 
 

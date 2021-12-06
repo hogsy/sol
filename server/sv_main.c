@@ -287,7 +287,6 @@ void SVC_Info (void)
 	int		i, count;
 	int		version;
 
-//	if (maxclients->value == 1)
 	if (maxclients->integer == 1)
 		return;		// ignore in single player
 

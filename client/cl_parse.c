@@ -447,9 +447,9 @@ void CL_ParseConfigString (void)
 {
 	int		i;
 	int		max_models, max_sounds, max_images, cs_lights, cs_sounds, cs_images, cs_playerskins;
-	char	*s;
+	char	*s, *dest;
 	char	olds[MAX_QPATH];
-	size_t	length;
+	size_t	length, maxLength;
 
 	// Knightmare- hack for connected to server using old protocol
 	// Changed config strings require different parsing
@@ -486,7 +486,7 @@ void CL_ParseConfigString (void)
 	if ( length >= (sizeof(cl.configstrings[0]) * (MAX_CONFIGSTRINGS - i)) - 1 )
 		Com_Error (ERR_DROP, "CL_ParseConfigString: string %d exceeds available buffer space!", i);
 
-	if (i >= CS_STATUSBAR && i < CS_AIRACCEL) {	// allow writes to statusbar strings to overflow
+/*	if ( (i >= CS_STATUSBAR) && (i < CS_AIRACCEL) ) {	// allow writes to statusbar strings to overflow
 		strncpy (cl.configstrings[i], s, (sizeof(cl.configstrings[i]) * (CS_AIRACCEL - i))-1 );
 		cl.configstrings[CS_AIRACCEL-1][MAX_QPATH-1] = 0;	// null terminate end of section
 	}
@@ -494,10 +494,38 @@ void CL_ParseConfigString (void)
 		if (length >= MAX_QPATH)
 			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d of length %d exceeds MAX_QPATH.\n", i, (int)length);
 		Q_strncpyz (cl.configstrings[i], sizeof(cl.configstrings[i]), s);
+	} */
+
+	// Allow writes to statusbar strings to overflow
+	if ( (i >= CS_STATUSBAR) && (i < CS_AIRACCEL) ) {
+		maxLength =  MAX_QPATH * (CS_AIRACCEL - i);
+		if (length >= maxLength)
+			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in CS_STATUSBAR of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	}
+	// Allow writes to general strings to overflow
+	else if ( LegacyProtocol() && ( (i >= OLD_CS_GENERAL) && (i < OLD_MAX_CONFIGSTRINGS) ) ) {
+		maxLength =  MAX_QPATH * (OLD_MAX_CONFIGSTRINGS - i);
+		if (length >= maxLength)
+			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in OLD_CS_GENERAL of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	}
+	else if ( !LegacyProtocol() && ( (i >= CS_GENERAL) && (i < CS_HUDVARIANT) ) ) {
+		maxLength =  MAX_QPATH * (CS_HUDVARIANT - i);
+		if (length >= maxLength)
+			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in CS_GENERAL of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	}
+	else {
+		maxLength = MAX_QPATH;
+		if (length >= maxLength)
+			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
 	}
 
+	length = min(length, (maxLength - 1));
+	dest = cl.configstrings[i];
+	memcpy(dest, s, length);
+	dest[length] = 0;	// null terminate string
+
 	// do something apropriate 
-	if (i >= cs_lights && i < cs_lights+MAX_LIGHTSTYLES)
+	if ( (i >= cs_lights) && (i < cs_lights+MAX_LIGHTSTYLES) )
 		CL_SetLightstyle (i - cs_lights);
 	else if (i == CS_CDTRACK)
 	{
@@ -509,7 +537,7 @@ void CL_ParseConfigString (void)
 		if (!cl.attractloop)
 			cl.maxclients = atoi(cl.configstrings[CS_MAXCLIENTS]);
 	}
-	else if (i >= CS_MODELS && i < CS_MODELS+max_models)
+	else if ( (i >= CS_MODELS) && (i < CS_MODELS+max_models) )
 	{
 		if (cl.refresh_prepped)
 		{
@@ -520,17 +548,17 @@ void CL_ParseConfigString (void)
 				cl.model_clip[i-CS_MODELS] = NULL;
 		}
 	}
-	else if (i >= cs_sounds && i < cs_sounds+max_sounds) // Knightmare- was MAX_MODELS
+	else if ( (i >= cs_sounds) && (i < cs_sounds+max_sounds) ) // Knightmare- was MAX_MODELS
 	{
 		if (cl.refresh_prepped)
 			cl.sound_precache[i-cs_sounds] = S_RegisterSound (cl.configstrings[i]);
 	}
-	else if (i >= cs_images && i < cs_images+max_images) // Knightmare- was MAX_IMAGES
+	else if ( (i >= cs_images) && (i < cs_images+max_images) ) // Knightmare- was MAX_IMAGES
 	{
 		if (cl.refresh_prepped)
 			cl.image_precache[i-cs_images] = R_DrawFindPic (cl.configstrings[i]);
 	}
-	else if (i >= cs_playerskins && i < cs_playerskins+MAX_CLIENTS)
+	else if ( (i >= cs_playerskins) && (i < cs_playerskins+MAX_CLIENTS) )
 	{
 		// from R1Q2- a hack to avoid parsing non-skins from mods that overload CS_PLAYERSKINS
 		if ( (i-cs_playerskins) < cl.maxclients ) {
@@ -540,6 +568,10 @@ void CL_ParseConfigString (void)
 		else {
 			Com_DPrintf ("CL_ParseConfigString: Ignoring out-of-range playerskin %d (%s)\n", i, MakePrintable(s, 0));
 		}
+	}
+	else if (i == CS_HUDVARIANT)	// update cl_hudVariant when CS_HUDVARIANT changes
+	{
+		CL_SetHudVariant ();
 	}
 }
 

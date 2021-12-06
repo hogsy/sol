@@ -163,6 +163,11 @@ void	SCR_DrawCrosshair (void);
 //
 void	Hud_DrawString (int x, int y, const char *string, int alpha, qboolean isStatusBar);
 void	Hud_DrawStringAlt (int x, int y, const char *string, int alpha, qboolean isStatusBar);
+void	Hud_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offset, float width, scralign_t align, char *string, color_t color, char *pic, int flags);
+//void	SCR_SetHud_f (void);
+void	CL_SetHudVariant (void);
+//void	CL_LoadHud (qboolean startup);
+//void	CL_FreeHud (void);
 void	CL_DrawStatus (void);
 void	CL_DrawLayout (void);
 void	CL_DrawInventory (void);

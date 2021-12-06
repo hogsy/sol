@@ -91,6 +91,18 @@ void Hud_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offs
 	CL_DrawStringFromCharsPic (x, y, w, h, scaledOffset, width, string, color, pic, flags);
 }
 
+//=======================================================
+
+/*
+================
+CL_SetHudVariant
+================
+*/
+void CL_SetHudVariant (void)
+{
+	// Just a dummy function for now
+}
+
 /*
 ===============================================================
 
@@ -803,6 +815,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 	}
 }
 
+//=======================================================
 
 /*
 ================
