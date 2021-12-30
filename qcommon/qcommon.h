@@ -945,6 +945,7 @@ void		FS_FreeFile (void *buffer);
 
 // Psychospaz's mod detector
 qboolean	FS_ModType (const char *name);
+qboolean	FS_XatrixPath (void);
 qboolean	FS_RoguePath (void);
 
 

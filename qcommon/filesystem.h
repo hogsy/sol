@@ -123,6 +123,7 @@ cvar_t	*fs_basegamedir2;
 cvar_t	*fs_basegamedir3;	// So we can mount Rogue, Xatrix, and Zaero assets at once
 cvar_t	*fs_gamedirvar;
 cvar_t	*fs_debug;
+cvar_t	*fs_xatrixgame;
 cvar_t	*fs_roguegame;
 
 #ifdef _WIN32

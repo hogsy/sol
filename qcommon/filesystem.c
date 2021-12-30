@@ -212,13 +212,34 @@ void FS_CreatePath (const char *path)
 // Psychospaz's mod detector
 qboolean FS_ModType (const char *name)
 {
-	fsSearchPath_t	*search;
+/*	fsSearchPath_t	*search;
 
 	for (search = fs_searchPaths ; search ; search = search->next)
 	{
 		if (strstr (search->path, name))
 			return true;
 	}
+	return false; */
+	// The above trips on fs_basegame, etc.
+	// Comparing against fs_gamedir is faster and more direct.
+	char *p;
+
+	if (strlen(fs_gamedir) == 0)
+		return false;
+	p = strrchr(fs_gamedir, '/');
+	if (!p)
+		return false;
+	p++;
+
+	return (Q_stricmp((char *)name, p) == 0);
+}
+
+
+// This enables Xatrix menu options
+qboolean FS_XatrixPath (void)
+{
+	if ( FS_ModType("xatrix") || fs_xatrixgame->integer )
+		return true;
 	return false;
 }
 
@@ -226,7 +247,6 @@ qboolean FS_ModType (const char *name)
 // This enables Rogue menu options for Q2MP4
 qboolean FS_RoguePath (void)
 {
-//	if (FS_ModType("rogue") || fs_roguegame->value)
 	if (FS_ModType("rogue") || fs_roguegame->integer)
 		return true;
 	return false;
@@ -2560,6 +2580,8 @@ void FS_InitFilesystem (void)
 	Cvar_SetDescription ("homepath", "Current directory that KMQuake2 is running in.  This is a NOSET value.");
 	fs_debug = Cvar_Get("fs_debug", "0", 0);
 	Cvar_SetDescription ("fs_debug", "Enables console output of filesystem operations.");
+	fs_xatrixgame = Cvar_Get("xatrixgame", "0", CVAR_LATCH);
+	Cvar_SetDescription ("xatrixgame", "Enables Xatrix-specific features in start server menu when not running under the Xatrix gamedir.");
 	fs_roguegame = Cvar_Get("roguegame", "0", CVAR_LATCH);
 	Cvar_SetDescription ("roguegame", "Enables Rogue-specific features in start server menu when not running under the Rogue gamedir.");
 	fs_basegamedir = Cvar_Get ("basegame", "", CVAR_LATCH);

@@ -190,7 +190,7 @@ static void DMFlagCallback (void *self)
 		bit = DF_QUAD_DROP;
 	}
 	// Knightmare added
-	else if (FS_ModType("xatrix"))
+	else if ( FS_XatrixPath() )
 	{
 		if ( f == &s_quadfire_drop_box)
 		{
@@ -199,7 +199,7 @@ static void DMFlagCallback (void *self)
 	}
 //=======
 //ROGUE
-	else if (FS_RoguePath())
+	else if ( FS_RoguePath() )
 	{
 		if ( f == &s_no_mines_box)
 		{
@@ -404,7 +404,7 @@ void Menu_DMOptions_Init (void)
 	s_friendlyfire_box.curValue = ( dmflags & DF_NO_FRIENDLY_FIRE ) == 0;
 
 	// Knightmare added
-	if ( FS_ModType("xatrix") )
+	if ( FS_XatrixPath() )
 	{
 		s_quadfire_drop_box.generic.type = MTYPE_SPINCONTROL;
 		s_quadfire_drop_box.generic.textSize = MENU_FONT_SIZE;
@@ -515,7 +515,7 @@ void Menu_DMOptions_Init (void)
 	UI_AddMenuItem (&s_dmoptions_menu, &s_friendlyfire_box);
 
 	// Xatrix
-	if ( FS_ModType("xatrix") )
+	if ( FS_XatrixPath() )
 	{
 		UI_AddMenuItem (&s_dmoptions_menu, &s_quadfire_drop_box);
 	}

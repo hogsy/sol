@@ -191,9 +191,9 @@ void Menu_Credits_f (void)
 	}
 	else
 	{	
-		if (FS_ModType("xatrix"))			// Xatrix
+		if ( FS_ModType("xatrix") )			// Xatrix
 			credits = ui_xatrixcredits;
-		else if (FS_ModType("rogue"))		// Rogue
+		else if ( FS_ModType("rogue") )		// Rogue
 			credits = ui_roguecredits;
 		else
 			credits = ui_idcredits;	
