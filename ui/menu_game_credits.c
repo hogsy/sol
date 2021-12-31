@@ -37,6 +37,11 @@ CREDITS MENU
 =============================================================================
 */
 
+static menuFramework_s	s_credits_menu;
+static menuAction_s		s_credits_back_action;
+
+//=======================================================================
+
 static int credits_start_time;
 // Knigthtmare added- allow credits to scroll past top of screen
 static int credits_start_line;
@@ -66,6 +71,9 @@ void Menu_Credits_Draw (void)
 	float		alpha, time = (cls.realtime - credits_start_time) * 0.05;
 	int			i, y, x, len, stringoffset;
 	qboolean	bold;
+
+	UI_AdjustMenuCursor (&s_credits_menu, 1);
+	UI_DrawMenu (&s_credits_menu);
 
 	if ((SCREEN_HEIGHT - ((cls.realtime - credits_start_time)/40.0F)
 		+ credits_start_line * MENU_LINE_SIZE) < 0)
@@ -149,12 +157,33 @@ const char *Menu_Credits_Key (int key)
 		sound = ui_menu_out_sound;
 		break;
 	default:
-		break;
+		return UI_DefaultMenuKey (&s_credits_menu, key);
 	}
 
 	return sound;
 }
 
+//=======================================================================
+
+void Menu_Credits_Init (void)
+{
+	s_credits_menu.x				= 0;
+	s_credits_menu.y				= 0;
+	s_credits_menu.nitems			= 0;
+//	s_credits_menu.hide_statusbar	= true;
+//	s_credits_menu.isPopup			= false;
+//	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
+//	s_credits_menu.canOpenFunc		= NULL;
+
+	s_credits_back_action.generic.type			= MTYPE_ACTION;
+	s_credits_back_action.generic.flags			= QMF_LEFT_JUSTIFY;
+	s_credits_back_action.generic.x				= MENU_FONT_SIZE*6;
+	s_credits_back_action.generic.y				= 460;
+	s_credits_back_action.generic.name			= "Back";
+	s_credits_back_action.generic.callback		= UI_BackMenu;
+
+	UI_AddMenuItem (&s_credits_menu, (void *) &s_credits_back_action);
+}
 
 void Menu_Credits_f (void)
 {
@@ -201,5 +230,7 @@ void Menu_Credits_f (void)
 
 	credits_start_time = cls.realtime;
 	credits_start_line = 0; // allow credits to scroll past top of screen
-	UI_PushMenu (Menu_Credits_Draw, Menu_Credits_Key);
+
+	Menu_Credits_Init ();
+	UI_PushMenu (&s_credits_menu, Menu_Credits_Draw, Menu_Credits_Key);
 }

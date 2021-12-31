@@ -31,13 +31,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-static menuframework_s	s_loadgame_menu;
-static menuaction_s		s_loadgame_actions[UI_MAX_SAVEGAMES];
-static menuaction_s		s_loadgame_back_action;
+static menuFramework_s	s_loadgame_menu;
+static menuAction_s		s_loadgame_actions[UI_MAX_SAVEGAMES];
+static menuAction_s		s_loadgame_back_action;
 
-static menuframework_s	s_savegame_menu;
-static menuaction_s		s_savegame_actions[UI_MAX_SAVEGAMES];
-static menuaction_s		s_savegame_back_action;
+static menuFramework_s	s_savegame_menu;
+static menuAction_s		s_savegame_actions[UI_MAX_SAVEGAMES];
+static menuAction_s		s_savegame_back_action;
 
 /*
 =============================================================================
@@ -129,7 +129,7 @@ char loadshotname[MAX_QPATH];
 
 void LoadGameCallback (void *self)
 {
-	menuaction_s *a = (menuaction_s *) self;
+	menuAction_s *a = (menuAction_s *) self;
 
 	// set saveshot name here
 	if ( ui_saveshotvalid[ a->generic.localdata[0] ] && (a->generic.localdata[0] != 0) )	// autosave has no saveshot, but uses levelshot instead
@@ -214,7 +214,7 @@ const char *Menu_LoadGame_Key (int key)
 void Menu_LoadGame_f (void)
 {
 	Menu_LoadGame_Init ();
-	UI_PushMenu (Menu_LoadGame_Draw, Menu_LoadGame_Key);
+	UI_PushMenu (&s_loadgame_menu, Menu_LoadGame_Draw, Menu_LoadGame_Key);
 }
 
 
@@ -228,7 +228,7 @@ SAVEGAME MENU
 
 void SaveGameCallback (void *self)
 {
-	menuaction_s *a = (menuaction_s *) self;
+	menuAction_s *a = (menuAction_s *) self;
 
 	Cbuf_AddText (va("save kmq2save%03i\n", a->generic.localdata[0] ));
 	UI_ForceMenuOff ();
@@ -302,6 +302,6 @@ void Menu_SaveGame_f (void)
 		return;		// not playing a game
 
 	Menu_SaveGame_Init ();
-	UI_PushMenu (Menu_SaveGame_Draw, Menu_SaveGame_Key);
+	UI_PushMenu (&s_savegame_menu, Menu_SaveGame_Draw, Menu_SaveGame_Key);
 //	Load_Savestrings ();
 }

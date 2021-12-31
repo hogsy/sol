@@ -45,6 +45,8 @@ MAIN MENU
 =======================================================================
 */
 
+menuFramework_s			s_main_menu;
+
 #define	MAIN_ITEMS	5
 
 char *main_names[] =
@@ -392,14 +394,29 @@ const char *Menu_Main_Key (int key)
 	return NULL;
 }
 
+void Menu_Main_Init (void)
+{
+	int		x, y;
 
-/*
-=============
-Menu_Main_f
-=============
-*/
+	// menu.x = 247, menu.y = 140
+	x = 247;
+	y = 143;
+
+	s_main_menu.x							= 0;	// was 247
+	s_main_menu.y							= 0;	// was 140
+	s_main_menu.nitems						= 0;
+//	s_main_menu.hide_statusbar				= true;
+//	s_main_menu.isPopup						= false;
+//	s_main_menu.keyFunc						= UI_DefaultMenuKey;
+//	s_main_menu.canOpenFunc					= NULL;
+//	s_main_menu.cursordraw					= M_DrawMainCursor;
+//	s_main_menu.cursorItem					= &s_main_cursor;
+}
+
+
 void Menu_Main_f (void)
 {
+	Menu_Main_Init ();
 	UI_CheckQuadModel ();
-	UI_PushMenu (Menu_Main_Draw, Menu_Main_Key);
+	UI_PushMenu (&s_main_menu, Menu_Main_Draw, Menu_Main_Key);
 }

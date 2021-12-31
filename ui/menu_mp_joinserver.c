@@ -29,17 +29,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-static menuframework_s	s_joinserver_menu;
-static menuseparator_s	s_joinserver_server_title;
+static menuFramework_s	s_joinserver_menu;
+static menuLabel_s		s_joinserver_server_title;
 
 // Knightmare- client compatibility option
-static menulist_s		s_joinserver_compatibility_box;
-static menuseparator_s	s_joinserver_compat_title;
+static menuSpinner_s	s_joinserver_compatibility_box;
+static menuLabel_s		s_joinserver_compat_title;
 
-static menuaction_s		s_joinserver_search_action;
-static menuaction_s		s_joinserver_address_book_action;
-static menuaction_s		s_joinserver_server_actions[UI_MAX_LOCAL_SERVERS];
-static menuaction_s		s_joinserver_back_action;
+static menuAction_s		s_joinserver_search_action;
+static menuAction_s		s_joinserver_address_book_action;
+static menuAction_s		s_joinserver_server_actions[UI_MAX_LOCAL_SERVERS];
+static menuAction_s		s_joinserver_back_action;
 
 /*
 =============================================================================
@@ -52,12 +52,12 @@ JOIN SERVER MENU
 // Knightmare- client compatibility option
 static void ClientCompatibilityFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
+	UI_MenuSpinner_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
 }
 
 void JoinServerFunc (void *self)
 {
-	int	index = (menuaction_s *)self - s_joinserver_server_actions;
+	int	index = (menuAction_s *)self - s_joinserver_server_actions;
 
 	UI_JoinServer (index);
 }
@@ -77,7 +77,7 @@ void SearchLocalGamesFunc (void *self)
 // Knightmare- init client compatibility menu option
 static void M_Joinserver_SetMenuItemValues (void)
 {
-	UI_MenuSpinControl_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
 }
 
 //=========================================================
@@ -98,13 +98,13 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_menu.nitems = 0;
 
 	// init client compatibility menu option
-	s_joinserver_compat_title.generic.type			= MTYPE_SEPARATOR;
+	s_joinserver_compat_title.generic.type			= MTYPE_LABEL;
 	s_joinserver_compat_title.generic.textSize		= MENU_FONT_SIZE;
 	s_joinserver_compat_title.generic.name			= "client protocol compatibility";
 	s_joinserver_compat_title.generic.x				= 200;
 	s_joinserver_compat_title.generic.y				= y;
 
-	s_joinserver_compatibility_box.generic.type				= MTYPE_SPINCONTROL;
+	s_joinserver_compatibility_box.generic.type				= MTYPE_SPINNER;
 	s_joinserver_compatibility_box.generic.textSize			= MENU_FONT_SIZE;
 	s_joinserver_compatibility_box.generic.name				= "";
 	s_joinserver_compatibility_box.generic.x				= -32;
@@ -131,7 +131,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_search_action.generic.callback		= SearchLocalGamesFunc;
 	s_joinserver_search_action.generic.statusbar	= "search for servers";
 
-	s_joinserver_server_title.generic.type		= MTYPE_SEPARATOR;
+	s_joinserver_server_title.generic.type		= MTYPE_LABEL;
 	s_joinserver_server_title.generic.textSize	= MENU_FONT_SIZE;
 	s_joinserver_server_title.generic.name		= "connect to...";
 	s_joinserver_server_title.generic.x			= 80;
@@ -197,5 +197,5 @@ const char *Menu_JoinServer_Key (int key)
 void Menu_JoinServer_f (void)
 {
 	Menu_JoinServer_Init ();
-	UI_PushMenu (Menu_JoinServer_Draw, Menu_JoinServer_Key);
+	UI_PushMenu (&s_joinserver_menu, Menu_JoinServer_Draw, Menu_JoinServer_Key);
 }

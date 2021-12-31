@@ -39,16 +39,16 @@ GAME MENU
 
 static int		m_game_cursor;
 
-static menuframework_s	s_game_menu;
-static menuaction_s		s_easy_game_action;
-static menuaction_s		s_medium_game_action;
-static menuaction_s		s_hard_game_action;
-static menuaction_s		s_nitemare_game_action;
-static menuaction_s		s_load_game_action;
-static menuaction_s		s_save_game_action;
-static menuaction_s		s_credits_action;
-static menuseparator_s	s_blankline;
-static menuaction_s		s_game_back_action;
+static menuFramework_s	s_game_menu;
+static menuAction_s		s_easy_game_action;
+static menuAction_s		s_medium_game_action;
+static menuAction_s		s_hard_game_action;
+static menuAction_s		s_nitemare_game_action;
+static menuAction_s		s_load_game_action;
+static menuAction_s		s_save_game_action;
+static menuAction_s		s_credits_action;
+static menuLabel_s		s_blankline;
+static menuAction_s		s_game_back_action;
 
 //=======================================================================
 
@@ -133,8 +133,8 @@ void Menu_Game_Init (void)
 	s_nitemare_game_action.generic.name			= "Nightmare";
 	s_nitemare_game_action.generic.callback		= NitemareGameFunc;
 
-	s_blankline.generic.type = MTYPE_SEPARATOR;
-	s_blankline.generic.textSize = MENU_FONT_SIZE;
+	s_blankline.generic.type				= MTYPE_LABEL;
+	s_blankline.generic.textSize			= MENU_FONT_SIZE;
 
 	s_load_game_action.generic.type			= MTYPE_ACTION;
 	s_load_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
@@ -201,6 +201,6 @@ const char *Menu_Game_Key (int key)
 void Menu_Game_f (void)
 {
 	Menu_Game_Init ();
-	UI_PushMenu (Menu_Game_Draw, Menu_Game_Key);
+	UI_PushMenu (&s_game_menu, Menu_Game_Draw, Menu_Game_Key);
 	m_game_cursor = 1;
 }

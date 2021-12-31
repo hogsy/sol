@@ -37,13 +37,13 @@ OPTIONS MENU
 =======================================================================
 */
 
-static menuframework_s	s_options_menu;
-static menuaction_s		s_options_sound_section;
-static menuaction_s		s_options_controls_section;
-static menuaction_s		s_options_screen_section;
-static menuaction_s		s_options_effects_section;
-static menuaction_s		s_options_interface_section;
-static menuaction_s		s_options_back_action;
+static menuFramework_s	s_options_menu;
+static menuAction_s		s_options_sound_section;
+static menuAction_s		s_options_controls_section;
+static menuAction_s		s_options_screen_section;
+static menuAction_s		s_options_effects_section;
+static menuAction_s		s_options_interface_section;
+static menuAction_s		s_options_back_action;
 
 //=======================================================================
 
@@ -159,5 +159,5 @@ const char *Menu_Options_Key (int key)
 void Menu_Options_f (void)
 {
 	Menu_Options_Init ();
-	UI_PushMenu (Menu_Options_Draw, Menu_Options_Key);
+	UI_PushMenu (&s_options_menu, Menu_Options_Draw, Menu_Options_Key);
 }

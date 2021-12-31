@@ -38,40 +38,40 @@ DMOPTIONS BOOK MENU
 */
 static char dmoptions_statusbar[128];
 
-static menuframework_s s_dmoptions_menu;
+static menuFramework_s	s_dmoptions_menu;
 
-static menulist_s	s_friendlyfire_box;
-static menulist_s	s_falls_box;
-static menulist_s	s_weapons_stay_box;
-static menulist_s	s_instant_powerups_box;
-static menulist_s	s_powerups_box;
-static menulist_s	s_health_box;
-static menulist_s	s_spawn_farthest_box;
-static menulist_s	s_teamplay_box;
-static menulist_s	s_samelevel_box;
-static menulist_s	s_force_respawn_box;
-static menulist_s	s_armor_box;
-static menulist_s	s_allow_exit_box;
-static menulist_s	s_infinite_ammo_box;
-static menulist_s	s_fixed_fov_box;
-static menulist_s	s_quad_drop_box;
+static menuSpinner_s	s_friendlyfire_box;
+static menuSpinner_s	s_falls_box;
+static menuSpinner_s	s_weapons_stay_box;
+static menuSpinner_s	s_instant_powerups_box;
+static menuSpinner_s	s_powerups_box;
+static menuSpinner_s	s_health_box;
+static menuSpinner_s	s_spawn_farthest_box;
+static menuSpinner_s	s_teamplay_box;
+static menuSpinner_s	s_samelevel_box;
+static menuSpinner_s	s_force_respawn_box;
+static menuSpinner_s	s_armor_box;
+static menuSpinner_s	s_allow_exit_box;
+static menuSpinner_s	s_infinite_ammo_box;
+static menuSpinner_s	s_fixed_fov_box;
+static menuSpinner_s	s_quad_drop_box;
 
 //Xatrix
-static menulist_s	s_quadfire_drop_box;
+static menuSpinner_s	s_quadfire_drop_box;
 
 //ROGUE
-static menulist_s	s_no_mines_box;
-static menulist_s	s_no_nukes_box;
-static menulist_s	s_stack_double_box;
-static menulist_s	s_no_spheres_box;
+static menuSpinner_s	s_no_mines_box;
+static menuSpinner_s	s_no_nukes_box;
+static menuSpinner_s	s_stack_double_box;
+static menuSpinner_s	s_no_spheres_box;
 
 // CTF
-static menulist_s	s_ctf_forceteam_box;
-static menulist_s	s_ctf_armor_protect_box;
-static menulist_s	s_ctf_notechs_box;
+static menuSpinner_s	s_ctf_forceteam_box;
+static menuSpinner_s	s_ctf_armor_protect_box;
+static menuSpinner_s	s_ctf_notechs_box;
 
-static menuaction_s	s_dmoptions_back_action;
-extern	menulist_s	s_rules_box;
+static menuAction_s	s_dmoptions_back_action;
+extern menuSpinner_s	s_rules_box;
 
 
 #define DF_CTF_FORCEJOIN	131072	
@@ -88,7 +88,7 @@ qboolean CTF_menumode (void)
 
 static void DMFlagCallback (void *self)
 {
-	menulist_s *f = ( menulist_s * ) self;
+	menuSpinner_s *f = ( menuSpinner_s * ) self;
 	int flags;
 	int bit = 0;
 
@@ -268,7 +268,7 @@ void Menu_DMOptions_Init (void)
 	s_dmoptions_menu.y = SCREEN_HEIGHT*0.5 - 80;
 	s_dmoptions_menu.nitems = 0;
 
-	s_falls_box.generic.type = MTYPE_SPINCONTROL;
+	s_falls_box.generic.type = MTYPE_SPINNER;
 	s_falls_box.generic.textSize = MENU_FONT_SIZE;
 	s_falls_box.generic.x	= 0;
 	s_falls_box.generic.y	= y; // 0
@@ -277,7 +277,7 @@ void Menu_DMOptions_Init (void)
 	s_falls_box.itemNames = yes_no_names;
 	s_falls_box.curValue = ( dmflags & DF_NO_FALLING ) == 0;
 
-	s_weapons_stay_box.generic.type = MTYPE_SPINCONTROL;
+	s_weapons_stay_box.generic.type = MTYPE_SPINNER;
 	s_weapons_stay_box.generic.textSize = MENU_FONT_SIZE;
 	s_weapons_stay_box.generic.x	= 0;
 	s_weapons_stay_box.generic.y	= y += MENU_LINE_SIZE;
@@ -286,7 +286,7 @@ void Menu_DMOptions_Init (void)
 	s_weapons_stay_box.itemNames = yes_no_names;
 	s_weapons_stay_box.curValue = ( dmflags & DF_WEAPONS_STAY ) != 0;
 
-	s_instant_powerups_box.generic.type = MTYPE_SPINCONTROL;
+	s_instant_powerups_box.generic.type = MTYPE_SPINNER;
 	s_instant_powerups_box.generic.textSize = MENU_FONT_SIZE;
 	s_instant_powerups_box.generic.x	= 0;
 	s_instant_powerups_box.generic.y	= y += MENU_LINE_SIZE;
@@ -295,7 +295,7 @@ void Menu_DMOptions_Init (void)
 	s_instant_powerups_box.itemNames = yes_no_names;
 	s_instant_powerups_box.curValue = ( dmflags & DF_INSTANT_ITEMS ) != 0;
 
-	s_powerups_box.generic.type = MTYPE_SPINCONTROL;
+	s_powerups_box.generic.type = MTYPE_SPINNER;
 	s_powerups_box.generic.textSize = MENU_FONT_SIZE;
 	s_powerups_box.generic.x	= 0;
 	s_powerups_box.generic.y	= y += MENU_LINE_SIZE;
@@ -304,7 +304,7 @@ void Menu_DMOptions_Init (void)
 	s_powerups_box.itemNames = yes_no_names;
 	s_powerups_box.curValue = ( dmflags & DF_NO_ITEMS ) == 0;
 
-	s_health_box.generic.type = MTYPE_SPINCONTROL;
+	s_health_box.generic.type = MTYPE_SPINNER;
 	s_health_box.generic.textSize = MENU_FONT_SIZE;
 	s_health_box.generic.x	= 0;
 	s_health_box.generic.y	= y += MENU_LINE_SIZE;
@@ -313,7 +313,7 @@ void Menu_DMOptions_Init (void)
 	s_health_box.itemNames = yes_no_names;
 	s_health_box.curValue = ( dmflags & DF_NO_HEALTH ) == 0;
 
-	s_armor_box.generic.type = MTYPE_SPINCONTROL;
+	s_armor_box.generic.type = MTYPE_SPINNER;
 	s_armor_box.generic.textSize = MENU_FONT_SIZE;
 	s_armor_box.generic.x	= 0;
 	s_armor_box.generic.y	= y += MENU_LINE_SIZE;
@@ -322,7 +322,7 @@ void Menu_DMOptions_Init (void)
 	s_armor_box.itemNames = yes_no_names;
 	s_armor_box.curValue = ( dmflags & DF_NO_ARMOR ) == 0;
 
-	s_spawn_farthest_box.generic.type = MTYPE_SPINCONTROL;
+	s_spawn_farthest_box.generic.type = MTYPE_SPINNER;
 	s_spawn_farthest_box.generic.textSize = MENU_FONT_SIZE;
 	s_spawn_farthest_box.generic.x	= 0;
 	s_spawn_farthest_box.generic.y	= y += MENU_LINE_SIZE;
@@ -331,7 +331,7 @@ void Menu_DMOptions_Init (void)
 	s_spawn_farthest_box.itemNames = yes_no_names;
 	s_spawn_farthest_box.curValue = ( dmflags & DF_SPAWN_FARTHEST ) != 0;
 
-	s_samelevel_box.generic.type = MTYPE_SPINCONTROL;
+	s_samelevel_box.generic.type = MTYPE_SPINNER;
 	s_samelevel_box.generic.textSize = MENU_FONT_SIZE;
 	s_samelevel_box.generic.x	= 0;
 	s_samelevel_box.generic.y	= y += MENU_LINE_SIZE;
@@ -340,7 +340,7 @@ void Menu_DMOptions_Init (void)
 	s_samelevel_box.itemNames = yes_no_names;
 	s_samelevel_box.curValue = ( dmflags & DF_SAME_LEVEL ) != 0;
 
-	s_force_respawn_box.generic.type = MTYPE_SPINCONTROL;
+	s_force_respawn_box.generic.type = MTYPE_SPINNER;
 	s_force_respawn_box.generic.textSize = MENU_FONT_SIZE;
 	s_force_respawn_box.generic.x	= 0;
 	s_force_respawn_box.generic.y	= y += MENU_LINE_SIZE;
@@ -349,7 +349,7 @@ void Menu_DMOptions_Init (void)
 	s_force_respawn_box.itemNames = yes_no_names;
 	s_force_respawn_box.curValue = ( dmflags & DF_FORCE_RESPAWN ) != 0;
 
-	s_teamplay_box.generic.type = MTYPE_SPINCONTROL;
+	s_teamplay_box.generic.type = MTYPE_SPINNER;
 	s_teamplay_box.generic.textSize = MENU_FONT_SIZE;
 	s_teamplay_box.generic.x	= 0;
 	s_teamplay_box.generic.y	= y += MENU_LINE_SIZE;
@@ -358,7 +358,7 @@ void Menu_DMOptions_Init (void)
 	s_teamplay_box.itemNames = teamplay_names;
 	s_teamplay_box.curValue = (dmflags & DF_SKINTEAMS) ? 1 : ((dmflags & DF_MODELTEAMS) ? 2 : 0);
 
-	s_allow_exit_box.generic.type = MTYPE_SPINCONTROL;
+	s_allow_exit_box.generic.type = MTYPE_SPINNER;
 	s_allow_exit_box.generic.textSize = MENU_FONT_SIZE;
 	s_allow_exit_box.generic.x	= 0;
 	s_allow_exit_box.generic.y	= y += MENU_LINE_SIZE;
@@ -367,7 +367,7 @@ void Menu_DMOptions_Init (void)
 	s_allow_exit_box.itemNames = yes_no_names;
 	s_allow_exit_box.curValue = ( dmflags & DF_ALLOW_EXIT ) != 0;
 
-	s_infinite_ammo_box.generic.type = MTYPE_SPINCONTROL;
+	s_infinite_ammo_box.generic.type = MTYPE_SPINNER;
 	s_infinite_ammo_box.generic.textSize = MENU_FONT_SIZE;
 	s_infinite_ammo_box.generic.x	= 0;
 	s_infinite_ammo_box.generic.y	= y += MENU_LINE_SIZE;
@@ -376,7 +376,7 @@ void Menu_DMOptions_Init (void)
 	s_infinite_ammo_box.itemNames = yes_no_names;
 	s_infinite_ammo_box.curValue = ( dmflags & DF_INFINITE_AMMO ) != 0;
 
-	s_fixed_fov_box.generic.type = MTYPE_SPINCONTROL;
+	s_fixed_fov_box.generic.type = MTYPE_SPINNER;
 	s_fixed_fov_box.generic.textSize = MENU_FONT_SIZE;
 	s_fixed_fov_box.generic.x	= 0;
 	s_fixed_fov_box.generic.y	= y += MENU_LINE_SIZE;
@@ -385,7 +385,7 @@ void Menu_DMOptions_Init (void)
 	s_fixed_fov_box.itemNames = yes_no_names;
 	s_fixed_fov_box.curValue = ( dmflags & DF_FIXED_FOV ) != 0;
 
-	s_quad_drop_box.generic.type = MTYPE_SPINCONTROL;
+	s_quad_drop_box.generic.type = MTYPE_SPINNER;
 	s_quad_drop_box.generic.textSize = MENU_FONT_SIZE;
 	s_quad_drop_box.generic.x	= 0;
 	s_quad_drop_box.generic.y	= y += MENU_LINE_SIZE;
@@ -394,7 +394,7 @@ void Menu_DMOptions_Init (void)
 	s_quad_drop_box.itemNames = yes_no_names;
 	s_quad_drop_box.curValue = ( dmflags & DF_QUAD_DROP ) != 0;
 
-	s_friendlyfire_box.generic.type = MTYPE_SPINCONTROL;
+	s_friendlyfire_box.generic.type = MTYPE_SPINNER;
 	s_friendlyfire_box.generic.textSize = MENU_FONT_SIZE;
 	s_friendlyfire_box.generic.x	= 0;
 	s_friendlyfire_box.generic.y	= y += MENU_LINE_SIZE;
@@ -406,7 +406,7 @@ void Menu_DMOptions_Init (void)
 	// Knightmare added
 	if ( FS_XatrixPath() )
 	{
-		s_quadfire_drop_box.generic.type = MTYPE_SPINCONTROL;
+		s_quadfire_drop_box.generic.type = MTYPE_SPINNER;
 		s_quadfire_drop_box.generic.textSize = MENU_FONT_SIZE;
 		s_quadfire_drop_box.generic.x	= 0;
 		s_quadfire_drop_box.generic.y	= y += MENU_LINE_SIZE;
@@ -420,7 +420,7 @@ void Menu_DMOptions_Init (void)
 	// Knightmare 12/23/2001
 	else if ( FS_RoguePath() )
 	{
-		s_no_mines_box.generic.type = MTYPE_SPINCONTROL;
+		s_no_mines_box.generic.type = MTYPE_SPINNER;
 		s_no_mines_box.generic.textSize = MENU_FONT_SIZE;
 		s_no_mines_box.generic.x	= 0;
 		s_no_mines_box.generic.y	= y += MENU_LINE_SIZE;
@@ -429,7 +429,7 @@ void Menu_DMOptions_Init (void)
 		s_no_mines_box.itemNames = yes_no_names;
 		s_no_mines_box.curValue = ( dmflags & DF_NO_MINES ) != 0;
 
-		s_no_nukes_box.generic.type = MTYPE_SPINCONTROL;
+		s_no_nukes_box.generic.type = MTYPE_SPINNER;
 		s_no_nukes_box.generic.textSize = MENU_FONT_SIZE;
 		s_no_nukes_box.generic.x	= 0;
 		s_no_nukes_box.generic.y	= y += MENU_LINE_SIZE;
@@ -438,7 +438,7 @@ void Menu_DMOptions_Init (void)
 		s_no_nukes_box.itemNames = yes_no_names;
 		s_no_nukes_box.curValue = ( dmflags & DF_NO_NUKES ) != 0;
 
-		s_stack_double_box.generic.type = MTYPE_SPINCONTROL;
+		s_stack_double_box.generic.type = MTYPE_SPINNER;
 		s_stack_double_box.generic.textSize = MENU_FONT_SIZE;
 		s_stack_double_box.generic.x	= 0;
 		s_stack_double_box.generic.y	= y += MENU_LINE_SIZE;
@@ -447,7 +447,7 @@ void Menu_DMOptions_Init (void)
 		s_stack_double_box.itemNames = yes_no_names;
 		s_stack_double_box.curValue = ( dmflags & DF_NO_STACK_DOUBLE ) != 0;
 
-		s_no_spheres_box.generic.type = MTYPE_SPINCONTROL;
+		s_no_spheres_box.generic.type = MTYPE_SPINNER;
 		s_no_spheres_box.generic.textSize = MENU_FONT_SIZE;
 		s_no_spheres_box.generic.x	= 0;
 		s_no_spheres_box.generic.y	= y += MENU_LINE_SIZE;
@@ -462,7 +462,7 @@ void Menu_DMOptions_Init (void)
 	// Knightmare added
 	else if ( CTF_menumode() )
 	{
-		s_ctf_forceteam_box.generic.type = MTYPE_SPINCONTROL;
+		s_ctf_forceteam_box.generic.type = MTYPE_SPINNER;
 		s_ctf_forceteam_box.generic.textSize = MENU_FONT_SIZE;
 		s_ctf_forceteam_box.generic.x	= 0;
 		s_ctf_forceteam_box.generic.y	= y += MENU_LINE_SIZE;
@@ -471,7 +471,7 @@ void Menu_DMOptions_Init (void)
 		s_ctf_forceteam_box.itemNames = yes_no_names;
 		s_ctf_forceteam_box.curValue = ( dmflags & DF_CTF_FORCEJOIN ) != 0;
 
-		s_ctf_armor_protect_box.generic.type = MTYPE_SPINCONTROL;
+		s_ctf_armor_protect_box.generic.type = MTYPE_SPINNER;
 		s_ctf_armor_protect_box.generic.textSize = MENU_FONT_SIZE;
 		s_ctf_armor_protect_box.generic.x	= 0;
 		s_ctf_armor_protect_box.generic.y	= y += MENU_LINE_SIZE;
@@ -480,7 +480,7 @@ void Menu_DMOptions_Init (void)
 		s_ctf_armor_protect_box.itemNames = yes_no_names;
 		s_ctf_armor_protect_box.curValue = ( dmflags & DF_ARMOR_PROTECT ) != 0;
 
-		s_ctf_notechs_box.generic.type = MTYPE_SPINCONTROL;
+		s_ctf_notechs_box.generic.type = MTYPE_SPINNER;
 		s_ctf_notechs_box.generic.textSize = MENU_FONT_SIZE;
 		s_ctf_notechs_box.generic.x	= 0;
 		s_ctf_notechs_box.generic.y	= y += MENU_LINE_SIZE;
@@ -559,5 +559,5 @@ const char *Menu_DMOptions_Key (int key)
 void Menu_DMOptions_f (void)
 {
 	Menu_DMOptions_Init ();
-	UI_PushMenu (Menu_DMOptions_Draw, Menu_DMOptions_Key);
+	UI_PushMenu (&s_dmoptions_menu, Menu_DMOptions_Draw, Menu_DMOptions_Key);
 }

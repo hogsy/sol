@@ -37,22 +37,22 @@ INTERFACE MENU
 =======================================================================
 */
 
-static menuframework_s	s_options_interface_menu;
-static menuseparator_s	s_options_interface_header;
-static menuslider_s		s_options_interface_conalpha_slider;
-//static menuslider_s		s_options_interface_conheight_slider;
-static menuslider_s		s_options_interface_menumouse_slider;
-static menuslider_s		s_options_interface_menualpha_slider;
-static menulist_s		s_options_interface_confont_box;
-static menuslider_s		s_options_interface_fontsize_slider;
-static menulist_s		s_options_interface_uifont_box;
-static menulist_s		s_options_interface_scrfont_box;
-static menulist_s		s_options_interface_alt_text_color_box;
-static menulist_s		s_options_interface_simple_loadscreen_box;
-static menulist_s		s_options_interface_newconback_box;
-static menulist_s		s_options_interface_noalttab_box;
-static menuaction_s		s_options_interface_defaults_action;
-static menuaction_s		s_options_interface_back_action;
+static menuFramework_s	s_options_interface_menu;
+static menuLabel_s		s_options_interface_header;
+static menuSlider_s		s_options_interface_conalpha_slider;
+//static menuSlider_s	s_options_interface_conheight_slider;
+static menuSlider_s		s_options_interface_menumouse_slider;
+static menuSlider_s		s_options_interface_menualpha_slider;
+static menuSpinner_s	s_options_interface_confont_box;
+static menuSlider_s		s_options_interface_fontsize_slider;
+static menuSpinner_s	s_options_interface_uifont_box;
+static menuSpinner_s	s_options_interface_scrfont_box;
+static menuSpinner_s	s_options_interface_alt_text_color_box;
+static menuSpinner_s	s_options_interface_simple_loadscreen_box;
+static menuSpinner_s	s_options_interface_newconback_box;
+static menuSpinner_s	s_options_interface_noalttab_box;
+static menuAction_s		s_options_interface_defaults_action;
+static menuAction_s		s_options_interface_back_action;
 
 //=======================================================================
 
@@ -69,7 +69,7 @@ static void MenuAlphaFunc (void *unused)
 
 static void ConFontFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_confont_box, "con_font");
+	UI_MenuSpinner_SaveValue (&s_options_interface_confont_box, "con_font");
 }
 
 static void FontSizeFunc (void *unused)
@@ -79,17 +79,17 @@ static void FontSizeFunc (void *unused)
 
 static void UIFontFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_uifont_box, "ui_font");
+	UI_MenuSpinner_SaveValue (&s_options_interface_uifont_box, "ui_font");
 }
 
 static void ScrFontFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_scrfont_box, "scr_font");
+	UI_MenuSpinner_SaveValue (&s_options_interface_scrfont_box, "scr_font");
 }
 
 static void AltTextColorFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_alt_text_color_box, "alt_text_color");
+	UI_MenuSpinner_SaveValue (&s_options_interface_alt_text_color_box, "alt_text_color");
 }
 
 // Psychospaz's transparent console
@@ -108,17 +108,17 @@ static void ConHeightFunc (void *unused)
 
 static void SimpleLoadscreenFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_simple_loadscreen_box, "scr_simple_loadscreen");
+	UI_MenuSpinner_SaveValue (&s_options_interface_simple_loadscreen_box, "scr_simple_loadscreen");
 }
 
 static void NewConbackFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_newconback_box, "scr_newconback");
+	UI_MenuSpinner_SaveValue (&s_options_interface_newconback_box, "scr_newconback");
 }
 
 static void NoAltTabFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_interface_noalttab_box, "win_noalttab");
+	UI_MenuSpinner_SaveValue (&s_options_interface_noalttab_box, "win_noalttab");
 }
 
 //=======================================================================
@@ -128,18 +128,18 @@ static void M_InterfaceSetMenuItemValues (void)
 	UI_MenuSlider_SetValue (&s_options_interface_menumouse_slider, "ui_sensitivity", 0.25f, 2.0f, true);
 	UI_MenuSlider_SetValue (&s_options_interface_menualpha_slider, "ui_background_alpha", 0.0f, 1.0f, true );
 
-	UI_MenuSpinControl_SetValue (&s_options_interface_confont_box, "con_font", 0, 0, false);
+	UI_MenuSpinner_SetValue (&s_options_interface_confont_box, "con_font", 0, 0, false);
 	UI_MenuSlider_SetValue (&s_options_interface_fontsize_slider, "con_font_size", 6.0f, 16.0f, true);
-	UI_MenuSpinControl_SetValue (&s_options_interface_uifont_box, "ui_font", 0, 0, false);
-	UI_MenuSpinControl_SetValue (&s_options_interface_scrfont_box, "scr_font", 0, 0, false);
-	UI_MenuSpinControl_SetValue (&s_options_interface_alt_text_color_box, "alt_text_color", 0, 9, true);
+	UI_MenuSpinner_SetValue (&s_options_interface_uifont_box, "ui_font", 0, 0, false);
+	UI_MenuSpinner_SetValue (&s_options_interface_scrfont_box, "scr_font", 0, 0, false);
+	UI_MenuSpinner_SetValue (&s_options_interface_alt_text_color_box, "alt_text_color", 0, 9, true);
 
 	UI_MenuSlider_SetValue (&s_options_interface_conalpha_slider, "scr_conalpha", 0.0f, 1.0f, true);
 //	UI_MenuSlider_SetValue (&s_options_interface_conheight_slider, "scr_conheight", 0.10f, 1.0f, true);
-	UI_MenuSpinControl_SetValue (&s_options_interface_simple_loadscreen_box, "scr_simple_loadscreen", 0, 1, true);
-	UI_MenuSpinControl_SetValue (&s_options_interface_newconback_box, "scr_newconback", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_options_interface_simple_loadscreen_box, "scr_simple_loadscreen", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_options_interface_newconback_box, "scr_newconback", 0, 1, true);
 
-	UI_MenuSpinControl_SetValue (&s_options_interface_noalttab_box, "win_noalttab", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_options_interface_noalttab_box, "win_noalttab", 0, 1, true);
 }
 
 static void M_InterfaceResetDefaultsFunc (void *unused)
@@ -190,7 +190,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_menu.y = SCREEN_HEIGHT*0.5 - 58;
 	s_options_interface_menu.nitems = 0;
 
-	s_options_interface_header.generic.type		= MTYPE_SEPARATOR;
+	s_options_interface_header.generic.type		= MTYPE_LABEL;
 	s_options_interface_header.generic.textSize	= MENU_HEADER_FONT_SIZE;
 	s_options_interface_header.generic.name		= "Interface";
 	s_options_interface_header.generic.x		= MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_options_interface_header.generic.name);
@@ -221,7 +221,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_menualpha_slider.displayAsPercent	= true;
 	s_options_interface_menualpha_slider.generic.statusbar	= "changes opacity of menu background";
 
-	s_options_interface_confont_box.generic.type			= MTYPE_SPINCONTROL;
+	s_options_interface_confont_box.generic.type			= MTYPE_SPINNER;
 	s_options_interface_confont_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_confont_box.generic.x				= 0;
 	s_options_interface_confont_box.generic.y				= y+=2*MENU_LINE_SIZE;
@@ -243,7 +243,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_fontsize_slider.displayAsPercent	= false;
 	s_options_interface_fontsize_slider.generic.statusbar	= "changes size of console text";
 
-	s_options_interface_uifont_box.generic.type				= MTYPE_SPINCONTROL;
+	s_options_interface_uifont_box.generic.type				= MTYPE_SPINNER;
 	s_options_interface_uifont_box.generic.textSize			= MENU_FONT_SIZE;
 	s_options_interface_uifont_box.generic.x				= 0;
 	s_options_interface_uifont_box.generic.y				= y+=MENU_LINE_SIZE;
@@ -253,7 +253,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_uifont_box.itemValues				= ui_font_names;
 	s_options_interface_uifont_box.generic.statusbar		= "changes font of menu text";
 
-	s_options_interface_scrfont_box.generic.type			= MTYPE_SPINCONTROL;
+	s_options_interface_scrfont_box.generic.type			= MTYPE_SPINNER;
 	s_options_interface_scrfont_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_scrfont_box.generic.x				= 0;
 	s_options_interface_scrfont_box.generic.y				= y+=MENU_LINE_SIZE;
@@ -263,7 +263,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_scrfont_box.itemValues				= ui_font_names;
 	s_options_interface_scrfont_box.generic.statusbar		= "changes font of HUD text";
 
-	s_options_interface_alt_text_color_box.generic.type			= MTYPE_SPINCONTROL;
+	s_options_interface_alt_text_color_box.generic.type			= MTYPE_SPINNER;
 	s_options_interface_alt_text_color_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_alt_text_color_box.generic.x			= 0;
 	s_options_interface_alt_text_color_box.generic.y			= y+=MENU_LINE_SIZE;
@@ -298,7 +298,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_conheight_slider.generic.statusbar	= "changes drop height of console";
 	*/
 
-	s_options_interface_simple_loadscreen_box.generic.type		= MTYPE_SPINCONTROL;
+	s_options_interface_simple_loadscreen_box.generic.type		= MTYPE_SPINNER;
 	s_options_interface_simple_loadscreen_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_simple_loadscreen_box.generic.x			= 0;
 	s_options_interface_simple_loadscreen_box.generic.y			= y+=2*MENU_LINE_SIZE;
@@ -307,7 +307,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_simple_loadscreen_box.itemNames			= yesno_names;
 	s_options_interface_simple_loadscreen_box.generic.statusbar	= "toggles simple map load screen";
 
-	s_options_interface_newconback_box.generic.type			= MTYPE_SPINCONTROL;
+	s_options_interface_newconback_box.generic.type			= MTYPE_SPINNER;
 	s_options_interface_newconback_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_newconback_box.generic.x			= 0;
 	s_options_interface_newconback_box.generic.y			= y+=MENU_LINE_SIZE;
@@ -316,7 +316,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_newconback_box.itemNames			= yesno_names;
 	s_options_interface_newconback_box.generic.statusbar	= "enables Q3-style console background";
 
-	s_options_interface_noalttab_box.generic.type		= MTYPE_SPINCONTROL;
+	s_options_interface_noalttab_box.generic.type		= MTYPE_SPINNER;
 	s_options_interface_noalttab_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_noalttab_box.generic.x			= 0;
 	s_options_interface_noalttab_box.generic.y			= y+=2*MENU_LINE_SIZE;
@@ -375,5 +375,5 @@ const char *Menu_Options_Interface_Key (int key)
 void Menu_Options_Interface_f (void)
 {
 	Options_Interface_MenuInit ();
-	UI_PushMenu (Menu_Options_Interface_Draw, Menu_Options_Interface_Key);
+	UI_PushMenu (&s_options_interface_menu, Menu_Options_Interface_Draw, Menu_Options_Interface_Key);
 }

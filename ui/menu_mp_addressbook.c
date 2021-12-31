@@ -39,9 +39,9 @@ ADDRESS BOOK MENU
 */
 #define NUM_ADDRESSBOOK_ENTRIES 12 // was 9
 
-static menuframework_s	s_addressbook_menu;
-static menufield_s		s_addressbook_fields[NUM_ADDRESSBOOK_ENTRIES];
-static menuaction_s		s_addressbook_back_action;
+static menuFramework_s	s_addressbook_menu;
+static menuField_s		s_addressbook_fields[NUM_ADDRESSBOOK_ENTRIES];
+static menuAction_s		s_addressbook_back_action;
 
 
 void AddressBook_SaveEntries (void)
@@ -124,5 +124,5 @@ void Menu_AddressBook_Draw (void)
 void Menu_AddressBook_f(void)
 {
 	Menu_AddressBook_Init ();
-	UI_PushMenu (Menu_AddressBook_Draw, Menu_AddressBook_Key);
+	UI_PushMenu (&s_addressbook_menu, Menu_AddressBook_Draw, Menu_AddressBook_Key);
 }

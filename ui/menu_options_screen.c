@@ -37,24 +37,24 @@ SCREEN MENU
 =======================================================================
 */
 
-static menuframework_s	s_options_screen_menu;
-static menuseparator_s	s_options_screen_header;
-static menulist_s		s_options_screen_crosshair_box;
-static menuslider_s		s_options_screen_crosshairscale_slider;
-static menuslider_s		s_options_screen_crosshairalpha_slider;
-static menuslider_s		s_options_screen_crosshairpulse_slider;
-static menuslider_s		s_options_screen_hudscale_slider;
-static menuslider_s		s_options_screen_hudalpha_slider;
-static menulist_s		s_options_screen_hudsqueezedigits_box;
-static menulist_s		s_options_screen_fps_box;
-static menuaction_s		s_options_screen_defaults_action;
-static menuaction_s		s_options_screen_back_action;
+static menuFramework_s	s_options_screen_menu;
+static menuLabel_s		s_options_screen_header;
+static menuSpinner_s	s_options_screen_crosshair_box;
+static menuSlider_s		s_options_screen_crosshairscale_slider;
+static menuSlider_s		s_options_screen_crosshairalpha_slider;
+static menuSlider_s		s_options_screen_crosshairpulse_slider;
+static menuSlider_s		s_options_screen_hudscale_slider;
+static menuSlider_s		s_options_screen_hudalpha_slider;
+static menuSpinner_s	s_options_screen_hudsqueezedigits_box;
+static menuSpinner_s	s_options_screen_fps_box;
+static menuAction_s		s_options_screen_defaults_action;
+static menuAction_s		s_options_screen_back_action;
 
 //=======================================================================
 
 static void CrosshairFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_screen_crosshair_box, "crosshair");
+	UI_MenuSpinner_SaveValue (&s_options_screen_crosshair_box, "crosshair");
 }
 
 // Psychospaz's changeable size crosshair
@@ -88,27 +88,27 @@ static void HudAlphaFunc (void *unused)
 // hud squeeze digits option
 static void HudSqueezeDigitsFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits");
+	UI_MenuSpinner_SaveValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits");
 }
 
 // FPS counter option
 static void FPSFunc (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_options_screen_fps_box, "cl_drawfps");
+	UI_MenuSpinner_SaveValue (&s_options_screen_fps_box, "cl_drawfps");
 }
 
 //=======================================================================
 
 static void M_ScreenSetMenuItemValues (void)
 {
-	UI_MenuSpinControl_SetValue (&s_options_screen_crosshair_box, "crosshair", 0, 100, true);
+	UI_MenuSpinner_SetValue (&s_options_screen_crosshair_box, "crosshair", 0, 100, true);
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairscale_slider, "crosshair_scale", 0.25f, 5.0f, true);
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha", 0.05f, 1.0f, true);
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse", 0.0f, 0.5f, true);
 	UI_MenuSlider_SetValue (&s_options_screen_hudscale_slider, "scr_hudsize", 0, 8, true);
 	UI_MenuSlider_SetValue (&s_options_screen_hudalpha_slider, "scr_hudalpha", 0.0f, 1.0f, true);
-	UI_MenuSpinControl_SetValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits", 0, 1, true);
-	UI_MenuSpinControl_SetValue (&s_options_screen_fps_box, "cl_drawfps", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits", 0, 1, true);
+	UI_MenuSpinner_SetValue (&s_options_screen_fps_box, "cl_drawfps", 0, 1, true);
 }
 
 static void M_ScreenResetDefaultsFunc (void *unused)
@@ -142,13 +142,13 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_menu.y = SCREEN_HEIGHT*0.5 - 58;
 	s_options_screen_menu.nitems = 0;
 
-	s_options_screen_header.generic.type		= MTYPE_SEPARATOR;
+	s_options_screen_header.generic.type		= MTYPE_LABEL;
 	s_options_screen_header.generic.textSize	= MENU_HEADER_FONT_SIZE;
 	s_options_screen_header.generic.name		= "Screen";
 	s_options_screen_header.generic.x			= MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_options_screen_header.generic.name);
 	s_options_screen_header.generic.y			= -2*MENU_LINE_SIZE;	// 0
 
-	s_options_screen_crosshair_box.generic.type				= MTYPE_SPINCONTROL;
+	s_options_screen_crosshair_box.generic.type				= MTYPE_SPINNER;
 	s_options_screen_crosshair_box.generic.textSize			= MENU_FONT_SIZE;
 	s_options_screen_crosshair_box.generic.x				= 0;
 	s_options_screen_crosshair_box.generic.y				= y;
@@ -222,7 +222,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_hudalpha_slider.generic.statusbar		= "changes opacity of HUD elements";
 
 	// hud squeeze digits option
-	s_options_screen_hudsqueezedigits_box.generic.type		= MTYPE_SPINCONTROL;
+	s_options_screen_hudsqueezedigits_box.generic.type		= MTYPE_SPINNER;
 	s_options_screen_hudsqueezedigits_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_screen_hudsqueezedigits_box.generic.x			= 0;
 	s_options_screen_hudsqueezedigits_box.generic.y			= y += MENU_LINE_SIZE;
@@ -231,7 +231,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_hudsqueezedigits_box.itemNames			= yesno_names;
 	s_options_screen_hudsqueezedigits_box.generic.statusbar	= "enables showing of longer numbers on HUD";
 
-	s_options_screen_fps_box.generic.type				= MTYPE_SPINCONTROL;
+	s_options_screen_fps_box.generic.type				= MTYPE_SPINNER;
 	s_options_screen_fps_box.generic.textSize			= MENU_FONT_SIZE;
 	s_options_screen_fps_box.generic.x					= 0;
 	s_options_screen_fps_box.generic.y					= y += 2*MENU_LINE_SIZE;
@@ -344,5 +344,5 @@ const char *Menu_Options_Screen_Key (int key)
 void Menu_Options_Screen_f (void)
 {
 	Menu_Options_Screen_Init ();
-	UI_PushMenu (Menu_Options_Screen_Draw, Menu_Options_Screen_Key);
+	UI_PushMenu (&s_options_screen_menu, Menu_Options_Screen_Draw, Menu_Options_Screen_Key);
 }

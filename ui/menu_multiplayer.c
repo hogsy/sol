@@ -40,12 +40,12 @@ MULTIPLAYER MENU
 =======================================================================
 */
 
-menuframework_s			s_multiplayer_menu;
-static menuaction_s		s_join_network_server_action;
-static menuaction_s		s_start_network_server_action;
-static menuaction_s		s_player_setup_action;
-static menuaction_s		s_download_options_action;
-static menuaction_s		s_backmain_action;
+menuFramework_s			s_multiplayer_menu;
+static menuAction_s		s_join_network_server_action;
+static menuAction_s		s_start_network_server_action;
+static menuAction_s		s_player_setup_action;
+static menuAction_s		s_download_options_action;
+static menuAction_s		s_backmain_action;
 
 //=======================================================================
 
@@ -146,5 +146,5 @@ const char *Menu_Multiplayer_Key (int key)
 void Menu_Multiplayer_f (void)
 {
 	Menu_Multiplayer_Init ();
-	UI_PushMenu (Menu_Multiplayer_Draw, Menu_Multiplayer_Key);
+	UI_PushMenu (&s_multiplayer_menu, Menu_Multiplayer_Draw, Menu_Multiplayer_Key);
 }

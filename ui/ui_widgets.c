@@ -29,16 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-static	void	MenuAction_DoEnter (menuaction_s *a);
-static	void	MenuAction_Draw (menuaction_s *a);
-static	void	Menulist_DoEnter (menulist_s *l);
-static	void	MenuList_Draw (menulist_s *l);
-static	void	MenuSeparator_Draw (menuseparator_s *s);
-static	void	MenuSlider_DoSlide (menuslider_s *s, int dir);
-static	void	MenuSlider_Draw (menuslider_s *s);
-static	void	MenuSpinControl_DoEnter (menulist_s *s);
-static	void	MenuSpinControl_Draw (menulist_s *s);
-static	void	MenuSpinControl_DoSlide (menulist_s *s, int dir);
+static	void	MenuAction_DoEnter (menuAction_s *a);
+static	void	MenuAction_Draw (menuAction_s *a);
+static	void	MenuLabel_Draw (menuLabel_s *s);
+static	void	MenuSlider_DoSlide (menuSlider_s *s, int dir);
+static	void	MenuSlider_Draw (menuSlider_s *s);
+static	void	MenuSpinControl_DoEnter (menuSpinner_s *s);
+static	void	MenuSpinControl_Draw (menuSpinner_s *s);
+static	void	MenuSpinControl_DoSlide (menuSpinner_s *s, int dir);
 
 #define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// was 16
 #define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// was -16
@@ -64,7 +62,7 @@ extern viddef_t viddef;
 
 //======================================================
 
-void MenuAction_DoEnter (menuaction_s *a)
+void MenuAction_DoEnter (menuAction_s *a)
 {
 	if (!a) return;
 
@@ -72,7 +70,7 @@ void MenuAction_DoEnter (menuaction_s *a)
 		a->generic.callback(a);
 }
 
-void MenuAction_Draw (menuaction_s *a)
+void MenuAction_Draw (menuAction_s *a)
 {
 	int		alpha;
 
@@ -104,7 +102,7 @@ void MenuAction_Draw (menuaction_s *a)
 
 //=========================================================
 
-qboolean MenuField_DoEnter (menufield_s *f)
+qboolean MenuField_DoEnter (menuField_s *f)
 {
 	if (!f) return false;
 
@@ -116,7 +114,7 @@ qboolean MenuField_DoEnter (menufield_s *f)
 	return false;
 }
 
-void MenuField_Draw (menufield_s *f)
+void MenuField_Draw (menuField_s *f)
 {
 	int i, alpha, xtra;
 	char tempbuffer[128]="";
@@ -192,7 +190,7 @@ void MenuField_Draw (menufield_s *f)
 					f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, tempbuffer, FONT_UI, alpha);
 }
 
-qboolean UI_MenuField_Key (menufield_s *f, int key)
+qboolean UI_MenuField_Key (menuField_s *f, int key)
 {
 	extern int keydown[];
 
@@ -329,66 +327,22 @@ qboolean UI_MenuField_Key (menufield_s *f, int key)
 
 //=========================================================
 
-void Menulist_DoEnter (menulist_s *l)
+void MenuLabel_Draw (menuLabel_s *l)
 {
-	int start;
-
-	if (!l) return;
-
-	start = l->generic.y / 10 + 1;
-
-	l->curValue = l->generic.parent->cursor - start;
-
-	if (l->generic.callback)
-		l->generic.callback(l);
-}
-
-void MenuList_Draw (menulist_s *l)
-{
-	const char	**n;
-	int			y = 0, alpha;
+	int alpha;
 
 	if (!l) return;
 
 	alpha = UI_MouseOverAlpha(&l->generic);
 
-	UI_DrawStringR2LDark (l->generic.x + l->generic.parent->x + LCOLUMN_OFFSET,	// - 2*MENU_FONT_SIZE,
-						l->generic.y + l->generic.parent->y, l->generic.textSize, ALIGN_CENTER, l->generic.name, FONT_UI, alpha);
-
-	n = l->itemNames;
-
-//	UI_DrawFill (l->generic.parent->x + l->generic.x - 112, l->generic.parent->y + l->generic.y + (l->curValue+1)*MENU_LINE_SIZE,
-//				128, MENU_LINE_SIZE, ALIGN_CENTER, false, 16);
-	UI_DrawFill (l->generic.parent->x + l->generic.x - 112, l->generic.parent->y + l->generic.y + (l->curValue+1)*MENU_LINE_SIZE,
-				128, MENU_LINE_SIZE, ALIGN_CENTER, false, color8red(16), color8green(16), color8blue(16), 255);
-
-	while (*n)
-	{
-		UI_DrawStringR2LDark (l->generic.x + l->generic.parent->x + LCOLUMN_OFFSET,
-							l->generic.y + l->generic.parent->y + y + MENU_LINE_SIZE, l->generic.textSize, ALIGN_CENTER, *n, FONT_UI, alpha);
-		n++;
-		y += MENU_LINE_SIZE;
-	}
+	if (l->generic.name)
+		UI_DrawStringR2LDark (l->generic.x + l->generic.parent->x,
+								l->generic.y + l->generic.parent->y, l->generic.textSize, ALIGN_CENTER, l->generic.name, FONT_UI, alpha);
 }
 
 //=========================================================
 
-void MenuSeparator_Draw (menuseparator_s *s)
-{
-	int alpha;
-
-	if (!s) return;
-
-	alpha = UI_MouseOverAlpha(&s->generic);
-
-	if (s->generic.name)
-		UI_DrawStringR2LDark (s->generic.x + s->generic.parent->x,
-								s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, FONT_UI, alpha);
-}
-
-//=========================================================
-
-void UI_MenuSlider_SetValue (menuslider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+void UI_MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -402,7 +356,7 @@ void UI_MenuSlider_SetValue (menuslider_s *s, const char *varName, float cvarMin
 	s->curPos = min(max(s->curPos, 0), s->maxPos);
 }
 
-void UI_MenuSlider_SaveValue (menuslider_s *s, const char *varName)
+void UI_MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -410,7 +364,7 @@ void UI_MenuSlider_SaveValue (menuslider_s *s, const char *varName)
 	Cvar_SetValue ((char *)varName, ((float)s->curPos * s->increment) + s->baseValue);
 }
 
-float UI_MenuSlider_GetValue (menuslider_s *s)
+float UI_MenuSlider_GetValue (menuSlider_s *s)
 {
 	if (!s) return 0.0f;
 
@@ -420,7 +374,7 @@ float UI_MenuSlider_GetValue (menuslider_s *s)
 	return ((float)s->curPos * s->increment) + s->baseValue;
 }
 
-void MenuSlider_DoSlide (menuslider_s *s, int dir)
+void MenuSlider_DoSlide (menuSlider_s *s, int dir)
 {
 	if (!s) return;
 
@@ -434,7 +388,7 @@ void MenuSlider_DoSlide (menuslider_s *s, int dir)
 
 #define SLIDER_RANGE 10
 
-void MenuSlider_Draw (menuslider_s *s)
+void MenuSlider_Draw (menuSlider_s *s)
 {
 	int		i, x, y, alpha;
 	float	tmpValue;
@@ -509,7 +463,7 @@ void MenuSlider_Draw (menuslider_s *s)
 
 //=========================================================
 
-void UI_MenuSpinControl_SetValue (menulist_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+void UI_MenuSpinner_SetValue (menuSpinner_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -531,16 +485,16 @@ void UI_MenuSpinControl_SetValue (menulist_s *s, const char *varName, float cvar
 	}
 }
 
-void UI_MenuSpinControl_SaveValue (menulist_s *s, const char *varName)
+void UI_MenuSpinner_SaveValue (menuSpinner_s *s, const char *varName)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
 	if (!s->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinControl_SaveValue: not initialized!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_SaveValue: not initialized!\n");
 		return;
 	}
 	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinControl_SaveValue: curvalue out of bounds!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_SaveValue: curvalue out of bounds!\n");
 		return;
 	}
 
@@ -560,7 +514,7 @@ void UI_MenuSpinControl_SaveValue (menulist_s *s, const char *varName)
 	}
 }
 
-const char *UI_MenuSpinControl_GetValue (menulist_s *s)
+const char *UI_MenuSpinner_GetValue (menuSpinner_s *s)
 {
 	const char *value;
 
@@ -568,11 +522,11 @@ const char *UI_MenuSpinControl_GetValue (menulist_s *s)
 		return NULL;
 
 	if (!s->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinControl_GetValue: not initialized!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_GetValue: not initialized!\n");
 		return NULL;
 	}
 	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinControl_GetValue: curvalue out of bounds!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_GetValue: curvalue out of bounds!\n");
 		return NULL;
 	}
 
@@ -586,7 +540,7 @@ const char *UI_MenuSpinControl_GetValue (menulist_s *s)
 	return value;
 }
 
-void MenuSpinControl_DoEnter (menulist_s *s)
+void MenuSpinControl_DoEnter (menuSpinner_s *s)
 {
 	if (!s || !s->itemNames || !s->numItems)
 		return;
@@ -599,7 +553,7 @@ void MenuSpinControl_DoEnter (menulist_s *s)
 		s->generic.callback(s);
 }
 
-void MenuSpinControl_DoSlide (menulist_s *s, int dir)
+void MenuSpinControl_DoSlide (menuSpinner_s *s, int dir)
 {
 	if (!s || !s->itemNames || !s->numItems)
 		return;
@@ -624,7 +578,7 @@ void MenuSpinControl_DoSlide (menulist_s *s, int dir)
 		s->generic.callback(s);
 }
  
-void MenuSpinControl_Draw (menulist_s *s)
+void MenuSpinControl_Draw (menuSpinner_s *s)
 {
 	int		alpha;
 	char	buffer[100];
@@ -659,9 +613,9 @@ void MenuSpinControl_Draw (menulist_s *s)
 
 //=========================================================
 
-void MenuKeyBind_DoEnter (menukeybind_s *k)
+void MenuKeyBind_DoEnter (menuKeyBind_s *k)
 {
-	menuframework_s	*menu = k->generic.parent;
+	menuFramework_s	*menu = k->generic.parent;
 
 	if (!menu)	return;
 
@@ -670,15 +624,15 @@ void MenuKeyBind_DoEnter (menukeybind_s *k)
 //	if (k->keys[1] != -1)
 //		UI_UnbindCommand (k->commandName);
 
-	UI_SetGrabBindItem (menu, (menucommon_s *)k);
+	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
 		
 	if (k->generic.callback)
 		k->generic.callback (k);
 }
 
-void MenuKeyBind_Draw (menukeybind_s *k)
+void MenuKeyBind_Draw (menuKeyBind_s *k)
 {
-	menuframework_s	*menu = k->generic.parent;
+	menuFramework_s	*menu = k->generic.parent;
 	int				x, alpha = UI_MouseOverAlpha(&k->generic);
 	const char		*keyName1, *keyName2;
 
@@ -718,9 +672,9 @@ void MenuKeyBind_Draw (menukeybind_s *k)
 //		k->generic.ownerdraw(k);
 }
 
-const char *UI_MenuKeyBind_Key (menukeybind_s *k, int key)
+const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 {
-	menuframework_s	*menu = k->generic.parent;
+	menuFramework_s	*menu = k->generic.parent;
 
 	// pressing mouse1 to pick a new bind wont force bind/unbind itself - spaz
 	if (UI_HasValidGrabBindItem(menu) && k->grabBind
@@ -781,31 +735,28 @@ void UI_DrawMenuItem (void *item)
 	if (!item)	return;
 
 	// skip hidden items
-	if ( ((menucommon_s *)item)->flags & QMF_HIDDEN )
+	if ( ((menuCommon_s *)item)->flags & QMF_HIDDEN )
 		return;
 
-	switch ( ((menucommon_s *)item)->type )
+	switch ( ((menuCommon_s *)item)->type )
 	{
 	case MTYPE_FIELD:
-		MenuField_Draw ((menufield_s *)item);
+		MenuField_Draw ((menuField_s *)item);
 		break;
 	case MTYPE_SLIDER:
-		MenuSlider_Draw ((menuslider_s *)item);
+		MenuSlider_Draw ((menuSlider_s *)item);
 		break;
-	case MTYPE_LIST:
-		MenuList_Draw ((menulist_s *)item);
-		break;
-	case MTYPE_SPINCONTROL:
-		MenuSpinControl_Draw ((menulist_s *)item);
+	case MTYPE_SPINNER:
+		MenuSpinControl_Draw ((menuSpinner_s *)item);
 		break;
 	case MTYPE_ACTION:
-		MenuAction_Draw ((menuaction_s *)item);
+		MenuAction_Draw ((menuAction_s *)item);
 		break;
-	case MTYPE_SEPARATOR:
-		MenuSeparator_Draw ((menuseparator_s *)item);
+	case MTYPE_LABEL:
+		MenuLabel_Draw ((menuLabel_s *)item);
 		break;
 	case MTYPE_KEYBIND:
-		MenuKeyBind_Draw ((menukeybind_s *)item);
+		MenuKeyBind_Draw ((menuKeyBind_s *)item);
 		break;
 	default:
 		break;
@@ -818,31 +769,28 @@ void UI_DrawMenuItem (void *item)
 UI_SelectMenuItem
 =================
 */
-qboolean UI_SelectMenuItem (menuframework_s *s)
+qboolean UI_SelectMenuItem (menuFramework_s *s)
 {
-	menucommon_s *item=NULL;
+	menuCommon_s *item=NULL;
 
 	if (!s)	return false;
 
-	item = (menucommon_s *)UI_ItemAtMenuCursor(s);
+	item = (menuCommon_s *)UI_ItemAtMenuCursor(s);
 
 	if (item)
 	{
 		switch (item->type)
 		{
 		case MTYPE_FIELD:
-			return MenuField_DoEnter ( (menufield_s *)item ) ;
+			return MenuField_DoEnter ( (menuField_s *)item ) ;
 		case MTYPE_ACTION:
-			MenuAction_DoEnter ( (menuaction_s *)item );
+			MenuAction_DoEnter ( (menuAction_s *)item );
 			return true;
-		case MTYPE_LIST:
-		//	Menulist_DoEnter ( (menulist_s *)item );
-			return false;
-		case MTYPE_SPINCONTROL:
-		//	MenuSpinControl_DoEnter ( (menulist_s *)item );
+		case MTYPE_SPINNER:
+		//	MenuSpinControl_DoEnter ( (menuSpinner_s *)item );
 			return false;
 		case MTYPE_KEYBIND:
-			MenuKeyBind_DoEnter ( (menukeybind_s *)item );
+			MenuKeyBind_DoEnter ( (menuKeyBind_s *)item );
 			return true;
 		default:
 			break;
@@ -857,7 +805,7 @@ qboolean UI_SelectMenuItem (menuframework_s *s)
 UI_MouseSelectItem
 =================
 */
-qboolean UI_MouseSelectItem (menucommon_s *item)
+qboolean UI_MouseSelectItem (menuCommon_s *item)
 {
 	if (!item)	return false;
 
@@ -866,15 +814,14 @@ qboolean UI_MouseSelectItem (menucommon_s *item)
 		switch (item->type)
 		{
 		case MTYPE_FIELD:
-			return MenuField_DoEnter ( (menufield_s *)item ) ;
+			return MenuField_DoEnter ( (menuField_s *)item ) ;
 		case MTYPE_ACTION:
-			MenuAction_DoEnter ( (menuaction_s *)item );
+			MenuAction_DoEnter ( (menuAction_s *)item );
 			return true;
 		case MTYPE_KEYBIND:
-			MenuKeyBind_DoEnter ( (menukeybind_s *)item );
+			MenuKeyBind_DoEnter ( (menuKeyBind_s *)item );
 			return true;
-		case MTYPE_LIST:
-		case MTYPE_SPINCONTROL:
+		case MTYPE_SPINNER:
 			return false;
 		default:
 			break;
@@ -889,23 +836,23 @@ qboolean UI_MouseSelectItem (menucommon_s *item)
 UI_SlideMenuItem
 =================
 */
-void UI_SlideMenuItem (menuframework_s *s, int dir)
+void UI_SlideMenuItem (menuFramework_s *s, int dir)
 {
-	menucommon_s *item=NULL;
+	menuCommon_s *item=NULL;
 
 	if (!s)	return;
 
-	item = (menucommon_s *) UI_ItemAtMenuCursor(s);
+	item = (menuCommon_s *) UI_ItemAtMenuCursor(s);
 
 	if (item)
 	{
 		switch (item->type)
 		{
 		case MTYPE_SLIDER:
-			MenuSlider_DoSlide ((menuslider_s *) item, dir);
+			MenuSlider_DoSlide ((menuSlider_s *) item, dir);
 			break;
-		case MTYPE_SPINCONTROL:
-			MenuSpinControl_DoSlide ((menulist_s *) item, dir);
+		case MTYPE_SPINNER:
+			MenuSpinControl_DoSlide ((menuSpinner_s *) item, dir);
 			break;
 		default:
 			break;

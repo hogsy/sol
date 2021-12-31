@@ -1153,8 +1153,9 @@ void CL_LocHelp_f (void);
 //
 void UI_Init (void);
 void UI_Shutdown (void);
-void UI_Keydown (int key);
 void UI_Draw (void);
+void UI_Keydown (int key);
+qboolean UI_MenuHasGrabBind (void);
 void UI_ForceMenuOff (void);
 void UI_AddToServerList (netadr_t adr, char *info);
 void UI_RootMenu (void);

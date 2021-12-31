@@ -75,13 +75,13 @@ int				keys_cursor;
 static int		bind_grab;
 #endif
 
-static menuframework_s	s_keys_menu;
+static menuFramework_s	s_keys_menu;
 #ifdef USE_KEYBIND_CONTROL
-static menukeybind_s	s_keys_binds[64];
+static menuKeyBind_s	s_keys_binds[64];
 #else
-static menuaction_s		s_keys_binds[64];
+static menuAction_s		s_keys_binds[64];
 #endif
-static menuaction_s		s_keys_back_action;
+static menuAction_s		s_keys_back_action;
 
 //=======================================================================
 
@@ -227,7 +227,7 @@ void M_AddBindOption (int i, char *list[][2])
 	s_keys_binds[i].generic.callback = M_KeyBindingFunc;
 
 	if (strstr ("MENUSPACE", list[i][0]))
-		s_keys_binds[i].generic.type	= MTYPE_SEPARATOR;
+		s_keys_binds[i].generic.type	= MTYPE_LABEL;
 }
 #endif	// USE_KEYBIND_CONTROL
 
@@ -301,7 +301,7 @@ static const char *Menu_Keys_Key (int key)
 	menuaction_s *item = (menuaction_s *) UI_ItemAtMenuCursor( &s_keys_menu );
 
 	// pressing mouse1 to pick a new bind wont force bind/unbind itself - spaz
-	if ( bind_grab && !(ui_mousecursor.buttonused[MOUSEBUTTON1]&&key==K_MOUSE1))
+	if ( bind_grab && !(ui_mousecursor.buttonused[MOUSEBUTTON1] && (key == K_MOUSE1)))
 	{	
 		if ( key != K_ESCAPE && key != '`' )
 		{
@@ -311,8 +311,8 @@ static const char *Menu_Keys_Key (int key)
 			Cbuf_InsertText (cmd);
 		}
 		
-		//  Knightmare- added Psychospaz's mouse support
-		//dont let selecting with mouse buttons screw everything up
+		// Knightmare- added Psychospaz's mouse support
+		// dont let selecting with mouse buttons screw everything up
 		UI_RefreshCursorButtons();
 		if (key == K_MOUSE1)
 			ui_mousecursor.buttonclicks[MOUSEBUTTON1] = -1;
@@ -344,5 +344,5 @@ static const char *Menu_Keys_Key (int key)
 void Menu_Keys_f (void)
 {
 	Menu_Keys_Init ();
-	UI_PushMenu (Menu_Keys_Draw, Menu_Keys_Key);
+	UI_PushMenu (&s_keys_menu, Menu_Keys_Draw, Menu_Keys_Key);
 }

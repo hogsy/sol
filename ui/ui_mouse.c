@@ -82,7 +82,7 @@ void UI_RefreshCursorLink (void)
 UI_Slider_CursorPositionX
 =================
 */
-int UI_Slider_CursorPositionX (menuslider_s *s)
+int UI_Slider_CursorPositionX (menuSlider_s *s)
 {
 	float range;
 
@@ -106,7 +106,7 @@ int UI_Slider_CursorPositionX (menuslider_s *s)
 UI_SliderValueForX
 =================
 */
-int UI_SliderValueForX (menuslider_s *s, int x)
+int UI_SliderValueForX (menuSlider_s *s, int x)
 {
 	float	newValue, sliderbase;
 	int		newValueInt;
@@ -135,7 +135,7 @@ int UI_SliderValueForX (menuslider_s *s, int x)
 UI_Slider_CheckSlide
 =================
 */
-void UI_Slider_CheckSlide (menuslider_s *s)
+void UI_Slider_CheckSlide (menuSlider_s *s)
 {
 	if (!s)
 		return;
@@ -152,14 +152,14 @@ void UI_Slider_CheckSlide (menuslider_s *s)
 UI_DragSlideItem
 =================
 */
-void UI_DragSlideItem (menuframework_s *menu, void *menuitem)
+void UI_DragSlideItem (menuFramework_s *menu, void *menuitem)
 {
-	menuslider_s *slider;
+	menuSlider_s *slider;
 
 	if (!menu || !menuitem)
 		return;
 
-	slider = (menuslider_s *) menuitem;
+	slider = (menuSlider_s *) menuitem;
 
 	slider->curPos = UI_SliderValueForX(slider, ui_mousecursor.x);
 	UI_Slider_CheckSlide (slider);
@@ -171,16 +171,16 @@ void UI_DragSlideItem (menuframework_s *menu, void *menuitem)
 UI_ClickSlideItem
 =================
 */
-void UI_ClickSlideItem (menuframework_s *menu, void *menuitem)
+void UI_ClickSlideItem (menuFramework_s *menu, void *menuitem)
 {
 	int				min, max;
 	float			x, w;
-	menuslider_s	*slider;
+	menuSlider_s	*slider;
 	
 	if (!menu || !menuitem)
 		return;
 
-	slider = (menuslider_s *)menuitem;
+	slider = (menuSlider_s *)menuitem;
 
 //	x = menu->x + item->x + UI_Slider_CursorPositionX(slider) - 4;
 //	w = 8;
@@ -201,16 +201,16 @@ void UI_ClickSlideItem (menuframework_s *menu, void *menuitem)
 UI_CheckSlider_Mouseover
 =================
 */
-qboolean UI_CheckSlider_Mouseover (menuframework_s *menu, void *menuitem)
+qboolean UI_CheckSlider_Mouseover (menuFramework_s *menu, void *menuitem)
 {
 	int				min[2], max[2];
 	float			x1, y1, x2, y2;
-	menuslider_s	*s;
+	menuSlider_s	*s;
 
 	if (!menu || !menuitem)
 		return false;
 
-	s = (menuslider_s *)menuitem;
+	s = (menuSlider_s *)menuitem;
 
 	x1 = s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET;
 	y1 = s->generic.y + s->generic.parent->y;
@@ -235,15 +235,15 @@ qboolean UI_CheckSlider_Mouseover (menuframework_s *menu, void *menuitem)
 UI_Mouseover_Check
 =================
 */
-void UI_Mouseover_Check (menuframework_s *menu)
+void UI_Mouseover_Check (menuFramework_s *menu)
 {
 	int				i;
-	menucommon_s	*item, *lastitem;
+	menuCommon_s	*item, *lastitem;
 
 	ui_mousecursor.menu = menu;
 
 	// don't allow change in item focus if waiting to grab a key
-	if (UI_HasValidGrabBindItem(menu)) 
+	if ( UI_HasValidGrabBindItem(menu) ) 
 		return;
 
 	if (ui_mousecursor.mouseaction)
@@ -257,9 +257,9 @@ void UI_Mouseover_Check (menuframework_s *menu)
 			int		min[2], max[2];
 			float	x1, y1, w1, h1;
 
-			item = ((menucommon_s * )menu->items[i]);
+			item = ((menuCommon_s * )menu->items[i]);
 
-			if (!item || item->type == MTYPE_SEPARATOR)
+			if (!item || item->type == MTYPE_LABEL)
 				continue;
 
 			x1 = menu->x + item->x + RCOLUMN_OFFSET; // + 2 chars for space + cursor
@@ -300,11 +300,10 @@ void UI_Mouseover_Check (menuframework_s *menu)
 						type = MENUITEM_SLIDER;
 					}
 					break;
-				case MTYPE_LIST:
-				case MTYPE_SPINCONTROL:
+				case MTYPE_SPINNER:
 					{
 						int len;
-						menulist_s *spin = menu->items[i];
+						menuSpinner_s *spin = menu->items[i];
 
 						if (item->name) {
 							len = (int)strlen(item->name);
@@ -319,7 +318,7 @@ void UI_Mouseover_Check (menuframework_s *menu)
 					break;
 				case MTYPE_FIELD:
 					{
-						menufield_s *text = menu->items[i];
+						menuField_s *text = menu->items[i];
 
 						len = text->visible_length + 2;
 
@@ -329,7 +328,7 @@ void UI_Mouseover_Check (menuframework_s *menu)
 					break;
 				case MTYPE_KEYBIND:
 					{
-						menukeybind_s *k = menu->items[i];
+						menuKeyBind_s *k = menu->items[i];
 						len = (int)strlen(item->name);
 						
 						if (item->flags & QMF_LEFT_JUSTIFY) {
@@ -365,7 +364,7 @@ void UI_Mouseover_Check (menuframework_s *menu)
 				ui_mousecursor.y <= max[1])
 			{
 				// new item
-				if (lastitem!=item)
+				if (lastitem != item)
 				{
 					int j;
 
@@ -398,14 +397,14 @@ UI_MouseCursor_Think
 void UI_MouseCursor_Think (void)
 {
 	char * sound = NULL;
-	menuframework_s *m = (menuframework_s *)ui_mousecursor.menu;
+	menuFramework_s *m = (menuFramework_s *)ui_mousecursor.menu;
 
-	if (m_drawfunc == Menu_Main_Draw) // have to hack for main menu :p
+	if (ui_menuState.draw == Menu_Main_Draw) // have to hack for main menu :p
 	{
 		UI_CheckMainMenuMouse ();
 		return;
 	}
-	if (m_drawfunc == Menu_Credits_Draw) // have to hack for credits :p
+	if (ui_menuState.draw == Menu_Credits_Draw) // have to hack for credits :p
 	{
 		if (ui_mousecursor.buttonclicks[MOUSEBUTTON2])
 		{
@@ -422,10 +421,10 @@ void UI_MouseCursor_Think (void)
 	}
 
 /*	// clicking on the player model menu...
-	if (m_drawfunc == Menu_PlayerConfig_Draw)
+	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 		Menu_PlayerConfig_MouseClick ();
 	// clicking on the screen menu
-	if (m_drawfunc == Menu_Options_Screen_Draw)
+	if (ui_menuState.draw == Menu_Options_Screen_Draw)
 		Menu_Options_Screen_Crosshair_MouseClick ();
 */
 	if (!m)
@@ -503,7 +502,7 @@ void UI_MouseCursor_Think (void)
 		&& ui_mousecursor.buttondown[MOUSEBUTTON2])
 	{
 		// We need to manually save changes for playerconfig menu here
-		if (m_drawfunc == Menu_PlayerConfig_Draw)
+		if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 			Menu_PConfigSaveChanges ();
 
 		UI_PopMenu ();
@@ -516,12 +515,12 @@ void UI_MouseCursor_Think (void)
 	}
 
 	// clicking on the player model menu...
-	if (m_drawfunc == Menu_PlayerConfig_Draw)
+	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 		Menu_PlayerConfig_MouseClick ();
 	// clicking on the screen menu
-	if (m_drawfunc == Menu_Options_Screen_Draw)
+	if (ui_menuState.draw == Menu_Options_Screen_Draw)
 		Menu_Options_Screen_Crosshair_MouseClick ();
 
 	if ( sound )
-		S_StartLocalSound ( sound );
+		S_StartLocalSound (sound);
 }

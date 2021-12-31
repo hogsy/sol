@@ -92,7 +92,7 @@ void UI_Draw (void)
 	// Knigthmare- added Psychospaz's mouse support
 	UI_RefreshCursorMenu();
 
-	m_drawfunc ();
+	ui_menuState.draw();
 
 	// delay playing the enter sound until after the
 	// menu has been drawn, to avoid delay while
@@ -118,9 +118,24 @@ void UI_Keydown (int key)
 {
 	const char *s;
 
-	if (m_keyfunc)
-		if ( ( s = m_keyfunc( key ) ) != 0 )
+	if (ui_menuState.key)
+		if ( ( s = ui_menuState.key( key ) ) != 0 )
 			S_StartLocalSound( ( char * ) s );
+}
+
+
+/*
+=================
+UI_MenuHasGrabBind
+=================
+*/
+qboolean UI_MenuHasGrabBind (void)
+{
+	if ( (ui_menudepth > 0) && ui_menuState.menu) {
+		if ( UI_HasValidGrabBindItem(ui_menuState.menu) ) 
+			return true;
+	}
+	return false;
 }
 
 

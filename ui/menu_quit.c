@@ -39,12 +39,17 @@ QUIT MENU
 =======================================================================
 */
 
-#ifdef QUITMENU_NOKEY
+static menuFramework_s	s_quit_menu;
 
-static menuframework_s	s_quit_menu;
-static menuseparator_s	s_quit_header;
-static menuaction_s		s_quit_yes_action;
-static menuaction_s		s_quit_no_action;
+#ifdef QUITMENU_NOKEY
+static menuLabel_s		s_quit_header;
+static menuAction_s		s_quit_yes_action;
+static menuAction_s		s_quit_no_action;
+#else
+//static menuImage_s		s_quit_pic;
+#endif // QUITMENU_NOKEY
+
+//=======================================================================
 
 static void QuitYesFunc (void *unused)
 {
@@ -52,13 +57,16 @@ static void QuitYesFunc (void *unused)
 	CL_Quit_f ();
 }
 
+//=======================================================================
+
 void Menu_Quit_Init (void)
 {
 	s_quit_menu.x = SCREEN_WIDTH*0.5 - 24;
 	s_quit_menu.y = SCREEN_HEIGHT*0.5 - 58;
 	s_quit_menu.nitems = 0;
 
-	s_quit_header.generic.type		= MTYPE_SEPARATOR;
+#ifdef QUITMENU_NOKEY
+	s_quit_header.generic.type		= MTYPE_LABEL;
 	s_quit_header.generic.textSize	= MENU_FONT_SIZE;
 	s_quit_header.generic.name		= "Quit game?";
 	s_quit_header.generic.x			= MENU_FONT_SIZE*0.7 * (int)strlen(s_quit_header.generic.name);
@@ -85,9 +93,25 @@ void Menu_Quit_Init (void)
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_header);
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_yes_action);
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_no_action);
-}
+#else // QUITMENU_NOKEY
+//	s_quit_menu.keyFunc		= UI_QuitMenuKey;
 
+/*	s_quit_pic.generic.type		= MTYPE_IMAGE;
+	s_quit_pic.generic.x		= 0;
+	s_quit_pic.generic.y		= 12*MENU_LINE_SIZE;
+	s_quit_pic.width			= 320;
+	s_quit_pic.height			= 240;
+	s_quit_pic.imageName		= "/pics/quit.pcx";
+	s_quit_pic.alpha			= 255;
+	s_quit_pic.border			= 0;
+	s_quit_pic.hCentered		= true;
+	s_quit_pic.vCentered		= true;
+	s_quit_pic.generic.isHidden	= false;
+
+	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_pic); */
 #endif // QUITMENU_NOKEY
+
+}
 
 
 const char *Menu_Quit_Key (int key)
@@ -134,7 +158,7 @@ void Menu_Quit_Draw (void)
 void Menu_Quit_f (void)
 {
 #ifdef QUITMENU_NOKEY
-	Menu_Quit_Init();
+	Menu_Quit_Init ();
 #endif
-	UI_PushMenu (Menu_Quit_Draw, Menu_Quit_Key);
+	UI_PushMenu (&s_quit_menu, Menu_Quit_Draw, Menu_Quit_Key);
 }

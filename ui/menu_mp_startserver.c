@@ -37,19 +37,19 @@ START SERVER MENU
 
 =============================================================================
 */
-static menuframework_s s_startserver_menu;
+static menuFramework_s s_startserver_menu;
 
-static menuaction_s	s_startserver_start_action;
-static menuaction_s	s_startserver_dmoptions_action;
-static menufield_s	s_timelimit_field;
-static menufield_s	s_fraglimit_field;
-static menufield_s	s_maxclients_field;
-static menufield_s	s_hostname_field;
-static menulist_s	s_startmap_list;
-menulist_s			s_rules_box;
-static menulist_s	s_dedicated_box;
+static menuAction_s		s_startserver_start_action;
+static menuAction_s		s_startserver_dmoptions_action;
+static menuField_s		s_timelimit_field;
+static menuField_s		s_fraglimit_field;
+static menuField_s		s_maxclients_field;
+static menuField_s		s_hostname_field;
+static menuSpinner_s	s_startmap_list;
+menuSpinner_s			s_rules_box;
+static menuSpinner_s	s_dedicated_box;
 
-static menuaction_s	s_startserver_back_action;
+static menuAction_s		s_startserver_back_action;
 
 //=============================================================================
 
@@ -210,14 +210,14 @@ void Menu_StartServer_Init (void)
 	//s_startserver_menu.y = 0;
 	s_startserver_menu.nitems = 0;
 
-	s_startmap_list.generic.type		= MTYPE_SPINCONTROL;
+	s_startmap_list.generic.type		= MTYPE_SPINNER;
 	s_startmap_list.generic.textSize	= MENU_FONT_SIZE;
 	s_startmap_list.generic.x			= 0;
 	s_startmap_list.generic.y			= y;
 	s_startmap_list.generic.name		= "initial map";
 	s_startmap_list.itemNames			= ui_svr_mapnames;
 
-	s_rules_box.generic.type		= MTYPE_SPINCONTROL;
+	s_rules_box.generic.type		= MTYPE_SPINNER;
 	s_rules_box.generic.textSize	= MENU_FONT_SIZE;
 	s_rules_box.generic.x			= 0;
 	s_rules_box.generic.y			= y += 2*MENU_LINE_SIZE;
@@ -297,7 +297,7 @@ void Menu_StartServer_Init (void)
 	Q_strncpyz (s_hostname_field.buffer, sizeof(s_hostname_field.buffer), Cvar_VariableString("hostname"));
 	s_hostname_field.cursor					= (int)strlen( s_hostname_field.buffer );
 
-	s_dedicated_box.generic.type			= MTYPE_SPINCONTROL;
+	s_dedicated_box.generic.type			= MTYPE_SPINNER;
 	s_dedicated_box.generic.textSize		= MENU_FONT_SIZE;
 	s_dedicated_box.generic.name			= "dedicated server";;
 	s_dedicated_box.generic.x				= 0;
@@ -375,5 +375,5 @@ const char *Menu_StartServer_Key (int key)
 void Menu_StartServer_f (void)
 {
 	Menu_StartServer_Init ();
-	UI_PushMenu (Menu_StartServer_Draw, Menu_StartServer_Key);
+	UI_PushMenu (&s_startserver_menu, Menu_StartServer_Draw, Menu_StartServer_Key);
 }

@@ -37,21 +37,21 @@ PLAYER CONFIG MENU
 
 =============================================================================
 */
-extern menuframework_s	s_multiplayer_menu;
+extern menuFramework_s	s_multiplayer_menu;
 
-static menuframework_s	s_player_config_menu;
-static menufield_s		s_playerconfig_name_field;
-static menulist_s		s_playerconfig_model_box;
-static menulist_s		s_playerconfig_skin_box;
-static menulist_s		s_playerconfig_handedness_box;
-static menulist_s		s_playerconfig_rate_box;
-static menuslider_s		s_playerconfig_railcolor_slider[3];
-static menuseparator_s	s_playerconfig_skin_title;
-static menuseparator_s	s_playerconfig_model_title;
-static menuseparator_s	s_playerconfig_hand_title;
-static menuseparator_s	s_playerconfig_rate_title;
-static menuseparator_s	s_playerconfig_railcolor_title;
-static menuaction_s		s_playerconfig_back_action;
+static menuFramework_s	s_player_config_menu;
+static menuField_s		s_playerconfig_name_field;
+static menuSpinner_s	s_playerconfig_model_box;
+static menuSpinner_s	s_playerconfig_skin_box;
+static menuSpinner_s	s_playerconfig_handedness_box;
+static menuSpinner_s	s_playerconfig_rate_box;
+static menuSlider_s		s_playerconfig_railcolor_slider[3];
+static menuLabel_s		s_playerconfig_skin_title;
+static menuLabel_s		s_playerconfig_model_title;
+static menuLabel_s		s_playerconfig_hand_title;
+static menuLabel_s		s_playerconfig_rate_title;
+static menuLabel_s		s_playerconfig_railcolor_title;
+static menuAction_s		s_playerconfig_back_action;
 
 //=======================================================================
 
@@ -59,13 +59,13 @@ static menuaction_s		s_playerconfig_back_action;
 
 static void Menu_PlayerHandednessCallback (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_playerconfig_handedness_box, "hand");
+	UI_MenuSpinner_SaveValue (&s_playerconfig_handedness_box, "hand");
 }
 
 
 static void Menu_PlayerRateCallback (void *unused)
 {
-	UI_MenuSpinControl_SaveValue (&s_playerconfig_rate_box, "rate");
+	UI_MenuSpinner_SaveValue (&s_playerconfig_rate_box, "rate");
 }
 
 
@@ -192,14 +192,14 @@ qboolean Menu_PlayerConfig_Init (void)
 	Q_strncpyz (s_playerconfig_name_field.buffer, sizeof(s_playerconfig_name_field.buffer), Cvar_VariableString("name"));
 	s_playerconfig_name_field.cursor = (int)strlen(s_playerconfig_name_field.buffer);
 
-	s_playerconfig_model_title.generic.type		= MTYPE_SEPARATOR;
+	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_model_title.generic.name		= "model";
 	s_playerconfig_model_title.generic.x		= -2*MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.y		= y += 3*MENU_LINE_SIZE;
 	
-	s_playerconfig_model_box.generic.type			= MTYPE_SPINCONTROL;
+	s_playerconfig_model_box.generic.type			= MTYPE_SPINNER;
 	s_playerconfig_model_box.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_model_box.generic.x				= -8*MENU_FONT_SIZE;
 	s_playerconfig_model_box.generic.y				= y += MENU_LINE_SIZE;
@@ -208,14 +208,14 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_model_box.curValue				= mNum;
 	s_playerconfig_model_box.itemNames				= ui_pmnames;
 	
-	s_playerconfig_skin_title.generic.type		= MTYPE_SEPARATOR;
+	s_playerconfig_skin_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_skin_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_skin_title.generic.name		= "skin";
 	s_playerconfig_skin_title.generic.x			= -3*MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
-	s_playerconfig_skin_box.generic.type			= MTYPE_SPINCONTROL;
+	s_playerconfig_skin_box.generic.type			= MTYPE_SPINNER;
 	s_playerconfig_skin_box.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_skin_box.generic.x				= -8*MENU_FONT_SIZE;
 	s_playerconfig_skin_box.generic.y				= y += MENU_LINE_SIZE;
@@ -226,14 +226,14 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_box.itemNames				= ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_box.generic.flags			|= QMF_SKINLIST;
 	
-	s_playerconfig_hand_title.generic.type		= MTYPE_SEPARATOR;
+	s_playerconfig_hand_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_hand_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_hand_title.generic.name		= "handedness";
 	s_playerconfig_hand_title.generic.x			= 3*MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
-	s_playerconfig_handedness_box.generic.type			= MTYPE_SPINCONTROL;
+	s_playerconfig_handedness_box.generic.type			= MTYPE_SPINNER;
 	s_playerconfig_handedness_box.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.x				= -8*MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.y				= y += MENU_LINE_SIZE;
@@ -241,16 +241,16 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_handedness_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.callback		= Menu_PlayerHandednessCallback;
 	s_playerconfig_handedness_box.itemNames				= handedness_names;
-	UI_MenuSpinControl_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
+	UI_MenuSpinner_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
 			
-	s_playerconfig_rate_title.generic.type		= MTYPE_SEPARATOR;
+	s_playerconfig_rate_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_rate_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_rate_title.generic.name		= "connect speed";
 	s_playerconfig_rate_title.generic.x			= 6*MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.y			= y += 2*MENU_LINE_SIZE;
 		
-	s_playerconfig_rate_box.generic.type			= MTYPE_SPINCONTROL;
+	s_playerconfig_rate_box.generic.type			= MTYPE_SPINNER;
 	s_playerconfig_rate_box.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_rate_box.generic.x				= -8*MENU_FONT_SIZE;
 	s_playerconfig_rate_box.generic.y				= y += MENU_LINE_SIZE;
@@ -259,9 +259,9 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
 	s_playerconfig_rate_box.itemNames				= rate_names;
 	s_playerconfig_rate_box.itemValues				= rate_values;
-	UI_MenuSpinControl_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
+	UI_MenuSpinner_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
 
-	s_playerconfig_railcolor_title.generic.type		= MTYPE_SEPARATOR;
+	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_railcolor_title.generic.name		= "railgun effect color";
@@ -658,5 +658,5 @@ void Menu_PlayerConfig_f (void)
 		return;
 	}
 	UI_SetMenuStatusBar (&s_multiplayer_menu, NULL);
-	UI_PushMenu (Menu_PlayerConfig_Draw, Menu_PlayerConfig_Key);
+	UI_PushMenu (&s_player_config_menu, Menu_PlayerConfig_Draw, Menu_PlayerConfig_Key);
 }

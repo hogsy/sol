@@ -169,7 +169,7 @@ int	UI_GetIndexForStringValue (const char **item_values, char *value)
 UI_MouseOverAlpha
 ==========================
 */
-int UI_MouseOverAlpha (menucommon_s *m)
+int UI_MouseOverAlpha (menuCommon_s *m)
 {
 	if (ui_mousecursor.menuitem == m)
 	{
@@ -249,7 +249,7 @@ void UI_FindKeysForCommand (char *command, int *twokeys)
 UI_ItemAtMenuCursor
 =================
 */
-void *UI_ItemAtMenuCursor (menuframework_s *m)
+void *UI_ItemAtMenuCursor (menuFramework_s *m)
 {
 	if (m->cursor < 0 || m->cursor >= m->nitems)
 		return 0;
@@ -263,7 +263,7 @@ void *UI_ItemAtMenuCursor (menuframework_s *m)
 UI_SetMenuStatusBar
 =================
 */
-void UI_SetMenuStatusBar (menuframework_s *m, const char *string)
+void UI_SetMenuStatusBar (menuFramework_s *m, const char *string)
 {
 	if (!m)	return;
 
@@ -276,26 +276,13 @@ void UI_SetMenuStatusBar (menuframework_s *m, const char *string)
 UI_TallyMenuSlots
 =================
 */
-int UI_TallyMenuSlots (menuframework_s *menu)
+int UI_TallyMenuSlots (menuFramework_s *menu)
 {
 	int i;
 	int total = 0;
 
 	for (i = 0; i < menu->nitems; i++)
-	{
-		if ( ((menucommon_s *)menu->items[i])->type == MTYPE_LIST )
-		{
-			int nitems = 0;
-			const char **n = ((menulist_s *)menu->items[i])->itemNames;
-
-			while (*n)
-				nitems++, n++;
-
-			total += nitems;
-		}
-		else
-			total++;
-	}
+		total++;
 
 	return total;
 }

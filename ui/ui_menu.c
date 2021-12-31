@@ -25,11 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+menulayer_t	ui_menuState;
 menulayer_t	ui_layers[MAX_MENU_DEPTH];
 int			ui_menudepth;
-
-void	(*m_drawfunc) (void);
-const char *(*m_keyfunc) (int key);
 
 /*
 =======================================================================
@@ -101,7 +99,7 @@ void UI_AddMainButton (mainmenuobject_t *thisObj, int index, int x, int y, char 
 UI_PushMenu
 =================
 */
-void UI_PushMenu ( void (*draw) (void), const char *(*key) (int k) )
+void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key) (int k))
 {
 	int		i;
 
@@ -127,13 +125,15 @@ void UI_PushMenu ( void (*draw) (void), const char *(*key) (int k) )
 	{
 		if (ui_menudepth >= MAX_MENU_DEPTH)
 			Com_Error (ERR_FATAL, "UI_PushMenu: MAX_MENU_DEPTH");
-		ui_layers[ui_menudepth].draw = m_drawfunc;
-		ui_layers[ui_menudepth].key = m_keyfunc;
+		ui_layers[ui_menudepth].draw = ui_menuState.draw;
+		ui_layers[ui_menudepth].key = ui_menuState.key;
+		ui_layers[ui_menudepth].menu = ui_menuState.menu;
 		ui_menudepth++;
 	}
 
-	m_drawfunc = draw;
-	m_keyfunc = key;
+	ui_menuState.draw = draw;
+	ui_menuState.key = key;
+	ui_menuState.menu = menu;
 
 	ui_entersound = true;
 
@@ -154,8 +154,7 @@ void UI_ForceMenuOff (void)
 {
 	// Knightmare- added Psychospaz's mouse support
 	UI_RefreshCursorLink ();
-	m_drawfunc = 0;
-	m_keyfunc = 0;
+	memset (&ui_menuState, 0, sizeof (ui_menuState));
 	cls.key_dest = key_game;
 	ui_menudepth = 0;
 	Key_ClearStates ();
@@ -176,8 +175,9 @@ void UI_PopMenu (void)
 		Com_Error (ERR_FATAL, "UI_PopMenu: depth < 1");
 	ui_menudepth--;
 
-	m_drawfunc = ui_layers[ui_menudepth].draw;
-	m_keyfunc = ui_layers[ui_menudepth].key;
+	ui_menuState.draw = ui_layers[ui_menudepth].draw;
+	ui_menuState.key = ui_layers[ui_menudepth].key;
+	ui_menuState.menu = ui_layers[ui_menudepth].menu;
 
 	// Knightmare- added Psychospaz's mouse support
 	UI_RefreshCursorLink ();
@@ -196,7 +196,7 @@ UI_BackMenu
 void UI_BackMenu (void *unused)
 {
 	// We need to manually save changes for playerconfig menu here
-	if (m_drawfunc == Menu_PlayerConfig_Draw)
+	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 		Menu_PConfigSaveChanges ();
 
 	UI_PopMenu ();
@@ -208,11 +208,11 @@ void UI_BackMenu (void *unused)
 UI_AddMenuItem
 ==========================
 */
-void UI_AddMenuItem (menuframework_s *menu, void *item)
+void UI_AddMenuItem (menuFramework_s *menu, void *item)
 {
-	int			i, j;
-	menulist_s	*list;
-	menucommon_s *baseItem;
+	int				i, j;
+	menuSpinner_s	*spin;
+	menuCommon_s	*baseItem;
 
 	if (menu->nitems == 0)
 		menu->nslots = 0;
@@ -220,31 +220,31 @@ void UI_AddMenuItem (menuframework_s *menu, void *item)
 	if (menu->nitems < MAXMENUITEMS)
 	{
 		menu->items[menu->nitems] = item;
-		( (menucommon_s *)menu->items[menu->nitems] )->parent = menu;
+		( (menuCommon_s *)menu->items[menu->nitems] )->parent = menu;
 		menu->nitems++;
 	}
 
 	menu->nslots = UI_TallyMenuSlots(menu);
 
-	list = (menulist_s *)item;
+	spin = (menuSpinner_s *)item;
 
-	switch (list->generic.type) {
-	case MTYPE_SPINCONTROL:
-		for (i=0; list->itemNames[i]; i++);
-		list->numItems = i;
-		if (list->itemValues)	// Check if itemvalues count matches itemnames
+	switch (spin->generic.type) {
+	case MTYPE_SPINNER:
+		for (i=0; spin->itemNames[i]; i++);
+		spin->numItems = i;
+		if (spin->itemValues)	// Check if itemvalues count matches itemnames
 		{
-			for (j=0; list->itemValues[j]; j++);
+			for (j=0; spin->itemValues[j]; j++);
 			if (j != i) {
 				Com_Printf (S_COLOR_YELLOW"UI_AddMenuItem: itemvalues size mismatch for %s!\n",
-							(list->generic.name && (list->generic.name[0] != 0)) ? list->generic.name : "<noname>");
+							(spin->generic.name && (spin->generic.name[0] != 0)) ? spin->generic.name : "<noname>");
 			}
 		}
 		break;
 	}
 
 	// Knightmare- init text size
-	baseItem = (menucommon_s *)item;
+	baseItem = (menuCommon_s *)item;
 	if (!baseItem->textSize)
 		baseItem->textSize = MENU_FONT_SIZE;
 	baseItem->textSize = min(max(baseItem->textSize, 4), 32);
@@ -259,24 +259,24 @@ void UI_AddMenuItem (menuframework_s *menu, void *item)
 UI_SetGrabBindItem
 =================
 */
-void UI_SetGrabBindItem (menuframework_s *m, menucommon_s *item)
+void UI_SetGrabBindItem (menuFramework_s *m, menuCommon_s *item)
 {
 	int				i;
-	menucommon_s	*it;
+	menuCommon_s	*it;
 	qboolean		found = false;
 
 	for (i = 0; i < m->nitems; i++)
 	{
-		it = (menucommon_s *)m->items[i];
+		it = (menuCommon_s *)m->items[i];
 		if (it->type == MTYPE_KEYBIND) 
 		{
 			if (it == item) {
-				((menukeybind_s *)it)->grabBind = true;
+				((menuKeyBind_s *)it)->grabBind = true;
 				m->grabBindCursor = i;
 				found = true;
 			}
 			else // clear grab flag if it's not the one
-				((menukeybind_s *)it)->grabBind = false;
+				((menuKeyBind_s *)it)->grabBind = false;
 		}
 	}
 
@@ -290,19 +290,19 @@ void UI_SetGrabBindItem (menuframework_s *m, menucommon_s *item)
 UI_ClearGrabBindItem
 =================
 */
-void UI_ClearGrabBindItem (menuframework_s *m)
+void UI_ClearGrabBindItem (menuFramework_s *m)
 {
 	int				i;
-	menucommon_s	*it;
+	menuCommon_s	*it;
 
 	m->grabBindCursor = -1;
 
 	// clear grab flag for all keybind items
 	for (i = 0; i < m->nitems; i++)
 	{
-		it = (menucommon_s *)m->items[i];
+		it = (menuCommon_s *)m->items[i];
 		if (it->type == MTYPE_KEYBIND)
-			((menukeybind_s *)it)->grabBind = false;
+			((menuKeyBind_s *)it)->grabBind = false;
 	}
 }
 
@@ -312,15 +312,15 @@ void UI_ClearGrabBindItem (menuframework_s *m)
 UI_HasValidGrabBindItem
 =================
 */
-qboolean UI_HasValidGrabBindItem (menuframework_s *m)
+qboolean UI_HasValidGrabBindItem (menuFramework_s *m)
 {
 	if (!m)	return false;
 
 	if ( (m->grabBindCursor != -1)
 		&& (m->grabBindCursor >= 0)
 		&& (m->grabBindCursor < m->nitems)
-		&& (((menucommon_s *)m->items[m->grabBindCursor])->type == MTYPE_KEYBIND)
-		&& (((menukeybind_s *)m->items[m->grabBindCursor])->grabBind) )
+		&& (((menuCommon_s *)m->items[m->grabBindCursor])->type == MTYPE_KEYBIND)
+		&& (((menuKeyBind_s *)m->items[m->grabBindCursor])->grabBind) )
 		return true;
 
 	return false;
@@ -342,12 +342,12 @@ qboolean UI_MenuItemIsValidCursorPosition (void *item)
 //		return false;
 
 	// hidden items are invalid
-	if ( ((menucommon_s *)item)->flags & QMF_HIDDEN )
+	if ( ((menuCommon_s *)item)->flags & QMF_HIDDEN )
 		return false;
 
-	switch ( ((menucommon_s *)item)->type )
+	switch ( ((menuCommon_s *)item)->type )
 	{
-	case MTYPE_SEPARATOR:
+	case MTYPE_LABEL:
 		return false;
 	default:
 		return true;
@@ -365,9 +365,9 @@ to adjust the menu's cursor so that it's at the next available
 slot.
 ==========================
 */
-void UI_AdjustMenuCursor (menuframework_s *m, int dir)
+void UI_AdjustMenuCursor (menuFramework_s *m, int dir)
 {
-	menucommon_s *citem;
+	menuCommon_s *citem;
 
 	//
 	// see if it's in a valid spot
@@ -376,7 +376,6 @@ void UI_AdjustMenuCursor (menuframework_s *m, int dir)
 	{
 		if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
 		{
-		//	if (citem->type != MTYPE_SEPARATOR)
 			if ( UI_MenuItemIsValidCursorPosition(citem) )
 				return;
 		}
@@ -391,7 +390,6 @@ void UI_AdjustMenuCursor (menuframework_s *m, int dir)
 		while (1)
 		{
 			if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
-			//	if ( citem->type != MTYPE_SEPARATOR )
 				if ( UI_MenuItemIsValidCursorPosition(citem) )
 					break;
 			m->cursor += dir;
@@ -404,7 +402,6 @@ void UI_AdjustMenuCursor (menuframework_s *m, int dir)
 		while (1)
 		{
 			if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
-			//	if (citem->type != MTYPE_SEPARATOR)
 				if ( UI_MenuItemIsValidCursorPosition(citem) )
 					break;
 			m->cursor += dir;
@@ -420,9 +417,9 @@ void UI_AdjustMenuCursor (menuframework_s *m, int dir)
 UI_CenterMenu
 ==========================
 */
-void UI_CenterMenu (menuframework_s *menu)
+void UI_CenterMenu (menuFramework_s *menu)
 {
-	int height = ((menucommon_s *) menu->items[menu->nitems-1])->y + 10;
+	int height = ((menuCommon_s *) menu->items[menu->nitems-1])->y + 10;
 	menu->y = (SCREEN_HEIGHT - height)*0.5;
 }
 
@@ -432,10 +429,10 @@ void UI_CenterMenu (menuframework_s *menu)
 UI_DrawMenu
 ==========================
 */
-void UI_DrawMenu (menuframework_s *menu)
+void UI_DrawMenu (menuFramework_s *menu)
 {
 	int i;
-	menucommon_s *item;
+	menuCommon_s *item;
 
 	//
 	// draw contents
@@ -464,7 +461,7 @@ void UI_DrawMenu (menuframework_s *menu)
 		char	*cursor;
 		int		cursorX;
 
-		if (item->type == MTYPE_KEYBIND && ((menukeybind_s *)item)->grabBind)
+		if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind)
 			cursor = UI_ITEMCURSOR_KEYBIND_PIC;
 		else
 			cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
@@ -497,8 +494,8 @@ void UI_DrawMenu (menuframework_s *menu)
 	{
 	//	if (item->statusbarfunc)
 	//		item->statusbarfunc ( (void *)item );
-		if (item->type == MTYPE_KEYBIND && ((menukeybind_s *)item)->grabBind && ((menukeybind_s *)item)->enter_statusbar)
-			UI_DrawMenuStatusBar (((menukeybind_s *)item)->enter_statusbar);
+		if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
+			UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
 		else if (item->statusbar)
 			UI_DrawMenuStatusBar (item->statusbar);
 		else
@@ -514,10 +511,10 @@ void UI_DrawMenu (menuframework_s *menu)
 UI_DefaultMenuKey
 =================
 */
-const char *UI_DefaultMenuKey (menuframework_s *m, int key)
+const char *UI_DefaultMenuKey (menuFramework_s *m, int key)
 {
 	const char *sound = NULL;
-	menucommon_s *item;
+	menuCommon_s *item;
 
 	if ( m )
 	{
@@ -525,12 +522,12 @@ const char *UI_DefaultMenuKey (menuframework_s *m, int key)
 		{
 			if ( item->type == MTYPE_FIELD )
 			{
-				if ( UI_MenuField_Key((menufield_s *) item, key) )
+				if ( UI_MenuField_Key((menuField_s *) item, key) )
 					return NULL;
 			}
 			else if (item->type == MTYPE_KEYBIND)
 			{
-				if ( (sound = UI_MenuKeyBind_Key((menukeybind_s *)item, key)) != ui_menu_null_sound )
+				if ( (sound = UI_MenuKeyBind_Key((menuKeyBind_s *)item, key)) != ui_menu_null_sound )
 					return sound;
 				else
 					sound = NULL;

@@ -299,7 +299,7 @@ void UI_Draw_Cursor (void)
 	char	*overlay = NULL;
 	char	*cur_img = NULL;
 
-	if (m_drawfunc == M_Main_Draw)
+	if (ui_menuState.draw == M_Main_Draw)
 	{
 		if (MainMenuMouseHover)
 		{
