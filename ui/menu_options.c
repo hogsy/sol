@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_options.c -- the options menu
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
@@ -38,6 +34,7 @@ OPTIONS MENU
 */
 
 static menuFramework_s	s_options_menu;
+static menuImage_s		s_options_banner;
 static menuAction_s		s_options_sound_section;
 static menuAction_s		s_options_controls_section;
 static menuAction_s		s_options_screen_section;
@@ -76,11 +73,30 @@ static void M_MenuInterfaceFunc (void *unused)
 
 void Menu_Options_Init (void)
 {
-	int		x = 0, y = 0;
+	int		x, y;
 
-	s_options_menu.x = SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
-	s_options_menu.y = SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
-	s_options_menu.nitems = 0;
+	// menu.x = 304, menu.y = 198
+	x = SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
+	y = SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
+
+	s_options_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
+	s_options_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
+	s_options_menu.nitems		= 0;
+//	s_options_menu.isPopup		= false;
+//	s_options_menu.keyFunc		= UI_DefaultMenuKey;
+//	s_options_menu.canOpenFunc	= NULL;
+
+	s_options_banner.generic.type		= MTYPE_IMAGE;
+	s_options_banner.generic.x			= 0;
+	s_options_banner.generic.y			= 9*MENU_LINE_SIZE;
+	s_options_banner.width				= 275;
+	s_options_banner.height				= 32;
+	s_options_banner.imageName			= "/pics/m_banner_options.pcx";
+	s_options_banner.alpha				= 255;
+	s_options_banner.border				= 0;
+	s_options_banner.hCentered			= true;
+	s_options_banner.vCentered			= false;
+	s_options_banner.generic.isHidden	= false;
 
 	s_options_sound_section.generic.type		= MTYPE_ACTION;
 	s_options_sound_section.generic.textSize	= MENU_HEADER_FONT_SIZE;
@@ -135,6 +151,7 @@ void Menu_Options_Init (void)
 	s_options_back_action.generic.y			= y += 3*MENU_HEADER_LINE_SIZE;	// MENU_FONT_SIZE * 13
 	s_options_back_action.generic.callback	= UI_BackMenu;
 
+	UI_AddMenuItem (&s_options_menu, (void *) &s_options_banner);
 	UI_AddMenuItem (&s_options_menu,	(void *) &s_options_sound_section);
 	UI_AddMenuItem (&s_options_menu,	(void *) &s_options_controls_section);
 	UI_AddMenuItem (&s_options_menu,	(void *) &s_options_screen_section);
@@ -145,8 +162,6 @@ void Menu_Options_Init (void)
 
 void Menu_Options_Draw (void)
 {
-	UI_DrawBanner ("m_banner_options");
-
 	UI_AdjustMenuCursor (&s_options_menu, 1);
 	UI_DrawMenu (&s_options_menu);
 }

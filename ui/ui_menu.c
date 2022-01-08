@@ -210,14 +210,18 @@ UI_AddMenuItem
 */
 void UI_AddMenuItem (menuFramework_s *menu, void *item)
 {
-	int				i, j;
-	menuSpinner_s	*spin;
-	menuCommon_s	*baseItem;
+//	qboolean	canOpen;
+
+	// if menu can't open, don't add items to it
+/*	if (menu->canOpenFunc) {
+		if ( (canOpen = menu->canOpenFunc(menu)) != true )
+			return;
+	} */
 
 	if (menu->nitems == 0)
 		menu->nslots = 0;
 
-	if (menu->nitems < MAXMENUITEMS)
+	if (menu->nitems < MAX_MENUITEMS)
 	{
 		menu->items[menu->nitems] = item;
 		( (menuCommon_s *)menu->items[menu->nitems] )->parent = menu;
@@ -226,29 +230,8 @@ void UI_AddMenuItem (menuFramework_s *menu, void *item)
 
 	menu->nslots = UI_TallyMenuSlots(menu);
 
-	spin = (menuSpinner_s *)item;
-
-	switch (spin->generic.type) {
-	case MTYPE_SPINNER:
-		for (i=0; spin->itemNames[i]; i++);
-		spin->numItems = i;
-		if (spin->itemValues)	// Check if itemvalues count matches itemnames
-		{
-			for (j=0; spin->itemValues[j]; j++);
-			if (j != i) {
-				Com_Printf (S_COLOR_YELLOW"UI_AddMenuItem: itemvalues size mismatch for %s!\n",
-							(spin->generic.name && (spin->generic.name[0] != 0)) ? spin->generic.name : "<noname>");
-			}
-		}
-		break;
-	}
-
-	// Knightmare- init text size
-	baseItem = (menuCommon_s *)item;
-	if (!baseItem->textSize)
-		baseItem->textSize = MENU_FONT_SIZE;
-	baseItem->textSize = min(max(baseItem->textSize, 4), 32);
-	// end Knightmare
+	// setup each item's fields
+	UI_InitMenuItem (item);
 
 	UI_ClearGrabBindItem (menu); // make sure this starts out unset
 }
@@ -329,35 +312,6 @@ qboolean UI_HasValidGrabBindItem (menuFramework_s *m)
 
 /*
 ==========================
-UI_MenuItemIsValidCursorPosition
-Checks if an item can be used
-as a cursor position.
-==========================
-*/
-qboolean UI_MenuItemIsValidCursorPosition (void *item)
-{
-	if (!item)	return false;
-	
-//	if ( (((menuCommon_s *)item)->flags & QMF_NOINTERACTION) || (((menuCommon_s *)item)->flags & QMF_MOUSEONLY) )
-//		return false;
-
-	// hidden items are invalid
-	if ( ((menuCommon_s *)item)->flags & QMF_HIDDEN )
-		return false;
-
-	switch ( ((menuCommon_s *)item)->type )
-	{
-	case MTYPE_LABEL:
-		return false;
-	default:
-		return true;
-	}
-	return true;
-}
-
-
-/*
-==========================
 UI_AdjustMenuCursor
 
 This function takes the given menu, the direction, and attempts
@@ -365,18 +319,23 @@ to adjust the menu's cursor so that it's at the next available
 slot.
 ==========================
 */
-void UI_AdjustMenuCursor (menuFramework_s *m, int dir)
+void UI_AdjustMenuCursor (menuFramework_s *menu, int dir)
 {
-	menuCommon_s *citem;
+	int				loopCount;
+	menuCommon_s	*citem;
+
+	// check if menu only has one item
+	if (menu->nitems < 2)
+		return;
 
 	//
 	// see if it's in a valid spot
 	//
-	if (m->cursor >= 0 && m->cursor < m->nitems)
+	if (menu->cursor >= 0 && menu->cursor < menu->nitems)
 	{
-		if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
+		if ( (citem = UI_ItemAtMenuCursor(menu)) != 0 )
 		{
-			if ( UI_MenuItemIsValidCursorPosition(citem) )
+			if ( UI_ItemIsValidCursorPosition(citem) )
 				return;
 		}
 	}
@@ -385,42 +344,30 @@ void UI_AdjustMenuCursor (menuFramework_s *m, int dir)
 	// it's not in a valid spot, so crawl in the direction indicated until we
 	// find a valid spot
 	//
-	if (dir == 1)
+	loopCount = 0;
+	while (1)
 	{
-		while (1)
+		if ( (citem = UI_ItemAtMenuCursor(menu)) != 0 )
+			if ( UI_ItemIsValidCursorPosition(citem) )
+				break;
+		menu->cursor += dir;
+		if (dir == 1)
 		{
-			if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
-				if ( UI_MenuItemIsValidCursorPosition(citem) )
-					break;
-			m->cursor += dir;
-			if ( m->cursor >= m->nitems )
-				m->cursor = 0;
+			if ( menu->cursor >= menu->nitems ) {
+				menu->cursor = 0;
+				loopCount++;
+			}
 		}
-	}
-	else
-	{
-		while (1)
+		else
 		{
-			if ( (citem = UI_ItemAtMenuCursor(m)) != 0 )
-				if ( UI_MenuItemIsValidCursorPosition(citem) )
-					break;
-			m->cursor += dir;
-			if (m->cursor < 0)
-				m->cursor = m->nitems - 1;
+			if (menu->cursor < 0) {
+				menu->cursor = menu->nitems - 1;
+				loopCount++;
+			}
 		}
+		if (loopCount > 1)
+			break;
 	}
-}
-
-
-/*
-==========================
-UI_CenterMenu
-==========================
-*/
-void UI_CenterMenu (menuFramework_s *menu)
-{
-	int height = ((menuCommon_s *) menu->items[menu->nitems-1])->y + 10;
-	menu->y = (SCREEN_HEIGHT - height)*0.5;
 }
 
 
@@ -431,14 +378,50 @@ UI_DrawMenu
 */
 void UI_DrawMenu (menuFramework_s *menu)
 {
-	int i;
-	menuCommon_s *item;
+	int				i;
+	menuCommon_s	*item, *cursorItem;
+	qboolean		hasCursorItem = false;
+
+	// update cursor item coords
+	if ( ((cursorItem = menu->cursorItem) != NULL)
+		&& ((item = UI_ItemAtMenuCursor (menu)) != NULL) )
+	{
+		if (cursorItem->isCursorItem) {
+			cursorItem->x = item->x + cursorItem->cursorItemOffset[0];
+			cursorItem->y = item->y + cursorItem->cursorItemOffset[1];
+			UI_UpdateMenuItemCoords (cursorItem);
+			hasCursorItem = true;
+		}
+	}
 
 	//
 	// draw contents
 	//
 	for (i = 0; i < menu->nitems; i++)
 	{
+		// cursor items can only be drawn if specified by the menu
+		if ( ((menuCommon_s *)menu->items[i])->isCursorItem
+			&& (menu->cursorItem != menu->items[i]) )
+			continue;
+
+		if (ui_debug_itembounds->integer)
+		{
+			float	w, h;
+
+			item = menu->items[i];
+			w = item->botRight[0] - item->topLeft[0];
+			h = item->botRight[1] - item->topLeft[1];
+
+			// add length and height of current item
+			UI_SetMenuItemDynamicSize (menu->items[i]);
+			w += item->dynamicWidth;
+			h += item->dynamicHeight;
+
+			if ( UI_ItemHasMouseBounds(item) )
+				UI_DrawFill (item->topLeft[0], item->topLeft[1], w, h, item->scrAlign, false, 128,128,128,128);
+			item = NULL;
+		}
+
 		UI_DrawMenuItem (menu->items[i]);
 	}
 
@@ -448,61 +431,63 @@ void UI_DrawMenu (menuFramework_s *menu)
 
 	item = UI_ItemAtMenuCursor(menu);
 
-	if (item && item->cursordraw)
+	if (!hasCursorItem)
 	{
-		item->cursordraw(item);
-	}
-	else if (menu->cursordraw)
-	{
-		menu->cursordraw(menu);
-	}
-	else if (item && item->type != MTYPE_FIELD)
-	{
-		char	*cursor;
-		int		cursorX;
-
-		if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind)
-			cursor = UI_ITEMCURSOR_KEYBIND_PIC;
-		else
-			cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
-
-	//	if (item->flags & QMF_LEFT_JUSTIFY)
-	//		cursorX = menu->x + item->x + item->cursor_offset - 24;
-	//	else
-	//		cursorX = menu->x + item->cursor_offset;
-		cursorX = menu->x + item->x + item->cursor_offset;
-		if ( (item->flags & QMF_LEFT_JUSTIFY) && (item->type == MTYPE_ACTION) )
-			cursorX -= 4*MENU_FONT_SIZE;
-
-		UI_DrawPic (cursorX, menu->y+item->y, item->textSize, item->textSize, ALIGN_CENTER, false, cursor, 255);
-
-	/*	if (item->flags & QMF_LEFT_JUSTIFY)
+		if (item && item->cursordraw)
 		{
-			UI_DrawChar (menu->x+item->x+item->cursor_offset-24, menu->y+item->y,
-						item->textSize, ALIGN_CENTER, 12+((int)(Sys_Milliseconds()/250)&1),
-						FONT_UI, 255,255,255,255, false, true);
+			item->cursordraw (item);
 		}
-		else
+		else if (menu->cursordraw)
 		{
-			UI_DrawChar (menu->x+item->cursor_offset, menu->y+item->y,
-						item->textSize, ALIGN_CENTER, 12+((int)(Sys_Milliseconds()/250)&1),
-						FONT_UI, 255,255,255,255, false, true);
-		} */
+			menu->cursordraw (menu);
+		}
+		else if ( item && (item->type != MTYPE_FIELD) && !(item->flags & QMF_NOINTERACTION) )
+		{
+			char	*cursor;
+			int		cursorX;
+
+			if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind)
+				cursor = UI_ITEMCURSOR_KEYBIND_PIC;
+			else
+				cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
+
+			cursorX = menu->x + item->x + item->cursor_offset;
+			if ( (item->flags & QMF_LEFT_JUSTIFY) && (item->type == MTYPE_ACTION) )
+				cursorX -= 4*MENU_FONT_SIZE;
+
+			UI_DrawPic (cursorX, menu->y+item->y, item->textSize, item->textSize, ALIGN_CENTER, false, cursor, 255);
+
+		/*	if (item->flags & QMF_LEFT_JUSTIFY)
+			{
+				UI_DrawChar (menu->x+item->x+item->cursor_offset-24, menu->y+item->y,
+							item->textSize, ALIGN_CENTER, 12+((int)(Sys_Milliseconds()/250)&1),
+							FONT_UI, 255,255,255,255, false, true);
+			}
+			else
+			{
+				UI_DrawChar (menu->x+item->cursor_offset, menu->y+item->y,
+							item->textSize, ALIGN_CENTER, 12+((int)(Sys_Milliseconds()/250)&1),
+							FONT_UI, 255,255,255,255, false, true);
+			} */
+		}
 	}
 
-	if (item)
+	if (!menu->hide_statusbar)
 	{
-	//	if (item->statusbarfunc)
-	//		item->statusbarfunc ( (void *)item );
-		if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
-			UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
-		else if (item->statusbar)
-			UI_DrawMenuStatusBar (item->statusbar);
+		if (item)
+		{
+		//	if (item->statusbarfunc)
+		//		item->statusbarfunc ( (void *)item );
+			if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
+				UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
+			else if (item->statusbar)
+				UI_DrawMenuStatusBar (item->statusbar);
+			else
+				UI_DrawMenuStatusBar (menu->statusbar);
+		}
 		else
 			UI_DrawMenuStatusBar (menu->statusbar);
 	}
-	else
-		UI_DrawMenuStatusBar (menu->statusbar);
 }
 
 
@@ -635,4 +620,35 @@ const char *UI_DefaultMenuKey (menuFramework_s *m, int key)
 	}
 
 	return sound;
+}
+
+
+/*
+=================
+UI_QuitMenuKey
+
+Just used by the quit menu
+=================
+*/
+const char *UI_QuitMenuKey (menuFramework_s *menu, int key)
+{
+	switch (key)
+	{
+	case K_ESCAPE:
+	case 'n':
+	case 'N':
+		UI_PopMenu ();
+		break;
+
+	case 'Y':
+	case 'y':
+	//	UI_QuitYesFunc ();
+		cls.key_dest = key_console;
+		CL_Quit_f ();
+		break;
+
+	default:
+		break;
+	}
+	return NULL;
 }

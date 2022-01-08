@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // ui_draw.c -- object drawing functions for the menus
 
-#include <string.h>
-#include <ctype.h>
-
 #include "../client/client.h"
 #include "ui_local.h"
 
@@ -55,7 +52,7 @@ void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *st
 	UI_DrawString (x, y, size, align, newstring, FONT_UI, alpha);
 }
 
-
+#if 0
 /*
 =============
 UI_DrawString
@@ -106,7 +103,7 @@ void UI_DrawStringR2LDark (int x, int y, int size, scralign_t align, const char 
 	x -= stringLen(string)*size;	// MENU_FONT_SIZE
 	SCR_DrawString (x, y, size, align, newstring, font, alpha);
 }
-
+#endif
 
 /*
 =============
@@ -261,20 +258,6 @@ void UI_DrawPopupMessage (char *message)
 
 	// the text box won't show up unless we do a buffer swap
 	R_EndFrame ();
-}
-
-
-/*
-=================
-UI_DrawBanner
-=================
-*/
-void UI_DrawBanner (char *name)
-{
-	int		w, h;
-
-	R_DrawGetPicSize (&w, &h, name );
-	UI_DrawPic (SCREEN_WIDTH/2 - w/2, SCREEN_HEIGHT/2 - 150, w, h, ALIGN_CENTER, false, name, 1.0);
 }
 
 

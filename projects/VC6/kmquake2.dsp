@@ -449,15 +449,19 @@ SOURCE=..\..\renderer\r_warp.c
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\ui\menu_credits.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\ui\menu_game.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\ui\menu_game_credits.c
+SOURCE=..\..\ui\menu_game_load.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\ui\menu_game_saveload.c
+SOURCE=..\..\ui\menu_game_save.c
 # End Source File
 # Begin Source File
 

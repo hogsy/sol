@@ -576,15 +576,19 @@
 				Name="ui"
 				>
 				<File
+					RelativePath="..\..\ui\menu_credits.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\ui\menu_game.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\ui\menu_game_credits.c"
+					RelativePath="..\..\ui\menu_game_load.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\ui\menu_game_saveload.c"
+					RelativePath="..\..\ui\menu_game_save.c"
 					>
 				</File>
 				<File

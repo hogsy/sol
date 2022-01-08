@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_game.c -- the single player menu and credits
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
@@ -40,6 +36,7 @@ GAME MENU
 static int		m_game_cursor;
 
 static menuFramework_s	s_game_menu;
+static menuImage_s		s_game_banner;
 static menuAction_s		s_easy_game_action;
 static menuAction_s		s_medium_game_action;
 static menuAction_s		s_hard_game_action;
@@ -95,11 +92,30 @@ static void CreditsFunc (void *unused)
 
 void Menu_Game_Init (void)
 {
-	int x = 0, y = 0;
+	int		x, y;
 
-	s_game_menu.x = SCREEN_WIDTH*0.5 - 3*MENU_LINE_SIZE;
-	s_game_menu.y = SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;	// 0
-	s_game_menu.nitems = 0;
+	// menu.x = 296, menu.y = 190
+	x = SCREEN_WIDTH*0.5 - 3*MENU_LINE_SIZE;
+	y = SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
+
+	s_game_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 3*MENU_LINE_SIZE;
+	s_game_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
+	s_game_menu.nitems		= 0;
+//	s_game_menu.isPopup		= false;
+//	s_game_menu.keyFunc		= UI_DefaultMenuKey;
+//	s_game_menu.canOpenFunc	= NULL;
+
+	s_game_banner.generic.type		= MTYPE_IMAGE;
+	s_game_banner.generic.x			= 0;
+	s_game_banner.generic.y			= 9*MENU_LINE_SIZE;
+	s_game_banner.width				= 275;
+	s_game_banner.height			= 32;
+	s_game_banner.imageName			= "/pics/m_banner_game.pcx";
+	s_game_banner.alpha				= 255;
+	s_game_banner.border			= 0;
+	s_game_banner.hCentered			= true;
+	s_game_banner.vCentered			= false;
+	s_game_banner.generic.isHidden	= false;
 
 	s_easy_game_action.generic.type			= MTYPE_ACTION;
 	s_easy_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
@@ -168,6 +184,7 @@ void Menu_Game_Init (void)
 	s_game_back_action.generic.name			= "Back to Main";
 	s_game_back_action.generic.callback		= UI_BackMenu;
 
+	UI_AddMenuItem (&s_game_menu, (void *) &s_game_banner);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_easy_game_action);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_medium_game_action);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_hard_game_action);
@@ -182,13 +199,10 @@ void Menu_Game_Init (void)
 	UI_AddMenuItem (&s_game_menu, (void *) &s_credits_action);
 
 	UI_AddMenuItem (&s_game_menu, (void *) &s_game_back_action);
-
-//	UI_CenterMenu (&s_game_menu);
 }
 
 void Menu_Game_Draw (void)
 {
-	UI_DrawBanner ("m_banner_game");
 	UI_AdjustMenuCursor (&s_game_menu, 1);
 	UI_DrawMenu (&s_game_menu);
 }

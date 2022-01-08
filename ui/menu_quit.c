@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_quit.c -- the quit menu
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
@@ -46,7 +42,7 @@ static menuLabel_s		s_quit_header;
 static menuAction_s		s_quit_yes_action;
 static menuAction_s		s_quit_no_action;
 #else
-//static menuImage_s		s_quit_pic;
+static menuImage_s		s_quit_pic;
 #endif // QUITMENU_NOKEY
 
 //=======================================================================
@@ -61,11 +57,16 @@ static void QuitYesFunc (void *unused)
 
 void Menu_Quit_Init (void)
 {
-	s_quit_menu.x = SCREEN_WIDTH*0.5 - 24;
-	s_quit_menu.y = SCREEN_HEIGHT*0.5 - 58;
-	s_quit_menu.nitems = 0;
+	s_quit_menu.x			= SCREEN_WIDTH*0.5 - 24;
+	s_quit_menu.y			= SCREEN_HEIGHT*0.5 - 58;
+	s_quit_menu.nitems		= 0;
+	s_quit_menu.nitems		= 0;
+//	s_quit_menu.isPopup		= false;
+//	s_quit_menu.canOpenFunc	= NULL;
 
 #ifdef QUITMENU_NOKEY
+	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
+
 	s_quit_header.generic.type		= MTYPE_LABEL;
 	s_quit_header.generic.textSize	= MENU_FONT_SIZE;
 	s_quit_header.generic.name		= "Quit game?";
@@ -96,7 +97,7 @@ void Menu_Quit_Init (void)
 #else // QUITMENU_NOKEY
 //	s_quit_menu.keyFunc		= UI_QuitMenuKey;
 
-/*	s_quit_pic.generic.type		= MTYPE_IMAGE;
+	s_quit_pic.generic.type		= MTYPE_IMAGE;
 	s_quit_pic.generic.x		= 0;
 	s_quit_pic.generic.y		= 12*MENU_LINE_SIZE;
 	s_quit_pic.width			= 320;
@@ -108,7 +109,7 @@ void Menu_Quit_Init (void)
 	s_quit_pic.vCentered		= true;
 	s_quit_pic.generic.isHidden	= false;
 
-	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_pic); */
+	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_pic);
 #endif // QUITMENU_NOKEY
 
 }
@@ -143,22 +144,13 @@ const char *Menu_Quit_Key (int key)
 
 void Menu_Quit_Draw (void)
 {
-#ifdef QUITMENU_NOKEY
 	UI_AdjustMenuCursor (&s_quit_menu, 1);
 	UI_DrawMenu (&s_quit_menu);
-#else // QUITMENU_NOKEY
-	int		w, h;
-
-	R_DrawGetPicSize (&w, &h, "quit");
-	UI_DrawPic (SCREEN_WIDTH/2-w/2, SCREEN_HEIGHT/2-h/2, w, h, ALIGN_CENTER, false, "quit", 1.0);
-#endif // QUITMENU_NOKEY
 }
 
 
 void Menu_Quit_f (void)
 {
-#ifdef QUITMENU_NOKEY
 	Menu_Quit_Init ();
-#endif
 	UI_PushMenu (&s_quit_menu, Menu_Quit_Draw, Menu_Quit_Key);
 }

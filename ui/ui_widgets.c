@@ -22,21 +22,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // ui_widgets.c -- supporting code for menu widgets
 
-
-#include <string.h>
-#include <ctype.h>
-
 #include "../client/client.h"
 #include "ui_local.h"
 
-static	void	MenuAction_DoEnter (menuAction_s *a);
-static	void	MenuAction_Draw (menuAction_s *a);
-static	void	MenuLabel_Draw (menuLabel_s *s);
-static	void	MenuSlider_DoSlide (menuSlider_s *s, int dir);
-static	void	MenuSlider_Draw (menuSlider_s *s);
-static	void	MenuSpinControl_DoEnter (menuSpinner_s *s);
-static	void	MenuSpinControl_Draw (menuSpinner_s *s);
-static	void	MenuSpinControl_DoSlide (menuSpinner_s *s, int dir);
+static	void	UI_MenuAction_DoEnter (menuAction_s *a);
+static	void	UI_MenuAction_Draw (menuAction_s *a);
+static	void	UI_MenuLabel_Draw (menuLabel_s *s);
+static	void	UI_MenuSlider_DoSlide (menuSlider_s *s, int dir);
+static	void	UI_MenuSlider_Draw (menuSlider_s *s);
+static	void	UI_MenuPicker_DoEnter (menuPicker_s *s);
+static	void	UI_MenuPicker_Draw (menuPicker_s *s);
+static	void	UI_MenuPicker_DoSlide (menuPicker_s *s, int dir);
 
 #define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// was 16
 #define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// was -16
@@ -62,7 +58,23 @@ extern viddef_t viddef;
 
 //======================================================
 
-void MenuAction_DoEnter (menuAction_s *a)
+void UI_MenuCommon_DrawItemName (menuCommon_s *c, int nameX, int nameY, int headerX, int headerY, int hoverAlpha)
+{
+	qboolean	usesName = (c->name && strlen(c->name) > 0);
+	qboolean	usesHeader = (c->header && strlen(c->header) > 0);
+
+	if (usesName)
+		UI_DrawMenuString (c->topLeft[0] + nameX, c->topLeft[1] +nameY,
+							MENU_FONT_SIZE, c->scrAlign, c->name, hoverAlpha, true, true);
+
+	if (usesHeader)
+		UI_DrawMenuString (c->topLeft[0] + headerX, c->topLeft[1] + headerY,
+							MENU_FONT_SIZE, c->scrAlign, c->header, (!usesName) ? hoverAlpha : 255, false, true);
+}
+
+//======================================================
+
+void UI_MenuAction_DoEnter (menuAction_s *a)
 {
 	if (!a) return;
 
@@ -70,7 +82,18 @@ void MenuAction_DoEnter (menuAction_s *a)
 		a->generic.callback(a);
 }
 
-void MenuAction_Draw (menuAction_s *a)
+char *UI_MenuAction_Click (menuAction_s *a, qboolean mouse2)
+{
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return ui_menu_null_sound;
+
+	UI_MenuAction_DoEnter (a);
+
+	return ui_menu_move_sound;
+}
+
+void UI_MenuAction_Draw (menuAction_s *a)
 {
 	int		alpha;
 
@@ -81,28 +104,219 @@ void MenuAction_Draw (menuAction_s *a)
 	if (a->generic.flags & QMF_LEFT_JUSTIFY)
 	{
 		if (a->generic.flags & QMF_GRAYED)
-			UI_DrawStringDark (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, FONT_UI, alpha);
+			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
+								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, false, true);
 		else
-			UI_DrawString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-							a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, FONT_UI, alpha);
+			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
+							a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, false, false);
 	}
 	else
 	{
 		if (a->generic.flags & QMF_GRAYED)
-			UI_DrawStringR2LDark (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-									a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, FONT_UI, alpha);
+			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
+								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, true, true);
 		else
-			UI_DrawStringR2L (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, FONT_UI, alpha);
+			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
+								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, true, false);
 	}
 	if (a->generic.ownerdraw)
 		a->generic.ownerdraw(a);
 }
 
+void UI_MenuAction_Setup (menuAction_s *a)
+{
+	menuFramework_s	*menu = a->generic.parent;
+	int				len;
+
+	len = (a->generic.name) ? (int)strlen(a->generic.name) : 0;
+	// set min and max coords
+	if (a->generic.flags & QMF_LEFT_JUSTIFY) {
+		a->generic.topLeft[0] = menu->x + a->generic.x + LCOLUMN_OFFSET;
+		a->generic.botRight[0] = a->generic.topLeft[0] + len*a->generic.textSize;
+	}
+	else {
+		a->generic.topLeft[0] = menu->x + a->generic.x - (len+2)*a->generic.textSize;
+		a->generic.botRight[0] = a->generic.topLeft[0] + (len+2)*a->generic.textSize;
+	}
+	a->generic.topLeft[1] = menu->y + a->generic.y;
+	a->generic.botRight[1] = a->generic.topLeft[1] + a->generic.textSize;
+	a->generic.dynamicWidth = 0;
+	a->generic.dynamicHeight = 0;
+	a->generic.isExtended = false;
+//	a->generic.valueChanged = false;
+}
+
 //=========================================================
 
-qboolean MenuField_DoEnter (menuField_s *f)
+void UI_MenuKeyBind_DoEnter (menuKeyBind_s *k)
+{
+	menuFramework_s	*menu = k->generic.parent;
+
+	if (!menu)	return;
+
+	UI_FindKeysForCommand (k->commandName, k->keys);
+
+//	if (k->keys[1] != -1)
+//		UI_UnbindCommand (k->commandName);
+
+	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
+		
+	if (k->generic.callback)
+		k->generic.callback (k);
+}
+
+char *UI_MenuKeyBind_Click (menuKeyBind_s *k, qboolean mouse2)
+{
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return ui_menu_null_sound;
+
+	UI_MenuKeyBind_DoEnter (k);
+
+	return ui_menu_move_sound;
+}
+
+void UI_MenuKeyBind_Draw (menuKeyBind_s *k)
+{
+	menuFramework_s	*menu = k->generic.parent;
+	int				x, alpha = UI_MouseOverAlpha(&k->generic);
+	const char		*keyName1, *keyName2;
+
+	UI_DrawMenuString (menu->x + k->generic.x + LCOLUMN_OFFSET,
+						menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, k->generic.name, alpha,
+						!(k->generic.flags & QMF_LEFT_JUSTIFY), (k->generic.flags & QMF_ALTCOLOR));
+
+	if (k->commandName)
+	{
+		UI_FindKeysForCommand (k->commandName, k->keys);
+
+		if (k->keys[0] == -1)
+		{
+			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
+								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "???", alpha, false, false);
+		}
+		else
+		{
+			keyName1 = Key_KeynumToString (k->keys[0]);
+			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
+								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName1, alpha, false, false);
+			if (k->keys[1] != -1)
+			{
+				x = (int)strlen(keyName1) * MENU_FONT_SIZE;
+				keyName2 = Key_KeynumToString (k->keys[1]);
+				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*3 + x,
+									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "or", alpha, false, false);
+				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*6 + x,
+									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName2, alpha, false, false);
+			}
+		}
+	}
+	else
+		Com_Printf ("UI_MenuKeyBind_Draw: keybind has no commandName!\n");
+
+//	if (k->generic.ownerdraw)
+//		k->generic.ownerdraw(k);
+}
+
+void UI_MenuKeyBind_SetDynamicSize (menuKeyBind_s *k)
+{
+	k->generic.dynamicWidth = 0;
+	if (k->commandName)
+	{
+		UI_FindKeysForCommand (k->commandName, k->keys);
+		k->generic.dynamicWidth += RCOLUMN_OFFSET;
+
+		if (k->keys[0] == -1)
+			k->generic.dynamicWidth += MENU_FONT_SIZE*3; // "???"
+		else {
+			k->generic.dynamicWidth += MENU_FONT_SIZE*strlen(Key_KeynumToString(k->keys[0])); // key 1
+			if (k->keys[1] != -1) // " or " + key2
+				k->generic.dynamicWidth += MENU_FONT_SIZE*4 + MENU_FONT_SIZE*strlen(Key_KeynumToString(k->keys[1]));
+		}
+	}
+}
+
+void UI_MenuKeyBind_Setup (menuKeyBind_s *k)
+{
+	menuFramework_s	*menu = k->generic.parent;
+	int				len;
+
+	if (!menu)	return;
+
+	len = (k->generic.name) ? (int)strlen(k->generic.name) : 0;
+	// set min and max coords
+	if (k->generic.flags & QMF_LEFT_JUSTIFY) {
+		k->generic.topLeft[0] = menu->x + k->generic.x + LCOLUMN_OFFSET;
+		k->generic.botRight[0] = k->generic.topLeft[0] + len*MENU_FONT_SIZE;
+	}
+	else {
+		k->generic.topLeft[0] = menu->x + k->generic.x - (len+2)*MENU_FONT_SIZE;
+		k->generic.botRight[0] = k->generic.topLeft[0] + (len+2)*MENU_FONT_SIZE;
+	}
+	k->generic.topLeft[1] = menu->y + k->generic.y;
+	k->generic.botRight[1] = k->generic.topLeft[1] + MENU_FONT_SIZE;
+	k->generic.dynamicWidth = 0;
+	k->generic.dynamicHeight = 0;
+	k->generic.isExtended = false;
+//	k->generic.valueChanged = false;
+
+	UI_MenuKeyBind_SetDynamicSize (k);
+	k->grabBind = false;
+}
+
+const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
+{
+	menuFramework_s	*menu = k->generic.parent;
+
+	// pressing mouse1 to pick a new bind wont force bind/unbind itself - spaz
+	if (UI_HasValidGrabBindItem(menu) && k->grabBind
+		&& !(ui_mousecursor.buttonused[MOUSEBUTTON1] && key == K_MOUSE1))
+	{
+		// grab key here
+		if (key != K_ESCAPE && key != '`')
+		{
+			char cmd[1024];
+
+			if (k->keys[1] != -1)	// if two keys are already bound to this, clear them
+				UI_UnbindCommand (k->commandName);
+
+			Com_sprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->commandName);
+			Cbuf_InsertText (cmd);
+		}
+
+		// don't let selecting with mouse buttons screw everything up
+		UI_RefreshCursorButtons();
+		if (key == K_MOUSE1)
+			ui_mousecursor.buttonclicks[MOUSEBUTTON1] = -1;
+
+		if (menu)
+			UI_ClearGrabBindItem (menu);
+
+		return ui_menu_out_sound;
+	}
+
+	switch (key)
+	{
+	case K_ESCAPE:
+		UI_PopMenu ();
+		return ui_menu_out_sound;
+	case K_ENTER:
+	case K_KP_ENTER:
+		UI_MenuKeyBind_DoEnter (k);
+		return ui_menu_in_sound;
+	case K_BACKSPACE:
+	case K_DEL:
+	case K_KP_DEL:
+		UI_UnbindCommand (k->commandName); // delete bindings
+		return ui_menu_out_sound;
+	default:
+		return ui_menu_null_sound;
+	}
+}
+
+//=========================================================
+
+qboolean UI_MenuField_DoEnter (menuField_s *f)
 {
 	if (!f) return false;
 
@@ -114,19 +328,32 @@ qboolean MenuField_DoEnter (menuField_s *f)
 	return false;
 }
 
-void MenuField_Draw (menuField_s *f)
+char *UI_MenuField_Click (menuField_s *f, qboolean mouse2)
 {
-	int i, alpha, xtra;
-	char tempbuffer[128]="";
-	int offset;
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return ui_menu_null_sound;
 
-	if (!f) return;
+	if (f->generic.callback)
+	{
+		f->generic.callback (f);
+		return ui_menu_move_sound;
+	}
+	return ui_menu_null_sound;
+}
 
-	alpha = UI_MouseOverAlpha(&f->generic);
+void UI_MenuField_Draw (menuField_s *f)
+{
+	menuFramework_s	*menu = f->generic.parent;
+	int				i, hoverAlpha = UI_MouseOverAlpha(&f->generic), xtra;
+	char			tempbuffer[128]="";
+	int				offset;
 
-	if (f->generic.name)
-		UI_DrawStringR2LDark (f->generic.x + f->generic.parent->x + LCOLUMN_OFFSET,
-								f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, f->generic.name, FONT_UI, 255);
+//	if (f->generic.name)
+//		UI_DrawMenuString (f->generic.x + f->generic.parent->x + LCOLUMN_OFFSET,
+//								f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, f->generic.name, 255, true, true);
+	// name
+	UI_MenuCommon_DrawItemName (&f->generic, -(2*RCOLUMN_OFFSET), 0, 0, -(FIELD_VOFFSET+MENU_LINE_SIZE), hoverAlpha);
 
 	if (xtra = stringLengthExtra(f->buffer))
 	{
@@ -136,13 +363,13 @@ void MenuField_Draw (menuField_s *f)
 		if (offset > f->visible_length)
 		{
 			f->visible_offset = offset - f->visible_length;
-			strncpy( tempbuffer, f->buffer + f->visible_offset - xtra, f->visible_length + xtra );
+			strncpy (tempbuffer, f->buffer + f->visible_offset - xtra, f->visible_length + xtra);
 			offset = f->visible_offset;
 		}
 	}
 	else
 	{
-		strncpy( tempbuffer, f->buffer + f->visible_offset, f->visible_length );
+		strncpy (tempbuffer, f->buffer + f->visible_offset, f->visible_length);
 		offset = (int)strlen(tempbuffer);
 	}
 
@@ -184,10 +411,25 @@ void MenuField_Draw (menuField_s *f)
 
 	// add cursor thingie
 	if ( (UI_ItemAtMenuCursor(f->generic.parent) == f)  && ((int)(Sys_Milliseconds()/250))&1 )
-		Com_sprintf (tempbuffer, sizeof(tempbuffer),	"%s%c", tempbuffer, 11);
+		Com_sprintf (tempbuffer, sizeof(tempbuffer), "%s%c", tempbuffer, 11);
 
-	UI_DrawString (f->generic.x + f->generic.parent->x + f->generic.textSize*3,
-					f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, tempbuffer, FONT_UI, alpha);
+	UI_DrawMenuString (f->generic.x + f->generic.parent->x + f->generic.textSize*3,
+						f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, tempbuffer, hoverAlpha, false, false);
+}
+
+void UI_MenuField_Setup (menuField_s *f)
+{
+	menuFramework_s	*menu = f->generic.parent;
+
+	// set min and max coords
+	f->generic.topLeft[0] = menu->x + f->generic.x + RCOLUMN_OFFSET;
+	f->generic.topLeft[1] = menu->y + f->generic.y;
+	f->generic.botRight[0] = f->generic.topLeft[0] + (f->visible_length+2)*MENU_FONT_SIZE;
+	f->generic.botRight[1] = f->generic.topLeft[1] + MENU_FONT_SIZE;
+	f->generic.dynamicWidth = 0;
+	f->generic.dynamicHeight = 0;
+	f->generic.isExtended = false;
+//	f->generic.valueChanged = false;
 }
 
 qboolean UI_MenuField_Key (menuField_s *f, int key)
@@ -327,7 +569,7 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 
 //=========================================================
 
-void MenuLabel_Draw (menuLabel_s *l)
+void UI_MenuLabel_Draw (menuLabel_s *l)
 {
 	int alpha;
 
@@ -336,8 +578,33 @@ void MenuLabel_Draw (menuLabel_s *l)
 	alpha = UI_MouseOverAlpha(&l->generic);
 
 	if (l->generic.name)
-		UI_DrawStringR2LDark (l->generic.x + l->generic.parent->x,
-								l->generic.y + l->generic.parent->y, l->generic.textSize, ALIGN_CENTER, l->generic.name, FONT_UI, alpha);
+		UI_DrawMenuString (l->generic.x + l->generic.parent->x,
+								l->generic.y + l->generic.parent->y, l->generic.textSize, ALIGN_CENTER, l->generic.name, alpha, true, true);
+}
+
+void UI_MenuLabel_Setup (menuLabel_s *l)
+{
+	menuFramework_s	*menu = l->generic.parent;
+	int				nameWidth;
+
+	nameWidth = (l->generic.name) ? (int)strlen(l->generic.name)*l->generic.textSize : 0;
+
+	// set min and max coords
+	if (l->generic.flags & QMF_LEFT_JUSTIFY) {
+		l->generic.topLeft[0] = menu->x + l->generic.x + LCOLUMN_OFFSET;
+		l->generic.botRight[0] = l->generic.topLeft[0] + nameWidth;
+	}
+	else {
+		l->generic.topLeft[0] = menu->x + l->generic.x - nameWidth;
+		l->generic.botRight[0] = l->generic.topLeft[0] + nameWidth;
+	}
+	l->generic.topLeft[1] = menu->y + l->generic.y;
+	l->generic.botRight[1] = l->generic.topLeft[1] + l->generic.textSize;
+	l->generic.dynamicWidth = 0;
+	l->generic.dynamicHeight = 0;
+	l->generic.isExtended = false;
+//	l->generic.valueChanged = false;
+	l->generic.flags |= QMF_NOINTERACTION;
 }
 
 //=========================================================
@@ -374,32 +641,129 @@ float UI_MenuSlider_GetValue (menuSlider_s *s)
 	return ((float)s->curPos * s->increment) + s->baseValue;
 }
 
-void MenuSlider_DoSlide (menuSlider_s *s, int dir)
+void UI_MenuSlider_CheckSlide (menuSlider_s *s)
+{
+	if (!s) return;
+
+	s->curPos = min(max(s->curPos, 0), s->maxPos);
+
+/*	if (!s->generic.cvarNoSave)
+		UI_MenuSlider_SaveValue (s);
+	else
+		s->generic.valueChanged = UI_MenuSlider_ValueChanged (s);
+*/
+	if (s->generic.callback)
+		s->generic.callback (s);
+}
+
+void UI_MenuSlider_DoSlide (menuSlider_s *s, int dir)
 {
 	if (!s) return;
 
 	s->curPos += dir;
 
-	s->curPos = min(max(s->curPos, 0), s->maxPos);
+//	s->curPos = min(max(s->curPos, 0), s->maxPos);
 
-	if (s->generic.callback)
-		s->generic.callback(s);
+//	if (s->generic.callback)
+//		s->generic.callback(s);
+	UI_MenuSlider_CheckSlide (s);
 }
 
-#define SLIDER_RANGE 10
-
-void MenuSlider_Draw (menuSlider_s *s)
+void UI_MenuSlider_ClickPos (menuFramework_s *menu, void *menuitem)
 {
-	int		i, x, y, alpha;
+	menuSlider_s	*slider = (menuSlider_s *)menuitem;
+	menuCommon_s	*item = (menuCommon_s *)menuitem;
+	int				sliderPos, min, max;
+	float			x, w, range;
+
+	range = min(max((float)slider->curPos / (float)slider->maxPos, 0), 1);
+	sliderPos = (int)(RCOLUMN_OFFSET + SLIDER_ENDCAP_WIDTH
+				+ (float)SLIDER_RANGE*(float)SLIDER_SECTION_WIDTH*range);
+	x = menu->x + item->x + sliderPos;
+	w = SLIDER_KNOB_WIDTH;
+	SCR_ScaleCoords (&x, NULL, &w, NULL, item->scrAlign);
+	min = x - w/2;
+	max = x + w/2;
+
+	if (ui_mousecursor.x < min)
+		UI_MenuSlider_DoSlide (slider, -1);
+	if (ui_mousecursor.x > max)
+		UI_MenuSlider_DoSlide (slider, 1);
+}
+
+void UI_MenuSlider_DragPos (menuFramework_s *menu, void *menuitem)
+{
+	menuSlider_s	*slider = (menuSlider_s *)menuitem;
+	float			newValue, sliderbase;
+
+	sliderbase = menu->x + slider->generic.x + RCOLUMN_OFFSET + SLIDER_ENDCAP_WIDTH;
+	SCR_ScaleCoords (&sliderbase, NULL, NULL, NULL, slider->generic.scrAlign);
+	newValue = (float)(ui_mousecursor.x - sliderbase)
+				/ (SLIDER_RANGE * SCR_ScaledScreen(SLIDER_SECTION_WIDTH));
+	slider->curPos = newValue * (float)slider->maxPos;
+
+	UI_MenuSlider_CheckSlide (slider);
+}
+
+qboolean UI_MenuSlider_Check_Mouseover (menuSlider_s *s)
+{
+	int				min[2], max[2];
+	float			x1, y1, x2, y2;
+
+	x1 = s->barTopLeft[0];
+	y1 = s->barTopLeft[1];
+	x2 = s->generic.botRight[0];
+	y2 = s->generic.botRight[1];
+
+	SCR_ScaleCoords (&x1, &y1, NULL, NULL, s->generic.scrAlign);
+	SCR_ScaleCoords (&x2, &y2, NULL, NULL, s->generic.scrAlign);
+	min[0] = x1;	max[0] = x2;
+	min[1] = y1;	max[1] = y2;
+
+	if ( ui_mousecursor.x >= min[0] && ui_mousecursor.x <= max[0] 
+		&& ui_mousecursor.y >= min[1] &&  ui_mousecursor.y <= max[1] )
+		return true;
+	else
+		return false;
+}
+
+char *UI_MenuSlider_Click (menuSlider_s *s, qboolean mouse2)
+{
+	if (mouse2)
+	{
+		if ( UI_MenuSlider_Check_Mouseover(s) )
+			UI_MenuSlider_ClickPos (s->generic.parent, s);
+		else
+			UI_MenuSlider_DoSlide (s, -1);
+		return ui_menu_move_sound;
+	}
+	else
+	{
+		if ( UI_MenuSlider_Check_Mouseover(s) ) {
+			UI_MenuSlider_DragPos (s->generic.parent, s);
+			return ui_menu_drag_sound;
+		}
+		else {
+			UI_MenuSlider_DoSlide (s, 1);
+			return ui_menu_move_sound;
+		}
+	}
+}
+
+void UI_MenuSlider_Draw (menuSlider_s *s)
+{
+	int		i, x, y, hoverAlpha;
 	float	tmpValue;
 	char	valueText[8];
 
 	if (!s) return;
 
-	alpha = UI_MouseOverAlpha(&s->generic);
+	hoverAlpha = UI_MouseOverAlpha(&s->generic);
 
-	UI_DrawStringR2LDark (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, FONT_UI, alpha);
+//	UI_DrawMenuString (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
+//							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, hoverAlpha, true, true);
+	// name and header
+	UI_MenuCommon_DrawItemName (&s->generic, LCOLUMN_OFFSET, 0, RCOLUMN_OFFSET, -MENU_LINE_SIZE, hoverAlpha);
 
 	if (!s->maxPos)
 		s->maxPos = 1;
@@ -455,15 +819,37 @@ void MenuSlider_Draw (menuSlider_s *s)
 		else
 			Com_sprintf (valueText, sizeof(valueText), "%4.2f", tmpValue);
 	}
-	UI_DrawString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
-					s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, FONT_UI, alpha);
-//	UI_DrawString (s->generic.x + s->generic.parent->x + s->generic.textSize*SLIDER_RANGE + RCOLUMN_OFFSET + 2.5*MENU_FONT_SIZE,
-//					s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, FONT_UI, alpha);
+	UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
+						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, hoverAlpha, false, false);
+//	UI_DrawMenuString (s->generic.x + s->generic.parent->x + s->generic.textSize*SLIDER_RANGE + RCOLUMN_OFFSET + 2.5*MENU_FONT_SIZE,
+//						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, hoverAlpha, false, false);
+}
+
+void UI_MenuSlider_Setup (menuSlider_s *s)
+{
+	menuFramework_s	*menu = s->generic.parent;
+//	int				nameWidth;
+
+//	nameWidth = (s->generic.name) ? (int)strlen(s->generic.name)*s->generic.textSize : 0;
+	if (!s->baseValue)	s->baseValue = 0.0f;
+	if (!s->increment)	s->increment = 1.0f;
+
+	// set min and max coords
+	s->generic.topLeft[0] = menu->x + s->generic.x;
+	s->generic.topLeft[1] = menu->y + s->generic.y;
+	s->generic.botRight[0] = s->generic.topLeft[0] + RCOLUMN_OFFSET + SLIDER_RANGE*SLIDER_SECTION_WIDTH + 2*SLIDER_ENDCAP_WIDTH;
+	s->generic.botRight[1] = s->generic.topLeft[1] + SLIDER_HEIGHT;
+	s->barTopLeft[0] = s->generic.topLeft[0] + RCOLUMN_OFFSET;
+	s->barTopLeft[1] = s->generic.topLeft[1];
+	s->generic.dynamicWidth = 0;
+	s->generic.dynamicHeight = 0;
+	s->generic.isExtended = false;
+//	s->generic.valueChanged = false;
 }
 
 //=========================================================
 
-void UI_MenuSpinner_SetValue (menuSpinner_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+void UI_MenuPicker_SetValue (menuPicker_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -485,16 +871,16 @@ void UI_MenuSpinner_SetValue (menuSpinner_s *s, const char *varName, float cvarM
 	}
 }
 
-void UI_MenuSpinner_SaveValue (menuSpinner_s *s, const char *varName)
+void UI_MenuPicker_SaveValue (menuPicker_s *s, const char *varName)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
 	if (!s->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_SaveValue: not initialized!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: not initialized!\n");
 		return;
 	}
 	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_SaveValue: curvalue out of bounds!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: curvalue out of bounds!\n");
 		return;
 	}
 
@@ -514,7 +900,7 @@ void UI_MenuSpinner_SaveValue (menuSpinner_s *s, const char *varName)
 	}
 }
 
-const char *UI_MenuSpinner_GetValue (menuSpinner_s *s)
+const char *UI_MenuPicker_GetValue (menuPicker_s *s)
 {
 	const char *value;
 
@@ -522,11 +908,11 @@ const char *UI_MenuSpinner_GetValue (menuSpinner_s *s)
 		return NULL;
 
 	if (!s->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_GetValue: not initialized!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: not initialized!\n");
 		return NULL;
 	}
 	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuSpinner_GetValue: curvalue out of bounds!\n");
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: curvalue out of bounds!\n");
 		return NULL;
 	}
 
@@ -540,7 +926,7 @@ const char *UI_MenuSpinner_GetValue (menuSpinner_s *s)
 	return value;
 }
 
-void MenuSpinControl_DoEnter (menuSpinner_s *s)
+void UI_MenuPicker_DoEnter (menuPicker_s *s)
 {
 	if (!s || !s->itemNames || !s->numItems)
 		return;
@@ -553,7 +939,22 @@ void MenuSpinControl_DoEnter (menuSpinner_s *s)
 		s->generic.callback(s);
 }
 
-void MenuSpinControl_DoSlide (menuSpinner_s *s, int dir)
+char *UI_MenuPicker_Click (menuPicker_s *s, qboolean mouse2)
+{
+	if (!s || !s->itemNames || !s->numItems)
+		return ui_menu_null_sound;
+
+	if (mouse2) {
+		UI_MenuPicker_DoSlide (s, -1);
+	}
+	else {
+		UI_MenuPicker_DoSlide (s, 1);
+	}
+
+	return ui_menu_move_sound;
+}
+
+void UI_MenuPicker_DoSlide (menuPicker_s *s, int dir)
 {
 	if (!s || !s->itemNames || !s->numItems)
 		return;
@@ -578,7 +979,7 @@ void MenuSpinControl_DoSlide (menuSpinner_s *s, int dir)
 		s->generic.callback(s);
 }
  
-void MenuSpinControl_Draw (menuSpinner_s *s)
+void UI_MenuPicker_Draw (menuPicker_s *s)
 {
 	int		alpha;
 	char	buffer[100];
@@ -589,140 +990,718 @@ void MenuSpinControl_Draw (menuSpinner_s *s)
 
 	if (s->generic.name)
 	{
-		UI_DrawStringR2LDark (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-								s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, FONT_UI, alpha);
+		UI_DrawMenuString (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
+							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, alpha, true, true);
 	}
 	if (!strchr(s->itemNames[s->curValue], '\n'))
 	{
-		UI_DrawString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-						s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->itemNames[s->curValue], FONT_UI, alpha);
+		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
+							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->itemNames[s->curValue], alpha, false, false);
 	}
 	else
 	{
 	//	strncpy(buffer, s->itemnames[s->curvalue]);
 		Q_strncpyz (buffer, sizeof(buffer), s->itemNames[s->curValue]);
 		*strchr(buffer, '\n') = 0;
-		UI_DrawString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-						s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, buffer, FONT_UI, alpha);
+		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
+						s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, buffer, alpha, false, false);
 	//	strncpy(buffer, strchr( s->itemnames[s->curvalue], '\n' ) + 1 );
 		Q_strncpyz (buffer, sizeof(buffer), strchr( s->itemNames[s->curValue], '\n' ) + 1);
-		UI_DrawString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-						s->generic.y + s->generic.parent->y + MENU_LINE_SIZE, s->generic.textSize, ALIGN_CENTER, buffer, FONT_UI, alpha);
+		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
+						s->generic.y + s->generic.parent->y + MENU_LINE_SIZE, s->generic.textSize, ALIGN_CENTER, buffer, alpha, false, false);
 	}
+}
+
+void UI_MenuPicker_SetDynamicSize (menuPicker_s *s)
+{
+	s->generic.dynamicWidth = 0;
+	s->generic.dynamicWidth += RCOLUMN_OFFSET;
+	if ( (s->curValue < s->numItems) && s->itemNames[s->curValue] && (strlen(s->itemNames[s->curValue]) > 0) )
+	{
+		s->generic.dynamicWidth += (int)strlen(s->itemNames[s->curValue])*s->generic.textSize;
+	}
+}
+
+void UI_MenuPicker_Setup (menuPicker_s *s)
+{
+	menuFramework_s	*menu = s->generic.parent;
+	int				i, j, len;
+
+	for (i=0; s->itemNames[i]; i++);
+	s->numItems = i;
+
+	if (s->itemValues)	// Check if itemvalues count matches itemnames
+	{
+		for (j=0; s->itemValues[j]; j++);
+		if (j != i) {
+			Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_Setup: itemvalues size mismatch for %s!\n",
+						(s->generic.name && (s->generic.name[0] != 0)) ? s->generic.name : "<noname>");
+		}
+	}
+
+	// set min and max coords
+	len = (s->generic.name) ? (int)strlen(s->generic.name) : 0;
+	s->generic.topLeft[0] = menu->x + s->generic.x - (len+2)*s->generic.textSize;
+	s->generic.topLeft[1] = menu->y + s->generic.y;
+	s->generic.botRight[0] = s->generic.topLeft[0] + (len+2)*s->generic.textSize;
+	s->generic.botRight[1] = s->generic.topLeft[1] + s->generic.textSize;
+	s->generic.dynamicWidth = 0;
+	s->generic.dynamicHeight = 0;
+	s->generic.isExtended = false;
+//	s->generic.valueChanged = false;
+
+	UI_MenuPicker_SetDynamicSize (s);
 }
 
 //=========================================================
 
-void MenuKeyBind_DoEnter (menuKeyBind_s *k)
+void UI_MenuImage_Draw (menuImage_s *i)
 {
-	menuFramework_s	*menu = k->generic.parent;
+//	menuFramework_s	*menu = i->generic.parent;
+	byte	*bc = i->borderColor;
 
-	if (!menu)	return;
-
-	UI_FindKeysForCommand (k->commandName, k->keys);
-
-//	if (k->keys[1] != -1)
-//		UI_UnbindCommand (k->commandName);
-
-	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
-		
-	if (k->generic.callback)
-		k->generic.callback (k);
+	if (i->border > 0)
+	{
+		if (i->alpha == 255) // just fill whole area for border if not trans
+			UI_DrawFill (i->generic.topLeft[0]-i->border, i->generic.topLeft[1]-i->border,
+							i->width+(i->border*2), i->height+(i->border*2), i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)i->generic.topLeft[0], (float)i->generic.topLeft[1], (float)i->width, (float)i->height,
+							(float)i->border, i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+	}
+	if (i->imageName && strlen(i->imageName) > 0) {
+		if (i->overrideColor)
+			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
+		else
+			UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
+	}
+	else
+		UI_DrawFill (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, 0,0,0,255);
 }
 
-void MenuKeyBind_Draw (menuKeyBind_s *k)
+void UI_MenuImage_UpdateCoords (menuImage_s *i)
 {
-	menuFramework_s	*menu = k->generic.parent;
-	int				x, alpha = UI_MouseOverAlpha(&k->generic);
-	const char		*keyName1, *keyName2;
+	menuFramework_s	*menu = i->generic.parent;
 
-	UI_DrawMenuString (menu->x + k->generic.x + LCOLUMN_OFFSET,
-						menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, k->generic.name, alpha,
-						!(k->generic.flags & QMF_LEFT_JUSTIFY), (k->generic.flags & QMF_ALTCOLOR));
+	i->generic.topLeft[0] = menu->x + i->generic.x;
+	i->generic.topLeft[1] = menu->y + i->generic.y;
+	i->generic.botRight[0] = i->generic.topLeft[0] + i->width;
+	i->generic.botRight[1] = i->generic.topLeft[1] + i->height;
+}
 
-	if (k->commandName)
+void UI_MenuImage_Setup (menuImage_s *i)
+{
+	menuFramework_s	*menu = i->generic.parent;
+
+	// automatic sizing
+	if (i->width == -1 || i->height == -1)
 	{
-		UI_FindKeysForCommand (k->commandName, k->keys);
+		int w, h;
+		R_DrawGetPicSize (&w, &h, i->imageName);
+		if (i->width == -1)
+			i->width = w;
+		if (i->height == -1)
+			i->height = h;
+	}
 
-		if (k->keys[0] == -1)
+	i->width = max(i->width, 1);
+	i->height = max(i->height, 1);
+	i->border = max(i->border, 0);
+
+	// automatic centering
+	if (i->hCentered)
+		i->generic.x = (SCREEN_WIDTH/2 - i->width/2) - menu->x;
+	if (i->vCentered)
+		i->generic.y = (SCREEN_HEIGHT/2 - i->height/2) - menu->y;
+
+	// set min and max coords
+	UI_MenuImage_UpdateCoords (i);
+	i->generic.dynamicWidth = 0;
+	i->generic.dynamicHeight = 0;
+	i->generic.isExtended = false;
+//	i->generic.valueChanged = false;
+	i->generic.flags |= QMF_NOINTERACTION;
+
+/*	if (R_DrawFindPic(i->imageName))
+		i->imageValid = true;
+	else
+		i->imageValid = false;*/
+}
+
+//=========================================================
+
+void UI_MenuButton_DoEnter (menuButton_s *b)
+{
+	if (b->generic.flags & QMF_MOUSEONLY)
+		return;
+
+	if (b->generic.callback)
+		b->generic.callback (b);
+}
+
+char *UI_MenuButton_Click (menuButton_s *b, qboolean mouse2)
+{
+	// skip if it's not mouse2-enabled and mouse1 wasn't clicked
+	if (!b->usesMouse2 && mouse2)
+		return ui_menu_null_sound;
+
+	if (b->generic.callback)
+		b->generic.callback (b);
+
+	return ui_menu_move_sound;
+}
+
+void UI_MenuButton_Draw (menuButton_s *b)
+{
+	menuFramework_s	*menu = b->generic.parent;
+	byte	*bc = b->borderColor;
+
+	if (b->border > 0)
+	{
+		if (b->alpha == 255) // just fill whole area for border if not trans
+			UI_DrawFill (b->generic.topLeft[0]-b->border, b->generic.topLeft[1]-b->border,
+							b->width+(b->border*2), b->height+(b->border*2), b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)b->generic.topLeft[0], (float)b->generic.topLeft[1], (float)b->width, (float)b->height,
+							(float)b->border, b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+	}
+	if ( (b == ui_mousecursor.menuitem || b == UI_ItemAtMenuCursor(menu))
+		&& (b->hoverImageName && strlen(b->hoverImageName) > 0) ) {
+		if (b->overrideColor)
+			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
+		else
+			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
+	}
+	else if (b->imageName && strlen(b->imageName) > 0) {
+		if (b->overrideColor)
+			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
+		else
+			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
+	}
+	else
+		UI_DrawFill (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, 0,0,0,255);
+}
+
+void UI_MenuButton_UpdateCoords (menuButton_s *b)
+{
+	menuFramework_s	*menu = b->generic.parent;
+
+	b->generic.topLeft[0] = menu->x + b->generic.x;
+	b->generic.topLeft[1] = menu->y + b->generic.y;
+	b->generic.botRight[0] = b->generic.topLeft[0] + b->width;
+	b->generic.botRight[1] = b->generic.topLeft[1] + b->height;
+}
+
+void UI_MenuButton_Setup (menuButton_s *b)
+{
+	menuFramework_s	*menu = b->generic.parent;
+
+	// automatic sizing
+	if (b->width == -1 || b->height == -1)
+	{
+		int w, h;
+		R_DrawGetPicSize (&w, &h, b->imageName);
+		if (b->width == -1)
+			b->width = w;
+		if (b->height == -1)
+			b->height = h;
+	}
+
+	b->width = max(b->width, 1);
+	b->height = max(b->height, 1);
+	b->border = max(b->border, 0);
+
+	// automatic centering
+	if (b->hCentered)
+		b->generic.x = (SCREEN_WIDTH/2 - b->width/2) - menu->x;
+	if (b->vCentered)
+		b->generic.y = (SCREEN_HEIGHT/2 - b->height/2) - menu->y;
+
+	// set min and max coords
+	UI_MenuButton_UpdateCoords (b);
+	b->generic.dynamicWidth = 0;
+	b->generic.dynamicHeight = 0;
+	b->generic.isExtended = false;
+//	b->generic.valueChanged = false;
+}
+
+//=========================================================
+
+void UI_MenuRectangle_Draw (menuRectangle_s *r)
+{
+//	menuFramework_s	*menu = r->generic.parent;
+	byte	*bc = r->borderColor;
+	byte	*c = r->color;
+
+	if (r->border > 0)
+	{
+		if (c[3] == 255) // just fill whole area for border if not trans
+			UI_DrawFill (r->generic.topLeft[0]-r->border, r->generic.topLeft[1]-r->border,
+							r->width+(r->border*2), r->height+(r->border*2), r->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)r->generic.topLeft[0], (float)r->generic.topLeft[1], (float)r->width, (float)r->height,
+							(float)r->border, r->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+	}
+	UI_DrawFill (r->generic.topLeft[0], r->generic.topLeft[1], r->width, r->height, r->generic.scrAlign, false, c[0],c[1],c[2],c[3]);
+}
+
+void UI_MenuRectangle_UpdateCoords (menuRectangle_s *r)
+{
+	menuFramework_s	*menu = r->generic.parent;
+
+	r->generic.topLeft[0] = menu->x + r->generic.x;
+	r->generic.topLeft[1] = menu->y + r->generic.y;
+	r->generic.botRight[0] = r->generic.topLeft[0] + r->width;
+	r->generic.botRight[1] = r->generic.topLeft[1] + r->height;
+}
+
+void UI_MenuRectangle_Setup (menuRectangle_s *r)
+{
+	menuFramework_s	*menu = r->generic.parent;
+
+	r->width =	max(r->width, 1);
+	r->height =	max(r->height, 1);
+	r->border = max(r->border, 0);
+
+	// automatic centering
+	if (r->hCentered)
+		r->generic.x = (SCREEN_WIDTH/2 - r->width/2) - menu->x;
+	if (r->vCentered)
+		r->generic.y = (SCREEN_HEIGHT/2 - r->height/2) - menu->y;
+
+	// set min and max coords
+	UI_MenuRectangle_UpdateCoords (r);
+	r->generic.dynamicWidth = 0;
+	r->generic.dynamicHeight = 0;
+	r->generic.isExtended = false;
+//	r->generic.valueChanged = false;
+	r->generic.flags |= QMF_NOINTERACTION;
+}
+
+//=========================================================
+
+void UI_MenuTextScroll_Draw (menuTextScroll_s *t)
+{
+//	menuFramework_s	*menu = t->generic.parent;
+	float			y, alpha;
+	int				i, x, len, stringoffset;
+	qboolean		bold;
+
+	if (!t->initialized)
+		return;
+
+	if ( ((float)t->height - ((float)(cls.realtime - t->start_time)*t->time_scale)
+		+ (float)(t->start_line * t->lineSize)) < 0 )
+	{
+		t->start_line++;
+		if (!t->scrollText[t->start_line])
 		{
-			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
-								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "???", alpha, false, false);
+			t->start_line = 0;
+			t->start_time = cls.realtime;
+		}
+	}
+
+	for (i=t->start_line, y=(float)t->generic.botRight[1] - ((float)(cls.realtime - t->start_time)*t->time_scale) + t->start_line * t->lineSize;
+		t->scrollText[i] && y < t->generic.botRight[1]; y += (float)t->lineSize, i++)
+	{
+		stringoffset = 0;
+		bold = false;
+
+		if (y <= t->generic.topLeft[1]-t->generic.textSize)
+			continue;
+		if (y > t->generic.botRight[1])
+			continue;
+
+		if (t->scrollText[i][0] == '+')
+		{
+			bold = true;
+			stringoffset = 1;
 		}
 		else
 		{
-			keyName1 = Key_KeynumToString (k->keys[0]);
-			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
-								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName1, alpha, false, false);
-			if (k->keys[1] != -1)
-			{
-				x = (int)strlen(keyName1) * MENU_FONT_SIZE;
-				keyName2 = Key_KeynumToString (k->keys[1]);
-				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*3 + x,
-									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "or", alpha, false, false);
-				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*6 + x,
-									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName2, alpha, false, false);
-			}
+			bold = false;
+			stringoffset = 0;
 		}
-	}
-	else
-		Com_Printf ("UI_MenuKeyBind_Draw: keybind has no commandName!\n");
 
-//	if (k->generic.ownerdraw)
-//		k->generic.ownerdraw(k);
+		if (y > (float)t->height*(7.0f/8.0f))
+		{
+			float y_test, h_test;
+			y_test = y - t->height*(7.0f/8.0f);
+			h_test = t->height/8;
+
+			alpha = 1 - (y_test/h_test);
+
+			alpha = max(min(alpha, 1), 0);
+		}
+		else if (y < (float)t->height/8)
+		{
+			float y_test, h_test;
+			y_test = y;
+			h_test = t->height/8;
+
+			alpha = y_test/h_test;
+
+			alpha = max(min(alpha, 1), 0);
+		}
+		else
+			alpha = 1;
+
+		len = (int)strlen(t->scrollText[i]) - stringLengthExtra(t->scrollText[i]);
+
+		x = t->generic.topLeft[0] + (t->width - (len * t->generic.textSize) - (stringoffset * t->generic.textSize)) / 2
+			+ stringoffset * t->generic.textSize;
+		UI_DrawMenuString (x, (int)floor(y), t->generic.textSize, t->generic.scrAlign, t->scrollText[i], alpha*255, false, false);
+	}
 }
 
-const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
+void UI_MenuTextScroll_UpdateCoords (menuTextScroll_s *t)
 {
-	menuFramework_s	*menu = k->generic.parent;
+	menuFramework_s	*menu = t->generic.parent;
 
-	// pressing mouse1 to pick a new bind wont force bind/unbind itself - spaz
-	if (UI_HasValidGrabBindItem(menu) && k->grabBind
-		&& !(ui_mousecursor.buttonused[MOUSEBUTTON1] && key == K_MOUSE1))
+	t->generic.topLeft[0] = menu->x + t->generic.x;
+	t->generic.topLeft[1] = menu->y + t->generic.y;
+	t->generic.botRight[0] = t->generic.topLeft[0] + t->width;
+	t->generic.botRight[1] = t->generic.topLeft[1] + t->height;
+}
+
+void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
+{
+//	menuFramework_s	*menu = t->generic.parent;
+	int				n, count;
+	static char		*lineIndex[256];
+	char			*p;
+
+	t->initialized = false;
+
+	// free this if reinitializing
+	if (t->fileBuffer) {
+		FS_FreeFile (t->fileBuffer);
+		t->fileBuffer = NULL;
+		t->scrollText = NULL;
+	}
+
+	if ( t->fileName && (strlen(t->fileName) > 0)
+		&& (count = FS_LoadFile (t->fileName, &t->fileBuffer)) != -1 )
 	{
-		// grab key here
-		if (key != K_ESCAPE && key != '`')
+		p = t->fileBuffer;
+		for (n = 0; n < 255; n++)
 		{
-			char cmd[1024];
-
-			if (k->keys[1] != -1)	// if two keys are already bound to this, clear them
-				UI_UnbindCommand (k->commandName);
-
-			Com_sprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->commandName);
-			Cbuf_InsertText (cmd);
+			lineIndex[n] = p;
+			while (*p != '\r' && *p != '\n')
+			{
+				p++;
+				if (--count == 0)
+					break;
+			}
+			if (*p == '\r')
+			{
+				*p++ = 0;
+				if (--count == 0)
+					break;
+			}
+			*p++ = 0;
+			if (--count == 0)
+				break;
 		}
-
-		// don't let selecting with mouse buttons screw everything up
-		UI_RefreshCursorButtons();
-		if (key == K_MOUSE1)
-			ui_mousecursor.buttonclicks[MOUSEBUTTON1] = -1;
-
-		if (menu)
-			UI_ClearGrabBindItem (menu);
-
-		return ui_menu_out_sound;
+		lineIndex[++n] = 0;
+		t->scrollText = lineIndex;
+		t->initialized = true;
 	}
-
-	switch (key)
+	else if (t->scrollText != NULL)
 	{
-	case K_ESCAPE:
-		UI_PopMenu ();
-		return ui_menu_out_sound;
-	case K_ENTER:
-	case K_KP_ENTER:
-		MenuKeyBind_DoEnter (k);
-		return ui_menu_in_sound;
-	case K_BACKSPACE:
-	case K_DEL:
-	case K_KP_DEL:
-		UI_UnbindCommand (k->commandName); // delete bindings
-		return ui_menu_out_sound;
-	default:
-		return ui_menu_null_sound;
+		t->initialized = true;
 	}
+
+	t->generic.textSize = min(max(t->generic.textSize, 4), 32);			// text size must be between 4 and 32 px
+	t->lineSize = min(max(t->lineSize, t->generic.textSize+1), t->generic.textSize*2);	// line spacing must be at least 1 px
+	t->width = min(max(t->width, t->generic.textSize*4), SCREEN_WIDTH);	// width must be at least 4 columns 
+	t->height = min(max(t->height, t->lineSize*8), SCREEN_HEIGHT);		// height must be at least 8 lines
+	t->time_scale = min(max(t->time_scale, 0.01f), 0.25f);				// scroll speed must be between 100 and 4 px/s
+	t->start_time = cls.realtime;
+	t->start_line = 0;
+
+	// set min and max coords
+	UI_MenuTextScroll_UpdateCoords (t);
+	t->generic.dynamicWidth = 0;
+	t->generic.dynamicHeight = 0;
+	t->generic.isExtended = false;
+//	t->generic.valueChanged = false;
+
+	t->generic.flags |= QMF_NOINTERACTION;
 }
 
 //=========================================================
+
+#if 0
+void UI_MenuModelView_Reregister (menuModelView_s *m)
+{
+	int				i;
+	char			scratch[MAX_QPATH];
+
+	for (i=0; i<MODELVIEW_MAX_MODELS; i++)
+	{
+		if (!m->modelValid[i] || !m->model[i])
+			continue;
+
+		Com_sprintf( scratch, sizeof(scratch),  m->modelName[i]);
+		m->model[i] = R_RegisterModel(scratch);
+		if (m->skin[i]) {
+			Com_sprintf( scratch, sizeof(scratch),  m->skinName[i]);
+			m->skin[i] = R_RegisterSkin (scratch);
+		}
+	}
+}
+#endif
+
+void UI_MenuModelView_Draw (menuModelView_s *m)
+{
+//	menuFramework_s	*menu = m->generic.parent;
+	int				i, j, entnum;
+	refdef_t		refdef;
+	float			rx, ry, rw, rh;
+	entity_t		entity[MODELVIEW_MAX_MODELS], *ent;
+//	qboolean		reRegister;
+	char			scratch[MAX_QPATH];
+
+	memset(&refdef, 0, sizeof(refdef));
+
+	rx = m->generic.topLeft[0];		ry = m->generic.topLeft[1];
+	rw = m->width;					rh = m->height;
+	SCR_ScaleCoords (&rx, &ry, &rw, &rh, m->generic.scrAlign);
+	refdef.x = rx;			refdef.y = ry;
+	refdef.width = rw;		refdef.height = rh;
+	refdef.fov_x = m->fov;
+	refdef.fov_y = CalcFov (refdef.fov_x, refdef.width, refdef.height);
+	refdef.time = cls.realtime*0.001;
+	refdef.areabits = 0;
+	refdef.lightstyles = 0;
+	refdef.rdflags = RDF_NOWORLDMODEL;
+	refdef.num_entities = 0;
+	refdef.entities = entity;
+	entnum = 0;
+
+	for (i=0; i<MODELVIEW_MAX_MODELS; i++)
+	{
+		if (!m->modelValid[i] || !m->model[i])
+			continue;
+
+		ent = &entity[entnum];
+		memset (&entity[entnum], 0, sizeof(entity[entnum]));
+
+		// model pointer may become invalid after a vid_restart
+	//	reRegister = (!R_ModelIsValid(m->model[i]));
+	//	if (reRegister) {
+			Com_sprintf (scratch, sizeof(scratch),  m->modelName[i]);
+			m->model[i] = R_RegisterModel(scratch);
+	//	}
+		ent->model = m->model[i];
+	//	if (m->skin[i]) {
+		if (m->skinName[i] && strlen(m->skinName[i])) {
+		//	if (reRegister) {
+				Com_sprintf (scratch, sizeof(scratch),  m->skinName[i]);
+				m->skin[i] = R_RegisterSkin (scratch);
+		//	}
+			ent->skin = m->skin[i];
+		}
+
+		ent->flags = m->entFlags[i];
+		VectorCopy (m->modelOrigin[i], ent->origin);
+		VectorCopy (ent->origin, ent->oldorigin);
+		ent->frame = m->modelFrame[i] + ((int)(cl.time*0.01f) % (m->modelFrameNumbers[i]+1)); // m->modelFrameTime[i]
+	//	ent->oldframe = 
+		ent->backlerp = 0.0f;
+		for (j=0; j<3; j++)
+			ent->angles[j] = m->modelBaseAngles[i][j] + cl.time*m->modelRotation[i][j];
+		if (m->isMirrored) {
+			ent->flags |= RF_MIRRORMODEL;
+			ent->angles[1] = 360 - ent->angles[1];
+		}
+
+		refdef.num_entities++;
+		entnum++;
+	}
+
+	if (refdef.num_entities > 0)
+		R_RenderFrame (&refdef);
+}
+
+void UI_MenuModelView_UpdateCoords (menuModelView_s *m)
+{
+	menuFramework_s	*menu = m->generic.parent;
+
+	m->generic.topLeft[0] = menu->x + m->generic.x;
+	m->generic.topLeft[1] = menu->y + m->generic.y;
+	m->generic.botRight[0] = m->generic.topLeft[0] + m->width;
+	m->generic.botRight[1] = m->generic.topLeft[1] + m->height;
+}
+
+void UI_MenuModelView_Setup (menuModelView_s *m)
+{
+//	menuFramework_s	*menu = m->generic.parent;
+	int				i, j;
+	char			scratch[MAX_QPATH];
+
+	m->num_entities = 0;
+	for (i=0; i<MODELVIEW_MAX_MODELS; i++) {
+		m->modelValid[i] = false;
+		m->model[i] = NULL;	m->skin[i] = NULL;
+	}
+	m->width	= min(max(m->width, 16), SCREEN_WIDTH);		// width must be at least 16 px
+	m->height	= min(max(m->height, 16), SCREEN_HEIGHT);	// height must be at least 16 px
+	m->fov		= min(max(m->fov, 10), 110);				// fov must be reasonble
+	for (i=0; i<MODELVIEW_MAX_MODELS; i++)
+	{
+		if (!m->modelName[i] || !strlen(m->modelName[i]))
+			continue;
+
+		Com_sprintf( scratch, sizeof(scratch),  m->modelName[i]);
+		if ( !(m->model[i] = R_RegisterModel(scratch)) )
+			continue;
+
+		if (m->skinName[i] && strlen(m->skinName[i])) {
+			Com_sprintf( scratch, sizeof(scratch),  m->skinName[i]);
+			m->skin[i] = R_RegisterSkin (scratch);
+		}
+		for (j=0; j<3; j++) {
+			m->modelOrigin[i][j]		= min(max(m->modelOrigin[i][j], -1024), 1024);
+			m->modelBaseAngles[i][j]	= min(max(m->modelBaseAngles[i][j], 0), 360);
+			m->modelRotation[i][j]		= min(max(m->modelRotation[i][j], -1.0f), 1.0f);
+		}
+		m->modelFrame[i]		= max(m->modelFrame[i], 0);			// catch negative frames
+		m->modelFrameNumbers[i]	= max(m->modelFrameNumbers[i], 0);	// catch negative frames
+	//	m->modelFrameTime[i]	= min(max(m->modelFrameTime[i], 0.005f), 0.04f);	// must be between 5 and 40 fps
+		m->modelValid[i] = true;
+		m->num_entities++;
+	}
+
+	// set min and max coords
+	UI_MenuModelView_UpdateCoords (m);
+	m->generic.dynamicWidth = 0;
+	m->generic.dynamicHeight = 0;
+	m->generic.isExtended = false;
+//	m->generic.valueChanged = false;
+
+	m->generic.flags |= QMF_NOINTERACTION;
+}
+
+//=========================================================
+
+/*
+==========================
+UI_UpdateMenuItemCoords
+Just updates coords for display items
+==========================
+*/
+void UI_UpdateMenuItemCoords (void *item)
+{
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_IMAGE:
+		UI_MenuImage_UpdateCoords ((menuImage_s *)item);
+		break;
+	case MTYPE_BUTTON:
+		UI_MenuButton_UpdateCoords ((menuButton_s *)item);
+		break;
+	case MTYPE_RECTANGLE:
+		UI_MenuRectangle_UpdateCoords ((menuRectangle_s *)item);
+		break;
+	case MTYPE_TEXTSCROLL:
+		UI_MenuTextScroll_UpdateCoords ((menuTextScroll_s *)item);
+		break;
+	case MTYPE_MODELVIEW:
+		UI_MenuModelView_UpdateCoords ((menuModelView_s *)item);
+		break;
+	default:
+		break;
+	}
+}
+
+
+/*
+==========================
+UI_ItemCanBeCursorItem
+Checks if an item is of a
+valid type to be a cursor item.
+==========================
+*/
+qboolean UI_ItemCanBeCursorItem (void *item)
+{
+	if (!item)	return false;
+	
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_IMAGE:
+	case MTYPE_BUTTON:
+	case MTYPE_RECTANGLE:
+	case MTYPE_TEXTSCROLL:
+	case MTYPE_MODELVIEW:
+		return true;
+	default:
+		return false;
+	}
+	return false;
+}
+
+
+/*
+==========================
+UI_ItemIsValidCursorPosition
+Checks if an item can be used
+as a cursor position.
+==========================
+*/
+qboolean UI_ItemIsValidCursorPosition (void *item)
+{
+	if (!item)	return false;
+	
+	if ( (((menuCommon_s *)item)->flags & QMF_NOINTERACTION) || (((menuCommon_s *)item)->flags & QMF_MOUSEONLY) )
+		return false;
+
+	if ( ((menuCommon_s *)item)->isHidden )
+		return false;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_LABEL:
+	case MTYPE_IMAGE:
+	case MTYPE_RECTANGLE:
+	case MTYPE_TEXTSCROLL:
+	case MTYPE_MODELVIEW:
+		return false;
+	default:
+		return true;
+	}
+	return true;
+}
+
+
+/*
+==========================
+UI_ItemHasMouseBounds
+Checks if an item is mouse-interactive.
+==========================
+*/
+qboolean UI_ItemHasMouseBounds (void *item)
+{
+	if (!item)	return false;
+
+	if (((menuCommon_s *)item)->flags & QMF_NOINTERACTION)
+		return false;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_LABEL:
+	case MTYPE_IMAGE:
+	case MTYPE_RECTANGLE:
+	case MTYPE_TEXTSCROLL:
+	case MTYPE_MODELVIEW:
+		return false;
+	default:
+		return true;
+	}
+	return true;
+}
+
 
 /*
 ==========================
@@ -735,32 +1714,195 @@ void UI_DrawMenuItem (void *item)
 	if (!item)	return;
 
 	// skip hidden items
-	if ( ((menuCommon_s *)item)->flags & QMF_HIDDEN )
+	if ( ((menuCommon_s *)item)->isHidden )
 		return;
 
 	switch ( ((menuCommon_s *)item)->type )
 	{
-	case MTYPE_FIELD:
-		MenuField_Draw ((menuField_s *)item);
-		break;
-	case MTYPE_SLIDER:
-		MenuSlider_Draw ((menuSlider_s *)item);
-		break;
-	case MTYPE_SPINNER:
-		MenuSpinControl_Draw ((menuSpinner_s *)item);
-		break;
 	case MTYPE_ACTION:
-		MenuAction_Draw ((menuAction_s *)item);
-		break;
-	case MTYPE_LABEL:
-		MenuLabel_Draw ((menuLabel_s *)item);
+		UI_MenuAction_Draw ((menuAction_s *)item);
 		break;
 	case MTYPE_KEYBIND:
-		MenuKeyBind_Draw ((menuKeyBind_s *)item);
+		UI_MenuKeyBind_Draw ((menuKeyBind_s *)item);
+		break;
+/*	case MTYPE_KEYBINDLIST:
+		UI_MenuKeyBindList_Draw ((menuKeyBindList_s *)item);
+		break; */
+	case MTYPE_FIELD:
+		UI_MenuField_Draw ((menuField_s *)item);
+		break;
+	case MTYPE_SLIDER:
+		UI_MenuSlider_Draw ((menuSlider_s *)item);
+		break;
+	case MTYPE_PICKER:
+		UI_MenuPicker_Draw ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_CHECKBOX:
+		UI_MenuCheckBox_Draw ((menuCheckBox_s *)item);
+		break; */
+	case MTYPE_LABEL:
+		UI_MenuLabel_Draw ((menuLabel_s *)item);
+		break;
+	case MTYPE_IMAGE:
+		UI_MenuImage_Draw ((menuImage_s *)item);
+		break;
+	case MTYPE_BUTTON:
+		UI_MenuButton_Draw ((menuButton_s *)item);
+		break;
+	case MTYPE_RECTANGLE:
+		UI_MenuRectangle_Draw ((menuRectangle_s *)item);
+		break;
+/*	case MTYPE_LISTBOX:
+		UI_MenuListBox_Draw ((menuListBox_s *)item);
+		break;
+	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_Draw ((menuComboBox_s *)item);
+		break;
+	case MTYPE_LISTVIEW:
+		UI_MenuListView_Draw ((menuListView_s *)item);
+		break; */
+	case MTYPE_TEXTSCROLL:
+		UI_MenuTextScroll_Draw ((menuTextScroll_s *)item);
+		break;
+	case MTYPE_MODELVIEW:
+		UI_MenuModelView_Draw ((menuModelView_s *)item);
 		break;
 	default:
 		break;
 	}
+}
+
+
+/*
+==========================
+UI_SetMenuItemDynamicSize
+Calls SetDynamicSize functions for each item type
+==========================
+*/
+void UI_SetMenuItemDynamicSize (void *item)
+{
+	if (!item)	return;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_KEYBIND:
+		UI_MenuKeyBind_SetDynamicSize ((menuKeyBind_s *)item);
+		break;
+	case MTYPE_PICKER:
+		UI_MenuPicker_SetDynamicSize ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_SetDynamicSize ((menuComboBox_s *)item);
+		break; */
+	default:
+		break;
+	}
+}
+
+
+/*
+==========================
+UI_GetItemMouseoverType
+Returns mouseover type for a menu item
+==========================
+*/
+int UI_GetItemMouseoverType (void *item)
+{
+	if (!item)
+		return MENUITEM_NONE;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+		case MTYPE_ACTION:
+		case MTYPE_KEYBIND:
+			return MENUITEM_ACTION;
+	/*	case MTYPE_KEYBINDLIST:
+			return MENUITEM_KEYBINDLIST; */
+		case MTYPE_SLIDER:
+			return MENUITEM_SLIDER;
+		case MTYPE_PICKER:
+			return MENUITEM_PICKER;
+	/*	case MTYPE_CHECKBOX:
+			return MENUITEM_CHECKBOX; */
+		case MTYPE_FIELD:
+			return MENUITEM_TEXT;
+		case MTYPE_BUTTON:
+			return MENUITEM_BUTTON;
+	/*	case MTYPE_LISTBOX:
+			return MENUITEM_LISTBOX;
+		case MTYPE_COMBOBOX:
+			return MENUITEM_COMBOBOX;
+		case MTYPE_LISTVIEW:
+			return MENUITEM_LISTVIEW; */
+		default:
+			return MENUITEM_NONE;
+	}
+	return MENUITEM_NONE;
+}
+
+
+/*
+=================
+UI_ClickMenuItem
+=================
+*/
+char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
+{
+	char *s;
+
+/*	if ( UI_MouseOverScrollKnob(item) && !mouse2 )
+	{
+	//	Com_Printf ("Dragging scroll bar\n");
+		UI_ClickItemScrollBar (item);
+		return ui_menu_drag_sound;
+	} */
+
+	if (item)
+	{
+		switch (item->type)
+		{
+		case MTYPE_ACTION:
+			s = UI_MenuAction_Click ( (menuAction_s *)item, mouse2 );
+			break;
+		case MTYPE_KEYBIND:
+			s = UI_MenuKeyBind_Click ( (menuKeyBind_s *)item, mouse2 );
+			break;
+	/*	case MTYPE_KEYBINDLIST:
+			s = UI_MenuKeyBindList_Click ( (menuKeyBindList_s *)item, mouse2 );
+			break; */
+		case MTYPE_SLIDER:
+			s = UI_MenuSlider_Click ( (menuSlider_s *)item, mouse2 );
+			break;
+		case MTYPE_PICKER:
+			s = UI_MenuPicker_Click ( (menuPicker_s *)item, mouse2 );
+			break;
+		case MTYPE_FIELD:
+			s = UI_MenuField_Click ( (menuField_s *)item, mouse2 );
+			break;
+	/*	case MTYPE_CHECKBOX:
+			s = UI_MenuCheckBox_Click ( (menuCheckBox_s *)item, mouse2 );
+			break; */
+		case MTYPE_BUTTON:
+			s = UI_MenuButton_Click ( (menuButton_s *)item, mouse2 );
+			break;
+	/*	case MTYPE_LISTBOX:
+			s = UI_MenuListBox_Click ( (menuListBox_s *)item, mouse2 );
+			break;
+		case MTYPE_COMBOBOX:
+			s = UI_MenuComboBox_Click ( (menuComboBox_s *)item, mouse2 );
+			break;
+		case MTYPE_LISTVIEW:
+			s = UI_MenuListView_Click ( (menuListView_s *)item, mouse2 );
+			break; */
+		default:
+			s = ui_menu_null_sound;
+			break;
+		}
+		if (!s)
+			s = ui_menu_null_sound;
+		return s;
+	}
+	return ui_menu_null_sound;
 }
 
 
@@ -781,17 +1923,20 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 	{
 		switch (item->type)
 		{
-		case MTYPE_FIELD:
-			return MenuField_DoEnter ( (menuField_s *)item ) ;
 		case MTYPE_ACTION:
-			MenuAction_DoEnter ( (menuAction_s *)item );
+			UI_MenuAction_DoEnter ((menuAction_s *)item);
 			return true;
-		case MTYPE_SPINNER:
-		//	MenuSpinControl_DoEnter ( (menuSpinner_s *)item );
-			return false;
 		case MTYPE_KEYBIND:
-			MenuKeyBind_DoEnter ( (menuKeyBind_s *)item );
+			UI_MenuKeyBind_DoEnter ((menuKeyBind_s *)item);
 			return true;
+		case MTYPE_FIELD:
+			return UI_MenuField_DoEnter ((menuField_s *)item) ;
+		case MTYPE_PICKER:
+		//	UI_MenuSpinControl_DoEnter ((menuPicker_s *)item);
+			return false;
+		case MTYPE_BUTTON:
+			UI_MenuButton_DoEnter ((menuButton_s *)item);
+			break;
 		default:
 			break;
 		}
@@ -813,16 +1958,19 @@ qboolean UI_MouseSelectItem (menuCommon_s *item)
 	{
 		switch (item->type)
 		{
-		case MTYPE_FIELD:
-			return MenuField_DoEnter ( (menuField_s *)item ) ;
 		case MTYPE_ACTION:
-			MenuAction_DoEnter ( (menuAction_s *)item );
+			UI_MenuAction_DoEnter ((menuAction_s *)item);
 			return true;
 		case MTYPE_KEYBIND:
-			MenuKeyBind_DoEnter ( (menuKeyBind_s *)item );
+			UI_MenuKeyBind_DoEnter ((menuKeyBind_s *)item);
 			return true;
-		case MTYPE_SPINNER:
+		case MTYPE_FIELD:
+			return UI_MenuField_DoEnter ((menuField_s *)item) ;
+		case MTYPE_PICKER:
 			return false;
+		case MTYPE_BUTTON:
+			UI_MenuButton_DoEnter ((menuButton_s *)item);
+			break;
 		default:
 			break;
 		}
@@ -849,13 +1997,90 @@ void UI_SlideMenuItem (menuFramework_s *s, int dir)
 		switch (item->type)
 		{
 		case MTYPE_SLIDER:
-			MenuSlider_DoSlide ((menuSlider_s *) item, dir);
+			UI_MenuSlider_DoSlide ((menuSlider_s *) item, dir);
 			break;
-		case MTYPE_SPINNER:
-			MenuSpinControl_DoSlide ((menuSpinner_s *) item, dir);
+		case MTYPE_PICKER:
+			UI_MenuPicker_DoSlide ((menuPicker_s *) item, dir);
 			break;
 		default:
 			break;
 		}
+	}
+}
+
+
+/*
+==========================
+UI_InitMenuItem
+Calls setup functions for menu item type
+==========================
+*/
+void UI_InitMenuItem (void *item)
+{
+	// only some items can be a cursor item
+	if ( !UI_ItemCanBeCursorItem(item) )
+		((menuCommon_s *)item)->isCursorItem = false;
+
+	// default alignment is center
+	if ( ((menuCommon_s *)item)->scrAlign == ALIGN_UNSET )
+		((menuCommon_s *)item)->scrAlign = ALIGN_CENTER;
+
+	// clamp text size
+	if (!((menuCommon_s *)item)->textSize)
+		((menuCommon_s *)item)->textSize = MENU_FONT_SIZE;
+	((menuCommon_s *)item)->textSize = min(max(((menuCommon_s *)item)->textSize, 4), 32);
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_ACTION:
+		UI_MenuAction_Setup ((menuAction_s *)item);
+		break;
+	case MTYPE_KEYBIND:
+		UI_MenuKeyBind_Setup ((menuKeyBind_s *)item);
+		break;
+/*	case MTYPE_KEYBINDLIST:
+		UI_MenuKeyBindList_Setup ((menuKeyBindList_s *)item);
+		break; */
+	case MTYPE_SLIDER:
+		UI_MenuSlider_Setup ((menuSlider_s *)item);
+		break;
+	case MTYPE_PICKER:
+		UI_MenuPicker_Setup ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_CHECKBOX:
+		UI_MenuCheckBox_Setup ((menuCheckBox_s *)item);
+		break; */
+	case MTYPE_LABEL:
+		UI_MenuLabel_Setup ((menuLabel_s *)item);
+		break;
+	case MTYPE_FIELD:
+		UI_MenuField_Setup ((menuField_s *)item);
+		break;
+	case MTYPE_IMAGE:
+		UI_MenuImage_Setup ((menuImage_s *)item);
+		break;
+	case MTYPE_BUTTON:
+		UI_MenuButton_Setup ((menuButton_s *)item);
+		break;
+	case MTYPE_RECTANGLE:
+		UI_MenuRectangle_Setup ((menuRectangle_s *)item);
+		break;
+/*	case MTYPE_LISTBOX:
+		UI_MenuListBox_Setup ((menuListBox_s *)item);
+		break;
+	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_Setup ((menuComboBox_s *)item);
+		break;
+	case MTYPE_LISTVIEW:
+		UI_MenuListView_Setup ((menuListView_s *)item);
+		break; */
+	case MTYPE_TEXTSCROLL:
+		UI_MenuTextScroll_Setup ((menuTextScroll_s *)item);
+		break;
+	case MTYPE_MODELVIEW:
+		UI_MenuModelView_Setup ((menuModelView_s *)item);
+		break;
+	default:
+		break;
 	}
 }

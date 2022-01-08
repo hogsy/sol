@@ -22,13 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_mp_startserver.c -- the start server menu 
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_MAPSHOT_WIDGET
 
 /*
 =============================================================================
@@ -38,17 +35,19 @@ START SERVER MENU
 =============================================================================
 */
 static menuFramework_s s_startserver_menu;
-
-static menuAction_s		s_startserver_start_action;
-static menuAction_s		s_startserver_dmoptions_action;
+static menuImage_s		s_startserver_banner;
+static menuPicker_s		s_startmap_list;
+#ifdef USE_MAPSHOT_WIDGET
+static menuImage_s		s_startserver_mapshot;
+#endif
+menuPicker_s			s_rules_box;
 static menuField_s		s_timelimit_field;
 static menuField_s		s_fraglimit_field;
 static menuField_s		s_maxclients_field;
 static menuField_s		s_hostname_field;
-static menuSpinner_s	s_startmap_list;
-menuSpinner_s			s_rules_box;
-static menuSpinner_s	s_dedicated_box;
-
+static menuPicker_s		s_dedicated_box;
+static menuAction_s		s_startserver_dmoptions_action;
+static menuAction_s		s_startserver_start_action;
 static menuAction_s		s_startserver_back_action;
 
 //=============================================================================
@@ -79,6 +78,13 @@ void M_RefreshMapList (maptype_t maptype)
 
 
 //=============================================================================
+
+void M_StartmapChangeFunc (void *unused)
+{
+#ifdef USE_MAPSHOT_WIDGET
+	s_startserver_mapshot.imageName = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
+#endif
+}
 
 void M_DMOptionsFunc (void *self)
 {
@@ -144,6 +150,9 @@ void M_RulesChangeFunc (void *self)
 	}
 
 	M_RefreshMapList (maptype);
+#ifdef USE_MAPSHOT_WIDGET
+	s_startserver_mapshot.imageName = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
+#endif
 }
 
 void Menu_StartServerActionFunc (void *self)
@@ -200,26 +209,65 @@ void Menu_StartServer_Init (void)
 		"tag",
 		0
 	};
-
-	int y = 0;
+	int		x, y;
 	
+	// menu.x = 168, menu.y = 150
+	x = SCREEN_WIDTH*0.5 - 140;
+	y = SCREEN_HEIGHT*0.5 - 9*MENU_LINE_SIZE;
+
 	//
 	// initialize the menu stuff
 	//
-	s_startserver_menu.x = SCREEN_WIDTH*0.5 - 140;
-	//s_startserver_menu.y = 0;
-	s_startserver_menu.nitems = 0;
+	s_startserver_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 140;
+	s_startserver_menu.y			= 0;
+	s_startserver_menu.nitems		= 0;
+//	s_startserver_menu.isPopup		= false;
+//	s_startserver_menu.keyFunc		= UI_DefaultMenuKey;
+//	s_startserver_menu.canOpenFunc	= NULL;
+//	s_startserver_menu.onOpenFunc	= M_RulesChangeFunc;
 
-	s_startmap_list.generic.type		= MTYPE_SPINNER;
+	s_startserver_banner.generic.type		= MTYPE_IMAGE;
+	s_startserver_banner.generic.x			= 0;
+	s_startserver_banner.generic.y			= 9*MENU_LINE_SIZE;
+	s_startserver_banner.width				= 275;
+	s_startserver_banner.height				= 32;
+	s_startserver_banner.imageName			= "/pics/m_banner_start_server.pcx";
+	s_startserver_banner.alpha				= 255;
+	s_startserver_banner.border				= 0;
+	s_startserver_banner.hCentered			= true;
+	s_startserver_banner.vCentered			= false;
+	s_startserver_banner.generic.isHidden	= false;
+
+	s_startmap_list.generic.type		= MTYPE_PICKER;
 	s_startmap_list.generic.textSize	= MENU_FONT_SIZE;
-	s_startmap_list.generic.x			= 0;
+	s_startmap_list.generic.x			= x;
 	s_startmap_list.generic.y			= y;
 	s_startmap_list.generic.name		= "initial map";
 	s_startmap_list.itemNames			= ui_svr_mapnames;
+	s_startmap_list.generic.callback	= M_StartmapChangeFunc;
 
-	s_rules_box.generic.type		= MTYPE_SPINNER;
+#ifdef USE_MAPSHOT_WIDGET
+//	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
+	s_startserver_mapshot.generic.type		= MTYPE_IMAGE;
+	s_startserver_mapshot.generic.x			= x + 23*MENU_FONT_SIZE+2;	// +186
+	s_startserver_mapshot.generic.y			= y + 2.2*MENU_LINE_SIZE;	// +22
+	s_startserver_mapshot.width				= 240;	// 200
+	s_startserver_mapshot.height			= 180;	// 150
+	s_startserver_mapshot.imageName			= UI_NOSCREEN_NAME;
+	s_startserver_mapshot.alpha				= 255;
+	s_startserver_mapshot.border			= 2;
+	s_startserver_mapshot.borderColor[0]	= 60;
+	s_startserver_mapshot.borderColor[1]	= 60;
+	s_startserver_mapshot.borderColor[2]	= 60;
+	s_startserver_mapshot.borderColor[3]	= 255;
+	s_startserver_mapshot.hCentered			= false;
+	s_startserver_mapshot.vCentered			= false;
+	s_startserver_mapshot.generic.isHidden	= false;
+#endif	// USE_MAPSHOT_WIDGET
+
+	s_rules_box.generic.type		= MTYPE_PICKER;
 	s_rules_box.generic.textSize	= MENU_FONT_SIZE;
-	s_rules_box.generic.x			= 0;
+	s_rules_box.generic.x			= x;
 	s_rules_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_rules_box.generic.name		= "rules";
 //PGM - rogue games only available with rogue DLL.
@@ -244,7 +292,7 @@ void Menu_StartServer_Init (void)
 	s_timelimit_field.generic.textSize	= MENU_FONT_SIZE;
 	s_timelimit_field.generic.name		= "time limit";
 	s_timelimit_field.generic.flags		= QMF_NUMBERSONLY;
-	s_timelimit_field.generic.x			= 0;
+	s_timelimit_field.generic.x			= x;
 	s_timelimit_field.generic.y			= y += 2*MENU_FONT_SIZE;
 	s_timelimit_field.generic.statusbar	= "0 = no limit";
 	s_timelimit_field.length			= 4;
@@ -256,7 +304,7 @@ void Menu_StartServer_Init (void)
 	s_fraglimit_field.generic.textSize	= MENU_FONT_SIZE;
 	s_fraglimit_field.generic.name		= "frag limit";
 	s_fraglimit_field.generic.flags		= QMF_NUMBERSONLY;
-	s_fraglimit_field.generic.x			= 0;
+	s_fraglimit_field.generic.x			= x;
 	s_fraglimit_field.generic.y			= y += 2.25*MENU_FONT_SIZE;
 	s_fraglimit_field.generic.statusbar	= "0 = no limit";
 	s_fraglimit_field.length			= 4;
@@ -274,7 +322,7 @@ void Menu_StartServer_Init (void)
 	s_maxclients_field.generic.textSize		= MENU_FONT_SIZE;
 	s_maxclients_field.generic.name			= "max players";
 	s_maxclients_field.generic.flags		= QMF_NUMBERSONLY;
-	s_maxclients_field.generic.x			= 0;
+	s_maxclients_field.generic.x			= x;
 	s_maxclients_field.generic.y			= y += 2.25*MENU_FONT_SIZE;
 	s_maxclients_field.generic.statusbar	= NULL;
 	s_maxclients_field.length				= 3;
@@ -289,7 +337,7 @@ void Menu_StartServer_Init (void)
 	s_hostname_field.generic.textSize		= MENU_FONT_SIZE;
 	s_hostname_field.generic.name			= "hostname";
 	s_hostname_field.generic.flags			= 0;
-	s_hostname_field.generic.x				= 0;
+	s_hostname_field.generic.x				= x;
 	s_hostname_field.generic.y				= y += 2.25*MENU_FONT_SIZE;
 	s_hostname_field.generic.statusbar		= NULL;
 	s_hostname_field.length					= 16;
@@ -297,10 +345,10 @@ void Menu_StartServer_Init (void)
 	Q_strncpyz (s_hostname_field.buffer, sizeof(s_hostname_field.buffer), Cvar_VariableString("hostname"));
 	s_hostname_field.cursor					= (int)strlen( s_hostname_field.buffer );
 
-	s_dedicated_box.generic.type			= MTYPE_SPINNER;
+	s_dedicated_box.generic.type			= MTYPE_PICKER;
 	s_dedicated_box.generic.textSize		= MENU_FONT_SIZE;
 	s_dedicated_box.generic.name			= "dedicated server";;
-	s_dedicated_box.generic.x				= 0;
+	s_dedicated_box.generic.x				= x;
 	s_dedicated_box.generic.y				= y += 2*MENU_FONT_SIZE;
 	s_dedicated_box.curValue				= 0;	// always start off
 	s_dedicated_box.generic.statusbar		= "makes the server faster, but you can't play on this computer";
@@ -310,7 +358,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_dmoptions_action.generic.textSize		= MENU_FONT_SIZE;
 	s_startserver_dmoptions_action.generic.name			= "Deathmatch Flags";
 	s_startserver_dmoptions_action.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_startserver_dmoptions_action.generic.x			= 4*MENU_FONT_SIZE;
+	s_startserver_dmoptions_action.generic.x			= x + 4*MENU_FONT_SIZE;
 	s_startserver_dmoptions_action.generic.y			= y += 2*MENU_FONT_SIZE;
 	s_startserver_dmoptions_action.generic.statusbar	= NULL;
 	s_startserver_dmoptions_action.generic.callback		= M_DMOptionsFunc;
@@ -319,7 +367,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_start_action.generic.textSize	= MENU_FONT_SIZE;
 	s_startserver_start_action.generic.name		= "Begin";
 	s_startserver_start_action.generic.flags	= QMF_LEFT_JUSTIFY;
-	s_startserver_start_action.generic.x		= 4*MENU_FONT_SIZE;
+	s_startserver_start_action.generic.x		= x + 4*MENU_FONT_SIZE;
 	s_startserver_start_action.generic.y		= y += 2*MENU_LINE_SIZE;
 	s_startserver_start_action.generic.callback	= Menu_StartServerActionFunc;
 
@@ -327,11 +375,15 @@ void Menu_StartServer_Init (void)
 	s_startserver_back_action.generic.textSize	= MENU_FONT_SIZE;
 	s_startserver_back_action.generic.name		= "Back to Multiplayer";
 	s_startserver_back_action.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_startserver_back_action.generic.x			= 4*MENU_FONT_SIZE;
+	s_startserver_back_action.generic.x			= x + 4*MENU_FONT_SIZE;
 	s_startserver_back_action.generic.y			= y += 3*MENU_LINE_SIZE;
 	s_startserver_back_action.generic.callback	= UI_BackMenu;
 
+	UI_AddMenuItem (&s_startserver_menu, &s_startserver_banner);
 	UI_AddMenuItem (&s_startserver_menu, &s_startmap_list);
+#ifdef USE_MAPSHOT_WIDGET
+	UI_AddMenuItem (&s_startserver_menu, &s_startserver_mapshot);
+#endif
 	UI_AddMenuItem (&s_startserver_menu, &s_rules_box);
 	UI_AddMenuItem (&s_startserver_menu, &s_timelimit_field);
 	UI_AddMenuItem (&s_startserver_menu, &s_fraglimit_field);
@@ -342,12 +394,11 @@ void Menu_StartServer_Init (void)
 	UI_AddMenuItem (&s_startserver_menu, &s_startserver_start_action);
 	UI_AddMenuItem (&s_startserver_menu, &s_startserver_back_action);
 
-	UI_CenterMenu (&s_startserver_menu);
-
 	// call this now to set proper inital state
 	M_RulesChangeFunc (NULL);
 }
 
+#ifndef USE_MAPSHOT_WIDGET
 void Menu_DrawStartSeverLevelshot (void)
 {
 	char *mapshotname = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
@@ -359,12 +410,15 @@ void Menu_DrawStartSeverLevelshot (void)
 	else
 		UI_DrawFill (SCREEN_WIDTH/2+46, SCREEN_HEIGHT/2-68, 240, 180, ALIGN_CENTER, false, 0,0,0,255);
 }
+#endif	// USE_MAPSHOT_WIDGET
 
 void Menu_StartServer_Draw (void)
 {
-	UI_DrawBanner ("m_banner_start_server"); // Knightmare added
+	UI_AdjustMenuCursor (&s_startserver_menu, 1);
 	UI_DrawMenu (&s_startserver_menu);
+#ifndef USE_MAPSHOT_WIDGET
 	Menu_DrawStartSeverLevelshot (); // added levelshots
+#endif
 }
 
 const char *Menu_StartServer_Key (int key)

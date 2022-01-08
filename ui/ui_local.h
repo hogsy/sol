@@ -23,15 +23,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __UI_LOCAL_H__
 #define __UI_LOCAL_H__
 
-#define MAXMENUITEMS	64
+#define MAX_MENUITEMS	64
 
 enum {
 	MTYPE_ACTION=0,
 	MTYPE_KEYBIND,
 	MTYPE_SLIDER,
-	MTYPE_SPINNER,
+	MTYPE_PICKER,
 	MTYPE_LABEL,
-	MTYPE_FIELD
+	MTYPE_FIELD,
+	MTYPE_IMAGE,
+	MTYPE_BUTTON,
+	MTYPE_RECTANGLE,
+	MTYPE_TEXTSCROLL,
+	MTYPE_MODELVIEW
 };
 
 #define	K_TAB			9
@@ -47,19 +52,27 @@ enum {
 #define	K_LEFTARROW		130
 #define	K_RIGHTARROW	131
 
-#define QMF_LEFT_JUSTIFY	0x00000001
-#define QMF_GRAYED			0x00000002
-#define QMF_NUMBERSONLY		0x00000004
-#define QMF_SKINLIST		0x00000008
-#define QMF_HIDDEN			0x00000010
-#define QMF_ALTCOLOR		0x00000020
+enum {
+	QMF_LEFT_JUSTIFY	= 1 << 0,
+	QMF_ALTCOLOR		= 1 << 1,
+	QMF_NUMBERSONLY		= 1 << 2,
+	QMF_NOLOOP			= 1 << 3,
+	QMF_MOUSEONLY		= 1 << 4,
+	QMF_COLORIMAGE		= 1 << 5,
+	QMF_DISABLED		= 1 << 6,
+	QMF_NOINTERACTION	= 1 << 7,
+	// to be removed
+	QMF_SKINLIST		= 1 << 8,
+	QMF_GRAYED			= 1 << 9
+};
 
 //
 #define MENU_SUBTEXT_FONT_SIZE	6
 #define MENU_HEADER_FONT_SIZE	10
 #define MENU_HEADER_LINE_SIZE	13
-#define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// was 16
-#define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// was -16
+#define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// 16
+#define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// -16
+#define FIELD_VOFFSET MENU_FONT_SIZE/2
 
 #define SLIDER_RANGE 10
 #define SLIDER_HEIGHT 8
@@ -67,6 +80,10 @@ enum {
 #define SLIDER_SECTION_WIDTH 10 // was 8
 #define SLIDER_KNOB_WIDTH 5 // was 8
 #define SLIDER_V_OFFSET (SLIDER_HEIGHT-MENU_FONT_SIZE)/2
+
+#define CHECKBOX_WIDTH 10
+#define CHECKBOX_HEIGHT 10
+#define CHECKBOX_V_OFFSET (CHECKBOX_HEIGHT-MENU_FONT_SIZE)/2
 //
 
 
@@ -75,15 +92,16 @@ typedef struct _tag_menuframework
 	int x, y;
 	int	cursor;
 
-	int	nitems;
-	int nslots;
-	void *items[64];
+	int			nitems;
+	int			nslots;
+	void		*items[MAX_MENUITEMS]; // 64
+	void		*cursorItem;
 
 	const char	*statusbar;
 //	const char	*cantOpenMessage;
 //	const char	*defaultsMessage;
 //	const char	*applyChangesMessage[3];
-//	qboolean	hide_statusbar;
+	qboolean	hide_statusbar;
 //	qboolean	isPopup;
 	int			grabBindCursor;
 //	int			bitFlags;			// for bit toggles
@@ -103,10 +121,10 @@ typedef struct
 {
 	int					type;
 	const char			*name;
-//	const char			*header;
+	const char			*header;
 	int					x;
 	int					y;
-//	scralign_t			scrAlign;
+	scralign_t			scrAlign;
 
 	menuFramework_s		*parent;
 	int					cursor_offset;
@@ -114,14 +132,14 @@ typedef struct
 	int					textSize;
 	unsigned			flags;
 
-//	float				topLeft[2];		// for mouse pointer detection
-//	float				botRight[2];	// for mouse pointer detection
-//	float				dynamicWidth;	// for size of changing list items
-//	float				dynamicHeight;	// for size of changing list items
-//	qboolean			isHidden;		// for hiding items
-//	qboolean			isExtended;		// for items that have pop-put parts
-//	qboolean			isCursorItem;	// for cursor items
-//	int					cursorItemOffset[2];
+	float				topLeft[2];		// for mouse pointer detection
+	float				botRight[2];	// for mouse pointer detection
+	float				dynamicWidth;	// for size of changing list items
+	float				dynamicHeight;	// for size of changing list items
+	qboolean			isHidden;		// for hiding items
+	qboolean			isExtended;		// for items that have pop-put parts
+	qboolean			isCursorItem;	// for cursor items
+	int					cursorItemOffset[2];
 	const char			*statusbar;
 
 //	char				*cvar;			// for option items
@@ -161,6 +179,7 @@ typedef struct
 	// end Knightmare
 
 	float			range;
+	float			barTopLeft[2];		// for checking if cursor is directly on slider
 	qboolean		displayAsPercent;
 } menuSlider_s;
 
@@ -175,7 +194,7 @@ typedef struct
 	const char		**itemNames;
 	const char		**itemValues;	// Knightmare added
 	int				numItems;
-} menuSpinner_s;
+} menuPicker_s;
 
 typedef struct
 {
@@ -197,11 +216,56 @@ typedef struct
 	menuCommon_s generic;
 } menuLabel_s;
 
-typedef enum {
-	LISTBOX_TEXT,
-	LISTBOX_IMAGE,
-	LISTBOX_TEXTIMAGE
-} listType_t;
+typedef struct
+{
+	menuCommon_s	generic;
+
+	int				width;
+	int				height;
+	char			*imageName;
+//	qboolean		imageValid;
+	byte			alpha;
+	int				border;
+	byte			borderColor[4];
+	byte			imageColor[4];
+	qboolean		overrideColor;
+	qboolean		hCentered;
+	qboolean		vCentered;
+} menuImage_s;
+
+typedef struct
+{
+	menuCommon_s	generic;
+
+	int				width;
+	int				height;
+	char			*imageName;
+	char			*hoverImageName;
+	byte			alpha;
+	int				border;
+	byte			borderColor[4];
+	byte			imageColor[4];
+	qboolean		overrideColor;
+	qboolean		hCentered;
+	qboolean		vCentered;
+	qboolean		usesMouse2;
+} menuButton_s;
+
+typedef struct
+{
+	menuCommon_s	generic;
+
+	int				width;
+	int				height;
+	byte			color[4];
+	int				border;
+	byte			borderColor[4];
+	qboolean		hCentered;
+	qboolean		vCentered;
+} menuRectangle_s;
+
+#define LIST_SCROLLBAR_SIZE			12
+#define LIST_SCROLLBAR_CONTROL_SIZE	12
 
 typedef enum {
 	SCROLL_X,
@@ -313,7 +377,10 @@ typedef struct
 	keyBindSubitem_t	*bindList;
 	int					numItems;
 
-	char				*fileName;
+	qboolean			useCustomBindList;	// uses custom list in ui_customKeyBindList
+	qboolean			bindListIsFromFile;
+	// in case scripted bind list fails to load, only for hard-coded keyBindList
+	keyBindSubitem_t	*bindListBackup;
 
 	const char			*enter_statusbar;
 	qboolean			grabBind;
@@ -354,6 +421,49 @@ typedef struct
 
 typedef struct
 {
+	menuCommon_s	generic;
+
+	int				width;
+	int				height;
+	int				lineSize;
+	float			time_scale;
+	int				start_time;
+	unsigned int	start_line;
+	qboolean		initialized;
+
+	char			*fileName;
+	char			*fileBuffer;
+	const char		**scrollText;
+} menuTextScroll_s;
+
+#define MODELVIEW_MAX_MODELS 2
+typedef struct
+{
+	menuCommon_s	generic;
+
+	int				width;
+	int				height;
+	int				fov;
+	qboolean		isMirrored;
+
+	char			*modelName[MODELVIEW_MAX_MODELS];
+	char			*skinName[MODELVIEW_MAX_MODELS];
+	vec3_t			modelOrigin[MODELVIEW_MAX_MODELS];
+	vec3_t			modelBaseAngles[MODELVIEW_MAX_MODELS];
+	vec3_t			modelRotation[MODELVIEW_MAX_MODELS];
+	int				modelFrame[MODELVIEW_MAX_MODELS];
+	int				modelFrameNumbers[MODELVIEW_MAX_MODELS];
+//	float			modelFrameTime[MODELVIEW_MAX_MODELS];
+	int				entFlags[MODELVIEW_MAX_MODELS];
+
+	int				num_entities;
+	qboolean		modelValid[MODELVIEW_MAX_MODELS];
+	struct model_s	*model[MODELVIEW_MAX_MODELS];
+	struct image_s	*skin[MODELVIEW_MAX_MODELS];
+} menuModelView_s;
+
+typedef struct
+{
 	float	min[2];
 	float max[2];
 	int index;
@@ -372,11 +482,17 @@ typedef struct
 //cursor - psychospaz
 #define MENU_CURSOR_BUTTON_MAX 2
 
-#define MENUITEM_ACTION		1
-#define MENUITEM_ROTATE		2
-#define MENUITEM_SLIDER		3
-#define MENUITEM_TEXT		4
-#define MENUITEM_KEYBIND	5
+#define MENUITEM_NONE			0
+#define MENUITEM_ACTION			1
+#define MENUITEM_SLIDER			2
+#define MENUITEM_PICKER			3
+#define MENUITEM_TEXT			4
+#define MENUITEM_BUTTON			5
+#define MENUITEM_CHECKBOX		6
+#define MENUITEM_LISTBOX		7
+#define MENUITEM_COMBOBOX		8
+#define MENUITEM_LISTVIEW		9
+#define MENUITEM_KEYBINDLIST	10
 
 typedef struct
 {
@@ -425,6 +541,19 @@ extern char **ui_crosshair_names;
 extern char **ui_crosshair_display_names;
 extern char **ui_crosshair_values;
 extern int	ui_numcrosshairs;
+
+//=======================================================
+
+#define UI_CUSTOM_KEYBIND_FILE	"scripts/ui/keybinds.def"
+
+typedef struct {
+	char				fileName[MAX_QPATH];
+	int					maxKeyBinds;
+	int					numKeyBinds;
+	keyBindSubitem_t	*bindList;
+} keyBindListHandle_t;
+
+extern keyBindListHandle_t ui_customKeyBindList;
 
 //=======================================================
 
@@ -498,11 +627,11 @@ extern int ui_numplayermodels;
 extern struct model_s *ui_playermodel;
 extern struct model_s *ui_weaponmodel;
 extern struct image_s *ui_playerskin;
-/*
+
 extern char	ui_playerconfig_playermodelname[MAX_QPATH];
 extern char	ui_playerconfig_playerskinname[MAX_QPATH];
 extern char	ui_playerconfig_weaponmodelname[MAX_QPATH];
-
+/*
 extern color_t ui_player_color_imageColors[];
 extern char **ui_player_color_values;
 extern char **ui_player_color_imageNames;
@@ -539,6 +668,9 @@ void UI_FreeFontNames (void);
 void UI_SortCrosshairs (char **list, int len);
 void UI_LoadCrosshairs (void);
 void UI_FreeCrosshairs (void);
+
+//void UI_LoadKeyBindList (void);
+//void UI_FreeKeyBindList (void);
 
 char *UI_UpdateSaveshot (int index);
 void UI_UpdateSavegameData (void);
@@ -586,11 +718,19 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 void	UI_MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
 void	UI_MenuSlider_SaveValue (menuSlider_s *s, const char *varName);
 float	UI_MenuSlider_GetValue (menuSlider_s *s);
-void	UI_MenuSpinner_SetValue (menuSpinner_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
-void	UI_MenuSpinner_SaveValue (menuSpinner_s *s, const char *varName);
-const char *UI_MenuSpinner_GetValue (menuSpinner_s *s);
+void	UI_MenuPicker_SetValue (menuPicker_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
+void	UI_MenuPicker_SaveValue (menuPicker_s *s, const char *varName);
+const char *UI_MenuPicker_GetValue (menuPicker_s *s);
 
+void UI_UpdateMenuItemCoords (void *item);
+qboolean UI_ItemCanBeCursorItem (void *item);
+qboolean UI_ItemIsValidCursorPosition (void *item);
+qboolean UI_ItemHasMouseBounds (void *item);
 void	UI_DrawMenuItem (void *item);
+void	UI_SetMenuItemDynamicSize (void *item);
+int		UI_GetItemMouseoverType (void *item);
+void	UI_InitMenuItem (void *item);
+char	*UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2);
 qboolean UI_SelectMenuItem (menuFramework_s *s);
 qboolean UI_MouseSelectItem (menuCommon_s *item);
 void	UI_SlideMenuItem (menuFramework_s *s, int dir);
@@ -630,11 +770,10 @@ void UI_AddMenuItem (menuFramework_s *menu, void *item);
 void UI_SetGrabBindItem (menuFramework_s *m, menuCommon_s *c);
 void UI_ClearGrabBindItem (menuFramework_s *m);
 qboolean UI_HasValidGrabBindItem (menuFramework_s *m);
-void UI_AdjustMenuCursor (menuFramework_s *menu, int dir);
-void UI_CenterMenu (menuFramework_s *menu);
 void UI_DrawMenu (menuFramework_s *menu);
-
+void UI_AdjustMenuCursor (menuFramework_s *menu, int dir);
 const char *UI_DefaultMenuKey (menuFramework_s *m, int key);
+const char *UI_QuitMenuKey (menuFramework_s *menu, int key);
 
 //
 // ui_main.c
@@ -660,16 +799,18 @@ void UI_RefreshData (void);
 #define UI_DrawOffsetPicST								SCR_DrawOffsetPicST
 #define UI_DrawTiledPic									SCR_DrawTiledPic
 #define UI_DrawChar(x, y, s, t, n, r, g, b, a, i, l)	SCR_DrawChar(x, y, s, t, n, FONT_UI, r, g, b, a, i, l)
+#define UI_DrawString									SCR_DrawString
 
 void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *string, int alpha, qboolean R2L, qboolean altColor);
+#if 0
 void UI_DrawString (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
 void UI_DrawStringDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
 void UI_DrawStringR2L (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
 void UI_DrawStringR2LDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
+#endif
 void UI_DrawMenuStatusBar (const char *string);
 void UI_DrawMenuTextBox (int x, int y, int width, int lines);
 void UI_DrawPopupMessage (char *message);
-void UI_DrawBanner (char *name);
 void UI_Draw_Cursor (void);
 
 //
@@ -705,9 +846,12 @@ void UI_Draw_Cursor (void);
 #define UI_ITEMVALUE_WILDCARD		"???"
 #define	UI_CUSTOMCOLOR_PIC			"/gfx/ui/custom_color.pcx"
 #define	UI_SOLIDWHITE_PIC			"/gfx/ui/solidwhite.pcx"
+#define	UI_RAILCORE_PIC				"/gfx/ui/misc/rail_core.pcx"
+#define	UI_RAILSPIRAL_PIC			"/gfx/ui/misc/rail_spiral.pcx"
 
 extern	cvar_t	*ui_sensitivity;
 extern	cvar_t	*ui_background_alpha;
+extern	cvar_t	*ui_debug_itembounds;
 extern	cvar_t	*ui_item_rotate;
 extern	cvar_t	*ui_cursor_scale;
 extern	cvar_t	*ui_new_textbox;

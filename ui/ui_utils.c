@@ -1195,6 +1195,317 @@ void UI_FreeCrosshairs (void)
 }
 
 /*
+=======================================================================
+
+	KEY BIND LIST LOADING
+
+=======================================================================
+*/
+
+// TODO: Enable this when keyBindList control is working
+#if 0
+keyBindListHandle_t ui_customKeyBindList;
+
+/*
+==========================
+UI_CountKeyBinds
+==========================
+*/
+void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script)
+{
+	char		*p, *tok;
+	qboolean	validBindItem;
+
+	if ( !handle || !script )
+		return;
+
+	p = *script;
+	while (1)
+	{
+		tok = COM_ParseExt (&p, true);
+		if (!tok[0]) {
+			Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: no concluding '}' in 'keyBindList' in keybind list %s\n", handle->fileName);
+			return;
+		}
+		if ( !Q_stricmp(tok, "}") )
+			break;
+		else if ( !Q_strcasecmp(tok, "keyBind") )
+		{
+			validBindItem = true;
+			
+			tok = COM_ParseExt (&p, true);
+			if (!tok[0]) {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: missing parameters for 'keyBind' in keybind list %s\n", handle->fileName);
+				validBindItem = false;
+			}
+
+			if ( !Q_stricmp(tok, "{") )
+			{
+				while (1)
+				{
+					tok = COM_ParseExt (&p, true);
+					if (!tok[0]) {
+						Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: no concluding '}' in 'keyBind' in keybind list %s\n", handle->fileName);
+						validBindItem = false;
+					}
+					if ( !Q_stricmp(tok, "}") )
+						break;
+				}
+			}
+			else {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: expected '{', found '%s' instead in 'keyBind' in keybind list %s\n", tok, handle->fileName);
+				validBindItem = false;
+			}
+
+			if (validBindItem) {
+				handle->maxKeyBinds++;
+			}
+		}
+		else {
+			Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: unknown command '%s' after item %i while looking for 'keyBind' in keybind list %s\n", tok, handle->maxKeyBinds, handle->fileName);
+			return;
+		}
+	}
+//	Com_Printf ("UI_CountKeyBinds: counted %i 'keyBind' items in keybind list %s\n", handle->maxKeyBinds, handle->fileName);
+}
+
+
+/*
+==========================
+UI_ParseKeyBind
+==========================
+*/
+qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
+{
+	char		command[MAX_OSPATH] = {0};
+	char		display[MAX_OSPATH] = {0};
+	char		*tok;
+	qboolean	gotCommand = false, gotDisplay = false;
+
+	if ( !handle || !script )
+		return false;
+
+	if (handle->numKeyBinds == handle->maxKeyBinds) {
+		Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: exceeded maxKeyBinds (%i > %i) in hud script %s\n", handle->numKeyBinds, handle->maxKeyBinds, handle->fileName);
+		return false;
+	}
+
+	tok = COM_ParseExt (script, true);
+	if (!tok[0]) {
+		Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: missing parameters for 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
+		return false;
+	}
+
+	if ( !Q_stricmp(tok, "{") )
+	{
+		while (1)
+		{
+			tok = COM_ParseExt (script, true);
+			if (!tok[0]) {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: no concluding '}' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
+				return false;
+			}
+			if ( !Q_stricmp(tok, "}") )
+				break;
+			if ( !Q_strcasecmp(tok, "commandName") )
+			{
+				tok = COM_ParseExt (script, true);
+				if (!tok[0]) {
+					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: missing parameter for 'commandName' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
+					return false;
+				}
+				Q_strncpyz(command, sizeof(command), tok);
+				gotCommand = true;
+			}
+			else if ( !Q_strcasecmp(tok, "displayName") )
+			{
+				tok = COM_ParseExt (script, true);
+				if (!tok[0]) {
+					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: missing parameter for 'displayName' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
+					return false;
+				}
+				Q_strncpyz(display, sizeof(display), tok);
+				gotDisplay = true;
+			}
+			else {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: unknown function '%s' for 'keyBind' item %i in keybind list %s\n", tok, handle->numKeyBinds+1, handle->fileName);
+				return false;
+			}
+		}
+	}
+	else {
+		Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: expected '{', found '%s' instead in 'keyBind' item %i in keybind list %s\n", tok, handle->numKeyBinds+1, handle->fileName);
+		return false;
+	}
+
+	if ( gotCommand && gotDisplay ) {
+		handle->bindList[handle->numKeyBinds].commandName = strdup(command);
+		handle->bindList[handle->numKeyBinds].displayName = strdup(display);
+		handle->numKeyBinds++;
+	}
+	else {
+		Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: 'keyBind' item %i is missing 'commandName' or 'displayName' in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
+		return false;
+	}
+
+	return true;
+}
+
+
+/*
+==========================
+UI_ParseKeyBindList
+==========================
+*/
+qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
+{
+	char		*p, *tok;
+	qboolean	foundKeyBindList = false;
+
+	if ( !handle || !buffer )
+		return false;
+
+	p = buffer;
+	while (1)
+	{
+		tok = COM_ParseExt (&p, true);
+		if (!tok[0])
+			break;
+
+		if ( !Q_strcasecmp(tok, "keyBindList") )
+		{
+			// only one keyBindList per file!
+			if (foundKeyBindList) {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: found extra 'keyBindList' in keybind list %s\n", tok, handle->fileName);
+				return false;
+			}
+			foundKeyBindList = true;
+
+			tok = COM_ParseExt (&p, true);
+			if ( Q_stricmp(tok, "{") ) {
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: expected '{', found %s instead in keybind list %s\n", tok, handle->fileName);
+				return false;
+			}
+
+			// count num of keybinds and alloc memory accordingly
+			UI_CountKeyBinds (handle, &p);
+		//	Com_Printf ("UI_ParseKeyBindList: allocating memory for %i 'keyBind' items in keybind list %s\n", handle->maxKeyBinds, handle->fileName);
+			handle->bindList = malloc(sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
+			memset (handle->bindList, 0, sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
+
+			while (1)
+			{
+				tok = COM_ParseExt (&p, true);
+				if (!tok[0]) {
+					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: no concluding '}' in 'keyBindList' in keybind list %s\n", handle->fileName);
+					return false;
+				}
+				if ( !Q_stricmp(tok, "}") )
+					break;
+				else if ( !Q_strcasecmp(tok, "keyBind") ) {
+					if ( !UI_ParseKeyBind(handle, &p) )
+						return false;
+				}
+				else {
+					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: unknown command '%s' after item %i while looking for 'keyBind' in keybind list %s\n", tok, handle->numKeyBinds, handle->fileName);
+					return false;
+				}
+			}
+		}
+		// ignore any crap after the keyBindList
+		else if ( !foundKeyBindList ) {
+			Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: unknown command '%s' while looking for 'keyBindList' in keybind list %s\n", tok, handle->fileName);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+/*
+==========================
+UI_LoadKeyBindListFromFile
+==========================
+*/
+void UI_LoadKeyBindListFromFile (keyBindListHandle_t *handle)
+{
+	int		i;
+	char	*buffer;
+
+	if ( !handle || !handle->fileName || (strlen(handle->fileName) < 1) )
+		return;
+
+	FS_LoadFile (handle->fileName, (void **)&buffer);
+	if (!buffer) {
+		// failed to load, keep bindlist if already loaded
+		Com_Printf ("UI_LoadKeyBindListFromFile: couldn't load %s\n", handle->fileName);
+		return;
+	}
+
+	// Parse it
+	if ( UI_ParseKeyBindList(handle, buffer) ) {
+		Com_Printf ("UI_LoadKeyBindListFromFile: loaded keyBindList %s with %i keyBinds\n", handle->fileName, handle->numKeyBinds);
+	}
+	else {	// handle parse failure
+		if (handle->bindList)
+		{
+			for (i=0; i<handle->maxKeyBinds; i++) {
+				if (handle->bindList[i].commandName)
+					free ((char *)handle->bindList[i].commandName);
+				if (handle->bindList[i].displayName)
+					free ((char *)handle->bindList[i].displayName);
+			}
+			free (handle->bindList);
+			handle->bindList = NULL;
+			handle->maxKeyBinds = 0;
+			handle->numKeyBinds = 0;
+		}
+	}
+
+	FS_FreeFile (buffer);
+}
+
+
+/*
+==========================
+UI_LoadKeyBindList
+==========================
+*/
+void UI_LoadKeyBindList (void)
+{
+	memset (&ui_customKeyBindList, 0, sizeof(ui_customKeyBindList));
+	Com_sprintf (ui_customKeyBindList.fileName, sizeof(ui_customKeyBindList.fileName), UI_CUSTOM_KEYBIND_FILE);
+	UI_LoadKeyBindListFromFile (&ui_customKeyBindList);
+}
+
+
+/*
+==========================
+UI_FreeKeyBindList
+==========================
+*/
+void UI_FreeKeyBindList (void)
+{
+	int		i;
+
+	if (ui_customKeyBindList.bindList)
+	{
+		for (i=0; i<ui_customKeyBindList.maxKeyBinds; i++) {
+			if (ui_customKeyBindList.bindList[i].commandName)
+				free ((char *)ui_customKeyBindList.bindList[i].commandName);
+			if (ui_customKeyBindList.bindList[i].displayName)
+				free ((char *)ui_customKeyBindList.bindList[i].displayName);
+		}
+		free (ui_customKeyBindList.bindList);
+		ui_customKeyBindList.bindList = NULL;
+		ui_customKeyBindList.maxKeyBinds = 0;
+		ui_customKeyBindList.numKeyBinds = 0;
+	}
+}
+#endif
+
+/*
 =============================================================================
 
 SAVEGAME / SAVESHOT HANDLING
@@ -1329,7 +1640,8 @@ UI_UpdateSaveshot
 char *UI_UpdateSaveshot (int index)
 {
 	// check index
-	if (index < 0 || index >= UI_MAX_SAVEGAMES)
+//	if (index < 0 || index >= UI_MAX_SAVEGAMES)
+	if (index < 0 || index > UI_MAX_SAVEGAMES)
 		return NULL;
 
 	if ( ui_savevalid[index] && ui_saveshotvalid[index] ) {
@@ -2317,11 +2629,11 @@ struct model_s *ui_playermodel;
 struct model_s *ui_weaponmodel;
 struct image_s *ui_playerskin;
 char *ui_currentweaponmodel;
-/*
+
 char	ui_playerconfig_playermodelname[MAX_QPATH];
 char	ui_playerconfig_playerskinname[MAX_QPATH];
 char	ui_playerconfig_weaponmodelname[MAX_QPATH];
-
+/*
 color_t ui_player_color_imageColors[] =
 {
 #include "ui_playercolors.h"
@@ -2773,11 +3085,11 @@ void UI_UpdatePlayerModelInfo (int mNum, int sNum)
 
 	Com_sprintf (scratch, sizeof(scratch), "players/%s/tris.md2", ui_pmi[mNum].directory);
 	ui_playermodel = R_RegisterModel (scratch);
-//	Q_strncpyz (ui_playerconfig_playermodelname, sizeof(ui_playerconfig_playermodelname), scratch);
+	Q_strncpyz (ui_playerconfig_playermodelname, sizeof(ui_playerconfig_playermodelname), scratch);
 
 	Com_sprintf (scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
 	ui_playerskin = R_RegisterSkin (scratch);
-//	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
+	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
 
 	// show current weapon model (if any)
 	if (ui_currentweaponmodel && strlen(ui_currentweaponmodel))
@@ -2793,7 +3105,7 @@ void UI_UpdatePlayerModelInfo (int mNum, int sNum)
 		Com_sprintf (scratch, sizeof(scratch), "players/%s/weapon.md2", ui_pmi[mNum].directory);
 		ui_weaponmodel = R_RegisterModel (scratch);
 	}
-//	Q_strncpyz (ui_playerconfig_weaponmodelname, sizeof(ui_playerconfig_weaponmodelname), scratch);
+	Q_strncpyz (ui_playerconfig_weaponmodelname, sizeof(ui_playerconfig_weaponmodelname), scratch);
 }
 
 
@@ -2808,7 +3120,7 @@ void UI_UpdatePlayerSkinInfo (int mNum, int sNum)
 
 	Com_sprintf(scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
 	ui_playerskin = R_RegisterSkin(scratch);
-//	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
+	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
 }
 
 

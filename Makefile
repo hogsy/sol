@@ -214,9 +214,10 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/snd_stream.o \
 	$(BUILDDIR)/client/m_flash.o \
 	\
+	$(BUILDDIR)/client/menu_credits.o \
 	$(BUILDDIR)/client/menu_game.o \
-	$(BUILDDIR)/client/menu_game_credits.o \
-	$(BUILDDIR)/client/menu_game_saveload.o \
+	$(BUILDDIR)/client/menu_game_load.o \
+	$(BUILDDIR)/client/menu_game_save.o \
 	$(BUILDDIR)/client/menu_main.o \
 	$(BUILDDIR)/client/menu_mp_addressbook.o \
 	$(BUILDDIR)/client/menu_mp_dmoptions.o \
@@ -399,13 +400,16 @@ $(BUILDDIR)/client/snd_stream.o :    	$(CLIENT_DIR)/snd_stream.c
 $(BUILDDIR)/client/m_flash.o :    	$(GAME_DIR)/m_flash.c
 	$(DO_CC)
 	
+$(BUILDDIR)/client/menu_credits.o :    	$(UI_DIR)/menu_credits.c
+	$(DO_CC)
+	
 $(BUILDDIR)/client/menu_game.o :    	$(UI_DIR)/menu_game.c
 	$(DO_CC)
 	
-$(BUILDDIR)/client/menu_game_credits.o :    	$(UI_DIR)/menu_game_credits.c
+$(BUILDDIR)/client/menu_game_load.o :    	$(UI_DIR)/menu_game_load.c
 	$(DO_CC)
 	
-$(BUILDDIR)/client/menu_game_saveload.o :    	$(UI_DIR)/menu_game_saveload.c
+$(BUILDDIR)/client/menu_game_save.o :    	$(UI_DIR)/menu_game_save.c
 	$(DO_CC)
 	
 $(BUILDDIR)/client/menu_main.o :    	$(UI_DIR)/menu_main.c

@@ -22,12 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_game_credits.c -- the credits scroll
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
+
+#define USE_TEXTSCROLL_WIDGET
 
 /*
 =============================================================================
@@ -38,16 +36,22 @@ CREDITS MENU
 */
 
 static menuFramework_s	s_credits_menu;
+#ifdef USE_TEXTSCROLL_WIDGET
+static menuTextScroll_s	s_credits_textscroll;
+#endif
 static menuAction_s		s_credits_back_action;
 
 //=======================================================================
 
+#ifndef USE_TEXTSCROLL_WIDGET
 static int credits_start_time;
 // Knigthtmare added- allow credits to scroll past top of screen
 static int credits_start_line;
 static const char **credits;
 static char *creditsIndex[256];
 //static char *creditsBuffer;
+#endif	// USE_TEXTSCROLL_WIDGET
+
 
 static const char *ui_idcredits[] =
 {
@@ -64,10 +68,14 @@ static const char *ui_roguecredits[] =
 #include "menu_credits_rogue.h"
 };
 
+//=======================================================================
 
-int stringLengthExtra (const char *string);
 void Menu_Credits_Draw (void)
 {
+#ifdef USE_TEXTSCROLL_WIDGET
+	UI_AdjustMenuCursor (&s_credits_menu, 1);
+	UI_DrawMenu (&s_credits_menu);
+#else
 	float		alpha, time = (cls.realtime - credits_start_time) * 0.05;
 	int			i, y, x, len, stringoffset;
 	qboolean	bold;
@@ -138,13 +146,60 @@ void Menu_Credits_Draw (void)
 
 		x = ( SCREEN_WIDTH - len * MENU_FONT_SIZE - stringoffset * MENU_FONT_SIZE ) / 2
 			+ stringoffset * MENU_FONT_SIZE;
-		UI_DrawString (x, y, MENU_FONT_SIZE, ALIGN_CENTER, credits[i], FONT_UI, alpha*255);
+		UI_DrawMenuString (x, y, MENU_FONT_SIZE, ALIGN_CENTER, credits[i], alpha*255, false, false);
 	}
+#endif	// USE_TEXTSCROLL_WIDGET
 }
 
+//=======================================================================
+
+void Menu_Credits_Init (void)
+{
+	s_credits_menu.x				= 0;
+	s_credits_menu.y				= 0;
+	s_credits_menu.nitems			= 0;
+	s_credits_menu.hide_statusbar	= true;
+//	s_credits_menu.isPopup			= false;
+//	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
+//	s_credits_menu.canOpenFunc		= NULL;
+
+#ifdef USE_TEXTSCROLL_WIDGET
+	s_credits_textscroll.generic.type			= MTYPE_TEXTSCROLL;
+	s_credits_textscroll.generic.x				= 0;
+	s_credits_textscroll.generic.y				= 0;
+	s_credits_textscroll.generic.textSize		= 10;
+	s_credits_textscroll.width					= SCREEN_WIDTH;
+	s_credits_textscroll.height					= SCREEN_HEIGHT;
+	s_credits_textscroll.lineSize				= 12;
+	s_credits_textscroll.time_scale				= 0.025f;
+	s_credits_textscroll.fileName				= "credits";
+	if ( FS_ModType("xatrix") )			// Xatrix
+		s_credits_textscroll.scrollText			= ui_xatrixcredits;
+	else if ( FS_ModType("rogue") )		// Rogue
+		s_credits_textscroll.scrollText			= ui_roguecredits;
+	else
+		s_credits_textscroll.scrollText			= ui_idcredits;	
+	s_credits_textscroll.generic.isHidden		= false;
+#endif	// USE_TEXTSCROLL_WIDGET
+
+	s_credits_back_action.generic.type			= MTYPE_ACTION;
+	s_credits_back_action.generic.flags			= QMF_LEFT_JUSTIFY;
+	s_credits_back_action.generic.x				= MENU_FONT_SIZE*6;
+	s_credits_back_action.generic.y				= 460;
+	s_credits_back_action.generic.name			= "Back";
+	s_credits_back_action.generic.callback		= UI_BackMenu;
+
+#ifdef USE_TEXTSCROLL_WIDGET
+	UI_AddMenuItem (&s_credits_menu, (void *) &s_credits_textscroll);
+#endif
+	UI_AddMenuItem (&s_credits_menu, (void *) &s_credits_back_action);
+}
 
 const char *Menu_Credits_Key (int key)
 {
+#ifdef USE_TEXTSCROLL_WIDGET
+	return UI_DefaultMenuKey (&s_credits_menu, key);
+#else
 	char *sound = NULL;
 
 	switch (key)
@@ -161,32 +216,12 @@ const char *Menu_Credits_Key (int key)
 	}
 
 	return sound;
-}
-
-//=======================================================================
-
-void Menu_Credits_Init (void)
-{
-	s_credits_menu.x				= 0;
-	s_credits_menu.y				= 0;
-	s_credits_menu.nitems			= 0;
-//	s_credits_menu.hide_statusbar	= true;
-//	s_credits_menu.isPopup			= false;
-//	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_credits_menu.canOpenFunc		= NULL;
-
-	s_credits_back_action.generic.type			= MTYPE_ACTION;
-	s_credits_back_action.generic.flags			= QMF_LEFT_JUSTIFY;
-	s_credits_back_action.generic.x				= MENU_FONT_SIZE*6;
-	s_credits_back_action.generic.y				= 460;
-	s_credits_back_action.generic.name			= "Back";
-	s_credits_back_action.generic.callback		= UI_BackMenu;
-
-	UI_AddMenuItem (&s_credits_menu, (void *) &s_credits_back_action);
+#endif
 }
 
 void Menu_Credits_f (void)
 {
+#ifndef USE_TEXTSCROLL_WIDGET
 	int		n;
 	int		count;
 	char	*p;
@@ -230,6 +265,7 @@ void Menu_Credits_f (void)
 
 	credits_start_time = cls.realtime;
 	credits_start_line = 0; // allow credits to scroll past top of screen
+#endif	// USE_TEXTSCROLL_WIDGET
 
 	Menu_Credits_Init ();
 	UI_PushMenu (&s_credits_menu, Menu_Credits_Draw, Menu_Credits_Key);

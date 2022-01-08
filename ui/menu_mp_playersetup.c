@@ -22,13 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // menu_mp_playersetup.c -- the player setup menu 
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_MODELVIEW_WIDGET
 
 /*
 =============================================================================
@@ -40,11 +37,14 @@ PLAYER CONFIG MENU
 extern menuFramework_s	s_multiplayer_menu;
 
 static menuFramework_s	s_player_config_menu;
+static menuImage_s		s_playerconfig_banner;
 static menuField_s		s_playerconfig_name_field;
-static menuSpinner_s	s_playerconfig_model_box;
-static menuSpinner_s	s_playerconfig_skin_box;
-static menuSpinner_s	s_playerconfig_handedness_box;
-static menuSpinner_s	s_playerconfig_rate_box;
+static menuPicker_s		s_playerconfig_model_box;
+static menuPicker_s		s_playerconfig_skin_box;
+static menuPicker_s		s_playerconfig_handedness_box;
+static menuPicker_s		s_playerconfig_rate_box;
+static menuRectangle_s	s_playerconfig_railcolor_background;
+static menuImage_s		s_playerconfig_railcolor_display[2];
 static menuSlider_s		s_playerconfig_railcolor_slider[3];
 static menuLabel_s		s_playerconfig_skin_title;
 static menuLabel_s		s_playerconfig_model_title;
@@ -52,6 +52,9 @@ static menuLabel_s		s_playerconfig_hand_title;
 static menuLabel_s		s_playerconfig_rate_title;
 static menuLabel_s		s_playerconfig_railcolor_title;
 static menuAction_s		s_playerconfig_back_action;
+#ifdef USE_MODELVIEW_WIDGET
+static menuModelView_s	s_playerconfig_model_display;
+#endif	// USE_MODELVIEW_WIDGET
 
 //=======================================================================
 
@@ -59,13 +62,26 @@ static menuAction_s		s_playerconfig_back_action;
 
 static void Menu_PlayerHandednessCallback (void *unused)
 {
-	UI_MenuSpinner_SaveValue (&s_playerconfig_handedness_box, "hand");
+#ifdef USE_MODELVIEW_WIDGET
+	int			i;
+	qboolean	lefthand;
+#endif	// USE_MODELVIEW_WIDGET
+
+	UI_MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
+
+#ifdef USE_MODELVIEW_WIDGET
+	// update player model display
+	lefthand = (Cvar_VariableValue("hand") == 1);
+	s_playerconfig_model_display.isMirrored = lefthand;
+	for (i=0; i<2; i++)
+		VectorSet (s_playerconfig_model_display.modelRotation[i], 0, (lefthand ? -0.1 : 0.1), 0);
+#endif	// USE_MODELVIEW_WIDGET
 }
 
 
 static void Menu_PlayerRateCallback (void *unused)
 {
-	UI_MenuSpinner_SaveValue (&s_playerconfig_rate_box, "rate");
+	UI_MenuPicker_SaveValue (&s_playerconfig_rate_box, "rate");
 }
 
 
@@ -77,6 +93,9 @@ static void Menu_LoadPlayerRailColor (void)
 		Cvar_SetInteger ("ui_player_railred", railColor[0]);
 		Cvar_SetInteger ("ui_player_railgreen", railColor[1]);
 		Cvar_SetInteger ("ui_player_railblue", railColor[2]);
+		s_playerconfig_railcolor_display[1].imageColor[0] = min(max(railColor[0], 0), 255);
+		s_playerconfig_railcolor_display[1].imageColor[1] = min(max(railColor[1], 0), 255);
+		s_playerconfig_railcolor_display[1].imageColor[2] = min(max(railColor[2], 0), 255);
 	}
 	UI_MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
 	UI_MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
@@ -90,6 +109,9 @@ static void Menu_SavePlayerRailColor (void)
 			min(max(Cvar_VariableInteger("ui_player_railred"), 0), 255),
 			min(max(Cvar_VariableInteger("ui_player_railgreen"), 0), 255),
 			min(max(Cvar_VariableInteger("ui_player_railblue"), 0), 255)) );
+	s_playerconfig_railcolor_display[1].imageColor[0] = min(max(Cvar_VariableInteger("ui_player_railred"), 0), 255);
+	s_playerconfig_railcolor_display[1].imageColor[1] = min(max(Cvar_VariableInteger("ui_player_railgreen"), 0), 255);
+	s_playerconfig_railcolor_display[1].imageColor[2] = min(max(Cvar_VariableInteger("ui_player_railblue"), 0), 255);
 }
 
 
@@ -133,6 +155,7 @@ static void Menu_PlayerSkinCallback (void *unused)
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
+
 	UI_UpdatePlayerSkinInfo (mNum, sNum);
 }
 
@@ -140,8 +163,11 @@ static void Menu_PlayerSkinCallback (void *unused)
 
 qboolean Menu_PlayerConfig_Init (void)
 {
-	int		y;
-	int		mNum = 0, sNum = 0;
+	int		x, y, mNum = 0, sNum = 0;
+#ifdef USE_MODELVIEW_WIDGET
+	int		i;
+	qboolean	lefthand = (Cvar_VariableValue("hand") == 1);
+#endif
 
 	static const char *handedness_names[] = { "right", "left", "center", 0 };
 
@@ -174,18 +200,37 @@ qboolean Menu_PlayerConfig_Init (void)
 	// get model and skin index and precache them
 	UI_InitPlayerModelInfo (&mNum, &sNum);
 
-	y = 0;
+	// menu.x = 46, menu.y = 170
+	x = 110;					// SCREEN_WIDTH*0.5 - 210
+	y = 17*MENU_LINE_SIZE;		// SCREEN_HEIGHT*0.5 - 70
 
-	s_player_config_menu.x = SCREEN_WIDTH*0.5 - 210;
-	s_player_config_menu.y = SCREEN_HEIGHT*0.5 - 70;
-	s_player_config_menu.nitems = 0;
+	s_player_config_menu.x					= 0;	// SCREEN_WIDTH*0.5 - 210;
+	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
+	s_player_config_menu.nitems				= 0;
+//	s_player_config_menu.isPopup			= false;
+//	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
+//	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
+//	s_player_config_menu.cantOpenMessage	= "No valid player models found";
+//	s_player_config_menu.onExitFunc			= Menu_PConfigSaveChanges;
 	
+	s_playerconfig_banner.generic.type		= MTYPE_IMAGE;
+	s_playerconfig_banner.generic.x			= 0;
+	s_playerconfig_banner.generic.y			= 9*MENU_LINE_SIZE;
+	s_playerconfig_banner.width				= 275;
+	s_playerconfig_banner.height			= 32;
+	s_playerconfig_banner.imageName			= "/pics/m_banner_plauer_setup.pcx";
+	s_playerconfig_banner.alpha				= 255;
+	s_playerconfig_banner.border			= 0;
+	s_playerconfig_banner.hCentered			= true;
+	s_playerconfig_banner.vCentered			= false;
+	s_playerconfig_banner.generic.isHidden	= false;
+
 	s_playerconfig_name_field.generic.type		= MTYPE_FIELD;
 	s_playerconfig_name_field.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_name_field.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_name_field.generic.name		= "name";
 	s_playerconfig_name_field.generic.callback	= 0;
-	s_playerconfig_name_field.generic.x			= -MENU_FONT_SIZE;
+	s_playerconfig_name_field.generic.x			= x + -MENU_FONT_SIZE;
 	s_playerconfig_name_field.generic.y			= y;
 	s_playerconfig_name_field.length			= 20;
 	s_playerconfig_name_field.visible_length	= 20;
@@ -196,12 +241,12 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_model_title.generic.name		= "model";
-	s_playerconfig_model_title.generic.x		= -2*MENU_FONT_SIZE;
+	s_playerconfig_model_title.generic.x		= x + -2*MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.y		= y += 3*MENU_LINE_SIZE;
 	
-	s_playerconfig_model_box.generic.type			= MTYPE_SPINNER;
+	s_playerconfig_model_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_model_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_model_box.generic.x				= -8*MENU_FONT_SIZE;
+	s_playerconfig_model_box.generic.x				= x + -8*MENU_FONT_SIZE;
 	s_playerconfig_model_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_model_box.generic.callback		= Menu_PlayerModelCallback;
 	s_playerconfig_model_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
@@ -212,12 +257,12 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_skin_title.generic.name		= "skin";
-	s_playerconfig_skin_title.generic.x			= -3*MENU_FONT_SIZE;
+	s_playerconfig_skin_title.generic.x			= x + -3*MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
-	s_playerconfig_skin_box.generic.type			= MTYPE_SPINNER;
+	s_playerconfig_skin_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_skin_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_skin_box.generic.x				= -8*MENU_FONT_SIZE;
+	s_playerconfig_skin_box.generic.x				= x + -8*MENU_FONT_SIZE;
 	s_playerconfig_skin_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_skin_box.generic.name			= 0;
 	s_playerconfig_skin_box.generic.callback		= Menu_PlayerSkinCallback; // Knightmare added, was 0
@@ -230,48 +275,95 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_hand_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_hand_title.generic.name		= "handedness";
-	s_playerconfig_hand_title.generic.x			= 3*MENU_FONT_SIZE;
+	s_playerconfig_hand_title.generic.x			= x + 3*MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
-	s_playerconfig_handedness_box.generic.type			= MTYPE_SPINNER;
+	s_playerconfig_handedness_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_handedness_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_handedness_box.generic.x				= -8*MENU_FONT_SIZE;
+	s_playerconfig_handedness_box.generic.x				= x + -8*MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_handedness_box.generic.name			= 0;
 	s_playerconfig_handedness_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.callback		= Menu_PlayerHandednessCallback;
 	s_playerconfig_handedness_box.itemNames				= handedness_names;
-	UI_MenuSpinner_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
+	UI_MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
 			
 	s_playerconfig_rate_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_rate_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_rate_title.generic.name		= "connect speed";
-	s_playerconfig_rate_title.generic.x			= 6*MENU_FONT_SIZE;
+	s_playerconfig_rate_title.generic.x			= x + 6*MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.y			= y += 2*MENU_LINE_SIZE;
 		
-	s_playerconfig_rate_box.generic.type			= MTYPE_SPINNER;
+	s_playerconfig_rate_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_rate_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_rate_box.generic.x				= -8*MENU_FONT_SIZE;
+	s_playerconfig_rate_box.generic.x				= x + -8*MENU_FONT_SIZE;
 	s_playerconfig_rate_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_rate_box.generic.name			= 0;
 	s_playerconfig_rate_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
 	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
 	s_playerconfig_rate_box.itemNames				= rate_names;
 	s_playerconfig_rate_box.itemValues				= rate_values;
-	UI_MenuSpinner_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
+	UI_MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
 
 	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_railcolor_title.generic.name		= "railgun effect color";
-	s_playerconfig_railcolor_title.generic.x		= 13*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_title.generic.x		= x + 13*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.y		= y += 2*MENU_LINE_SIZE;
+
+	s_playerconfig_railcolor_background.generic.type		= MTYPE_RECTANGLE;
+	s_playerconfig_railcolor_background.generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_background.generic.y			= y += 1.5*MENU_LINE_SIZE;
+	s_playerconfig_railcolor_background.width				= 160;
+	s_playerconfig_railcolor_background.height				= 40;
+	s_playerconfig_railcolor_background.color[0]			= 0;
+	s_playerconfig_railcolor_background.color[1]			= 0;
+	s_playerconfig_railcolor_background.color[2]			= 0;
+	s_playerconfig_railcolor_background.color[3]			= 255;
+	s_playerconfig_railcolor_background.border				= 2;
+	s_playerconfig_railcolor_background.borderColor[0]		= 60;
+	s_playerconfig_railcolor_background.borderColor[1]		= 60;
+	s_playerconfig_railcolor_background.borderColor[2]		= 60;
+	s_playerconfig_railcolor_background.borderColor[3]		= 255;
+	s_playerconfig_railcolor_background.hCentered			= false;
+	s_playerconfig_railcolor_background.vCentered			= false;
+	s_playerconfig_railcolor_background.generic.isHidden	= false;
+
+	s_playerconfig_railcolor_display[0].generic.type		= MTYPE_IMAGE;
+	s_playerconfig_railcolor_display[0].generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_display[0].generic.y			= y;
+	s_playerconfig_railcolor_display[0].width				= 160;
+	s_playerconfig_railcolor_display[0].height				= 40;
+	s_playerconfig_railcolor_display[0].imageName			= UI_RAILCORE_PIC;
+	s_playerconfig_railcolor_display[0].alpha				= 254;
+	s_playerconfig_railcolor_display[0].border				= 0;
+	s_playerconfig_railcolor_display[0].hCentered			= false;
+	s_playerconfig_railcolor_display[0].vCentered			= false;
+	s_playerconfig_railcolor_display[0].generic.isHidden	= false;
+
+	s_playerconfig_railcolor_display[1].generic.type		= MTYPE_IMAGE;
+	s_playerconfig_railcolor_display[1].generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_display[1].generic.y			= y;
+	s_playerconfig_railcolor_display[1].width				= 160;
+	s_playerconfig_railcolor_display[1].height				= 40;
+	s_playerconfig_railcolor_display[1].imageName			= UI_RAILSPIRAL_PIC;
+	s_playerconfig_railcolor_display[1].alpha				= 254;
+	s_playerconfig_railcolor_display[1].overrideColor		= true;
+	s_playerconfig_railcolor_display[1].imageColor[0]		= 255;
+	s_playerconfig_railcolor_display[1].imageColor[1]		= 255;
+	s_playerconfig_railcolor_display[1].imageColor[2]		= 255;
+	s_playerconfig_railcolor_display[1].imageColor[3]		= 254;
+	s_playerconfig_railcolor_display[1].border				= 0;
+	s_playerconfig_railcolor_display[1].hCentered			= false;
+	s_playerconfig_railcolor_display[1].vCentered			= false;
+	s_playerconfig_railcolor_display[1].generic.isHidden	= false;
 
 	s_playerconfig_railcolor_slider[0].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[0].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[0].generic.x			= 0*MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[0].generic.y			= y += MENU_LINE_SIZE;
+	s_playerconfig_railcolor_slider[0].generic.x			= x + 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[0].generic.y			= y += 4.5*MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[0].generic.name			= "red";
 	s_playerconfig_railcolor_slider[0].generic.callback		= Menu_PlayerRailColorRedFunc;
 	s_playerconfig_railcolor_slider[0].maxPos				= 64;
@@ -282,7 +374,7 @@ qboolean Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_railcolor_slider[1].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[1].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[1].generic.x			= 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[1].generic.x			= x + 0*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.name			= "green";
 	s_playerconfig_railcolor_slider[1].generic.callback		= Menu_PlayerRailColorGreenFunc;
@@ -294,7 +386,7 @@ qboolean Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_railcolor_slider[2].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[2].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[2].generic.x			= 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[2].generic.x			= x + 0*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.name			= "blue";
 	s_playerconfig_railcolor_slider[2].generic.callback		= Menu_PlayerRailColorBlueFunc;
@@ -308,11 +400,37 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_back_action.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_back_action.generic.name			= "Back to Multiplayer";
 	s_playerconfig_back_action.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_playerconfig_back_action.generic.x			= -5*MENU_FONT_SIZE;
+	s_playerconfig_back_action.generic.x			= x + -5*MENU_FONT_SIZE;
 	s_playerconfig_back_action.generic.y			= y += 3*MENU_LINE_SIZE;
 	s_playerconfig_back_action.generic.statusbar	= NULL;
 	s_playerconfig_back_action.generic.callback		= UI_BackMenu;
 
+#ifdef USE_MODELVIEW_WIDGET
+	s_playerconfig_model_display.generic.type	= MTYPE_MODELVIEW;
+	s_playerconfig_model_display.generic.x		= 0;
+	s_playerconfig_model_display.generic.y		= 0;
+	s_playerconfig_model_display.generic.name	= 0;
+	s_playerconfig_model_display.width			= SCREEN_WIDTH;
+	s_playerconfig_model_display.height			= SCREEN_HEIGHT;
+	s_playerconfig_model_display.fov			= 50;
+	s_playerconfig_model_display.isMirrored		= lefthand;
+	s_playerconfig_model_display.modelName[0]	= ui_playerconfig_playermodelname;
+	s_playerconfig_model_display.skinName[0]	= ui_playerconfig_playerskinname;
+	s_playerconfig_model_display.modelName[1]	= ui_playerconfig_weaponmodelname;
+	for (i=0; i<2; i++)
+	{
+		VectorSet (s_playerconfig_model_display.modelOrigin[i], 150, -25, 0);	// -8
+		VectorSet (s_playerconfig_model_display.modelBaseAngles[i], 0, 0, 0);
+		VectorSet (s_playerconfig_model_display.modelRotation[i], 0, (lefthand ? -0.1 : 0.1), 0);
+		s_playerconfig_model_display.modelFrame[i]			= 0;
+		s_playerconfig_model_display.modelFrameNumbers[i]	= 0;
+	//	s_playerconfig_model_display.modelFrameTime[i]		= 0.01;
+		s_playerconfig_model_display.entFlags[i]			= RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
+	}
+	s_playerconfig_model_display.generic.isHidden	= false;
+#endif	// USE_MODELVIEW_WIDGET
+
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_banner);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_name_field);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_box);
@@ -326,10 +444,16 @@ qboolean Menu_PlayerConfig_Init (void)
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_rate_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_rate_box);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_title);
-	UI_AddMenuItem (&s_player_config_menu, (void *) &s_playerconfig_railcolor_slider[0]);
-	UI_AddMenuItem (&s_player_config_menu, (void *) &s_playerconfig_railcolor_slider[1]);
-	UI_AddMenuItem (&s_player_config_menu, (void *) &s_playerconfig_railcolor_slider[2]);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_background);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_display[0]);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_display[1]);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[0]);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[1]);
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[2]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_back_action);
+#ifdef USE_MODELVIEW_WIDGET
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_display);
+#endif	// USE_MODELVIEW_WIDGET
 
 	// get color components from color1 cvar
 	Menu_LoadPlayerRailColor ();
@@ -525,12 +649,19 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 
 void Menu_PlayerConfig_Draw (void)
 {
+#ifndef USE_MODELVIEW_WIDGET
 	refdef_t	refdef;
 	float		rx, ry, rw, rh;
 	qboolean	lefthand = (Cvar_VariableInteger("hand") == 1);
+#endif	// USE_MODELVIEW_WIDGET
 
-	UI_DrawBanner ("m_banner_plauer_setup"); // typo for image name is id's fault
+#ifdef USE_MODELVIEW_WIDGET
+	UI_AdjustMenuCursor (&s_player_config_menu, 1);
+	UI_DrawMenu (&s_player_config_menu);
 
+	// skin selection preview
+	Menu_PlayerConfig_DrawSkinSelection ();
+#else
 	memset(&refdef, 0, sizeof(refdef));
 
 	rx = 0;							ry = 0;
@@ -621,6 +752,7 @@ void Menu_PlayerConfig_Draw (void)
 
 		R_RenderFrame (&refdef);
 	}
+#endif	// USE_MODELVIEW_WIDGET
 }
 
 

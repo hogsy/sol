@@ -22,13 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // ui_mouse.c -- mouse support code
 
-#include <string.h>
-#include <ctype.h>
-
 #include "../client/client.h"
 #include "ui_local.h"
 
 cursor_t ui_mousecursor;
+
+#define USE_WIDGET_CLICK_HANDLER
 
 /*
 =======================================================================
@@ -77,30 +76,7 @@ void UI_RefreshCursorLink (void)
 }
 
 
-/*
-=================
-UI_Slider_CursorPositionX
-=================
-*/
-int UI_Slider_CursorPositionX (menuSlider_s *s)
-{
-	float range;
-
-	if (!s)
-		return 0;
-
-	range = (float)s->curPos / (float)s->maxPos;
-
-	if (range < 0)
-		range = 0;
-	if (range > 1)
-		range = 1;
-
-//	return (int)(s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + MENU_FONT_SIZE + SLIDER_RANGE*MENU_FONT_SIZE*range);
-	return (int)(s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + SLIDER_ENDCAP_WIDTH + SLIDER_RANGE*SLIDER_SECTION_WIDTH*range);
-}
-
-
+#ifndef USE_WIDGET_CLICK_HANDLER
 /*
 =================
 UI_SliderValueForX
@@ -173,18 +149,22 @@ UI_ClickSlideItem
 */
 void UI_ClickSlideItem (menuFramework_s *menu, void *menuitem)
 {
-	int				min, max;
-	float			x, w;
 	menuSlider_s	*slider;
+	int				sliderPos, min, max;
+	float			x, w, range;
 	
 	if (!menu || !menuitem)
 		return;
 
 	slider = (menuSlider_s *)menuitem;
 
-//	x = menu->x + item->x + UI_Slider_CursorPositionX(slider) - 4;
+	range = min(max((float)slider->curPos / (float)slider->maxPos, 0), 1);
+//	sliderPos = (int)(slider->generic.x + slider->generic.parent->x + RCOLUMN_OFFSET + MENU_FONT_SIZE + (float)SLIDER_RANGE*(float)MENU_FONT_SIZE*range);
+	sliderPos = (int)(slider->generic.x + slider->generic.parent->x + RCOLUMN_OFFSET + SLIDER_ENDCAP_WIDTH + (float)SLIDER_RANGE*(float)SLIDER_SECTION_WIDTH*range);
+
+//	x = menu->x + item->x + sliderPos - 4;
 //	w = 8;
-	x = UI_Slider_CursorPositionX(slider) - (SLIDER_KNOB_WIDTH/2);
+	x = sliderPos - (SLIDER_KNOB_WIDTH/2);
 	w = SLIDER_KNOB_WIDTH;
 	SCR_ScaleCoords (&x, NULL, &w, NULL, ALIGN_CENTER);
 	min = x;	max = x + w;
@@ -228,6 +208,66 @@ qboolean UI_CheckSlider_Mouseover (menuFramework_s *menu, void *menuitem)
 	else
 		return false;
 }
+#endif	// USE_WIDGET_CLICK_HANDLER
+
+
+/*
+=================
+UI_Mouseover_CheckItem
+=================
+*/
+qboolean UI_Mouseover_CheckItem (menuFramework_s *menu, int i, menuCommon_s	*lastitem)
+{
+	int				itemType, min[2], max[2];
+	float			x1, y1, x2, y2;
+	menuCommon_s	*item;
+
+	item = ((menuCommon_s * )menu->items[i]);
+
+	if ( !UI_ItemHasMouseBounds(item) )
+		return false;
+	if ( item->isHidden )
+		return false;
+
+	x1 = item->topLeft[0];
+	y1 = item->topLeft[1];
+	x2 = item->botRight[0];
+	y2 = item->botRight[1];
+
+	// add length and height of current item
+	UI_SetMenuItemDynamicSize (menu->items[i]);
+	x2 += item->dynamicWidth;
+	y2 += item->dynamicHeight;
+
+	SCR_ScaleCoords (&x1, &y1, NULL, NULL, item->scrAlign);
+	SCR_ScaleCoords (&x2, &y2, NULL, NULL, item->scrAlign);
+	min[0] = x1;	max[0] = x2;
+	min[1] = y1;	max[1] = y2;
+
+	itemType = UI_GetItemMouseoverType(item);
+	if (itemType == MENUITEM_NONE)
+		return false;
+
+	if ( (ui_mousecursor.x >= min[0]) &&  (ui_mousecursor.x <= max[0])
+		&& (ui_mousecursor.y >= min[1]) && (ui_mousecursor.y <= max[1]) )
+	{	// new item
+		if (lastitem != item)
+		{
+			int j;
+			for (j=0; j<MENU_CURSOR_BUTTON_MAX; j++) {
+				ui_mousecursor.buttonclicks[j] = 0;
+				ui_mousecursor.buttontime[j] = 0;
+			}
+		}
+		ui_mousecursor.menuitem = item;
+		ui_mousecursor.menuitemtype = itemType;
+		// don't set menu cursor for mouse-only items
+		if (!(item->flags & QMF_MOUSEONLY))
+			menu->cursor = i;
+		return true;
+	}
+	return false;
+}
 
 
 /*
@@ -238,7 +278,7 @@ UI_Mouseover_Check
 void UI_Mouseover_Check (menuFramework_s *menu)
 {
 	int				i;
-	menuCommon_s	*item, *lastitem;
+	menuCommon_s	*lastitem;
 
 	ui_mousecursor.menu = menu;
 
@@ -249,13 +289,18 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 	if (ui_mousecursor.mouseaction)
 	{
 		lastitem = ui_mousecursor.menuitem;
-		UI_RefreshCursorLink();
+		UI_RefreshCursorLink ();
 
 		for (i = menu->nitems; i >= 0 ; i--)
 		{
+#if 1
+			if ( UI_Mouseover_CheckItem (menu, i, lastitem) )
+				break;
+#else
 			int		type, len;
 			int		min[2], max[2];
 			float	x1, y1, w1, h1;
+			menuCommon_s	*item;
 
 			item = ((menuCommon_s * )menu->items[i]);
 
@@ -300,10 +345,10 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 						type = MENUITEM_SLIDER;
 					}
 					break;
-				case MTYPE_SPINNER:
+				case MTYPE_PICKER:
 					{
 						int len;
-						menuSpinner_s *spin = menu->items[i];
+						menuPicker_s *spin = menu->items[i];
 
 						if (item->name) {
 							len = (int)strlen(item->name);
@@ -313,7 +358,7 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 						len = (int)strlen(spin->itemNames[spin->curValue]);
 						max[0] += SCR_ScaledScreen(len*item->textSize);
 
-						type = MENUITEM_ROTATE;
+						type = MENUITEM_PICKER;
 					}
 					break;
 				case MTYPE_FIELD:
@@ -351,7 +396,7 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 									max[0] += SCR_ScaledScreen( MENU_FONT_SIZE*4 + item->textSize*(int)strlen(Key_KeynumToString(k->keys[1])) );
 							}
 						}
-						type = MENUITEM_KEYBIND;
+						type = MENUITEM_ACTION;
 					}
 					break;
 				default:
@@ -382,9 +427,9 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 
 				break;
 			}
+#endif	// USE_WIDGET_CLICK_HANDLER
 		}
 	}
-
 	ui_mousecursor.mouseaction = false;
 }
 
@@ -399,7 +444,7 @@ void UI_MouseCursor_Think (void)
 	char * sound = NULL;
 	menuFramework_s *m = (menuFramework_s *)ui_mousecursor.menu;
 
-	if (ui_menuState.draw == Menu_Main_Draw) // have to hack for main menu :p
+/*	if (ui_menuState.draw == Menu_Main_Draw) // have to hack for main menu :p
 	{
 		UI_CheckMainMenuMouse ();
 		return;
@@ -418,22 +463,32 @@ void UI_MouseCursor_Think (void)
 			UI_PopMenu();
 			return;
 		}
-	}
+	} */
 
-/*	// clicking on the player model menu...
-	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
-		Menu_PlayerConfig_MouseClick ();
-	// clicking on the screen menu
-	if (ui_menuState.draw == Menu_Options_Screen_Draw)
-		Menu_Options_Screen_Crosshair_MouseClick ();
-*/
 	if (!m)
 		return;
 
-	// Exit with double click 2nd mouse button
-
 	if (ui_mousecursor.menuitem)
 	{
+#ifdef USE_WIDGET_CLICK_HANDLER
+		// MOUSE1
+		if (ui_mousecursor.buttondown[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1]
+			&& !ui_mousecursor.buttonused[MOUSEBUTTON1])
+		{
+			sound = UI_ClickMenuItem (ui_mousecursor.menuitem, false);
+			if ( !strcmp(sound, ui_menu_drag_sound) )	// dragging an item does not make sound
+				sound = ui_menu_null_sound;
+			else
+				ui_mousecursor.buttonused[MOUSEBUTTON1] = true;
+		}
+		// MOUSE2
+		if (ui_mousecursor.buttondown[MOUSEBUTTON2] && ui_mousecursor.buttonclicks[MOUSEBUTTON2]
+			&& !ui_mousecursor.buttonused[MOUSEBUTTON2])
+		{
+			sound = UI_ClickMenuItem (ui_mousecursor.menuitem, true);
+			ui_mousecursor.buttonused[MOUSEBUTTON2] = true;
+		}
+#else
 		// MOUSE1
 		if (ui_mousecursor.buttondown[MOUSEBUTTON1])
 		{
@@ -451,7 +506,7 @@ void UI_MouseCursor_Think (void)
 			}
 			else if (!ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1])
 			{
-				if (ui_mousecursor.menuitemtype == MENUITEM_ROTATE)
+				if (ui_mousecursor.menuitemtype == MENUITEM_PICKER)
 				{
 					if (ui_item_rotate->integer)					
 						UI_SlideMenuItem (m, -1);
@@ -485,7 +540,7 @@ void UI_MouseCursor_Think (void)
 			}
 			else if (!ui_mousecursor.buttonused[MOUSEBUTTON2])
 			{
-				if (ui_mousecursor.menuitemtype == MENUITEM_ROTATE)
+				if (ui_mousecursor.menuitemtype == MENUITEM_PICKER)
 				{
 					if (ui_item_rotate->integer)					
 						UI_SlideMenuItem (m, 1);
@@ -497,10 +552,11 @@ void UI_MouseCursor_Think (void)
 				}
 			}
 		}
+#endif
 	}
 	else if (!ui_mousecursor.buttonused[MOUSEBUTTON2] && (ui_mousecursor.buttonclicks[MOUSEBUTTON2] == 2)
 		&& ui_mousecursor.buttondown[MOUSEBUTTON2])
-	{
+	{	// Exit with double click 2nd mouse button
 		// We need to manually save changes for playerconfig menu here
 		if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 			Menu_PConfigSaveChanges ();
@@ -518,9 +574,9 @@ void UI_MouseCursor_Think (void)
 	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
 		Menu_PlayerConfig_MouseClick ();
 	// clicking on the screen menu
-	if (ui_menuState.draw == Menu_Options_Screen_Draw)
-		Menu_Options_Screen_Crosshair_MouseClick ();
+//	if (ui_menuState.draw == Menu_Options_Screen_Draw)
+//		Menu_Options_Screen_Crosshair_MouseClick ();
 
-	if ( sound )
+	if (sound)
 		S_StartLocalSound (sound);
 }

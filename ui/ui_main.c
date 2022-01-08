@@ -22,15 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // ui_main.c -- menu subsystem functions
 
-#include <ctype.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
 #include "../client/client.h"
 #include "ui_local.h"
 
 cvar_t	*ui_sensitivity;
 cvar_t	*ui_background_alpha;
+cvar_t	*ui_debug_itembounds;
 cvar_t	*ui_item_rotate;
 cvar_t	*ui_cursor_scale;
 cvar_t	*ui_new_textbox;
@@ -254,6 +251,8 @@ void UI_Init (void)
 	Cvar_SetDescription ("ui_sensitivity", "Sets sensitvity of mouse in menus.");
 	ui_background_alpha = Cvar_Get ("ui_background_alpha", "0.6", CVAR_ARCHIVE);
 	Cvar_SetDescription ("ui_background_alpha", "Sets opacity of background menu image when ingame.");
+	ui_debug_itembounds = Cvar_Get ("ui_debug_itembounds", "0", 0);
+	Cvar_SetDescription ("ui_debug_itembounds", "Shows mouse interaction bounds of menu controls.");
 	ui_item_rotate = Cvar_Get ("ui_item_rotate", "0", CVAR_ARCHIVE);
 	Cvar_SetDescription ("ui_item_rotate", "Reverses direction of mouse click rotation for menu lists.");
 	ui_cursor_scale = Cvar_Get ("ui_cursor_scale", "0.4", 0);
@@ -275,6 +274,7 @@ void UI_Init (void)
 	UI_LoadFontNames ();	// load font list
 //	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
+//	UI_LoadKeyBindList ();	// load key bind list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList();		// load map list
 	UI_LoadPlayerModels (); // load player models
@@ -326,6 +326,7 @@ void UI_Shutdown (void)
 	UI_FreeFontNames ();
 //	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
+//	UI_FreeKeyBindList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
@@ -376,6 +377,7 @@ void UI_RefreshData (void)
 	UI_FreeFontNames ();
 //	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
+//	UI_FreeKeyBindList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
@@ -384,6 +386,7 @@ void UI_RefreshData (void)
 	UI_LoadFontNames ();	// load font list
 //	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
+//	UI_LoadKeyBindList ();	// load key bind list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList ();		// load map list
 	UI_LoadPlayerModels (); // load player models
