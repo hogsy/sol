@@ -465,15 +465,15 @@ typedef struct
 typedef struct
 {
 	float	min[2];
-	float max[2];
-	int index;
+	float	max[2];
+	int		index;
 } buttonmenuobject_t;
 
 typedef struct
 {
-	int	min[2];
-	int max[2];
-	void (*OpenMenu)(void);
+	int		min[2];
+	int		max[2];
+	void	(*OpenMenu)(void);
 } mainmenuobject_t;
 
 //=======================================================
@@ -802,12 +802,6 @@ void UI_RefreshData (void);
 #define UI_DrawString									SCR_DrawString
 
 void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *string, int alpha, qboolean R2L, qboolean altColor);
-#if 0
-void UI_DrawString (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
-void UI_DrawStringDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
-void UI_DrawStringR2L (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
-void UI_DrawStringR2LDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
-#endif
 void UI_DrawMenuStatusBar (const char *string);
 void UI_DrawMenuTextBox (int x, int y, int width, int lines);
 void UI_DrawPopupMessage (char *message);
@@ -870,11 +864,6 @@ extern	char *ui_menu_drag_sound;
 
 extern qboolean	ui_entersound;		// play after drawing a frame, so caching
 									// won't disrupt the sound
-
-extern int MainMenuMouseHover;
-
-void Menu_Main_Draw (void);
-void UI_CheckMainMenuMouse (void);
 
 void Menu_Main_f (void);
 	void Menu_Game_f (void);

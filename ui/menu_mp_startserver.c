@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define USE_MAPSHOT_WIDGET
-
 /*
 =============================================================================
 
@@ -37,9 +35,7 @@ START SERVER MENU
 static menuFramework_s s_startserver_menu;
 static menuImage_s		s_startserver_banner;
 static menuPicker_s		s_startmap_list;
-#ifdef USE_MAPSHOT_WIDGET
 static menuImage_s		s_startserver_mapshot;
-#endif
 menuPicker_s			s_rules_box;
 static menuField_s		s_timelimit_field;
 static menuField_s		s_fraglimit_field;
@@ -81,9 +77,7 @@ void M_RefreshMapList (maptype_t maptype)
 
 void M_StartmapChangeFunc (void *unused)
 {
-#ifdef USE_MAPSHOT_WIDGET
 	s_startserver_mapshot.imageName = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
-#endif
 }
 
 void M_DMOptionsFunc (void *self)
@@ -150,9 +144,8 @@ void M_RulesChangeFunc (void *self)
 	}
 
 	M_RefreshMapList (maptype);
-#ifdef USE_MAPSHOT_WIDGET
+
 	s_startserver_mapshot.imageName = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
-#endif
 }
 
 void Menu_StartServerActionFunc (void *self)
@@ -246,7 +239,6 @@ void Menu_StartServer_Init (void)
 	s_startmap_list.itemNames			= ui_svr_mapnames;
 	s_startmap_list.generic.callback	= M_StartmapChangeFunc;
 
-#ifdef USE_MAPSHOT_WIDGET
 //	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
 	s_startserver_mapshot.generic.type		= MTYPE_IMAGE;
 	s_startserver_mapshot.generic.x			= x + 23*MENU_FONT_SIZE+2;	// +186
@@ -263,7 +255,6 @@ void Menu_StartServer_Init (void)
 	s_startserver_mapshot.hCentered			= false;
 	s_startserver_mapshot.vCentered			= false;
 	s_startserver_mapshot.generic.isHidden	= false;
-#endif	// USE_MAPSHOT_WIDGET
 
 	s_rules_box.generic.type		= MTYPE_PICKER;
 	s_rules_box.generic.textSize	= MENU_FONT_SIZE;
@@ -381,9 +372,7 @@ void Menu_StartServer_Init (void)
 
 	UI_AddMenuItem (&s_startserver_menu, &s_startserver_banner);
 	UI_AddMenuItem (&s_startserver_menu, &s_startmap_list);
-#ifdef USE_MAPSHOT_WIDGET
 	UI_AddMenuItem (&s_startserver_menu, &s_startserver_mapshot);
-#endif
 	UI_AddMenuItem (&s_startserver_menu, &s_rules_box);
 	UI_AddMenuItem (&s_startserver_menu, &s_timelimit_field);
 	UI_AddMenuItem (&s_startserver_menu, &s_fraglimit_field);
@@ -398,27 +387,10 @@ void Menu_StartServer_Init (void)
 	M_RulesChangeFunc (NULL);
 }
 
-#ifndef USE_MAPSHOT_WIDGET
-void Menu_DrawStartSeverLevelshot (void)
-{
-	char *mapshotname = UI_UpdateStartSeverLevelshot (s_startmap_list.curValue);
-
-	UI_DrawFill (SCREEN_WIDTH/2+44, SCREEN_HEIGHT/2-70, 244, 184, ALIGN_CENTER, false, 60,60,60,255);
-
-	if (mapshotname)
-		UI_DrawPic (SCREEN_WIDTH/2+46, SCREEN_HEIGHT/2-68, 240, 180, ALIGN_CENTER, false, mapshotname, 1.0);
-	else
-		UI_DrawFill (SCREEN_WIDTH/2+46, SCREEN_HEIGHT/2-68, 240, 180, ALIGN_CENTER, false, 0,0,0,255);
-}
-#endif	// USE_MAPSHOT_WIDGET
-
 void Menu_StartServer_Draw (void)
 {
 	UI_AdjustMenuCursor (&s_startserver_menu, 1);
 	UI_DrawMenu (&s_startserver_menu);
-#ifndef USE_MAPSHOT_WIDGET
-	Menu_DrawStartSeverLevelshot (); // added levelshots
-#endif
 }
 
 const char *Menu_StartServer_Key (int key)

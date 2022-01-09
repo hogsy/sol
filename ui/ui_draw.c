@@ -277,71 +277,42 @@ void UI_Draw_Cursor (void)
 #else
 void UI_Draw_Cursor (void)
 {
-	float	alpha = 1, scale = SCR_ScaledScreen(0.66);
-	int		w, h;
+	float	alpha = 1.0f, scale = SCR_ScaledScreen(0.66f);
 	char	*overlay = NULL;
 	char	*cur_img = NULL;
 
-	if (ui_menuState.draw == M_Main_Draw)
+	if (ui_mousecursor.menuitem)
 	{
-		if (MainMenuMouseHover)
-		{
-			if ((cursor.buttonused[0] && cursor.buttonclicks[0])
-				|| (cursor.buttonused[1] && cursor.buttonclicks[1]))
+	/*if (ui_mousecursor.menuitemtype == MENUITEM_TEXT)
+			cur_img = UI_MOUSECURSOR_TEXT_PIC;
+		else
+		{*/
+			if ( ((ui_mousecursor.buttonused[0] && ui_mousecursor.buttonclicks[0])
+				|| (ui_mousecursor.buttonused[1] && ui_mousecursor.buttonclicks[1]))
+				&& ui_mousecursor.menuitemtype != MENUITEM_TEXT)
 			{
-				cur_img = "/gfx/ui/cursors/m_cur_click.pcx";
-				alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005));
+				cur_img = UI_MOUSECURSOR_CLICK_PIC;
+				alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005f));
 			}
 			else
 			{
-				cur_img = "/gfx/ui/cursors/m_cur_hover.pcx";
-				alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005));
+				cur_img = UI_MOUSECURSOR_HOVER_PIC;
+				alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005f));
 			}
-		}
-		else
-			cur_img = "/gfx/ui/cursors/m_cur_main.pcx";
-		overlay = "/gfx/ui/cursors/m_cur_over.pcx";
+			overlay = UI_MOUSECURSOR_OVER_PIC;
+	//	}
 	}
 	else
 	{
-		if (cursor.menuitem)
-		{
-		/*	if (cursor.menuitemtype == MENUITEM_TEXT)
-			{
-				cur_img = "/gfx/ui/cursors/m_cur_text.pcx";
-			}
-			else
-			{ */
-				if ((cursor.buttonused[0] && cursor.buttonclicks[0])
-					|| (cursor.buttonused[1] && cursor.buttonclicks[1]))
-				{
-					cur_img = "/gfx/ui/cursors/m_cur_click.pcx";
-					alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005));
-				}
-				else
-				{
-					cur_img = "/gfx/ui/cursors/m_cur_hover.pcx";
-					alpha = 0.85 + 0.15*sin(anglemod(cl.time*0.005));
-				}
-				overlay = "/gfx/ui/cursors/m_cur_over.pcx";
-		//	}
-		}
-		else
-		{
-			cur_img = "/gfx/ui/cursors/m_cur_main.pcx";
-			overlay = "/gfx/ui/cursors/m_cur_over.pcx";
-		}
+		cur_img = UI_MOUSECURSOR_MAIN_PIC;
+		overlay = UI_MOUSECURSOR_OVER_PIC;
 	}
-	
+
 	if (cur_img)
 	{
-		R_DrawGetPicSize (&w, &h, cur_img);
-		SCR_DrawScaledPic (cursor.x - scale*w/2, cursor.y - scale*h/2, scale, true, false, cur_img, alpha);
-
-		if (overlay) {
-			R_DrawGetPicSize (&w, &h, overlay);
-			SCR_DrawScaledPic (cursor.x - scale*w/2, cursor.y - scale*h/2, scale, true, false, overlay, 1.0f);
-		}
+		SCR_DrawScaledPic (ui_mousecursor.x, ui_mousecursor.y, scale, true, false, cur_img, alpha);
+		if (overlay)
+			SCR_DrawScaledPic (ui_mousecursor.x, ui_mousecursor.y, scale, true, false, overlay, 1.0f);
 	}
 }
 #endif

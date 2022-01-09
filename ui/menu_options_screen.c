@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define	USE_CROSSHAIR_WIDGET
-
 /*
 =======================================================================
 
@@ -39,10 +37,8 @@ static menuFramework_s	s_options_screen_menu;
 static menuImage_s		s_options_screen_banner;
 static menuLabel_s		s_options_screen_header;
 static menuPicker_s		s_options_screen_crosshair_box;
-#ifdef USE_CROSSHAIR_WIDGET
 static menuRectangle_s	s_options_screen_crosshair_background;
 static menuButton_s		s_options_screen_crosshair_display;
-#endif	// USE_CROSSHAIR_WIDGET
 static menuSlider_s		s_options_screen_crosshairscale_slider;
 static menuSlider_s		s_options_screen_crosshairalpha_slider;
 static menuSlider_s		s_options_screen_crosshairpulse_slider;
@@ -59,12 +55,9 @@ static void CrosshairFunc (void *unused)
 {
 	UI_MenuPicker_SaveValue (&s_options_screen_crosshair_box, "crosshair");
 
-#ifdef USE_CROSSHAIR_WIDGET
 	s_options_screen_crosshair_display.imageName = ui_crosshair_display_names[s_options_screen_crosshair_box.curValue];
-#endif
 }
 
-#ifdef USE_CROSSHAIR_WIDGET
 static void CrosshairButtonFunc (void *unused)
 {
 	if (!ui_mousecursor.buttonused[MOUSEBUTTON1] && (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 1) )
@@ -89,7 +82,6 @@ void CrosshairButtonCursor (void *unused)
 {
 	// Do nothing
 }
-#endif	// USE_CROSSHAIR_WIDGET
 
 // Psychospaz's changeable size crosshair
 static void CrosshairSizeFunc (void *unused)
@@ -136,9 +128,7 @@ static void FPSFunc (void *unused)
 static void M_ScreenSetMenuItemValues (void)
 {
 	UI_MenuPicker_SetValue (&s_options_screen_crosshair_box, "crosshair", 0, 100, true);
-#ifdef USE_CROSSHAIR_WIDGET
 	s_options_screen_crosshair_display.imageName = ui_crosshair_display_names[s_options_screen_crosshair_box.curValue];
-#endif
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairscale_slider, "crosshair_scale", 0.25f, 5.0f, true);
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha", 0.05f, 1.0f, true);
 	UI_MenuSlider_SetValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse", 0.0f, 0.5f, true);
@@ -215,7 +205,6 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_box.itemValues				= ui_crosshair_values;
 	s_options_screen_crosshair_box.generic.statusbar		= "changes crosshair";
 
-#ifdef USE_CROSSHAIR_WIDGET
 	s_options_screen_crosshair_background.generic.type		= MTYPE_RECTANGLE;
 	s_options_screen_crosshair_background.generic.x			= SCREEN_WIDTH*0.5 - 18;
 	s_options_screen_crosshair_background.generic.y			= SCREEN_HEIGHT*0.5 - 26;
@@ -248,7 +237,6 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_display.generic.isHidden		= false;
 	s_options_screen_crosshair_display.generic.callback		= CrosshairButtonFunc;
 	s_options_screen_crosshair_display.generic.cursordraw	= CrosshairButtonCursor;
-#endif	// USE_CROSSHAIR_WIDGET
 
 	// Psychospaz's changeable size crosshair
 	s_options_screen_crosshairscale_slider.generic.type			= MTYPE_SLIDER;
@@ -350,10 +338,8 @@ void Menu_Options_Screen_Init (void)
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_banner);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_header);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_box);
-#ifdef USE_CROSSHAIR_WIDGET
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_background);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_display);
-#endif	// USE_CROSSHAIR_WIDGET
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairscale_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairalpha_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairpulse_slider);
@@ -367,72 +353,10 @@ void Menu_Options_Screen_Init (void)
 	M_ScreenSetMenuItemValues ();
 }
 
-#ifndef USE_CROSSHAIR_WIDGET
-void Menu_Options_Screen_Crosshair_MouseClick (void)
-{
-	char *sound = NULL;
-	buttonmenuobject_t crosshairbutton;
-	int button_x, button_y;
-	int button_size;
-
-	button_size = 36;
-
-	button_x = SCREEN_WIDTH*0.5 - 14;
-	button_y = SCREEN_HEIGHT*0.5 - 26;	// s_options_screen_menu.y + 42;
-
-	UI_AddButton (&crosshairbutton, 0, button_x, button_y, button_size, button_size);
-
-	if ( (ui_mousecursor.x >= crosshairbutton.min[0]) && (ui_mousecursor.x <= crosshairbutton.max[0]) &&
-		(ui_mousecursor.y >= crosshairbutton.min[1]) && (ui_mousecursor.y <= crosshairbutton.max[1]) )
-	{
-		if (!ui_mousecursor.buttonused[MOUSEBUTTON1] && (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 1) )
-		{
-			s_options_screen_crosshair_box.curValue++;
-			if (s_options_screen_crosshair_box.curValue > ui_numcrosshairs-1)
-				s_options_screen_crosshair_box.curValue = 0; // wrap around
-			CrosshairFunc (NULL);
-
-			ui_mousecursor.buttonused[MOUSEBUTTON1] = true;
-			ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 0;
-			sound = ui_menu_move_sound;
-			if ( sound )
-				S_StartLocalSound( sound );
-		}
-		if (!ui_mousecursor.buttonused[MOUSEBUTTON2] && (ui_mousecursor.buttonclicks[MOUSEBUTTON2] == 1) )
-		{
-			s_options_screen_crosshair_box.curValue--;
-			if (s_options_screen_crosshair_box.curValue < 0)
-				s_options_screen_crosshair_box.curValue = ui_numcrosshairs-1; // wrap around
-			CrosshairFunc (NULL);
-
-			ui_mousecursor.buttonused[MOUSEBUTTON2] = true;
-			ui_mousecursor.buttonclicks[MOUSEBUTTON2] = 0;
-			sound = ui_menu_move_sound;
-			if ( sound )
-				S_StartLocalSound( sound );
-		}
-	}
-}
-
-void Menu_Options_Screen_DrawCrosshair (void)
-{
-	UI_DrawFill (SCREEN_WIDTH*0.5 - 18, SCREEN_HEIGHT*0.5 - 26,		// s_options_screen_menu.y + 42
-					36, 36, ALIGN_CENTER, false, 60,60,60,255);
-	UI_DrawFill (SCREEN_WIDTH*0.5 - 17, SCREEN_HEIGHT*0.5 - 25,		// s_options_screen_menu.y + 43
-					34, 34, ALIGN_CENTER,  false, 0,0,0,255);
-
-	UI_DrawPic (SCREEN_WIDTH*0.5 - 16, SCREEN_HEIGHT*0.5 - 24,		// s_options_screen_menu.y + 44
-					32, 32, ALIGN_CENTER, false, ui_crosshair_display_names[s_options_screen_crosshair_box.curValue], 1.0);
-}
-#endif	// USE_CROSSHAIR_WIDGET
-
 void Menu_Options_Screen_Draw (void)
 {
 	UI_AdjustMenuCursor (&s_options_screen_menu, 1);
 	UI_DrawMenu (&s_options_screen_menu);
-#ifndef USE_CROSSHAIR_WIDGET
-	Menu_Options_Screen_DrawCrosshair ();
-#endif	// USE_CROSSHAIR_WIDGET
 }
 
 const char *Menu_Options_Screen_Key (int key)

@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define USE_MODELVIEW_WIDGET
-
 /*
 =============================================================================
 
@@ -52,9 +50,7 @@ static menuLabel_s		s_playerconfig_hand_title;
 static menuLabel_s		s_playerconfig_rate_title;
 static menuLabel_s		s_playerconfig_railcolor_title;
 static menuAction_s		s_playerconfig_back_action;
-#ifdef USE_MODELVIEW_WIDGET
 static menuModelView_s	s_playerconfig_model_display;
-#endif	// USE_MODELVIEW_WIDGET
 
 //=======================================================================
 
@@ -62,20 +58,16 @@ static menuModelView_s	s_playerconfig_model_display;
 
 static void Menu_PlayerHandednessCallback (void *unused)
 {
-#ifdef USE_MODELVIEW_WIDGET
 	int			i;
 	qboolean	lefthand;
-#endif	// USE_MODELVIEW_WIDGET
 
 	UI_MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
 
-#ifdef USE_MODELVIEW_WIDGET
 	// update player model display
 	lefthand = (Cvar_VariableValue("hand") == 1);
 	s_playerconfig_model_display.isMirrored = lefthand;
 	for (i=0; i<2; i++)
 		VectorSet (s_playerconfig_model_display.modelRotation[i], 0, (lefthand ? -0.1 : 0.1), 0);
-#endif	// USE_MODELVIEW_WIDGET
 }
 
 
@@ -163,11 +155,8 @@ static void Menu_PlayerSkinCallback (void *unused)
 
 qboolean Menu_PlayerConfig_Init (void)
 {
-	int		x, y, mNum = 0, sNum = 0;
-#ifdef USE_MODELVIEW_WIDGET
-	int		i;
+	int			i, x, y, mNum = 0, sNum = 0;
 	qboolean	lefthand = (Cvar_VariableValue("hand") == 1);
-#endif
 
 	static const char *handedness_names[] = { "right", "left", "center", 0 };
 
@@ -405,7 +394,6 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_back_action.generic.statusbar	= NULL;
 	s_playerconfig_back_action.generic.callback		= UI_BackMenu;
 
-#ifdef USE_MODELVIEW_WIDGET
 	s_playerconfig_model_display.generic.type	= MTYPE_MODELVIEW;
 	s_playerconfig_model_display.generic.x		= 0;
 	s_playerconfig_model_display.generic.y		= 0;
@@ -428,7 +416,6 @@ qboolean Menu_PlayerConfig_Init (void)
 		s_playerconfig_model_display.entFlags[i]			= RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
 	}
 	s_playerconfig_model_display.generic.isHidden	= false;
-#endif	// USE_MODELVIEW_WIDGET
 
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_banner);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_name_field);
@@ -451,9 +438,7 @@ qboolean Menu_PlayerConfig_Init (void)
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[1]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[2]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_back_action);
-#ifdef USE_MODELVIEW_WIDGET
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_display);
-#endif	// USE_MODELVIEW_WIDGET
 
 	// get color components from color1 cvar
 	Menu_LoadPlayerRailColor ();
@@ -649,110 +634,11 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 
 void Menu_PlayerConfig_Draw (void)
 {
-#ifndef USE_MODELVIEW_WIDGET
-	refdef_t	refdef;
-	float		rx, ry, rw, rh;
-	qboolean	lefthand = (Cvar_VariableInteger("hand") == 1);
-#endif	// USE_MODELVIEW_WIDGET
-
-#ifdef USE_MODELVIEW_WIDGET
 	UI_AdjustMenuCursor (&s_player_config_menu, 1);
 	UI_DrawMenu (&s_player_config_menu);
 
 	// skin selection preview
 	Menu_PlayerConfig_DrawSkinSelection ();
-#else
-	memset(&refdef, 0, sizeof(refdef));
-
-	rx = 0;							ry = 0;
-	rw = SCREEN_WIDTH;				rh = SCREEN_HEIGHT;
-	SCR_ScaleCoords (&rx, &ry, &rw, &rh, ALIGN_CENTER);
-	refdef.x = rx;		refdef.y = ry;
-	refdef.width = rw;	refdef.height = rh;
-	refdef.fov_x = 50;
-	refdef.fov_y = CalcFov (refdef.fov_x, refdef.width, refdef.height);
-	refdef.time = cls.realtime*0.001;
- 
-	if ( ui_pmi[s_playerconfig_model_box.curValue].skinDisplayNames )
-	{
-		int			yaw;
-		int			maxframe = 29;
-		vec3_t		modelOrg;
-		// Psychopspaz's support for showing weapon model
-		entity_t	entity[2], *ent;
-
-		refdef.num_entities = 0;
-		refdef.entities = entity;
-
-		yaw = anglemod(cl.time/10);
-
-		VectorSet (modelOrg, 150, -25, 0); // was 80, 0, 0
-
-		// Setup player model
-		ent = &entity[0];
-		memset (&entity[0], 0, sizeof(entity[0]));
-
-		// moved registration code to init and change only
-		ent->model = ui_playermodel;
-		ent->skin = ui_playerskin;
-
-		ent->flags = RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
-		if (lefthand)
-			ent->flags |= RF_MIRRORMODEL;
-
-		ent->origin[0] = modelOrg[0];
-		ent->origin[1] = modelOrg[1];
-		ent->origin[2] = modelOrg[2];
-
-		VectorCopy( ent->origin, ent->oldorigin );
-		ent->frame = 0;
-		ent->oldframe = 0;
-		ent->backlerp = 0.0;
-		ent->angles[1] = yaw;
-		
-		refdef.num_entities++;
-
-		// Setup weapon model
-		ent = &entity[1];
-		memset (&entity[1], 0, sizeof(entity[1]));
-
-		// moved registration code to init and change only
-		ent->model = ui_weaponmodel;
-
-		if (ent->model)
-		{
-			ent->skinnum = 0;
-
-			ent->flags = RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
-			if (lefthand)
-				ent->flags |= RF_MIRRORMODEL;
-
-			ent->origin[0] = modelOrg[0];
-			ent->origin[1] = modelOrg[1];
-			ent->origin[2] = modelOrg[2];
-
-			VectorCopy( ent->origin, ent->oldorigin );
-			ent->frame = 0;
-			ent->oldframe = 0;
-			ent->backlerp = 0.0;
-			ent->angles[1] = yaw;
-			
-			refdef.num_entities++;
-		}
-
-
-		refdef.areabits = 0;
-		refdef.lightstyles = 0;
-		refdef.rdflags = RDF_NOWORLDMODEL;
-
-		UI_DrawMenu (&s_player_config_menu);
-
-		// skin selection preview
-		Menu_PlayerConfig_DrawSkinSelection ();
-
-		R_RenderFrame (&refdef);
-	}
-#endif	// USE_MODELVIEW_WIDGET
 }
 
 

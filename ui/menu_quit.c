@@ -57,37 +57,43 @@ static void QuitYesFunc (void *unused)
 
 void Menu_Quit_Init (void)
 {
-	s_quit_menu.x			= SCREEN_WIDTH*0.5 - 24;
-	s_quit_menu.y			= SCREEN_HEIGHT*0.5 - 58;
+	int		x, y;
+
+	// menu.x = 296, menu.y = 202
+	x = SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
+	y = SCREEN_HEIGHT*0.5 - 38;
+
+	s_quit_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 24
+	s_quit_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58
 	s_quit_menu.nitems		= 0;
 	s_quit_menu.nitems		= 0;
 //	s_quit_menu.isPopup		= false;
 //	s_quit_menu.canOpenFunc	= NULL;
 
 #ifdef QUITMENU_NOKEY
-	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
+//	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
 
 	s_quit_header.generic.type		= MTYPE_LABEL;
-	s_quit_header.generic.textSize	= MENU_FONT_SIZE;
+	s_quit_header.generic.textSize	= MENU_HEADER_FONT_SIZE;
 	s_quit_header.generic.name		= "Quit game?";
-	s_quit_header.generic.x			= MENU_FONT_SIZE*0.7 * (int)strlen(s_quit_header.generic.name);
-	s_quit_header.generic.y			= 20;
+	s_quit_header.generic.x			= x + MENU_FONT_SIZE*0.9 * (int)strlen(s_quit_header.generic.name);
+	s_quit_header.generic.y			= y;	// 20
 
 	s_quit_yes_action.generic.type			= MTYPE_ACTION;
-	s_quit_yes_action.generic.textSize		= MENU_FONT_SIZE;
+	s_quit_yes_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
 	s_quit_yes_action.generic.flags			= QMF_LEFT_JUSTIFY;
-	s_quit_yes_action.generic.x				= MENU_FONT_SIZE*3;
-	s_quit_yes_action.generic.y				= 60;
-	s_quit_yes_action.generic.name			= "yes";
+	s_quit_yes_action.generic.x				= x + MENU_FONT_SIZE*3;
+	s_quit_yes_action.generic.y				= y += MENU_LINE_SIZE*4;	// 60
+	s_quit_yes_action.generic.name			= "Yes";
 	s_quit_yes_action.generic.callback		= QuitYesFunc;
 	s_quit_yes_action.generic.cursor_offset	= -MENU_FONT_SIZE;
 
 	s_quit_no_action.generic.type			= MTYPE_ACTION;
-	s_quit_no_action.generic.textSize		= MENU_FONT_SIZE;
+	s_quit_no_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
 	s_quit_no_action.generic.flags			= QMF_LEFT_JUSTIFY;
-	s_quit_no_action.generic.x				= MENU_FONT_SIZE*3;
-	s_quit_no_action.generic.y				= 80;
-	s_quit_no_action.generic.name			= "no";
+	s_quit_no_action.generic.x				= x + MENU_FONT_SIZE*3;
+	s_quit_no_action.generic.y				= y += MENU_LINE_SIZE*2;	// 80
+	s_quit_no_action.generic.name			= "No";
 	s_quit_no_action.generic.callback		= UI_BackMenu;
 	s_quit_no_action.generic.cursor_offset	= -MENU_FONT_SIZE;
 
@@ -111,43 +117,22 @@ void Menu_Quit_Init (void)
 
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_pic);
 #endif // QUITMENU_NOKEY
-
 }
-
 
 const char *Menu_Quit_Key (int key)
 {
 #ifdef QUITMENU_NOKEY
 	return UI_DefaultMenuKey (&s_quit_menu, key);
-#else // QUITMENU_NOKEY
-	switch (key)
-	{
-	case K_ESCAPE:
-	case 'n':
-	case 'N':
-		UI_PopMenu ();
-		break;
-
-	case 'Y':
-	case 'y':
-		cls.key_dest = key_console;
-		CL_Quit_f ();
-		break;
-
-	default:
-		break;
-	}
-	return NULL;
+#else
+	return UI_QuitMenuKey (&s_quit_menu, key);
 #endif // QUITMENU_NOKEY
 }
-
 
 void Menu_Quit_Draw (void)
 {
 	UI_AdjustMenuCursor (&s_quit_menu, 1);
 	UI_DrawMenu (&s_quit_menu);
 }
-
 
 void Menu_Quit_f (void)
 {

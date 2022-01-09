@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define USE_SAVESHOT_WIDGET
-
 /*
 =============================================================================
 
@@ -38,35 +36,11 @@ SAVEGAME MENU
 static menuFramework_s	s_savegame_menu;
 static menuImage_s		s_savegame_banner;
 static menuAction_s		s_savegame_actions[UI_MAX_SAVEGAMES];
-#ifdef USE_SAVESHOT_WIDGET
 static menuImage_s		s_savegame_saveshot;
-#endif
 static menuAction_s		s_savegame_back_action;
 
 //=========================================================
 
-#ifndef USE_SAVESHOT_WIDGET
-void UI_DrawSaveMenuSaveshot (void)
-{
-	char	*shotname = NULL;
-	int		i;
-
-	if ( (s_savegame_menu.cursor < 0) || (s_savegame_menu.cursor >= UI_MAX_SAVEGAMES-1))	// catch back action
-		i = UI_MAX_SAVEGAMES;
-	else
-		i = s_savegame_actions[s_savegame_menu.cursor].generic.localdata[0];
-	shotname = UI_UpdateSaveshot (i);
-
-	UI_DrawFill (SCREEN_WIDTH/2+44, SCREEN_HEIGHT/2-70, 244, 184, ALIGN_CENTER, false, 60,60,60,255);
-
-	if (shotname)
-		UI_DrawPic (SCREEN_WIDTH/2+46, SCREEN_HEIGHT/2-68, 240, 180, ALIGN_CENTER, false, shotname, 1.0);
-	else
-		UI_DrawFill (SCREEN_WIDTH/2+46, SCREEN_HEIGHT/2-68, 240, 180, ALIGN_CENTER, false, 0,0,0,255);
-}
-#endif	// USE_SAVESHOT_WIDGET
-
-#ifdef USE_SAVESHOT_WIDGET
 void M_SaveGameUpdateSaveshot (void)
 {
 	int		slotNum, shotNum;
@@ -77,10 +51,8 @@ void M_SaveGameUpdateSaveshot (void)
 	else
 		shotNum = s_savegame_actions[slotNum].generic.localdata[0];
 
-//	Com_Printf ("M_SaveGameUpdateSaveshot: updating with slot %i, shot %i\n", slotNum, shotNum);
 	s_savegame_saveshot.imageName = UI_UpdateSaveshot (shotNum);
 }
-#endif	// USE_SAVESHOT_WIDGET
 
 void M_SaveGameCallback (void *self)
 {
@@ -137,7 +109,6 @@ void Menu_SaveGame_Init (void)
 		s_savegame_actions[i].generic.textSize	= MENU_FONT_SIZE;
 	}
 
-#ifdef USE_SAVESHOT_WIDGET
 //	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
 	s_savegame_saveshot.generic.type		= MTYPE_IMAGE;
 	s_savegame_saveshot.generic.x			= x + 286;
@@ -155,8 +126,6 @@ void Menu_SaveGame_Init (void)
 	s_savegame_saveshot.hCentered			= false;
 	s_savegame_saveshot.vCentered			= false;
 	s_savegame_saveshot.generic.isHidden	= false;
-//	M_SaveGameUpdateSaveshot ();
-#endif	// USE_SAVESHOT_WIDGET
 
 	s_savegame_back_action.generic.type	= MTYPE_ACTION;
 	s_savegame_back_action.generic.textSize	= MENU_FONT_SIZE;
@@ -169,32 +138,21 @@ void Menu_SaveGame_Init (void)
 	UI_AddMenuItem (&s_savegame_menu, &s_savegame_banner);
 	for ( i = 0; i < UI_MAX_SAVEGAMES-1; i++ )
 		UI_AddMenuItem (&s_savegame_menu, &s_savegame_actions[i]);
-#ifdef USE_SAVESHOT_WIDGET
 	UI_AddMenuItem (&s_savegame_menu, &s_savegame_saveshot);
-#endif
 	UI_AddMenuItem (&s_savegame_menu, &s_savegame_back_action);
+
+	M_SaveGameUpdateSaveshot ();
 }
 
 void Menu_SaveGame_Draw (void)
 {
 	UI_AdjustMenuCursor (&s_savegame_menu, 1);
-#ifdef USE_SAVESHOT_WIDGET
 	M_SaveGameUpdateSaveshot ();
-#endif
 	UI_DrawMenu (&s_savegame_menu);
-#ifndef USE_SAVESHOT_WIDGET
-	UI_DrawSaveMenuSaveshot ();
-#endif
 }
 
 const char *Menu_SaveGame_Key (int key)
 {
-/*	if ( key == K_ENTER || key == K_ESCAPE )
-	{
-		s_loadgame_menu.cursor = s_savegame_menu.cursor - 1;
-		if ( s_loadgame_menu.cursor < 0 )
-			s_loadgame_menu.cursor = 0;
-	} */
 	return UI_DefaultMenuKey (&s_savegame_menu, key);
 }
 
