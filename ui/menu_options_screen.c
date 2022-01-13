@@ -60,22 +60,18 @@ static void CrosshairFunc (void *unused)
 
 static void CrosshairButtonFunc (void *unused)
 {
-	if (!ui_mousecursor.buttonused[MOUSEBUTTON1] && (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 1) )
-	{
-		s_options_screen_crosshair_box.curValue++;
-		if (s_options_screen_crosshair_box.curValue > ui_numcrosshairs-1)
-			s_options_screen_crosshair_box.curValue = 0; // wrap around
-		CrosshairFunc (NULL);
-		ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 0;
-	}
-	if (!ui_mousecursor.buttonused[MOUSEBUTTON2] && (ui_mousecursor.buttonclicks[MOUSEBUTTON2] == 1) )
-	{
-		s_options_screen_crosshair_box.curValue--;
-		if (s_options_screen_crosshair_box.curValue < 0)
-			s_options_screen_crosshair_box.curValue = ui_numcrosshairs-1; // wrap around
-		CrosshairFunc (NULL);
-		ui_mousecursor.buttonclicks[MOUSEBUTTON2] = 0;
-	}
+	s_options_screen_crosshair_box.curValue++;
+	if (s_options_screen_crosshair_box.curValue > ui_numcrosshairs-1)
+		s_options_screen_crosshair_box.curValue = 0; // wrap around
+	CrosshairFunc (NULL);
+}
+
+static void CrosshairButtonMouse2Func (void *unused)
+{
+	s_options_screen_crosshair_box.curValue--;
+	if (s_options_screen_crosshair_box.curValue < 0)
+		s_options_screen_crosshair_box.curValue = ui_numcrosshairs-1; // wrap around
+	CrosshairFunc (NULL);
 }
 
 void CrosshairButtonCursor (void *unused)
@@ -223,20 +219,21 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_background.vCentered			= false;
 	s_options_screen_crosshair_background.generic.isHidden	= false;
 
-	s_options_screen_crosshair_display.generic.type			= MTYPE_BUTTON;
-	s_options_screen_crosshair_display.generic.x			= SCREEN_WIDTH*0.5 - 16;
-	s_options_screen_crosshair_display.generic.y			= SCREEN_HEIGHT*0.5 - 24;
-	s_options_screen_crosshair_display.width				= 32;
-	s_options_screen_crosshair_display.height				= 32;
-	s_options_screen_crosshair_display.imageName			= NULL;		// This is set in M_ScreenSetMenuItemValues()
-	s_options_screen_crosshair_display.alpha				= 255;
-	s_options_screen_crosshair_display.border				= 0;
-	s_options_screen_crosshair_display.hCentered			= false;
-	s_options_screen_crosshair_display.vCentered			= false;
-	s_options_screen_crosshair_display.usesMouse2			= true;
-	s_options_screen_crosshair_display.generic.isHidden		= false;
-	s_options_screen_crosshair_display.generic.callback		= CrosshairButtonFunc;
-	s_options_screen_crosshair_display.generic.cursordraw	= CrosshairButtonCursor;
+	s_options_screen_crosshair_display.generic.type				= MTYPE_BUTTON;
+	s_options_screen_crosshair_display.generic.x				= SCREEN_WIDTH*0.5 - 16;
+	s_options_screen_crosshair_display.generic.y				= SCREEN_HEIGHT*0.5 - 24;
+	s_options_screen_crosshair_display.width					= 32;
+	s_options_screen_crosshair_display.height					= 32;
+	s_options_screen_crosshair_display.imageName				= NULL;		// This is set in M_ScreenSetMenuItemValues()
+	s_options_screen_crosshair_display.alpha					= 255;
+	s_options_screen_crosshair_display.border					= 0;
+	s_options_screen_crosshair_display.hCentered				= false;
+	s_options_screen_crosshair_display.vCentered				= false;
+	s_options_screen_crosshair_display.usesMouse2				= true;
+	s_options_screen_crosshair_display.generic.isHidden			= false;
+	s_options_screen_crosshair_display.generic.callback			= CrosshairButtonFunc;
+	s_options_screen_crosshair_display.generic.mouse2Callback	= CrosshairButtonMouse2Func;
+	s_options_screen_crosshair_display.generic.cursordraw		= CrosshairButtonCursor;
 
 	// Psychospaz's changeable size crosshair
 	s_options_screen_crosshairscale_slider.generic.type			= MTYPE_SLIDER;

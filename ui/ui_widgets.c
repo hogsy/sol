@@ -30,9 +30,9 @@ static	void	UI_MenuAction_Draw (menuAction_s *a);
 static	void	UI_MenuLabel_Draw (menuLabel_s *s);
 static	void	UI_MenuSlider_DoSlide (menuSlider_s *s, int dir);
 static	void	UI_MenuSlider_Draw (menuSlider_s *s);
-static	void	UI_MenuPicker_DoEnter (menuPicker_s *s);
-static	void	UI_MenuPicker_Draw (menuPicker_s *s);
-static	void	UI_MenuPicker_DoSlide (menuPicker_s *s, int dir);
+static	void	UI_MenuPicker_DoEnter (menuPicker_s *p);
+static	void	UI_MenuPicker_Draw (menuPicker_s *p);
+static	void	UI_MenuPicker_DoSlide (menuPicker_s *p, int dir);
 
 #define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// was 16
 #define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// was -16
@@ -79,16 +79,20 @@ void UI_MenuAction_DoEnter (menuAction_s *a)
 	if (!a) return;
 
 	if (a->generic.callback)
-		a->generic.callback(a);
+		a->generic.callback (a);
 }
 
 char *UI_MenuAction_Click (menuAction_s *a, qboolean mouse2)
 {
 	// return if it's just a mouse2 click
-	if (mouse2)
+	if (!a->usesMouse2 && mouse2)
 		return ui_menu_null_sound;
 
-	UI_MenuAction_DoEnter (a);
+//	UI_MenuAction_DoEnter (a);
+	if ( mouse2 && a->generic.mouse2Callback )
+		a->generic.mouse2Callback (a);
+	else if (a->generic.callback)
+		a->generic.callback (a);
 
 	return ui_menu_move_sound;
 }
@@ -105,19 +109,19 @@ void UI_MenuAction_Draw (menuAction_s *a)
 	{
 		if (a->generic.flags & QMF_GRAYED)
 			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, false, true);
+			a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, false, true);
 		else
 			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-							a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, false, false);
+							a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, false, false);
 	}
 	else
 	{
 		if (a->generic.flags & QMF_GRAYED)
 			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, true, true);
+								a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, true, true);
 		else
 			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, ALIGN_CENTER, a->generic.name, alpha, true, false);
+								a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, true, false);
 	}
 	if (a->generic.ownerdraw)
 		a->generic.ownerdraw(a);
@@ -183,7 +187,7 @@ void UI_MenuKeyBind_Draw (menuKeyBind_s *k)
 	const char		*keyName1, *keyName2;
 
 	UI_DrawMenuString (menu->x + k->generic.x + LCOLUMN_OFFSET,
-						menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, k->generic.name, alpha,
+						menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, k->generic.name, alpha,
 						!(k->generic.flags & QMF_LEFT_JUSTIFY), (k->generic.flags & QMF_ALTCOLOR));
 
 	if (k->commandName)
@@ -193,21 +197,21 @@ void UI_MenuKeyBind_Draw (menuKeyBind_s *k)
 		if (k->keys[0] == -1)
 		{
 			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
-								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "???", alpha, false, false);
+								menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, "???", alpha, false, false);
 		}
 		else
 		{
 			keyName1 = Key_KeynumToString (k->keys[0]);
 			UI_DrawMenuString (menu->x + k->generic.x + RCOLUMN_OFFSET,
-								menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName1, alpha, false, false);
+								menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, keyName1, alpha, false, false);
 			if (k->keys[1] != -1)
 			{
 				x = (int)strlen(keyName1) * MENU_FONT_SIZE;
 				keyName2 = Key_KeynumToString (k->keys[1]);
 				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*3 + x,
-									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, "or", alpha, false, false);
+									menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, "or", alpha, false, false);
 				UI_DrawMenuString (menu->x + k->generic.x + MENU_FONT_SIZE*6 + x,
-									menu->y + k->generic.y, MENU_FONT_SIZE, ALIGN_CENTER, keyName2, alpha, false, false);
+									menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, keyName2, alpha, false, false);
 			}
 		}
 	}
@@ -322,7 +326,7 @@ qboolean UI_MenuField_DoEnter (menuField_s *f)
 
 	if (f->generic.callback)
 	{
-		f->generic.callback(f);
+		f->generic.callback (f);
 		return true;
 	}
 	return false;
@@ -351,7 +355,7 @@ void UI_MenuField_Draw (menuField_s *f)
 
 //	if (f->generic.name)
 //		UI_DrawMenuString (f->generic.x + f->generic.parent->x + LCOLUMN_OFFSET,
-//								f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, f->generic.name, 255, true, true);
+//								f->generic.y + f->generic.parent->y, f->generic.textSize, f->generic.scrAlign, f->generic.name, 255, true, true);
 	// name
 	UI_MenuCommon_DrawItemName (&f->generic, -(2*RCOLUMN_OFFSET), 0, 0, -(FIELD_VOFFSET+MENU_LINE_SIZE), hoverAlpha);
 
@@ -377,21 +381,21 @@ void UI_MenuField_Draw (menuField_s *f)
 	{
 		UI_DrawPicST (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
 						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_left,
-						ALIGN_CENTER, true, color_identity, UI_FIELD_PIC);
+						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 		UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
 						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_right,
-						ALIGN_CENTER, true, color_identity, UI_FIELD_PIC);
+						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 	}
 	else
 	{
 		UI_DrawChar (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, ALIGN_CENTER, 18, 255, 255, 255, 255, false, false);
+					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 18, 255, 255, 255, 255, false, false);
 		UI_DrawChar (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, ALIGN_CENTER, 24, 255, 255, 255, 255, false, false);
+					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 24, 255, 255, 255, 255, false, false);
 		UI_DrawChar (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, ALIGN_CENTER, 20, 255, 255, 255, 255, false, false);
+					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 20, 255, 255, 255, 255, false, false);
 		UI_DrawChar (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, ALIGN_CENTER, 26, 255, 255, 255, 255, false, false);
+					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 26, 255, 255, 255, 255, false, false);
 	}
 
 	for (i = 0; i < f->visible_length; i++)
@@ -399,13 +403,13 @@ void UI_MenuField_Draw (menuField_s *f)
 		if (ui_new_textfield->integer) {
 			UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
 							f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_center,
-							ALIGN_CENTER, true, color_identity, UI_FIELD_PIC);
+							f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 		}
 		else {
 			UI_DrawChar (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, ALIGN_CENTER, 19, 255, 255, 255, 255, false, false);
+						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 19, 255, 255, 255, 255, false, false);
 			UI_DrawChar (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y + 4, f->generic.textSize, ALIGN_CENTER, 25, 255, 255, 255, 255, false, (i==(f->visible_length-1)));
+						f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 25, 255, 255, 255, 255, false, (i==(f->visible_length-1)));
 		}
 	}
 
@@ -414,7 +418,7 @@ void UI_MenuField_Draw (menuField_s *f)
 		Com_sprintf (tempbuffer, sizeof(tempbuffer), "%s%c", tempbuffer, 11);
 
 	UI_DrawMenuString (f->generic.x + f->generic.parent->x + f->generic.textSize*3,
-						f->generic.y + f->generic.parent->y, f->generic.textSize, ALIGN_CENTER, tempbuffer, hoverAlpha, false, false);
+						f->generic.y + f->generic.parent->y, f->generic.textSize, f->generic.scrAlign, tempbuffer, hoverAlpha, false, false);
 }
 
 void UI_MenuField_Setup (menuField_s *f)
@@ -579,7 +583,7 @@ void UI_MenuLabel_Draw (menuLabel_s *l)
 
 	if (l->generic.name)
 		UI_DrawMenuString (l->generic.x + l->generic.parent->x,
-								l->generic.y + l->generic.parent->y, l->generic.textSize, ALIGN_CENTER, l->generic.name, alpha, true, true);
+								l->generic.y + l->generic.parent->y, l->generic.textSize, l->generic.scrAlign, l->generic.name, alpha, true, true);
 }
 
 void UI_MenuLabel_Setup (menuLabel_s *l)
@@ -761,7 +765,7 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 	hoverAlpha = UI_MouseOverAlpha(&s->generic);
 
 //	UI_DrawMenuString (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-//							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, hoverAlpha, true, true);
+//							s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, s->generic.name, hoverAlpha, true, true);
 	// name and header
 	UI_MenuCommon_DrawItemName (&s->generic, LCOLUMN_OFFSET, 0, RCOLUMN_OFFSET, -MENU_LINE_SIZE, hoverAlpha);
 
@@ -782,30 +786,30 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 
 	// draw left
 	UI_DrawPicST (x, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_left, ALIGN_CENTER, true, color_identity, UI_SLIDER_PIC);
+						stCoord_slider_left, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, 128, 255,255,255,255, false, false);
+//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 128, 255,255,255,255, false, false);
 
 	// draw center
 	x += SLIDER_ENDCAP_WIDTH;
 	for (i = 0; i < SLIDER_RANGE; i++) {
 		UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_SECTION_WIDTH, SLIDER_HEIGHT,
-							stCoord_slider_center, ALIGN_CENTER, true, color_identity, UI_SLIDER_PIC);
+							stCoord_slider_center, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 	//	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
-	//				s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, 129, 255,255,255,255, false, false);
+	//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 129, 255,255,255,255, false, false);
 	}
 
 	// draw right
 	UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_right, ALIGN_CENTER, true, color_identity, UI_SLIDER_PIC);
+						stCoord_slider_right, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, 130, 255,255,255,255, false, false);
+//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 130, 255,255,255,255, false, false);
 
 	// draw knob
 	UI_DrawPicST (x + SLIDER_RANGE*SLIDER_SECTION_WIDTH*s->range - (SLIDER_KNOB_WIDTH/2), y, SLIDER_KNOB_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_knob, ALIGN_CENTER, true, color_identity, UI_SLIDER_PIC);
+						stCoord_slider_knob, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + s->generic.textSize*((SLIDER_RANGE-1)*s->range+1) + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, 131, 255,255,255,255, false, true);
+//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 131, 255,255,255,255, false, true);
 
 	// draw value
 	tmpValue = s->curPos * s->increment + s->baseValue;
@@ -820,9 +824,9 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 			Com_sprintf (valueText, sizeof(valueText), "%4.2f", tmpValue);
 	}
 	UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
-						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, hoverAlpha, false, false);
+						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
 //	UI_DrawMenuString (s->generic.x + s->generic.parent->x + s->generic.textSize*SLIDER_RANGE + RCOLUMN_OFFSET + 2.5*MENU_FONT_SIZE,
-//						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, ALIGN_CENTER, valueText, hoverAlpha, false, false);
+//						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
 }
 
 void UI_MenuSlider_Setup (menuSlider_s *s)
@@ -849,208 +853,210 @@ void UI_MenuSlider_Setup (menuSlider_s *s)
 
 //=========================================================
 
-void UI_MenuPicker_SetValue (menuPicker_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+void UI_MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
-	if (!s || !varName || varName[0] == '\0')
+	if (!p || !varName || varName[0] == '\0')
 		return;
 
 	if (clamp) {
 		UI_ClampCvar (varName, cvarMin, cvarMax);
 	}
-	if (s->itemValues) {
-		s->curValue = UI_GetIndexForStringValue(s->itemValues, Cvar_VariableString((char *)varName));
+	if (p->itemValues) {
+		p->curValue = UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString((char *)varName));
 	}
 	else
 	{
-		if (s->invertValue) {
-			s->curValue = (Cvar_VariableValue((char *)varName) < 0);
+		if (p->invertValue) {
+			p->curValue = (Cvar_VariableValue((char *)varName) < 0);
 		}
 		else {
-			s->curValue = (int)min(max(Cvar_VariableValue((char *)varName), cvarMin), cvarMax);
+			p->curValue = (int)min(max(Cvar_VariableValue((char *)varName), cvarMin), cvarMax);
 		}
 	}
 }
 
-void UI_MenuPicker_SaveValue (menuPicker_s *s, const char *varName)
+void UI_MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
 {
-	if (!s || !varName || varName[0] == '\0')
+	if (!p || !varName || varName[0] == '\0')
 		return;
-	if (!s->numItems) {
+	if (!p->numItems) {
 		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: not initialized!\n");
 		return;
 	}
-	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
+	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
 		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: curvalue out of bounds!\n");
 		return;
 	}
 
-	if (s->itemValues) {
+	if (p->itemValues) {
 		// Don't save to cvar if this itemvalue is the wildcard
-		if ( Q_stricmp(va("%s", s->itemValues[s->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
-			Cvar_Set ((char *)varName, va("%s", s->itemValues[s->curValue]));
+		if ( Q_stricmp(va("%s", p->itemValues[p->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+			Cvar_Set ((char *)varName, va("%s", p->itemValues[p->curValue]));
 	}
 	else
 	{
-		if (s->invertValue) {
+		if (p->invertValue) {
 			Cvar_SetValue ((char *)varName, Cvar_VariableValue((char *)varName) * -1 );
 		}
 		else {
-			Cvar_SetInteger ((char *)varName, s->curValue);
+			Cvar_SetInteger ((char *)varName, p->curValue);
 		}
 	}
 }
 
-const char *UI_MenuPicker_GetValue (menuPicker_s *s)
+const char *UI_MenuPicker_GetValue (menuPicker_s *p)
 {
 	const char *value;
 
-	if (!s)
+	if (!p)
 		return NULL;
 
-	if (!s->numItems) {
+	if (!p->numItems) {
 		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: not initialized!\n");
 		return NULL;
 	}
-	if ( (s->curValue < 0) || (s->curValue >= s->numItems) ) {
+	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
 		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: curvalue out of bounds!\n");
 		return NULL;
 	}
 
-	if (s->itemValues) {
-		value = s->itemValues[s->curValue];
+	if (p->itemValues) {
+		value = p->itemValues[p->curValue];
 	}
 	else {
-		value = va("%d", s->curValue);
+		value = va("%d", p->curValue);
 	}
 
 	return value;
 }
 
-void UI_MenuPicker_DoEnter (menuPicker_s *s)
+void UI_MenuPicker_DoEnter (menuPicker_s *p)
 {
-	if (!s || !s->itemNames || !s->numItems)
+	if (!p || !p->itemNames || !p->numItems)
 		return;
 
-	s->curValue++;
-	if (s->itemNames[s->curValue] == 0)
-		s->curValue = 0;
+	p->curValue++;
+	if (p->itemNames[p->curValue] == 0)
+		p->curValue = 0;
 
-	if (s->generic.callback)
-		s->generic.callback(s);
+	if (p->generic.callback)
+		p->generic.callback (p);
 }
 
-char *UI_MenuPicker_Click (menuPicker_s *s, qboolean mouse2)
+char *UI_MenuPicker_Click (menuPicker_s *p, qboolean mouse2)
 {
-	if (!s || !s->itemNames || !s->numItems)
+	if (!p || !p->itemNames || !p->numItems)
 		return ui_menu_null_sound;
 
 	if (mouse2) {
-		UI_MenuPicker_DoSlide (s, -1);
+		UI_MenuPicker_DoSlide (p, -1);
 	}
 	else {
-		UI_MenuPicker_DoSlide (s, 1);
+		UI_MenuPicker_DoSlide (p, 1);
 	}
 
 	return ui_menu_move_sound;
 }
 
-void UI_MenuPicker_DoSlide (menuPicker_s *s, int dir)
+void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 {
-	if (!s || !s->itemNames || !s->numItems)
+	if (!p || !p->itemNames || !p->numItems)
 		return;
 
-	s->curValue += dir;
+	p->curValue += dir;
 
-	if (s->generic.flags & QMF_SKINLIST) // don't allow looping around for skin lists
+	if (p->generic.flags & QMF_SKINLIST) // don't allow looping around for skin lists
 	{
-		if (s->curValue < 0)
-			s->curValue = 0;
-		else if (s->itemNames[s->curValue] == 0)
-			s->curValue--;
+		if (p->curValue < 0)
+			p->curValue = 0;
+		else if (p->itemNames[p->curValue] == 0)
+			p->curValue--;
 	}
 	else {
-		if (s->curValue < 0)
-			s->curValue = s->numItems-1; // was 0
-		else if (s->itemNames[s->curValue] == 0)
-			s->curValue = 0; // was --
+		if (p->curValue < 0)
+			p->curValue = p->numItems-1; // was 0
+		else if (p->itemNames[p->curValue] == 0)
+			p->curValue = 0; // was --
 	}
 
-	if (s->generic.callback)
-		s->generic.callback(s);
+	if (p->generic.callback)
+		p->generic.callback (p);
 }
  
-void UI_MenuPicker_Draw (menuPicker_s *s)
+void UI_MenuPicker_Draw (menuPicker_s *p)
 {
 	int		alpha;
 	char	buffer[100];
 
-	if (!s)	return;
+	if (!p)	return;
 
-	alpha = UI_MouseOverAlpha(&s->generic);
+	alpha = UI_MouseOverAlpha(&p->generic);
 
-	if (s->generic.name)
+	if (p->generic.name)
 	{
-		UI_DrawMenuString (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->generic.name, alpha, true, true);
+		UI_DrawMenuString (p->generic.x + p->generic.parent->x + LCOLUMN_OFFSET,
+							p->generic.y + p->generic.parent->y, p->generic.textSize, p->generic.scrAlign, p->generic.name, alpha, true, true);
 	}
-	if (!strchr(s->itemNames[s->curValue], '\n'))
+	if (!strchr(p->itemNames[p->curValue], '\n'))
 	{
-		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-							s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, s->itemNames[s->curValue], alpha, false, false);
+		UI_DrawMenuString (p->generic.x + p->generic.parent->x + RCOLUMN_OFFSET,
+							p->generic.y + p->generic.parent->y, p->generic.textSize, p->generic.scrAlign, p->itemNames[p->curValue], alpha, false, false);
 	}
 	else
 	{
-	//	strncpy(buffer, s->itemnames[s->curvalue]);
-		Q_strncpyz (buffer, sizeof(buffer), s->itemNames[s->curValue]);
+	//	strncpy(buffer, p->itemnames[p->curvalue]);
+		Q_strncpyz (buffer, sizeof(buffer), p->itemNames[p->curValue]);
 		*strchr(buffer, '\n') = 0;
-		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-						s->generic.y + s->generic.parent->y, s->generic.textSize, ALIGN_CENTER, buffer, alpha, false, false);
-	//	strncpy(buffer, strchr( s->itemnames[s->curvalue], '\n' ) + 1 );
-		Q_strncpyz (buffer, sizeof(buffer), strchr( s->itemNames[s->curValue], '\n' ) + 1);
-		UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-						s->generic.y + s->generic.parent->y + MENU_LINE_SIZE, s->generic.textSize, ALIGN_CENTER, buffer, alpha, false, false);
+		UI_DrawMenuString (p->generic.x + p->generic.parent->x + RCOLUMN_OFFSET,
+						p->generic.y + p->generic.parent->y, p->generic.textSize, p->generic.scrAlign, buffer, alpha, false, false);
+	//	strncpy(buffer, strchr( p->itemnames[p->curvalue], '\n' ) + 1 );
+		Q_strncpyz (buffer, sizeof(buffer), strchr( p->itemNames[p->curValue], '\n' ) + 1);
+		UI_DrawMenuString (p->generic.x + p->generic.parent->x + RCOLUMN_OFFSET,
+						p->generic.y + p->generic.parent->y + MENU_LINE_SIZE, p->generic.textSize, p->generic.scrAlign, buffer, alpha, false, false);
 	}
 }
 
-void UI_MenuPicker_SetDynamicSize (menuPicker_s *s)
+void UI_MenuPicker_SetDynamicSize (menuPicker_s *p)
 {
-	s->generic.dynamicWidth = 0;
-	s->generic.dynamicWidth += RCOLUMN_OFFSET;
-	if ( (s->curValue < s->numItems) && s->itemNames[s->curValue] && (strlen(s->itemNames[s->curValue]) > 0) )
+	if (!p)	return;
+
+	p->generic.dynamicWidth = 0;
+	p->generic.dynamicWidth += RCOLUMN_OFFSET;
+	if ( (p->curValue < p->numItems) && p->itemNames[p->curValue] && (strlen(p->itemNames[p->curValue]) > 0) )
 	{
-		s->generic.dynamicWidth += (int)strlen(s->itemNames[s->curValue])*s->generic.textSize;
+		p->generic.dynamicWidth += (int)strlen(p->itemNames[p->curValue])*p->generic.textSize;
 	}
 }
 
-void UI_MenuPicker_Setup (menuPicker_s *s)
+void UI_MenuPicker_Setup (menuPicker_s *p)
 {
-	menuFramework_s	*menu = s->generic.parent;
+	menuFramework_s	*menu = p->generic.parent;
 	int				i, j, len;
 
-	for (i=0; s->itemNames[i]; i++);
-	s->numItems = i;
+	for (i=0; p->itemNames[i]; i++);
+	p->numItems = i;
 
-	if (s->itemValues)	// Check if itemvalues count matches itemnames
+	if (p->itemValues)	// Check if itemvalues count matches itemnames
 	{
-		for (j=0; s->itemValues[j]; j++);
+		for (j=0; p->itemValues[j]; j++);
 		if (j != i) {
 			Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_Setup: itemvalues size mismatch for %s!\n",
-						(s->generic.name && (s->generic.name[0] != 0)) ? s->generic.name : "<noname>");
+						(p->generic.name && (p->generic.name[0] != 0)) ? p->generic.name : "<noname>");
 		}
 	}
 
 	// set min and max coords
-	len = (s->generic.name) ? (int)strlen(s->generic.name) : 0;
-	s->generic.topLeft[0] = menu->x + s->generic.x - (len+2)*s->generic.textSize;
-	s->generic.topLeft[1] = menu->y + s->generic.y;
-	s->generic.botRight[0] = s->generic.topLeft[0] + (len+2)*s->generic.textSize;
-	s->generic.botRight[1] = s->generic.topLeft[1] + s->generic.textSize;
-	s->generic.dynamicWidth = 0;
-	s->generic.dynamicHeight = 0;
-	s->generic.isExtended = false;
-//	s->generic.valueChanged = false;
+	len = (p->generic.name) ? (int)strlen(p->generic.name) : 0;
+	p->generic.topLeft[0] = menu->x + p->generic.x - (len+2)*p->generic.textSize;
+	p->generic.topLeft[1] = menu->y + p->generic.y;
+	p->generic.botRight[0] = p->generic.topLeft[0] + (len+2)*p->generic.textSize;
+	p->generic.botRight[1] = p->generic.topLeft[1] + p->generic.textSize;
+	p->generic.dynamicWidth = 0;
+	p->generic.dynamicHeight = 0;
+	p->generic.isExtended = false;
+//	p->generic.valueChanged = false;
 
-	UI_MenuPicker_SetDynamicSize (s);
+	UI_MenuPicker_SetDynamicSize (p);
 }
 
 //=========================================================
@@ -1145,7 +1151,9 @@ char *UI_MenuButton_Click (menuButton_s *b, qboolean mouse2)
 	if (!b->usesMouse2 && mouse2)
 		return ui_menu_null_sound;
 
-	if (b->generic.callback)
+	if ( mouse2 && b->generic.mouse2Callback )
+		b->generic.mouse2Callback (b);
+	else if (b->generic.callback)
 		b->generic.callback (b);
 
 	return ui_menu_move_sound;

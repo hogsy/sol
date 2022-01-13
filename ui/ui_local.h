@@ -89,9 +89,9 @@ enum {
 
 typedef struct _tag_menuframework
 {
-	int x, y;
-	int	cursor;
+	int			x, y;
 
+	int			cursor;
 	int			nitems;
 	int			nslots;
 	void		*items[MAX_MENUITEMS]; // 64
@@ -108,7 +108,7 @@ typedef struct _tag_menuframework
 //	char		*flagCvar;			// for dmflags var
 //	char		bitFlags_statusbar[128];
 
-	void (*cursordraw)( struct _tag_menuframework *m );
+	void		(*cursordraw)	(struct _tag_menuframework *m);
 //	const char	*(*keyFunc)		(struct _tag_menuFramework *m, int key);
 //	qboolean	(*canOpenFunc)	(void *self);
 //	void		(*onOpenFunc)	(void *unused);
@@ -119,37 +119,38 @@ typedef struct _tag_menuframework
 
 typedef struct
 {
-	int					type;
-	const char			*name;
-	const char			*header;
-	int					x;
-	int					y;
-	scralign_t			scrAlign;
+	int						type;
+	const char				*name;
+	const char				*header;
+	int						x;
+	int						y;
+	scralign_t				scrAlign;
 
-	menuFramework_s		*parent;
-	int					cursor_offset;
-	int					localdata[4];
-	int					textSize;
-	unsigned			flags;
+	menuFramework_s			*parent;
+	int						cursor_offset;
+	int						localdata[4];
+	int						textSize;
+	unsigned				flags;
 
-	float				topLeft[2];		// for mouse pointer detection
-	float				botRight[2];	// for mouse pointer detection
-	float				dynamicWidth;	// for size of changing list items
-	float				dynamicHeight;	// for size of changing list items
-	qboolean			isHidden;		// for hiding items
-	qboolean			isExtended;		// for items that have pop-put parts
-	qboolean			isCursorItem;	// for cursor items
-	int					cursorItemOffset[2];
-	const char			*statusbar;
+	float					topLeft[2];		// for mouse pointer detection
+	float					botRight[2];	// for mouse pointer detection
+	float					dynamicWidth;	// for size of changing list items
+	float					dynamicHeight;	// for size of changing list items
+	qboolean				isHidden;		// for hiding items
+	qboolean				isExtended;		// for items that have pop-put parts
+	qboolean				isCursorItem;	// for cursor items
+	int						cursorItemOffset[2];
+	const char				*statusbar;
 
-//	char				*cvar;			// for option items
-//	qboolean			cvarNoSave;		// whether cvar is saved manually (apply changes func)
-//	qboolean			valueChanged;	// whether value has changed from cvar (unchanged)
-//	qboolean			cvarClamp;		// whether option cvar is clamped
-//	float				cvarMin;		// cvar clamp range
-//	float				cvarMax;
+//	char					*cvar;			// for option items
+//	qboolean				cvarNoSave;		// whether cvar is saved manually (apply changes func)
+//	qboolean				valueChanged;	// whether value has changed from cvar (unchanged)
+//	qboolean				cvarClamp;		// whether option cvar is clamped
+//	float					cvarMin;		// cvar clamp range
+//	float					cvarMax;
 
 	void (*callback)		(void *self);
+	void (*mouse2Callback)	(void *self);
 //	void (*dblClkCallback)	(void *self);
 	void (*statusbarfunc)	(void *self);
 	void (*ownerdraw)		(void *self);
@@ -198,7 +199,9 @@ typedef struct
 
 typedef struct
 {
-	menuCommon_s generic;
+	menuCommon_s	generic;
+
+	qboolean		usesMouse2;
 } menuAction_s;
 
 typedef struct
@@ -213,7 +216,7 @@ typedef struct
 
 typedef struct
 {
-	menuCommon_s generic;
+	menuCommon_s	generic;
 } menuLabel_s;
 
 typedef struct
@@ -718,9 +721,9 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 void	UI_MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
 void	UI_MenuSlider_SaveValue (menuSlider_s *s, const char *varName);
 float	UI_MenuSlider_GetValue (menuSlider_s *s);
-void	UI_MenuPicker_SetValue (menuPicker_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
-void	UI_MenuPicker_SaveValue (menuPicker_s *s, const char *varName);
-const char *UI_MenuPicker_GetValue (menuPicker_s *s);
+void	UI_MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
+void	UI_MenuPicker_SaveValue (menuPicker_s *p, const char *varName);
+const char *UI_MenuPicker_GetValue (menuPicker_s *p);
 
 void UI_UpdateMenuItemCoords (void *item);
 qboolean UI_ItemCanBeCursorItem (void *item);
