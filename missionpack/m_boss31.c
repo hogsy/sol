@@ -319,7 +319,7 @@ mframe_t jorg_frames_death1 [] =
 	ai_move,	0,	MakronToss,
 	ai_move,	0,	jorg_dead // was BossExplode
 };
-mmove_t jorg_move_death = {FRAME_death01, FRAME_death50, jorg_frames_death1, NULL}; //was jorg_dead
+mmove_t jorg_move_death = {FRAME_death01, FRAME_death50, jorg_frames_death1, NULL}; // was jorg_dead
 
 mframe_t jorg_frames_attack2 []=
 {
@@ -588,7 +588,7 @@ void jorg_attack(edict_t *self)
 	}
 }
 
-//Knightmare- explosions and throw a few gibs, but don't gib body
+// Knightmare- explosions and throw a few gibs, but don't gib body
 void JorgExplode (edict_t *self)
 {
 	vec3_t	org;
@@ -726,7 +726,7 @@ void jorg_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	// check for gib
 	if (self->health <= self->gib_health)
 	{
-		if (self->deadflag == DEAD_DEAD && (self->fogclip & 1) && (self->svflags & SVF_DEADMONSTER))
+		if ( (self->deadflag == DEAD_DEAD) && (self->fogclip & 1) && (self->svflags & SVF_DEADMONSTER) )
 			BossExplode (self);	// explode if already dead and have tossed makron
 		else
 			self->fog_index |= 1; // else set gib flag
@@ -763,7 +763,7 @@ qboolean Jorg_CheckAttack (edict_t *self)
 		VectorCopy (self->enemy->s.origin, spot2);
 		spot2[2] += self->enemy->viewheight;
 
-		//Knightmare- don't shoot from behind a window
+		// Knightmare- don't shoot from behind a window
 		tr = gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_WINDOW);
 
 		// do we have a clear shot?
@@ -914,9 +914,9 @@ void SP_monster_jorg (edict_t *self)
 	self->monsterinfo.checkattack = Jorg_CheckAttack;
 	
 	if (!self->blood_type)
-		self->blood_type = 2; //sparks
+		self->blood_type = 2;	// sparks
 	else
-		self->fogclip |= 2; //custom bloodtype flag
+		self->fogclip |= 2;		// custom bloodtype flag
 
 	gi.linkentity (self);
 	

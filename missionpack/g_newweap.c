@@ -2586,7 +2586,7 @@ void tracker_pain_daemon_think (edict_t *self)
 	{
 		if (self->enemy->health > 0)
 		{
-//			gi.dprintf("ouch %x\n", self);
+		//	gi.dprintf("ouch %x\n", self);
 			T_Damage (self->enemy, self, self->owner, vec3_origin, self->enemy->s.origin, pain_normal,
 						self->dmg, 0, TRACKER_DAMAGE_FLAGS, MOD_TRACKER);
 
@@ -2601,7 +2601,7 @@ void tracker_pain_daemon_think (edict_t *self)
 					else
 						hurt = 500;
 
-//					gi.dprintf("non-player killed. ensuring gib!  %d\n", hurt);
+				//	gi.dprintf("non-player killed. ensuring gib!  %d\n", hurt);
 					T_Damage (self->enemy, self, self->owner, vec3_origin, self->enemy->s.origin,
 								pain_normal, hurt, 0, TRACKER_DAMAGE_FLAGS, MOD_TRACKER);
 				}

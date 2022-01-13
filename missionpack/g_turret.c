@@ -1576,12 +1576,13 @@ void SP_turret_breach (edict_t *self)
 	self->class_id = ENTITY_TURRET_BREACH;
 	self->common_name = "Turret Breach";
 
-	//Knightmare- no goodguy flag on level02 of Zorius
-	if (/*Q_stricmp(level.mapname, "level02") == 0
-		||*/ Q_stricmp(level.mapname, "cm3pt1") == 0
-		|| Q_stricmp(level.mapname, "cm3pt3") == 0)
+	// Knightmare- no goodguy flag on Neil Manke's maps
+	if ( (Q_stricmp(level.mapname, "cm3pt1") == 0)
+		|| (Q_stricmp(level.mapname, "cm3pt3") == 0) 
+		|| (Q_stricmp(level.mapname, "sofm2") == 0)
+		|| (Q_stricmp(level.mapname, "sofpt1") == 0) )
 	{
-		gi.dprintf("Removing goodguy flag from turret\n");
+		gi.dprintf("Removing goodguy flag from turret.\n");
 		self->spawnflags &= ~SF_TURRET_GOODGUY;
 	}
 

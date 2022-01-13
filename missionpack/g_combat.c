@@ -1379,8 +1379,8 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 			continue;
 		if (!ent->takedamage)
 			continue;
-		//if (ent->svflags & SVF_GIB) //Knightmare- gibs aren't destoyed by splash damage
-		//	continue;
+	//	if (ent->svflags & SVF_GIB) //Knightmare- gibs aren't destoyed by splash damage
+	//		continue;
 
 		VectorAdd (ent->mins, ent->maxs, v);
 		VectorMA (ent->s.origin, 0.5, v, v);
