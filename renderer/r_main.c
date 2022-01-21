@@ -1166,7 +1166,7 @@ void R_Register (void)
 	Cvar_SetDescription ("r_warp_lighting_sample_offset", "Sets offset sampling distance for vertex light sampling.");
 
 	// allow disabling of trans33+trans66 surface flag combining
-	r_solidalpha = Cvar_Get( "r_solidalpha", "1", CVAR_ARCHIVE );
+	r_solidalpha = Cvar_Get( "r_solidalpha", "0", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_solidalpha", "Enables rendering of solid alphas (1.0f) when both trans33 and trans66 flags are set.");
 	
 	// allow disabling of backwards alias model roll

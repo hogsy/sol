@@ -2361,7 +2361,7 @@ void ClientCommand (edict_t *ent)
 			FILE	*f;
 		//	int		i;
 
-			e = LookingAt(ent,0,NULL,NULL);
+			e = LookingAt(ent, 0, NULL, NULL);
 			if (!e) return;
 	
 			SavegameDirRelativePath(parm, filename, sizeof(filename));
@@ -2386,7 +2386,7 @@ void ClientCommand (edict_t *ent)
 		edict_t *viewing;
 		float	range;
 
-		viewing = LookingAt(ent,0,NULL,&range);
+		viewing = LookingAt(ent, 0, NULL, &range);
 		if (range > 512)
 			return;
 		if (!(viewing->monsterinfo.aiflags & AI_ACTOR))
@@ -2395,23 +2395,23 @@ void ClientCommand (edict_t *ent)
 			return;
 		if (!(viewing->monsterinfo.aiflags & AI_FOLLOW_LEADER))
 			return;
-		actor_moveit(ent,viewing);
+		actor_moveit(ent, viewing);
 	}
-	else if (!Q_stricmp(cmd,"hud"))
+	else if (!Q_stricmp(cmd, "hud"))
 	{
 		if (parm)
 		{
 			int	state = atoi(parm);
 
 			if (state)
-				Hud_On();
+				Hud_On ();
 			else
-				Hud_Off();
+				Hud_Off ();
 		}
 		else
 			Cmd_ToggleHud();
 	}
-	else if (!Q_stricmp(cmd,"whatsit"))
+	else if (!Q_stricmp(cmd, "whatsit"))
 	{
 		if (parm)
 		{
@@ -2425,7 +2425,7 @@ void ClientCommand (edict_t *ent)
 			world->effects ^= FX_WORLDSPAWN_WHATSIT;
 	}
 
-/*	else if (!Q_stricmp(cmd,"lsight"))
+/*	else if (!Q_stricmp(cmd, "lsight"))
 	{
 		if (ent->client->laser_sight)
 		{

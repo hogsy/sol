@@ -840,7 +840,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 	search_data = data;  // copy entity data postion
 	// go through all the dictionary pairs looking for the classname
 	while (1)
-	{	//parse keyname
+	{	// parse keyname
 		search_token = COM_Parse (&search_data);
 		if (!search_data)
 			gi.error ("ED_ParseEntityAlias: end of entity data without closing brace");
@@ -881,7 +881,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 			}
 			// matching classname must be outside braces
 			if (!strcmp(search_token, entclassname) && (braceLevel == 0)) {
-				//gi.dprintf ("Alias for %s found in alias script file.\n", search_token);
+			//	gi.dprintf ("Alias for %s found in alias script file.\n", search_token);
 				alias_found = true;
 				break;
 			}

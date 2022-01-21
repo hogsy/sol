@@ -111,8 +111,10 @@ cvar_t	*zoomrate;
 cvar_t	*zoomsnap;
 cvar_t	*tpp;
 
-cvar_t	*sv_stopspeed;	//PGM	 (this was a define in g_phys.c)
+cvar_t	*sv_stopspeed;		//PGM	 (this was a define in g_phys.c)
 cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
+
+cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE cvars
 cvar_t	*g_showlogic;

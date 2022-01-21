@@ -405,7 +405,7 @@ void InitGame (void)
 	gun_y = gi.cvar ("gun_y", "0", 0);
 	gun_z = gi.cvar ("gun_z", "0", 0);
 
-	//FIXME: sv_ prefix is wrong for these
+	// FIXME: sv_ prefix is wrong for these
 	sv_rollspeed = gi.cvar ("sv_rollspeed", "200", 0);
 	sv_rollangle = gi.cvar ("sv_rollangle", "2", 0);
 	sv_maxvelocity = gi.cvar ("sv_maxvelocity", "2000", 0);
@@ -413,6 +413,8 @@ void InitGame (void)
 
 	sv_stopspeed = gi.cvar ("sv_stopspeed", "100", 0);		// PGM - was #define in g_phys.c
 	sv_step_fraction = gi.cvar ("sv_step_fraction", "0.90", 0);	// Knightmare- this was a define in p_view.c
+
+	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "1", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE
 	g_showlogic = gi.cvar ("g_showlogic", "0", 0);

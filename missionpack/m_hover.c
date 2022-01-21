@@ -785,9 +785,11 @@ void SP_monster_hover (edict_t *self)
 	self->s.modelindex = gi.modelindex("models/monsters/hover/tris.md2");
 
 	// Knightmare- smaller bounding box for Pierre replacement in Coconut Monkey level 3
-	if (Q_stricmp(level.mapname, "cm3pt3") == 0
-		&& !strcmp(self->combattarget, "showdown"))
+	if ( (int)g_nm_maphacks->value
+		&& (Q_stricmp(level.mapname, "cm3pt3") == 0)
+		&& !strcmp(self->combattarget, "showdown") )
 	{
+		gi.dprintf("Using smaller bbox (-16,16 vs. -24,24) for Pierre replacement monster_daedalus.\n");
 		VectorSet (self->mins, -16, -16, -24);
 		VectorSet (self->maxs, 16, 16, 32);
 	}

@@ -2195,7 +2195,7 @@ void ClientCommand (edict_t *ent)
 			FILE	*f;
 		//	int		i;
 
-			e = LookingAt(ent,0,NULL,NULL);
+			e = LookingAt(ent, 0, NULL, NULL);
 			if (!e) return;
 	
 			SavegameDirRelativePath(parm, filename, sizeof(filename));
@@ -2220,7 +2220,7 @@ void ClientCommand (edict_t *ent)
 		edict_t *viewing;
 		float	range;
 
-		viewing = LookingAt(ent,0,NULL,&range);
+		viewing = LookingAt(ent, 0, NULL, &range);
 		if (range > 512)
 			return;
 		if (!(viewing->monsterinfo.aiflags & AI_ACTOR))
@@ -2229,7 +2229,7 @@ void ClientCommand (edict_t *ent)
 			return;
 		if (!(viewing->monsterinfo.aiflags & AI_FOLLOW_LEADER))
 			return;
-		actor_moveit(ent,viewing);
+		actor_moveit(ent, viewing);
 	}
 #ifndef DISABLE_FMOD
 	else if (!Q_stricmp(cmd, "playsound"))
@@ -2282,9 +2282,9 @@ void ClientCommand (edict_t *ent)
 			int	state = atoi(parm);
 
 			if (state)
-				Hud_On();
+				Hud_On ();
 			else
-				Hud_Off();
+				Hud_Off ();
 		}
 		else
 			Cmd_ToggleHud();
