@@ -64,6 +64,7 @@ static void CrosshairButtonFunc (void *unused)
 	if (s_options_screen_crosshair_box.curValue > ui_numcrosshairs-1)
 		s_options_screen_crosshair_box.curValue = 0; // wrap around
 	CrosshairFunc (NULL);
+//	UI_SlideMenuItem ((void *) &s_options_screen_crosshair_box, 1);
 }
 
 static void CrosshairButtonMouse2Func (void *unused)
@@ -72,6 +73,7 @@ static void CrosshairButtonMouse2Func (void *unused)
 	if (s_options_screen_crosshair_box.curValue < 0)
 		s_options_screen_crosshair_box.curValue = ui_numcrosshairs-1; // wrap around
 	CrosshairFunc (NULL);
+//	UI_SlideMenuItem ((void *) &s_options_screen_crosshair_box, -1);
 }
 
 void CrosshairButtonCursor (void *unused)

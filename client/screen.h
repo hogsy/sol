@@ -72,6 +72,7 @@ typedef struct
 #define DSF_OVERRIDEPATH		512
 #define	DSF_RENAMESHADER		1024
 #define	DSF_MASKSHADER			2048	// uses shaderMinus for mask image
+#define	DSF_ADDITIVESHADER		4096	// specifies additive blending
 
 
 // Psychospaz's scaled menu stuff
@@ -148,11 +149,11 @@ void	SCR_DrawBorder (float x, float y, float width, float height, float borderSi
 void	SCR_DrawPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawScaledPic (float x, float y, float scale, qboolean centerCoords, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawLegacyPic (float x, float y, float scale, char *pic, float alpha);
-void	SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, char *pic);
-void	SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, char *pic);
-void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, char *pic);
-void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic);
-void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic, char *maskPic);
+void	SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
+void	SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
+void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
+void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
+void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic);
 void	SCR_DrawTiledPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawChar (float x, float y, int size, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	SCR_DrawString (float x, float y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);

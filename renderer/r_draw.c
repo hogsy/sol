@@ -364,6 +364,7 @@ void R_DrawPic_Standard (int x, int y, int w, int h, vec2_t offset, vec4_t stCoo
 		GL_Disable (GL_ALPHA_TEST);
 		GL_TexEnv (GL_MODULATE);
 		GL_Enable (GL_BLEND);
+		GL_BlendFunc (parms->blendfunc_src, parms->blendfunc_dst);
 		GL_DepthMask (false);
 	}
 
@@ -410,6 +411,7 @@ void R_DrawPic_Standard (int x, int y, int w, int h, vec2_t offset, vec4_t stCoo
 	{
 		GL_DepthMask (true);
 		GL_TexEnv (GL_REPLACE);
+		GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL_Disable (GL_BLEND);
 		GL_Enable (GL_ALPHA_TEST);
 	}
@@ -590,6 +592,14 @@ void R_DrawPic (drawStruct_t ds)
 	}
 
 	drawParms.blend = ( image->has_alpha || (ds.color[0] < 1.0f) || (ds.color[1] < 1.0f) || (ds.color[2] < 1.0f) || (ds.color[3] < 1.0f) );
+	if (ds.flags & DSFLAG_ADDITIVE) {
+		drawParms.blendfunc_src = GL_SRC_ALPHA;
+		drawParms.blendfunc_dst = GL_ONE;
+	}
+	else {
+		drawParms.blendfunc_src = GL_SRC_ALPHA;
+		drawParms.blendfunc_dst = GL_ONE_MINUS_SRC_ALPHA;
+	}
 	R_DrawPic_Standard (ds.x, ds.y, w, h, ds.offset, texCoords, ds.color, image->texnum, &drawParms, (ds.flags & DSFLAG_CLAMP));
 }
 

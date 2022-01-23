@@ -80,6 +80,7 @@ typedef enum
 #define DSFLAG_SCALED			0x0004		// scale up using scale values, instead of width and height
 #define DSFLAG_CLAMP			0x0004		// texture edge clamping
 #define DSFLAG_MASKED			0x0008		// use mask image
+#define DSFLAG_ADDITIVE			0x0010		// use additive blending
 
 typedef struct
 {

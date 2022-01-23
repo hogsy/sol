@@ -586,7 +586,7 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 		arrowTemp[0][3] += 0.25;
 	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_left_d.pcx");
 	}
-	UI_DrawPicST (icon_x-39, icon_y+2, 32, 32, arrowTemp[0], ALIGN_CENTER, false, arrowColor, UI_ARROWS_PIC);
+	UI_DrawPicST (icon_x-39, icon_y+2, 32, 32, arrowTemp[0], ALIGN_CENTER, false, arrowColor, false, UI_ARROWS_PIC);
 //	UI_DrawPic (icon_x-39, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
 
 	// background
@@ -627,7 +627,7 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 		arrowTemp[1][3] += 0.25;
 	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_right_d.pcx");
 	}
-	UI_DrawPicST (icon_x+icon_offset+5, icon_y+2, 32, 32, arrowTemp[1], ALIGN_CENTER, false, arrowColor, UI_ARROWS_PIC);
+	UI_DrawPicST (icon_x+icon_offset+5, icon_y+2, 32, 32, arrowTemp[1], ALIGN_CENTER, false, arrowColor, false, UI_ARROWS_PIC);
 //	UI_DrawPic (icon_x+icon_offset+5, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
 }
 
