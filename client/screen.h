@@ -86,9 +86,8 @@ typedef struct
 
 #define MENU_FONT_SIZE	8
 #define MENU_LINE_SIZE	10
-
 #define HUD_FONT_SIZE	8.0
-
+#define	HUD_CHAR_WIDTH	16
 
 extern	char		*sb_nums[2][11];
 
@@ -112,6 +111,7 @@ extern	vrect_t		scr_vrect;		// position of render window
 
 extern color_t		color_identity;
 extern vec4_t		vec4_identity;
+extern vec4_t		stCoord_identity;
 extern vec4_t		stCoord_default;
 extern vec4_t		stCoord_tile;
 
@@ -145,15 +145,15 @@ float	SCR_GetScreenScale (void);
 
 void	SCR_DrawFill (float x, float y, float width, float height, scralign_t align, qboolean roundOut, int red, int green, int blue, int alpha);
 void	SCR_DrawBorder (float x, float y, float width, float height, float borderSize, scralign_t align, qboolean roundOut, int red, int green, int blue, int alpha);
-//void	SCR_DrawPic (float x, float y, float width, float height, scralign_t align, char *pic, float alpha);
 void	SCR_DrawPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawScaledPic (float x, float y, float scale, qboolean centerCoords, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawLegacyPic (float x, float y, float scale, char *pic, float alpha);
-void	SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
-void	SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
-void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
-void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic);
-void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic);
+void	SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, char *pic);
+void	SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, char *pic);
+void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, char *pic);
+void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic);
+void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic, char *maskPic);
+void	SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic);
 void	SCR_DrawTiledPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawChar (float x, float y, int size, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	SCR_DrawString (float x, float y, int size, scralign_t align, const char *string, fontslot_t font, int alpha);
@@ -165,7 +165,8 @@ void	SCR_DrawCrosshair (void);
 void	Hud_DrawString (int x, int y, const char *string, int alpha, qboolean isStatusBar);
 void	Hud_DrawStringAlt (int x, int y, const char *string, int alpha, qboolean isStatusBar);
 void	Hud_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offset, float width, scralign_t align, char *string, color_t color, char *pic, int flags);
-//void	SCR_SetHud_f (void);
+//void	CL_SetHud (const char *value);
+//void	CL_SetDefaultHud (void);
 void	CL_SetHudVariant (void);
 //void	CL_LoadHud (qboolean startup);
 //void	CL_FreeHud (void);

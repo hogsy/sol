@@ -381,10 +381,10 @@ void UI_MenuField_Draw (menuField_s *f)
 	{
 		UI_DrawPicST (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
 						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_left,
-						f->generic.scrAlign, true, color_identity, false, UI_FIELD_PIC);
+						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 		UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
 						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_right,
-						f->generic.scrAlign, true, color_identity, false, UI_FIELD_PIC);
+						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 	}
 	else
 	{
@@ -403,7 +403,7 @@ void UI_MenuField_Draw (menuField_s *f)
 		if (ui_new_textfield->integer) {
 			UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
 							f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_center,
-							f->generic.scrAlign, true, color_identity, false, UI_FIELD_PIC);
+							f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 		}
 		else {
 			UI_DrawChar (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
@@ -786,7 +786,7 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 
 	// draw left
 	UI_DrawPicST (x, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_left, s->generic.scrAlign, true, color_identity, false, UI_SLIDER_PIC);
+						stCoord_slider_left, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
 //				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 128, 255,255,255,255, false, false);
 
@@ -794,20 +794,20 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 	x += SLIDER_ENDCAP_WIDTH;
 	for (i = 0; i < SLIDER_RANGE; i++) {
 		UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_SECTION_WIDTH, SLIDER_HEIGHT,
-							stCoord_slider_center, s->generic.scrAlign, true, color_identity, false, UI_SLIDER_PIC);
+							stCoord_slider_center, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 	//	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
 	//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 129, 255,255,255,255, false, false);
 	}
 
 	// draw right
 	UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_right, s->generic.scrAlign, true, color_identity, false, UI_SLIDER_PIC);
+						stCoord_slider_right, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
 //				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 130, 255,255,255,255, false, false);
 
 	// draw knob
 	UI_DrawPicST (x + SLIDER_RANGE*SLIDER_SECTION_WIDTH*s->range - (SLIDER_KNOB_WIDTH/2), y, SLIDER_KNOB_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_knob, s->generic.scrAlign, true, color_identity, false, UI_SLIDER_PIC);
+						stCoord_slider_knob, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
 //	UI_DrawChar (s->generic.x + s->generic.parent->x + s->generic.textSize*((SLIDER_RANGE-1)*s->range+1) + RCOLUMN_OFFSET,
 //				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 131, 255,255,255,255, false, true);
 
@@ -1077,7 +1077,7 @@ void UI_MenuImage_Draw (menuImage_s *i)
 	}
 	if (i->imageName && strlen(i->imageName) > 0) {
 		if (i->overrideColor)
-			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, false, i->imageName);
+			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
 		else
 			UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
 	}
@@ -1176,13 +1176,13 @@ void UI_MenuButton_Draw (menuButton_s *b)
 	if ( (b == ui_mousecursor.menuitem || b == UI_ItemAtMenuCursor(menu))
 		&& (b->hoverImageName && strlen(b->hoverImageName) > 0) ) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, false, b->hoverImageName);
+			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
 		else
 			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
 	}
 	else if (b->imageName && strlen(b->imageName) > 0) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, false, b->imageName);
+			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
 		else
 			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
 	}

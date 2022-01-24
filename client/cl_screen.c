@@ -765,7 +765,7 @@ SCR_DrawColoredPic
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic)
+void SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, char *pic)
 {
 	vec4_t			outColor;
 	drawStruct_t	ds = { 0 };
@@ -774,9 +774,6 @@ void SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
-	}
-	if (additive) {
-		ds.flags |= DSFLAG_ADDITIVE;
 	}
 
 	ds.pic = pic;
@@ -793,7 +790,7 @@ SCR_DrawOffsetPic
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic)
+void SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, char *pic)
 {
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
@@ -805,9 +802,6 @@ void SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offs
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
-	}
-	if (additive) {
-		ds.flags |= DSFLAG_ADDITIVE;
 	}
 
 	ds.pic = pic;
@@ -824,7 +818,7 @@ SCR_DrawOffsetPicST
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic)
+void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, char *pic)
 {
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
@@ -836,9 +830,6 @@ void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t of
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
-	}
-	if (additive) {
-		ds.flags |= DSFLAG_ADDITIVE;
 	}
 
 	ds.pic = pic;
@@ -857,7 +848,7 @@ SCR_DrawScrollPic
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic)
+void SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic)
 {
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
@@ -869,9 +860,6 @@ void SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offs
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
-	}
-	if (additive) {
-		ds.flags |= DSFLAG_ADDITIVE;
 	}
 
 	ds.pic = pic;
@@ -891,11 +879,44 @@ SCR_DrawMaskedPic
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic)
+void SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic, char *maskPic)
 {
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
 	drawStruct_t	ds = { 0 };
+
+	Vector2Copy (offset, scaledOffset);
+	SCR_ScaleCoords (&x, &y, &width, &height, align);
+	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
+	if (roundOut) {
+		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
+	}
+
+	ds.pic = pic;
+	ds.maskPic = maskPic;
+	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
+	ds.flags |= DSFLAG_USESTCOORDS|DSFLAG_MASKED;
+	Vector2Copy (scroll, ds.scroll);
+	Vector2Copy (scaledOffset, ds.offset);
+	Vector4Copy (texCorners, ds.stCoords);
+	Vector4Copy (outColor, ds.color);
+	R_DrawPic (ds);
+}
+
+
+/*
+================
+SCR_DrawPicFull
+Coordinates are 640*480 virtual values
+=================
+*/
+void SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic)
+{
+	vec4_t			outColor;
+	vec2_t			scaledOffset;
+	drawStruct_t	ds = { 0 };
+	qboolean		useMask = ( (maskPic != NULL) && (strlen(maskPic) > 0) );
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
@@ -909,9 +930,11 @@ void SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offs
 	}
 
 	ds.pic = pic;
-	ds.maskPic = maskPic;
+	if ( useMask ) {
+		ds.maskPic = maskPic;
+	}
 	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
-	ds.flags |= DSFLAG_USESTCOORDS|DSFLAG_MASKED;
+	ds.flags |= (useMask) ? DSFLAG_USESTCOORDS|DSFLAG_MASKED : DSFLAG_USESTCOORDS;
 	Vector2Copy (scroll, ds.scroll);
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (texCorners, ds.stCoords);
@@ -1020,11 +1043,11 @@ static void SCR_ShowFPS (void)
 		fpscounter = cl.time + 100;
 	}
 	// leave space for 3-digit frag counter
-//	x = (viddef.width - strlen(fpsText)*FONT_SIZE - 3*SCR_GetHudScale()*(CHAR_WIDTH+2));
-//	x = (viddef.width - strlen(fpsText)*HUD_FONT_SIZE*SCR_GetHudScale() - 3*SCR_GetHudScale()*(CHAR_WIDTH+2));
+//	x = (viddef.width - strlen(fpsText)*FONT_SIZE - 3*SCR_GetHudScale()*(HUD_CHAR_WIDTH+2));
+//	x = (viddef.width - strlen(fpsText)*HUD_FONT_SIZE*SCR_GetHudScale() - 3*SCR_GetHudScale()*(HUD_CHAR_WIDTH+2));
 	scrLeft = SCREEN_WIDTH;
 	SCR_ScaleCoords (&scrLeft, NULL, NULL, NULL, ALIGN_STRETCH);
-	fragsSize = SCR_GetHudScale() * 3 * (CHAR_WIDTH+2);
+	fragsSize = SCR_GetHudScale() * 3 * (HUD_CHAR_WIDTH+2);
 //	x = ( viddef.width - strlen(fpsText)*HUD_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)) );
 	x = (scrLeft - stringLen(fpsText)*HUD_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
 	y = 0;
