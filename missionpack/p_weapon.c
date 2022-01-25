@@ -498,6 +498,7 @@ void Use_Weapon (edict_t *ent, gitem_t *in_item)
 	if ( (index == current_weapon_index) ||
 		 ( (index == rl_index)  && (current_weapon_index == hml_index) ) ||
 		 ( (index == hml_index) && (current_weapon_index == rl_index)  ) ||
+		 ( (index == trap_index) && (current_weapon_index == trap_index)  ) ||
 		 ( (index == pl_index) && (current_weapon_index == pl_index)  ) ||
 		 ( (index == pr_index) && (current_weapon_index == pr_index)  ) )
 	{
@@ -520,6 +521,12 @@ void Use_Weapon (edict_t *ent, gitem_t *in_item)
 			}
 			else
 				return;
+		}
+		// Knightmare- dettrap command
+		else if (current_weapon_index == trap_index)
+		{
+			Cmd_DetTrap_f (ent);
+			return;
 		}
 		// Knightmare- detprox command
 		else if (current_weapon_index == pl_index)
@@ -2813,6 +2820,19 @@ void Weapon_Trap (edict_t *ent)
 
 	if (ent->client->weaponstate == WEAPON_READY)
 	{
+		// Knightmare- catch alt fire commands
+		if ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK2)
+		{
+			int	current_weapon_index = ITEM_INDEX(ent->client->pers.weapon);
+			
+			if (current_weapon_index == trap_index) // trap detonate
+			{
+				Cmd_DetTrap_f (ent);
+				ent->client->latched_buttons &= ~BUTTONS_ATTACK;
+				ent->client->buttons &= ~BUTTONS_ATTACK;
+			}
+		}
+
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTONS_ATTACK) )
 		{
 			ent->client->latched_buttons &= ~BUTTONS_ATTACK;

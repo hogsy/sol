@@ -1937,8 +1937,8 @@ void ClientCommand (edict_t *ent)
 //CHASECAM
 	else if (Q_stricmp (cmd, "thirdperson") == 0)
             Cmd_Chasecam_Toggle (ent);
-	else if (Q_stricmp(cmd, "killtrap") == 0)
-		Cmd_KillTrap_f(ent);
+	else if ( (Q_stricmp(cmd, "killtrap") == 0) || (Q_stricmp(cmd, "dettrap") == 0) )
+		Cmd_DetTrap_f(ent);
 	else if (Q_stricmp (cmd, "entcount") == 0)		// PGM
 		Cmd_Ent_Count_f (ent);						// PGM
 	else if (Q_stricmp (cmd, "disguise") == 0)		// PGM

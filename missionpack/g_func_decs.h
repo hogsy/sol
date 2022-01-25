@@ -1585,7 +1585,7 @@ extern void actor_walk ( edict_t * self ) ;
 extern void actor_stand ( edict_t * self ) ;
 extern void InitLithiumVars ( void ) ;
 extern void Trap_Explode ( edict_t * ent ) ;
-extern void Cmd_KillTrap_f ( edict_t * ent ) ;
+extern void Cmd_DetTrap_f ( edict_t * ent ) ;
 extern void Trap_Die ( edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point ) ;
 extern void SP_trap ( edict_t * trap ) ;
 extern void trap_delayed_start ( edict_t * trap ) ;

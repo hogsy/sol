@@ -767,11 +767,11 @@ void Trap_Die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, 
 }
 
 
-void Cmd_KillTrap_f (edict_t *ent)
+void Cmd_DetTrap_f (edict_t *ent)
 {
 	edict_t *blip = NULL;
 
-	while ((blip = findradius(blip, ent->s.origin, 1000)) != NULL)
+	while ((blip = findradius(blip, ent->s.origin, 2048)) != NULL)	// was 1024
 	{
 		if (!strcmp(blip->classname, "htrap") && blip->owner == ent)
 		{

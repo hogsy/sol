@@ -1585,7 +1585,7 @@
 {"actor_stand", (byte *)actor_stand},
 {"InitLithiumVars", (byte *)InitLithiumVars},
 {"Trap_Explode", (byte *)Trap_Explode},
-{"Cmd_KillTrap_f", (byte *)Cmd_KillTrap_f},
+{"Cmd_DetTrap_f", (byte *)Cmd_DetTrap_f},
 {"Trap_Die", (byte *)Trap_Die},
 {"SP_trap", (byte *)SP_trap},
 {"trap_delayed_start", (byte *)trap_delayed_start},

@@ -43,6 +43,8 @@ static int	tactician_sound_sight;
 // Knightmare- placement spread for Tactician Gunner prox mines
 #define	GUNNER_PROX_SPREAD			48.0f
 #define	HALF_GUNNER_PROX_SPREAD		(GUNNER_PROX_SPREAD * 0.5f)
+#define	QUARTER_GUNNER_PROX_SPREAD	(GUNNER_PROX_SPREAD * 0.25f)
+#define GUNNER_PROX_OFFSET			(HALF_GUNNER_PROX_SPREAD + (random() * HALF_GUNNER_PROX_SPREAD))
 
 void gunner_idlesound (edict_t *self)
 {
@@ -577,6 +579,7 @@ qboolean gunner_grenade_check (edict_t *self)
 	if (tr.ent == self->enemy || tr.fraction == 1)
 	{	
 		VectorCopy (target, self->aim_point);	// save this aim location in case later safety check fails
+		self->bossFireCount = 0;				// init prox fire counter
 		// Knightmare- added close-range prox and contact grenade safety checks
 		if (isProx) {
 			if ( gunner_prox_safety_check(self, start, target) )
@@ -734,6 +737,7 @@ void GunnerGrenade (edict_t *self)
 	vec3_t		start;
 	vec3_t		forward, right, up;
 	vec3_t		aim;
+	vec3_t		spreadOffset, spreadOffsetForward, spreadOffsetRight;
 	vec_t		monster_speed;
 	int			flash_number;
 	float		spread;
@@ -871,8 +875,41 @@ void GunnerGrenade (edict_t *self)
 		// Knightmare- spread out Tactician Gunner's prox mines so they don't collide
 		if (isProx)
 		{
-			target[0] += crandom() * GUNNER_PROX_SPREAD;
-			target[1] += crandom() * GUNNER_PROX_SPREAD;
+			qboolean	useRandomProxOffset = false;
+			switch (self->bossFireCount)	// use ordered dispersion
+			{
+			case 0:
+				VectorNegate (forward, spreadOffsetForward);
+				VectorCopy (right, spreadOffsetRight);
+				break;
+			case 1:
+				VectorNegate (forward, spreadOffsetForward);
+				VectorNegate (right, spreadOffsetRight);
+				break;
+			case 2:
+				VectorCopy (forward, spreadOffsetForward);
+				VectorNegate (right, spreadOffsetRight);
+				break;
+			case 3:
+				VectorCopy (forward, spreadOffsetForward);
+				VectorCopy (right, spreadOffsetRight);
+				break;
+			default:		// use random dispersion if counter got screwed up
+				useRandomProxOffset = true;
+				break;
+			}
+			if (useRandomProxOffset) {
+				target[0] += crandom() * GUNNER_PROX_SPREAD;
+				target[1] += crandom() * GUNNER_PROX_SPREAD;
+			}
+			else {
+				VectorAdd (spreadOffsetForward, spreadOffsetRight, spreadOffset);
+				spreadOffset[2] = 0;
+				VectorNormalize (spreadOffset);
+				VectorScale (spreadOffset, GUNNER_PROX_OFFSET, spreadOffset);
+				VectorAdd (target, spreadOffset, target);
+			}
+			self->bossFireCount++;
 		}
 
 		// Lazarus fog reduction of accuracy

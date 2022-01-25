@@ -1517,7 +1517,7 @@ void fire_blueblaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 void fire_phalanx_plasma (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);	// Knightmare- renamed this, was fire_plasma
 void fire_trap (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, qboolean held);
 void Trap_Die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
-void Cmd_KillTrap_f (edict_t *ent);
+void Cmd_DetTrap_f (edict_t *ent);
 void Trap_Explode (edict_t *ent);
 
 //
