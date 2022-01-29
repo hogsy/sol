@@ -101,7 +101,31 @@ UI_PushMenu
 */
 void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key) (int k))
 {
-	int		i;
+	int			i;
+	qboolean	canOpen;
+
+	if (!menu)	return;
+
+	// if new menu has a conditional opening func, use it
+	if (menu->canOpenFunc)
+	{
+		if ( (canOpen = menu->canOpenFunc(menu)) != true ) {
+
+			if ( (ui_menudepth > 0) && ui_menuState.menu ) {
+				if (menu->cantOpenMessage)
+					UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, menu->cantOpenMessage);
+				else
+					UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, NULL);
+			}
+			return;
+		}
+		if (ui_menudepth > 0 && ui_menuState.menu)
+			UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, NULL);
+	}
+
+	// set item values for menu
+//	UI_LoadMenuBitFlags (menu);
+//	UI_SetMenuItemValues (menu);
 
 	if (Cvar_VariableValue ("maxclients") == 1 && Com_ServerState () && !cls.consoleActive) // Knightmare added
 		Cvar_Set ("paused", "1");
@@ -142,6 +166,10 @@ void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key)
 	UI_RefreshCursorButtons ();
 
 	cls.key_dest = key_menu;
+
+	// if menu has an on open function, call it now
+	if (menu->onOpenFunc)
+		menu->onOpenFunc (NULL);
 }
 
 
@@ -193,15 +221,69 @@ void UI_PopMenu (void)
 UI_BackMenu
 =================
 */
-void UI_BackMenu (void *unused)
+void UI_BackMenu (void *item)
 {
-	// We need to manually save changes for playerconfig menu here
-	if (ui_menuState.draw == Menu_PlayerConfig_Draw)
-		Menu_PConfigSaveChanges ();
+	menuFramework_s	*menu;
+
+	if (item) {
+		menu = ((menuCommon_s *)item)->parent;
+		if (menu && menu->onExitFunc)
+			menu->onExitFunc (menu);
+	}
 
 	UI_PopMenu ();
 }
 
+
+/*
+=================
+UI_CheckAndPopMenu
+=================
+*/
+void UI_CheckAndPopMenu (menuFramework_s *menu)
+{
+	if (menu && menu->onExitFunc)
+		menu->onExitFunc (menu);
+
+	UI_PopMenu ();
+}
+
+#if 0
+/*
+=================
+UI_LoadMenuBitFlags
+=================
+*/
+void UI_LoadMenuBitFlags (menuFramework_s *menu)
+{
+	if ( !menu || !menu->flagCvar || !strlen(menu->flagCvar) )
+		return;
+
+	menu->bitFlags = Cvar_VariableValue(menu->flagCvar);
+	Com_sprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
+}
+
+
+/*
+=================
+UI_SetMenuBitFlags
+=================
+*/
+void UI_SetMenuBitFlags (menuFramework_s *menu, int bit, qboolean set)
+{
+	if ( !menu || !menu->flagCvar || !strlen(menu->flagCvar) )
+		return;
+
+	if (bit > 0) {
+		if (set)
+			menu->bitFlags |= bit;
+		else
+			menu->bitFlags &= ~bit;
+	}
+	Cvar_SetValue (menu->flagCvar, menu->bitFlags);
+	Com_sprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
+}
+#endif
 
 /*
 ==========================
@@ -210,13 +292,13 @@ UI_AddMenuItem
 */
 void UI_AddMenuItem (menuFramework_s *menu, void *item)
 {
-//	qboolean	canOpen;
+	qboolean	canOpen;
 
 	// if menu can't open, don't add items to it
-/*	if (menu->canOpenFunc) {
+	if (menu->canOpenFunc) {
 		if ( (canOpen = menu->canOpenFunc(menu)) != true )
 			return;
-	} */
+	}
 
 	if (menu->nitems == 0)
 		menu->nslots = 0;
@@ -242,29 +324,39 @@ void UI_AddMenuItem (menuFramework_s *menu, void *item)
 UI_SetGrabBindItem
 =================
 */
-void UI_SetGrabBindItem (menuFramework_s *m, menuCommon_s *item)
+void UI_SetGrabBindItem (menuFramework_s *menu, menuCommon_s *item)
 {
 	int				i;
 	menuCommon_s	*it;
 	qboolean		found = false;
 
-	for (i = 0; i < m->nitems; i++)
+	for (i = 0; i < menu->nitems; i++)
 	{
-		it = (menuCommon_s *)m->items[i];
+		it = (menuCommon_s *)menu->items[i];
 		if (it->type == MTYPE_KEYBIND) 
 		{
 			if (it == item) {
 				((menuKeyBind_s *)it)->grabBind = true;
-				m->grabBindCursor = i;
+				menu->grabBindCursor = i;
 				found = true;
 			}
 			else // clear grab flag if it's not the one
 				((menuKeyBind_s *)it)->grabBind = false;
 		}
+	/*	else if (it->type == MTYPE_KEYBINDLIST) 
+		{
+			if (it == item) {
+				((menuKeyBindList_s *)it)->grabBind = true;
+				m->grabBindCursor = i;
+				found = true;
+			}
+			else // clear grab flag if it's not the one
+				((menuKeyBindList_s *)it)->grabBind = false;
+		} */
 	}
 
 	if (!found)
-		m->grabBindCursor = -1;
+		menu->grabBindCursor = -1;
 }
 
 
@@ -273,19 +365,21 @@ void UI_SetGrabBindItem (menuFramework_s *m, menuCommon_s *item)
 UI_ClearGrabBindItem
 =================
 */
-void UI_ClearGrabBindItem (menuFramework_s *m)
+void UI_ClearGrabBindItem (menuFramework_s *menu)
 {
 	int				i;
 	menuCommon_s	*it;
 
-	m->grabBindCursor = -1;
+	menu->grabBindCursor = -1;
 
 	// clear grab flag for all keybind items
-	for (i = 0; i < m->nitems; i++)
+	for (i = 0; i < menu->nitems; i++)
 	{
-		it = (menuCommon_s *)m->items[i];
+		it = (menuCommon_s *)menu->items[i];
 		if (it->type == MTYPE_KEYBIND)
 			((menuKeyBind_s *)it)->grabBind = false;
+	//	else if (it->type == MTYPE_KEYBINDLIST)
+	//		((menuKeyBindList_s *)it)->grabBind = false;
 	}
 }
 
@@ -295,20 +389,199 @@ void UI_ClearGrabBindItem (menuFramework_s *m)
 UI_HasValidGrabBindItem
 =================
 */
-qboolean UI_HasValidGrabBindItem (menuFramework_s *m)
+qboolean UI_HasValidGrabBindItem (menuFramework_s *menu)
 {
-	if (!m)	return false;
+	if (!menu)	return false;
 
-	if ( (m->grabBindCursor != -1)
-		&& (m->grabBindCursor >= 0)
-		&& (m->grabBindCursor < m->nitems)
-		&& (((menuCommon_s *)m->items[m->grabBindCursor])->type == MTYPE_KEYBIND)
-		&& (((menuKeyBind_s *)m->items[m->grabBindCursor])->grabBind) )
+	if ( (menu->grabBindCursor != -1)
+		&& (menu->grabBindCursor >= 0)
+		&& (menu->grabBindCursor < menu->nitems)
+		&& (((menuCommon_s *)menu->items[menu->grabBindCursor])->type == MTYPE_KEYBIND)
+		&& (((menuKeyBind_s *)menu->items[menu->grabBindCursor])->grabBind) )
 		return true;
 
+/*	if ( (menu->grabBindCursor != -1)
+		&& (menu->grabBindCursor >= 0)
+		&& (menu->grabBindCursor < menu->nitems)
+		&& (((menuCommon_s *)menu->items[menu->grabBindCursor])->type == MTYPE_KEYBINDLIST)
+		&& (((menuKeyBindList_s *)menu->items[menu->grabBindCursor])->grabBind) )
+		return true;
+*/
 	return false;
 }
 
+#if 0
+/*
+=================
+UI_RefreshMenuItems
+
+Refreshes models in all menus on stack.
+Called after a vid restart.
+=================
+*/
+void UI_RefreshMenuItems (void)
+{
+	int				i;
+	menuFramework_s	*menu;
+	menuCommon_s	*item;
+
+	if (cls.key_dest != key_menu)	return;
+
+	menu = ui_menuState.menu;
+	if (!menu)	return;
+
+	for (i=0; i<menu->nitems; i++)
+	{
+		item = menu->items[i];
+		if (!item)	continue;
+		UI_ReregisterMenuItem (item);
+	}
+}
+
+
+/*
+=================
+UI_SetMenuItemValues
+
+Loads values for all menu items
+from linked cvars.
+=================
+*/
+void UI_SetMenuItemValues (menuFramework_s *menu)
+{
+	int				i;
+	menuCommon_s	*item;
+
+	if (!menu)	return;
+
+	for (i=0; i<menu->nitems; i++)
+	{
+		item = menu->items[i];
+		if (!item)	continue;
+		UI_SetMenuItemValue (item);
+	}
+}
+
+
+/*
+=================
+UI_SetMenuDefaults
+=================
+*/
+void UI_SetMenuDefaults (void)
+{
+	menuFramework_s *curMenu;
+
+	if (ui_menudepth < 1)
+		return;
+
+	curMenu = ui_menuState.menu;
+	if (curMenu && curMenu->defaultsFunc) {
+		curMenu->defaultsFunc ();
+		UI_SetMenuItemValues (curMenu);	// refresh menu items
+	}
+}
+
+
+/*
+=================
+UI_GetDefaultsMessage
+=================
+*/
+const char *UI_GetDefaultsMessage (void)
+{
+	menuFramework_s *curMenu;
+
+	if (ui_menudepth < 1)
+		return UI_DEFAULTS_MESSAGE;
+
+	curMenu = ui_menuState.menu;
+	if (curMenu && curMenu->defaultsMessage
+		&& (strlen(curMenu->defaultsMessage) > 0))
+		return curMenu->defaultsMessage;
+	else
+		return UI_DEFAULTS_MESSAGE;
+}
+
+
+/*
+=================
+UI_Defaults_Popup
+=================
+*/
+void UI_Defaults_Popup (void *unused)
+{
+	Menu_DefaultsConfirm_f ();
+}
+
+
+/*
+=================
+UI_ApplyMenuChanges
+=================
+*/
+void UI_ApplyMenuChanges (void)
+{
+	menuFramework_s *curMenu;
+
+	if (ui_menudepth < 1)
+		return;
+
+	curMenu = ui_menuState.menu;
+	if (curMenu && curMenu->applyChangesFunc) {
+		curMenu->applyChangesFunc ();
+		UI_SetMenuItemValues (curMenu);	// refresh menu items
+	}
+}
+
+
+/*
+=================
+UI_GetApplyChangesMessage
+=================
+*/
+const char *UI_GetApplyChangesMessage (int line)
+{
+	menuFramework_s *curMenu;
+
+	if (ui_menudepth < 1)
+		return UI_APPLYCHANGES_MESSAGE;
+
+	curMenu = ui_menuState.menu;
+	if (line == 1) {
+		if (curMenu && curMenu->applyChangesMessage[1]
+			&& (strlen(curMenu->applyChangesMessage[1]) > 0))
+			return curMenu->applyChangesMessage[1];
+		else
+			return NULL;
+	}
+	else if (line == 2) {
+		if (curMenu && curMenu->applyChangesMessage[2]
+			&& (strlen(curMenu->applyChangesMessage[2]) > 0))
+			return curMenu->applyChangesMessage[2];
+		else
+			return UI_APPLYCHANGES_MESSAGE2;
+	}
+	else {
+		if (curMenu && curMenu->applyChangesMessage[0]
+			&& (strlen(curMenu->applyChangesMessage[0]) > 0))
+			return curMenu->applyChangesMessage[0];
+		else
+			return UI_APPLYCHANGES_MESSAGE;
+	}
+}
+
+
+/*
+=================
+UI_ApplyChanges_Popup
+=================
+*/
+void UI_ApplyChanges_Popup (void *unused)
+{
+	Menu_ApplyChanges_f ();
+}
+#endif
 
 /*
 ==========================
@@ -382,6 +655,11 @@ void UI_DrawMenu (menuFramework_s *menu)
 	menuCommon_s	*item, *cursorItem;
 	qboolean		hasCursorItem = false;
 
+	// Check if this menu is a popup.
+	// If it is, draw menu beneath.
+	if ( menu->isPopup && (ui_menudepth > 1) && ui_layers[ui_menudepth-1].menu )
+		UI_DrawMenu (ui_layers[ui_menudepth-1].menu);
+
 	// update cursor item coords
 	if ( ((cursorItem = menu->cursorItem) != NULL)
 		&& ((item = UI_ItemAtMenuCursor (menu)) != NULL) )
@@ -423,6 +701,14 @@ void UI_DrawMenu (menuFramework_s *menu)
 		}
 
 		UI_DrawMenuItem (menu->items[i]);
+	}
+
+	//
+	// draw item extensions
+	//
+	for (i = 0; i < menu->nitems; i++)
+	{
+		UI_DrawMenuItemExtension (menu->items[i]);
 	}
 
 	// Psychspaz's mouse support
@@ -480,6 +766,8 @@ void UI_DrawMenu (menuFramework_s *menu)
 		//		item->statusbarfunc ( (void *)item );
 			if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
 				UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
+		//	else if ( (item->type == MTYPE_KEYBINDLIST) && ((menuKeyBindList_s *)item)->grabBind && ((menuKeyBindList_s *)item)->enter_statusbar)
+		//		UI_DrawMenuStatusBar (((menuKeyBindList_s *)item)->enter_statusbar);
 			else if (item->statusbar)
 				UI_DrawMenuStatusBar (item->statusbar);
 			else
@@ -496,14 +784,14 @@ void UI_DrawMenu (menuFramework_s *menu)
 UI_DefaultMenuKey
 =================
 */
-const char *UI_DefaultMenuKey (menuFramework_s *m, int key)
+const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 {
 	const char *sound = NULL;
 	menuCommon_s *item;
 
-	if ( m )
+	if ( menu )
 	{
-		if ( ( item = UI_ItemAtMenuCursor( m ) ) != 0 )
+		if ( ( item = UI_ItemAtMenuCursor( menu ) ) != 0 )
 		{
 			if ( item->type == MTYPE_FIELD )
 			{
@@ -517,63 +805,62 @@ const char *UI_DefaultMenuKey (menuFramework_s *m, int key)
 				else
 					sound = NULL;
 			}
+		/*	else if (item->type == MTYPE_KEYBINDLIST)
+			{
+				if ( (sound = UI_MenuKeyBindList_Key((menuKeyBindList_s *)item, key)) != ui_menu_null_sound )
+					return sound;
+				else
+					sound = NULL;
+			} */
 		}
 	}
 
 	switch ( key )
 	{
 	case K_ESCAPE:
-		UI_PopMenu ();
+	//	UI_PopMenu ();
+		UI_CheckAndPopMenu (menu);
 		return ui_menu_out_sound;
 	case K_KP_UPARROW:
 	case K_UPARROW:
-		if ( m )
+		if ( menu )
 		{
-			m->cursor--;
-			// Knightmare- added Psychospaz's mouse support
+			menu->cursor--;
+			// added Psychospaz's mouse support
 			UI_RefreshCursorLink ();
-
-			UI_AdjustMenuCursor (m, -1);
+			UI_AdjustMenuCursor (menu, -1);
 			sound = ui_menu_move_sound;
 		}
 		break;
 	case K_TAB:
 	case K_KP_DOWNARROW:
 	case K_DOWNARROW:
-		if ( m )
+		if ( menu )
 		{
-			m->cursor++;
-			// Knightmare- added Psychospaz's mouse support
-
+			menu->cursor++;
+			// added Psychospaz's mouse support
 			UI_RefreshCursorLink ();
-			UI_AdjustMenuCursor (m, 1);
+			UI_AdjustMenuCursor (menu, 1);
 			sound = ui_menu_move_sound;
 		}
 		break;
 	case K_KP_LEFTARROW:
 	case K_LEFTARROW:
-		if ( m )
+		if ( menu )
 		{
-			UI_SlideMenuItem (m, -1);
+			UI_SlideMenuItem (menu, -1);
 			sound = ui_menu_move_sound;
 		}
 		break;
 	case K_KP_RIGHTARROW:
 	case K_RIGHTARROW:
-		if ( m )
+		if ( menu )
 		{
-			UI_SlideMenuItem (m, 1);
+			UI_SlideMenuItem (menu, 1);
 			sound = ui_menu_move_sound;
 		}
 		break;
 
-	/*case K_MOUSE1:
-	case K_MOUSE2:
-	case K_MOUSE3:
-	//Knightmare 12/22/2001
-	case K_MOUSE4:
-	case K_MOUSE5:*/
-	//end Knightmare
 	case K_JOY1:
 	case K_JOY2:
 	case K_JOY3:
@@ -613,8 +900,8 @@ const char *UI_DefaultMenuKey (menuFramework_s *m, int key)
 		
 	case K_KP_ENTER:
 	case K_ENTER:
-		if ( m )
-			UI_SelectMenuItem (m);
+		if ( menu )
+			UI_SelectMenuItem (menu);
 		sound = ui_menu_move_sound;
 		break;
 	}

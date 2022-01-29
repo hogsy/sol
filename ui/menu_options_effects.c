@@ -52,59 +52,59 @@ static menuAction_s		s_options_effects_back_action;
 
 static void BloodFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_blood_box, "cl_blood"); 
+	MenuPicker_SaveValue (&s_options_effects_blood_box, "cl_blood"); 
 }
 
 static void OldExplosionFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_oldexplosions_box, "cl_old_explosions");
+	MenuPicker_SaveValue (&s_options_effects_oldexplosions_box, "cl_old_explosions");
 }
 
 static void PlasmaExploSoundFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_plasmaexplosound_box, "cl_plasma_explo_sound");
+	MenuPicker_SaveValue (&s_options_effects_plasmaexplosound_box, "cl_plasma_explo_sound");
 }
 
 static void ItemBobFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_itembob_box, "cl_item_bobbing");
+	MenuPicker_SaveValue (&s_options_effects_itembob_box, "cl_item_bobbing");
 }
 
 static void ParticleCompFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_effects_particle_comp_slider, "cl_particle_scale");
+	MenuSlider_SaveValue (&s_options_effects_particle_comp_slider, "cl_particle_scale");
 }
 
 static void DecalCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_effects_decal_slider, "r_decals");
+	MenuSlider_SaveValue (&s_options_effects_decal_slider, "r_decals");
 }
 
 // Psychospaz's changeable rail trail
 static void RailTrailFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_railtrail_box, "cl_railtype");
+	MenuPicker_SaveValue (&s_options_effects_railtrail_box, "cl_railtype");
 }
 
 static void RailColorRedFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_effects_railcolor_slider[0], "cl_railred");
+	MenuSlider_SaveValue (&s_options_effects_railcolor_slider[0], "cl_railred");
 }
 
 static void RailColorGreenFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_effects_railcolor_slider[1], "cl_railgreen");
+	MenuSlider_SaveValue (&s_options_effects_railcolor_slider[1], "cl_railgreen");
 }
 
 static void RailColorBlueFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_effects_railcolor_slider[2], "cl_railblue");
+	MenuSlider_SaveValue (&s_options_effects_railcolor_slider[2], "cl_railblue");
 }
 
 // foostep override option
 static void FootStepFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_effects_footstep_box, "cl_footstep_override");
+	MenuPicker_SaveValue (&s_options_effects_footstep_box, "cl_footstep_override");
 }
 
 
@@ -112,21 +112,21 @@ static void FootStepFunc (void *unused)
 
 static void M_EffectsSetMenuItemValues (void)
 {
-	UI_MenuPicker_SetValue (&s_options_effects_blood_box, "cl_blood", 0, 4, true);
+	MenuPicker_SetValue (&s_options_effects_blood_box, "cl_blood", 0, 4, true);
 
-	UI_MenuPicker_SetValue (&s_options_effects_oldexplosions_box, "cl_old_explosions", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_effects_plasmaexplosound_box, "cl_plasma_explo_sound", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_effects_itembob_box, "cl_item_bobbing", 0, 1, true);
+	MenuPicker_SetValue (&s_options_effects_oldexplosions_box, "cl_old_explosions", 0, 1, true);
+	MenuPicker_SetValue (&s_options_effects_plasmaexplosound_box, "cl_plasma_explo_sound", 0, 1, true);
+	MenuPicker_SetValue (&s_options_effects_itembob_box, "cl_item_bobbing", 0, 1, true);
 
-	UI_MenuSlider_SetValue (&s_options_effects_decal_slider, "r_decals", 0, 1000, true);
-	UI_MenuSlider_SetValue (&s_options_effects_particle_comp_slider, "cl_particle_scale", 1, 5, true);
+	MenuSlider_SetValue (&s_options_effects_decal_slider, "r_decals", 0, 1000, true);
+	MenuSlider_SetValue (&s_options_effects_particle_comp_slider, "cl_particle_scale", 1, 5, true);
 
-	UI_MenuPicker_SetValue (&s_options_effects_railtrail_box, "cl_railtype", 0, 2, true);
-	UI_MenuSlider_SetValue (&s_options_effects_railcolor_slider[0], "cl_railred", 0, 256, true);
-	UI_MenuSlider_SetValue (&s_options_effects_railcolor_slider[1], "cl_railgreen", 0, 256, true);
-	UI_MenuSlider_SetValue (&s_options_effects_railcolor_slider[2], "cl_railblue", 0, 256, true);
+	MenuPicker_SetValue (&s_options_effects_railtrail_box, "cl_railtype", 0, 2, true);
+	MenuSlider_SetValue (&s_options_effects_railcolor_slider[0], "cl_railred", 0, 256, true);
+	MenuSlider_SetValue (&s_options_effects_railcolor_slider[1], "cl_railgreen", 0, 256, true);
+	MenuSlider_SetValue (&s_options_effects_railcolor_slider[2], "cl_railblue", 0, 256, true);
 
-	UI_MenuPicker_SetValue (&s_options_effects_footstep_box, "cl_footstep_override", 0, 1, true);
+	MenuPicker_SetValue (&s_options_effects_footstep_box, "cl_footstep_override", 0, 1, true);
 }
 
 static void M_EffectsResetDefaultsFunc (void *unused)
@@ -181,9 +181,9 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_menu.x				= 0;	// SCREEN_WIDTH*0.5;
 	s_options_effects_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_effects_menu.nitems			= 0;
-//	s_options_effects_menu.isPopup			= false;
-//	s_options_effects_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_options_effects_menu.canOpenFunc		= NULL;
+	s_options_effects_menu.isPopup			= false;
+	s_options_effects_menu.keyFunc			= UI_DefaultMenuKey;
+	s_options_effects_menu.canOpenFunc		= NULL;
 //	s_options_effects_menu.defaultsFunc		= M_EffectsResetDefaults;
 //	s_options_effects_menu.defaultsMessage	= "Reset all Effects settings to defaults?";
 

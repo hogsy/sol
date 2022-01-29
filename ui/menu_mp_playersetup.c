@@ -56,24 +56,9 @@ static menuModelView_s	s_playerconfig_model_display;
 
 #define	NUM_SKINBOX_ITEMS 7
 
-static void Menu_PlayerHandednessCallback (void *unused)
-{
-	int			i;
-	qboolean	lefthand;
-
-	UI_MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
-
-	// update player model display
-	lefthand = (Cvar_VariableValue("hand") == 1);
-	s_playerconfig_model_display.isMirrored = lefthand;
-	for (i=0; i<2; i++)
-		VectorSet (s_playerconfig_model_display.modelRotation[i], 0, (lefthand ? -0.1 : 0.1), 0);
-}
-
-
 static void Menu_PlayerRateCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_playerconfig_rate_box, "rate");
+	MenuPicker_SaveValue (&s_playerconfig_rate_box, "rate");
 }
 
 
@@ -89,9 +74,9 @@ static void Menu_LoadPlayerRailColor (void)
 		s_playerconfig_railcolor_display[1].imageColor[1] = min(max(railColor[1], 0), 255);
 		s_playerconfig_railcolor_display[1].imageColor[2] = min(max(railColor[2], 0), 255);
 	}
-	UI_MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
-	UI_MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
-	UI_MenuSlider_SetValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue", 0, 256, true);
+	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
+	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
+	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue", 0, 256, true);
 }
 
 
@@ -109,21 +94,21 @@ static void Menu_SavePlayerRailColor (void)
 
 static void Menu_PlayerRailColorRedFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred");
+	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorGreenFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen");
+	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorBlueFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue");
+	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue");
 	Menu_SavePlayerRailColor ();
 }
 
@@ -151,9 +136,39 @@ static void Menu_PlayerSkinCallback (void *unused)
 	UI_UpdatePlayerSkinInfo (mNum, sNum);
 }
 
+
+static void Menu_PlayerHandednessCallback (void *unused)
+{
+	int			i;
+	qboolean	lefthand;
+
+	MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
+
+	// update player model display
+	lefthand = (Cvar_VariableValue("hand") == 1);
+	s_playerconfig_model_display.isMirrored = lefthand;
+	for (i=0; i<2; i++)
+		VectorSet (s_playerconfig_model_display.modelRotation[i], 0, (lefthand ? -0.1 : 0.1), 0);
+}
+
+
+void Menu_PConfigSaveChanges (void *unused)
+{
+	int		mNum, sNum;
+	char	scratch[1024];
+
+	Cvar_Set ("name", s_playerconfig_name_field.buffer);
+
+	mNum = s_playerconfig_model_box.curValue;
+	sNum = s_playerconfig_skin_box.curValue;
+	Com_sprintf (scratch, sizeof( scratch ), "%s/%s", 
+		ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
+	Cvar_Set ("skin", scratch);
+}
+
 //=======================================================================
 
-qboolean Menu_PlayerConfig_Init (void)
+void Menu_PlayerConfig_Init (void)
 {
 	int			i, x, y, mNum = 0, sNum = 0;
 	qboolean	lefthand = (Cvar_VariableValue("hand") == 1);
@@ -183,9 +198,6 @@ qboolean Menu_PlayerConfig_Init (void)
 		0
 	};
 
-	if ( !UI_HaveValidPlayerModels(NULL) )
-		return false;
-
 	// get model and skin index and precache them
 	UI_InitPlayerModelInfo (&mNum, &sNum);
 
@@ -196,11 +208,11 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_player_config_menu.x					= 0;	// SCREEN_WIDTH*0.5 - 210;
 	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
 	s_player_config_menu.nitems				= 0;
-//	s_player_config_menu.isPopup			= false;
-//	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
-//	s_player_config_menu.cantOpenMessage	= "No valid player models found";
-//	s_player_config_menu.onExitFunc			= Menu_PConfigSaveChanges;
+	s_player_config_menu.isPopup			= false;
+	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
+	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
+	s_player_config_menu.cantOpenMessage	= "No valid player models found";
+	s_player_config_menu.onExitFunc			= Menu_PConfigSaveChanges;
 	
 	s_playerconfig_banner.generic.type		= MTYPE_IMAGE;
 	s_playerconfig_banner.generic.x			= 0;
@@ -275,7 +287,7 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_handedness_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
 	s_playerconfig_handedness_box.generic.callback		= Menu_PlayerHandednessCallback;
 	s_playerconfig_handedness_box.itemNames				= handedness_names;
-	UI_MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
+	MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
 			
 	s_playerconfig_rate_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_rate_title.generic.textSize	= MENU_FONT_SIZE;
@@ -293,7 +305,7 @@ qboolean Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
 	s_playerconfig_rate_box.itemNames				= rate_names;
 	s_playerconfig_rate_box.itemValues				= rate_values;
-	UI_MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
+	MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
 
 	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
@@ -442,8 +454,6 @@ qboolean Menu_PlayerConfig_Init (void)
 
 	// get color components from color1 cvar
 	Menu_LoadPlayerRailColor ();
-
-	return true;
 }
 
 //=======================================================================
@@ -631,6 +641,7 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 //	UI_DrawPic (icon_x+icon_offset+5, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
 }
 
+//=======================================================================
 
 void Menu_PlayerConfig_Draw (void)
 {
@@ -642,27 +653,8 @@ void Menu_PlayerConfig_Draw (void)
 }
 
 
-void Menu_PConfigSaveChanges (void)
-{
-	int		mNum, sNum;
-	char	scratch[1024];
-
-	Cvar_Set ("name", s_playerconfig_name_field.buffer);
-
-	mNum = s_playerconfig_model_box.curValue;
-	sNum = s_playerconfig_skin_box.curValue;
-	Com_sprintf (scratch, sizeof( scratch ), "%s/%s", 
-		ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
-	Cvar_Set ("skin", scratch);
-}
-
-//=======================================================================
-
 const char *Menu_PlayerConfig_Key (int key)
 {
-	if ( key == K_ESCAPE )
-		Menu_PConfigSaveChanges ();
-
 	return UI_DefaultMenuKey (&s_player_config_menu, key);
 }
 
@@ -670,11 +662,6 @@ const char *Menu_PlayerConfig_Key (int key)
 void Menu_PlayerConfig_f (void)
 {
 	UI_RefreshPlayerModels ();	// Reload player models if we recently downloaded anything
-	if ( !Menu_PlayerConfig_Init() )
-	{
-		UI_SetMenuStatusBar (&s_multiplayer_menu, "No valid player models found");
-		return;
-	}
-	UI_SetMenuStatusBar (&s_multiplayer_menu, NULL);
+	Menu_PlayerConfig_Init ();
 	UI_PushMenu (&s_player_config_menu, Menu_PlayerConfig_Draw, Menu_PlayerConfig_Key);
 }

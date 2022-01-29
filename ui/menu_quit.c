@@ -67,11 +67,11 @@ void Menu_Quit_Init (void)
 	s_quit_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58
 	s_quit_menu.nitems		= 0;
 	s_quit_menu.nitems		= 0;
-//	s_quit_menu.isPopup		= false;
-//	s_quit_menu.canOpenFunc	= NULL;
+	s_quit_menu.isPopup		= false;
+	s_quit_menu.canOpenFunc	= NULL;
 
 #ifdef QUITMENU_NOKEY
-//	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
+	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
 
 	s_quit_header.generic.type		= MTYPE_LABEL;
 	s_quit_header.generic.textSize	= MENU_HEADER_FONT_SIZE;
@@ -101,7 +101,7 @@ void Menu_Quit_Init (void)
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_yes_action);
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_no_action);
 #else // QUITMENU_NOKEY
-//	s_quit_menu.keyFunc		= UI_QuitMenuKey;
+	s_quit_menu.keyFunc		= UI_QuitMenuKey;
 
 	s_quit_pic.generic.type		= MTYPE_IMAGE;
 	s_quit_pic.generic.x		= 0;

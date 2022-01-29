@@ -62,9 +62,9 @@ void Menu_Credits_Init (void)
 	s_credits_menu.y				= 0;
 	s_credits_menu.nitems			= 0;
 	s_credits_menu.hide_statusbar	= true;
-//	s_credits_menu.isPopup			= false;
-//	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_credits_menu.canOpenFunc		= NULL;
+	s_credits_menu.isPopup			= false;
+	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
+	s_credits_menu.canOpenFunc		= NULL;
 
 	s_credits_textscroll.generic.type			= MTYPE_TEXTSCROLL;
 	s_credits_textscroll.generic.x				= 0;

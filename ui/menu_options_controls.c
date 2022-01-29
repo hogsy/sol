@@ -56,63 +56,63 @@ static menuAction_s		s_options_controls_back_action;
 
 static void MouseSpeedFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_controls_sensitivity_slider, "sensitivity");
+	MenuSlider_SaveValue (&s_options_controls_sensitivity_slider, "sensitivity");
 }
 
 static void AlwaysRunFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_alwaysrun_box, "cl_run");
+	MenuPicker_SaveValue (&s_options_controls_alwaysrun_box, "cl_run");
 }
 
 // Psychospaz's chaseam
 static void ThirdPersonFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_thirdperson_box, "cg_thirdperson");
+	MenuPicker_SaveValue (&s_options_controls_thirdperson_box, "cg_thirdperson");
 }
 
 static void ThirdPersonDistFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist");
+	MenuSlider_SaveValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist");
 }
 
 static void ThirdPersonOffsetFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset");
+	MenuSlider_SaveValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset");
 }
 
 static void ThirdPersonAngleFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle");
+	MenuSlider_SaveValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle");
 }
 
 static void FreeLookFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_freelook_box, "freelook");
+	MenuPicker_SaveValue (&s_options_controls_freelook_box, "freelook");
 }
 
 static void InvertMouseFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_invertmouse_box, "m_pitch");
+	MenuPicker_SaveValue (&s_options_controls_invertmouse_box, "m_pitch");
 }
 
 static void AutosensitivityFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_autosensitivity_box, "in_autosensitivity");
+	MenuPicker_SaveValue (&s_options_controls_autosensitivity_box, "in_autosensitivity");
 }
 
 static void LookspringFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_lookspring_box, "lookspring");
+	MenuPicker_SaveValue (&s_options_controls_lookspring_box, "lookspring");
 }
 
 static void LookstrafeFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_lookstrafe_box, "lookstrafe");
+	MenuPicker_SaveValue (&s_options_controls_lookstrafe_box, "lookstrafe");
 }
 
 static void JoystickFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_controls_joystick_box, "in_joystick");
+	MenuPicker_SaveValue (&s_options_controls_joystick_box, "in_joystick");
 }
 
 static void CustomizeControlsFunc(void *unused)
@@ -124,20 +124,20 @@ static void CustomizeControlsFunc(void *unused)
 
 static void M_ControlsSetMenuItemValues (void)
 {
-	UI_MenuSlider_SetValue (&s_options_controls_sensitivity_slider, "sensitivity", 1.0f, 11.0f, false);
-	UI_MenuPicker_SetValue (&s_options_controls_invertmouse_box, "m_pitch", 0, 0, false);
-	UI_MenuPicker_SetValue (&s_options_controls_autosensitivity_box, "in_autosensitivity", 0, 1, true);
+	MenuSlider_SetValue (&s_options_controls_sensitivity_slider, "sensitivity", 1.0f, 11.0f, false);
+	MenuPicker_SetValue (&s_options_controls_invertmouse_box, "m_pitch", 0, 0, false);
+	MenuPicker_SetValue (&s_options_controls_autosensitivity_box, "in_autosensitivity", 0, 1, true);
 
-	UI_MenuPicker_SetValue (&s_options_controls_thirdperson_box, "cg_thirdperson", 0, 1, true);
-	UI_MenuSlider_SetValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist", 10.0f, 150.0f, true);
-	UI_MenuSlider_SetValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset", 0.0f, 64.0f, true);
-	UI_MenuSlider_SetValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle", 0.0f, 30.0f, true);
+	MenuPicker_SetValue (&s_options_controls_thirdperson_box, "cg_thirdperson", 0, 1, true);
+	MenuSlider_SetValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist", 10.0f, 150.0f, true);
+	MenuSlider_SetValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset", 0.0f, 64.0f, true);
+	MenuSlider_SetValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle", 0.0f, 30.0f, true);
 
-	UI_MenuPicker_SetValue (&s_options_controls_alwaysrun_box, "cl_run", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_controls_lookspring_box, "lookspring", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_controls_lookstrafe_box, "lookstrafe", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_controls_freelook_box, "freelook", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_controls_joystick_box, "in_joystick", 0, 1, true);
+	MenuPicker_SetValue (&s_options_controls_alwaysrun_box, "cl_run", 0, 1, true);
+	MenuPicker_SetValue (&s_options_controls_lookspring_box, "lookspring", 0, 1, true);
+	MenuPicker_SetValue (&s_options_controls_lookstrafe_box, "lookstrafe", 0, 1, true);
+	MenuPicker_SetValue (&s_options_controls_freelook_box, "freelook", 0, 1, true);
+	MenuPicker_SetValue (&s_options_controls_joystick_box, "in_joystick", 0, 1, true);
 }
 
 static void M_ControlsResetDefaultsFunc (void *unused)
@@ -181,9 +181,9 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_menu.x				= 0;	// SCREEN_WIDTH*0.5;
 	s_options_controls_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_controls_menu.nitems			= 0;
-//	s_options_controls_menu.isPopup			= false;
-//	s_options_controls_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_options_controls_menu.canOpenFunc		= NULL;
+	s_options_controls_menu.isPopup			= false;
+	s_options_controls_menu.keyFunc			= UI_DefaultMenuKey;
+	s_options_controls_menu.canOpenFunc		= NULL;
 //	s_options_controls_menu.defaultsFunc	= M_ControlsResetDefaults;
 //	s_options_controls_menu.defaultsMessage	= "Reset all Control settings to defaults?";
 

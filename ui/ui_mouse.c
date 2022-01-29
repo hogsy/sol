@@ -200,17 +200,13 @@ void UI_MouseCursor_Think (void)
 	else if (!ui_mousecursor.buttonused[MOUSEBUTTON2] && (ui_mousecursor.buttonclicks[MOUSEBUTTON2] == 2)
 		&& ui_mousecursor.buttondown[MOUSEBUTTON2])
 	{	// Exit with double click 2nd mouse button
-		// We need to manually save changes for playerconfig menu here
-		if (ui_menuState.draw == Menu_PlayerConfig_Draw)
-			Menu_PConfigSaveChanges ();
+		UI_CheckAndPopMenu (m);
 
-		UI_PopMenu ();
-
-		sound = ui_menu_out_sound;
 		ui_mousecursor.buttonused[MOUSEBUTTON2] = true;
 		ui_mousecursor.buttonclicks[MOUSEBUTTON2] = 0;
 		ui_mousecursor.buttonused[MOUSEBUTTON1] = true;
 		ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 0;
+		sound = ui_menu_out_sound;
 	}
 
 	// clicking on the player model menu...

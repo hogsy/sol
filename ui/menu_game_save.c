@@ -77,10 +77,10 @@ void Menu_SaveGame_Init (void)
 	s_savegame_menu.x				= 0;	// SCREEN_WIDTH*0.5 - 240;
 	s_savegame_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 68;
 	s_savegame_menu.nitems			= 0;
-//	s_savegame_menu.isPopup			= false;
-//	s_savegame_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_savegame_menu.canOpenFunc		= UI_CanOpenSaveMenu;
-//	s_savegame_menu.cantOpenMessage	= "You must be in a game to save";
+	s_savegame_menu.isPopup			= false;
+	s_savegame_menu.keyFunc			= UI_DefaultMenuKey;
+	s_savegame_menu.canOpenFunc		= UI_CanOpenSaveMenu;
+	s_savegame_menu.cantOpenMessage	= "You must be in a game to save";
 
 	s_savegame_banner.generic.type		= MTYPE_IMAGE;
 	s_savegame_banner.generic.x			= 0;
@@ -158,8 +158,8 @@ const char *Menu_SaveGame_Key (int key)
 
 void Menu_SaveGame_f (void)
 {
-	if ( !Com_ServerState() )
-		return;		// not playing a game
+//	if ( !Com_ServerState() )
+//		return;		// not playing a game
 
 	Menu_SaveGame_Init ();
 	UI_PushMenu (&s_savegame_menu, Menu_SaveGame_Draw, Menu_SaveGame_Key);

@@ -51,11 +51,6 @@ vec4_t		stCoord_slider_center = {0.125, 0.0, 0.375, 1.0};
 vec4_t		stCoord_slider_right = {0.375, 0.0, 0.5, 1.0};
 vec4_t		stCoord_slider_knob = {0.5, 0.0, 0.625, 1.0};
 
-extern viddef_t viddef;
-
-#define VID_WIDTH viddef.width
-#define VID_HEIGHT viddef.height
-
 //======================================================
 
 void UI_MenuCommon_DrawItemName (menuCommon_s *c, int nameX, int nameY, int headerX, int headerY, int hoverAlpha)
@@ -302,7 +297,8 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 	switch (key)
 	{
 	case K_ESCAPE:
-		UI_PopMenu ();
+	//	UI_PopMenu ();
+		UI_CheckAndPopMenu (menu);
 		return ui_menu_out_sound;
 	case K_ENTER:
 	case K_KP_ENTER:
@@ -319,6 +315,53 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 }
 
 //=========================================================
+
+#if 0
+char *UI_MenuField_GetValue (menuField_s *f)
+{
+	if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp 
+		&& !(f->generic.cvarMin == 0 && f->generic.cvarMax == 0) )
+		return va("%f", ClampCvar(f->generic.cvarMin, f->generic.cvarMax, atof(f->buffer)) );
+	else
+		return f->buffer;
+}
+
+void UI_MenuField_SetValue (menuField_s *f)
+{
+	if (f->generic.cvar && strlen(f->generic.cvar) > 0)
+	{
+		if (f->generic.flags & QMF_NUMBERSONLY)
+			UI_ClampCvarForControl (&f->generic);
+
+		strncpy (f->buffer, Cvar_VariableString(f->generic.cvar), sizeof(f->buffer));
+		f->cursor = (int)strlen(Cvar_VariableString(f->generic.cvar));
+	}
+}
+
+void UI_MenuField_SaveValue (menuField_s *f)
+{
+	if (f->generic.cvar && strlen(f->generic.cvar) > 0)
+	{
+		// clamp numeric values if needed
+		if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp 
+			&& !(f->generic.cvarMin == 0 && f->generic.cvarMax == 0) )
+			Cvar_SetValue ( f->generic.cvar, ClampCvar(f->generic.cvarMin, f->generic.cvarMax, atof(f->buffer)) );
+		else
+			Cvar_Set (f->generic.cvar, f->buffer);
+	}
+	f->generic.valueChanged = false;
+}
+
+qboolean UI_MenuField_ValueChanged (menuField_s *f)
+{
+	if (!f->generic.cvar || !strlen(f->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!f->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+
+	return ( strcmp(Cvar_VariableString(f->generic.cvar), f->buffer) != 0 );
+}
+#endif
 
 qboolean UI_MenuField_DoEnter (menuField_s *f)
 {
@@ -442,71 +485,14 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 
 	if (!f) return false;
 
-	switch ( key )
-	{
-	case K_KP_SLASH:
-		key = '/';
-		break;
-	case K_KP_MINUS:
-		key = '-';
-		break;
-	case K_KP_PLUS:
-		key = '+';
-		break;
-	case K_KP_HOME:
-		key = '7';
-		break;
-	case K_KP_UPARROW:
-		key = '8';
-		break;
-	case K_KP_PGUP:
-		key = '9';
-		break;
-	case K_KP_LEFTARROW:
-		key = '4';
-		break;
-	case K_KP_5:
-		key = '5';
-		break;
-	case K_KP_RIGHTARROW:
-		key = '6';
-		break;
-	case K_KP_END:
-		key = '1';
-		break;
-	case K_KP_DOWNARROW:
-		key = '2';
-		break;
-	case K_KP_PGDN:
-		key = '3';
-		break;
-	case K_KP_INS:
-		key = '0';
-		break;
-	case K_KP_DEL:
-		key = '.';
-		break;
-	}
+	key = Key_ParseKeypad (key);
 
 	// mxd- This blocked Shift-Ins combo in the next block.
 	// Knightmare- allow only the INS key thru, otherwise mouse events end up as text input!
-	if (key > 127)
-	{
-		switch (key)
-		{
-		case K_INS:
-		case K_KP_INS:
-			break;
-		case K_DEL:
-		default:
-			return false;
-		}
-	}
+	if ( (key > 127) && (key != K_INS) && (key != K_KP_INS) )
+		return false;
 
-
-	//
 	// support pasting from the clipboard
-	//
 	if ( ( toupper(key) == 'V' && keydown[K_CTRL] ) ||
 		 ( ( (key == K_INS) || (key == K_KP_INS) ) && keydown[K_SHIFT] ) )
 	{
@@ -524,50 +510,56 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 
 			free( cbd );
 		}
-		return true;
 	}
-
-	switch ( key )
+	else
 	{
-	case K_KP_LEFTARROW:
-	case K_LEFTARROW:
-	case K_BACKSPACE:
-		if ( f->cursor > 0 )
+		switch ( key )
 		{
-			memmove( &f->buffer[f->cursor-1], &f->buffer[f->cursor], strlen( &f->buffer[f->cursor] ) + 1 );
-			f->cursor--;
+		case K_KP_LEFTARROW:
+		case K_LEFTARROW:
+		case K_BACKSPACE:
+			if ( f->cursor > 0 )
+			{
+				memmove( &f->buffer[f->cursor-1], &f->buffer[f->cursor], strlen( &f->buffer[f->cursor] ) + 1 );
+				f->cursor--;
 
-			if (f->visible_offset)
-				f->visible_offset--;
-		}
-		break;
+				if (f->visible_offset)
+					f->visible_offset--;
+			}
+			break;
 
-	case K_KP_DEL:
-	case K_DEL:
-		memmove( &f->buffer[f->cursor], &f->buffer[f->cursor+1], strlen( &f->buffer[f->cursor+1] ) + 1 );
-		break;
+		case K_KP_DEL:
+		case K_DEL:
+			memmove( &f->buffer[f->cursor], &f->buffer[f->cursor+1], strlen( &f->buffer[f->cursor+1] ) + 1 );
+			break;
 
-	case K_KP_ENTER:
-	case K_ENTER:
-	case K_ESCAPE:
-	case K_TAB:
-		return false;
-
-	case K_SPACE:
-	default:
-		if ( !isdigit(key) && (f->generic.flags & QMF_NUMBERSONLY) )
+		case K_KP_ENTER:
+		case K_ENTER:
+		case K_ESCAPE:
+		case K_TAB:
 			return false;
 
-		if (f->cursor < f->length)
-		{
-			f->buffer[f->cursor++] = key;
-			f->buffer[f->cursor] = 0;
+		case K_SPACE:
+		default:
+			if ( !isdigit(key) && (f->generic.flags & QMF_NUMBERSONLY) )
+				return false;
 
-			if (f->cursor > f->visible_length)
-				f->visible_offset++;
+			if (f->cursor < f->length)
+			{
+				f->buffer[f->cursor++] = key;
+				f->buffer[f->cursor] = 0;
+
+				if (f->cursor > f->visible_length)
+					f->visible_offset++;
+			}
 		}
 	}
 
+/*	if (!f->generic.cvarNoSave)
+		UI_MenuField_SaveValue (f);
+	else
+		f->generic.valueChanged = UI_MenuField_ValueChanged (f);
+*/
 	return true;
 }
 
@@ -613,7 +605,17 @@ void UI_MenuLabel_Setup (menuLabel_s *l)
 
 //=========================================================
 
-void UI_MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+float MenuSlider_GetValue (menuSlider_s *s)
+{
+	if (!s) return 0.0f;
+
+	if (!s->increment)
+		s->increment = 1.0f;
+
+	return ((float)s->curPos * s->increment) + s->baseValue;
+}
+
+void MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -627,7 +629,7 @@ void UI_MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin
 	s->curPos = min(max(s->curPos, 0), s->maxPos);
 }
 
-void UI_MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
+void MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
 {
 	if (!s || !varName || varName[0] == '\0')
 		return;
@@ -635,15 +637,41 @@ void UI_MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
 	Cvar_SetValue ((char *)varName, ((float)s->curPos * s->increment) + s->baseValue);
 }
 
-float UI_MenuSlider_GetValue (menuSlider_s *s)
+#if 0
+char *UI_MenuSlider_GetValue (menuSlider_s *s)
 {
-	if (!s) return 0.0f;
-
-	if (!s->increment)
-		s->increment = 1.0f;
-
-	return ((float)s->curPos * s->increment) + s->baseValue;
+	return va("%f", ((float)s->curPos * s->increment) + s->baseValue);
 }
+
+void UI_MenuSlider_SetValue (menuSlider_s *s)
+{
+	if (s->generic.cvar && strlen(s->generic.cvar) > 0)
+	{
+		UI_ClampCvarForControl (&s->generic);
+		s->curPos	= (int)ceil((Cvar_VariableValue(s->generic.cvar) - s->baseValue) / s->increment);
+		s->curPos = min(max(s->curPos, 0), s->maxPos);
+	}
+}
+
+void UI_MenuSlider_SaveValue (menuSlider_s *s)
+{
+	if (s->generic.cvar && strlen(s->generic.cvar) > 0)
+	{
+		Cvar_SetValue (s->generic.cvar, ((float)s->curPos * s->increment) + s->baseValue);
+	}
+	s->generic.valueChanged = false;
+}
+
+qboolean UI_MenuSlider_ValueChanged (menuSlider_s *s)
+{
+	if (!s->generic.cvar || !strlen(s->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!s->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+
+	return (s->curPos != (int)ceil((Cvar_VariableValue(s->generic.cvar) - s->baseValue) / s->increment));
+}
+#endif
 
 void UI_MenuSlider_CheckSlide (menuSlider_s *s)
 {
@@ -665,11 +693,6 @@ void UI_MenuSlider_DoSlide (menuSlider_s *s, int dir)
 	if (!s) return;
 
 	s->curPos += dir;
-
-//	s->curPos = min(max(s->curPos, 0), s->maxPos);
-
-//	if (s->generic.callback)
-//		s->generic.callback(s);
 	UI_MenuSlider_CheckSlide (s);
 }
 
@@ -853,7 +876,33 @@ void UI_MenuSlider_Setup (menuSlider_s *s)
 
 //=========================================================
 
-void UI_MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
+const char *MenuPicker_GetValue (menuPicker_s *p)
+{
+	const char *value;
+
+	if (!p)
+		return NULL;
+
+	if (!p->numItems) {
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: not initialized!\n");
+		return NULL;
+	}
+	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
+		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: curvalue out of bounds!\n");
+		return NULL;
+	}
+
+	if (p->itemValues) {
+		value = p->itemValues[p->curValue];
+	}
+	else {
+		value = va("%d", p->curValue);
+	}
+
+	return value;
+}
+
+void MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
 {
 	if (!p || !varName || varName[0] == '\0')
 		return;
@@ -875,7 +924,7 @@ void UI_MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin
 	}
 }
 
-void UI_MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
+void MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
 {
 	if (!p || !varName || varName[0] == '\0')
 		return;
@@ -904,31 +953,103 @@ void UI_MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
 	}
 }
 
-const char *UI_MenuPicker_GetValue (menuPicker_s *p)
+#if 0
+char *UI_MenuPicker_GetValue (menuPicker_s *p)
 {
-	const char *value;
-
-	if (!p)
-		return NULL;
-
-	if (!p->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: not initialized!\n");
-		return NULL;
+	if (p->bitFlag) {
+		return va("%i", (p->curValue ? (!p->invertValue) : p->invertValue) ? p->bitFlag : 0);
 	}
-	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: curvalue out of bounds!\n");
-		return NULL;
-	}
-
-	if (p->itemValues) {
-		value = p->itemValues[p->curValue];
+	else if (p->bitFlags != NULL) {
+		return va("%i", (p->curValue ? p->bitFlags[p->curValue] : 0));
 	}
 	else {
-		value = va("%d", p->curValue);
+		if (p->itemValues)
+			return va("%s", p->itemValues[p->curValue]);
+		else
+			return va("%i", p->curValue);
 	}
-
-	return value;
 }
+
+void UI_MenuPicker_SetValue (menuPicker_s *p)
+{
+	if (p->generic.cvar && strlen(p->generic.cvar) > 0)
+	{
+		if (p->itemValues)
+			p->curValue = UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString(p->generic.cvar));
+		else {
+			UI_ClampCvarForControl (&p->generic);
+			p->curValue = Cvar_VariableInteger(p->generic.cvar);
+		}
+	}
+	else if (p->bitFlag)
+	{
+		menuFramework_s	*menu = p->generic.parent;
+
+		p->curValue = p->invertValue ? !(menu->bitFlags & p->bitFlag) : (menu->bitFlags & p->bitFlag);
+	}
+	else if (p->bitFlags != NULL)
+	{
+		menuFramework_s	*menu = p->generic.parent;
+		int				i, foundBit=0;
+
+		for (i=1; i<p->numItems; i++)
+			if (menu->bitFlags & p->bitFlags[i]) {
+				foundBit = i;
+				break;
+			}
+		p->curValue = foundBit;
+	}
+}
+
+void UI_MenuPicker_SaveValue (menuPicker_s *p)
+{
+	if (p->generic.cvar && strlen(p->generic.cvar) > 0)
+	{
+		if (p->itemValues) {
+			// Don't save to cvar if this itemvalue is the wildcard
+			if ( Q_stricmp(va("%s", p->itemValues[p->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+				Cvar_Set (p->generic.cvar, va("%s", p->itemValues[p->curValue]));
+		}
+		else
+			Cvar_SetInteger (p->generic.cvar, p->curValue);
+	}
+	else if (p->bitFlag)
+	{
+		menuFramework_s	*menu = p->generic.parent;
+
+		UI_SetMenuBitFlags (menu, p->bitFlag, (p->curValue ? (!p->invertValue) : p->invertValue));
+	}
+	else if (p->bitFlags != NULL)
+	{
+		menuFramework_s	*menu = p->generic.parent;
+		int				i, clearBits=0;
+
+		for (i=1; i<p->numItems; i++)
+			clearBits |= p->bitFlags[i];
+
+		UI_SetMenuBitFlags (menu, clearBits, false);
+		UI_SetMenuBitFlags (menu, p->bitFlags[p->curValue], true);
+	}
+	p->generic.valueChanged = false;
+}
+
+qboolean UI_MenuPicker_ValueChanged (menuPicker_s *p)
+{
+	if ( (p->bitFlag != 0) || (p->bitFlags != NULL) )	// doesn't apply to bitflag/bitflags
+		return false;
+	if (!p->generic.cvar || !strlen(p->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!p->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+		
+	if (p->itemValues)
+		return ( p->curValue != UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString(p->generic.cvar)) );
+	else {
+		UI_ClampCvarForControl (&p->generic);
+		return ( p->curValue != Cvar_VariableInteger(p->generic.cvar) );
+	}
+}
+#endif
 
 void UI_MenuPicker_DoEnter (menuPicker_s *p)
 {
@@ -939,6 +1060,11 @@ void UI_MenuPicker_DoEnter (menuPicker_s *p)
 	if (p->itemNames[p->curValue] == 0)
 		p->curValue = 0;
 
+/*	if (!p->generic.cvarNoSave)
+		UI_MenuPicker_SaveValue (p);
+	else
+		p->generic.valueChanged = UI_MenuPicker_ValueChanged (p);
+*/
 	if (p->generic.callback)
 		p->generic.callback (p);
 }
@@ -979,6 +1105,11 @@ void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 			p->curValue = 0; // was --
 	}
 
+/*	if (!p->generic.cvarNoSave)
+		UI_MenuPicker_SaveValue (p);
+	else
+		p->generic.valueChanged = UI_MenuPicker_ValueChanged (p);
+*/
 	if (p->generic.callback)
 		p->generic.callback (p);
 }
@@ -1594,6 +1725,26 @@ void UI_MenuModelView_Setup (menuModelView_s *m)
 
 //=========================================================
 
+#if 0
+/*
+==========================
+UI_ReregisterMenuItem
+Just refreshes anything registered
+==========================
+*/
+void UI_ReregisterMenuItem (void *item)
+{
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_MODELVIEW:
+		UI_MenuModelView_Reregister ((menuModelView_s *)item);
+		break;
+	default:
+		break;
+	}
+}
+#endif
+
 /*
 ==========================
 UI_UpdateMenuItemCoords
@@ -1710,6 +1861,124 @@ qboolean UI_ItemHasMouseBounds (void *item)
 	return true;
 }
 
+#if 0
+/*
+==========================
+UI_GetMenuItemValue
+Retruns string value for menu item from linked cvar.
+==========================
+*/
+char *UI_GetMenuItemValue (void *item)
+{
+	if (!item)	return "";
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_FIELD:
+		return UI_MenuField_GetValue ((menuField_s *)item);
+		break;
+	case MTYPE_SLIDER:
+		return UI_MenuSlider_GetValue ((menuSlider_s *)item);
+		break;
+	case MTYPE_PICKER:
+		return UI_MenuPicker_GetValue ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_CHECKBOX:
+		return UI_MenuCheckBox_GetValue ((menuCheckBox_s *)item);
+		break;
+	case MTYPE_LISTBOX:
+		return UI_MenuListBox_GetValue ((menuListBox_s *)item);
+		break;
+	case MTYPE_COMBOBOX:
+		return UI_MenuComboBox_GetValue ((menuComboBox_s *)item);
+		break;
+	case MTYPE_LISTVIEW:
+		return UI_MenuListView_GetValue ((menuListView_s *)item);
+		break; */
+	default:
+		return "";
+	}
+	return "";
+}
+
+
+/*
+==========================
+UI_SetMenuItemValue
+Loads value for menu item from linked cvar.
+==========================
+*/
+void UI_SetMenuItemValue (void *item)
+{
+	if (!item)	return;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_FIELD:
+		UI_MenuField_SetValue ((menuField_s *)item);
+		break;
+	case MTYPE_SLIDER:
+		UI_MenuSlider_SetValue ((menuSlider_s *)item);
+		break;
+	case MTYPE_PICKER:
+		UI_MenuPicker_SetValue ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_CHECKBOX:
+		UI_MenuCheckBox_SetValue ((menuCheckBox_s *)item);
+		break;
+	case MTYPE_LISTBOX:
+		UI_MenuListBox_SetValue ((menuListBox_s *)item);
+		break;
+	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_SetValue ((menuComboBox_s *)item);
+		break;
+	case MTYPE_LISTVIEW:
+		UI_MenuListView_SetValue ((menuListView_s *)item);
+		break; */
+	default:
+		break;
+	}
+}
+
+
+/*
+==========================
+UI_SaveMenuItemValue
+Loads value for menu item from linked cvar
+==========================
+*/
+void UI_SaveMenuItemValue (void *item)
+{
+	if (!item)	return;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+	case MTYPE_FIELD:
+		UI_MenuField_SaveValue ((menuField_s *)item);
+		break;
+	case MTYPE_SLIDER:
+		UI_MenuSlider_SaveValue ((menuSlider_s *)item);
+		break;
+	case MTYPE_PICKER:
+		UI_MenuPicker_SaveValue ((menuPicker_s *)item);
+		break;
+/*	case MTYPE_CHECKBOX:
+		UI_MenuCheckBox_SaveValue ((menuCheckBox_s *)item);
+		break;
+	case MTYPE_LISTBOX:
+		UI_MenuListBox_SaveValue ((menuListBox_s *)item);
+		break;
+	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_SaveValue ((menuComboBox_s *)item);
+		break;
+	case MTYPE_LISTVIEW:
+		UI_MenuListView_SaveValue ((menuListView_s *)item);
+		break; */
+	default:
+		break;
+	}
+}
+#endif
 
 /*
 ==========================
@@ -1775,6 +2044,30 @@ void UI_DrawMenuItem (void *item)
 	case MTYPE_MODELVIEW:
 		UI_MenuModelView_Draw ((menuModelView_s *)item);
 		break;
+	default:
+		break;
+	}
+}
+
+
+/*
+==========================
+UI_DrawMenuItemExtension
+Calls draw functions for each item type
+==========================
+*/
+void UI_DrawMenuItemExtension (void *item)
+{
+	if (!item)	return;
+
+	if ( !((menuCommon_s *)item)->isExtended )
+		return;
+
+	switch ( ((menuCommon_s *)item)->type )
+	{
+/*	case MTYPE_COMBOBOX:
+		UI_MenuComboBox_DrawExtension ((menuComboBox_s *)item);
+		break; */
 	default:
 		break;
 	}
@@ -1937,48 +2230,23 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 		case MTYPE_KEYBIND:
 			UI_MenuKeyBind_DoEnter ((menuKeyBind_s *)item);
 			return true;
+	/*	case MTYPE_KEYBINDLIST:
+			UI_MenuKeyBindList_DoEnter ( (menuKeyBindList_s *)item );
+			return true; */
 		case MTYPE_FIELD:
 			return UI_MenuField_DoEnter ((menuField_s *)item) ;
 		case MTYPE_PICKER:
-		//	UI_MenuSpinControl_DoEnter ((menuPicker_s *)item);
+		//	UI_MenuPicker_DoEnter ((menuPicker_s *)item);
 			return false;
 		case MTYPE_BUTTON:
 			UI_MenuButton_DoEnter ((menuButton_s *)item);
 			break;
-		default:
-			break;
-		}
-	}
-	return false;
-}
-
-
-/*
-=================
-UI_MouseSelectItem
-=================
-*/
-qboolean UI_MouseSelectItem (menuCommon_s *item)
-{
-	if (!item)	return false;
-
-	if (item)
-	{
-		switch (item->type)
-		{
-		case MTYPE_ACTION:
-			UI_MenuAction_DoEnter ((menuAction_s *)item);
-			return true;
-		case MTYPE_KEYBIND:
-			UI_MenuKeyBind_DoEnter ((menuKeyBind_s *)item);
-			return true;
-		case MTYPE_FIELD:
-			return UI_MenuField_DoEnter ((menuField_s *)item) ;
-		case MTYPE_PICKER:
+	/*	case MTYPE_CHECKBOX:
+			UI_MenuCheckBox_DoEnter ( (menuCheckBox_s *)item );
 			return false;
-		case MTYPE_BUTTON:
-			UI_MenuButton_DoEnter ((menuButton_s *)item);
-			break;
+		case MTYPE_LISTBOX:
+			UI_MenuListBox_DoEnter ( (menuListBox_s *)item );
+			return true; */
 		default:
 			break;
 		}
@@ -2004,18 +2272,62 @@ void UI_SlideMenuItem (menuFramework_s *s, int dir)
 	{
 		switch (item->type)
 		{
+	/*	case MTYPE_KEYBINDLIST:
+			UI_MenuKeyBindList_DoSlide ((menuKeyBindList_s *)item, dir);
+			return ui_menu_null_sound; */
 		case MTYPE_SLIDER:
 			UI_MenuSlider_DoSlide ((menuSlider_s *) item, dir);
 			break;
 		case MTYPE_PICKER:
 			UI_MenuPicker_DoSlide ((menuPicker_s *) item, dir);
 			break;
+	/*	case MTYPE_CHECKBOX:
+			UI_MenuCheckBox_DoSlide ((menuCheckBox_s *)item, dir);
+			return ui_menu_move_sound;
+		case MTYPE_LISTBOX:
+			UI_MenuListBox_DoSlide ((menuListBox_s *)item, dir);
+			return ui_menu_move_sound;
+		case MTYPE_COMBOBOX:
+			UI_MenuComboBox_DoSlide ((menuComboBox_s *)item, dir);
+			return ui_menu_move_sound; */
 		default:
 			break;
 		}
 	}
 }
 
+#if 0
+/*
+=================
+UI_ScrollMenuItem
+=================
+*/
+qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir)
+{
+	menuCommon_s *item;
+	
+	if (!ui_mousecursor.menuitem)
+		return false;
+
+	item = (menuCommon_s *)ui_mousecursor.menuitem;
+	if (!UI_ItemHasScrollBar(item))
+		return false;
+
+	switch (item->type)
+	{
+/*	case MTYPE_KEYBINDLIST:
+		return UI_MenuScrollBar_Increment (&((menuKeyBindList_s *)item)->scrollState, dir);
+	case MTYPE_LISTBOX:
+		return UI_MenuScrollBar_Increment (&((menuListBox_s *)item)->scrollState, dir);
+	case MTYPE_COMBOBOX:
+		return UI_MenuScrollBar_Increment (&((menuComboBox_s *)item)->scrollState, dir);
+	case MTYPE_LISTVIEW:
+		return UI_MenuScrollBar_Increment (&((menuListView_s *)item)->scrollState, dir); */
+	default:
+		return false;
+	}
+}
+#endif
 
 /*
 ==========================

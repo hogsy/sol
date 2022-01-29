@@ -82,9 +82,9 @@ void Menu_Options_Init (void)
 	s_options_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
 	s_options_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
 	s_options_menu.nitems		= 0;
-//	s_options_menu.isPopup		= false;
-//	s_options_menu.keyFunc		= UI_DefaultMenuKey;
-//	s_options_menu.canOpenFunc	= NULL;
+	s_options_menu.isPopup		= false;
+	s_options_menu.keyFunc		= UI_DefaultMenuKey;
+	s_options_menu.canOpenFunc	= NULL;
 
 	s_options_banner.generic.type		= MTYPE_IMAGE;
 	s_options_banner.generic.x			= 0;

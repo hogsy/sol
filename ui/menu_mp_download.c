@@ -54,60 +54,60 @@ static menuAction_s		s_download_back_action;
 
 static void AllowDownloadCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_box, "allow_download");
+	MenuPicker_SaveValue (&s_allow_download_box, "allow_download");
 }
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 static void HTTPDownloadCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_http_download_box, "cl_http_downloads");
+	MenuPicker_SaveValue (&s_http_download_box, "cl_http_downloads");
 }
 
 static void HTTPFallbackCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_http_fallback_box, "cl_http_fallback");
+	MenuPicker_SaveValue (&s_http_fallback_box, "cl_http_fallback");
 }
 #endif	// USE_CURL
 
 static void DownloadMapsCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_maps_box, "allow_download_maps");
+	MenuPicker_SaveValue (&s_allow_download_maps_box, "allow_download_maps");
 }
 
 static void DownloadTextures24BitCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_textures_24bit_box, "allow_download_textures_24bit");
+	MenuPicker_SaveValue (&s_allow_download_textures_24bit_box, "allow_download_textures_24bit");
 }
 
 static void DownloadPlayersCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_players_box, "allow_download_players");
+	MenuPicker_SaveValue (&s_allow_download_players_box, "allow_download_players");
 }
 
 static void DownloadModelsCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_models_box, "allow_download_models");
+	MenuPicker_SaveValue (&s_allow_download_models_box, "allow_download_models");
 }
 
 static void DownloadSoundsCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_allow_download_sounds_box, "allow_download_sounds");
+	MenuPicker_SaveValue (&s_allow_download_sounds_box, "allow_download_sounds");
 }
 
 //=======================================================================
 
 static void M_Download_SetMenuItemValues (void)
 {
-	UI_MenuPicker_SetValue (&s_allow_download_box, "allow_download", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_box, "allow_download", 0, 1, true);
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-	UI_MenuPicker_SetValue (&s_http_download_box, "cl_http_downloads", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_http_fallback_box, "cl_http_fallback", 0, 1, true);
+	MenuPicker_SetValue (&s_http_download_box, "cl_http_downloads", 0, 1, true);
+	MenuPicker_SetValue (&s_http_fallback_box, "cl_http_fallback", 0, 1, true);
 #endif	// USE_CURL
-	UI_MenuPicker_SetValue (&s_allow_download_maps_box, "allow_download_maps", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_allow_download_textures_24bit_box, "allow_download_textures_24bit", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_allow_download_players_box, "allow_download_players", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_allow_download_models_box, "allow_download_models", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_allow_download_sounds_box, "allow_download_sounds", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_maps_box, "allow_download_maps", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_textures_24bit_box, "allow_download_textures_24bit", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_players_box, "allow_download_players", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_models_box, "allow_download_models", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_download_sounds_box, "allow_download_sounds", 0, 1, true);
 }
 
 //=======================================================================
@@ -130,9 +130,9 @@ void Menu_DownloadOptions_Init (void)
 	s_downloadoptions_menu.x			= 0;	// SCREEN_WIDTH*0.5;
 	s_downloadoptions_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_downloadoptions_menu.nitems		= 0;
-//	s_downloadoptions_menu.isPopup		= false;
-//	s_downloadoptions_menu.keyFunc		= UI_DefaultMenuKey;
-//	s_downloadoptions_menu.canOpenFunc	= NULL;
+	s_downloadoptions_menu.isPopup		= false;
+	s_downloadoptions_menu.keyFunc		= UI_DefaultMenuKey;
+	s_downloadoptions_menu.canOpenFunc	= NULL;
 
 	s_downloadoptions_banner.generic.type		= MTYPE_IMAGE;
 	s_downloadoptions_banner.generic.x			= 0;

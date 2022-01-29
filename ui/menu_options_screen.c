@@ -53,7 +53,7 @@ static menuAction_s		s_options_screen_back_action;
 
 static void CrosshairFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_screen_crosshair_box, "crosshair");
+	MenuPicker_SaveValue (&s_options_screen_crosshair_box, "crosshair");
 
 	s_options_screen_crosshair_display.imageName = ui_crosshair_display_names[s_options_screen_crosshair_box.curValue];
 }
@@ -84,56 +84,56 @@ void CrosshairButtonCursor (void *unused)
 // Psychospaz's changeable size crosshair
 static void CrosshairSizeFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_screen_crosshairscale_slider, "crosshair_scale");
+	MenuSlider_SaveValue (&s_options_screen_crosshairscale_slider, "crosshair_scale");
 }
 
 static void CrosshairAlphaFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha");
+	MenuSlider_SaveValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha");
 }
 
 static void CrosshairPulseFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse");
+	MenuSlider_SaveValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse");
 }
 
 // hud scaling option
 static void HudScaleFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_screen_hudscale_slider, "scr_hudsize");
+	MenuSlider_SaveValue (&s_options_screen_hudscale_slider, "scr_hudsize");
 }
 
 // hud trans option
 static void HudAlphaFunc (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_options_screen_hudalpha_slider, "scr_hudalpha");
+	MenuSlider_SaveValue (&s_options_screen_hudalpha_slider, "scr_hudalpha");
 }
 
 // hud squeeze digits option
 static void HudSqueezeDigitsFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits");
+	MenuPicker_SaveValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits");
 }
 
 // FPS counter option
 static void FPSFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_options_screen_fps_box, "cl_drawfps");
+	MenuPicker_SaveValue (&s_options_screen_fps_box, "cl_drawfps");
 }
 
 //=======================================================================
 
 static void M_ScreenSetMenuItemValues (void)
 {
-	UI_MenuPicker_SetValue (&s_options_screen_crosshair_box, "crosshair", 0, 100, true);
+	MenuPicker_SetValue (&s_options_screen_crosshair_box, "crosshair", 0, 100, true);
 	s_options_screen_crosshair_display.imageName = ui_crosshair_display_names[s_options_screen_crosshair_box.curValue];
-	UI_MenuSlider_SetValue (&s_options_screen_crosshairscale_slider, "crosshair_scale", 0.25f, 5.0f, true);
-	UI_MenuSlider_SetValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha", 0.05f, 1.0f, true);
-	UI_MenuSlider_SetValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse", 0.0f, 0.5f, true);
-	UI_MenuSlider_SetValue (&s_options_screen_hudscale_slider, "scr_hudsize", 0, 8, true);
-	UI_MenuSlider_SetValue (&s_options_screen_hudalpha_slider, "scr_hudalpha", 0.0f, 1.0f, true);
-	UI_MenuPicker_SetValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_options_screen_fps_box, "cl_drawfps", 0, 1, true);
+	MenuSlider_SetValue (&s_options_screen_crosshairscale_slider, "crosshair_scale", 0.25f, 5.0f, true);
+	MenuSlider_SetValue (&s_options_screen_crosshairalpha_slider, "crosshair_alpha", 0.05f, 1.0f, true);
+	MenuSlider_SetValue (&s_options_screen_crosshairpulse_slider, "crosshair_pulse", 0.0f, 0.5f, true);
+	MenuSlider_SetValue (&s_options_screen_hudscale_slider, "scr_hudsize", 0, 8, true);
+	MenuSlider_SetValue (&s_options_screen_hudalpha_slider, "scr_hudalpha", 0.0f, 1.0f, true);
+	MenuPicker_SetValue (&s_options_screen_hudsqueezedigits_box, "scr_hudsqueezedigits", 0, 1, true);
+	MenuPicker_SetValue (&s_options_screen_fps_box, "cl_drawfps", 0, 1, true);
 }
 
 static void M_ScreenResetDefaultsFunc (void *unused)
@@ -169,9 +169,9 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_menu.x					= 0;	// SCREEN_WIDTH*0.5;
 	s_options_screen_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_screen_menu.nitems			= 0;
-//	s_options_screen_menu.isPopup			= false;
-//	s_options_screen_menu.keyFunc			= UI_DefaultMenuKey;
-//	s_options_screen_menu.canOpenFunc		= NULL;
+	s_options_screen_menu.isPopup			= false;
+	s_options_screen_menu.keyFunc			= UI_DefaultMenuKey;
+	s_options_screen_menu.canOpenFunc		= NULL;
 //	s_options_screen_menu.defaultsFunc		= M_ScreenResetDefaults;
 //	s_options_screen_menu.defaultsMessage	= "Reset all Screen settings to defaults?";
 

@@ -129,6 +129,56 @@ void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax)
 	Cvar_SetValue ((char *)varName, ClampCvar( cvarMin, cvarMax, Cvar_VariableValue((char *)varName) ));
 }
 
+#if 0
+/*
+==========================
+UI_ClampCvarForControl
+==========================
+*/
+void UI_ClampCvarForControl (menuCommon_s *item)
+{
+	float	cvarMin, cvarMax;
+
+	if (!item->cvarClamp)
+		return;
+	cvarMin = item->cvarMin;
+	cvarMax = item->cvarMax;
+	if (cvarMin == 0 && cvarMax == 0)	 // unitialized
+		return;
+	Cvar_SetValue (item->cvar, ClampCvar( cvarMin, cvarMax, Cvar_VariableValue(item->cvar) ));
+}
+#endif
+
+/*
+==========================
+UI_GetCurValueForControl
+==========================
+*/
+int UI_GetCurValueForControl (menuCommon_s *item)
+{
+	if (!item)	return 0;
+
+	switch (item->type)
+	{
+//	case MTYPE_KEYBINDLIST:
+//		return ((menuKeyBindList_s *)item)->curValue;
+	case MTYPE_SLIDER:
+		return ((menuSlider_s *)item)->curPos;
+	case MTYPE_PICKER:
+		return ((menuPicker_s *)item)->curValue;
+//	case MTYPE_CHECKBOX:
+//		return ((menuCheckBox_s *)item)->curValue;
+//	case MTYPE_LISTBOX:
+//		return ((menuListBox_s *)item)->curValue;
+//	case MTYPE_COMBOBOX:
+//		return ((menuComboBox_s *)item)->curValue;
+//	case MTYPE_LISTVIEW:
+//		return ((menuListView_s *)item)->curValue;
+	default:
+		return 0;
+	}
+}
+
 
 /*
 ==========================
@@ -184,6 +234,26 @@ int UI_MouseOverAlpha (menuCommon_s *m)
 	}
 	else 
 		return 255;
+}
+
+
+/*
+==========================
+UI_MouseOverSubItem
+==========================
+*/
+qboolean UI_MouseOverSubItem (int x, int y, int w, int h, scralign_t align)
+{
+	float	x1, y1, w1, h1;
+
+	x1 = x;	y1 = y;	w1 = w; h1 = h;
+	SCR_ScaleCoords (&x1, &y1, &w1, &h1, align);
+
+	if ( ui_mousecursor.x >= x1 && ui_mousecursor.x < (x1+w1) 
+		&& ui_mousecursor.y >= y1 &&  ui_mousecursor.y < (y1+h1) )
+		return true;
+
+	return false;
 }
 
 
@@ -268,6 +338,22 @@ void UI_SetMenuStatusBar (menuFramework_s *m, const char *string)
 	if (!m)	return;
 
 	m->statusbar = string;
+}
+
+
+/*
+=================
+UI_SetMenuCurrentItemStatusBar
+=================
+*/
+void UI_SetMenuCurrentItemStatusBar (menuFramework_s *m, const char *string)
+{	
+	menuCommon_s *curItem;
+
+	if (!m)	return;
+
+	if ( (curItem = (menuCommon_s *)UI_ItemAtMenuCursor(m)) != NULL )
+		curItem->statusbar = string;
 }
 
 

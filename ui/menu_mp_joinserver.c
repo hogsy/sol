@@ -49,8 +49,9 @@ JOIN SERVER MENU
 // Knightmare- client compatibility option
 static void ClientCompatibilityFunc (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
+	MenuPicker_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
 }
+
 
 void JoinServerFunc (void *self)
 {
@@ -59,12 +60,14 @@ void JoinServerFunc (void *self)
 	UI_JoinServer (index);
 }
 
+
 void AddressBookFunc (void *self)
 {
 	Menu_AddressBook_f ();
 }
 
-void SearchLocalGamesFunc (void *self)
+
+void M_SearchLocalGamesFunc (void *self)
 {
 	UI_SearchLocalGames ();
 }
@@ -74,7 +77,7 @@ void SearchLocalGamesFunc (void *self)
 // Knightmare- init client compatibility menu option
 static void M_Joinserver_SetMenuItemValues (void)
 {
-	UI_MenuPicker_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
+	MenuPicker_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
 }
 
 //=========================================================
@@ -83,13 +86,12 @@ void Menu_JoinServer_Init (void)
 {
 	static const char *compatibility_names[] =
 	{
-		"version 56 (KMQuake2)",
+		"version 57 (KMQuake2)",
 		"version 34 (stock Quake2)",
 		0
 	};
 	int i, x, y;
 
-//	int y = 0;
 	// menu.x = 200, menu.y = 160
 	x = SCREEN_WIDTH*0.5 - 160;
 	y = SCREEN_HEIGHT*0.5 - 80;
@@ -97,10 +99,10 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_menu.x				= 0;	// SCREEN_WIDTH*0.5 - 160;
 	s_joinserver_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 80;
 	s_joinserver_menu.nitems		= 0;
-//	s_joinserver_menu.isPopup		= false;
-//	s_joinserver_menu.keyFunc		= UI_DefaultMenuKey;
-//	s_joinserver_menu.canOpenFunc	= NULL;
-//	s_joinserver_menu.onOpenFunc	= M_SearchLocalGamesFunc;
+	s_joinserver_menu.isPopup		= false;
+	s_joinserver_menu.keyFunc		= UI_DefaultMenuKey;
+	s_joinserver_menu.canOpenFunc	= NULL;
+	s_joinserver_menu.onOpenFunc	= M_SearchLocalGamesFunc;
 
 	s_joinserver_banner.generic.type		= MTYPE_IMAGE;
 	s_joinserver_banner.generic.x			= 0;
@@ -133,7 +135,7 @@ void Menu_JoinServer_Init (void)
 
 	s_joinserver_address_book_action.generic.type		= MTYPE_ACTION;
 	s_joinserver_address_book_action.generic.textSize	= MENU_FONT_SIZE;
-	s_joinserver_address_book_action.generic.name		= "address book";
+	s_joinserver_address_book_action.generic.name		= "Address Book";
 	s_joinserver_address_book_action.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_joinserver_address_book_action.generic.x			= x;
 	s_joinserver_address_book_action.generic.y			= y += 2*MENU_LINE_SIZE;
@@ -141,11 +143,11 @@ void Menu_JoinServer_Init (void)
 
 	s_joinserver_search_action.generic.type			= MTYPE_ACTION;
 	s_joinserver_search_action.generic.textSize		= MENU_FONT_SIZE;
-	s_joinserver_search_action.generic.name			= "refresh server list";
+	s_joinserver_search_action.generic.name			= "Refresh Server List";
 	s_joinserver_search_action.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_joinserver_search_action.generic.x			= x;
-	s_joinserver_search_action.generic.y			= y += MENU_LINE_SIZE;
-	s_joinserver_search_action.generic.callback		= SearchLocalGamesFunc;
+	s_joinserver_search_action.generic.y			= y += 2*MENU_LINE_SIZE;
+	s_joinserver_search_action.generic.callback		= M_SearchLocalGamesFunc;
 	s_joinserver_search_action.generic.statusbar	= "search for servers";
 
 	s_joinserver_server_title.generic.type		= MTYPE_LABEL;
@@ -187,8 +189,6 @@ void Menu_JoinServer_Init (void)
 	for ( i = 0; i < UI_MAX_LOCAL_SERVERS; i++ )
 		UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_server_actions[i] );
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_back_action );
-
-	UI_SearchLocalGames ();
 }
 
 void Menu_JoinServer_Draw (void)

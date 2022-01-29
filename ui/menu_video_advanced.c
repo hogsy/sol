@@ -37,7 +37,7 @@ static menuImage_s		s_video_advanced_banner;
 static menuLabel_s		s_options_advanced_header;	
 
 static menuSlider_s		s_lightmapscale_slider;
-static menuSlider_s		s_textureintensity_slider;
+//static menuSlider_s		s_textureintensity_slider;
 static menuPicker_s  	s_rgbscale_box;
 static menuPicker_s  	s_trans_lighting_box;
 static menuPicker_s  	s_warp_lighting_box;
@@ -58,6 +58,8 @@ static menuPicker_s  	s_glass_envmap_box;
 static menuPicker_s  	s_screenshotformat_box;
 static menuSlider_s  	s_screenshotjpegquality_slider;
 static menuPicker_s  	s_saveshotsize_box;
+static menuPicker_s		s_npot_mipmap_box;
+static menuPicker_s		s_sgis_mipmap_box;
 static menuPicker_s		s_upscale_font_box;
 
 static menuAction_s		s_advanced_apply_action;
@@ -68,154 +70,168 @@ static menuAction_s		s_back_action;
 
 static void LightMapScaleCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_lightmapscale_slider, "r_modulate");
+	MenuSlider_SaveValue (&s_lightmapscale_slider, "r_modulate");
 }
 
-static void TextureIntensCallback (void *unused)
+/*static void TextureIntensCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_textureintensity_slider, "r_intensity");
-}
+	MenuSlider_SaveValue (&s_textureintensity_slider, "r_intensity");
+} */
 
 static void RGBSCaleCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_rgbscale_box, "r_rgbscale");
+	MenuPicker_SaveValue (&s_rgbscale_box, "r_rgbscale");
 }
 
 static void TransLightingCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_trans_lighting_box, "r_trans_lighting");
+	MenuPicker_SaveValue (&s_trans_lighting_box, "r_trans_lighting");
 }
 
 static void WarpLightingCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_warp_lighting_box, "r_warp_lighting");
+	MenuPicker_SaveValue (&s_warp_lighting_box, "r_warp_lighting");
 }
 
 static void LightCutoffCallback(void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_lightcutoff_slider, "r_lightcutoff");
+	MenuSlider_SaveValue (&s_lightcutoff_slider, "r_lightcutoff");
 }
 
 static void GlassEnvmapCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_glass_envmap_box, "r_glass_envmaps");
+	MenuPicker_SaveValue (&s_glass_envmap_box, "r_glass_envmaps");
 }
 
 static void SolidAlphaCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_solidalpha_box, "r_solidalpha");
+	MenuPicker_SaveValue (&s_solidalpha_box, "r_solidalpha");
 }
 
 static void TexShaderWarpCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_texshader_warp_box, "r_pixel_shader_warp");
+	MenuPicker_SaveValue (&s_texshader_warp_box, "r_pixel_shader_warp");
 }
 
 static void WaterWaveCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_waterwave_slider, "r_waterwave");
+	MenuSlider_SaveValue (&s_waterwave_slider, "r_waterwave");
 }
 
 static void CausticsCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_caustics_box, "r_caustics");
+	MenuPicker_SaveValue (&s_caustics_box, "r_caustics");
 }
 
 static void ParticleOverdrawCallback(void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_particle_overdraw_box, "r_particle_overdraw");
+	MenuPicker_SaveValue (&s_particle_overdraw_box, "r_particle_overdraw");
 }
 
 static void LightBloomCallback(void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_lightbloom_box, "r_bloom");
+	MenuPicker_SaveValue (&s_lightbloom_box, "r_bloom");
 }
 
 static void ModelShadingCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_modelshading_box, "r_model_shading");
+	MenuPicker_SaveValue (&s_modelshading_box, "r_model_shading");
 }
 
 static void ShadowsCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_shadows_box, "r_shadows");
+	MenuPicker_SaveValue (&s_shadows_box, "r_shadows");
 }
 
 static void TwoSideStencilCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_two_side_stencil_box, "r_stencilTwoSide");
+	MenuPicker_SaveValue (&s_two_side_stencil_box, "r_stencilTwoSide");
 }
 
 static void EntShellCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_ent_shell_box, "r_shelltype");
+	MenuPicker_SaveValue (&s_ent_shell_box, "r_shelltype");
 }
 
 static void CelShadingCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_celshading_box, "r_celshading");
+	MenuPicker_SaveValue (&s_celshading_box, "r_celshading");
 }
 
 static void CelShadingWidthCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_celshading_width_slider, "r_celshading_width");
+	MenuSlider_SaveValue (&s_celshading_width_slider, "r_celshading_width");
 }
 
 static void ScreenshotFormatCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_screenshotformat_box, "r_screenshot_format");
+	MenuPicker_SaveValue (&s_screenshotformat_box, "r_screenshot_format");
 }
 
 static void JPEGScreenshotQualityCallback (void *unused)
 {
-	UI_MenuSlider_SaveValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality");
+	MenuSlider_SaveValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality");
 }
 
 static void SaveshotSizeCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_saveshotsize_box, "r_saveshotsize");
+	MenuPicker_SaveValue (&s_saveshotsize_box, "r_saveshotsize");
+}
+
+static void NPOTMipmapCallback (void *unused)
+{
+	MenuPicker_SaveValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps");
+}
+
+static void SGISMipmapCallback (void *unused)
+{
+	MenuPicker_SaveValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap");
 }
 
 static void UpscaleFontCallback (void *unused)
 {
-	UI_MenuPicker_SaveValue (&s_upscale_font_box, "r_font_upscale");
+	MenuPicker_SaveValue (&s_upscale_font_box, "r_font_upscale");
 }
 
 //=======================================================================
 
 static void M_AdvancedVideo_MenuSetValues (void)
 {
-	UI_MenuSlider_SetValue (&s_lightmapscale_slider, "r_modulate", 1, 2, true);
-	UI_MenuSlider_SetValue (&s_textureintensity_slider, "r_intensity", 1, 2, true);
-	UI_MenuPicker_SetValue (&s_rgbscale_box, "r_rgbscale", 1, 4, true);
-	UI_MenuPicker_SetValue (&s_trans_lighting_box, "r_trans_lighting", 0, 2, true);
-	UI_MenuPicker_SetValue (&s_warp_lighting_box, "r_warp_lighting", 0, 1, true);
-	UI_MenuSlider_SetValue (&s_lightcutoff_slider, "r_lightcutoff", 0, 64, true);
-	UI_MenuPicker_SetValue (&s_glass_envmap_box, "r_glass_envmaps", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_solidalpha_box, "r_solidalpha", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_texshader_warp_box, "r_pixel_shader_warp", 0, 1, true);
-	UI_MenuSlider_SetValue (&s_waterwave_slider, "r_waterwave", 0, 24, true);
-	UI_MenuPicker_SetValue (&s_caustics_box, "r_caustics", 0, 2, true);
+	MenuSlider_SetValue (&s_lightmapscale_slider, "r_modulate", 1, 2, true);
+//	MenuSlider_SetValue (&s_textureintensity_slider, "r_intensity", 1, 2, true);
+	MenuPicker_SetValue (&s_rgbscale_box, "r_rgbscale", 1, 4, true);
+	MenuPicker_SetValue (&s_trans_lighting_box, "r_trans_lighting", 0, 2, true);
+	MenuPicker_SetValue (&s_warp_lighting_box, "r_warp_lighting", 0, 1, true);
+	MenuSlider_SetValue (&s_lightcutoff_slider, "r_lightcutoff", 0, 64, true);
+	MenuPicker_SetValue (&s_glass_envmap_box, "r_glass_envmaps", 0, 1, true);
+	MenuPicker_SetValue (&s_solidalpha_box, "r_solidalpha", 0, 1, true);
+	MenuPicker_SetValue (&s_texshader_warp_box, "r_pixel_shader_warp", 0, 1, true);
+	MenuSlider_SetValue (&s_waterwave_slider, "r_waterwave", 0, 24, true);
+	MenuPicker_SetValue (&s_caustics_box, "r_caustics", 0, 2, true);
 
-	UI_MenuPicker_SetValue (&s_particle_overdraw_box, "r_particle_overdraw", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_lightbloom_box, "r_bloom", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_modelshading_box, "r_model_shading", 0, 3, true);
-	UI_MenuPicker_SetValue (&s_shadows_box, "r_shadows", 0, 3, true);
-	UI_MenuPicker_SetValue (&s_two_side_stencil_box, "r_stencilTwoSide", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_ent_shell_box, "r_shelltype", 0, 2, true);
-	UI_MenuPicker_SetValue (&s_celshading_box, "r_celshading", 0, 1, true);
-	UI_MenuSlider_SetValue (&s_celshading_width_slider, "r_celshading_width", 1, 12, true);
+	MenuPicker_SetValue (&s_particle_overdraw_box, "r_particle_overdraw", 0, 1, true);
+	MenuPicker_SetValue (&s_lightbloom_box, "r_bloom", 0, 1, true);
+	MenuPicker_SetValue (&s_modelshading_box, "r_model_shading", 0, 3, true);
+	MenuPicker_SetValue (&s_shadows_box, "r_shadows", 0, 3, true);
+	MenuPicker_SetValue (&s_two_side_stencil_box, "r_stencilTwoSide", 0, 1, true);
+	MenuPicker_SetValue (&s_ent_shell_box, "r_shelltype", 0, 2, true);
+	MenuPicker_SetValue (&s_celshading_box, "r_celshading", 0, 1, true);
+	MenuSlider_SetValue (&s_celshading_width_slider, "r_celshading_width", 1, 12, true);
 
-	UI_MenuPicker_SetValue (&s_screenshotformat_box, "r_screenshot_format", 0, 2, false);
-	UI_MenuSlider_SetValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality", 50, 100, true);
-	UI_MenuPicker_SetValue (&s_saveshotsize_box, "r_saveshotsize", 0, 1, true);
-	UI_MenuPicker_SetValue (&s_upscale_font_box, "r_font_upscale", 0, 2, true);
+	MenuPicker_SetValue (&s_screenshotformat_box, "r_screenshot_format", 0, 2, false);
+	MenuSlider_SetValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality", 50, 100, true);
+	MenuPicker_SetValue (&s_saveshotsize_box, "r_saveshotsize", 0, 1, true);
+
+	MenuPicker_SetValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps", 0, 1, true);
+	MenuPicker_SetValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap", 0, 1, true);
+	MenuPicker_SetValue (&s_upscale_font_box, "r_font_upscale", 0, 2, true);
 }
 
 static void M_AdvancedMenuApplyChanges (void *unused)
 {
-	// update for modified r_intensity and r_stencilTwoSide
-	if ( Cvar_IsModified("r_intensity") || Cvar_IsModified("r_font_upscale") )
+	// update for modified r_nonpoweroftwo_mipmaps, r_sgis_generatemipmap, and r_font_upscale
+//	if ( Cvar_IsModified("r_intensity") || Cvar_IsModified("r_font_upscale") )
+	if ( Cvar_IsModified("r_nonpoweroftwo_mipmaps") || Cvar_IsModified("r_sgis_generatemipmap") || Cvar_IsModified("r_font_upscale") )
 		Cvar_SetModified ("vid_ref", true);
 }
 
@@ -316,9 +332,9 @@ void Menu_Video_Advanced_Init (void)
 	s_video_advanced_menu.x						= 0;	// SCREEN_WIDTH*0.5;
 	s_video_advanced_menu.y						= 0;	// SCREEN_HEIGHT*0.5 - 100;
 	s_video_advanced_menu.nitems				= 0;
-//	s_video_advanced_menu.isPopup				= false;
-//	s_video_advanced_menu.keyFunc				= UI_DefaultMenuKey;
-//	s_video_advanced_menu.canOpenFunc			= NULL;
+	s_video_advanced_menu.isPopup				= false;
+	s_video_advanced_menu.keyFunc				= UI_DefaultMenuKey;
+	s_video_advanced_menu.canOpenFunc			= NULL;
 //	s_video_advanced_menu.applyChangesFunc		= M_ApplyAdvVideoChanges;
 //	s_video_advanced_menu.applyChangesMessage[0]	= "This will restart the video system to";
 //	s_video_advanced_menu.applyChangesMessage[1]	= "apply settings and return to the menu.";
@@ -354,7 +370,7 @@ void Menu_Video_Advanced_Init (void)
 	s_lightmapscale_slider.displayAsPercent		= false;
 	s_lightmapscale_slider.generic.statusbar	= "leave at minimum, washes out textures";
 
-	s_textureintensity_slider.generic.type		= MTYPE_SLIDER;
+/*	s_textureintensity_slider.generic.type		= MTYPE_SLIDER;
 	s_textureintensity_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_textureintensity_slider.generic.x			= x;
 	s_textureintensity_slider.generic.y			= y += MENU_LINE_SIZE;
@@ -365,7 +381,7 @@ void Menu_Video_Advanced_Init (void)
 	s_textureintensity_slider.increment			= 0.1f;
 	s_textureintensity_slider.displayAsPercent	= false;
 	s_textureintensity_slider.generic.statusbar	= "leave at minimum, washes out textures";
-
+*/
 	s_rgbscale_box.generic.type				= MTYPE_PICKER;
 	s_rgbscale_box.generic.textSize			= MENU_FONT_SIZE;
 	s_rgbscale_box.generic.x				= x;
@@ -457,7 +473,7 @@ void Menu_Video_Advanced_Init (void)
 	s_particle_overdraw_box.generic.type		= MTYPE_PICKER;
 	s_particle_overdraw_box.generic.textSize	= MENU_FONT_SIZE;
 	s_particle_overdraw_box.generic.x			= x;
-	s_particle_overdraw_box.generic.y			= y += 2*MENU_LINE_SIZE;
+	s_particle_overdraw_box.generic.y			= y += MENU_LINE_SIZE;
 	s_particle_overdraw_box.generic.name		= "particle overdraw";
 	s_particle_overdraw_box.generic.callback	= ParticleOverdrawCallback;
 	s_particle_overdraw_box.itemNames			= yesno_names;
@@ -560,10 +576,26 @@ void Menu_Video_Advanced_Init (void)
 	s_saveshotsize_box.itemNames				= yesno_names;
 	s_saveshotsize_box.generic.statusbar		= "hi-res saveshots when running at 800x600 or higher";
 
+	s_npot_mipmap_box.generic.type				= MTYPE_PICKER;
+	s_npot_mipmap_box.generic.textSize			= MENU_FONT_SIZE;
+	s_npot_mipmap_box.generic.x					= x;
+	s_npot_mipmap_box.generic.y					= y += 2*MENU_LINE_SIZE;
+	s_npot_mipmap_box.generic.name				= "non-power-of-2 mipmaps";
+	s_npot_mipmap_box.itemNames					= yesno_names;
+	s_npot_mipmap_box.generic.statusbar			= "enables non-power-of-2 mipmapped textures (requires driver support)";
+
+	s_sgis_mipmap_box.generic.type				= MTYPE_PICKER;
+	s_sgis_mipmap_box.generic.textSize			= MENU_FONT_SIZE;
+	s_sgis_mipmap_box.generic.x					= x;
+	s_sgis_mipmap_box.generic.y					= y += MENU_LINE_SIZE;
+	s_sgis_mipmap_box.generic.name				= "SGIS mipmaps";
+	s_sgis_mipmap_box.itemNames					= yesno_names;
+	s_sgis_mipmap_box.generic.statusbar			= "enables driver-based mipmap generation";
+
 	s_upscale_font_box.generic.type				= MTYPE_PICKER;
 	s_upscale_font_box.generic.textSize			= MENU_FONT_SIZE;
 	s_upscale_font_box.generic.x				= x;
-	s_upscale_font_box.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_upscale_font_box.generic.y				= y += MENU_LINE_SIZE;
 	s_upscale_font_box.generic.name				= "upscale old fonts";
 	s_upscale_font_box.generic.callback			= UpscaleFontCallback;
 	s_upscale_font_box.itemNames				= font_upscale_names;
@@ -589,7 +621,7 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_options_advanced_header);
 
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_lightmapscale_slider);
-	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_textureintensity_slider);
+//	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_textureintensity_slider);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_rgbscale_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_trans_lighting_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_warp_lighting_box);
@@ -599,6 +631,7 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_texshader_warp_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_waterwave_slider);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_caustics_box);
+
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_particle_overdraw_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_lightbloom_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_modelshading_box);
@@ -610,6 +643,9 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_screenshotformat_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_screenshotjpegquality_slider);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_saveshotsize_box);
+
+	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_npot_mipmap_box);
+	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_sgis_mipmap_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_upscale_font_box);
 
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_advanced_apply_action );
@@ -629,7 +665,6 @@ void Menu_Video_Advanced_Draw (void)
 const char *Menu_Video_Advanced_Key (int key)
 {
 	return UI_DefaultMenuKey (&s_video_advanced_menu, key);
-
 }
 
 void Menu_Video_Advanced_f (void)

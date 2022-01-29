@@ -113,9 +113,9 @@ void Menu_Main_Init (void)
 	s_main_menu.y							= 0;	// was 140
 	s_main_menu.nitems						= 0;
 	s_main_menu.hide_statusbar				= true;
-//	s_main_menu.isPopup						= false;
-//	s_main_menu.keyFunc						= UI_DefaultMenuKey;
-//	s_main_menu.canOpenFunc					= NULL;
+	s_main_menu.isPopup						= false;
+	s_main_menu.keyFunc						= UI_DefaultMenuKey;
+	s_main_menu.canOpenFunc					= NULL;
 //	s_main_menu.cursordraw					= M_DrawMainCursor;
 	s_main_menu.cursorItem					= &s_main_cursor;
 

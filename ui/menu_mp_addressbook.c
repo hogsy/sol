@@ -39,8 +39,9 @@ static menuImage_s		s_addressbook_banner;
 static menuField_s		s_addressbook_fields[NUM_ADDRESSBOOK_ENTRIES];
 static menuAction_s		s_addressbook_back_action;
 
+//=========================================================
 
-void AddressBook_SaveEntries (void)
+void M_AddressBook_SaveEntries (void *unused)
 {
 	int index;
 	char buffer[20];
@@ -52,11 +53,7 @@ void AddressBook_SaveEntries (void)
 	}
 }
 
-static void AddressBookBack (void *unused)
-{
-	AddressBook_SaveEntries ();
-	UI_BackMenu (unused);
-}
+//=========================================================
 
 void Menu_AddressBook_Init (void)
 {
@@ -69,9 +66,10 @@ void Menu_AddressBook_Init (void)
 	s_addressbook_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 142;
 	s_addressbook_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 76; // was 58
 	s_addressbook_menu.nitems		= 0;
-//	s_addressbook_menu.isPopup		= false;
-//	s_addressbook_menu.keyFunc		= UI_DefaultMenuKey;
-//	s_addressbook_menu.canOpenFunc	= NULL;
+	s_addressbook_menu.isPopup		= false;
+	s_addressbook_menu.keyFunc		= UI_DefaultMenuKey;
+	s_addressbook_menu.canOpenFunc	= NULL;
+	s_addressbook_menu.onExitFunc	= M_AddressBook_SaveEntries;
 
 	s_addressbook_banner.generic.type		= MTYPE_IMAGE;
 	s_addressbook_banner.generic.x			= 0;
@@ -106,8 +104,6 @@ void Menu_AddressBook_Init (void)
 	//	strncpy(s_addressbook_fields[i].buffer, adr->string);
 		Q_strncpyz (s_addressbook_fields[i].buffer, sizeof(s_addressbook_fields[i].buffer), adr->string);
 		s_addressbook_fields[i].cursor = (int)strlen(adr->string);
-
-	//	UI_AddMenuItem (&s_addressbook_menu, &s_addressbook_fields[i]);
 	}
 
 	s_addressbook_back_action.generic.type = MTYPE_ACTION;
@@ -115,8 +111,8 @@ void Menu_AddressBook_Init (void)
 	s_addressbook_back_action.generic.flags = QMF_LEFT_JUSTIFY;
 	s_addressbook_back_action.generic.x	= x + 24;
 	s_addressbook_back_action.generic.y	= y + (NUM_ADDRESSBOOK_ENTRIES*2.25+0.5)*MENU_LINE_SIZE;
-	s_addressbook_back_action.generic.name	= " back";
-	s_addressbook_back_action.generic.callback = AddressBookBack; // UI_BackMenu;
+	s_addressbook_back_action.generic.name	= "Back";
+	s_addressbook_back_action.generic.callback = UI_BackMenu;
 
 	UI_AddMenuItem (&s_addressbook_menu, &s_addressbook_banner);
 	for (i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++)
@@ -127,9 +123,6 @@ void Menu_AddressBook_Init (void)
 
 const char *Menu_AddressBook_Key (int key)
 {
-	if (key == K_ESCAPE)
-		AddressBook_SaveEntries ();
-
 	return UI_DefaultMenuKey (&s_addressbook_menu, key);
 }
 

@@ -92,9 +92,9 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 240;
 	s_loadgame_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 68;
 	s_loadgame_menu.nitems		= 0;
-//	s_loadgame_menu.isPopup		= false;
-//	s_loadgame_menu.keyFunc		= UI_DefaultMenuKey;
-//	s_loadgame_menu.canOpenFunc	= NULL;
+	s_loadgame_menu.isPopup		= false;
+	s_loadgame_menu.keyFunc		= UI_DefaultMenuKey;
+	s_loadgame_menu.canOpenFunc	= NULL;
 
 	s_loadgame_banner.generic.type		= MTYPE_IMAGE;
 	s_loadgame_banner.generic.x			= 0;

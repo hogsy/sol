@@ -87,9 +87,12 @@ void UI_Draw (void)
 		R_DrawFill (0, 0, viddef.width, viddef.height, 0, 0, 0, (int)(ui_background_alpha->value*255.0f));
 
 	// Knigthmare- added Psychospaz's mouse support
-	UI_RefreshCursorMenu();
+	UI_RefreshCursorMenu ();
 
-	ui_menuState.draw();
+	ui_menuState.draw ();
+	// draw it
+//	UI_AdjustMenuCursor (ui_menuState.menu, 1);
+//	UI_DrawMenu (ui_menuState.menu);
 
 	// delay playing the enter sound until after the
 	// menu has been drawn, to avoid delay while
@@ -101,7 +104,7 @@ void UI_Draw (void)
 	}
 
 	// Knigthmare- added Psychospaz's mouse support
-	//menu cursor for mouse usage :)
+	// menu cursor for mouse usage :)
 	UI_Draw_Cursor();
 }
 
@@ -115,9 +118,21 @@ void UI_Keydown (int key)
 {
 	const char *s;
 
-	if (ui_menuState.key)
+/*	if (ui_menuState.key)
 		if ( ( s = ui_menuState.key( key ) ) != 0 )
 			S_StartLocalSound( ( char * ) s );
+*/
+	if (ui_menuState.menu)
+	{
+		if (ui_menuState.menu->keyFunc) {
+			if ( ( s = ui_menuState.menu->keyFunc(ui_menuState.menu, key) ) != 0 )
+				S_StartLocalSound ((char *) s);
+		}
+		else {
+			if ( ( s = UI_DefaultMenuKey(ui_menuState.menu, key) ) != 0 )
+				S_StartLocalSound ((char *) s);
+		}
+	}
 }
 
 
