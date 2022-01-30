@@ -632,9 +632,11 @@ int		Cvar_DefaultInteger (char *var_name);
 char	*Cvar_DefaultString (char *var_name);
 // returns an empty string if not defined
 
-// Knightmare added
 cvar_t *Cvar_SetToDefault (char *var_name);
-// end Knightmare
+// resets cvar to default value
+
+cvar_t	*Cvar_ForceSetToDefault (char *var_name);
+// resets cvar to default value even if NOSET or LATCH
 
 void Cvar_SetDescription (char *var_name, char *description);
 // sets description string of given cvar

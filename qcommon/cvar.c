@@ -410,6 +410,19 @@ cvar_t *Cvar_SetToDefault (char *var_name)
 
 /*
 ============
+Cvar_ForceSetToDefault
+
+Knightmare added
+============
+*/
+cvar_t	*Cvar_ForceSetToDefault (char *var_name)
+{
+	return Cvar_Set2 (var_name, Cvar_DefaultString(var_name), true);
+}
+
+
+/*
+============
 Cvar_SetDescription
 Knightmare added
 From Maraa'kate's cvar code

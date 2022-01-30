@@ -83,8 +83,6 @@ void Hud_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offs
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &w, &h, align);
-//	SCR_ScaleCoords (NULL, NULL, &offsetX, NULL, align);
-//	SCR_ScaleCoords (NULL, NULL, NULL, &offsetY, align);
 	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
 	SCR_ScaleCoords (NULL, NULL, &width, NULL, align);
 
