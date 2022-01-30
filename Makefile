@@ -202,7 +202,7 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/cl_main.o \
 	$(BUILDDIR)/client/cl_parse.o \
 	$(BUILDDIR)/client/cl_particle.o \
-	$(BUILDDIR)/client/cl_pred.o \
+	$(BUILDDIR)/client/cl_predict.o \
 	$(BUILDDIR)/client/cl_screen.o \
 	$(BUILDDIR)/client/cl_string.o \
 	$(BUILDDIR)/client/cl_tempent.o \
@@ -367,7 +367,7 @@ $(BUILDDIR)/client/cl_parse.o :   	$(CLIENT_DIR)/cl_parse.c
 $(BUILDDIR)/client/cl_particle.o :   	$(CLIENT_DIR)/cl_particle.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/cl_pred.o :    	$(CLIENT_DIR)/cl_pred.c
+$(BUILDDIR)/client/cl_predict.o :    	$(CLIENT_DIR)/cl_predict.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/cl_screen.o :    	$(CLIENT_DIR)/cl_screen.c
