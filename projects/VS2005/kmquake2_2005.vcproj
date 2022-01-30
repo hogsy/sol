@@ -316,7 +316,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\client\cl_pred.c"
+					RelativePath="..\..\client\cl_predict.c"
 					>
 				</File>
 				<File

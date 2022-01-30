@@ -301,7 +301,7 @@
     <ClCompile Include="..\..\client\cl_main.c" />
     <ClCompile Include="..\..\client\cl_parse.c" />
     <ClCompile Include="..\..\client\cl_particle.c" />
-    <ClCompile Include="..\..\client\cl_pred.c" />
+    <ClCompile Include="..\..\client\cl_predict.c" />
     <ClCompile Include="..\..\client\cl_screen.c" />
     <ClCompile Include="..\..\client\cl_string.c" />
     <ClCompile Include="..\..\client\cl_tempent.c" />

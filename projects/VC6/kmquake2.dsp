@@ -189,7 +189,7 @@ SOURCE=..\..\client\cl_particle.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\client\cl_pred.c
+SOURCE=..\..\client\cl_predict.c
 # End Source File
 # Begin Source File
 
