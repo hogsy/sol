@@ -69,6 +69,7 @@ void Menu_Quit_Init (void)
 	s_quit_menu.nitems		= 0;
 	s_quit_menu.isPopup		= false;
 	s_quit_menu.canOpenFunc	= NULL;
+	s_quit_menu.drawFunc	= UI_DefaultMenuDraw;
 
 #ifdef QUITMENU_NOKEY
 	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
@@ -119,23 +120,9 @@ void Menu_Quit_Init (void)
 #endif // QUITMENU_NOKEY
 }
 
-const char *Menu_Quit_Key (int key)
-{
-#ifdef QUITMENU_NOKEY
-	return UI_DefaultMenuKey (&s_quit_menu, key);
-#else
-	return UI_QuitMenuKey (&s_quit_menu, key);
-#endif // QUITMENU_NOKEY
-}
-
-void Menu_Quit_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_quit_menu, 1);
-	UI_DrawMenu (&s_quit_menu);
-}
 
 void Menu_Quit_f (void)
 {
 	Menu_Quit_Init ();
-	UI_PushMenu (&s_quit_menu, Menu_Quit_Draw, Menu_Quit_Key);
+	UI_PushMenu (&s_quit_menu);
 }

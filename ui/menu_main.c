@@ -114,6 +114,7 @@ void Menu_Main_Init (void)
 	s_main_menu.nitems						= 0;
 	s_main_menu.hide_statusbar				= true;
 	s_main_menu.isPopup						= false;
+	s_main_menu.drawFunc					= UI_DefaultMenuDraw;
 	s_main_menu.keyFunc						= UI_DefaultMenuKey;
 	s_main_menu.canOpenFunc					= NULL;
 //	s_main_menu.cursordraw					= M_DrawMainCursor;
@@ -257,19 +258,9 @@ void Menu_Main_Init (void)
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_logo);
 }
 
-void Menu_Main_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_main_menu, 1);
-	UI_DrawMenu (&s_main_menu);
-}
-
-const char *Menu_Main_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_main_menu, key);
-}
 
 void Menu_Main_f (void)
 {
 	Menu_Main_Init ();
-	UI_PushMenu (&s_main_menu, Menu_Main_Draw, Menu_Main_Key);
+	UI_PushMenu (&s_main_menu);
 }

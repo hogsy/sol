@@ -1465,8 +1465,7 @@ void SCR_SetHud_f (void)
 		return;
 	}
 
-	Cvar_ForceSet ("cl_hud", Cmd_Argv(1));
-	CL_LoadHud (false);
+	CL_SetHud (Cmd_Argv(1));
 }
 #endif
 
@@ -1765,6 +1764,7 @@ void SCR_Init (void)
 
 	SCR_InitScreenScale ();
 	SCR_InitHudScale ();
+//	CL_LoadHud (true);	// Custom HUD
 
 	scr_initialized = true;
 }
@@ -1789,7 +1789,7 @@ void SCR_Shutdown (void)
 	Cmd_RemoveCommand ("dumpstatuslayout");
 	Cmd_RemoveCommand ("dumpgenerallayout");
 
-	// TODO: Free HUD script here
+//	CL_FreeHud ();
 
 	scr_initialized = false;
 }

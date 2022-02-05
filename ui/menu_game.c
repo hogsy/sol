@@ -33,8 +33,6 @@ GAME MENU
 =============================================================================
 */
 
-static int		m_game_cursor;
-
 static menuFramework_s	s_game_menu;
 static menuImage_s		s_game_banner;
 static menuAction_s		s_easy_game_action;
@@ -102,6 +100,7 @@ void Menu_Game_Init (void)
 	s_game_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
 	s_game_menu.nitems		= 0;
 	s_game_menu.isPopup		= false;
+	s_game_menu.drawFunc	= UI_DefaultMenuDraw;
 	s_game_menu.keyFunc		= UI_DefaultMenuKey;
 	s_game_menu.canOpenFunc	= NULL;
 
@@ -201,20 +200,9 @@ void Menu_Game_Init (void)
 	UI_AddMenuItem (&s_game_menu, (void *) &s_game_back_action);
 }
 
-void Menu_Game_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_game_menu, 1);
-	UI_DrawMenu (&s_game_menu);
-}
-
-const char *Menu_Game_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_game_menu, key);
-}
 
 void Menu_Game_f (void)
 {
 	Menu_Game_Init ();
-	UI_PushMenu (&s_game_menu, Menu_Game_Draw, Menu_Game_Key);
-	m_game_cursor = 1;
+	UI_PushMenu (&s_game_menu);
 }

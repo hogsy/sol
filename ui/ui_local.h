@@ -114,6 +114,7 @@ typedef struct _tag_menuFramework
 //	char		bitFlags_statusbar[128];
 
 	void		(*cursordraw)	(struct _tag_menuFramework *m);
+	void		(*drawFunc)		(struct _tag_menuFramework *m);
 	const char	*(*keyFunc)		(struct _tag_menuFramework *m, int key);
 	qboolean	(*canOpenFunc)	(void *self);
 	void		(*onOpenFunc)	(void *unused);
@@ -791,8 +792,6 @@ void UI_MouseCursor_Think (void);
 
 typedef struct
 {
-	void		(*draw) (void);
-	const char	*(*key) (int k);
 	menuFramework_s *menu;
 } menulayer_t;
 
@@ -802,7 +801,7 @@ extern menulayer_t	ui_menuState;
 
 void UI_AddButton (buttonmenuobject_t *thisObj, int index, float x, float y, float w, float h);
 void UI_AddMainButton (mainmenuobject_t *thisObj, int index, int x, int y, char *name);
-void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key) (int k));
+void UI_PushMenu (menuFramework_s *menu);
 void UI_ForceMenuOff (void);
 void UI_PopMenu (void);
 void UI_BackMenu (void *item);
@@ -825,6 +824,7 @@ void UI_ApplyChanges_Popup (void *unused);
 */
 void UI_DrawMenu (menuFramework_s *menu);
 void UI_AdjustMenuCursor (menuFramework_s *menu, int dir);
+void UI_DefaultMenuDraw (menuFramework_s *menu);
 const char *UI_DefaultMenuKey (menuFramework_s *menu, int key);
 const char *UI_QuitMenuKey (menuFramework_s *menu, int key);
 
@@ -947,7 +947,7 @@ void Menu_Main_f (void);
 //
 // ui_mp_playersetup.c
 //
-void Menu_PlayerConfig_Draw (void);
-void Menu_PlayerConfig_MouseClick (void);
+void UI_MenuPlayerConfig_Draw (menuFramework_s *menu);
+void UI_MenuPlayerConfig_MouseClick (void);
 
 #endif	// __UI_LOCAL_H__

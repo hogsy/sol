@@ -270,6 +270,7 @@ void Menu_DMOptions_Init (void)
 	s_dmoptions_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 80;
 	s_dmoptions_menu.nitems				= 0;
 	s_dmoptions_menu.isPopup			= false;
+	s_dmoptions_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_dmoptions_menu.keyFunc			= UI_DefaultMenuKey;
 	s_dmoptions_menu.canOpenFunc		= UI_CanOpenDMFlagsMenu;
 	s_dmoptions_menu.cantOpenMessage	= "N/A for cooperative";
@@ -563,19 +564,9 @@ void Menu_DMOptions_Init (void)
 	UI_SetMenuStatusBar (&s_dmoptions_menu, dmoptions_statusbar);
 }
 
-void Menu_DMOptions_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_dmoptions_menu, 1);
-	UI_DrawMenu (&s_dmoptions_menu);
-}
-
-const char *Menu_DMOptions_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_dmoptions_menu, key);
-}
 
 void Menu_DMOptions_f (void)
 {
 	Menu_DMOptions_Init ();
-	UI_PushMenu (&s_dmoptions_menu, Menu_DMOptions_Draw, Menu_DMOptions_Key);
+	UI_PushMenu (&s_dmoptions_menu);
 }

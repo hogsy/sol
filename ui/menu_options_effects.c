@@ -182,6 +182,7 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_effects_menu.nitems			= 0;
 	s_options_effects_menu.isPopup			= false;
+	s_options_effects_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_options_effects_menu.keyFunc			= UI_DefaultMenuKey;
 	s_options_effects_menu.canOpenFunc		= NULL;
 //	s_options_effects_menu.defaultsFunc		= M_EffectsResetDefaults;
@@ -355,19 +356,9 @@ void Options_Effects_MenuInit (void)
 	M_EffectsSetMenuItemValues ();
 }
 
-void Menu_Options_Effects_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_options_effects_menu, 1);
-	UI_DrawMenu (&s_options_effects_menu);
-}
-
-const char *Menu_Options_Effects_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_options_effects_menu, key);
-}
 
 void Menu_Options_Effects_f (void)
 {
 	Options_Effects_MenuInit ();
-	UI_PushMenu (&s_options_effects_menu, Menu_Options_Effects_Draw, Menu_Options_Effects_Key);
+	UI_PushMenu (&s_options_effects_menu);
 }

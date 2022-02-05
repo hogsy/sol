@@ -103,6 +103,15 @@ Key Features
 - Integrated support for Lazarus footstep sounds
 
 ------------------------------
+System Requirements
+------------------------------
+- OpenGL 1.2 compatible 3D accelerator, OpenGL 1.4 support or higher
+	(GeForce FX/Radeon 9500 or better) recommended.
+	Absolutely MUST have GL_ARB_multitexture support, 3Dfx cards are NOT supported.
+- Pentium III or Athlon 800MHz+
+- At least 512MB of RAM (1 GB recommended) for 32-bit operating systems, at least 2GB for 64-bit operating systems.
+
+------------------------------
 How To Run
 ------------------------------
 	Unzip into your Quake2 directory (where quake2.exe is) and make a shortcut with path
@@ -143,19 +152,17 @@ How To Run
 	The classic Quake 2 behavior of writing config files/savegames/etc to the Quake2 folder can be restored by adding the parameter
 	"-portable" to the command line, or by placing an empty text file called "portable.cfg" in the baseq2 folder.
 
-	An OpenGL 1.2 compatible 3D accelerator, OpenGL 1.4 support or higher (GeForce FX/Radeon 9500 or better) recommended.
-	Absolutely MUST have GL_ARB_multitexture support, 3Dfx cards are NOT supported.
-	Pentium III or Athlon 800MHz+
-	At least 512MB of RAM (1 GB recommended) for 32-bit operating sytems, at least 2GB for 64-bit operating sytsems.
+	If it crashes on startup, make sure that kmq2gamex86.dll is in the baseq2 folder.
 
-	If it crashes on startup, make sure that kmq2gamex86.dll is in the baseq2 subdir.
+	If the controls are missing in the menus and particle effects don't appear properly,
+	make sure that kmquake2.pk3 is in the baseq2 folder.
 
 	If you experience lockups on an ATI video card, set entity shell type to solid or flowing
 	in the advanced section of the video menu.  The envmap effect may be causing the lockups.
 
 	If performance is too slow, or there are no visible or all black textures, type
 	"exec lowend.cfg; vid_restart" in the console.  If you still get all-black
-	textures, remove all config files from the game directory you are running in and restart.
+	textures, remove all config files from the game and savegame directories you are running in and restart.
 	This will make KMQ2 fall back on the internal cvar defaults.
 
 	It is strongly recommened that you copy the idlog.cin file from the Quake2 CD to your

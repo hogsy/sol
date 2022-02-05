@@ -93,6 +93,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 68;
 	s_loadgame_menu.nitems		= 0;
 	s_loadgame_menu.isPopup		= false;
+	s_loadgame_menu.drawFunc	= UI_DefaultMenuDraw;
 	s_loadgame_menu.keyFunc		= UI_DefaultMenuKey;
 	s_loadgame_menu.canOpenFunc	= NULL;
 
@@ -159,20 +160,9 @@ void Menu_LoadGame_Init (void)
 	M_LoadGameUpdateSaveshot ();
 }
 
-void Menu_LoadGame_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_loadgame_menu, 1);
-	M_LoadGameUpdateSaveshot ();
-	UI_DrawMenu (&s_loadgame_menu);
-}
-
-const char *Menu_LoadGame_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_loadgame_menu, key);
-}
 
 void Menu_LoadGame_f (void)
 {
 	Menu_LoadGame_Init ();
-	UI_PushMenu (&s_loadgame_menu, Menu_LoadGame_Draw, Menu_LoadGame_Key);
+	UI_PushMenu (&s_loadgame_menu);
 }

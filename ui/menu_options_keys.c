@@ -86,6 +86,7 @@ static void Menu_Keys_Init (void)
 	s_keys_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 72;
 	s_keys_menu.nitems		= 0;
 	s_keys_menu.isPopup		= false;
+	s_keys_menu.drawFunc	= UI_DefaultMenuDraw;
 	s_keys_menu.keyFunc		= UI_DefaultMenuKey;
 	s_keys_menu.canOpenFunc	= NULL;
 
@@ -128,19 +129,9 @@ static void Menu_Keys_Init (void)
 	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_back_action);
 }
 
-static void Menu_Keys_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_keys_menu, 1);
-	UI_DrawMenu (&s_keys_menu);
-}
-
-static const char *Menu_Keys_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_keys_menu, key);
-}
 
 void Menu_Keys_f (void)
 {
 	Menu_Keys_Init ();
-	UI_PushMenu (&s_keys_menu, Menu_Keys_Draw, Menu_Keys_Key);
+	UI_PushMenu (&s_keys_menu);
 }

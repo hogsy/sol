@@ -825,6 +825,11 @@ is based on the stats array
 */
 void CL_DrawStatus (void)
 {
+/*	if ( Hud_ScriptIsLoaded() )
+	{
+		Hud_DrawHud ();
+		return;
+	} */
 	CL_ExecuteLayoutString (cl.configstrings[CS_STATUSBAR], true);
 }
 

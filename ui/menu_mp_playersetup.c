@@ -209,6 +209,7 @@ void Menu_PlayerConfig_Init (void)
 	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
 	s_player_config_menu.nitems				= 0;
 	s_player_config_menu.isPopup			= false;
+	s_player_config_menu.drawFunc			= UI_MenuPlayerConfig_Draw;	// UI_DefaultMenuDraw
 	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
 	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
 	s_player_config_menu.cantOpenMessage	= "No valid player models found";
@@ -498,7 +499,7 @@ qboolean Menu_PlayerConfig_CheckIncrement (int dir, float x, float y, float w, f
 }
 
 
-void Menu_PlayerConfig_MouseClick (void)
+void UI_MenuPlayerConfig_MouseClick (void)
 {
 	float	icon_x = SCREEN_WIDTH*0.5 - 5, // width - 325
 			icon_y = SCREEN_HEIGHT - 108,
@@ -643,7 +644,7 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 
 //=======================================================================
 
-void Menu_PlayerConfig_Draw (void)
+void UI_MenuPlayerConfig_Draw (menuFramework_s *menu)
 {
 	UI_AdjustMenuCursor (&s_player_config_menu, 1);
 	UI_DrawMenu (&s_player_config_menu);
@@ -653,15 +654,9 @@ void Menu_PlayerConfig_Draw (void)
 }
 
 
-const char *Menu_PlayerConfig_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_player_config_menu, key);
-}
-
-
 void Menu_PlayerConfig_f (void)
 {
 	UI_RefreshPlayerModels ();	// Reload player models if we recently downloaded anything
 	Menu_PlayerConfig_Init ();
-	UI_PushMenu (&s_player_config_menu, Menu_PlayerConfig_Draw, Menu_PlayerConfig_Key);
+	UI_PushMenu (&s_player_config_menu);
 }

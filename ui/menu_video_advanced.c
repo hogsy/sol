@@ -333,6 +333,7 @@ void Menu_Video_Advanced_Init (void)
 	s_video_advanced_menu.y						= 0;	// SCREEN_HEIGHT*0.5 - 100;
 	s_video_advanced_menu.nitems				= 0;
 	s_video_advanced_menu.isPopup				= false;
+	s_video_advanced_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_video_advanced_menu.keyFunc				= UI_DefaultMenuKey;
 	s_video_advanced_menu.canOpenFunc			= NULL;
 //	s_video_advanced_menu.applyChangesFunc		= M_ApplyAdvVideoChanges;
@@ -653,22 +654,9 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_back_action );
 }
 
-void Menu_Video_Advanced_Draw (void)
-{
-	// move cursor to a reasonable starting position
-	UI_AdjustMenuCursor (&s_video_advanced_menu, 1);
-
-	// draw the menu
-	UI_DrawMenu (&s_video_advanced_menu);
-}
-
-const char *Menu_Video_Advanced_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_video_advanced_menu, key);
-}
 
 void Menu_Video_Advanced_f (void)
 {
 	Menu_Video_Advanced_Init ();
-	UI_PushMenu (&s_video_advanced_menu, Menu_Video_Advanced_Draw, Menu_Video_Advanced_Key);
+	UI_PushMenu (&s_video_advanced_menu);
 }

@@ -79,6 +79,7 @@ void Menu_Multiplayer_Init (void)
 	s_multiplayer_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;	// 0
 	s_multiplayer_menu.nitems		= 0;
 	s_multiplayer_menu.isPopup		= false;
+	s_multiplayer_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_multiplayer_menu.keyFunc		= UI_DefaultMenuKey;
 	s_multiplayer_menu.canOpenFunc	= NULL;
 
@@ -144,19 +145,9 @@ void Menu_Multiplayer_Init (void)
 	UI_SetMenuStatusBar (&s_multiplayer_menu, NULL);
 }
 
-static void Menu_Multiplayer_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_multiplayer_menu, 1);
-	UI_DrawMenu (&s_multiplayer_menu);
-}
-
-const char *Menu_Multiplayer_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_multiplayer_menu, key);
-}
 
 void Menu_Multiplayer_f (void)
 {
 	Menu_Multiplayer_Init ();
-	UI_PushMenu (&s_multiplayer_menu, Menu_Multiplayer_Draw, Menu_Multiplayer_Key);
+	UI_PushMenu (&s_multiplayer_menu);
 }

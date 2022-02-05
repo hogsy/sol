@@ -131,6 +131,7 @@ void Menu_DownloadOptions_Init (void)
 	s_downloadoptions_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_downloadoptions_menu.nitems		= 0;
 	s_downloadoptions_menu.isPopup		= false;
+	s_downloadoptions_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_downloadoptions_menu.keyFunc		= UI_DefaultMenuKey;
 	s_downloadoptions_menu.canOpenFunc	= NULL;
 
@@ -256,19 +257,9 @@ void Menu_DownloadOptions_Init (void)
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_download_back_action );
 }
 
-void Menu_DownloadOptions_Draw(void)
-{
-	UI_AdjustMenuCursor (&s_downloadoptions_menu, 1);
-	UI_DrawMenu (&s_downloadoptions_menu);
-}
-
-const char *Menu_DownloadOptions_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_downloadoptions_menu, key);
-}
 
 void Menu_DownloadOptions_f (void)
 {
 	Menu_DownloadOptions_Init ();
-	UI_PushMenu (&s_downloadoptions_menu, Menu_DownloadOptions_Draw, Menu_DownloadOptions_Key);
+	UI_PushMenu (&s_downloadoptions_menu);
 }

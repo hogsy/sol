@@ -300,6 +300,7 @@ void Menu_Video_Init (void)
 	s_video_menu.y						= 0;	// SCREEN_HEIGHT*0.5 - 80;
 	s_video_menu.nitems					= 0;
 	s_video_menu.isPopup				= false;
+	s_video_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_video_menu.keyFunc				= UI_DefaultMenuKey;
 	s_video_menu.canOpenFunc			= NULL;
 //	s_video_menu.defaultsFunc			= M_ResetVideoDefaults;
@@ -553,23 +554,10 @@ void Menu_Video_Init (void)
 	UI_AddMenuItem (&s_video_menu, (void *) &s_backmain_action);
 }
 
-void Menu_Video_Draw (void)
-{
-	// move cursor to a reasonable starting position
-	UI_AdjustMenuCursor (&s_video_menu, 1);
-
-	// draw the menu
-	UI_DrawMenu (&s_video_menu);
-}
-
-const char *Menu_Video_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_video_menu, key);
-}
 
 void Menu_Video_f (void)
 {
 	Menu_Video_Init ();
-	UI_PushMenu (&s_video_menu, Menu_Video_Draw, Menu_Video_Key);
+	UI_PushMenu (&s_video_menu);
 	M_ShowCustomFields ();
 }

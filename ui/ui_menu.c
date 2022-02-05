@@ -99,7 +99,7 @@ void UI_AddMainButton (mainmenuobject_t *thisObj, int index, int x, int y, char 
 UI_PushMenu
 =================
 */
-void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key) (int k))
+void UI_PushMenu (menuFramework_s *menu)
 {
 	int			i;
 	qboolean	canOpen;
@@ -130,7 +130,7 @@ void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key)
 	if (Cvar_VariableValue ("maxclients") == 1 && Com_ServerState () && !cls.consoleActive) // Knightmare added
 		Cvar_Set ("paused", "1");
 
-	// Knightmare- if just opened menu, and ingame and not DM, grab screen first
+	// if just opened menu, and ingame and not DM, grab screen first
 	if (cls.key_dest != key_menu && !Cvar_VariableValue("deathmatch")
 		&& Com_ServerState() == 2) //ss_game
 		//&& !cl.cinematictime && Com_ServerState())
@@ -138,9 +138,8 @@ void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key)
 
 	// if this menu is already present, drop back to that level
 	// to avoid stacking menus by hotkeys
-	for (i=0 ; i<ui_menudepth ; i++)
-		if (ui_layers[i].draw == draw &&
-			ui_layers[i].key == key)
+	for (i=0; i<ui_menudepth; i++)
+		if (ui_layers[i].menu == menu)
 		{
 			ui_menudepth = i;
 		}
@@ -149,19 +148,15 @@ void UI_PushMenu (menuFramework_s *menu, void (*draw) (void), const char *(*key)
 	{
 		if (ui_menudepth >= MAX_MENU_DEPTH)
 			Com_Error (ERR_FATAL, "UI_PushMenu: MAX_MENU_DEPTH");
-		ui_layers[ui_menudepth].draw = ui_menuState.draw;
-		ui_layers[ui_menudepth].key = ui_menuState.key;
 		ui_layers[ui_menudepth].menu = ui_menuState.menu;
 		ui_menudepth++;
 	}
 
-	ui_menuState.draw = draw;
-	ui_menuState.key = key;
 	ui_menuState.menu = menu;
 
 	ui_entersound = true;
 
-	// Knightmare- added Psychospaz's mouse support
+	// added Psychospaz's mouse support
 	UI_RefreshCursorLink ();
 	UI_RefreshCursorButtons ();
 
@@ -180,7 +175,7 @@ UI_ForceMenuOff
 */
 void UI_ForceMenuOff (void)
 {
-	// Knightmare- added Psychospaz's mouse support
+	// added Psychospaz's mouse support
 	UI_RefreshCursorLink ();
 	memset (&ui_menuState, 0, sizeof (ui_menuState));
 	cls.key_dest = key_game;
@@ -203,11 +198,9 @@ void UI_PopMenu (void)
 		Com_Error (ERR_FATAL, "UI_PopMenu: depth < 1");
 	ui_menudepth--;
 
-	ui_menuState.draw = ui_layers[ui_menudepth].draw;
-	ui_menuState.key = ui_layers[ui_menudepth].key;
 	ui_menuState.menu = ui_layers[ui_menudepth].menu;
 
-	// Knightmare- added Psychospaz's mouse support
+	// added Psychospaz's mouse support
 	UI_RefreshCursorLink ();
 	UI_RefreshCursorButtons ();
 
@@ -776,6 +769,20 @@ void UI_DrawMenu (menuFramework_s *menu)
 		else
 			UI_DrawMenuStatusBar (menu->statusbar);
 	}
+}
+
+
+/*
+=================
+UI_DefaultMenuDraw
+=================
+*/
+void UI_DefaultMenuDraw (menuFramework_s *menu)
+{
+	if (!menu)	return;
+
+	UI_AdjustMenuCursor (menu, 1);
+	UI_DrawMenu (menu);
 }
 
 

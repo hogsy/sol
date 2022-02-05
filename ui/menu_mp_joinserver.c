@@ -100,6 +100,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 80;
 	s_joinserver_menu.nitems		= 0;
 	s_joinserver_menu.isPopup		= false;
+	s_joinserver_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_joinserver_menu.keyFunc		= UI_DefaultMenuKey;
 	s_joinserver_menu.canOpenFunc	= NULL;
 	s_joinserver_menu.onOpenFunc	= M_SearchLocalGamesFunc;
@@ -191,20 +192,9 @@ void Menu_JoinServer_Init (void)
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_back_action );
 }
 
-void Menu_JoinServer_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_joinserver_menu, 1);
-	UI_DrawMenu (&s_joinserver_menu);
-}
-
-
-const char *Menu_JoinServer_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_joinserver_menu, key);
-}
 
 void Menu_JoinServer_f (void)
 {
 	Menu_JoinServer_Init ();
-	UI_PushMenu (&s_joinserver_menu, Menu_JoinServer_Draw, Menu_JoinServer_Key);
+	UI_PushMenu (&s_joinserver_menu);
 }

@@ -83,6 +83,7 @@ void Menu_Options_Init (void)
 	s_options_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
 	s_options_menu.nitems		= 0;
 	s_options_menu.isPopup		= false;
+	s_options_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_options_menu.keyFunc		= UI_DefaultMenuKey;
 	s_options_menu.canOpenFunc	= NULL;
 
@@ -160,19 +161,9 @@ void Menu_Options_Init (void)
 	UI_AddMenuItem (&s_options_menu,	(void *) &s_options_back_action);
 }
 
-void Menu_Options_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_options_menu, 1);
-	UI_DrawMenu (&s_options_menu);
-}
-
-const char *Menu_Options_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_options_menu, key);
-}
 
 void Menu_Options_f (void)
 {
 	Menu_Options_Init ();
-	UI_PushMenu (&s_options_menu, Menu_Options_Draw, Menu_Options_Key);
+	UI_PushMenu (&s_options_menu);
 }

@@ -198,6 +198,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_menu.y			= 0;
 	s_startserver_menu.nitems		= 0;
 	s_startserver_menu.isPopup		= false;
+	s_startserver_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_startserver_menu.keyFunc		= UI_DefaultMenuKey;
 	s_startserver_menu.canOpenFunc	= NULL;
 	s_startserver_menu.onOpenFunc	= M_RulesChangeFunc;
@@ -367,19 +368,9 @@ void Menu_StartServer_Init (void)
 	UI_AddMenuItem (&s_startserver_menu, &s_startserver_back_action);
 }
 
-void Menu_StartServer_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_startserver_menu, 1);
-	UI_DrawMenu (&s_startserver_menu);
-}
-
-const char *Menu_StartServer_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_startserver_menu, key);
-}
 
 void Menu_StartServer_f (void)
 {
 	Menu_StartServer_Init ();
-	UI_PushMenu (&s_startserver_menu, Menu_StartServer_Draw, Menu_StartServer_Key);
+	UI_PushMenu (&s_startserver_menu);
 }

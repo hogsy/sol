@@ -67,6 +67,7 @@ void Menu_AddressBook_Init (void)
 	s_addressbook_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 76; // was 58
 	s_addressbook_menu.nitems		= 0;
 	s_addressbook_menu.isPopup		= false;
+	s_addressbook_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_addressbook_menu.keyFunc		= UI_DefaultMenuKey;
 	s_addressbook_menu.canOpenFunc	= NULL;
 	s_addressbook_menu.onExitFunc	= M_AddressBook_SaveEntries;
@@ -121,19 +122,8 @@ void Menu_AddressBook_Init (void)
 }
 
 
-const char *Menu_AddressBook_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_addressbook_menu, key);
-}
-
-void Menu_AddressBook_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_addressbook_menu, 1);
-	UI_DrawMenu (&s_addressbook_menu);
-}
-
 void Menu_AddressBook_f(void)
 {
 	Menu_AddressBook_Init ();
-	UI_PushMenu (&s_addressbook_menu, Menu_AddressBook_Draw, Menu_AddressBook_Key);
+	UI_PushMenu (&s_addressbook_menu);
 }

@@ -159,6 +159,7 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_menu.y						= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_sound_menu.nitems					= 0;
 	s_options_sound_menu.isPopup				= false;
+	s_options_sound_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_options_sound_menu.keyFunc				= UI_DefaultMenuKey;
 	s_options_sound_menu.canOpenFunc			= NULL;
 //	s_options_sound_menu.defaultsFunc			= M_SoundResetDefaults;
@@ -279,19 +280,9 @@ void Menu_Options_Sound_Init (void)
 	M_SoundSetMenuItemValues ();
 }
 
-void Menu_Options_Sound_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_options_sound_menu, 1);
-	UI_DrawMenu (&s_options_sound_menu);
-}
-
-const char *Menu_Options_Sound_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_options_sound_menu, key);
-}
 
 void Menu_Options_Sound_f (void)
 {
 	Menu_Options_Sound_Init ();
-	UI_PushMenu (&s_options_sound_menu, Menu_Options_Sound_Draw, Menu_Options_Sound_Key);
+	UI_PushMenu (&s_options_sound_menu);
 }

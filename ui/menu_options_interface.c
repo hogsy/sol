@@ -191,6 +191,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_interface_menu.nitems				= 0;
 	s_options_interface_menu.isPopup			= false;
+	s_options_interface_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_options_interface_menu.keyFunc			= UI_DefaultMenuKey;
 	s_options_interface_menu.canOpenFunc		= NULL;
 //	s_options_interface_menu.defaultsFunc		= M_InterfaceResetDefaults;
@@ -378,19 +379,9 @@ void Options_Interface_MenuInit (void)
 	M_InterfaceSetMenuItemValues ();
 }
 
-void Menu_Options_Interface_Draw (void)
-{
-	UI_AdjustMenuCursor  (&s_options_interface_menu, 1);
-	UI_DrawMenu (&s_options_interface_menu);
-}
-
-const char *Menu_Options_Interface_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_options_interface_menu, key);
-}
 
 void Menu_Options_Interface_f (void)
 {
 	Options_Interface_MenuInit ();
-	UI_PushMenu (&s_options_interface_menu, Menu_Options_Interface_Draw, Menu_Options_Interface_Key);
+	UI_PushMenu (&s_options_interface_menu);
 }

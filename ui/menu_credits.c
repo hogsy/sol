@@ -63,6 +63,7 @@ void Menu_Credits_Init (void)
 	s_credits_menu.nitems			= 0;
 	s_credits_menu.hide_statusbar	= true;
 	s_credits_menu.isPopup			= false;
+	s_credits_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
 	s_credits_menu.canOpenFunc		= NULL;
 
@@ -94,19 +95,9 @@ void Menu_Credits_Init (void)
 	UI_AddMenuItem (&s_credits_menu, (void *) &s_credits_back_action);
 }
 
-void Menu_Credits_Draw (void)
-{
-	UI_AdjustMenuCursor (&s_credits_menu, 1);
-	UI_DrawMenu (&s_credits_menu);
-}
-
-const char *Menu_Credits_Key (int key)
-{
-	return UI_DefaultMenuKey (&s_credits_menu, key);
-}
 
 void Menu_Credits_f (void)
 {
 	Menu_Credits_Init ();
-	UI_PushMenu (&s_credits_menu, Menu_Credits_Draw, Menu_Credits_Key);
+	UI_PushMenu (&s_credits_menu);
 }
