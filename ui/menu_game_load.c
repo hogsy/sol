@@ -39,7 +39,7 @@ static menuAction_s		s_loadgame_actions[UI_MAX_SAVEGAMES];
 static menuImage_s		s_loadgame_saveshot;
 static menuAction_s		s_loadgame_back_action;
 
-extern	char *load_saveshot;
+extern	char *scr_load_saveshot;
 char loadshotname[MAX_QPATH];
 
 //=========================================================
@@ -66,9 +66,9 @@ void M_LoadGameCallback (void *self)
 	{
 	//	Com_sprintf(loadshotname, sizeof(loadshotname), "/save/kmq2save%03i/shot.jpg", a->generic.localdata[0]);
 		Com_sprintf(loadshotname, sizeof(loadshotname), "/"SAVEDIRNAME"/kmq2save%03i/shot.jpg", a->generic.localdata[0]);
-		load_saveshot = loadshotname; }
+		scr_load_saveshot = loadshotname; }
 	else {
-		load_saveshot = NULL;
+		scr_load_saveshot = NULL;
 	}
 
 	if ( UI_SaveIsValid(a->generic.localdata[0]) ) {

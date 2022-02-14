@@ -352,7 +352,7 @@ void CL_RequestNextDownload (void)
 					precache_check++;
 					continue;
 				}
-				Com_sprintf(fn, sizeof(fn), "sound/%s", cl.configstrings[precache_check++]);
+				Com_sprintf (fn, sizeof(fn), "sound/%s", cl.configstrings[precache_check++]);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -365,7 +365,7 @@ void CL_RequestNextDownload (void)
 			precache_check++; // zero is blank
 		while (precache_check < cs_images+max_images &&
 			cl.configstrings[precache_check][0]) {
-			Com_sprintf(fn, sizeof(fn), "pics/%s.pcx", cl.configstrings[precache_check++]);
+			Com_sprintf (fn, sizeof(fn), "pics/%s.pcx", cl.configstrings[precache_check++]);
 			if ( !CL_CheckOrDownloadFile(fn) )
 				return; // started a download
 		}
@@ -454,7 +454,7 @@ void CL_RequestNextDownload (void)
 				switch (n)
 				{
 				case 0: // model
-					Com_sprintf(fn, sizeof(fn), "players/%s/tris.md2", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/tris.md2", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 1;
 						return; // started a download
@@ -463,7 +463,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 1: // weapon model
-					Com_sprintf(fn, sizeof(fn), "players/%s/weapon.md2", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/weapon.md2", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 2;
 						return; // started a download
@@ -472,7 +472,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 2: // weapon skin
-					Com_sprintf(fn, sizeof(fn), "players/%s/weapon.pcx", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/weapon.pcx", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 3;
 						return; // started a download
@@ -481,7 +481,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 3: // skin
-					Com_sprintf(fn, sizeof(fn), "players/%s/%s.pcx", model, skin);
+					Com_sprintf (fn, sizeof(fn), "players/%s/%s.pcx", model, skin);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 4;
 						return; // started a download
@@ -490,7 +490,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 4: // skin_i
-					Com_sprintf(fn, sizeof(fn), "players/%s/%s_i.pcx", model, skin);
+					Com_sprintf (fn, sizeof(fn), "players/%s/%s_i.pcx", model, skin);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 5;
 						return; // started a download
@@ -500,7 +500,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 5: // death1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/death1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/death1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 6;
 						return; // started a download
@@ -509,7 +509,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 6: // death2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/death2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/death2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 7;
 						return; // started a download
@@ -518,7 +518,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 7: // death3.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/death3.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/death3.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 8;
 						return; // started a download
@@ -527,7 +527,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 8: // death4.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/death4.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/death4.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 9;
 						return; // started a download
@@ -536,7 +536,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 9: // fall1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/fall1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/fall1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 10;
 						return; // started a download
@@ -545,7 +545,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 10: // fall2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/fall2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/fall2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 11;
 						return; // started a download
@@ -554,7 +554,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 11: // gurp1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/gurp1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/gurp1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 12;
 						return; // started a download
@@ -563,7 +563,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 12: // gurp2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/gurp2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/gurp2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 13;
 						return; // started a download
@@ -572,7 +572,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 13: // jump1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/jump1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/jump1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 14;
 						return; // started a download
@@ -581,7 +581,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 14: // pain25_1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain25_1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain25_1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 15;
 						return; // started a download
@@ -590,7 +590,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 15: // pain25_2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain25_2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain25_2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 16;
 						return; // started a download
@@ -599,7 +599,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 16: // pain50_1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain50_1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain50_1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 17;
 						return; // started a download
@@ -608,7 +608,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 17: // pain50_2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain50_2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain50_2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 18;
 						return; // started a download
@@ -617,7 +617,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 18: // pain75_1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain75_1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain75_1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 19;
 						return; // started a download
@@ -626,7 +626,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 19: // pain75_2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain75_2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain75_2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 20;
 						return; // started a download
@@ -635,7 +635,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 20: // pain100_1.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain100_1.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain100_1.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 21;
 						return; // started a download
@@ -644,7 +644,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 					
 				case 21: // pain100_2.wav
-					Com_sprintf(fn, sizeof(fn), "players/%s/pain100_2.wav", model);
+					Com_sprintf (fn, sizeof(fn), "players/%s/pain100_2.wav", model);
 					if ( !CL_CheckOrDownloadFile(fn) ) {
 						precache_check = cs_playerskins + i * PLAYER_MULT + 22;
 						return; // started a download
@@ -712,10 +712,10 @@ void CL_RequestNextDownload (void)
 				int n = precache_check++ - env_cnt - 1;
 
 				if (n & 1)
-					Com_sprintf(fn, sizeof(fn), "env/%s%s.pcx", 
+					Com_sprintf (fn, sizeof(fn), "env/%s%s.pcx", 
 						cl.configstrings[CS_SKY], env_suf[n/2]);
 				else
-					Com_sprintf(fn, sizeof(fn), "env/%s%s.tga", 
+					Com_sprintf (fn, sizeof(fn), "env/%s%s.tga", 
 						cl.configstrings[CS_SKY], env_suf[n/2]);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
@@ -741,7 +741,7 @@ void CL_RequestNextDownload (void)
 			{
 				char fn[MAX_OSPATH];
 
-				Com_sprintf(fn, sizeof(fn), "textures/%s.wal", map_surfaces[precache_tex++].rname);
+				Com_sprintf (fn, sizeof(fn), "textures/%s.wal", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -764,7 +764,7 @@ void CL_RequestNextDownload (void)
 			{
 				char fn[MAX_OSPATH];
 
-				Com_sprintf(fn, sizeof(fn), "textures/%s.tga", map_surfaces[precache_tex++].rname);
+				Com_sprintf (fn, sizeof(fn), "textures/%s.tga", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -787,7 +787,7 @@ void CL_RequestNextDownload (void)
 			{
 				char fn[MAX_OSPATH];
 
-				Com_sprintf(fn, sizeof(fn), "textures/%s.png", map_surfaces[precache_tex++].rname);
+				Com_sprintf (fn, sizeof(fn), "textures/%s.png", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -813,7 +813,7 @@ void CL_RequestNextDownload (void)
 			{
 				char fn[MAX_OSPATH];
 
-				Com_sprintf(fn, sizeof(fn), "textures/%s.jpg", map_surfaces[precache_tex++].rname);
+				Com_sprintf (fn, sizeof(fn), "textures/%s.jpg", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -881,7 +881,7 @@ void CL_InitFailedDownloadList (void)
 	int		i;
 
 	for (i=0; i<NUM_FAIL_DLDS; i++)
-		Com_sprintf(lastFailedDownload[i], sizeof(lastFailedDownload[i]), "\0");
+		Com_sprintf (lastFailedDownload[i], sizeof(lastFailedDownload[i]), "\0");
 
 	failedDlListIndex = 0;
 }
@@ -927,7 +927,7 @@ void CL_AddToFailedDownloadList (const char *name)
 	// if it isn't already in the table, then we need to add it
 	if (!found)
 	{
-		Com_sprintf(lastFailedDownload[failedDlListIndex], sizeof(lastFailedDownload[failedDlListIndex]), "%s", name);
+		Com_sprintf (lastFailedDownload[failedDlListIndex], sizeof(lastFailedDownload[failedDlListIndex]), "%s", name);
 		failedDlListIndex++;
 
 		// wrap around to start of list
@@ -1106,7 +1106,7 @@ void CL_Download_f (void)
 		return;
 	}
 
-	Com_sprintf(filename, sizeof(filename), "%s", Cmd_Argv(1));
+	Com_sprintf (filename, sizeof(filename), "%s", Cmd_Argv(1));
 
 	if (strstr (filename, ".."))
 	{

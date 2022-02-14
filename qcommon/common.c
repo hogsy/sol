@@ -2053,7 +2053,7 @@ const char *MakePrintable (const void *subject, size_t numchars)
 		}
 		else
 		{
-			sprintf (tmp, "%.3d", s[0]);
+			Com_sprintf (tmp, sizeof(tmp), "%.3d", s[0]);
 			*p++ = '\\';
 			*p++ = tmp[0];
 			*p++ = tmp[1];

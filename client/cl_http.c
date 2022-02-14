@@ -75,7 +75,7 @@ void CL_InitFailedHTTPDownloadList (void)
 	int		i;
 
 	for (i=0; i<NUM_FAIL_DLDS; i++)
-		Com_sprintf(lastFailedHTTPDownload[i], sizeof(lastFailedHTTPDownload[i]), "\0");
+		Com_sprintf (lastFailedHTTPDownload[i], sizeof(lastFailedHTTPDownload[i]), "\0");
 
 	failed_HTTP_Dl_ListIndex = 0;
 }
@@ -121,7 +121,7 @@ void CL_AddToFailedHTTPDownloadList (char *name)
 	// if it isn't already in the table, then we need to add it
 	if (!found)
 	{
-		Com_sprintf(lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex], sizeof(lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex]), "%s", name);
+		Com_sprintf (lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex], sizeof(lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex]), "%s", name);
 		failed_HTTP_Dl_ListIndex++;
 
 		// wrap around to start of list
@@ -244,13 +244,14 @@ seems to treat '/' and such as illegal chars and encodes almost
 the entire URL...
 ===============
 */
-static void CL_EscapeHTTPPath (const char *filePath, char *escaped)
+static void CL_EscapeHTTPPath (const char *filePath, char *escaped, size_t escapedSize)
 {
 	int		i;
-	size_t	len;
+	size_t	len, remainingSize;
 	char	*p;
 
 	p = escaped;
+	remainingSize = escapedSize;
 
 	len = strlen (filePath);
 	for (i = 0; i < len; i++)
@@ -262,13 +263,15 @@ static void CL_EscapeHTTPPath (const char *filePath, char *escaped)
 			filePath[i] != '.' && filePath[i] != '!' && filePath[i] != '~' && filePath[i] != '*' &&
 			filePath[i] != '\'' && filePath[i] != '(' && filePath[i] != ')')
 		{
-			sprintf (p, "%%%02x", filePath[i]);
+			Com_sprintf (p, remainingSize, "%%%02x", filePath[i]);
 			p += 3;
+			remainingSize -= 3;
 		}
 		else
 		{
 			*p = filePath[i];
 			p++;
+			remainingSize--;
 		}
 	}
 	p[0] = 0;
@@ -397,7 +400,7 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 	if (len > 9 && !strcmp (entry->quakePath + len - 9, ".filelist"))
 	{
 		dl->file = NULL;
-		CL_EscapeHTTPPath (entry->quakePath, escapedFilePath);
+		CL_EscapeHTTPPath (entry->quakePath, escapedFilePath, sizeof(escapedFilePath));
 	}
 	else
 	{
@@ -412,8 +415,8 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 		else
 			Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", remoteGamedir, entry->quakePath);
 
-	//	CL_EscapeHTTPPath (dl->filePath, escapedFilePath);
-		CL_EscapeHTTPPath (remoteFilePath, escapedFilePath);
+	//	CL_EscapeHTTPPath (dl->filePath, escapedFilePath, sizeof(escapedFilePath));
+		CL_EscapeHTTPPath (remoteFilePath, escapedFilePath, sizeof(escapedFilePath));
 
 	//	strncat (dl->filePath, ".tmp");
 		Q_strncatz (dl->filePath, sizeof(dl->filePath), ".tmp");

@@ -47,9 +47,11 @@ qboolean	scr_hidehud;
 qboolean	scr_initialized = false;		// ready to draw
 
 int			scr_draw_loading;
+char		*scr_load_saveshot;
+
+int			scr_fps = 0;	// global FPS counter variable, used by SCR_ShowFPS() and SCR_DrawDebugGraph()
 
 vrect_t		scr_vrect;		// position of render window on screen
-
 
 cvar_t		*scr_viewsize;
 cvar_t		*scr_conspeed;
@@ -999,35 +1001,35 @@ void SCR_DrawString (float x, float y, int size, scralign_t align, const char *s
 
 /*
 ================
-SCR_ShowFPS
+SCR_CalcFPS
+
 FPS counter, code combined from BramBo and Q2E
 ================
 */
 #define FPS_FRAMES		4
-static void SCR_ShowFPS (void)
+static void SCR_CalcFPS (void)
 {
 	static int	previousTimes[FPS_FRAMES];
 	static int	previousTime, fpscounter;
 	static unsigned int	index;
-	static char	fpsText[32];
-	int			i, time, total, fps, x, y, fragsSize;
-	float		scrLeft;
+	int			i, time, total, fps;
 
-//	if ((cls.state != ca_active) || !(cl_drawfps->value))
-	if ((cls.state != ca_active) || !(cl_drawfps->integer))
+	if (cls.state != ca_active)
 		return;
 
-	SCR_InitHudScale ();
-	if ((cl.time + 1000) < fpscounter)
+	if ((cl.time + 1000) < fpscounter) {
 		fpscounter = cl.time + 100;
+	}
 
 	time = Sys_Milliseconds();
 	previousTimes[index % FPS_FRAMES] = time - previousTime;
 	previousTime = time;
 	index++;
 
-	if (index <= FPS_FRAMES)
+	if (index <= FPS_FRAMES) {
+		scr_fps = 0;
 		return;
+	}
 
 	// Average multiple frames together to smooth changes out a bit
 	total = 0;
@@ -1037,21 +1039,40 @@ static void SCR_ShowFPS (void)
 	fps = 1000 * FPS_FRAMES / total;
 
 	if (cl.time > fpscounter) {
-	//	Com_sprintf(fpsText, sizeof(fpsText), S_COLOR_BOLD S_COLOR_SHADOW"%3.0ffps", 1/cls.renderFrameTime);
-		Com_sprintf(fpsText, sizeof(fpsText), S_COLOR_BOLD S_COLOR_SHADOW"%3ifps", fps);
+		scr_fps = fps;
 		fpscounter = cl.time + 100;
 	}
+}
+
+
+/*
+================
+SCR_ShowFPS
+
+FPS counter drawing
+================
+*/
+static void SCR_ShowFPS (void)
+{
+	static char	fpsText[32];
+	int			x, y, fragsSize;
+	float		scrLeft;
+
+	if ((cls.state != ca_active) || !(cl_drawfps->integer))
+		return;
+
+	SCR_InitHudScale ();
+
+	Com_sprintf (fpsText, sizeof(fpsText), S_COLOR_BOLD S_COLOR_SHADOW"%3ifps", scr_fps);
+
 	// leave space for 3-digit frag counter
-//	x = (viddef.width - strlen(fpsText)*FONT_SIZE - 3*SCR_GetHudScale()*(HUD_CHAR_WIDTH+2));
-//	x = (viddef.width - strlen(fpsText)*HUD_FONT_SIZE*SCR_GetHudScale() - 3*SCR_GetHudScale()*(HUD_CHAR_WIDTH+2));
 	scrLeft = SCREEN_WIDTH;
 	SCR_ScaleCoords (&scrLeft, NULL, NULL, NULL, ALIGN_STRETCH);
 	fragsSize = SCR_GetHudScale() * 3 * (HUD_CHAR_WIDTH+2);
-//	x = ( viddef.width - strlen(fpsText)*HUD_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)) );
-	x = (scrLeft - stringLen(fpsText)*HUD_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
-	y = 0;
-//	CL_DrawStringGeneric (x, y, fpsText, FONT_SCREEN, 255, MENU_FONT_SIZE, SCALETYPE_HUD, false); // SCALETYPE_CONSOLE
-	CL_DrawStringGeneric (x, y, fpsText, FONT_SCREEN, 255, MENU_FONT_SIZE, SCALETYPE_MENU, false); // SCALETYPE_HUD
+//	x = (viddef.width - stringLen(fpsText)*MENU_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
+	x = (scrLeft - stringLen(fpsText)*MENU_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
+	y = MENU_FONT_SIZE / 2;
+	CL_DrawStringGeneric (x, y, fpsText, FONT_SCREEN, 255, MENU_FONT_SIZE, SCALETYPE_MENU, false); // SCALETYPE_CONSOLE
 }
 
 /*
@@ -1130,12 +1151,11 @@ SCR_DrawDebugGraph
 */
 void SCR_DrawDebugGraph (void)
 {
-	int		a, x, y, w, i, h, min, max;
-	float	v;
-	int		color;
-	static	float lasttime = 0;
-	static	int fps, ping;
-	float	scrLeft, scrWidth, scrRight;
+	int				a, x, y, w, i, h, min, max;
+	float			v, scrLeft, scrWidth, scrRight;
+	int				color;
+	static	float	lasttime = 0;
+	static	int		/*fps,*/ ping;
 
 	h = (2*FONT_SIZE > 40)?60+2*FONT_SIZE:100;
 	w = (9*FONT_SIZE>100)?9*FONT_SIZE:100;
@@ -1145,7 +1165,6 @@ void SCR_DrawDebugGraph (void)
 	SCR_ScaleCoords (&scrLeft, NULL, &scrWidth, NULL, ALIGN_STRETCH);
 	scrRight = scrLeft + scrWidth;
 
-//	if (scr_netgraph_pos->value == 0) // bottom right
 	if (scr_netgraph_pos->integer == 0) // bottom right
 	{
 	//	x = scr_vrect.width - (w+2) - 1;
@@ -1180,19 +1199,18 @@ void SCR_DrawDebugGraph (void)
 		if (min>y+h) min = y+h;
 		if (min+max > y+h) max = y+h-max;
 
-	//	R_DrawFill (x+w-a, min, 1, max, color);
 		R_DrawFill (x+w-a, min, 1, max, color8red(color), color8green(color), color8blue(color), 255);
 	}
 
 	if (cls.realtime - lasttime > 50)
 	{
 		lasttime = cls.realtime;
-		fps = (cls.renderFrameTime)? 1/cls.renderFrameTime: 0;
+	//	fps = (cls.renderFrameTime)? 1/cls.renderFrameTime: 0;
 		ping = currentping;
 	}
 
-	CL_DrawStringGeneric (x, y + 5, va(S_COLOR_SHADOW"fps: %3i", fps), FONT_SCREEN, 255, FONT_SIZE, SCALETYPE_CONSOLE, false);
-	CL_DrawStringGeneric (x, y + 5 + FONT_SIZE , va(S_COLOR_SHADOW"ping:%3i", ping), FONT_SCREEN, 255, FONT_SIZE, SCALETYPE_CONSOLE, false);
+	CL_DrawStringGeneric (x, y + 5, va(S_COLOR_SHADOW"fps: %3i", scr_fps), FONT_SCREEN, 255, FONT_SIZE, SCALETYPE_CONSOLE, false);
+	CL_DrawStringGeneric (x, y + 5 + FONT_SIZE, va(S_COLOR_SHADOW"ping:%3i", ping), FONT_SCREEN, 255, FONT_SIZE, SCALETYPE_CONSOLE, false);
 
 	// draw border
 	R_DrawFill (x,			y,			(w+2),	1,		0, 0, 0, 255);
@@ -1507,7 +1525,7 @@ void SCR_DumpStatusLayout_f (void)
 
 	// statusbar layout is in multiple configstrings
 	// starting at CS_STATUSBAR and ending at CS_AIRACCEL
-	Com_sprintf(formatLine, sizeof(formatLine), "\nFormatted Dump\n--------------\n");
+	Com_sprintf (formatLine, sizeof(formatLine), "\nFormatted Dump\n--------------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	fwrite(&buffer, 1, bufcount, f);
@@ -1543,7 +1561,7 @@ void SCR_DumpStatusLayout_f (void)
 	bufcount = 0;
 
 	// write out the raw dump
-	Com_sprintf(formatLine, sizeof(formatLine), "\nRaw Dump\n--------\n");
+	Com_sprintf (formatLine, sizeof(formatLine), "\nRaw Dump\n--------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	fwrite(&buffer, 1, bufcount, f);
@@ -1562,12 +1580,12 @@ void SCR_DumpStatusLayout_f (void)
 	}
 
 	// write out the stat values for debugging
-	Com_sprintf(formatLine, sizeof(formatLine), "\nStat Values\n-----------\n");
+	Com_sprintf (formatLine, sizeof(formatLine), "\nStat Values\n-----------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	for (i=0; i<MAX_STATS; i++)
 	{
-		Com_sprintf(statLine, sizeof(statLine), "%i: %i\n", i, cl.frame.playerstate.stats[i]);
+		Com_sprintf (statLine, sizeof(statLine), "%i: %i\n", i, cl.frame.playerstate.stats[i]);
 		// prevent overflow of buffer
 		if ( (bufcount + strlen(statLine)) >= sizeof(buffer) ) {
 			fwrite(&buffer, 1, bufcount, f);
@@ -1582,12 +1600,12 @@ void SCR_DumpStatusLayout_f (void)
 	bufcount = 0;
 
 	// write out CS_GENERAL for stat_string tokens
-	Com_sprintf(formatLine, sizeof(formatLine), "\nGeneral Configstrings\n---------------------\n");
+	Com_sprintf (formatLine, sizeof(formatLine), "\nGeneral Configstrings\n---------------------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	for (i = cs_general; i < (cs_general + MAX_GENERAL); i++)
 	{
-		Com_sprintf(formatLine, sizeof(formatLine), "%i: %s\n", i, cl.configstrings[i]);
+		Com_sprintf (formatLine, sizeof(formatLine), "%i: %s\n", i, cl.configstrings[i]);
 		// prevent overflow of buffer
 		if ( (bufcount + strlen(formatLine)) >= sizeof(buffer) ) {
 			fwrite(&buffer, 1, bufcount, f);
@@ -1990,8 +2008,6 @@ void SCR_GetPicPosWidth (char *pic, int *x, int *w)
 }
 
 
-char *load_saveshot;
-
 /*
 ==============
 SCR_DrawLoading
@@ -2022,8 +2038,8 @@ void SCR_DrawLoading (void)
 		mapfile[strlen(mapfile)-4] = 0;		// cut off ".bsp"
 
 		// show saveshot here
-		if (load_saveshot && (strlen(load_saveshot) > 8) && R_DrawFindPic(load_saveshot)) {
-			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, false, load_saveshot, 1.0);
+		if (scr_load_saveshot && (strlen(scr_load_saveshot) > 8) && R_DrawFindPic(scr_load_saveshot)) {
+			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, false, scr_load_saveshot, 1.0);
 			haveMapPic = true;
 		}
 		// else try levelshot
@@ -2033,7 +2049,7 @@ void SCR_DrawLoading (void)
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 		//	SCR_DrawPic (-64, 0, SCREEN_WIDTH+128, SCREEN_HEIGHT, ALIGN_CENTER, va("/levelshots/%s_widescreen.pcx", mapfile), 1.0);
 			// Draw at native aspect
-			Com_sprintf(picName, sizeof(picName), "/levelshots/%s_widescreen.pcx", mapfile);
+			Com_sprintf (picName, sizeof(picName), "/levelshots/%s_widescreen.pcx", mapfile);
 			SCR_GetPicPosWidth (picName, &picX, &picW);
 			SCR_DrawPic (picX, 0, picW, SCREEN_HEIGHT, ALIGN_CENTER, false, picName, 1.0);
 			haveMapPic = true;
@@ -2371,7 +2387,7 @@ SCR_EndLoadingPlaque
 void SCR_EndLoadingPlaque (void)
 {
 	// make loading saveshot null here
-	load_saveshot = NULL;
+	scr_load_saveshot = NULL;
 	cls.disable_screen = 0;
 	scr_draw_loading = 0; // Knightmare added
 	Con_ClearNotify ();
@@ -2576,7 +2592,6 @@ void SCR_UpdateScreen (void)
 	// Re-init screen scale
 	SCR_InitScreenScale ();
 
-//	if ( cl_stereo->value )
 	if ( cl_stereo->integer )
 	{
 		numframes = 2;
@@ -2674,21 +2689,18 @@ void SCR_UpdateScreen (void)
 			SCR_DrawNet ();
 			SCR_CheckDrawCenterString ();
 
-		//	if (scr_timegraph->value)
 			if (scr_timegraph->integer)
 				SCR_DebugGraph (cls.netFrameTime*300, 0);
 
-		//	if (scr_debuggraph->value || scr_timegraph->value || scr_netgraph->value)
 			if (scr_debuggraph->integer || scr_timegraph->integer || scr_netgraph->integer)
 				SCR_DrawDebugGraph ();
 
 			SCR_DrawPause ();
 
-		//	if (cl_demomessage->value)
 			if (cl_demomessage->integer)
 				DrawDemoMessage();
 
-		//	if ((cl_drawfps->integer) && (cls.state == ca_active))
+			SCR_CalcFPS ();
 			SCR_ShowFPS ();
 
 			UI_Draw ();

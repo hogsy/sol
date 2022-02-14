@@ -772,13 +772,13 @@ void R_ShowSpeeds (void)
 	for (i=0; i<lines; i++)
 	{
 		switch (i) {
-			case 0:	n = sprintf (buf, "%5i wcall", c_brush_calls); break;
-			case 1:	n = sprintf (buf, "%5i wsurf", c_brush_surfs); break;
-			case 2:	n = sprintf (buf, "%5i wpoly", c_brush_polys); break;
-			case 3: n = sprintf (buf, "%5i epoly", c_alias_polys); break;
-			case 4: n = sprintf (buf, "%5i ppoly", c_part_polys); break;
-		//	case 5: n = sprintf (buf, "%5i tex  ", c_visible_textures); break;
-		//	case 6: n = sprintf (buf, "%5i lmaps", c_visible_lightmaps); break;
+			case 0:	Com_sprintf (buf, sizeof(buf), "%5i wcall", c_brush_calls); n = (int)strlen(buf); break;
+			case 1:	Com_sprintf (buf, sizeof(buf), "%5i wsurf", c_brush_surfs); n = (int)strlen(buf); break;
+			case 2:	Com_sprintf (buf, sizeof(buf), "%5i wpoly", c_brush_polys); n = (int)strlen(buf); break;
+			case 3: Com_sprintf (buf, sizeof(buf), "%5i epoly", c_alias_polys); n = (int)strlen(buf); break;
+			case 4: Com_sprintf (buf, sizeof(buf), "%5i ppoly", c_part_polys); n = (int)strlen(buf); break;
+		//	case 5: Com_sprintf (buf, sizeof(buf), "%5i tex  ", c_visible_textures); n = (int)strlen(buf); break;
+		//	case 6: Com_sprintf (buf, sizeof(buf), "%5i lmaps", c_visible_lightmaps); n = (int)strlen(buf); break;
 			default: break;
 		}
 		if (scr_netgraph_pos->integer)

@@ -461,7 +461,7 @@ void SV_WriteServerFile (qboolean autosave, qboolean quicksave)
 
 	Com_DPrintf("SV_WriteServerFile(%s)\n", autosave ? "true" : "false");
 
-//	Com_sprintf (fileName, sizeof(fileName), "%s/save/current/server.ssv", FS_Savegamedir());	// was FS_Gamedir()
+//	Com_sprintf (fileName, sizeof(fileName), "%s/save/current/server.ssv", FS_Savegamedir());
 	Com_sprintf (fileName, sizeof(fileName), "%s/"SAVEDIRNAME"/current/server.ssv", FS_Savegamedir());	// was FS_Gamedir()
 	f = fopen (fileName, "wb");
 	if (!f)
@@ -477,9 +477,9 @@ void SV_WriteServerFile (qboolean autosave, qboolean quicksave)
 
 	if (!autosave)
 	{
-		Com_sprintf (comment,sizeof(comment), "%2i:%i%i %2i/%2i  ", newtime->tm_hour
-			, newtime->tm_min/10, newtime->tm_min%10,
-			newtime->tm_mon+1, newtime->tm_mday);
+		Com_sprintf (comment, sizeof(comment), "%2i:%i%i %2i/%2i  ", newtime->tm_hour,
+					newtime->tm_min/10, newtime->tm_min%10,
+					newtime->tm_mon+1, newtime->tm_mday);
 		strncat (comment, sv.configstrings[CS_NAME], sizeof(comment)-1-strlen(comment) );
 	}
 	else
@@ -778,7 +778,7 @@ void SV_Map_f (void)
 
 =====================================================================
 */
-extern	char *load_saveshot;
+extern	char *scr_load_saveshot;
 char sv_loadshotname[MAX_QPATH];
 
 /*
@@ -830,7 +830,7 @@ void SV_Loadgame_f (void)
 		R_FreePic (sv_loadshotname);
 	//	Com_sprintf(sv_loadshotname, sizeof(sv_loadshotname), "/save/%s/shot.jpg", Cmd_Argv(1));
 		Com_sprintf(sv_loadshotname, sizeof(sv_loadshotname), "/"SAVEDIRNAME"/%s/shot.jpg", Cmd_Argv(1));
-		load_saveshot = sv_loadshotname;
+		scr_load_saveshot = sv_loadshotname;
 	}
 
 	SV_CopySaveGame (Cmd_Argv(1), "current");

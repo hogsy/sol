@@ -445,13 +445,13 @@ char *Sys_ScanForCD (void)
 		// where activision put the stuff...
 		if (missionpack) // Knightmare- mission packs have cinematics in different path
 		{
-			sprintf (cddir, "%sdata\\max", drive);
-			sprintf (test, "%sdata\\patch\\quake2.exe", drive);
+			Com_sprintf (cddir, sizeof(cddir), "%sdata\\max", drive);
+			Com_sprintf (test, sizeof(test), "%sdata\\patch\\quake2.exe", drive);
 		}
 		else
 		{
-			sprintf (cddir, "%sinstall\\data", drive);
-			sprintf (test, "%sinstall\\data\\quake2.exe", drive);
+			Com_sprintf (cddir, sizeof(cddir), "%sinstall\\data", drive);
+			Com_sprintf (test, sizeof(test), "%sinstall\\data\\quake2.exe", drive);
 		}
 		f = fopen(test, "r");
 		if (f)
