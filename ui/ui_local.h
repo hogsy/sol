@@ -934,6 +934,7 @@ void Menu_Main_f (void);
 		void Menu_DownloadOptions_f (void);
 	void Menu_Video_f (void);
 		void Menu_Video_Advanced_f (void);
+//	void Menu_Mods_f (void);
 	void Menu_Options_f (void);
 		void Menu_Options_Sound_f (void);
 		void Menu_Options_Controls_f (void);

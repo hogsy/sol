@@ -605,8 +605,6 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 	if (R_DrawFindPic("/gfx/ui/widgets/listbox_background.pcx")) {
 		x = icon_x-2;	y = icon_y-2;	w = NUM_SKINBOX_ITEMS * 34 + 2;	h = 36;
 		UI_DrawTiledPic (x, y, w, h, ALIGN_CENTER, true, "/gfx/ui/widgets/listbox_background.pcx", 255);
-	//	SCR_ScaleCoords (&x, &y, &w, &h, ALIGN_CENTER);
-	//	R_DrawTileClear ((int)x, (int)y, (int)w, (int)h, "/gfx/ui/widgets/listbox_background.pcx");
 	}
 	else
 		UI_DrawFill (icon_x-2, icon_y-2, NUM_SKINBOX_ITEMS*34+2, 36, ALIGN_CENTER, false, 60, 60, 60, 255);

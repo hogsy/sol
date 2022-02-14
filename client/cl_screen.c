@@ -2467,22 +2467,18 @@ void SCR_TileClear (void)
 	// clear above view screen
 	ds.x = 0;	ds.y = 0;		ds.w = w;		ds.h = top;
 	R_DrawPic (ds);
-//	R_DrawTileClear (0, 0, w, top, "backtile");
 
 	// clear below view screen
 	ds.x = 0;	ds.y = bottom;	ds.w = w;		ds.h = h - bottom;
 	R_DrawPic (ds);
-//	R_DrawTileClear (0, bottom, w, h - bottom, "backtile");
 
 	// clear left of view screen
 	ds.x = 0;	ds.y = top;		ds.w = left;	ds.h = bottom - top + 1;
 	R_DrawPic (ds);
-//	R_DrawTileClear (0, top, left, bottom - top + 1, "backtile");
 
 	// clear right of view screen
 	ds.x = right;	ds.y = top;	ds.w = w - right;	ds.h = bottom - top + 1;
 	R_DrawPic (ds);
-//	R_DrawTileClear (right, top, w - right, bottom - top + 1, "backtile");
 }
 
 

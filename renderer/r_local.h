@@ -734,7 +734,6 @@ void	R_DrawChar (float x, float y, int num, fontslot_t font, float scale,
 			int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	R_DrawString (float x, float y, const char *string, fontslot_t font, float scale, 
 				int red, int green, int blue, int alpha, qboolean italic, qboolean shadow);
-void	R_DrawTileClear (int x, int y, int w, int h, char *name);
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
 float	R_CharMapScale (void);
 

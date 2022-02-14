@@ -168,8 +168,8 @@ UI_Precache
 */
 void UI_Precache (void)
 {
-	int		i;
-	char	scratch[80];
+//	int		i;
+//	char	scratch[80];
 
 	// general images
 	R_DrawFindPic (LOADSCREEN_NAME); 
@@ -194,10 +194,10 @@ void UI_Precache (void)
 	R_DrawFindPic (UI_ITEMCURSOR_KEYBIND_PIC);
 	R_DrawFindPic (UI_ITEMCURSOR_BLINK_PIC);
 
-	for (i = 0; i < NUM_MAINMENU_CURSOR_FRAMES; i++) {
+/*	for (i = 0; i < NUM_MAINMENU_CURSOR_FRAMES; i++) {
 		Com_sprintf (scratch, sizeof(scratch), "/pics/m_cursor%d.pcx", i);
 		R_DrawFindPic (scratch);
-	}
+	} */
 
 	// main menu items
 	R_DrawFindPic ("/pics/m_main_game.pcx");
@@ -241,12 +241,6 @@ void UI_Precache (void)
 	R_DrawFindPic (UI_TEXTBOX_PIC);
 	R_DrawFindPic (UI_SLIDER_PIC);
 	R_DrawFindPic (UI_ARROWS_PIC);
-
-//	R_DrawFindPic ("/gfx/ui/listbox_background.pcx");
-//	R_DrawFindPic ("/gfx/ui/arrows/arrow_left.pcx");
-//	R_DrawFindPic ("/gfx/ui/arrows/arrow_left_d.pcx");
-//	R_DrawFindPic ("/gfx/ui/arrows/arrow_right.pcx");
-//	R_DrawFindPic ("/gfx/ui/arrows/arrow_right_d.pcx"); 
 }
 
 
@@ -310,6 +304,7 @@ void UI_Init (void)
 		Cmd_AddCommand ("menu_downloadoptions", Menu_DownloadOptions_f);
 	Cmd_AddCommand ("menu_video", Menu_Video_f);
 		Cmd_AddCommand ("menu_video_advanced", Menu_Video_Advanced_f);
+//	Cmd_AddCommand ("menu_mods", Menu_Mods_f);
 	Cmd_AddCommand ("menu_options", Menu_Options_f);
 		Cmd_AddCommand ("menu_sound", Menu_Options_Sound_f);
 		Cmd_AddCommand ("menu_controls", Menu_Options_Controls_f);
@@ -358,6 +353,7 @@ void UI_Shutdown (void)
 	Cmd_RemoveCommand ("menu_downloadoptions");
 	Cmd_RemoveCommand ("menu_video");
 	Cmd_RemoveCommand ("menu_video_advanced");
+//	Cmd_RemoveCommand ("menu_mods");
 	Cmd_RemoveCommand ("menu_options");
 	Cmd_RemoveCommand ("menu_sound");
 	Cmd_RemoveCommand ("menu_controls");
