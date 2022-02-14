@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// cl_hud.c -- parsing for HUD and client inventory screen
+// cl_hud.c -- parsing for HUD layout string and client inventory screen
 
 #include "client.h"
 #include "../ui/ui_local.h"
@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	ICON_HEIGHT	24
 #define	ICON_SPACE	8
 
-#define STAT_MINUS		10	// num frame for '-' stats digit
 char		*sb_nums[2][11] = 
 {
 	{"num_0", "num_1", "num_2", "num_3", "num_4", "num_5",
@@ -68,7 +67,7 @@ void Hud_DrawStringAlt (int x, int y, const char *string, int alpha, qboolean is
 		highString[i] ^= 128;
 	}
 	CL_DrawStringGeneric (x, y, highString, FONT_SCREEN, alpha, HUD_FONT_SIZE, (isStatusBar) ? SCALETYPE_HUD : SCALETYPE_MENU, false);
-//	CL_DrawStringGeneric (x, y, string, alpha, HUD_FONT_SIZE, (isStatusBar) ? SCALETYPE_HUD : SCALETYPE_MENU, true);
+//	CL_DrawStringGeneric (x, y, string,		FONT_SCREEN, alpha, HUD_FONT_SIZE, (isStatusBar) ? SCALETYPE_HUD : SCALETYPE_MENU, true);
 }
 
 
@@ -147,8 +146,6 @@ void CL_SizeLayoutString (char *string, int *w, int *h, qboolean isStatusBar)
 		string++;
 	}
 
-//	*w = width * scaledHud(8);
-//	*h = lines * scaledHud(8);
 	*w = width * scaleForScreen(8);
 	*h = lines * scaleForScreen(8);
 }
@@ -180,21 +177,20 @@ void CL_DrawLayoutString (char *string, int x, int y, int centerwidth, int xor, 
 	{
 		// scan out one line of text from the string
 		width = 0;
-		while (*string && *string != '\n')
+		while (*string && *string != '\n') {
 			line[width++] = *string++;
+		}
 
 		line[width] = 0;
 		visibleWidth = stringLen(line);
 
 		if (centerwidth)
-		//	x = margin + (centerwidth - width*scaledHud(8))/2;
-		//	x = margin + (centerwidth - width*scaleForScreen(8))/2;
 			x = margin + (centerwidth - visibleWidth*scaleForScreen(8))/2;
 		else
 			x = margin;
 
 
-		if (xor)
+		if (xor != 0)
 		{	// Knightmare- text color hack
 		//	Com_sprintf (line, sizeof(line), S_COLOR_ALT"%s", line);
 			len = (int)strlen(line);
@@ -208,7 +204,6 @@ void CL_DrawLayoutString (char *string, int x, int y, int centerwidth, int xor, 
 		{
 			string++;	// skip the \n
 			x = margin;
-		//	y += scaledHud(8);
 			y += scaleForScreen(8);
 		}
 	}
@@ -246,16 +241,12 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 		getScreenScale = SCR_GetScreenScale;
 	}
 
-	// draw number string
 	fieldScale = getScreenScale();
-	if (width > 5)
-		width = 5;
-
+	width = min (width, 5);
 	Com_sprintf (num, sizeof(num), "%i", value);
 	l = (int)strlen(num);
 	if (l > width)
-	{
-	//	if (scr_hudsqueezedigits->value) {
+	{	// allow squeezing in extra digits
 		if (scr_hudsqueezedigits->integer) {
 			l = min(l, width+2);
 			fieldScale =  (1.0 - ((1.0 - (float)width/(float)l) * 0.5)) * getScreenScale();
@@ -267,6 +258,8 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 	digitOffset = width*scaleForScreen(HUD_CHAR_WIDTH) - l*digitWidth;
 //	x += 2 + scaleForScreen(HUD_CHAR_WIDTH)*max(width - l, 0);
 	x += 2 + digitOffset;
+//	flashWidth = (l*digitWidth >  width*scaleForScreen(HUD_CHAR_WIDTH)) ? l*digitWidth : width*scaleForScreen(HUD_CHAR_WIDTH);
+//	flash_x = (l>width) ? x : x-digitOffset;
 	flashWidth = l * digitWidth;
 	flash_x = x;
 	Vector4Set (picColor, 1.0f, 1.0f, 1.0f, scr_hudalpha->value);
@@ -279,7 +272,6 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 		ds.pic = "field_3";
 		ds.x = flash_x;	ds.w = flashWidth;	
 		R_DrawPic (ds);
-	//	R_DrawStretchPic (flash_x, y, flashWidth, scaleForScreen(ICON_HEIGHT), "field_3", scr_hudalpha->value);
 	}
 
 	ptr = num;
@@ -293,7 +285,6 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 		ds.pic = sb_nums[color][frame];
 		ds.x = x;	ds.w = digitWidth;	
 		R_DrawPic (ds);
-	//	R_DrawStretchPic (x, y, digitWidth, scaleForScreen(ICON_HEIGHT), sb_nums[color][frame], scr_hudalpha->value);
 		x += digitWidth;
 		ptr++;
 		l--;
@@ -408,9 +399,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 				Com_Printf (S_COLOR_YELLOW"WARNING: Pic >= MAX_IMAGES\n");
 				value = max_images-1;
 			}
-			if (cl.configstrings[cs_images+value])
-			{
-			//	R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value, cl.configstrings[cs_images+value]);
+			if (cl.configstrings[cs_images+value]) {
 				SCR_DrawLegacyPic (x, y, getScreenScale(), cl.configstrings[cs_images+value], scr_hudalpha->value);
 			}
 			continue;
@@ -450,7 +439,6 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 
 			if (!ci->icon)
 				ci = &cl.baseclientinfo;
-		//	R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value,  ci->iconname);
 			SCR_DrawLegacyPic (x, y, getScreenScale(), ci->iconname, scr_hudalpha->value);
 			continue;
 		}
@@ -481,7 +469,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			if (ping > 999)
 				ping = 999;
 
-			sprintf(block, "%3d %3d %-12.12s", score, ping, ci->name);
+			Com_sprintf (block, sizeof(block), "%3d %3d %-12.12s", score, ping, ci->name);
 
 			if (value == cl.playernum)
 				Hud_DrawStringAlt (x, y, block, 255, isStatusBar);
@@ -516,7 +504,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			if (ping > 999)
 				ping = 999;
 			// double spaced before player name for 2 flag icons
-			sprintf(block, "%3d %3d  %-12.12s", score, ping, ci->name);
+			Com_sprintf (block, sizeof(block), "%3d %3d  %-12.12s", score, ping, ci->name);
 
 			if (value == cl.playernum)
 				Hud_DrawStringAlt (x, y, block, 255, isStatusBar);
@@ -528,7 +516,6 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 		if (!strcmp(token, "picn"))
 		{	// draw a pic from a name
 			token = COM_Parse (&s);
-		//	R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value, token);
 			SCR_DrawLegacyPic (x, y, getScreenScale(), token, scr_hudalpha->value);
 			continue;
 		}
@@ -560,9 +547,6 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			else
 				color = 1;
 
-		//	if (cl.frame.playerstate.stats[STAT_FLASHES] & 1)
-		//		R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value, "field_3");
-
 			CL_DrawLayoutField (x, y, color, width, value, (cl.frame.playerstate.stats[STAT_FLASHES] & 1), isStatusBar);
 			continue;
 		}
@@ -580,9 +564,6 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			else
 				continue;	// negative number = don't show
 
-		//	if (cl.frame.playerstate.stats[STAT_FLASHES] & 4)
-		//		R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value, "field_3");
-
 			CL_DrawLayoutField (x, y, color, width, value, (cl.frame.playerstate.stats[STAT_FLASHES] & 4), isStatusBar);
 			continue;
 		}
@@ -597,9 +578,6 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 				continue;
 
 			color = 0;	// green
-
-		//	if (cl.frame.playerstate.stats[STAT_FLASHES] & 2)
-		//		R_DrawScaledPic (x, y, getScreenScale(), scr_hudalpha->value, "field_3");
 
 			CL_DrawLayoutField (x, y, color, width, value, (cl.frame.playerstate.stats[STAT_FLASHES] & 2), isStatusBar);
 			continue;
@@ -820,7 +798,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 CL_DrawStatus
 
 The status bar is a small layout program that
-is based on the stats array
+is based on the stats array.
 ================
 */
 void CL_DrawStatus (void)
@@ -890,27 +868,35 @@ void CL_ParseInventory (void)
 CL_DrawInventory
 ================
 */
-#define	DISPLAY_ITEMS	17
+#define	INVEN_DISPLAY_ITEMS	17
 
 void CL_DrawInventory (void)
 {
-	int		i, j;
+	int		i, j, x, y;
 	int		num, selected_num, item;
+	int		selected, top, cs_items, max_items;
 	int		index[MAX_ITEMS];
-	char	string[1024];
-	int		x, y;
-	char	binding[1024];
+	char	string[1024], binding[1024];
 	char	*bind;
-	int		selected;
-	int		top;
+
+	// Knightmare- hack for connected to server using old protocol
+	// Changed config strings require different parsing
+	if ( LegacyProtocol() ) {
+		cs_items = OLD_CS_ITEMS;
+		max_items = OLD_MAX_ITEMS;
+	}
+	else {
+		cs_items = CS_ITEMS;
+		max_items = MAX_ITEMS;
+	}
 
 	selected = cl.frame.playerstate.stats[STAT_SELECTED_ITEM];
 
 	num = 0;
 	selected_num = 0;
-	for (i=0; i<MAX_ITEMS; i++)
+	for (i=0; i<max_items; i++)
 	{
-		if (i==selected)
+		if (i == selected)
 			selected_num = num;
 		if (cl.inventory[i])
 		{
@@ -920,23 +906,25 @@ void CL_DrawInventory (void)
 	}
 
 	// determine scroll point
-	top = selected_num - DISPLAY_ITEMS/2;
-	if (num - top < DISPLAY_ITEMS)
-		top = num - DISPLAY_ITEMS;
+	top = selected_num - INVEN_DISPLAY_ITEMS/2;
+	if (num - top < INVEN_DISPLAY_ITEMS)
+		top = num - INVEN_DISPLAY_ITEMS;
 	if (top < 0)
 		top = 0;
 
 //	x = viddef.width/2 - SCR_ScaledHud(128);
-//	y = viddef.height/2 - SCR_ScaledHud(120);
+//	y = viddef.height/2 - SCR_ScaledHud(116);
 	x = SCREEN_WIDTH/2 - 128;
 	y = SCREEN_HEIGHT/2 - 116;
 
-//	R_DrawScaledPic (x, y+SCR_ScaledHud(8), SCR_GetHudScale(), scr_hudalpha->value, "inventory");
-//	y += SCR_ScaledHud(24);
+//	SCR_DrawScaledPic (x, y, SCR_GetScreenScale(), false, false, "inventory", scr_hudalpha->value);
 //	x += SCR_ScaledHud(24);
-//	Hud_DrawString (x, y, S_COLOR_BOLD"hotkey ### item");
-//	Hud_DrawString (x, y+SCR_ScaledHud(8), S_COLOR_BOLD"------ --- ----");
-//	y += SCR_ScaledHud(16);
+//	y += SCR_ScaledHud(20);
+//	Hud_DrawString (x, y, S_COLOR_BOLD"hotkey ### item", 255);
+//	y += SCR_ScaledHud(8);
+//	Hud_DrawString (x, y, S_COLOR_BOLD"------ --- ----", 255);
+//	x += SCR_ScaledHud(16);
+//	y += SCR_ScaledHud(8);
 	SCR_DrawPic (x, y, 256, 192, ALIGN_CENTER, false, "inventory", scr_hudalpha->value);
 	x += 24;
 	y += 20;
@@ -946,18 +934,11 @@ void CL_DrawInventory (void)
 	x += 16;
 	y += 8;
 
-	for (i=top; i<num && i < top+DISPLAY_ITEMS; i++)
+	for (i=top; i<num && i < top+INVEN_DISPLAY_ITEMS; i++)
 	{
 		item = index[i];
 		// search for a binding
-
-		// Knightmare- BIG UGLY HACK for connected to server using old protocol
-		// Changed config strings require different parsing
-		if ( LegacyProtocol() )
-			Com_sprintf (binding, sizeof(binding), "use %s", cl.configstrings[OLD_CS_ITEMS+item]);
-		else
-			Com_sprintf (binding, sizeof(binding), "use %s", cl.configstrings[CS_ITEMS+item]);
-
+		Com_sprintf (binding, sizeof(binding), "use %s", cl.configstrings[cs_items+item]);
 		bind = "";
 		for (j=0; j<256; j++)
 			if (keybindings[j] && !Q_stricmp (keybindings[j], binding))
@@ -966,36 +947,18 @@ void CL_DrawInventory (void)
 				break;
 			}
 
-		// Knightmare- BIG UGLY HACK for connected to server using old protocol
-		// Changed config strings require different parsing
-		if ( LegacyProtocol() )
+		if (item != selected)
 		{
-			if (item != selected)
-			{
-				Com_sprintf (string, sizeof(string), " "S_COLOR_ALT"%3s %3i %7s", bind, cl.inventory[item],
-					cl.configstrings[OLD_CS_ITEMS+item] );
-			}
-			else	// draw a blinky cursor by the selected item
-			{
-				Com_sprintf (string, sizeof(string), S_COLOR_WHITE">"S_COLOR_ITALIC"%3s %3i %7s", bind, cl.inventory[item],
-					cl.configstrings[OLD_CS_ITEMS+item] );
-			}
+			Com_sprintf (string, sizeof(string), " "S_COLOR_ALT"%3s %3i %7s", bind, cl.inventory[item],
+				cl.configstrings[cs_items+item] );
 		}
-		else
+		else	// draw a blinky cursor by the selected item
 		{
-			if (item != selected)
-			{
-				Com_sprintf (string, sizeof(string), " "S_COLOR_ALT"%3s %3i %7s", bind, cl.inventory[item],
-					cl.configstrings[CS_ITEMS+item] );
-			}
-			else	// draw a blinky cursor by the selected item
-			{
-				Com_sprintf (string, sizeof(string), S_COLOR_WHITE">"S_COLOR_ITALIC"%3s %3i %7s", bind, cl.inventory[item],
-					cl.configstrings[CS_ITEMS+item] );
-			}
+			Com_sprintf (string, sizeof(string), S_COLOR_WHITE">"S_COLOR_ITALIC"%3s %3i %7s", bind, cl.inventory[item],
+				cl.configstrings[cs_items+item] );
 		}
 
-	//	Hud_DrawString (x, y, string);
+	//	Hud_DrawString (x, y, string, 255);
 	//	y += SCR_ScaledHud(8);
 		SCR_DrawString (x, y, 8, ALIGN_CENTER, string, FONT_SCREEN, 255);
 		y += 8;

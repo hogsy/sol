@@ -593,7 +593,7 @@ void R_DrawPic (drawStruct_t ds)
 
 	drawParms.blend = ( image->has_alpha || (ds.color[0] < 1.0f) || (ds.color[1] < 1.0f) || (ds.color[2] < 1.0f) || (ds.color[3] < 1.0f) );
 	if (ds.flags & DSFLAG_ADDITIVE) {
-		drawParms.blendfunc_src = GL_SRC_ALPHA;
+		drawParms.blendfunc_src = GL_ONE;
 		drawParms.blendfunc_dst = GL_ONE;
 	}
 	else {

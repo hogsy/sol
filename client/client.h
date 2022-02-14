@@ -786,12 +786,6 @@ void	R_DrawGetPicSize (int *w, int *h, char *name);	// will return 0 0 if not fo
 
 void	R_DrawPic (drawStruct_t ds);
 
-//void	R_DrawPic (int x, int y, char *name);
-// added alpha for Psychospaz's transparent console
-//void	R_DrawStretchPic (int x, int y, int w, int h, char *name, float alpha);
-//void	R_DrawScaledPic (int x, int y, float scale, float alpha, char *name);
-//void	R_DrawTileClear (int x, int y, int w, int h, char *name);
-
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
 
 void	R_DrawCameraEffect (void);

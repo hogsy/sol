@@ -88,9 +88,8 @@ cvar_t		*crosshair_scale; // Psychospaz's scalable corsshair
 cvar_t		*crosshair_alpha;
 cvar_t		*crosshair_pulse;
 
-//Knightmare 12/28/2001- BramBo's FPS counter
+// Knightmare 12/28/2001- BramBo's FPS counter
 cvar_t		*cl_drawfps;
-//end Knightmare
 cvar_t		*cl_demomessage;
 //cvar_t		*cl_loadpercent;	// unused
 cvar_t		*cl_hud;				// placeholder cvar
@@ -2662,6 +2661,11 @@ void SCR_UpdateScreen (void)
 
 			if (!scr_hidehud)
 			{
+				// update hud variant if cl_hud_variant is modified
+			/*	if (cl_hud_variant->modified) {
+					cl_hud_variant->modified = false;
+					CL_SetHudVariant ();
+				} */
 				CL_DrawStatus ();
 				if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 1)
 					CL_DrawLayout ();
