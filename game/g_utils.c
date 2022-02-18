@@ -898,32 +898,32 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 void GameDirRelativePath (const char *filename, char *output, size_t outputSize)
 {
 #ifdef KMQUAKE2_ENGINE_MOD
-	Com_sprintf (output, outputSize, "%s/%s", gi.GameDir(), filename);
+	Com_sprintf(output, outputSize, "%s/%s", gi.GameDir(), filename);
 #else	// KMQUAKE2_ENGINE_MOD
 	cvar_t	*basedir, *gamedir;
 
 	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("gamedir", "", 0);
 	if (strlen(gamedir->string))
-		Com_sprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
+		Com_sprintf(output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
 	else
-		Com_sprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
+		Com_sprintf(output, outputSize, "%s/baseq2/%s", basedir->string, filename);
 #endif	// KMQUAKE2_ENGINE_MOD
 }
 
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize)
 {
 #ifdef KMQUAKE2_ENGINE_MOD
-	Com_sprintf (output, outputSize, "%s/%s", gi.SaveGameDir(), filename);
+	Com_sprintf(output, outputSize, "%s/%s", gi.SaveGameDir(), filename);
 #else	// KMQUAKE2_ENGINE_MOD
 	cvar_t	*basedir, *gamedir;
 
 	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("gamedir", "", 0);
 	if (strlen(gamedir->string))
-		Com_sprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
+		Com_sprintf(output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
 	else
-		Com_sprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
+		Com_sprintf(output, outputSize, "%s/baseq2/%s", basedir->string, filename);
 #endif	// KMQUAKE2_ENGINE_MOD
 }
 

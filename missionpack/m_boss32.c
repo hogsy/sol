@@ -632,7 +632,7 @@ void makron_attack(edict_t *self)
 	VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
 	range = VectorLength (vec);
 	
-	//Knightmare- gross hack for map6 of COS3- no BFG attack
+	// Knightmare- gross hack for map6 of COS3- no BFG attack
 	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
 	{
 		if (r <= 0.5)

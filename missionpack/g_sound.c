@@ -30,9 +30,7 @@ void Use_Target_Playback (edict_t *ent, edict_t *other, edict_t *activator)	{}
 void target_playback_delayed_start (edict_t *ent)	{}
 void target_playback_delayed_restart (edict_t *ent)	{}
 void SP_target_playback (edict_t *ent)	{}
-#ifdef FMOD_FOOTSTEPS
 void ReadTextureSurfaceAssignments ()	{}
-#endif // FMOD_FOOTSTEPS
 
 #else // DISABLE_FMOD
 
@@ -668,7 +666,20 @@ void FootStep (edict_t *ent)
 	}
 }
 
+#else // FMOD footsteps
+
+void PlayFootstep (edict_t *ent, footstep_t index)
+{
+	// Dummy function
+}
+
+void FootStep (edict_t *ent)
+{
+	// Dummy function
+}
+
 #endif // FMOD footsteps
+
 /* All other footstep-related code is in p_view.c. Short version: replace all 
    "ent->s.event = EV_FOOTSTEP" with a call to Footstep and check out G_SetClientEvent,
    where water and ladder sounds are played. */
@@ -756,7 +767,7 @@ qboolean FMOD_Init ()
 #ifdef FMOD_FOOTSTEPS
 
 		if (qFMOD_Footsteps)
-			PrecacheFootsteps();
+			PrecacheFootsteps ();
 #endif
 		return true;
 	}
@@ -770,9 +781,9 @@ void FMOD_Shutdown ()
 {
 	if (hFMOD)
 	{
-		FMOD_Stop();		// stops all target_playback sounds
-		FSOUND_Close();
-		FreeLibrary(hFMOD);
+		FMOD_Stop ();		// stops all target_playback sounds
+		FSOUND_Close ();
+		FreeLibrary (hFMOD);
 		hFMOD = (HMODULE)NULL;
 	}
 }
@@ -1476,6 +1487,7 @@ void SP_target_playback (edict_t *ent)
 }
 
 #ifdef FMOD_FOOTSTEPS
+
 void ReadTextureSurfaceAssignments (void)
 {
 	cvar_t	*basedir, *gamedir;
@@ -1509,6 +1521,14 @@ void ReadTextureSurfaceAssignments (void)
 	}
 	fclose(f);
 }
+
+#else // FMOD_FOOTSTEPS
+
+void ReadTextureSurfaceAssignments (void)
+{
+	// Dummy function
+}
+
 #endif // FMOD_FOOTSTEPS
 
 #endif // DISABLE_FMOD

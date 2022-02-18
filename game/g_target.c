@@ -3624,7 +3624,7 @@ void target_animation_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		if (!self->target)
 			return;
-		target = G_Find(NULL,FOFS(targetname),self->target);
+		target = G_Find(NULL, FOFS(targetname), self->target);
 		if (!target)
 			return;
 	}

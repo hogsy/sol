@@ -206,7 +206,7 @@ qboolean SV_RunThink (edict_t *ent)
 	
 	ent->nextthink = 0;
 	if (!ent->think)
-		gi.error ("NULL ent->think for %s",ent->classname);
+		gi.error ("NULL ent->think for %s", ent->classname);
 	ent->think (ent);
 
 	return false;
@@ -1396,7 +1396,7 @@ Non moving objects can only think
 */
 void SV_Physics_None (edict_t *ent)
 {
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
 }
 
@@ -1702,15 +1702,15 @@ void SV_Physics_Step (edict_t *ent)
 	if (ent->mass > 0 && ent->density == 0.)
 	{
 		ent->volume = ent->size[0] * ent->size[1] * ent->size[2];
-		ent->density = ent->mass/ent->volume;
+		ent->density = ent->mass / ent->volume;
 
 		if (ent->movetype == MOVETYPE_PUSHABLE)
 		{
 			// This stuff doesn't apply to anything else, and... heh...
 			// caused monster_flipper to sink
 
-			ent->bob      = min(2.0,300.0/ent->mass);
-			ent->duration = max(2.0,1.0 + ent->mass/100.0f);
+			ent->bob      = min(2.0, 300.0 / ent->mass);
+			ent->duration = max(2.0, 1.0 + ent->mass / 100.0f);
 			
 			// Figure out neutral bouyancy line for this entity
 			// This isn't entirely realistic, but helps gameplay:
@@ -1727,8 +1727,8 @@ void SV_Physics_Step (edict_t *ent)
 	// (monsters take care of this in g_monster.c)
 	if (!(ent->svflags & SVF_MONSTER) && (ent->flags & FL_SWIM) )
 	{
-		point[0] = (ent->absmax[0] + ent->absmin[0])/2;
-		point[1] = (ent->absmax[1] + ent->absmin[1])/2;
+		point[0] = (ent->absmax[0] + ent->absmin[0]) / 2;
+		point[1] = (ent->absmax[1] + ent->absmin[1]) / 2;
 		point[2] = ent->absmin[2] + 1;
 		cont = gi.pointcontents (point);
 		if (!(cont & MASK_WATER)) {
@@ -1739,7 +1739,7 @@ void SV_Physics_Step (edict_t *ent)
 		{
 			ent->watertype = cont;
 			ent->waterlevel = 1;
-			point[2] = ent->absmin[2] + ent->size[2]/2;
+			point[2] = ent->absmin[2] + ent->size[2] / 2;
 			cont = gi.pointcontents (point);
 			if (cont & MASK_WATER)
 			{
@@ -2696,10 +2696,10 @@ void G_RunEntity (edict_t *ent)
 		break;
 	// Lazarus
 	case MOVETYPE_WALK:
-		SV_Physics_None(ent);
+		SV_Physics_None (ent);
 		break;
 	case MOVETYPE_CONVEYOR:
-		SV_Physics_Conveyor(ent);
+		SV_Physics_Conveyor (ent);
 		break;
 	default:
 		gi.error ("SV_Physics: bad movetype %i", (int)ent->movetype);			

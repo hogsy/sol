@@ -541,11 +541,10 @@ void ThrowClientHead (edict_t *self, int damage)
 	VectorSet (self->maxs, 4, 4, 4);
 
 	self->takedamage = DAMAGE_NO;
-	self->solid = SOLID_TRIGGER;	// Knightmare- was SOLID_NOT
+	self->solid = SOLID_NOT;	// Knightmare- don't use SOLID_TRIGGER, as SVF_GIB can't force removal from the body queue
 	self->s.effects = EF_GIB;
 	self->s.sound = 0;
 	self->flags |= FL_NO_KNOCKBACK;
-	self->svflags |= SVF_GIB; // Knightmare- gib flag
 	self->movetype = MOVETYPE_BOUNCE;
 	VelocityForDamage (damage, vd);
 	VectorAdd (self->velocity, vd, self->velocity);
@@ -3090,7 +3089,7 @@ typedef struct zhead_s {
 
 	if (self->style == 1)
 	{
-		Com_sprintf (self->message, CLOCK_MESSAGE_SIZE, "%2i:%2i", self->health / 60, self->health % 60);
+		Com_sprintf(self->message, CLOCK_MESSAGE_SIZE, "%2i:%2i", self->health / 60, self->health % 60);
 		if (self->message[3] == ' ')
 			self->message[3] = '0';
 		return;
@@ -3098,7 +3097,7 @@ typedef struct zhead_s {
 
 	if (self->style == 2)
 	{
-		Com_sprintf (self->message, CLOCK_MESSAGE_SIZE, "%2i:%2i:%2i", self->health / 3600, (self->health - (self->health / 3600) * 3600) / 60, self->health % 60);
+		Com_sprintf(self->message, CLOCK_MESSAGE_SIZE, "%2i:%2i:%2i", self->health / 3600, (self->health - (self->health / 3600) * 3600) / 60, self->health % 60);
 		if (self->message[3] == ' ')
 			self->message[3] = '0';
 		if (self->message[6] == ' ')
@@ -4306,9 +4305,9 @@ void SP_target_fountain (edict_t *ent)
 		bufSize = strlen(ent->usermodel)+10;
 		buffer = gi.TagMalloc(bufSize, TAG_LEVEL);
 		if (strstr(ent->usermodel,".sp2"))
-			Com_sprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
+			Com_sprintf(buffer, bufSize, "sprites/%s", ent->usermodel);
 		else
-			Com_sprintf (buffer, bufSize, "models/%s", ent->usermodel);
+			Com_sprintf(buffer, bufSize, "models/%s", ent->usermodel);
 		ent->usermodel = buffer;
 	}
 
@@ -4430,7 +4429,7 @@ int PatchDeadSoldier (void)
 
 			cddir = gi.cvar("cddir", "", 0);
 		//	sprintf(pakfile,"%s/baseq2/pak0.pak",cddir->string);
-			Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak",cddir->string);
+			Com_sprintf(pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak",cddir->string);
 			fpak = fopen(pakfile,"rb");
 			if (!fpak)
 			{

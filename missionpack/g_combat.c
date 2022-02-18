@@ -353,7 +353,7 @@ static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, in
 	if (!client)
 		return 0;
 
-	// ROGUE - added DAMAGE_NO_REG_ARMOR for atf rifle
+	// ROGUE - added DAMAGE_NO_REG_ARMOR for etf rifle
 	if (dflags & (DAMAGE_NO_ARMOR | DAMAGE_NO_REG_ARMOR))
 		return 0;
 
@@ -1379,7 +1379,7 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 			continue;
 		if (!ent->takedamage)
 			continue;
-	//	if (ent->svflags & SVF_GIB) //Knightmare- gibs aren't destoyed by splash damage
+	//	if (ent->svflags & SVF_GIB) // Knightmare- gibs aren't destoyed by splash damage
 	//		continue;
 
 		VectorAdd (ent->mins, ent->maxs, v);

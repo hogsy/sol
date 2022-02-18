@@ -115,7 +115,7 @@ void gib_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, v
 	G_FreeEdict(self);
 }
 
-void ThrowGib(edict_t *self, char *gibname, int damage, int type, float livetime)
+void ThrowGib (edict_t *self, char *gibname, int damage, int type, float livetime)
 {
 	edict_t *gib;
 	vec3_t	vd;
@@ -169,7 +169,7 @@ void ThrowGib(edict_t *self, char *gibname, int damage, int type, float livetime
 	gi.linkentity(gib);
 }
 
-void ThrowHead(edict_t *self, char *gibname, int damage, int type)
+void ThrowHead (edict_t *self, char *gibname, int damage, int type)
 {
 	vec3_t	vd;
 	float	vscale;
@@ -219,7 +219,7 @@ void ThrowHead(edict_t *self, char *gibname, int damage, int type)
 }
 
 
-void ThrowClientHead(edict_t *self, int damage)
+void ThrowClientHead (edict_t *self, int damage)
 {
 	vec3_t	vd;
 	char	*gibname;
@@ -249,11 +249,10 @@ void ThrowClientHead(edict_t *self, int damage)
 	VectorSet(self->maxs, 16.0, 16.0, 16.0);
 
 	self->takedamage = DAMAGE_NO;
-	self->solid = SOLID_NOT;
+	self->solid = SOLID_NOT;	// Knightmare- don't use SOLID_TRIGGER, as SVF_GIB can't force removal from the body queue
 	self->s.effects = EF_GIB;
 	self->s.sound = 0;
 	self->flags |= FL_NO_KNOCKBACK;
-	self->svflags |= SVF_GIB; // Knightmare- added gib flag
 
 //CW++
 	if (self->disintegrated)
@@ -290,7 +289,7 @@ void debris_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 	G_FreeEdict(self);
 }
 
-void ThrowDebris(edict_t *self, char *modelname, float speed, vec3_t origin)
+void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin)
 {
 	edict_t	*chunk;
 	vec3_t	v;

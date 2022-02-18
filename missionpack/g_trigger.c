@@ -1844,7 +1844,7 @@ void WriteTransitionEdict (FILE *f, edict_t *changelevel, edict_t *ent)
 	}
 	if (e.classname &&
 	   ( !Q_stricmp(e.classname,"misc_actor") || strstr(e.classname,"monster_") ) &&
-	   //Knightmare- changed this from a gib_health check, to take into account no_gib monsters
+	   // Knightmare- changed this from a gib_health check, to take into account no_gib monsters
 	   (e.svflags & SVF_GIB) )
 		e.classname = "gibhead";
 	WriteEdict(f,&e);

@@ -1337,8 +1337,8 @@ qboolean SV_Push (edict_t *pusher, vec3_t move, vec3_t amove)
 				pushed_p--;
 				continue;
 			}
-			//gi.dprintf("#3 ent is inside pusher's next position, PINCH!!!\n");
-			if (check->svflags & SVF_GIB) //Knightmare- gibs don't block
+		//	gi.dprintf("#3 ent is inside pusher's next position, PINCH!!!\n");
+			if (check->svflags & SVF_GIB) // Knightmare- gibs don't block
 			{
 				G_FreeEdict(check);
 				pushed_p--;

@@ -1894,7 +1894,7 @@ int FMOD_PlaySound(edict_t *ent);
 void FMOD_UpdateListenerPos();
 void FMOD_UpdateSpeakerPos(edict_t *speaker);
 qboolean FMOD_Init();
-//Knightmare- this is now handled client-side
+// Knightmare- this is now handled client-side
 #ifdef FMOD_FOOTSTEPS
 void FootStep(edict_t *ent);
 void PlayFootstep(edict_t *ent, footstep_t index);
