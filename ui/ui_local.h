@@ -684,6 +684,10 @@ void UI_SetMenuStatusBar (menuFramework_s *s, const char *string);
 void UI_SetMenuCurrentItemStatusBar (menuFramework_s *m, const char *string);
 int	 UI_TallyMenuSlots (menuFramework_s *menu);
 
+qboolean UI_ItemInAssetList (const char *check, int num, const char **list);
+void UI_InsertInAssetList (char **list, const char *insert, int len, int start, qboolean frontInsert);
+void UI_FreeAssetList (char **list, int n);
+
 void UIStartSPGame (void);
 void UI_StartServer (char *startmap, qboolean dedicated);
 void UI_LoadMod (char *modName);

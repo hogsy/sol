@@ -3047,7 +3047,6 @@ void FS_InsertInList (char **list, const char *insert, int len, int start)
 
 	if (!list || !insert) return;
 	if (len < 1 || start < 0) return;
-//	if (start >= len) return;
 	if (start > len) return;
 
 	for (i=start; i<len; i++)

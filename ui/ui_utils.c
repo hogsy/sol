@@ -53,11 +53,11 @@ void FreeFileList (char **list, int n)
 	{
 		if (list && list[i])
 		{
-			free(list[i]);
+			free (list[i]);
 			list[i] = 0;
 		}
 	}
-	free(list);
+	free (list);
 }
 
 /*
@@ -500,9 +500,9 @@ void UI_GetVideoModes (void)
 		}
 	}
 	// allocate lists
-	ui_resolution_names = malloc ((numModes+2) * sizeof(char *));
+	ui_resolution_names = malloc((numModes+2) * sizeof(char *));
+	ui_video_modes = malloc((numModes+2) * sizeof(char *));
 	memset (ui_resolution_names, 0, (numModes+2) * sizeof(char *));
-	ui_video_modes = malloc ((numModes+2) * sizeof(char *));
 	memset (ui_video_modes, 0, (numModes+2) * sizeof(char *));
 
 	// add custom resolution item
@@ -575,8 +575,8 @@ UI_FreeVideoModes
 void UI_FreeVideoModes (void)
 {
 	if (ui_num_video_modes > 0) {
-		FS_FreeFileList (ui_resolution_names, ui_num_video_modes);
-		FS_FreeFileList (ui_video_modes, ui_num_video_modes);
+		UI_FreeAssetList (ui_resolution_names, ui_num_video_modes);
+		UI_FreeAssetList (ui_video_modes, ui_num_video_modes);
 	}
 	ui_resolution_names = NULL;
 	ui_video_modes = NULL;
@@ -610,9 +610,9 @@ void UI_GetAnisoValues (void)
 		numValues = 5;
 
 	// allocate lists
-	ui_aniso_names = malloc ((numValues+1) * sizeof(char *));
+	ui_aniso_names = malloc((numValues+1) * sizeof(char *));
+	ui_aniso_values = malloc((numValues+1) * sizeof(char *));
 	memset (ui_aniso_names, 0, (numValues+1) * sizeof(char *));
-	ui_aniso_values = malloc ((numValues+1) * sizeof(char *));
 	memset (ui_aniso_values, 0, (numValues+1) * sizeof(char *));
 
 	// set names and values
@@ -637,8 +637,8 @@ UI_FreeAnisoValues
 void UI_FreeAnisoValues (void)
 {
 	if (ui_num_aniso_values > 0) {
-		FS_FreeFileList (ui_aniso_names, ui_num_aniso_values);
-		FS_FreeFileList (ui_aniso_values, ui_num_aniso_values);
+		UI_FreeAssetList (ui_aniso_names, ui_num_aniso_values);
+		UI_FreeAssetList (ui_aniso_values, ui_num_aniso_values);
 	}
 	ui_aniso_names = NULL;
 	ui_aniso_values = NULL;
@@ -703,8 +703,8 @@ void UI_BuildModList (void)
 
 	ui_mod_names = malloc(sizeof(char *) * (UI_MAX_MODS+1));
 	ui_mod_values = malloc(sizeof(char *) * (UI_MAX_MODS+1));
-	memset(ui_mod_names, 0, sizeof(char *) * (UI_MAX_MODS+1));
-	memset(ui_mod_values, 0, sizeof(char *) * (UI_MAX_MODS+1));
+	memset (ui_mod_names, 0, sizeof(char *) * (UI_MAX_MODS+1));
+	memset (ui_mod_values, 0, sizeof(char *) * (UI_MAX_MODS+1));
 
 	// add baseq2 first
 	ui_mod_names[0] = strdup("Quake II (vanilla)"); 
@@ -803,11 +803,11 @@ void UI_BuildModList (void)
 		else
 			Q_strncpyz(modFormatedName, sizeof(modFormatedName), modName);
 
-		if (!FS_ItemInList(modDir, count, ui_mod_values))
+		if ( !UI_ItemInAssetList(modDir, count, ui_mod_values) )
 		{
-		//	FS_InsertInList (ui_mod_names, modName, count, 1);	// start=1 so first item stays first!
-			FS_InsertInList (ui_mod_names, modFormatedName, count, 1);	// start=1 so first item stays first!
-			FS_InsertInList (ui_mod_values, modDir, count, 1);	// start=1 so first item stays first!
+		//	UI_InsertInAssetList (ui_mod_names, modName, count, 1, false);	// start=1 so first item stays first!
+			UI_InsertInAssetList (ui_mod_names, modFormatedName, count, 1, false);	// start=1 so first item stays first!
+			UI_InsertInAssetList (ui_mod_values, modDir, count, 1, false);	// start=1 so first item stays first!
 			count++;
 			ui_mod_isUnsupported[count] = unsupportedMod;
 		}
@@ -840,8 +840,8 @@ UI_FreeModList
 void UI_FreeModList (void)
 {
 	if (ui_num_mods > 0) {
-		FS_FreeFileList (ui_mod_names, ui_num_mods);
-		FS_FreeFileList (ui_mod_values, ui_num_mods);
+		UI_FreeAssetList (ui_mod_names, ui_num_mods);
+		UI_FreeAssetList (ui_mod_values, ui_num_mods);
 	}
 	ui_mod_names = NULL;
 	ui_mod_values = NULL;
@@ -852,43 +852,10 @@ void UI_FreeModList (void)
 /*
 =======================================================================
 
-	GENERIC ASSET LIST LOADING
+	GENERIC ASSET LIST LOADING / MANAGEMENT
 
 =======================================================================
 */
-
-/*
-==========================
-UI_InsertInAssetList
-==========================
-*/
-void UI_InsertInAssetList (char **list, char *insert, int len, int start)
-{
-	int i, j;
-
-	if (!list || !insert) return;
-	if (start < 0) return;
-//	if (start >= len) return;
-	if (start > len) return;
-
-	// i=start so default stays first!
-	for (i=start; i<len; i++)
-	{
-		if (!list[i])
-			break;
-
-		if (strcmp( list[i], insert ))
-		{
-			for (j=len; j>i; j--)
-				list[j] = list[j-1];
-
-			list[i] = strdup(insert);
-			return;
-		}
-	}
-	list[len] = strdup(insert);
-}
-
 
 /*
 ==========================
@@ -912,7 +879,7 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 		return NULL;
 
 	list = malloc(sizeof(char *) * (maxItems+1));
-	memset(list, 0, sizeof(char *) * (maxItems+1));
+	memset (list, 0, sizeof(char *) * (maxItems+1));
 
 	// set first item name
 	list[0] = strdup(firstItem); 
@@ -937,10 +904,10 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 		}
 		curItem = p;
 
-		if (!FS_ItemInList(curItem, nItemNames, list))
+		if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
 		{
-			// UI_InsertInAssetList (frontInsert) not needed due to sorting in FS_GetFileList()
-			FS_InsertInList (list, curItem, nItemNames, 1);	// start=1 so first item stays first!
+			// frontInsert not needed due to sorting in FS_GetFileList()
+			UI_InsertInAssetList (list, curItem, nItemNames, 1, false);	// start=1 so first item stays first!
 			nItemNames++;
 		}
 		
@@ -972,12 +939,9 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 			}
 			curItem = p;
 
-			if (!FS_ItemInList(curItem, nItemNames, list))
+			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
 			{
-				if (frontInsert)
-					UI_InsertInAssetList (list, curItem, nItemNames, 1);	// start=1 so first item stays first!
-				else
-					FS_InsertInList (list, curItem, nItemNames, 1);	// start=1 so first item stays first!
+				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
 				nItemNames++;
 			}
 			
@@ -1011,12 +975,9 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 			}
 			curItem = p;
 
-			if (!FS_ItemInList(curItem, nItemNames, list))
+			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
 			{
-				if (frontInsert)
-					UI_InsertInAssetList (list, curItem, nItemNames, 1);	// start=1 so first item stays first!
-				else
-					FS_InsertInList (list, curItem, nItemNames, 1);	// start=1 so first item stays first!
+				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
 				nItemNames++;
 			}
 			
@@ -1038,6 +999,94 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 		*returnCount = nItemNames;
 
 	return list;		
+}
+
+/*
+=================
+UI_ItemInAssetList
+=================
+*/
+qboolean UI_ItemInAssetList (const char *check, int num, const char **list)
+{
+	int		i;
+
+	if (!check || !list)
+		return false;
+	for (i=0; i<num; i++)
+	{
+		if (!list[i])
+			continue;
+		if ( !Q_strcasecmp((char *)check, (char *)list[i]) )
+			return true;
+	}
+	return false;
+}
+
+
+/*
+==========================
+UI_InsertInAssetList
+==========================
+*/
+void UI_InsertInAssetList (char **list, const char *insert, int len, int start, qboolean frontInsert)
+{
+	int i, j;
+
+	if ( !list || !insert )	return;
+	if ( !frontInsert && (len < 1) )	return;
+	if (start < 0)	return;
+	if (start > len)	return;
+
+	if (frontInsert)
+	{
+		for (i=start; i<len; i++)	// i=start so default stays first!
+		{
+			if (!list[i])
+				break;
+
+			if (strcmp( list[i], insert ))
+			{
+				for (j=len; j>i; j--)
+					list[j] = list[j-1];
+
+				list[i] = strdup(insert);
+				return;
+			}
+		}
+	}
+	else
+	{
+		for (i=start; i<len; i++)	// i=start so default stays first!
+		{
+			if (!list[i])
+			{
+				list[i] = strdup(insert);
+				return;
+			}
+		}
+	}
+	list[len] = strdup(insert);
+}
+
+
+/*
+=================
+UI_FreeAssetList
+=================
+*/
+void UI_FreeAssetList (char **list, int n)
+{
+	int i;
+
+	for (i = 0; i < n; i++)
+	{
+		if (list && list[i])
+		{
+			free (list[i]);
+			list[i] = 0;
+		}
+	}
+	free (list);
 }
 
 /*
@@ -1082,7 +1131,7 @@ UI_FreeFontNames
 void UI_FreeFontNames (void)
 {
 	if (ui_numfonts > 0) {
-		FS_FreeFileList (ui_font_names, ui_numfonts);
+		UI_FreeAssetList (ui_font_names, ui_numfonts);
 	}
 	ui_font_names = NULL;
 	ui_numfonts = 0;
@@ -1137,7 +1186,7 @@ UI_FreeHudNames
 void UI_FreeHudNames (void)
 {
 	if (ui_numhuds > 0){
-		FS_FreeFileList (ui_hud_names, ui_numhuds);
+		UI_FreeAssetList (ui_hud_names, ui_numhuds);
 	}
 	ui_hud_names = NULL;
 	ui_numhuds = 0;
@@ -1243,12 +1292,12 @@ void UI_LoadCrosshairs (void)
 	ui_crosshair_names = UI_LoadAssetList ("pics", "ch*.*", "none", &ui_numcrosshairs, UI_MAX_CROSSHAIRS, true, false, UI_IsValidCrosshairName);
 	UI_SortCrosshairs (ui_crosshair_names, ui_numcrosshairs);
 
-	ui_crosshair_display_names = malloc( sizeof(char *) * (UI_MAX_CROSSHAIRS+1) );
-	memcpy(ui_crosshair_display_names, ui_crosshair_names, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+	ui_crosshair_display_names = malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+	memcpy (ui_crosshair_display_names, ui_crosshair_names, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 	ui_crosshair_display_names[0] = strdup("chnone");
 
-	ui_crosshair_values  = malloc( sizeof(char *) * (UI_MAX_CROSSHAIRS+1) );
-	memset(ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1) );
+	ui_crosshair_values = malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+	memset (ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 
 	for (i=0; i<ui_numcrosshairs; i++)
 		ui_crosshair_values[i] = (i == 0) ? strdup("0") : strdup(strtok(ui_crosshair_names[i], "ch")); 
@@ -1264,7 +1313,7 @@ void UI_FreeCrosshairs (void)
 {
 	if (ui_numcrosshairs > 0)
 	{
-		FS_FreeFileList (ui_crosshair_names, ui_numcrosshairs);
+		UI_FreeAssetList (ui_crosshair_names, ui_numcrosshairs);
 		if (ui_crosshair_display_names)
 		{
 			if (ui_crosshair_display_names[0]) {
@@ -1272,7 +1321,7 @@ void UI_FreeCrosshairs (void)
 			}
 			free (ui_crosshair_display_names);
 		}
-		FS_FreeFileList (ui_crosshair_values, ui_numcrosshairs);
+		UI_FreeAssetList (ui_crosshair_values, ui_numcrosshairs);
 	}
 	ui_crosshair_names = NULL;
 	ui_crosshair_display_names = NULL;
@@ -2174,14 +2223,14 @@ void UI_LoadArenas (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_arena_mapnames[i])
-			FS_FreeFileList (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
+			UI_FreeAssetList (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
 		ui_svr_arena_nummaps[i] = 0;
-		ui_svr_arena_mapnames[i] = malloc( sizeof( char * ) * MAX_ARENAS );
-		memset( ui_svr_arena_mapnames[i], 0, sizeof( char * ) * MAX_ARENAS );
+		ui_svr_arena_mapnames[i] = malloc(sizeof(char *) * MAX_ARENAS);
+		memset (ui_svr_arena_mapnames[i], 0, sizeof(char *) * MAX_ARENAS);
 	}
 
-	tmplist = malloc( sizeof( char * ) * MAX_ARENAS );
-	memset( tmplist, 0, sizeof( char * ) * MAX_ARENAS );
+	tmplist = malloc(sizeof(char *) * MAX_ARENAS);
+	memset (tmplist, 0, sizeof(char *) * MAX_ARENAS);
 
 #if 1
 	arenafiles = FS_GetFileList ("scripts", "arena", &narenas);
@@ -2196,7 +2245,7 @@ void UI_LoadArenas (void)
 
 		p = arenafiles[i];
 
-		if (!FS_ItemInList(p, narenanames, tmplist)) // check if already in list
+		if ( !UI_ItemInAssetList(p, narenanames, tmplist) ) // check if already in list
 		{
 			if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 			{
@@ -2228,14 +2277,13 @@ void UI_LoadArenas (void)
 					if (type_supported[j]) {
 						nameSize = strlen(scratch) + 1;
 						ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-					//	strncpy(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], scratch);
 						Q_strncpyz (ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
 						ui_svr_arena_nummaps[j]++;
 					}
 
 			//	Com_Printf ("UI_LoadArenas: successfully loaded arena file %s: mapname: %s levelname: %s gametypes: %s\n", p, shortname, longname, gametypes);
 				narenanames++;
-				FS_InsertInList(tmplist, p, narenanames, 0); // add to list
+				UI_InsertInAssetList (tmplist, p, narenanames, 0, false); // add to list
 			}
 		}
 	}
@@ -2260,7 +2308,7 @@ void UI_LoadArenas (void)
 
 			p = arenafiles[i] + strlen(path) + 1;	// skip over path and next slash
 
-			if (!FS_ItemInList(p, narenanames, tmplist)) // check if already in list
+			if ( !UI_ItemInAssetList(p, narenanames, tmplist) ) // check if already in list
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
@@ -2291,14 +2339,13 @@ void UI_LoadArenas (void)
 						if (type_supported[j]) {
 							nameSize = strlen(scratch) + 1;
 							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-						//	strncpy(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], scratch);
 							Q_strncpyz(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
 				//	Com_Printf ("UI_LoadArenas: successfully loaded arena file %s: mapname: %s levelname: %s gametypes: %s\n", p, shortname, longname, gametypes);
 					narenanames++;
-					FS_InsertInList(tmplist, p, narenanames, 0); // add to list
+					UI_InsertInAssetList (tmplist, p, narenanames, 0, false); // add to list
 				}			
 			}
 		}
@@ -2324,7 +2371,7 @@ void UI_LoadArenas (void)
 
 			p = arenafiles[i];
 
-			if (!FS_ItemInList(p, narenanames, tmplist)) // check if already in list
+			if ( !UI_ItemInAssetList(p, narenanames, tmplist) ) // check if already in list
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
@@ -2355,14 +2402,13 @@ void UI_LoadArenas (void)
 						if (type_supported[j]) {
 							nameSize = strlen(scratch) + 1;
 							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-						//	strncpy(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], scratch);
 							Q_strncpyz(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
-					//Com_Printf ("UI_LoadArenas: successfully loaded arena file %s: mapname: %s levelname: %s gametypes: %s\n", p, shortname, longname, gametypes);
+				//	Com_Printf ("UI_LoadArenas: successfully loaded arena file %s: mapname: %s levelname: %s gametypes: %s\n", p, shortname, longname, gametypes);
 					narenanames++;
-					FS_InsertInList(tmplist, strdup(p), narenanames, 0); // add to list
+					UI_InsertInAssetList (tmplist, p, narenanames, 0, false); // add to list
 				}
 			}
 		}
@@ -2373,7 +2419,7 @@ void UI_LoadArenas (void)
 		FS_FreeFileList (arenafiles, narenas);
 
 	if (narenanames)
-		FS_FreeFileList (tmplist, narenanames);
+		UI_FreeAssetList (tmplist, narenanames);
 
 	for (i=0; i<NUM_MAPTYPES; i++)
 		UI_SortArenas (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
@@ -2401,7 +2447,7 @@ void UI_LoadMapList (void)
 	// free existing list
 	//
 	if (ui_svr_listfile_mapnames)
-		FS_FreeFileList (ui_svr_listfile_mapnames, ui_svr_listfile_nummaps);
+		UI_FreeAssetList (ui_svr_listfile_mapnames, ui_svr_listfile_nummaps);
 	ui_svr_listfile_nummaps = 0;
 
 	//
@@ -2422,8 +2468,8 @@ void UI_LoadMapList (void)
 		length = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 #endif
-		buffer = malloc( length );
-		fread( buffer, length, 1, fp );
+		buffer = malloc(length);
+		fread (buffer, length, 1, fp);
 	}
 
 	s = buffer;
@@ -2442,8 +2488,8 @@ void UI_LoadMapList (void)
 		buffer = "base1 \"Outer Base\"\n";
 	}
 
-	ui_svr_listfile_mapnames = malloc( sizeof( char * ) * ( ui_svr_listfile_nummaps + 1 ) );
-	memset( ui_svr_listfile_mapnames, 0, sizeof( char * ) * ( ui_svr_listfile_nummaps + 1 ) );
+	ui_svr_listfile_mapnames = malloc(sizeof(char *) * (ui_svr_listfile_nummaps + 1));
+	memset (ui_svr_listfile_mapnames, 0, sizeof(char *) * (ui_svr_listfile_nummaps + 1));
 
 	s = buffer;
 
@@ -2459,8 +2505,7 @@ void UI_LoadMapList (void)
 		Q_strncpyz (longname, sizeof(longname), COM_Parse(&s));
 		Com_sprintf (scratch, sizeof( scratch ), "%s\n%s", longname, shortname);
 		nameSize = strlen(scratch) + 1;
-		ui_svr_listfile_mapnames[i] = malloc( nameSize );
-	//	strncpyz( ui_svr_listfile_mapnames[i], scratch );
+		ui_svr_listfile_mapnames[i] = malloc(nameSize);
 		Q_strncpyz (ui_svr_listfile_mapnames[i], nameSize, scratch);
 	}
 	ui_svr_listfile_mapnames[ui_svr_listfile_nummaps] = 0;
@@ -2468,7 +2513,7 @@ void UI_LoadMapList (void)
 	if ( fp != 0 )
 	{
 		fp = 0;
-		free( buffer );
+		free ( buffer );
 	}
 	else
 		FS_FreeFile( buffer );
@@ -2483,8 +2528,8 @@ void UI_LoadMapList (void)
 		}
 		ui_svr_maplists[i] = NULL;
 		ui_svr_maplist_sizes[i] = ui_svr_listfile_nummaps + ui_svr_arena_nummaps[i];
-		ui_svr_maplists[i] = malloc( sizeof( char * ) * (ui_svr_maplist_sizes[i] + 1) );
-		memset( ui_svr_maplists[i], 0, sizeof( char * ) * (ui_svr_maplist_sizes[i] + 1) );
+		ui_svr_maplists[i] = malloc(sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
+		memset (ui_svr_maplists[i], 0, sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
 
 		for (j = 0; j < ui_svr_maplist_sizes[i]; j++)
 		{
@@ -2528,7 +2573,7 @@ void UI_FreeMapList (void)
 	// free list from file
 	//
 	if (ui_svr_listfile_mapnames) {
-		FS_FreeFileList (ui_svr_listfile_mapnames, ui_svr_listfile_nummaps);
+		UI_FreeAssetList (ui_svr_listfile_mapnames, ui_svr_listfile_nummaps);
 	}
 	ui_svr_listfile_mapnames = NULL;
 	ui_svr_listfile_nummaps = 0;
@@ -2539,7 +2584,7 @@ void UI_FreeMapList (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_arena_mapnames[i]) {
-			FS_FreeFileList (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
+			UI_FreeAssetList (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
 		}
 		ui_svr_arena_mapnames[i] = NULL;
 		ui_svr_arena_nummaps[i] = 0;
@@ -2573,13 +2618,13 @@ void UI_BuildStartSeverLevelshotTables (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{	// free existing list	
 		if (ui_svr_mapshotvalid[i]) {
-			free(ui_svr_mapshotvalid[i]);
+			free (ui_svr_mapshotvalid[i]);
 			ui_svr_mapshotvalid[i] = NULL;
 		}
 
 		// alloc and zero new list
-		ui_svr_mapshotvalid[i] = malloc( sizeof( byte ) * ( ui_svr_maplist_sizes[i] + 1 ) );
-		memset( ui_svr_mapshotvalid[i], 0, sizeof( byte ) * ( ui_svr_maplist_sizes[i] + 1 ) );
+		ui_svr_mapshotvalid[i] = malloc(sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
+		memset (ui_svr_mapshotvalid[i], 0, sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
 
 		// register null levelshot
 		if (ui_svr_mapshotvalid[i][ui_svr_maplist_sizes[i]] == M_UNSET) {	
@@ -2604,7 +2649,7 @@ void UI_FreeStartSeverLevelshotTables (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_mapshotvalid[i]) {
-			free(ui_svr_mapshotvalid[i]);
+			free (ui_svr_mapshotvalid[i]);
 			ui_svr_mapshotvalid[i] = NULL;
 		}
 	}
@@ -2873,7 +2918,7 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			Q_strncatz(scratch, sizeof(scratch), "/tris.md2");
 			if ( !Sys_FindFirst(scratch, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
 			{
-				free(dirnames[i]);
+				free (dirnames[i]);
 				dirnames[i] = 0;
 				Sys_FindClose();
 				continue;
@@ -2887,7 +2932,7 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 
 			if (!imagenames)
 			{
-				free(dirnames[i]);
+				free (dirnames[i]);
 				dirnames[i] = 0;
 				continue;
 			}
@@ -2911,9 +2956,9 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			Q_strncpyz(ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
 
 			skinnames = malloc(sizeof(char *) * (nskins+1));
-			memset(skinnames, 0, sizeof(char *) * (nskins+1));
 			skiniconnames = malloc(sizeof(char *) * (nskins+1));
-			memset(skiniconnames, 0, sizeof(char *) * (nskins+1));
+			memset (skinnames, 0, sizeof(char *) * (nskins+1));
+			memset (skiniconnames, 0, sizeof(char *) * (nskins+1));
 
 			// copy the valid skins
 			if (nimagefiles)
@@ -2979,8 +3024,8 @@ void UI_BuildPlayerColorList (void)
 
 	ui_player_color_values = malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
 	ui_player_color_imageNames = malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
-	memset(ui_player_color_values, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
-	memset(ui_player_color_imageNames, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+	memset (ui_player_color_values, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+	memset (ui_player_color_imageNames, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
 
 	for (i = 0; i < UI_NUM_PLAYER_COLORS; i++)
 	{	// last index is custom color
@@ -3018,27 +3063,31 @@ UI_FreePlayerModels
 */
 void UI_FreePlayerModels (void)
 {
-	int		i;
+	int		i, j;
 
 	for (i = 0; i < ui_numplayermodels; i++)
 	{
-		int j;
-
 		for (j = 0; j < ui_pmi[i].nskins; j++)
 		{
 			if (ui_pmi[i].skinDisplayNames[j])
-				free(ui_pmi[i].skinDisplayNames[j]);
+				free (ui_pmi[i].skinDisplayNames[j]);
 			ui_pmi[i].skinDisplayNames[j] = NULL;
+			if (ui_pmi[i].skinIconNames[j])
+				free (ui_pmi[i].skinIconNames[j]);
+			ui_pmi[i].skinIconNames[j] = NULL;
 		}
-		free(ui_pmi[i].skinDisplayNames);
+		free (ui_pmi[i].skinDisplayNames);
+		free (ui_pmi[i].skinIconNames);
 		ui_pmi[i].skinDisplayNames = NULL;
+		ui_pmi[i].skinIconNames = NULL;
 		ui_pmi[i].nskins = 0;
 	}
+	ui_numplayermodels = 0;
 
 /*	if (ui_numplayercolors > 0)
 	{
-		FS_FreeFileList (ui_player_color_values, ui_numplayercolors);
-		FS_FreeFileList (ui_player_color_imageNames, ui_numplayercolors);
+		UI_FreeAssetList (ui_player_color_values, ui_numplayercolors);
+		UI_FreeAssetList (ui_player_color_imageNames, ui_numplayercolors);
 	}
 	ui_player_color_values = NULL;
 	ui_player_color_imageNames = NULL;
@@ -3127,9 +3176,9 @@ void UI_InitPlayerModelInfo (int *modelNum, int *skinNum)
 		Q_strncpyz(currentskin, sizeof(currentskin), "grunt");
 	}
 
-	qsort( ui_pmi, ui_numplayermodels, sizeof( ui_pmi[0] ), UI_PlayerModelCmpFunc );
+	qsort (ui_pmi, ui_numplayermodels, sizeof(ui_pmi[0]), UI_PlayerModelCmpFunc);
 
-	memset( ui_pmnames, 0, sizeof( ui_pmnames ) );
+	memset (ui_pmnames, 0, sizeof(ui_pmnames));
 	for (i = 0; i < ui_numplayermodels; i++)
 	{
 		ui_pmnames[i] = ui_pmi[i].displayname;
