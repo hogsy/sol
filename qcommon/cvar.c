@@ -438,10 +438,10 @@ void Cvar_SetDescription (char *var_name, char *description)
 		return;
 	}
 	if (var->description) {
-		free(var->description);
+		Z_Free (var->description);
 	}
 	if ( description && (strlen(description) > 1) ) {
-		var->description = strdup(description);
+		var->description = CopyString (description);
 	}
 }
 

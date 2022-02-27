@@ -1185,8 +1185,8 @@ char **FS_ListPak (const char *find, int *num)
 		}
 	}
 
-	list = malloc( sizeof( char * ) * nfiles );
-	memset( list, 0, sizeof( char * ) * nfiles );
+	list = malloc(sizeof(char *) * nfiles);
+	memset(list, 0, sizeof(char *) * nfiles);
 
 	for (search = fs_searchPaths; search; search = search->next)
 	{
@@ -1725,7 +1725,7 @@ void FS_FreeFile (void *buffer)
 		FS_DPrintf("FS_FreeFile: NULL buffer\n");
 		return;
 	}
-	Z_Free(buffer);
+	Z_Free (buffer);
 }
 
 // Some incompetently packaged mods have these files in their paks!
@@ -2446,12 +2446,12 @@ void FS_Startup (void)
 				if (pack->pk3)
 					unzClose(pack->pk3);
 
-				Z_Free(pack->files);
-				Z_Free(pack);
+				Z_Free (pack->files);
+				Z_Free (pack);
 			}
 
 			next = fs_searchPaths->next;
-			Z_Free(fs_searchPaths);
+			Z_Free (fs_searchPaths);
 			fs_searchPaths = next;
 		}
 
@@ -2669,11 +2669,11 @@ void FS_Shutdown (void)
 			if (pack->pk3)
 				unzClose(pack->pk3);
 
-			Z_Free(pack->files);
-			Z_Free(pack);
+			Z_Free (pack->files);
+			Z_Free (pack);
 		}
 		next = fs_searchPaths->next;
-		Z_Free(fs_searchPaths);
+		Z_Free (fs_searchPaths);
 		fs_searchPaths = next;
 	}
 }
@@ -2973,8 +2973,8 @@ char **FS_ListFiles (const char *findname, int *numfiles, unsigned musthave, uns
 	nfiles++; // add space for a guard
 	*numfiles = nfiles;
 
-	list = malloc( sizeof( char * ) * nfiles );
-	memset( list, 0, sizeof( char * ) * nfiles );
+	list = malloc(sizeof(char *) * nfiles);
+	memset(list, 0, sizeof(char *) * nfiles);
 
 	s = Sys_FindFirst( (char *)findname, musthave, canthave );
 	nfiles = 0;

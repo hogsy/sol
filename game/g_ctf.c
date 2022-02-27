@@ -5948,7 +5948,7 @@ void CTFPlayerList(edict_t *ent)
 }
 
 
-void CTFWarp(edict_t *ent)
+void CTFWarp (edict_t *ent)
 {
 	char text[1024];
 	char *mlist, *token;
@@ -5979,7 +5979,8 @@ void CTFWarp(edict_t *ent)
 	free(mlist);
 
 
-	if (ent->client->resp.admin) {
+	if (ent->client->resp.admin)
+	{
 		safe_bprintf(PRINT_HIGH, "%s is warping to level %s.\n", 
 			ent->client->pers.netname, gi.argv(1));
 	//	strncpy(level.forcemap, gi.argv(1), sizeof(level.forcemap) - 1);

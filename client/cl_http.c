@@ -543,7 +543,7 @@ void CL_SetHTTPServer (const char *URL)
 
 	// from YQ2: remove trailing '/' from URL
 	URLlen = strlen(URL);
-	fixedURL = strdup(URL);
+	fixedURL = CopyString ((char *)URL);
 	if (fixedURL[URLlen-1] == '/') {
 		fixedURL[URLlen-1] = '\0';
 	}
@@ -555,7 +555,7 @@ void CL_SetHTTPServer (const char *URL)
 	}
 
 	Q_strncpyz (cls.downloadServer, sizeof(cls.downloadServer), fixedURL);
-	free(fixedURL);
+	Z_Free (fixedURL);
 	fixedURL = NULL;
 
 	// FS: Added because Whale's Weapons HTTP server rejects you after a lot of 404s.  Then you lose HTTP until a hard reconnect.

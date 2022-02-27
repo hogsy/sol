@@ -1241,8 +1241,6 @@ void COM_AddParm (char *parm)
 }
 
 
-
-
 /// just for debugging
 int	memsearch (byte *start, int count, int search)
 {
