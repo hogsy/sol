@@ -1229,7 +1229,7 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 // rarely and for large blocks of memory.  After about 185-190 VirtualAlloc()
 // reserve calls are made on Win7 x64, the subsequent call fails.  Bad Carmack, bad!
 
-// These ModChunk_ functions are a replacement that wrap around malloc()/free()
+// These ModChunk_ functions are a replacement that wrap around Z_Malloc()/Z_Free()
 // and return pointers into sections aligned on cache lines.
 // The only caveat is that the allocation size passed to ModChunk_Begin() is
 // immediately allocated, not reserved.  Calling it with a maximum memory size
@@ -1250,7 +1250,7 @@ void *ModChunk_Begin (size_t maxsize)
 	modChunkCurSize = 0;
 	modChunkMaxSize = maxsize;
 
-	modChunkMemBase = malloc (maxsize);
+	modChunkMemBase = Z_Malloc (maxsize);
 
 	if (!modChunkMemBase)
 		Sys_Error ("ModChunk_Begin: malloc of size %i failed, %i chunks already allocated", maxsize, modChunkCount);
@@ -1284,7 +1284,7 @@ size_t ModChunk_End (void)
 void ModChunk_Free (void *base)
 {
 	if ( base )
-		free (base);
+		Z_Free (base);
 
 	modChunkCount--;
 }

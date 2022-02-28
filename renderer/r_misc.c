@@ -579,7 +579,7 @@ void R_ScaledScreenshot (char *name)
 	if (!jpgdata)	return;
 
 	// Resize grabbed screen
-	R_ResampleShot(saveshotdata, grab_width, vid.height, jpgdata, saveshotWidth, saveshotHeight);
+	R_ResampleShot (saveshotdata, grab_width, vid.height, jpgdata, saveshotWidth, saveshotHeight);
 
 	// Open the file for Binary Output
 	Com_sprintf (shotname, sizeof(shotname), "%s", name);
@@ -592,39 +592,39 @@ void R_ScaledScreenshot (char *name)
 
 	// Initialise the JPEG compression object
 	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress(&cinfo);
-	jpeg_stdio_dest(&cinfo, file);
+	jpeg_create_compress (&cinfo);
+	jpeg_stdio_dest (&cinfo, file);
 
 	// Setup JPEG Parameters
 	cinfo.image_width = saveshotWidth; //256;
 	cinfo.image_height = saveshotHeight; //256;
 	cinfo.in_color_space = JCS_RGB;
 	cinfo.input_components = 3;
-	jpeg_set_defaults(&cinfo);
-	jpeg_set_quality(&cinfo, 85, TRUE); // was 100
+	jpeg_set_defaults (&cinfo);
+	jpeg_set_quality (&cinfo, 85, TRUE); // was 100
 
 	// Start Compression
-	jpeg_start_compress(&cinfo, true);
+	jpeg_start_compress (&cinfo, true);
 
 	// Feed Scanline data
 	offset = (cinfo.image_width * cinfo.image_height * 3) - (cinfo.image_width * 3);
 	while (cinfo.next_scanline < cinfo.image_height)
 	{
 		s[0] = &jpgdata[offset - (cinfo.next_scanline * (cinfo.image_width * 3))];
-		jpeg_write_scanlines(&cinfo, s, 1);
+		jpeg_write_scanlines (&cinfo, s, 1);
 	}
 
 	// Finish Compression
-	jpeg_finish_compress(&cinfo);
+	jpeg_finish_compress (&cinfo);
 
 	// Destroy JPEG object
-	jpeg_destroy_compress(&cinfo);
+	jpeg_destroy_compress (&cinfo);
 
 	// Close File
-	fclose(file);
+	fclose (file);
 
 	// Free Reduced screenshot
-	free(jpgdata);
+	free (jpgdata);
 }
 
 
@@ -640,18 +640,18 @@ void R_GrabScreen (void)
 
 	// Free saveshot buffer first
 	if (saveshotdata)
-		free(saveshotdata);
+		Z_Free (saveshotdata);
 
 	// Round down width to nearest multiple of 4
 	grab_width = vid.width & ~3;
 	grab_x = (vid.width - grab_width) / 2;
 
 	// Allocate room for a copy of the framebuffer
-	saveshotdata = malloc(grab_width * vid.height * 3);
+	saveshotdata = Z_Malloc(grab_width * vid.height * 3);
 	if (!saveshotdata)	return;
 
 	// Read the framebuffer into our storage
-	qglReadPixels(grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, saveshotdata);
+	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, saveshotdata);
 }
 
 
@@ -721,45 +721,45 @@ void R_ScreenShot_JPG (qboolean silent)
 
 	// Read the framebuffer into our storage
 //	qglReadPixels(grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, rgbdata);
-	R_ScreenShot_Read_Buffer(grab_x, grab_width, rgbdata);
+	R_ScreenShot_Read_Buffer (grab_x, grab_width, rgbdata);
 
 	// Initialise the JPEG compression object
 	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress(&cinfo);
-	jpeg_stdio_dest(&cinfo, file);
+	jpeg_create_compress (&cinfo);
+	jpeg_stdio_dest (&cinfo, file);
 
 	// Setup JPEG Parameters
 	cinfo.image_width = grab_width;
 	cinfo.image_height = vid.height;
 	cinfo.in_color_space = JCS_RGB;
 	cinfo.input_components = 3;
-	jpeg_set_defaults(&cinfo);
+	jpeg_set_defaults (&cinfo);
 	if ((r_screenshot_jpeg_quality->integer >= 101) || (r_screenshot_jpeg_quality->integer <= 0))
-		Cvar_Set("r_screenshot_jpeg_quality", "85");
-	jpeg_set_quality(&cinfo, r_screenshot_jpeg_quality->integer, TRUE);
+		Cvar_Set ("r_screenshot_jpeg_quality", "85");
+	jpeg_set_quality (&cinfo, r_screenshot_jpeg_quality->integer, TRUE);
 
 	// Start Compression
-	jpeg_start_compress(&cinfo, true);
+	jpeg_start_compress (&cinfo, true);
 
 	// Feed Scanline data
 	offset = (cinfo.image_width * cinfo.image_height * 3) - (cinfo.image_width * 3);
-	while(cinfo.next_scanline < cinfo.image_height)
+	while (cinfo.next_scanline < cinfo.image_height)
 	{
 		s[0] = &rgbdata[offset - (cinfo.next_scanline * (cinfo.image_width * 3))];
-		jpeg_write_scanlines(&cinfo, s, 1);
+		jpeg_write_scanlines (&cinfo, s, 1);
 	}
 
 	// Finish Compression
-	jpeg_finish_compress(&cinfo);
+	jpeg_finish_compress (&cinfo);
 
 	// Destroy JPEG object
-	jpeg_destroy_compress(&cinfo);
+	jpeg_destroy_compress (&cinfo);
 
 	// Close File
-	fclose(file);
+	fclose (file);
 
 	// Free Temp Framebuffer
-	free(rgbdata);
+	free (rgbdata);
 
 	// Done!
 	if (!silent)
@@ -834,7 +834,7 @@ void R_ScreenShot_PNG (qboolean silent)
 
 	// Read the framebuffer into our storage
 //	qglReadPixels(grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, rgbdata);
-	R_ScreenShot_Read_Buffer(grab_x, grab_width, rgbdata);
+	R_ScreenShot_Read_Buffer (grab_x, grab_width, rgbdata);
 
 	png_sptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 	if (!png_sptr)
@@ -856,9 +856,9 @@ void R_ScreenShot_PNG (qboolean silent)
 //	if ( setjmp(png_sptr->jmpbuf) )
 	if ( setjmp(png_jmpbuf(png_sptr)) )
 	{
-		png_destroy_info_struct(png_sptr, &png_infoptr);
-		png_destroy_write_struct(&png_sptr, 0);
-		free(rgbdata);
+		png_destroy_info_struct (png_sptr, &png_infoptr);
+		png_destroy_write_struct (&png_sptr, 0);
+		free (rgbdata);
 		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: bad data\n"); 
 		return;
 	}
@@ -867,29 +867,29 @@ void R_ScreenShot_PNG (qboolean silent)
 	file = fopen(checkname, "wb");
 	if (!file)
 	{
-		png_destroy_info_struct(png_sptr, &png_infoptr);
+		png_destroy_info_struct (png_sptr, &png_infoptr);
 		png_destroy_write_struct (&png_sptr, 0);
-		free(rgbdata);
+		free (rgbdata);
 		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create a file\n"); 
 		return;
  	}
 
 	// encode and output
-	png_init_io(png_sptr, file);
+	png_init_io (png_sptr, file);
 	png_set_IHDR(png_sptr, png_infoptr, grab_width, vid.height, 8,
 		PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-	png_write_info(png_sptr, png_infoptr);
+	png_write_info (png_sptr, png_infoptr);
 	for (i=vid.height-1; i>=0; i--)
 	{
 		lineptr = rgbdata + i*grab_width*3;
-		png_write_row(png_sptr, lineptr);
+		png_write_row (png_sptr, lineptr);
 	}
-	png_write_end(png_sptr, png_infoptr);
+	png_write_end (png_sptr, png_infoptr);
 
 	// clean up
 	fclose (file);
-	png_destroy_info_struct(png_sptr, &png_infoptr);
-	png_destroy_write_struct(&png_sptr, 0);
+	png_destroy_info_struct (png_sptr, &png_infoptr);
+	png_destroy_write_struct (&png_sptr, 0);
 	free (rgbdata);
 
 	if (!silent)

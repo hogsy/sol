@@ -21,3 +21,4 @@ Release/
 # ignore these for obvious reasons!
 bitbucket_set_app_pwd.sh
 push_bitbucket.sh
+pull_bitbucket.sh

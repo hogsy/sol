@@ -164,8 +164,8 @@ void R_Bloom_InitBackUpTexture (int width, int height)
 {
 	byte	*data;
 	
-	data = malloc( width * height * 4 );
-	memset( data, 0, width * height * 4 );
+	data = Z_Malloc(width * height * 4);
+	memset (data, 0, width * height * 4);
 
 //	r_screenbackuptexture_size = width;
 	r_screenbackuptexture_width = width;
@@ -173,7 +173,7 @@ void R_Bloom_InitBackUpTexture (int width, int height)
 
 	r_bloombackuptexture = R_LoadPic ("***r_bloombackuptexture***", (byte *)data, width, height, it_pic, 3);
 	
-	free ( data );
+	Z_Free (data);
 }
 
 /*
@@ -212,12 +212,12 @@ void R_Bloom_InitEffectTexture (void)
 	while ( ((BLOOM_SIZE * 2) > vid.height) || ((BLOOM_SIZE * 2) > vid.width) )
 		BLOOM_SIZE /= 2;
 
-	data = malloc( BLOOM_SIZE * BLOOM_SIZE * 4 );
-	memset( data, 0, BLOOM_SIZE * BLOOM_SIZE * 4 );
+	data = Z_Malloc(BLOOM_SIZE * BLOOM_SIZE * 4);
+	memset(data, 0, BLOOM_SIZE * BLOOM_SIZE * 4);
 
 	r_bloomeffecttexture = R_LoadPic ("***r_bloomeffecttexture***", (byte *)data, BLOOM_SIZE, BLOOM_SIZE, it_pic, 3);
 	
-	free ( data );
+	Z_Free (data);
 }
 
 /*
@@ -245,10 +245,10 @@ void R_Bloom_InitTextures (void)
 
 	//init the screen texture
 	size = screen_texture_width * screen_texture_height * 4;
-	data = malloc( size );
-	memset( data, 255, size );
+	data = Z_Malloc(size);
+	memset (data, 255, size);
 	r_bloomscreentexture = R_LoadPic ("***r_bloomscreentexture***", (byte *)data, screen_texture_width, screen_texture_height, it_pic, 3);
-	free ( data );
+	Z_Free (data);
 
 	// validate bloom size and init the bloom effect texture
 	R_Bloom_InitEffectTexture ();
@@ -259,17 +259,17 @@ void R_Bloom_InitTextures (void)
 	if ( vid.width > (BLOOM_SIZE * 2) && !r_bloom_fast_sample->integer )
 	{
 		r_screendownsamplingtexture_size = (int)(BLOOM_SIZE * 2);
-		data = malloc( r_screendownsamplingtexture_size * r_screendownsamplingtexture_size * 4 );
-		memset( data, 0, r_screendownsamplingtexture_size * r_screendownsamplingtexture_size * 4 );
+		data = Z_Malloc(r_screendownsamplingtexture_size * r_screendownsamplingtexture_size * 4);
+		memset (data, 0, r_screendownsamplingtexture_size * r_screendownsamplingtexture_size * 4);
 		r_bloomdownsamplingtexture = R_LoadPic ("***r_bloomdownsamplingtexture***", (byte *)data, r_screendownsamplingtexture_size, r_screendownsamplingtexture_size, it_pic, 3);
-		free ( data );
+		Z_Free (data);
 	}
 
 	// Init the screen backup texture
 	if ( r_screendownsamplingtexture_size )
-		R_Bloom_InitBackUpTexture( r_screendownsamplingtexture_size, r_screendownsamplingtexture_size );
+		R_Bloom_InitBackUpTexture (r_screendownsamplingtexture_size, r_screendownsamplingtexture_size );
 	else
-		R_Bloom_InitBackUpTexture( BLOOM_SIZE, BLOOM_SIZE );
+		R_Bloom_InitBackUpTexture (BLOOM_SIZE, BLOOM_SIZE );
 	
 }
 
@@ -281,20 +281,20 @@ R_InitBloomTextures
 void R_InitBloomTextures (void)
 {
 
-//	r_bloom = Cvar_Get( "r_bloom", "0", CVAR_ARCHIVE );
-	r_bloom_alpha = Cvar_Get( "r_bloom_alpha", "0.25", CVAR_ARCHIVE );			// was 0.33
+//	r_bloom = Cvar_Get("r_bloom", "0", CVAR_ARCHIVE );
+	r_bloom_alpha = Cvar_Get("r_bloom_alpha", "0.25", CVAR_ARCHIVE);			// was 0.33
 	Cvar_SetDescription ("r_bloom_alpha", "Sets opacity of bloom blends.");
-	r_bloom_diamond_size = Cvar_Get( "r_bloom_diamond_size", "8", CVAR_ARCHIVE );
+	r_bloom_diamond_size = Cvar_Get("r_bloom_diamond_size", "8", CVAR_ARCHIVE);
 	Cvar_SetDescription ("r_bloom_diamond_size", "Sets size of bloom diamonds.  Accepted values are 4, 6, or 8.");
-	r_bloom_intensity = Cvar_Get( "r_bloom_intensity", "2.5", CVAR_ARCHIVE );	// was 0.6
+	r_bloom_intensity = Cvar_Get("r_bloom_intensity", "2.5", CVAR_ARCHIVE);	// was 0.6
 	Cvar_SetDescription ("r_bloom_intensity", "Sets intensity of bloom effect.");
-	r_bloom_threshold = Cvar_Get( "r_bloom_threshold", "0.68", CVAR_ARCHIVE );	// was 0.08
+	r_bloom_threshold = Cvar_Get("r_bloom_threshold", "0.68", CVAR_ARCHIVE);	// was 0.08
 	Cvar_SetDescription ("r_bloom_threshold", "Sets brightness threshold for bloom effect.");
-	r_bloom_darken = Cvar_Get( "r_bloom_darken", "5", CVAR_ARCHIVE );			// was 4
+	r_bloom_darken = Cvar_Get("r_bloom_darken", "5", CVAR_ARCHIVE);			// was 4
 	Cvar_SetDescription ("r_bloom_darken", "Sets number of darkening pass for bloom effect.");
-	r_bloom_sample_size = Cvar_Get( "r_bloom_sample_size", "256", CVAR_ARCHIVE );	// was 128
+	r_bloom_sample_size = Cvar_Get("r_bloom_sample_size", "256", CVAR_ARCHIVE);	// was 128
 	Cvar_SetDescription ("r_bloom_sample_size", "Sets sample size in pixels for bloom effect.");
-	r_bloom_fast_sample = Cvar_Get( "r_bloom_fast_sample", "0", CVAR_ARCHIVE );
+	r_bloom_fast_sample = Cvar_Get("r_bloom_fast_sample", "0", CVAR_ARCHIVE);
 	Cvar_SetDescription ("r_bloom_fast_sample", "Disables downsampling of screen buffer for bloom sampling when set to 1.");
 
 	BLOOM_SIZE = 0;
@@ -593,6 +593,9 @@ void R_SetupGL (void);
 void R_BloomBlend ( refdef_t *fd )
 {
 	if ( (fd->rdflags & RDF_NOWORLDMODEL) || !r_bloom->integer || r_showtris->integer )
+		return;
+
+	if ( r_newrefdef.foginfo.enabled )	// no blooms when fog is active
 		return;
 
 	if ( !BLOOM_SIZE )
