@@ -2945,6 +2945,7 @@ void FS_ExecAutoexec (void)
 	Sys_FindClose ();
 }
 
+
 /*
 ================
 FS_ListFiles
@@ -2995,6 +2996,7 @@ char **FS_ListFiles (const char *findname, int *numfiles, unsigned musthave, uns
 	return list;
 }
 
+
 /*
 =================
 FS_FreeFileList
@@ -3014,6 +3016,7 @@ void FS_FreeFileList (char **list, int n)
 	}
 	free(list);
 }
+
 
 /*
 =================
@@ -3036,29 +3039,6 @@ qboolean FS_ItemInList (const char *check, int num, const char **list)
 	return false;
 }
 
-/*
-=================
-FS_InsertInList
-=================
-*/
-void FS_InsertInList (char **list, const char *insert, int len, int start)
-{
-	int		i;
-
-	if (!list || !insert) return;
-	if (len < 1 || start < 0) return;
-	if (start > len) return;
-
-	for (i=start; i<len; i++)
-	{
-		if (!list[i])
-		{
-			list[i] = strdup(insert);
-			return;
-		}
-	}
-	list[len] = strdup(insert);
-}
 
 /*
 ================

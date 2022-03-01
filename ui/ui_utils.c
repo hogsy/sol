@@ -39,64 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 =======================================================================
 */
 
-#if 0
-/*
-=================
-FreeFileList
-=================
-*/
-void FreeFileList (char **list, int n)
-{
-	int i;
-
-	for (i = 0; i < n; i++)
-	{
-		if (list && list[i])
-		{
-			free (list[i]);
-			list[i] = 0;
-		}
-	}
-	free (list);
-}
-
-/*
-=================
-ItemInList
-=================
-*/
-qboolean ItemInList (char *check, int num, char **list)
-{
-	int i;
-	for (i=0;i<num;i++)
-		if (!Q_strcasecmp(check, list[i]))
-			return true;
-	return false;
-}
-
-/*
-=================
-InsertInList
-=================
-*/
-void InsertInList (char **list, char *insert, int len, int start)
-{
-	int i;
-	if (!list) return;
-
-	for (i=start; i<len; i++)
-	{
-		if (!list[i])
-		{
-			list[i] = strdup(insert);
-			return;
-		}
-	}
-	list[len] = strdup(insert);
-}
-#endif
-
-
 /*
 ==========================
 UI_IsValidImageFilename
@@ -104,7 +46,7 @@ UI_IsValidImageFilename
 */
 qboolean UI_IsValidImageFilename (char *name)
 {
-	int		len = (int)strlen(name);
+	size_t	len = strlen(name);
 
 	if (	!strcmp(name+max(len-4,0), ".pcx")
 		||	!strcmp(name+max(len-4,0), ".tga")
@@ -463,6 +405,264 @@ void UI_LoadMod (char *modName)
 /*
 =======================================================================
 
+	GENERIC ASSET LIST LOADING / MANAGEMENT
+
+=======================================================================
+*/
+
+//#define UI_USE_ZMALLOC
+
+#ifdef UI_USE_ZMALLOC
+#define UI_Malloc ( s )			Z_Malloc ( s )
+#define UI_CopyString ( a )		CopyString ( a )
+#define UI_Free ( a )			Z_Free ( a )
+#else	// UI_USE_ZMALLOC
+__inline void *UI_Malloc (size_t size)
+{
+	byte *ret;
+
+	ret = malloc (size);
+	memset (ret, 0, size);
+	return (void *)ret;
+}
+#define UI_CopyString ( a )		strdup ( a )
+#define UI_Free ( a )			free ( a )
+#endif	// UI_USE_ZMALLOC
+
+/*
+==========================
+UI_InsertInAssetList
+==========================
+*/
+void UI_InsertInAssetList (char **list, const char *insert, int len, int start, qboolean frontInsert)
+{
+	int i, j;
+
+	if ( !list || !insert )	return;
+	if ( (len < 1) || (start < 0) || (start > len) )	return;
+
+	if (frontInsert)
+	{
+		for (i=start; i<len; i++)	// i=start so default stays first!
+		{
+			if (!list[i])
+				break;
+
+			if (strcmp( list[i], insert ))
+			{
+				for (j=len; j>i; j--)
+					list[j] = list[j-1];
+
+				list[i] = strdup(insert);
+				return;
+			}
+		}
+	}
+	else
+	{
+		for (i=start; i<len; i++)	// i=start so default stays first!
+		{
+			if (!list[i])
+			{
+				list[i] = strdup(insert);
+				return;
+			}
+		}
+	}
+	list[len] = strdup(insert);
+}
+
+
+/*
+=================
+UI_ItemInAssetList
+=================
+*/
+qboolean UI_ItemInAssetList (const char *check, int num, const char **list)
+{
+	int		i;
+
+	if (!check || !list)
+		return false;
+	for (i=0; i<num; i++)
+	{
+		if (!list[i])
+			continue;
+		if ( !Q_strcasecmp((char *)check, (char *)list[i]) )
+			return true;
+	}
+	return false;
+}
+
+
+/*
+==========================
+UI_LoadAssetList
+
+Generic file list loader
+Used for fonts, huds, and crosshairs
+==========================
+*/
+char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *returnCount, int maxItems, qboolean stripExtension, qboolean frontInsert, qboolean (*checkName)(char *p))
+{
+	char	**list = 0, **itemFiles;
+	char	*path = NULL, *curItem, *p, *ext;
+//	char	findName[1024];
+	int		nItems = 0, nItemNames, i, baseLen, extLen;
+
+	// check pointers
+	if (!dir || !nameMask || !firstItem || !returnCount || !checkName)
+		return NULL;
+	if (maxItems < 2) // must allow at least 2 items
+		return NULL;
+
+	list = malloc(sizeof(char *) * (maxItems+1));
+	memset (list, 0, sizeof(char *) * (maxItems+1));
+
+	// set first item name
+	list[0] = strdup(firstItem); 
+	nItemNames = 1;
+
+#if 1
+	itemFiles = FS_GetFileList(va("%s/%s", dir, nameMask), NULL, &nItems);
+	for (i=0; i<nItems && nItemNames < maxItems; i++)
+	{
+		if (!itemFiles || !itemFiles[i])
+			continue;
+
+		p = strrchr(itemFiles[i], '/'); p++;
+
+		if ( !checkName(p) )
+			continue;
+
+		if (stripExtension && (ext = strrchr(p, '.')) ) {
+			extLen = (int)strlen(ext);
+			baseLen = (int)strlen(p) - extLen;
+			p[baseLen] = 0;	// NULL
+		}
+		curItem = p;
+
+		if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
+		{
+			// frontInsert not needed due to sorting in FS_GetFileList()
+			UI_InsertInAssetList (list, curItem, nItemNames, 1, false);	// start=1 so first item stays first!
+			nItemNames++;
+		}
+		
+		// restore extension so whole string gets deleted
+		if (stripExtension && ext)
+			p[baseLen] = '.';
+	}
+#else
+	path = FS_NextPath (path);
+	while (path) 
+	{
+		Com_sprintf (findName, sizeof(findName), "%s/%s/%s", path, dir, nameMask);
+		itemFiles = FS_ListFiles(findName, &nItems, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
+
+		for (i=0; i < nItems && nItemNames < maxItems; i++)
+		{
+			if (!itemFiles || !itemFiles[i])
+				continue;
+
+			p = strrchr(itemFiles[i], '/'); p++;
+
+			if ( !checkName(p) )
+				continue;
+
+			if (stripExtension && (ext = strrchr(p, '.')) ) {
+				extLen = (int)strlen(ext);
+				baseLen = (int)strlen(p) - extLen;
+				p[baseLen] = 0;	// NULL
+			}
+			curItem = p;
+
+			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
+			{
+				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
+				nItemNames++;
+			}
+			
+			// restore extension so whole string gets deleted
+			if (stripExtension && ext)
+				p[baseLen] = '.';
+		}
+		if (nItems)
+			FS_FreeFileList (itemFiles, nItems);
+		
+		path = FS_NextPath (path);
+	}
+
+	// check pak after
+	if (itemFiles = FS_ListPak(va("%s/", dir), &nItems))
+	{
+		for (i=0; i<nItems && nItemNames < maxItems; i++)
+		{
+			if (!itemFiles || !itemFiles[i])
+				continue;
+
+			p = strrchr(itemFiles[i], '/'); p++;
+
+			if ( !checkName(p) )
+				continue;
+
+			if (stripExtension && (ext = strrchr(p, '.')) ) {
+				extLen = (int)strlen(ext);
+				baseLen = (int)strlen(p) - extLen;
+				p[baseLen] = 0;	// NULL
+			}
+			curItem = p;
+
+			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
+			{
+				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
+				nItemNames++;
+			}
+			
+			// restore extension so whole string gets deleted
+			if (stripExtension && ext)
+				p[baseLen] = '.';
+		}
+	}
+#endif
+
+	if (nItems)
+		FS_FreeFileList (itemFiles, nItems);
+
+	// re-count list, nItemNames is somehow counted with 1 extra
+	for (i=0; list[i]; i++);
+		nItemNames = i;
+
+	if ( returnCount ) 
+		*returnCount = nItemNames;
+
+	return list;		
+}
+
+
+/*
+=================
+UI_FreeAssetList
+=================
+*/
+void UI_FreeAssetList (char **list, int n)
+{
+	int i;
+
+	for (i = 0; i < n; i++)
+	{
+		if (list && list[i])
+		{
+			free (list[i]);
+			list[i] = 0;
+		}
+	}
+	free (list);
+}
+
+/*
+=======================================================================
+
 	VIDEO INFO LOADING
 
 =======================================================================
@@ -799,9 +999,9 @@ void UI_BuildModList (void)
 			modName = modDir;
 
 		if (unsupportedMod)
-			Com_sprintf(modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
+			Com_sprintf (modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
 		else
-			Q_strncpyz(modFormatedName, sizeof(modFormatedName), modName);
+			Q_strncpyz (modFormatedName, sizeof(modFormatedName), modName);
 
 		if ( !UI_ItemInAssetList(modDir, count, ui_mod_values) )
 		{
@@ -848,246 +1048,6 @@ void UI_FreeModList (void)
 	ui_num_mods = 0;
 }
 #endif
-
-/*
-=======================================================================
-
-	GENERIC ASSET LIST LOADING / MANAGEMENT
-
-=======================================================================
-*/
-
-/*
-==========================
-UI_LoadAssetList
-
-Generic file list loader
-Used for fonts, huds, and crosshairs
-==========================
-*/
-char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *returnCount, int maxItems, qboolean stripExtension, qboolean frontInsert, qboolean (*checkName)(char *p))
-{
-	char	**list = 0, **itemFiles;
-	char	*path = NULL, *curItem, *p, *ext;
-//	char	findName[1024];
-	int		nItems = 0, nItemNames, i, baseLen, extLen;
-
-	// check pointers
-	if (!dir || !nameMask || !firstItem || !returnCount || !checkName)
-		return NULL;
-	if (maxItems < 2) // must allow at least 2 items
-		return NULL;
-
-	list = malloc(sizeof(char *) * (maxItems+1));
-	memset (list, 0, sizeof(char *) * (maxItems+1));
-
-	// set first item name
-	list[0] = strdup(firstItem); 
-	nItemNames = 1;
-
-#if 1
-	itemFiles = FS_GetFileList(va("%s/%s", dir, nameMask), NULL, &nItems);
-	for (i=0; i<nItems && nItemNames < maxItems; i++)
-	{
-		if (!itemFiles || !itemFiles[i])
-			continue;
-
-		p = strrchr(itemFiles[i], '/'); p++;
-
-		if ( !checkName(p) )
-			continue;
-
-		if (stripExtension && (ext = strrchr(p, '.')) ) {
-			extLen = (int)strlen(ext);
-			baseLen = (int)strlen(p) - extLen;
-			p[baseLen] = 0;	// NULL
-		}
-		curItem = p;
-
-		if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
-		{
-			// frontInsert not needed due to sorting in FS_GetFileList()
-			UI_InsertInAssetList (list, curItem, nItemNames, 1, false);	// start=1 so first item stays first!
-			nItemNames++;
-		}
-		
-		// restore extension so whole string gets deleted
-		if (stripExtension && ext)
-			p[baseLen] = '.';
-	}
-#else
-	path = FS_NextPath (path);
-	while (path) 
-	{
-		Com_sprintf (findName, sizeof(findName), "%s/%s/%s", path, dir, nameMask);
-		itemFiles = FS_ListFiles(findName, &nItems, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
-
-		for (i=0; i < nItems && nItemNames < maxItems; i++)
-		{
-			if (!itemFiles || !itemFiles[i])
-				continue;
-
-			p = strrchr(itemFiles[i], '/'); p++;
-
-			if ( !checkName(p) )
-				continue;
-
-			if (stripExtension && (ext = strrchr(p, '.')) ) {
-				extLen = (int)strlen(ext);
-				baseLen = (int)strlen(p) - extLen;
-				p[baseLen] = 0;	// NULL
-			}
-			curItem = p;
-
-			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
-			{
-				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
-				nItemNames++;
-			}
-			
-			// restore extension so whole string gets deleted
-			if (stripExtension && ext)
-				p[baseLen] = '.';
-		}
-		if (nItems)
-			FS_FreeFileList (itemFiles, nItems);
-		
-		path = FS_NextPath (path);
-	}
-
-	// check pak after
-	if (itemFiles = FS_ListPak(va("%s/", dir), &nItems))
-	{
-		for (i=0; i<nItems && nItemNames < maxItems; i++)
-		{
-			if (!itemFiles || !itemFiles[i])
-				continue;
-
-			p = strrchr(itemFiles[i], '/'); p++;
-
-			if ( !checkName(p) )
-				continue;
-
-			if (stripExtension && (ext = strrchr(p, '.')) ) {
-				extLen = (int)strlen(ext);
-				baseLen = (int)strlen(p) - extLen;
-				p[baseLen] = 0;	// NULL
-			}
-			curItem = p;
-
-			if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
-			{
-				UI_InsertInAssetList (list, curItem, nItemNames, 1, frontInsert);	// start=1 so first item stays first!
-				nItemNames++;
-			}
-			
-			// restore extension so whole string gets deleted
-			if (stripExtension && ext)
-				p[baseLen] = '.';
-		}
-	}
-#endif
-
-	if (nItems)
-		FS_FreeFileList (itemFiles, nItems);
-
-	// re-count list, nItemNames is somehow counted with 1 extra
-	for (i=0; list[i]; i++);
-		nItemNames = i;
-
-	if ( returnCount ) 
-		*returnCount = nItemNames;
-
-	return list;		
-}
-
-/*
-=================
-UI_ItemInAssetList
-=================
-*/
-qboolean UI_ItemInAssetList (const char *check, int num, const char **list)
-{
-	int		i;
-
-	if (!check || !list)
-		return false;
-	for (i=0; i<num; i++)
-	{
-		if (!list[i])
-			continue;
-		if ( !Q_strcasecmp((char *)check, (char *)list[i]) )
-			return true;
-	}
-	return false;
-}
-
-
-/*
-==========================
-UI_InsertInAssetList
-==========================
-*/
-void UI_InsertInAssetList (char **list, const char *insert, int len, int start, qboolean frontInsert)
-{
-	int i, j;
-
-	if ( !list || !insert )	return;
-	if ( !frontInsert && (len < 1) )	return;
-	if (start < 0)	return;
-	if (start > len)	return;
-
-	if (frontInsert)
-	{
-		for (i=start; i<len; i++)	// i=start so default stays first!
-		{
-			if (!list[i])
-				break;
-
-			if (strcmp( list[i], insert ))
-			{
-				for (j=len; j>i; j--)
-					list[j] = list[j-1];
-
-				list[i] = strdup(insert);
-				return;
-			}
-		}
-	}
-	else
-	{
-		for (i=start; i<len; i++)	// i=start so default stays first!
-		{
-			if (!list[i])
-			{
-				list[i] = strdup(insert);
-				return;
-			}
-		}
-	}
-	list[len] = strdup(insert);
-}
-
-
-/*
-=================
-UI_FreeAssetList
-=================
-*/
-void UI_FreeAssetList (char **list, int n)
-{
-	int i;
-
-	for (i = 0; i < n; i++)
-	{
-		if (list && list[i])
-		{
-			free (list[i]);
-			list[i] = 0;
-		}
-	}
-	free (list);
-}
 
 /*
 =======================================================================
@@ -1158,7 +1118,7 @@ UI_IsValidHudName
 */
 qboolean UI_IsValidHudName (char *name)
 {
-	int		len = (int)strlen(name);
+	size_t		len = strlen(name);
 
 	if ( !strcmp(name+max(len-4,0), ".hud") )
 		return true;
@@ -1185,7 +1145,7 @@ UI_FreeHudNames
 */
 void UI_FreeHudNames (void)
 {
-	if (ui_numhuds > 0){
+	if (ui_numhuds > 0) {
 		UI_FreeAssetList (ui_hud_names, ui_numhuds);
 	}
 	ui_hud_names = NULL;
@@ -1215,6 +1175,7 @@ UI_SortCrosshairs
 void UI_SortCrosshairs (char **list, int len)
 {
 	int			i, j;
+	char		crosshA[16], crosshB[16];
 	char		*temp;
 	qboolean	moved;
 
@@ -1227,8 +1188,10 @@ void UI_SortCrosshairs (char **list, int len)
 		for (j=0; j<i; j++)
 		{
 		//	if (!list[j]) break;
-			if (!list[j] || !list[j+1]) continue;
-			if ( atoi(strdup(list[j]+2)) > atoi(strdup(list[j+1]+2)) )
+			if ( !list[j] || !list[j+1] ) continue;
+			Q_strncpyz (crosshA, sizeof(crosshA), list[j]+2);
+			Q_strncpyz (crosshB, sizeof(crosshB), list[j+1]+2);
+			if ( atoi(crosshA) > atoi(crosshB) )
 			{
 				temp = list[j];
 				list[j] = list[j+1];
@@ -1248,33 +1211,35 @@ UI_IsValidCrosshairName
 */
 qboolean UI_IsValidCrosshairName (char *name)
 {
-	int		namelen;
+	char		crossh[16];
+	size_t		len;
 
 	if ( !UI_IsValidImageFilename(name) )
 		return false;
 
+	Q_strncpyz (crossh, sizeof(crossh), name);
 	// filename must be chxxx
-	if ( strncmp(name, "ch", 2) ) 
+	if ( strncmp(crossh, "ch", 2) ) 
 		return false;
-	namelen = (int)strlen(strdup(name));
-	if (namelen < 7 || namelen > 9)
+	len = strlen(crossh);
+	if ( (len < 7) || (len > 9) )
 		return false;
-	if ( !isNumeric(name[2]) )
+	if ( !isNumeric(crossh[2]) )
 		return false;
-	if ( namelen >= 8 && !isNumeric(name[3]) )
+	if ( (len >= 8) && !isNumeric(crossh[3]) )
 		return false;
 	// ch0 is invalid
-	if ( namelen == 7 && name[2] == '0' )
+	if ( (len == 7) && (crossh[2] == '0') )
 		return false;
-	// ch100 is only valid 5-char name
-	if ( namelen == 9 && (name[2] != '1' || name[3] != '0' || name[4] != '0') )
+	// ch100 is only valid 5-char filename
+	if ( (len == 9) && ( (crossh[2] != '1') || (crossh[3] != '0') || (crossh[4] != '0') ) )
 		return false;
-	// ch100-ch128 are only valid 5-char names
-/*	if ( namelen == 9 &&
-		( !isNumeric(name[4]) || name[2] != '1'
-		|| (name[2] == '1' && name[3] > '2')
-		|| (name[2] == '1' && name[3] == '2' && name[4] > '8') ) )
-		return false;*/
+	// ch100-ch128 are only valid 5-char filenames
+/*	if ( (len == 9) &&
+		( !isNumeric(crossh[4]) || (crossh[2] != '1')
+		|| (( crossh[2] == '1') && (crossh[3] > '2') )
+		|| ( (crossh[2] == '1') && (crossh[3] == '2') && (crossh[4] > '8') ) ) )
+		return false; */
 
 	return true;
 }
@@ -1449,7 +1414,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
 					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: missing parameter for 'commandName' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
 					return false;
 				}
-				Q_strncpyz(command, sizeof(command), tok);
+				Q_strncpyz (command, sizeof(command), tok);
 				gotCommand = true;
 			}
 			else if ( !Q_strcasecmp(tok, "displayName") )
@@ -1459,7 +1424,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
 					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: missing parameter for 'displayName' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
 					return false;
 				}
-				Q_strncpyz(display, sizeof(display), tok);
+				Q_strncpyz (display, sizeof(display), tok);
 				gotDisplay = true;
 			}
 			else {
@@ -2057,6 +2022,8 @@ gametype_names_t gametype_names[] =
 	{MAP_3TCTF, "3tctf"},
 };
 
+#define MAPLIST_FORMAT "%s\n%s"
+
 maptype_t ui_svr_maptype;
 static int	ui_svr_nummaps;
 char **ui_svr_mapnames;
@@ -2214,7 +2181,6 @@ void UI_LoadArenas (void)
 	char		gametypes[MAX_TOKEN_CHARS];
 	char		scratch[200];
 	int			i, j, len, narenas = 0, narenanames = 0;
-	size_t		nameSize;
 	qboolean	type_supported[NUM_MAPTYPES];
 
 	//
@@ -2249,8 +2215,7 @@ void UI_LoadArenas (void)
 		{
 			if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 			{
-			//	Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
-				Com_sprintf(scratch, sizeof(scratch), "%s\n%s", longname, shortname);
+				Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 				
 				for (j=0; j<NUM_MAPTYPES; j++)
 					type_supported[j] = false;
@@ -2275,9 +2240,7 @@ void UI_LoadArenas (void)
 
 				for (j=0; j<NUM_MAPTYPES; j++)
 					if (type_supported[j]) {
-						nameSize = strlen(scratch) + 1;
-						ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-						Q_strncpyz (ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
+						ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
 						ui_svr_arena_nummaps[j]++;
 					}
 
@@ -2312,7 +2275,7 @@ void UI_LoadArenas (void)
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
-					Com_sprintf(scratch, sizeof(scratch), "%s\n%s", longname, shortname);
+					Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
@@ -2337,9 +2300,7 @@ void UI_LoadArenas (void)
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
-							nameSize = strlen(scratch) + 1;
-							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-							Q_strncpyz(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
+							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
@@ -2375,7 +2336,7 @@ void UI_LoadArenas (void)
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
-					Com_sprintf(scratch, sizeof(scratch), "%s\n%s", longname, shortname);
+					Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
@@ -2400,9 +2361,7 @@ void UI_LoadArenas (void)
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
-							nameSize = strlen(scratch) + 1;
-							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = malloc(nameSize);
-							Q_strncpyz(ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]], nameSize, scratch);
+							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
@@ -2440,7 +2399,6 @@ void UI_LoadMapList (void)
 	char	*buffer, *s;
 	char	mapsname[1024];
 	int		i, j, length;
-	size_t	nameSize;
 	FILE	*fp;
 
 	//
@@ -2499,24 +2457,22 @@ void UI_LoadMapList (void)
 		char	longname[MAX_TOKEN_CHARS];
 		char	scratch[200];
 
-	//	strncpy( shortname, COM_Parse( &s ) );
-	//	strncpy( longname, COM_Parse( &s ) );
+	//	strncpy (shortname, COM_Parse(&s));
+	//	strncpy (longname, COM_Parse(&s));
 		Q_strncpyz (shortname, sizeof(shortname), COM_Parse(&s));
 		Q_strncpyz (longname, sizeof(longname), COM_Parse(&s));
-		Com_sprintf (scratch, sizeof( scratch ), "%s\n%s", longname, shortname);
-		nameSize = strlen(scratch) + 1;
-		ui_svr_listfile_mapnames[i] = malloc(nameSize);
-		Q_strncpyz (ui_svr_listfile_mapnames[i], nameSize, scratch);
+		Com_sprintf (scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
+		ui_svr_listfile_mapnames[i] = strdup(scratch);
 	}
 	ui_svr_listfile_mapnames[ui_svr_listfile_nummaps] = 0;
 
 	if ( fp != 0 )
 	{
 		fp = 0;
-		free ( buffer );
+		free (buffer);
 	}
 	else
-		FS_FreeFile( buffer );
+		FS_FreeFile (buffer);
 
 	UI_LoadArenas ();
 
@@ -2786,7 +2742,7 @@ static qboolean UI_IsSkinIcon (char *name)
 	int		len;
 	char	*s, scratch[1024];
 
-	Q_strncpyz(scratch, sizeof(scratch), name);
+	Q_strncpyz (scratch, sizeof(scratch), name);
 	*strrchr(scratch, '.') = 0;
 	s = scratch;
 	len = (int)strlen(s);
@@ -2912,10 +2868,10 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			}
 
 			// verify the existence of tris.md2
-		//	strncpy(scratch, dirnames[i]);
-		//	strncat(scratch, "/tris.md2");
-			Q_strncpyz(scratch, sizeof(scratch), dirnames[i]);
-			Q_strncatz(scratch, sizeof(scratch), "/tris.md2");
+		//	strncpy (scratch, dirnames[i]);
+		//	strncat (scratch, "/tris.md2");
+			Q_strncpyz (scratch, sizeof(scratch), dirnames[i]);
+			Q_strncatz (scratch, sizeof(scratch), "/tris.md2");
 			if ( !Sys_FindFirst(scratch, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
 			{
 				free (dirnames[i]);
@@ -2926,8 +2882,8 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			Sys_FindClose();
 
 			// verify the existence of at least one skin
-		//	strncpy(scratch, va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
-			Q_strncpyz(scratch, sizeof(scratch), va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
+		//	strncpy (scratch, va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
+			Q_strncpyz (scratch, sizeof(scratch), va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
 			imagenames = FS_ListFiles (scratch, &nimagefiles, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
 
 			if (!imagenames)
@@ -2950,10 +2906,10 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			b = strrchr(dirnames[i], '\\');
 			c = (a > b) ? a : b;
 
-		//	strncpy(ui_pmi[ui_numplayermodels].displayname, c+1, MAX_DISPLAYNAME-1);
-		//	strncpy(ui_pmi[ui_numplayermodels].directory, c+1);
-			Q_strncpyz(ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
-			Q_strncpyz(ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
+		//	strncpy (ui_pmi[ui_numplayermodels].displayname, c+1, MAX_DISPLAYNAME-1);
+		//	strncpy (ui_pmi[ui_numplayermodels].directory, c+1);
+			Q_strncpyz (ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
+			Q_strncpyz (ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
 
 			skinnames = malloc(sizeof(char *) * (nskins+1));
 			skiniconnames = malloc(sizeof(char *) * (nskins+1));
@@ -2973,7 +2929,7 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 						c = (a > b) ? a : b;
 
 					//	strncpy(scratch, c+1);
-						Q_strncpyz(scratch, sizeof(scratch), c+1);
+						Q_strncpyz (scratch, sizeof(scratch), c+1);
 
 						if ( strrchr(scratch, '.') )
 							*strrchr(scratch, '.') = 0;
@@ -2994,8 +2950,8 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 		//	b = strrchr(dirnames[i], '\\');
 		//	c = (a > b) ? a : b;
 
-		//	Q_strncpyz(ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
-		//	Q_strncpyz(ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
+		//	Q_strncpyz (ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
+		//	Q_strncpyz (ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
 
 			FS_FreeFileList (imagenames, nimagefiles);
 
@@ -3158,22 +3114,22 @@ void UI_InitPlayerModelInfo (int *modelNum, int *skinNum)
 		return;
 	}
 		
-	Q_strncpyz(currentdirectory, sizeof(currentdirectory), Cvar_VariableString ("skin"));
+	Q_strncpyz (currentdirectory, sizeof(currentdirectory), Cvar_VariableString ("skin"));
 
-	if ( strchr( currentdirectory, '/' ) )
+	if ( strchr(currentdirectory, '/') )
 	{
-		Q_strncpyz(currentskin, sizeof(currentskin), strchr( currentdirectory, '/' ) + 1);
-		*strchr( currentdirectory, '/' ) = 0;
+		Q_strncpyz (currentskin, sizeof(currentskin), strchr( currentdirectory, '/' ) + 1);
+		*strchr(currentdirectory, '/') = 0;
 	}
-	else if ( strchr( currentdirectory, '\\' ) )
+	else if ( strchr(currentdirectory, '\\') )
 	{
-		Q_strncpyz(currentskin, sizeof(currentskin), strchr( currentdirectory, '\\' ) + 1);
-		*strchr( currentdirectory, '\\' ) = 0;
+		Q_strncpyz (currentskin, sizeof(currentskin), strchr( currentdirectory, '\\' ) + 1);
+		*strchr(currentdirectory, '\\') = 0;
 	}
 	else
 	{
-		Q_strncpyz(currentdirectory, sizeof(currentdirectory), "male");
-		Q_strncpyz(currentskin, sizeof(currentskin), "grunt");
+		Q_strncpyz (currentdirectory, sizeof(currentdirectory), "male");
+		Q_strncpyz (currentskin, sizeof(currentskin), "grunt");
 	}
 
 	qsort (ui_pmi, ui_numplayermodels, sizeof(ui_pmi[0]), UI_PlayerModelCmpFunc);

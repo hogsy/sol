@@ -834,9 +834,9 @@ PixEncode:
    }
 
    if (mapped)
-      free( ColorMap );
+      free (ColorMap);
    
-   FS_FreeFile( data );
+   FS_FreeFile (data);
 }
 
 #else
@@ -1100,12 +1100,12 @@ void R_InitializePNGData (void)
 	// Initialize Data and RowPtrs
 	if (r_png_handle->data) 
 	{
-		free(r_png_handle->data);
+		free (r_png_handle->data);
 		r_png_handle->data = 0;
 	}
 	if (r_png_handle->fRowPtrs) 
 	{
-		free(r_png_handle->fRowPtrs);
+		free (r_png_handle->fRowPtrs);
 		r_png_handle->fRowPtrs = 0;
 	}
 	r_png_handle->data = malloc(r_png_handle->height * r_png_handle->fRowBytes ); // DL Added 30/5/2000
@@ -1141,10 +1141,10 @@ void R_DestroyPNG (qboolean keepData)
 	if (!r_png_handle) 
 		return;
 	if (r_png_handle->data && !keepData) 
-		free(r_png_handle->data);
+		free (r_png_handle->data);
 	if (r_png_handle->fRowPtrs) 
-		free(r_png_handle->fRowPtrs);
-	free(r_png_handle);
+		free (r_png_handle->fRowPtrs);
+	free (r_png_handle);
 	r_png_handle = NULL;
 }
 
@@ -1282,7 +1282,7 @@ void jpg_null (j_decompress_ptr cinfo)
 
 unsigned char jpg_fill_input_buffer (j_decompress_ptr cinfo)
 {
-    VID_Printf(PRINT_ALL, "Premature end of JPEG data\n");
+    VID_Printf (PRINT_ALL, "Premature end of JPEG data\n");
     return 1;
 }
 
@@ -1293,7 +1293,7 @@ void jpg_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
 
     if (cinfo->src->bytes_in_buffer < 0) 
-		VID_Printf(PRINT_ALL, "Premature end of JPEG data\n");
+		VID_Printf (PRINT_ALL, "Premature end of JPEG data\n");
 }
 
 //void jpeg_mem_src (j_decompress_ptr cinfo, const byte *mem, unsigned long len)
@@ -1340,29 +1340,29 @@ void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
 		||	rawdata[8] != 'I'
 		||	rawdata[9] != 'F') {
 		VID_Printf (PRINT_ALL, "Bad jpg file %s\n", filename);
-		FS_FreeFile(rawdata);
+		FS_FreeFile (rawdata);
 		return;
 	}
 
 	// Initialise libJpeg Object
 	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_decompress(&cinfo);
+	jpeg_create_decompress (&cinfo);
 
 	// Feed JPEG memory into the libJpeg Object
-	jpeg_mem_src(&cinfo, rawdata, rawsize);
+	jpeg_mem_src (&cinfo, rawdata, rawsize);
 
 	// Process JPEG header
-	jpeg_read_header(&cinfo, true); // bombs out here
+	jpeg_read_header (&cinfo, true); // bombs out here
 
 	// Start Decompression
-	jpeg_start_decompress(&cinfo);
+	jpeg_start_decompress (&cinfo);
 
 	// Check Color Components
 	if (cinfo.output_components != 3)
 	{
-		VID_Printf(PRINT_ALL, "Invalid JPEG color components in %s\n", filename);
-		jpeg_destroy_decompress(&cinfo);
-		FS_FreeFile(rawdata);
+		VID_Printf (PRINT_ALL, "Invalid JPEG color components in %s\n", filename);
+		jpeg_destroy_decompress (&cinfo);
+		FS_FreeFile (rawdata);
 		return;
 	}
 
@@ -1370,9 +1370,9 @@ void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
 	rgbadata = malloc(cinfo.output_width * cinfo.output_height * 4);
 	if (!rgbadata)
 	{
-		VID_Printf(PRINT_ALL, "Insufficient RAM for JPEG buffer\n");
-		jpeg_destroy_decompress(&cinfo);
-		FS_FreeFile(rawdata);
+		VID_Printf (PRINT_ALL, "Insufficient RAM for JPEG buffer\n");
+		jpeg_destroy_decompress (&cinfo);
+		FS_FreeFile (rawdata);
 		return;
 	}
 
@@ -1383,10 +1383,10 @@ void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
 	scanline = malloc(cinfo.output_width * 3);
 	if (!scanline)
 	{
-		VID_Printf(PRINT_ALL, "Insufficient RAM for JPEG scanline buffer\n");
-		free(rgbadata);
-		jpeg_destroy_decompress(&cinfo);
-		FS_FreeFile(rawdata);
+		VID_Printf (PRINT_ALL, "Insufficient RAM for JPEG scanline buffer\n");
+		free (rgbadata);
+		jpeg_destroy_decompress (&cinfo);
+		FS_FreeFile (rawdata);
 		return;
 	}
 
@@ -1395,7 +1395,7 @@ void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
 	while (cinfo.output_scanline < cinfo.output_height)
 	{
 		p = scanline;
-		jpeg_read_scanlines(&cinfo, &scanline, 1);
+		jpeg_read_scanlines (&cinfo, &scanline, 1);
 
 		for (i=0; i<cinfo.output_width; i++)
 		{
@@ -1409,16 +1409,16 @@ void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
 	}
 
 	// Free the scanline buffer
-	free(scanline);
+	free (scanline);
 
 	// Finish Decompression
-	jpeg_finish_decompress(&cinfo);
+	jpeg_finish_decompress (&cinfo);
 
 	// Destroy JPEG object
-	jpeg_destroy_decompress(&cinfo);
+	jpeg_destroy_decompress (&cinfo);
 
 	// Free raw data buffer
-	FS_FreeFile(rawdata);
+	FS_FreeFile (rawdata);
 
 	// Return the 'rgbadata'
 	*pic = rgbadata;
@@ -1614,8 +1614,8 @@ void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,
 			row1 -= outwidth*4; 
 		} 
 	} 
-	free(row1); 
-	free(row2); 
+	free (row1); 
+	free (row2); 
 } 
 /*
 void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
@@ -2033,7 +2033,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 
 //	if (scaled_width != width || scaled_height != height)
 	if (resampled)
-		free(scaled);
+		free (scaled);
 
 	upload_width = scaled_width;	upload_height = scaled_height;
 
@@ -2176,8 +2176,10 @@ image_t *R_LoadPic (char *name, byte *pic, int width, int height, imagetype_t ty
 			image->replace_scale_w = (float)pcxwidth/image->width;
 			image->replace_scale_h = (float)pcxheight/image->height;
 		}
-		if (pic) free(pic);
-		if (palette) free(palette);
+		if (pic)
+			free (pic);
+		if (palette)
+			free (palette);
 	}	
 
 	// load little pics into the scrap
@@ -2501,9 +2503,9 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 		R_AddToFailedImgList(name);
 
 	if (pic)
-		free(pic);
+		free (pic);
 	if (palette)
-		free(palette);
+		free (palette);
 
 	return image;
 }
