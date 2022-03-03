@@ -413,9 +413,9 @@ void UI_LoadMod (char *modName)
 //#define UI_USE_ZMALLOC
 
 #ifdef UI_USE_ZMALLOC
-#define UI_Malloc ( s )			Z_Malloc ( s )
-#define UI_CopyString ( a )		CopyString ( a )
-#define UI_Free ( a )			Z_Free ( a )
+#define UI_Malloc			Z_Malloc
+#define UI_CopyString		CopyString
+#define UI_Free				Z_Free
 #else	// UI_USE_ZMALLOC
 __inline void *UI_Malloc (size_t size)
 {
@@ -425,8 +425,8 @@ __inline void *UI_Malloc (size_t size)
 	memset (ret, 0, size);
 	return (void *)ret;
 }
-#define UI_CopyString ( a )		strdup ( a )
-#define UI_Free ( a )			free ( a )
+#define UI_CopyString		strdup
+#define UI_Free 			free
 #endif	// UI_USE_ZMALLOC
 
 /*
@@ -3018,17 +3018,10 @@ void UI_FreePlayerModels (void)
 
 	for (i = 0; i < ui_numplayermodels; i++)
 	{
-		for (j = 0; j < ui_pmi[i].nskins; j++)
-		{
-			if (ui_pmi[i].skinDisplayNames[j])
-				free (ui_pmi[i].skinDisplayNames[j]);
-			ui_pmi[i].skinDisplayNames[j] = NULL;
-			if (ui_pmi[i].skinIconNames[j])
-				free (ui_pmi[i].skinIconNames[j]);
-			ui_pmi[i].skinIconNames[j] = NULL;
+		if (ui_pmi[i].nskins > 0) {
+			UI_FreeAssetList (ui_pmi[i].skinDisplayNames, ui_pmi[i].nskins);
+			UI_FreeAssetList (ui_pmi[i].skinIconNames, ui_pmi[i].nskins);
 		}
-		free (ui_pmi[i].skinDisplayNames);
-		free (ui_pmi[i].skinIconNames);
 		ui_pmi[i].skinDisplayNames = NULL;
 		ui_pmi[i].skinIconNames = NULL;
 		ui_pmi[i].nskins = 0;
