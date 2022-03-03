@@ -34,9 +34,10 @@ static int old_mouse_x, old_mouse_y;
 
 static qboolean	mlooking;
 cvar_t	*m_filter;
-cvar_t	*in_dgamouse;
+//cvar_t	*in_dgamouse;
+//cvar_t	*in_menumouse;		// FIXME Menu Mouse on windowed mode 
 cvar_t	*in_autosensitivity;
-cvar_t	*in_menumouse; /// FIXME Menu Mouse on windowed mode 
+cvar_t	*in_doubleclicktime;	// reset time for double click
 
 extern cursor_t ui_mousecursor;
 
@@ -66,11 +67,13 @@ void IN_Init (void)
 	Cvar_SetDescription ("in_joystick", "Enables joystick input.");
 	m_filter = Cvar_Get ("m_filter", "0", 0);
 	Cvar_SetDescription ("m_filter", "Enables mouse input filtering.");
-	in_dgamouse = Cvar_Get ("in_dgamouse", "1", CVAR_ARCHIVE);
-	in_menumouse = Cvar_Get ("in_menumouse", "0", CVAR_ARCHIVE);
+//	in_dgamouse = Cvar_Get ("in_dgamouse", "1", CVAR_ARCHIVE);
+//	in_menumouse = Cvar_Get ("in_menumouse", "0", CVAR_ARCHIVE);
 	// Knightmare added
 	in_autosensitivity = Cvar_Get ("in_autosensitivity", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("autosensitivity", "Enables scaling of mouse and joystick sensitivty when zoomed in.");
+	in_doubleclicktime	= Cvar_Get ("in_doubleclicktime", "0.5", CVAR_ARCHIVE);		// reset time for double click
+	Cvar_SetDescription ("in_doubleclicktime", "Sets reset time in seconds for mouse double click.");
 
 	Cmd_AddCommand ("+mlook", IN_MLookDown);
 	Cmd_AddCommand ("-mlook", IN_MLookUp);

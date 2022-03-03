@@ -352,8 +352,14 @@ IN_TranslateSDLtoQ2Button(SDL_GameControllerButton button)
 
 void HandleEvents (void)
 {
-	int multiclicktime = 750;
+	int multiclicktime;	// = 500
 	SDL_Event evt;
+
+	if (!in_doubleclicktime)
+		in_doubleclicktime = Cvar_Get ("in_doubleclicktime", "0.5", 0);
+
+	multiclicktime = (int)(1000.0f * in_doubleclicktime->value);
+
 	while (SDL_PollEvent(&evt) == 1)
 	{
 		if (evt.type == SDL_QUIT)

@@ -37,4 +37,6 @@ typedef struct
 
 extern glwstate_t glw_state;
 
+extern cvar_t	*in_doubleclicktime;	// reset time for double click
+
 #endif	// __GLW_UNIX_H__

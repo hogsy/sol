@@ -60,6 +60,7 @@ cvar_t	*in_mouse;
 cvar_t	*in_joystick;
 
 cvar_t	*in_autosensitivity;
+cvar_t	*in_doubleclicktime;	// reset time for double click
 
 
 // none of these cvars are saved over a session
@@ -292,9 +293,15 @@ void IN_MouseEvent (int mstate)
 	// set menu cursor buttons
 	if (cls.key_dest == key_menu)
 	{
-		int multiclicktime = 750;
+		int multiclicktime;		// = 500
 		int max = mouse_buttons;
-		if (max > MENU_CURSOR_BUTTON_MAX) max = MENU_CURSOR_BUTTON_MAX;
+		if (max > MENU_CURSOR_BUTTON_MAX)
+			max = MENU_CURSOR_BUTTON_MAX;
+
+		if (!in_doubleclicktime)
+			in_doubleclicktime = Cvar_Get ("in_doubleclicktime", "0.5", 0);
+
+		multiclicktime = (int)(1000.0f * in_doubleclicktime->value);
 
 		for (i=0 ; i<max ; i++)
 		{
@@ -449,12 +456,14 @@ void IN_Init (void)
 	// mouse variables
 	in_autosensitivity		= Cvar_Get ("in_autosensitivity",			"1",		CVAR_ARCHIVE);
 	Cvar_SetDescription ("in_autosensitivity", "Enables scaling of mouse and joystick sensitivty when zoomed in.");
-	m_noaccel				= Cvar_Get ("m_noaccel",				"0",		CVAR_ARCHIVE); //sul  enables mouse acceleration XP fix?
+	m_noaccel				= Cvar_Get ("m_noaccel",				"0",		CVAR_ARCHIVE);		// sul  enables mouse acceleration XP fix?
 	Cvar_SetDescription ("m_noaccel", "Disables mouse acceleration when set to 1.");
 	m_filter				= Cvar_Get ("m_filter",					"0",		0);
 	Cvar_SetDescription ("m_filter", "Enables mouse input filtering.");
     in_mouse				= Cvar_Get ("in_mouse",					"1",		CVAR_ARCHIVE);
 	Cvar_SetDescription ("in_mouse", "Enables mouse input.");
+	in_doubleclicktime		= Cvar_Get ("in_doubleclicktime",		"0.5",		CVAR_ARCHIVE);		// reset time for double click
+	Cvar_SetDescription ("in_doubleclicktime", "Sets reset time in seconds for mouse double click.");
 
 	// joystick variables
 	in_joystick				= Cvar_Get ("in_joystick",				"0",		CVAR_ARCHIVE);
