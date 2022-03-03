@@ -2171,7 +2171,7 @@ UI_LoadArenas
 */
 void UI_LoadArenas (void)
 {
-	char		*p, *s, *s2, *tok, *tok2;
+	char		*p, *s1, *s2, *tok2;	// *tok1
 	char		**arenafiles = NULL;
 	char		**tmplist = NULL;
 	char		*path = NULL;
@@ -2180,11 +2180,12 @@ void UI_LoadArenas (void)
 	char		longname[MAX_TOKEN_CHARS];
 	char		gametypes[MAX_TOKEN_CHARS];
 	char		scratch[200];
+	char		tok1[MAX_TOKEN_CHARS];
 	int			i, j, len, narenas = 0, narenanames = 0;
 	qboolean	type_supported[NUM_MAPTYPES];
 
 	//
-	// free existing lists and malloc new ones
+	// free existing lists and allocate new ones
 	//
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
@@ -2206,7 +2207,7 @@ void UI_LoadArenas (void)
 			continue;
 
 		len = (int)strlen(arenafiles[i]);
-		if ( strcmp(arenafiles[i]+max(len-6,0), ".arena") )
+		if ( strcmp(arenafiles[i] + max(len-6, 0), ".arena") )
 			continue;
 
 		p = arenafiles[i];
@@ -2219,24 +2220,22 @@ void UI_LoadArenas (void)
 				
 				for (j=0; j<NUM_MAPTYPES; j++)
 					type_supported[j] = false;
-				s = gametypes;
-				tok = strdup(COM_Parse (&s));
-				while (s != NULL)
+				s1 = gametypes;
+				Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
+				while (s1 != NULL)
 				{
 					for (j=0; j<NUM_MAPTYPES; j++)
 					{
 						s2 = gametype_names[j].tokens;
 						tok2 = COM_Parse (&s2);
 						while (s2 != NULL) {
-							if ( !Q_strcasecmp(tok, tok2) )
+							if ( !Q_strcasecmp(tok1, tok2) )
 								type_supported[j] = true;
 							tok2 = COM_Parse (&s2);
 						}
 					}
-					if (tok)	free (tok);
-					tok = strdup(COM_Parse(&s));
+					Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
 				}
-				if (tok)	free (tok);
 
 				for (j=0; j<NUM_MAPTYPES; j++)
 					if (type_supported[j]) {
@@ -2266,7 +2265,7 @@ void UI_LoadArenas (void)
 				continue;
 
 			len = (int)strlen(arenafiles[i]);
-			if ( strcmp(arenafiles[i]+max(len-6,0), ".arena") )
+			if ( strcmp(arenafiles[i] + max(len-6, 0), ".arena") )
 				continue;
 
 			p = arenafiles[i] + strlen(path) + 1;	// skip over path and next slash
@@ -2279,24 +2278,22 @@ void UI_LoadArenas (void)
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
-					s = gametypes;
-					tok = strdup(COM_Parse (&s));
-					while (s != NULL)
+					s1 = gametypes;
+					Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
+					while (s1 != NULL)
 					{
 						for (j=0; j<NUM_MAPTYPES; j++)
 						{
 							s2 = gametype_names[j].tokens;
 							tok2 = COM_Parse (&s2);
 							while (s2 != NULL) {
-								if ( !Q_strcasecmp(tok, tok2) )
+								if ( !Q_strcasecmp(tok1, tok2) )
 									type_supported[j] = true;
 								tok2 = COM_Parse (&s2);
 							}
 						}
-						if (tok)	free (tok);
-						tok = strdup(COM_Parse(&s));
+						Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
 					}
-					if (tok)	free (tok);
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
@@ -2310,7 +2307,7 @@ void UI_LoadArenas (void)
 				}			
 			}
 		}
-		if (narenas)
+		if (narenas > 0)
 			FS_FreeFileList (arenafiles, narenas);
 		
 		path = FS_NextPath (path);
@@ -2321,13 +2318,13 @@ void UI_LoadArenas (void)
 	//
 	if (arenafiles = FS_ListPak("scripts/", &narenas))
 	{
-		for (i=0; i<narenas && narenanames<MAX_ARENAS; i++)
+		for (i = 0; i < narenas && narenanames < MAX_ARENAS; i++)
 		{
 			if (!arenafiles || !arenafiles[i])
 				continue;
 
 			len = (int)strlen(arenafiles[i]);
-			if ( strcmp(arenafiles[i]+max(len-6,0), ".arena") )
+			if ( strcmp(arenafiles[i] + max(len-6, 0), ".arena") )
 				continue;
 
 			p = arenafiles[i];
@@ -2340,24 +2337,22 @@ void UI_LoadArenas (void)
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
-					s = gametypes;
-					tok = strdup(COM_Parse (&s));
-					while (s != NULL)
+					s1 = gametypes;
+					Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
+					while (s1 != NULL)
 					{
 						for (j=0; j<NUM_MAPTYPES; j++)
 						{
 							s2 = gametype_names[j].tokens;
 							tok2 = COM_Parse (&s2);
 							while (s2 != NULL) {
-								if ( !Q_strcasecmp(tok, tok2) )
+								if ( !Q_strcasecmp(tok1, tok2) )
 									type_supported[j] = true;
 								tok2 = COM_Parse (&s2);
 							}
 						}
-						if (tok)	free (tok);
-						tok = strdup(COM_Parse(&s));
+						Q_strncpyz (tok1, sizeof(tok1), COM_Parse(&s1));
 					}
-					if (tok)	free (tok);
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
@@ -2374,10 +2369,10 @@ void UI_LoadArenas (void)
 	}
 #endif
 
-	if (narenas)
+	if (narenas > 0)
 		FS_FreeFileList (arenafiles, narenas);
 
-	if (narenanames)
+	if (narenanames > 0)
 		UI_FreeAssetList (tmplist, narenanames);
 
 	for (i=0; i<NUM_MAPTYPES; i++)
