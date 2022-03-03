@@ -410,7 +410,7 @@ void UI_LoadMod (char *modName)
 =======================================================================
 */
 
-//#define UI_USE_ZMALLOC
+#define UI_USE_ZMALLOC
 
 #ifdef UI_USE_ZMALLOC
 #define UI_Malloc			Z_Malloc
@@ -453,7 +453,7 @@ void UI_InsertInAssetList (char **list, const char *insert, int len, int start, 
 				for (j=len; j>i; j--)
 					list[j] = list[j-1];
 
-				list[i] = strdup(insert);
+				list[i] = UI_CopyString((char *)insert);
 				return;
 			}
 		}
@@ -464,12 +464,12 @@ void UI_InsertInAssetList (char **list, const char *insert, int len, int start, 
 		{
 			if (!list[i])
 			{
-				list[i] = strdup(insert);
+				list[i] = UI_CopyString((char *)insert);
 				return;
 			}
 		}
 	}
-	list[len] = strdup(insert);
+	list[len] = UI_CopyString((char *)insert);
 }
 
 
@@ -516,11 +516,11 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 	if (maxItems < 2) // must allow at least 2 items
 		return NULL;
 
-	list = malloc(sizeof(char *) * (maxItems+1));
-	memset (list, 0, sizeof(char *) * (maxItems+1));
+	list = UI_Malloc(sizeof(char *) * (maxItems+1));
+//	memset (list, 0, sizeof(char *) * (maxItems+1));
 
 	// set first item name
-	list[0] = strdup(firstItem); 
+	list[0] = UI_CopyString(firstItem); 
 	nItemNames = 1;
 
 #if 1
@@ -653,11 +653,11 @@ void UI_FreeAssetList (char **list, int n)
 	{
 		if (list && list[i])
 		{
-			free (list[i]);
+			UI_Free (list[i]);
 			list[i] = 0;
 		}
 	}
-	free (list);
+	UI_Free (list);
 }
 
 /*
@@ -700,15 +700,15 @@ void UI_GetVideoModes (void)
 		}
 	}
 	// allocate lists
-	ui_resolution_names = malloc((numModes+2) * sizeof(char *));
-	ui_video_modes = malloc((numModes+2) * sizeof(char *));
-	memset (ui_resolution_names, 0, (numModes+2) * sizeof(char *));
-	memset (ui_video_modes, 0, (numModes+2) * sizeof(char *));
+	ui_resolution_names = UI_Malloc((numModes+2) * sizeof(char *));
+	ui_video_modes = UI_Malloc((numModes+2) * sizeof(char *));
+//	memset (ui_resolution_names, 0, (numModes+2) * sizeof(char *));
+//	memset (ui_video_modes, 0, (numModes+2) * sizeof(char *));
 
 	// add custom resolution item
-//	ui_resolution_names[0] = strdup ("custom      ???");
-	ui_resolution_names[0] = strdup ("[custom   ] [ ??? ]");
-	ui_video_modes[0] = strdup ("-1");	
+//	ui_resolution_names[0] = UI_CopyString ("custom      ???");
+	ui_resolution_names[0] = UI_CopyString ("[custom   ] [ ??? ]");
+	ui_video_modes[0] = UI_CopyString ("-1");	
 
 	// add to lists
 	for (i=firstMode, j=1; i<(firstMode+numModes); i++, j++)
@@ -758,8 +758,8 @@ void UI_GetVideoModes (void)
 		//	Com_sprintf (nameBuf, sizeof(nameBuf), "%-12s%s", resBuf, aspectBuf);
 			Com_sprintf (nameBuf, sizeof(nameBuf), "[%-9s] [%-5s]", resBuf, aspectBuf);
 
-			ui_resolution_names[j] = strdup (nameBuf);
-			ui_video_modes[j] = strdup (va("%i", i));	
+			ui_resolution_names[j] = UI_CopyString (nameBuf);
+			ui_video_modes[j] = UI_CopyString (va("%i", i));	
 		}
 	}
 
@@ -810,19 +810,19 @@ void UI_GetAnisoValues (void)
 		numValues = 5;
 
 	// allocate lists
-	ui_aniso_names = malloc((numValues+1) * sizeof(char *));
-	ui_aniso_values = malloc((numValues+1) * sizeof(char *));
-	memset (ui_aniso_names, 0, (numValues+1) * sizeof(char *));
-	memset (ui_aniso_values, 0, (numValues+1) * sizeof(char *));
+	ui_aniso_names = UI_Malloc((numValues+1) * sizeof(char *));
+	ui_aniso_values = UI_Malloc((numValues+1) * sizeof(char *));
+//	memset (ui_aniso_names, 0, (numValues+1) * sizeof(char *));
+//	memset (ui_aniso_values, 0, (numValues+1) * sizeof(char *));
 
 	// set names and values
 	for (i=0; i<numValues; i++)
 	{
 		if (i == 0)
-			ui_aniso_names[i] = (numValues == 1) ? strdup("not supported") : strdup("off");
+			ui_aniso_names[i] = (numValues == 1) ? UI_CopyString("not supported") : UI_CopyString("off");
 		else
-			ui_aniso_names[i] = strdup(va("%ix", 1<<i));
-		ui_aniso_values[i] = strdup(va("%i", 1<<i));
+			ui_aniso_names[i] = UI_CopyString(va("%ix", 1<<i));
+		ui_aniso_values[i] = UI_CopyString(va("%i", 1<<i));
 	}
 
 	ui_num_aniso_values = numValues;
@@ -901,14 +901,14 @@ void UI_BuildModList (void)
 	int			i;
 	qboolean	unsupportedMod;
 
-	ui_mod_names = malloc(sizeof(char *) * (UI_MAX_MODS+1));
-	ui_mod_values = malloc(sizeof(char *) * (UI_MAX_MODS+1));
-	memset (ui_mod_names, 0, sizeof(char *) * (UI_MAX_MODS+1));
-	memset (ui_mod_values, 0, sizeof(char *) * (UI_MAX_MODS+1));
+	ui_mod_names = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
+	ui_mod_values = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
+//	memset (ui_mod_names, 0, sizeof(char *) * (UI_MAX_MODS+1));
+//	memset (ui_mod_values, 0, sizeof(char *) * (UI_MAX_MODS+1));
 
 	// add baseq2 first
-	ui_mod_names[0] = strdup("Quake II (vanilla)"); 
-	ui_mod_values[0] = strdup(BASEDIRNAME);
+	ui_mod_names[0] = UI_CopyString("Quake II (vanilla)"); 
+	ui_mod_values[0] = UI_CopyString(BASEDIRNAME);
 	ui_mod_isUnsupported[0] = false;
 	count++;
 
@@ -1257,15 +1257,15 @@ void UI_LoadCrosshairs (void)
 	ui_crosshair_names = UI_LoadAssetList ("pics", "ch*.*", "none", &ui_numcrosshairs, UI_MAX_CROSSHAIRS, true, false, UI_IsValidCrosshairName);
 	UI_SortCrosshairs (ui_crosshair_names, ui_numcrosshairs);
 
-	ui_crosshair_display_names = malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+	ui_crosshair_display_names = UI_Malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 	memcpy (ui_crosshair_display_names, ui_crosshair_names, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
-	ui_crosshair_display_names[0] = strdup("chnone");
+	ui_crosshair_display_names[0] = UI_CopyString("chnone");
 
-	ui_crosshair_values = malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
-	memset (ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+	ui_crosshair_values = UI_Malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
+//	memset (ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 
 	for (i=0; i<ui_numcrosshairs; i++)
-		ui_crosshair_values[i] = (i == 0) ? strdup("0") : strdup(strtok(ui_crosshair_names[i], "ch")); 
+		ui_crosshair_values[i] = (i == 0) ? UI_CopyString("0") : UI_CopyString(strtok(ui_crosshair_names[i], "ch")); 
 }
 
 
@@ -1282,9 +1282,9 @@ void UI_FreeCrosshairs (void)
 		if (ui_crosshair_display_names)
 		{
 			if (ui_crosshair_display_names[0]) {
-				free (ui_crosshair_display_names[0]);
+				UI_Free (ui_crosshair_display_names[0]);
 			}
-			free (ui_crosshair_display_names);
+			UI_Free (ui_crosshair_display_names);
 		}
 		UI_FreeAssetList (ui_crosshair_values, ui_numcrosshairs);
 	}
@@ -1439,8 +1439,8 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
 	}
 
 	if ( gotCommand && gotDisplay ) {
-		handle->bindList[handle->numKeyBinds].commandName = strdup(command);
-		handle->bindList[handle->numKeyBinds].displayName = strdup(display);
+		handle->bindList[handle->numKeyBinds].commandName = UI_CopyString(command);
+		handle->bindList[handle->numKeyBinds].displayName = UI_CopyString(display);
 		handle->numKeyBinds++;
 	}
 	else {
@@ -1490,8 +1490,8 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
 			// count num of keybinds and alloc memory accordingly
 			UI_CountKeyBinds (handle, &p);
 		//	Com_Printf ("UI_ParseKeyBindList: allocating memory for %i 'keyBind' items in keybind list %s\n", handle->maxKeyBinds, handle->fileName);
-			handle->bindList = malloc(sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
-			memset (handle->bindList, 0, sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
+			handle->bindList = UI_Malloc(sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
+		//	memset (handle->bindList, 0, sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
 
 			while (1)
 			{
@@ -1552,11 +1552,11 @@ void UI_LoadKeyBindListFromFile (keyBindListHandle_t *handle)
 		{
 			for (i=0; i<handle->maxKeyBinds; i++) {
 				if (handle->bindList[i].commandName)
-					free ((char *)handle->bindList[i].commandName);
+					UI_Free ((char *)handle->bindList[i].commandName);
 				if (handle->bindList[i].displayName)
-					free ((char *)handle->bindList[i].displayName);
+					UI_Free ((char *)handle->bindList[i].displayName);
 			}
-			free (handle->bindList);
+			UI_Free (handle->bindList);
 			handle->bindList = NULL;
 			handle->maxKeyBinds = 0;
 			handle->numKeyBinds = 0;
@@ -1593,11 +1593,11 @@ void UI_FreeKeyBindList (void)
 	{
 		for (i=0; i<ui_customKeyBindList.maxKeyBinds; i++) {
 			if (ui_customKeyBindList.bindList[i].commandName)
-				free ((char *)ui_customKeyBindList.bindList[i].commandName);
+				UI_Free ((char *)ui_customKeyBindList.bindList[i].commandName);
 			if (ui_customKeyBindList.bindList[i].displayName)
-				free ((char *)ui_customKeyBindList.bindList[i].displayName);
+				UI_Free ((char *)ui_customKeyBindList.bindList[i].displayName);
 		}
-		free (ui_customKeyBindList.bindList);
+		UI_Free (ui_customKeyBindList.bindList);
 		ui_customKeyBindList.bindList = NULL;
 		ui_customKeyBindList.maxKeyBinds = 0;
 		ui_customKeyBindList.numKeyBinds = 0;
@@ -2192,12 +2192,12 @@ void UI_LoadArenas (void)
 		if (ui_svr_arena_mapnames[i])
 			UI_FreeAssetList (ui_svr_arena_mapnames[i], ui_svr_arena_nummaps[i]);
 		ui_svr_arena_nummaps[i] = 0;
-		ui_svr_arena_mapnames[i] = malloc(sizeof(char *) * MAX_ARENAS);
-		memset (ui_svr_arena_mapnames[i], 0, sizeof(char *) * MAX_ARENAS);
+		ui_svr_arena_mapnames[i] = UI_Malloc(sizeof(char *) * MAX_ARENAS);
+	//	memset (ui_svr_arena_mapnames[i], 0, sizeof(char *) * MAX_ARENAS);
 	}
 
-	tmplist = malloc(sizeof(char *) * MAX_ARENAS);
-	memset (tmplist, 0, sizeof(char *) * MAX_ARENAS);
+	tmplist = UI_Malloc(sizeof(char *) * MAX_ARENAS);
+//	memset (tmplist, 0, sizeof(char *) * MAX_ARENAS);
 
 #if 1
 	arenafiles = FS_GetFileList ("scripts", "arena", &narenas);
@@ -2239,7 +2239,7 @@ void UI_LoadArenas (void)
 
 				for (j=0; j<NUM_MAPTYPES; j++)
 					if (type_supported[j]) {
-						ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
+						ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = UI_CopyString(scratch);
 						ui_svr_arena_nummaps[j]++;
 					}
 
@@ -2297,7 +2297,7 @@ void UI_LoadArenas (void)
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
-							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
+							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = UI_CopyString(scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
@@ -2356,7 +2356,7 @@ void UI_LoadArenas (void)
 
 					for (j=0; j<NUM_MAPTYPES; j++)
 						if (type_supported[j]) {
-							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = strdup(scratch);
+							ui_svr_arena_mapnames[j][ui_svr_arena_nummaps[j]] = UI_CopyString(scratch);
 							ui_svr_arena_nummaps[j]++;
 						}
 
@@ -2441,8 +2441,8 @@ void UI_LoadMapList (void)
 		buffer = "base1 \"Outer Base\"\n";
 	}
 
-	ui_svr_listfile_mapnames = malloc(sizeof(char *) * (ui_svr_listfile_nummaps + 1));
-	memset (ui_svr_listfile_mapnames, 0, sizeof(char *) * (ui_svr_listfile_nummaps + 1));
+	ui_svr_listfile_mapnames = UI_Malloc(sizeof(char *) * (ui_svr_listfile_nummaps + 1));
+//	memset (ui_svr_listfile_mapnames, 0, sizeof(char *) * (ui_svr_listfile_nummaps + 1));
 
 	s = buffer;
 
@@ -2457,7 +2457,7 @@ void UI_LoadMapList (void)
 		Q_strncpyz (shortname, sizeof(shortname), COM_Parse(&s));
 		Q_strncpyz (longname, sizeof(longname), COM_Parse(&s));
 		Com_sprintf (scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
-		ui_svr_listfile_mapnames[i] = strdup(scratch);
+		ui_svr_listfile_mapnames[i] = UI_CopyString(scratch);
 	}
 	ui_svr_listfile_mapnames[ui_svr_listfile_nummaps] = 0;
 
@@ -2475,12 +2475,12 @@ void UI_LoadMapList (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_maplists[i]) {
-			free (ui_svr_maplists[i]);
+			UI_Free (ui_svr_maplists[i]);
 		}
 		ui_svr_maplists[i] = NULL;
 		ui_svr_maplist_sizes[i] = ui_svr_listfile_nummaps + ui_svr_arena_nummaps[i];
-		ui_svr_maplists[i] = malloc(sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
-		memset (ui_svr_maplists[i], 0, sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
+		ui_svr_maplists[i] = UI_Malloc(sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
+	//	memset (ui_svr_maplists[i], 0, sizeof(char *) * (ui_svr_maplist_sizes[i] + 1));
 
 		for (j = 0; j < ui_svr_maplist_sizes[i]; j++)
 		{
@@ -2513,7 +2513,7 @@ void UI_FreeMapList (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_maplists[i]) {
-			free (ui_svr_maplists[i]);
+			UI_Free (ui_svr_maplists[i]);
 		}
 		ui_svr_maplists[i] = NULL;
 		ui_svr_maplist_sizes[i] = 0;
@@ -2569,13 +2569,13 @@ void UI_BuildStartSeverLevelshotTables (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{	// free existing list	
 		if (ui_svr_mapshotvalid[i]) {
-			free (ui_svr_mapshotvalid[i]);
+			UI_Free (ui_svr_mapshotvalid[i]);
 			ui_svr_mapshotvalid[i] = NULL;
 		}
 
 		// alloc and zero new list
-		ui_svr_mapshotvalid[i] = malloc(sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
-		memset (ui_svr_mapshotvalid[i], 0, sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
+		ui_svr_mapshotvalid[i] = UI_Malloc(sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
+	//	memset (ui_svr_mapshotvalid[i], 0, sizeof(byte) * (ui_svr_maplist_sizes[i] + 1));
 
 		// register null levelshot
 		if (ui_svr_mapshotvalid[i][ui_svr_maplist_sizes[i]] == M_UNSET) {	
@@ -2600,7 +2600,7 @@ void UI_FreeStartSeverLevelshotTables (void)
 	for (i=0; i<NUM_MAPTYPES; i++)
 	{
 		if (ui_svr_mapshotvalid[i]) {
-			free (ui_svr_mapshotvalid[i]);
+			UI_Free (ui_svr_mapshotvalid[i]);
 			ui_svr_mapshotvalid[i] = NULL;
 		}
 	}
@@ -2906,10 +2906,10 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			Q_strncpyz (ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
 			Q_strncpyz (ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
 
-			skinnames = malloc(sizeof(char *) * (nskins+1));
-			skiniconnames = malloc(sizeof(char *) * (nskins+1));
-			memset (skinnames, 0, sizeof(char *) * (nskins+1));
-			memset (skiniconnames, 0, sizeof(char *) * (nskins+1));
+			skinnames = UI_Malloc(sizeof(char *) * (nskins+1));
+			skiniconnames = UI_Malloc(sizeof(char *) * (nskins+1));
+		//	memset (skinnames, 0, sizeof(char *) * (nskins+1));
+		//	memset (skiniconnames, 0, sizeof(char *) * (nskins+1));
 
 			// copy the valid skins
 			if (nimagefiles)
@@ -2929,8 +2929,8 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 						if ( strrchr(scratch, '.') )
 							*strrchr(scratch, '.') = 0;
 
-						skinnames[s] = strdup(scratch);
-						skiniconnames[s] = strdup(va("/players/%s/%s_i.pcx", ui_pmi[ui_numplayermodels].directory, scratch));
+						skinnames[s] = UI_CopyString(scratch);
+						skiniconnames[s] = UI_CopyString(va("/players/%s/%s_i.pcx", ui_pmi[ui_numplayermodels].directory, scratch));
 						s++;
 					}
 				}
@@ -2973,20 +2973,20 @@ void UI_BuildPlayerColorList (void)
 {
 	int		i, numColors = 0;
 
-	ui_player_color_values = malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
-	ui_player_color_imageNames = malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
-	memset (ui_player_color_values, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
-	memset (ui_player_color_imageNames, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+	ui_player_color_values = UI_Malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+	ui_player_color_imageNames = UI_Malloc(sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+//	memset (ui_player_color_values, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
+//	memset (ui_player_color_imageNames, 0, sizeof(char *) * (UI_NUM_PLAYER_COLORS+1));
 
 	for (i = 0; i < UI_NUM_PLAYER_COLORS; i++)
 	{	// last index is custom color
 		if (i == UI_NUM_PLAYER_COLORS-1) {
-			ui_player_color_values[i] = strdup(UI_ITEMVALUE_WILDCARD);
-			ui_player_color_imageNames[i] = strdup(UI_CUSTOMCOLOR_PIC);
+			ui_player_color_values[i] = UI_CopyString(UI_ITEMVALUE_WILDCARD);
+			ui_player_color_imageNames[i] = UI_CopyString(UI_CUSTOMCOLOR_PIC);
 		}
 		else {
-			ui_player_color_values[i] = strdup(va("%02X%02X%02X", ui_player_color_imageColors[i][0], ui_player_color_imageColors[i][1], ui_player_color_imageColors[i][2]));
-			ui_player_color_imageNames[i] = strdup(UI_SOLIDWHITE_PIC);
+			ui_player_color_values[i] = UI_BuildPlayerColorList(va("%02X%02X%02X", ui_player_color_imageColors[i][0], ui_player_color_imageColors[i][1], ui_player_color_imageColors[i][2]));
+			ui_player_color_imageNames[i] = UI_BuildPlayerColorList(UI_SOLIDWHITE_PIC);
 		}
 		numColors++;
 	}
@@ -3014,7 +3014,7 @@ UI_FreePlayerModels
 */
 void UI_FreePlayerModels (void)
 {
-	int		i, j;
+	int		i;
 
 	for (i = 0; i < ui_numplayermodels; i++)
 	{
