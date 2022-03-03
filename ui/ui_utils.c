@@ -2985,8 +2985,8 @@ void UI_BuildPlayerColorList (void)
 			ui_player_color_imageNames[i] = UI_CopyString(UI_CUSTOMCOLOR_PIC);
 		}
 		else {
-			ui_player_color_values[i] = UI_BuildPlayerColorList(va("%02X%02X%02X", ui_player_color_imageColors[i][0], ui_player_color_imageColors[i][1], ui_player_color_imageColors[i][2]));
-			ui_player_color_imageNames[i] = UI_BuildPlayerColorList(UI_SOLIDWHITE_PIC);
+			ui_player_color_values[i] = UI_CopyString(va("%02X%02X%02X", ui_player_color_imageColors[i][0], ui_player_color_imageColors[i][1], ui_player_color_imageColors[i][2]));
+			ui_player_color_imageNames[i] = UI_CopyString(UI_SOLIDWHITE_PIC);
 		}
 		numColors++;
 	}
