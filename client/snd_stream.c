@@ -681,7 +681,7 @@ void S_OGG_LoadFileList (void)
 
 		p = list[i];
 
-		if (!FS_ItemInList(p, ogg_numfiles, ogg_filelist)) // check if already in list
+		if ( !FS_ItemInList(p, ogg_numfiles, ogg_filelist) ) // check if already in list
 		{
 			ogg_filelist[ogg_numfiles] = malloc(strlen(p)+1);
 			Com_sprintf (ogg_filelist[ogg_numfiles], strlen(p)+1, "%s\0", p);
@@ -713,11 +713,11 @@ void S_OGG_LoadFileList (void)
 				continue;
 
 			p = list[i];
-		//	if (!strstr(p, ".ogg"))
+		//	if ( !strstr(p, ".ogg") )
 		//		continue;
-		//	if (!S_OGG_Check(p))
+		//	if ( !S_OGG_Check(p) )
 		//		continue;
-			if (!FS_ItemInList(p, ogg_numfiles, ogg_filelist)) // check if already in list
+			if ( !FS_ItemInList(p, ogg_numfiles, ogg_filelist) ) // check if already in list
 			{
 				ogg_filelist[ogg_numfiles] = malloc(strlen(p)+1);
 				Com_sprintf (ogg_filelist[ogg_numfiles], strlen(p)+1, "%s\0", p);
@@ -744,11 +744,11 @@ void S_OGG_LoadFileList (void)
 				continue;
 
 			p = list[i];
-		//	if (!strstr(p, ".ogg"))
+		//	if ( !strstr(p, ".ogg" ))
 		//		continue;
-		//	if (!S_OGG_Check(p))
+		//	if ( !S_OGG_Check(p) )
 		//		continue;
-			if (!FS_ItemInList(p, ogg_numfiles, ogg_filelist)) // check if already in list
+			if ( !FS_ItemInList(p, ogg_numfiles, ogg_filelist) ) // check if already in list
 			{
 				ogg_filelist[ogg_numfiles] = malloc(strlen(p)+1);
 				Com_sprintf (ogg_filelist[ogg_numfiles], strlen(p)+1, "%s\0", p);

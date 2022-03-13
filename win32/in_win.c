@@ -460,7 +460,7 @@ void IN_Init (void)
 	Cvar_SetDescription ("m_noaccel", "Disables mouse acceleration when set to 1.");
 	m_filter				= Cvar_Get ("m_filter",					"0",		0);
 	Cvar_SetDescription ("m_filter", "Enables mouse input filtering.");
-    in_mouse				= Cvar_Get ("in_mouse",					"1",		CVAR_ARCHIVE);
+	in_mouse				= Cvar_Get ("in_mouse",					"1",		CVAR_ARCHIVE);
 	Cvar_SetDescription ("in_mouse", "Enables mouse input.");
 	in_doubleclicktime		= Cvar_Get ("in_doubleclicktime",		"0.5",		CVAR_ARCHIVE);		// reset time for double click
 	Cvar_SetDescription ("in_doubleclicktime", "Sets reset time in seconds for mouse double click.");

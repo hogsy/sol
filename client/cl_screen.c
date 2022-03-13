@@ -72,7 +72,7 @@ cvar_t		*scr_debuggraph;
 //cvar_t		*scr_graphheight;	// unused
 cvar_t		*scr_graphscale;
 cvar_t		*scr_graphshift;
-//cvar_t		*scr_drawall;	// unused
+//cvar_t		*scr_drawall;		// unused
 
 cvar_t		*scr_simple_loadscreen;	// whether to use reduced load screen
 
@@ -92,6 +92,7 @@ cvar_t		*crosshair_pulse;
 
 // Knightmare 12/28/2001- BramBo's FPS counter
 cvar_t		*cl_drawfps;
+cvar_t		*cl_drawhud;			// HUD disable cvar
 cvar_t		*cl_demomessage;
 //cvar_t		*cl_loadpercent;	// unused
 cvar_t		*cl_hud;				// placeholder cvar
@@ -1696,6 +1697,8 @@ void SCR_Init (void)
 {
 	cl_drawfps = Cvar_Get ("cl_drawfps", "0", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_drawfps", "Enables drawing of FPS counter on the screen.");
+	cl_drawhud = Cvar_Get ("cl_drawhud", "1", CVAR_ARCHIVE);;	// HUD disable cvar
+	Cvar_SetDescription ("cl_drawhud", "Toggles drawing of HUD.");
 	cl_demomessage = Cvar_Get ("cl_demomessage", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_demomessage", "Enables display of \"Running Demo\" message when a demo is playing.");
 //	cl_loadpercent = Cvar_Get ("cl_loadpercent", "0", CVAR_ARCHIVE);	// unused
@@ -1865,43 +1868,10 @@ SCR_DrawNet
 */
 void SCR_DrawNet (void)
 {
-	if (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged 
-		< CMD_BACKUP-1)
+	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) < (CMD_BACKUP-1) )
 		return;
 
-//	R_DrawPic (scr_vrect.x + SCR_ScaledHud(64), scr_vrect.y, "net");
 	SCR_DrawPic (scr_vrect.x+64, scr_vrect.y, 32, 32, ALIGN_TOPLEFT, false, "net", 1.0f);
-}
-
-
-/*
-==============
-SCR_DrawAlertMessagePicture
-==============
-*/
-void SCR_DrawAlertMessagePicture (char *name, qboolean center, int yOffset)
-{
-	float ratio;//, scale;
-	int w, h;
-
-	//scale = SCR_GetScreenScale();
-
-	R_DrawGetPicSize (&w, &h, name);
-	if (w)
-	{
-		ratio = 35.0/(float)h;
-		h = 35;
-		w *= ratio;
-	}
-	else
-		return;
-
-	if (center)
-		SCR_DrawPic((SCREEN_WIDTH - w)*0.5, (SCREEN_HEIGHT - h)*0.5,
-				w, h, ALIGN_CENTER, false, name, 1.0);
-	else
-		SCR_DrawPic((SCREEN_WIDTH - w)*0.5, SCREEN_HEIGHT*0.5 + yOffset,
-				w, h, ALIGN_CENTER, false, name, 1.0);
 }
 
 
@@ -1930,7 +1900,6 @@ void SCR_DrawPause (void)
 		return;
 
 //	R_DrawGetPicSize (&w, &h, "pause");
-//	SCR_DrawPic ((SCREEN_WIDTH-w)*0.5, (SCREEN_HEIGHT-h)*0.5, w, h, ALIGN_CENTER, "pause", 1.0);
 	SCR_DrawPic (x, y, w, h, ALIGN_CENTER, false, "pause", 1.0);
 }
 
@@ -1962,24 +1931,56 @@ void SCR_DrawLoadingTagProgress (char *picName, int yOffset, int percent)
 
 /*
 ==============
+SCR_DrawDownloadingTag
+==============
+*/
+void SCR_DrawDownloadingTag (int yOffset)
+{
+	int		w, h, x, y;
+
+	w = 208;	// size of downloading.tga = 416x64
+	h = 32;
+	x = (SCREEN_WIDTH - w)*0.5;
+	y = (SCREEN_HEIGHT - h)*0.5;
+
+	SCR_DrawPic(x, y + yOffset, w, h, ALIGN_CENTER, false, "downloading", 1.0);
+}
+
+
+/*
+==============
+SCR_DrawLoadingTag
+==============
+*/
+void SCR_DrawLoadingTag (int yOffset)
+{
+	int		w, h, x, y;
+
+	w = 142;	// size of original loading.pcx = 111x25
+	h = 32;
+	x = (SCREEN_WIDTH - w)*0.5;
+	y = (SCREEN_HEIGHT - h)*0.5;
+
+	SCR_DrawPic(x, y + yOffset, w, h, ALIGN_CENTER, false, "loading", 1.0);
+}
+
+
+/*
+==============
 SCR_DrawLoadingBar
 ==============
 */
-void SCR_DrawLoadingBar (float x, float y, float w, float h, int percent, float sizeRatio)
+void SCR_DrawLoadingBar (float x, float y, float w, float h, int indent, int percent)
 {	
 	int		red, green, blue;
-	float	iRatio, hiRatio;
 
 	// changeable download/map load bar color
-//	CL_TextColor ((int)alt_text_color->value, &red, &green, &blue);
 	CL_TextColor (alt_text_color->integer, &red, &green, &blue);
-	iRatio = 1 - fabs(sizeRatio);
-	hiRatio = iRatio * 0.5;
 
 	SCR_DrawFill (x, y, w, h, ALIGN_STRETCH, false, 255, 255, 255, 90);
 
 	if (percent != 0)
-		SCR_DrawFill (x+(h*hiRatio), y+(h*hiRatio), (w-(h*iRatio))*percent*0.01, h*sizeRatio,
+		SCR_DrawFill (x+indent, y+indent, (w-(2*indent))*percent*0.01, h-(2*indent),
 						ALIGN_STRETCH, false, red, green, blue, 255);
 }
 
@@ -2019,7 +2020,6 @@ void SCR_DrawLoading (void)
 	char		mapfile[64], picName[MAX_QPATH];
 	char		*loadMsg;
 	qboolean	isMap = false, haveMapPic = false, widescreen;
-//	qboolean	simplePlaque = (scr_simple_loadscreen->value != 0);
 	qboolean	simplePlaque = (scr_simple_loadscreen->integer != 0);
 
 	if (!scr_draw_loading) {
@@ -2033,7 +2033,6 @@ void SCR_DrawLoading (void)
 	// loading a map...
 	if (cls.loadingMessage && cl.configstrings[CS_MODELS+1][0])
 	{
-	//	strncpy (mapfile, cl.configstrings[CS_MODELS+1] + 5);	// skip "maps/"
 		Q_strncpyz (mapfile, sizeof(mapfile), cl.configstrings[CS_MODELS+1] + 5);	// skip "maps/"
 		mapfile[strlen(mapfile)-4] = 0;		// cut off ".bsp"
 
@@ -2118,8 +2117,8 @@ void SCR_DrawLoading (void)
 			SCR_DrawString (SCREEN_WIDTH*0.5 - MENU_FONT_SIZE*stringLen(loadMsg)*0.5,
 							SCREEN_HEIGHT*0.5 + MENU_FONT_SIZE*6, MENU_FONT_SIZE, ALIGN_CENTER, loadMsg, FONT_SCREEN, 255);
 
-			SCR_DrawLoadingBar (SCREEN_WIDTH*0.5 - 180, SCREEN_HEIGHT*0.5 + 60, 360, 24, cls.downloadpercent, 0.75);
-			SCR_DrawAlertMessagePicture("downloading", false, -plaqueOffset);
+			SCR_DrawLoadingBar (SCREEN_WIDTH*0.5 - 180, SCREEN_HEIGHT*0.5 + 60, 360, 24, 3, cls.downloadpercent);
+			SCR_DrawDownloadingTag (plaqueOffset);
 		}
 	}
 	// Loading message stuff && loading bar...
@@ -2152,15 +2151,15 @@ void SCR_DrawLoading (void)
 		if (simplePlaque)
 			SCR_DrawLoadingTagProgress ("loading_bar", plaqueOffset, (int)cls.loadingPercent);
 		else {
-			SCR_DrawLoadingBar (SCREEN_WIDTH*0.5 - 180, SCREEN_HEIGHT - 20, 360, 15, (int)cls.loadingPercent, 0.6);
-			SCR_DrawAlertMessagePicture("loading", false, plaqueOffset);
+			SCR_DrawLoadingBar (SCREEN_WIDTH*0.5 - 180, SCREEN_HEIGHT - 20, 360, 15, 3, (int)cls.loadingPercent);
+			SCR_DrawLoadingTag (plaqueOffset);
 		}
 	}
 	else {// just a plain old loading plaque
 		if (simplePlaque)
 			SCR_DrawLoadingTagProgress ("loading_bar", 0, (int)cls.loadingPercent);
 		else
-			SCR_DrawAlertMessagePicture("loading", true, 0);
+			SCR_DrawLoadingTag (0);
 	}
 }
 
@@ -2176,7 +2175,6 @@ SCR_RunLetterbox
 void SCR_RunLetterbox (void)
 {
 	// decide on the height of the letterbox
-//	if (scr_letterbox->value && (cl.refdef.rdflags & RDF_LETTERBOX)) {
 	if (scr_letterbox->integer && (cl.refdef.rdflags & RDF_LETTERBOX)) {
 		scr_letterbox_lines = (1 - min(1, viddef.width*LETTERBOX_RATIO/viddef.height)) * 0.5;
 		scr_letterbox_active = true;
@@ -2219,7 +2217,6 @@ void SCR_DrawCameraEffect (void)
 	if (!(cl.refdef.rdflags & RDF_CAMERAEFFECT))
 		return;
 
-//	R_DrawStretchPic (0, 0, viddef.width, viddef.height, "gfx/2d/cameraeffect.tga", 1.0);
 	R_DrawCameraEffect ();
 }
 
@@ -2253,12 +2250,12 @@ Scroll it up or down
 void SCR_RunConsole (void)
 {
 	// Knightmare- clamp console height
-	//if (scr_conheight->value < 0.1f || con_height->value > 1.0f)
-	//	Cvar_SetValue( "scr_conheight", ClampCvar( 0.1, 1, scr_conheight->value ) );
+//	if (scr_conheight->value < 0.1f || con_height->value > 1.0f)
+//		Cvar_SetValue( "scr_conheight", ClampCvar( 0.1, 1, scr_conheight->value ) );
 
 	// decide on the height of the console
 	if (cls.consoleActive) // (cls.key_dest == key_console)
-		//scr_conlines = halfconback ? 0.5 : scr_conheight->value; // variable height console
+	//	scr_conlines = halfconback ? 0.5 : scr_conheight->value; // variable height console
 		scr_conlines = 0.5;
 	else
 		scr_conlines = 0;				// none visible
@@ -2289,10 +2286,10 @@ void SCR_DrawConsole (void)
 	Con_CheckResize ();
 	
 	// clamp console height
-	//if (con_height->value < 0.1f || con_height->value > 1.0f)
-	//	Cvar_SetValue ( "con_height", ClampCvar(0.1, 1, con_height->value) );
+//	if (con_height->value < 0.1f || con_height->value > 1.0f)
+//		Cvar_SetValue ( "con_height", ClampCvar(0.1, 1, con_height->value) );
 
-	/*if ( (cls.key_dest != key_menu)
+/*	if ( (cls.key_dest != key_menu)
 		&& (cls.state == ca_disconnected || cls.state == ca_connecting) )
 	{
 		R_DrawFill (0, 0, viddef.width, viddef.height, 0);
@@ -2313,7 +2310,7 @@ void SCR_DrawConsole (void)
 			Con_DrawConsole (con_height->value, false);
 		}
 		return;
-	}*/
+	} */
 
 	// can't render menu or game
 	if ( (cls.key_dest != key_menu) &&
@@ -2326,7 +2323,7 @@ void SCR_DrawConsole (void)
 	{
 		if (!scr_draw_loading) // no background
 			R_DrawFill (0, 0, viddef.width, viddef.height, 0, 0, 0, 255);
-		//Con_DrawConsole (halfconback?0.5:con_height->value, false);
+	//	Con_DrawConsole (halfconback?0.5:con_height->value, false);
 		Con_DrawConsole (0.5, false);
 		return;
 	}
@@ -2357,18 +2354,17 @@ void SCR_BeginLoadingPlaque (void)
 	S_StopAllSounds ();
 	cl.sound_prepped = false;		// don't play ambients
 	CDAudio_Stop ();
-	//if (cls.disable_screen)
-	//	return;
-//	if (developer->value)
+//	if (cls.disable_screen)
+//		return;
 	if (developer->integer)
 		return;
 
 	cls.consoleActive = false; // Knightmare added
 
-	/*if (cls.state == ca_disconnected)
+/*	if (cls.state == ca_disconnected)
 		return;	// if at console, don't bring up the plaque
 	if (cls.key_dest == key_console)
-		return;*/
+		return; */
 	if (cl.cinematictime > 0)
 		scr_draw_loading = 2;	// clear to black first
 	else
@@ -2513,13 +2509,12 @@ void SCR_TouchPics (void)
 		for (j=0 ; j<11 ; j++)
 			R_DrawFindPic (sb_nums[i][j]);
 
-//	if (crosshair->value)
 	if (crosshair->integer)
 	{
-	//	if (crosshair->value > 100 || crosshair->value < 0) //Knightmare increased
-	//		crosshair->value = 1;
-		if (crosshair->integer > 100 || crosshair->integer < 0) //Knightmare increased
+		if (crosshair->integer > 100 || crosshair->integer < 0) {
+		//	Cvar_SetValue ("crosshair", 1);
 			Cvar_SetInteger ("crosshair", 1);
+		}
 
 	//	Com_sprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", (int)(crosshair->value));
 		Com_sprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", crosshair->integer);
@@ -2565,8 +2560,9 @@ void SCR_UpdateScreen (void)
 	// do nothing at all
 	if (cls.disable_screen)
 	{
-		if (cls.download) // Knightmare- don't time out on downloads
+		if (cls.download) { // Knightmare- don't time out on downloads
 			cls.disable_screen = Sys_Milliseconds ();
+		}
 		if (Sys_Milliseconds() - cls.disable_screen > 120000
 			&& cl.refresh_prepped && !(cl.cinematictime > 0)) // Knightmare- dont time out on vid restart
 		{
@@ -2577,29 +2573,30 @@ void SCR_UpdateScreen (void)
 		scr_draw_loading = 2; // Knightmare- added for loading screen
 	}
 
-	if (!scr_initialized || !con.initialized)
+	if (!scr_initialized || !con.initialized) {
 		return;				// not initialized yet
+	}
 
 	//
 	// range check cl_camera_separation so we don't inadvertently fry someone's
 	// brain
 	//
-	if ( cl_stereo_separation->value > 1.0 )
+	if ( cl_stereo_separation->value > 1.0 ) {
 		Cvar_SetValue( "cl_stereo_separation", 1.0 );
-	else if ( cl_stereo_separation->value < 0 )
+	}
+	else if ( cl_stereo_separation->value < 0 ) {
 		Cvar_SetValue( "cl_stereo_separation", 0.0 );
+	}
 
 	// Re-init screen scale
 	SCR_InitScreenScale ();
 
-	if ( cl_stereo->integer )
-	{
+	if ( cl_stereo->integer ) {
 		numframes = 2;
 		separation[0] = -cl_stereo_separation->value / 2;
 		separation[1] =  cl_stereo_separation->value / 2;
 	}		
-	else
-	{
+	else {
 		separation[0] = 0;
 		separation[1] = 0;
 		numframes = 1;
@@ -2611,18 +2608,18 @@ void SCR_UpdateScreen (void)
 
 		if (scr_draw_loading == 2)
 		{	//  loading plaque over black screen
-			//R_SetPalette(NULL);
+		//	R_SetPalette(NULL);
 			// Knightmare- refresh loading screen
 			SCR_DrawLoading ();
 
 			// Knightmare- set back for loading screen
-			if (cls.disable_screen)
+			if (cls.disable_screen) {
 				scr_draw_loading = 2;
-
-			if (cls.consoleActive)
+			}
+			if (cls.consoleActive) {
 				Con_DrawConsole (0.5, false);
-
-			//NO FULLSCREEN CONSOLE!!!
+			}
+			// NO FULLSCREEN CONSOLE!!!
 			continue;
 		} 
 		// if a cinematic is supposed to be running, handle menus
@@ -2631,15 +2628,15 @@ void SCR_UpdateScreen (void)
 		{
 			if (cls.key_dest == key_menu)
 			{
-				/*if (cl.cinematicpalette_active)
-				{
+			/*	if (cl.cinematicpalette_active) {
 					R_SetPalette(NULL);
 					cl.cinematicpalette_active = false;
-				}*/
+				} */
 				UI_Draw ();
 			}
-			else
+			else {
 				SCR_DrawCinematic();
+			}
 		}
 		else 
 		{
@@ -2652,11 +2649,10 @@ void SCR_UpdateScreen (void)
 			}
 
 			// make sure the game palette is active
-			/*if (cl.cinematicpalette_active)
-			{
+		/*	if (cl.cinematicpalette_active) {
 				R_SetPalette(NULL);
 				cl.cinematicpalette_active = false;
-			}*/
+			} */
 
 			// do 3D refresh drawing, and then update the screen
 			SCR_CalcVrect ();
@@ -2667,8 +2663,9 @@ void SCR_UpdateScreen (void)
 			V_RenderView ( separation[i] );
 
 			// don't draw crosshair while in menu
-			if (cls.key_dest != key_menu) 
+			if (cls.key_dest != key_menu) {
 				SCR_DrawCrosshair ();
+			}
 
 			if (!scr_hidehud)
 			{
@@ -2677,11 +2674,15 @@ void SCR_UpdateScreen (void)
 					cl_hud_variant->modified = false;
 					CL_SetHudVariant ();
 				} */
-				CL_DrawStatus ();
-				if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 1)
+				if (cl_drawhud->integer) {
+					CL_DrawStatus ();
+				}
+				if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 1) {
 					CL_DrawLayout ();
-				if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 2)
+				}
+				if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 2) {
 					CL_DrawInventory ();
+				}
 			}
 			SCR_DrawCameraEffect ();
 			SCR_DrawLetterbox ();
@@ -2689,16 +2690,19 @@ void SCR_UpdateScreen (void)
 			SCR_DrawNet ();
 			SCR_CheckDrawCenterString ();
 
-			if (scr_timegraph->integer)
+			if (scr_timegraph->integer) {
 				SCR_DebugGraph (cls.netFrameTime*300, 0);
+			}
 
-			if (scr_debuggraph->integer || scr_timegraph->integer || scr_netgraph->integer)
+			if (scr_debuggraph->integer || scr_timegraph->integer || scr_netgraph->integer) {
 				SCR_DrawDebugGraph ();
+			}
 
 			SCR_DrawPause ();
 
-			if (cl_demomessage->integer)
+			if (cl_demomessage->integer) {
 				DrawDemoMessage();
+			}
 
 			SCR_CalcFPS ();
 			SCR_ShowFPS ();
