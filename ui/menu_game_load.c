@@ -79,11 +79,19 @@ void M_LoadGameCallback (void *self)
 
 //=======================================================================
 
+void Menu_LoadGame_Draw (menuFramework_s *menu)
+{
+	M_LoadGameUpdateSaveshot ();
+	UI_AdjustMenuCursor (&s_loadgame_menu, 1);
+	UI_DrawMenu (&s_loadgame_menu);
+}
+
+
 void Menu_LoadGame_Init (void)
 {
 	int		i, x, y;
 
-	UI_UpdateSavegameData ();
+	UI_UpdateSavegameData ();	// update savestrings and levelshots
 
 	// menu.x = 80, menu.y = 172
 	x = SCREEN_WIDTH*0.5 - 240;
@@ -93,7 +101,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 68;
 	s_loadgame_menu.nitems		= 0;
 	s_loadgame_menu.isPopup		= false;
-	s_loadgame_menu.drawFunc	= UI_DefaultMenuDraw;
+	s_loadgame_menu.drawFunc	= Menu_LoadGame_Draw;	// UI_DefaultMenuDraw
 	s_loadgame_menu.keyFunc		= UI_DefaultMenuKey;
 	s_loadgame_menu.canOpenFunc	= NULL;
 
@@ -157,7 +165,7 @@ void Menu_LoadGame_Init (void)
 	UI_AddMenuItem (&s_loadgame_menu, &s_loadgame_saveshot);
 	UI_AddMenuItem (&s_loadgame_menu, &s_loadgame_back_action);
 
-	M_LoadGameUpdateSaveshot ();
+//	M_LoadGameUpdateSaveshot ();
 }
 
 

@@ -356,7 +356,9 @@
     <ClCompile Include="..\..\server\sv_send.c" />
     <ClCompile Include="..\..\server\sv_user.c" />
     <ClCompile Include="..\..\server\sv_world.c" />
+    <ClCompile Include="..\..\ui\menu_apply_changes.c" />
     <ClCompile Include="..\..\ui\menu_credits.c" />
+    <ClCompile Include="..\..\ui\menu_defaults_confirm.c" />
     <ClCompile Include="..\..\ui\menu_game.c" />
     <ClCompile Include="..\..\ui\menu_game_load.c" />
     <ClCompile Include="..\..\ui\menu_game_save.c" />

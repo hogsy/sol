@@ -449,7 +449,15 @@ SOURCE=..\..\renderer\r_warp.c
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\ui\menu_apply_changes.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\ui\menu_credits.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\ui\menu_defaults_confirm.c
 # End Source File
 # Begin Source File
 
@@ -691,10 +699,6 @@ SOURCE=..\..\client\vid.h
 # Begin Source File
 
 SOURCE=..\..\qcommon\vid_modes.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\qcommon\vid_resolutions.h
 # End Source File
 # Begin Source File
 

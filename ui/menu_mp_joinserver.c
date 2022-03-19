@@ -46,11 +46,11 @@ JOIN SERVER MENU
 =============================================================================
 */
 
-// Knightmare- client compatibility option
-static void ClientCompatibilityFunc (void *unused)
+// client compatibility option
+/*static void ClientCompatibilityFunc (void *unused)
 {
 	MenuPicker_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
-}
+} */
 
 
 void JoinServerFunc (void *self)
@@ -74,11 +74,11 @@ void M_SearchLocalGamesFunc (void *self)
 
 //=======================================================================
 
-// Knightmare- init client compatibility menu option
-static void M_Joinserver_SetMenuItemValues (void)
+// init client compatibility menu option
+/*static void M_Joinserver_SetMenuItemValues (void)
 {
 	MenuPicker_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
-}
+} */
 
 //=========================================================
 
@@ -129,8 +129,12 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_compatibility_box.generic.name				= "";
 	s_joinserver_compatibility_box.generic.x				= x - 32;
 	s_joinserver_compatibility_box.generic.y				= y += MENU_LINE_SIZE;
-	s_joinserver_compatibility_box.generic.callback			= ClientCompatibilityFunc;
+//	s_joinserver_compatibility_box.generic.callback			= ClientCompatibilityFunc;
 	s_joinserver_compatibility_box.itemNames				= compatibility_names;
+	s_joinserver_compatibility_box.generic.cvar				= "cl_servertrick";
+	s_joinserver_compatibility_box.generic.cvarClamp		= true;
+	s_joinserver_compatibility_box.generic.cvarMin			= 0;
+	s_joinserver_compatibility_box.generic.cvarMax			= 1;
 	s_joinserver_compatibility_box.generic.statusbar		= "set to version 34 to join non-KMQuake2 servers";
 	s_joinserver_compatibility_box.generic.cursor_offset	= 0;
 
@@ -179,7 +183,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_back_action.generic.y	= y += (UI_MAX_LOCAL_SERVERS+2)*MENU_LINE_SIZE;
 	s_joinserver_back_action.generic.callback = UI_BackMenu;
 
-	M_Joinserver_SetMenuItemValues (); // init item values
+//	M_Joinserver_SetMenuItemValues (); // init item values
 
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_banner);
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_compat_title);

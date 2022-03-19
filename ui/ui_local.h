@@ -104,14 +104,14 @@ typedef struct _tag_menuFramework
 
 	const char	*statusbar;
 	const char	*cantOpenMessage;
-//	const char	*defaultsMessage;
-//	const char	*applyChangesMessage[3];
+	const char	*defaultsMessage;
+	const char	*applyChangesMessage[3];
 	qboolean	hide_statusbar;
 	qboolean	isPopup;
 	int			grabBindCursor;
-//	int			bitFlags;			// for bit toggles
-//	char		*flagCvar;			// for dmflags var
-//	char		bitFlags_statusbar[128];
+	int			bitFlags;			// for bit toggles
+	char		*flagCvar;			// for dmflags var
+	char		bitFlags_statusbar[128];
 
 	void		(*cursordraw)	(struct _tag_menuFramework *m);
 	void		(*drawFunc)		(struct _tag_menuFramework *m);
@@ -119,8 +119,8 @@ typedef struct _tag_menuFramework
 	qboolean	(*canOpenFunc)	(void *self);
 	void		(*onOpenFunc)	(void *unused);
 	void		(*onExitFunc)	(void *self);
-//	void		(*defaultsFunc)	(void);
-//	void		(*applyChangesFunc) (void);	
+	void		(*defaultsFunc)	(void);
+	void		(*applyChangesFunc) (void);	
 } menuFramework_s;
 
 typedef struct
@@ -147,14 +147,14 @@ typedef struct
 	qboolean				isCursorItem;	// for cursor items
 	int						cursorItemOffset[2];
 	const char				*statusbar;
-/*
+
 	char					*cvar;			// for option items
 	qboolean				cvarNoSave;		// whether cvar is saved manually (apply changes func)
 	qboolean				valueChanged;	// whether value has changed from cvar (unchanged)
 	qboolean				cvarClamp;		// whether option cvar is clamped
 	float					cvarMin;		// cvar clamp range
 	float					cvarMax;
-*/
+
 	void (*callback)		(void *self);
 	void (*mouse2Callback)	(void *self);
 //	void (*dblClkCallback)	(void *self);
@@ -196,13 +196,24 @@ typedef struct
 
 	qboolean		invertValue;	// Knightmare added
 	int				curValue;
-//	int				bitFlag;		// for dmflags bit toggle
-//	const int		*bitFlags;
+	int				bitFlag;		// for dmflags bit toggle
+	const int		*bitFlags;
 
 	const char		**itemNames;
 	const char		**itemValues;	// Knightmare added
 	int				numItems;
 } menuPicker_s;
+
+typedef struct
+{
+	menuCommon_s	generic;
+
+	qboolean		invertValue;
+	float			baseValue;
+	float			increment;
+	int				curValue;
+	int				bitFlag;		// for dmflags bit toggle
+} menuCheckBox_s;
 
 typedef struct
 {
@@ -672,7 +683,7 @@ extern int ui_numplayercolors;
 
 qboolean UI_IsValidImageFilename (char *name);
 void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax);
-//void UI_ClampCvarForControl (menuCommon_s *item);
+void UI_ClampCvarForControl (menuCommon_s *item);
 int UI_GetCurValueForControl (menuCommon_s *item);
 int	UI_GetIndexForStringValue (const char **item_values, char *value);
 int UI_MouseOverAlpha (menuCommon_s *m);
@@ -750,22 +761,22 @@ extern	vec4_t stCoord_arrow_down;
 qboolean UI_MenuField_Key (menuField_s *field, int key);
 const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 //const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
-
+/*
 float	MenuSlider_GetValue (menuSlider_s *s);
 void	MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
 void	MenuSlider_SaveValue (menuSlider_s *s, const char *varName);
 const char *MenuPicker_GetValue (menuPicker_s *p);
 void	MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
 void	MenuPicker_SaveValue (menuPicker_s *p, const char *varName);
-
+*/
 //void UI_ReregisterMenuItem (void *item);
 void UI_UpdateMenuItemCoords (void *item);
 qboolean UI_ItemCanBeCursorItem (void *item);
 qboolean UI_ItemIsValidCursorPosition (void *item);
 qboolean UI_ItemHasMouseBounds (void *item);
-//char *UI_GetMenuItemValue (void *item);
-//void UI_SetMenuItemValue (void *item);
-//void UI_SaveMenuItemValue (void *item);
+char *UI_GetMenuItemValue (void *item);
+void UI_SetMenuItemValue (void *item);
+void UI_SaveMenuItemValue (void *item);
 void	UI_DrawMenuItem (void *item);
 void	UI_DrawMenuItemExtension (void *item);
 void	UI_SetMenuItemDynamicSize (void *item);
@@ -773,7 +784,7 @@ int		UI_GetItemMouseoverType (void *item);
 void	UI_InitMenuItem (void *item);
 char	*UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2);
 qboolean UI_SelectMenuItem (menuFramework_s *s);
-void	UI_SlideMenuItem (menuFramework_s *s, int dir);
+char	*UI_SlideMenuItem (menuFramework_s *s, int dir);
 //qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir);
 
 //
@@ -806,14 +817,13 @@ void UI_ForceMenuOff (void);
 void UI_PopMenu (void);
 void UI_BackMenu (void *item);
 void UI_CheckAndPopMenu (menuFramework_s *menu);
-//void UI_LoadMenuBitFlags (menuFramework_s *menu);
-//void UI_SetMenuBitFlags (menuFramework_s *menu, int bit, qboolean set);
+void UI_LoadMenuBitFlags (menuFramework_s *menu);
+void UI_SetMenuBitFlags (menuFramework_s *menu, int bit, qboolean set);
 void UI_AddMenuItem (menuFramework_s *menu, void *item);
 void UI_SetGrabBindItem (menuFramework_s *menu, menuCommon_s *c);
 void UI_ClearGrabBindItem (menuFramework_s *menu);
 qboolean UI_HasValidGrabBindItem (menuFramework_s *menu);
-/*
-void UI_RefreshMenuItems (void);
+//void UI_RefreshMenuItems (void);
 void UI_SetMenuItemValues (menuFramework_s	*menu);
 void UI_SetMenuDefaults (void);
 const char *UI_GetDefaultsMessage (void);
@@ -821,7 +831,6 @@ void UI_Defaults_Popup (void *unused);
 void UI_ApplyMenuChanges (void);
 const char *UI_GetApplyChangesMessage (int line);
 void UI_ApplyChanges_Popup (void *unused);
-*/
 void UI_DrawMenu (menuFramework_s *menu);
 void UI_AdjustMenuCursor (menuFramework_s *menu, int dir);
 void UI_DefaultMenuDraw (menuFramework_s *menu);
@@ -890,6 +899,10 @@ void UI_Draw_Cursor (void);
 #define UI_SLIDER_PIC				"/gfx/ui/widgets/slider.pcx"
 #define UI_ARROWS_PIC				"/gfx/ui/widgets/arrows.pcx"
 
+#define UI_DEFAULTS_MESSAGE			"Reset all menu settings to defaults?"
+#define UI_APPLYCHANGES_MESSAGE		"This will apply changes for this menu."
+#define UI_APPLYCHANGES_MESSAGE2	"Continue?"
+
 #define UI_ITEMVALUE_WILDCARD		"???"
 #define	UI_CUSTOMCOLOR_PIC			"/gfx/ui/custom_color.pcx"
 #define	UI_SOLIDWHITE_PIC			"/gfx/ui/solidwhite.pcx"
@@ -944,6 +957,8 @@ void Menu_Main_f (void);
 		void Menu_Options_Interface_f (void);
 	void Menu_Quit_f (void);
 	void Menu_Credits( void );
+	void Menu_DefaultsConfirm_f (void);
+	void Menu_ApplyChanges_f (void);
 
 //
 // ui_mp_playersetup.c

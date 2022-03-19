@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-void Menu_Video_Init (void);
+//void Menu_Video_Init (void);
 
 /*
 =======================================================================
@@ -44,14 +44,12 @@ static menuField_s		s_customwidth_field;
 static menuField_s		s_customheight_field;
 static menuPicker_s  	s_fs_box;
 static menuSlider_s		s_brightness_slider;
+static menuPicker_s		s_refresh_box;
 static menuPicker_s		s_texqual_box;
 static menuPicker_s		s_texfilter_box;
 static menuPicker_s		s_aniso_box;
-//static menuPicker_s		s_npot_mipmap_box;
-//static menuPicker_s		s_sgis_mipmap_box;
 //static menuPicker_s  	s_texcompress_box;
 static menuPicker_s  	s_vsync_box;
-static menuPicker_s		s_refresh_box;	// Knightmare- refresh rate option
 static menuPicker_s  	s_adjust_fov_box;
 static menuPicker_s  	s_async_box;
 
@@ -62,6 +60,24 @@ static menuAction_s		s_backmain_action;
 
 //=======================================================================
 
+static void M_AdvancedVideoOptionsFunc (void *s)
+{
+	Menu_Video_Advanced_f ();
+}
+
+static void M_ShowApplyChanges (void *unused)
+{
+//	s_apply_action.generic.isHidden = false;
+	s_apply_action.generic.isHidden = ( !s_mode_list.generic.valueChanged &&
+										!(s_customwidth_field.generic.valueChanged && !s_customwidth_field.generic.isHidden) &&
+										!(s_customheight_field.generic.valueChanged && !s_customheight_field.generic.isHidden) &&
+										!s_fs_box.generic.valueChanged &&
+										!s_refresh_box.generic.valueChanged &&
+										!s_texqual_box.generic.valueChanged );
+									//	!s_texcompress_box.generic.valueChanged &&
+									
+}
+
 static void M_ShowCustomFields (void)
 {
 //	s_customwidth_title.generic.isHidden =
@@ -70,12 +86,13 @@ static void M_ShowCustomFields (void)
 	s_customheight_field.generic.isHidden = (strcmp(ui_video_modes[s_mode_list.curValue], "-1") != 0);
 }
 
-static void VidModeCallback (void *unused)
+static void M_ModeListCallback (void *unused)
 {
 	M_ShowCustomFields ();
+	M_ShowApplyChanges (unused);
 }
 
-static void BrightnessCallback (void *s)
+/*static void BrightnessCallback (void *s)
 {
 	MenuSlider_SaveValue (&s_brightness_slider, "vid_gamma");
 }
@@ -98,12 +115,7 @@ static void AdjustFOVCallback (void *unused)
 static void AsyncCallback (void *unused)
 {
 	MenuPicker_SaveValue (&s_async_box, "cl_async");
-}
-
-static void M_AdvancedOptions (void *s)
-{
-	Menu_Video_Advanced_f ();
-}
+} */
 
 //=======================================================================
 
@@ -117,22 +129,24 @@ static void M_PrepareVideoRefresh (void)
 	Cvar_SetModified ("vid_ref", true);
 }
 
-static void M_ResetVideoDefaults (void *unused)
+//static void M_ResetVideoDefaults (void *unused)
+static void M_ResetVideoDefaults (void)
 {
 	Cvar_SetToDefault ("r_mode");
 	Cvar_SetToDefault ("vid_fullscreen");
 	Cvar_SetToDefault ("vid_gamma");
+	Cvar_SetToDefault ("r_displayrefresh");
 	Cvar_SetToDefault ("r_texturemode");
 	Cvar_SetToDefault ("r_anisotropic");
 	Cvar_SetToDefault ("r_picmip");
-	Cvar_SetToDefault ("r_ext_texture_compression");
+//	Cvar_SetToDefault ("r_ext_texture_compression");
 	Cvar_SetToDefault ("r_swapinterval");
-	Cvar_SetToDefault ("r_displayrefresh");
 	Cvar_SetToDefault ("cl_widescreen_fov");
 	Cvar_SetToDefault ("cl_async");
 
+	// Advanced section
 	Cvar_SetToDefault ("r_modulate");
-	Cvar_SetToDefault ("r_intensity");
+//	Cvar_SetToDefault ("r_intensity");
 	Cvar_SetToDefault ("r_rgbscale");
 	Cvar_SetToDefault ("r_trans_lighting");
 	Cvar_SetToDefault ("r_warp_lighting");
@@ -157,12 +171,26 @@ static void M_ResetVideoDefaults (void *unused)
 	Cvar_SetToDefault ("r_sgis_generatemipmap");
 	Cvar_SetToDefault ("r_font_upscale");
 
-	Menu_Video_Init();
+//	Menu_Video_Init ();
+	M_PrepareVideoRefresh ();
 }
 
-static void M_ApplyVideoChanges (void *unused)
+//static void M_ApplyVideoChanges (void *unused)
+static void M_ApplyVideoChanges (void)
 {
-	int		customW, customH;
+	// hide this again
+	s_apply_action.generic.isHidden = true;
+
+	// save values to cvars that don't instant-adjust
+	UI_SaveMenuItemValue (&s_mode_list);
+	UI_SaveMenuItemValue (&s_customwidth_field);
+	UI_SaveMenuItemValue (&s_customheight_field);
+	UI_SaveMenuItemValue (&s_fs_box);
+	UI_SaveMenuItemValue (&s_refresh_box);
+	UI_SaveMenuItemValue (&s_texqual_box);
+//	UI_SaveMenuItemValue (&s_texcompress_box);
+
+/*	int		customW, customH;
 	char	*customStr;
 
 	MenuPicker_SaveValue (&s_mode_list, "r_mode");
@@ -185,20 +213,16 @@ static void M_ApplyVideoChanges (void *unused)
 
 	MenuPicker_SaveValue (&s_fs_box, "vid_fullscreen");
 	MenuSlider_SaveValue (&s_brightness_slider, "vid_gamma");
+	MenuPicker_SaveValue (&s_refresh_box, "r_displayrefresh");
 	MenuPicker_SaveValue (&s_texfilter_box, "r_texturemode");
 	MenuPicker_SaveValue (&s_aniso_box, "r_anisotropic");
 	MenuPicker_SaveValue (&s_texqual_box, "r_picmip");
-//	MenuPicker_SaveValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps");
-//	MenuPicker_SaveValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap");
 //	MenuPicker_SaveValue (&s_texcompress_box, "r_ext_texture_compression");
 	MenuPicker_SaveValue (&s_vsync_box, "r_swapinterval");
-	MenuPicker_SaveValue (&s_refresh_box, "r_displayrefresh");
 	MenuPicker_SaveValue (&s_adjust_fov_box, "cl_widescreen_fov");
 	MenuPicker_SaveValue (&s_async_box, "cl_async");
-
+*/
 	M_PrepareVideoRefresh ();
-
-//	UI_ForceMenuOff();
 }
 
 //=======================================================================
@@ -287,7 +311,7 @@ void Menu_Video_Init (void)
 		0
 	};
 	int			x, y;	//  = 0;
-	char		*customStr;
+//	char		*customStr;
 
 	if ( !con_font_size )
 		con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
@@ -303,12 +327,12 @@ void Menu_Video_Init (void)
 	s_video_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_video_menu.keyFunc				= UI_DefaultMenuKey;
 	s_video_menu.canOpenFunc			= NULL;
-//	s_video_menu.defaultsFunc			= M_ResetVideoDefaults;
-//	s_video_menu.defaultsMessage		= "Reset all Video settings to defaults?";
-//	s_video_menu.applyChangesFunc		= M_ApplyVideoChanges;
-//	s_video_menu.applyChangesMessage[0]	= "This will restart the video system to";
-//	s_video_menu.applyChangesMessage[1]	= "apply settings and return to the menu.";
-//	s_video_menu.applyChangesMessage[2]	= "Continue?";
+	s_video_menu.defaultsFunc			= M_ResetVideoDefaults;
+	s_video_menu.defaultsMessage		= "Reset all Video settings to defaults?";
+	s_video_menu.applyChangesFunc		= M_ApplyVideoChanges;
+	s_video_menu.applyChangesMessage[0]	= "This will restart the video system to";
+	s_video_menu.applyChangesMessage[1]	= "apply settings and return to the menu.";
+	s_video_menu.applyChangesMessage[2]	= "Continue?";
 
 	s_video_banner.generic.type		= MTYPE_IMAGE;
 	s_video_banner.generic.x		= 0;
@@ -329,9 +353,13 @@ void Menu_Video_Init (void)
 	s_mode_list.generic.y			= y;
 	s_mode_list.itemNames			= ui_resolution_names;
 	s_mode_list.itemValues			= ui_video_modes;
-	s_mode_list.generic.callback	= VidModeCallback;
+	s_mode_list.generic.cvar		= "r_mode";
+	s_mode_list.generic.cvarNoSave	= true;
+	s_mode_list.generic.cvarClamp	= false;
 	s_mode_list.generic.statusbar	= "changes screen resolution";
-	MenuPicker_SetValue (&s_mode_list, "r_mode", 0, 0, false);
+	s_mode_list.generic.callback	= M_ModeListCallback;
+//	MenuPicker_SetValue (&s_mode_list, "r_mode", 0, 0, false);
+
 /*
 	s_customwidth_title.generic.type		= MTYPE_LABEL;
 	s_customwidth_title.generic.textSize	= MENU_FONT_SIZE;
@@ -340,19 +368,27 @@ void Menu_Video_Init (void)
 	s_customwidth_title.generic.x			= x + -2*MENU_FONT_SIZE;
 	s_customwidth_title.generic.y			= y + 1.5*MENU_LINE_SIZE;
 */
-	s_customwidth_field.generic.type		= MTYPE_FIELD;
-	s_customwidth_field.generic.textSize	= MENU_FONT_SIZE;
-	s_customwidth_field.generic.header		= "custom width";
-	s_customwidth_field.generic.flags		= QMF_NUMBERSONLY;
-//	s_customwidth_field.generic.name		= "custom width";
-	s_customwidth_field.generic.callback	= 0;
-	s_customwidth_field.generic.x			= x + -14*MENU_FONT_SIZE;
-	s_customwidth_field.generic.y			= y + 3*MENU_LINE_SIZE;
-	s_customwidth_field.length				= 5;
-	s_customwidth_field.visible_length		= 6;
-	customStr = Cvar_VariableString("r_customwidth");
-	Q_strncpyz (s_customwidth_field.buffer, sizeof(s_customwidth_field.buffer), customStr);
-	s_customwidth_field.cursor				= (int)strlen( customStr );
+	s_customwidth_field.generic.type			= MTYPE_FIELD;
+	s_customwidth_field.generic.textSize		= MENU_FONT_SIZE;
+	s_customwidth_field.generic.header			= "custom width";
+	s_customwidth_field.generic.flags			= QMF_NUMBERSONLY;
+//	s_customwidth_field.generic.name			= "custom width";
+	s_customwidth_field.generic.callback		= 0;
+	s_customwidth_field.generic.x				= x + -14*MENU_FONT_SIZE;
+	s_customwidth_field.generic.y				= y + 3*MENU_LINE_SIZE;
+	s_customwidth_field.generic.statusbar		= "";
+	s_customwidth_field.generic.cvar			= "r_customwidth";
+	s_customwidth_field.generic.cvarClamp		= true;
+	s_customwidth_field.generic.cvarMin			= 640;
+	s_customwidth_field.generic.cvarMax			= 99999;
+	s_customwidth_field.generic.cvarNoSave		= true;
+	s_customwidth_field.generic.callback		= M_ShowApplyChanges;
+	s_customwidth_field.length					= 5;
+	s_customwidth_field.visible_length			= 6;
+//	customStr = Cvar_VariableString("r_customwidth");
+//	Q_strncpyz (s_customwidth_field.buffer, sizeof(s_customwidth_field.buffer), customStr);
+//	s_customwidth_field.cursor					= (int)strlen( customStr );
+
 /*
 	s_customheight_title.generic.type		= MTYPE_LABEL;
 	s_customheight_title.generic.textSize	= MENU_FONT_SIZE;
@@ -361,42 +397,70 @@ void Menu_Video_Init (void)
 	s_customheight_title.generic.x			= x + 14.5*MENU_FONT_SIZE;
 	s_customheight_title.generic.y			= y + 1.5*MENU_LINE_SIZE;
 */
-	s_customheight_field.generic.type		= MTYPE_FIELD;
-	s_customheight_field.generic.textSize	= MENU_FONT_SIZE;
-	s_customheight_field.generic.header		= "custom height";
-	s_customheight_field.generic.flags		= QMF_NUMBERSONLY;
-//	s_customheight_field.generic.name		= "custom height";
-	s_customheight_field.generic.callback	= 0;
-	s_customheight_field.generic.x			= x + 2*MENU_FONT_SIZE;
-	s_customheight_field.generic.y			= y + 3*MENU_LINE_SIZE;
-	s_customheight_field.length				= 5;
-	s_customheight_field.visible_length		= 6;
-	customStr = Cvar_VariableString("r_customheight");
-	Q_strncpyz (s_customheight_field.buffer, sizeof(s_customheight_field.buffer), customStr);
-	s_customheight_field.cursor				= (int)strlen( customStr );
+	s_customheight_field.generic.type			= MTYPE_FIELD;
+	s_customheight_field.generic.textSize		= MENU_FONT_SIZE;
+	s_customheight_field.generic.header			= "custom height";
+	s_customheight_field.generic.flags			= QMF_NUMBERSONLY;
+//	s_customheight_field.generic.name			= "custom height";
+	s_customheight_field.generic.callback		= 0;
+	s_customheight_field.generic.x				= x + 2*MENU_FONT_SIZE;
+	s_customheight_field.generic.y				= y + 3*MENU_LINE_SIZE;
+	s_customheight_field.generic.statusbar		= "";
+	s_customheight_field.generic.cvar			= "r_customheight";
+	s_customheight_field.generic.cvarClamp		= true;
+	s_customheight_field.generic.cvarMin		= 480;
+	s_customheight_field.generic.cvarMax		= 99999;
+	s_customheight_field.generic.cvarNoSave		= true;
+	s_customheight_field.generic.callback		= M_ShowApplyChanges;
+	s_customheight_field.length					= 5;
+	s_customheight_field.visible_length			= 6;
+//	customStr = Cvar_VariableString("r_customheight");
+//	Q_strncpyz (s_customheight_field.buffer, sizeof(s_customheight_field.buffer), customStr);
+//	s_customheight_field.cursor					= (int)strlen( customStr );
 
 	s_fs_box.generic.type			= MTYPE_PICKER;
 	s_fs_box.generic.textSize		= MENU_FONT_SIZE;
 	s_fs_box.generic.x				= x;
 	s_fs_box.generic.y				= y += 5*MENU_LINE_SIZE;
-	s_fs_box.generic.name			= "display type";	// "fullscreen"
+	s_fs_box.generic.name			= "display type";
 	s_fs_box.itemNames				= fullscreen_names;
-//	s_fs_box.generic.statusbar		= "changes bettween fullscreen and windowed display";
+	s_fs_box.generic.cvar			= "vid_fullscreen";
+	s_fs_box.generic.cvarNoSave		= true;
+	s_fs_box.generic.cvarClamp		= true;
+	s_fs_box.generic.cvarMin		= 0;
+	s_fs_box.generic.cvarMax		= 2;
 	s_fs_box.generic.statusbar		= "changes bettween fullscreen, borderless window, and windowed display";
-	MenuPicker_SetValue (&s_fs_box, "vid_fullscreen", 0, 2, true);
+	s_fs_box.generic.callback		= M_ShowApplyChanges;
+//	MenuPicker_SetValue (&s_fs_box, "vid_fullscreen", 0, 2, true);
 
 	s_brightness_slider.generic.type		= MTYPE_SLIDER;
 	s_brightness_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_brightness_slider.generic.x			= x;
 	s_brightness_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_brightness_slider.generic.name		= "brightness";
-	s_brightness_slider.generic.callback	= BrightnessCallback;
+//	s_brightness_slider.generic.callback	= BrightnessCallback;
 	s_brightness_slider.maxPos				= 20;
 	s_brightness_slider.baseValue			= 1.3f;
 	s_brightness_slider.increment			= -0.05f;
 	s_brightness_slider.displayAsPercent	= false;
+	s_brightness_slider.generic.cvar		= "vid_gamma";
+	s_brightness_slider.generic.cvarClamp	= false;
 	s_brightness_slider.generic.statusbar	= "changes display brightness";
-	MenuSlider_SetValue (&s_brightness_slider, "vid_gamma", 0.3f, 1.3f, true);
+//	MenuSlider_SetValue (&s_brightness_slider, "vid_gamma", 0.3f, 1.3f, true);
+
+	s_refresh_box.generic.type			= MTYPE_PICKER;
+	s_refresh_box.generic.textSize		= MENU_FONT_SIZE;
+	s_refresh_box.generic.x				= x;
+	s_refresh_box.generic.y				= y += MENU_LINE_SIZE;
+	s_refresh_box.generic.name			= "refresh rate";
+	s_refresh_box.itemNames				= refreshrate_names;
+	s_refresh_box.itemValues			= refreshrate_values;
+	s_refresh_box.generic.cvar			= "r_displayrefresh";
+	s_refresh_box.generic.cvarNoSave	= true;
+	s_refresh_box.generic.cvarClamp		= false;
+	s_refresh_box.generic.statusbar		= "sets refresh rate for fullscreen modes";
+	s_refresh_box.generic.callback		= M_ShowApplyChanges;
+//	MenuPicker_SetValue (&s_refresh_box, "r_displayrefresh", 0, 0, false);
 
 	s_texfilter_box.generic.type		= MTYPE_PICKER;
 	s_texfilter_box.generic.textSize	= MENU_FONT_SIZE;
@@ -405,8 +469,10 @@ void Menu_Video_Init (void)
 	s_texfilter_box.generic.name		= "texture filter";
 	s_texfilter_box.itemNames			= texfilter_names;
 	s_texfilter_box.itemValues			= texfilter_values;
+	s_texfilter_box.generic.cvar		= "r_texturemode";
+	s_texfilter_box.generic.cvarClamp	= false;
 	s_texfilter_box.generic.statusbar	= "changes texture filtering mode";
-	MenuPicker_SetValue (&s_texfilter_box, "r_texturemode", 0, 0, false);
+//	MenuPicker_SetValue (&s_texfilter_box, "r_texturemode", 0, 0, false);
 
 	s_aniso_box.generic.type		= MTYPE_PICKER;
 	s_aniso_box.generic.textSize	= MENU_FONT_SIZE;
@@ -415,101 +481,84 @@ void Menu_Video_Init (void)
 	s_aniso_box.generic.name		= "anisotropic filter";
 	s_aniso_box.itemNames			= ui_aniso_names;
 	s_aniso_box.itemValues			= ui_aniso_values;
-	s_aniso_box.generic.callback	= AnisoCallback;
+//	s_aniso_box.generic.callback	= AnisoCallback;
+	s_aniso_box.generic.cvar		= "r_anisotropic";
+	s_aniso_box.generic.cvarClamp	= false;
 	s_aniso_box.generic.statusbar	= "changes level of anisotropic mipmap filtering";
-	MenuPicker_SetValue (&s_aniso_box, "r_anisotropic", 0, 0, false);
+//	MenuPicker_SetValue (&s_aniso_box, "r_anisotropic", 0, 0, false);
 
-	s_texqual_box.generic.type		= MTYPE_PICKER;
-	s_texqual_box.generic.textSize	= MENU_FONT_SIZE;
-	s_texqual_box.generic.x			= x;
-	s_texqual_box.generic.y			= y += MENU_LINE_SIZE;
-	s_texqual_box.generic.name		= "texture quality";
-	s_texqual_box.itemNames			= lmh_names;
-	s_texqual_box.itemValues		= lmh_values;
-	s_texqual_box.generic.statusbar	= "changes maximum texture size (highest = no limit)";
-	MenuPicker_SetValue (&s_texqual_box, "r_picmip", 0, 0, false);
+	s_texqual_box.generic.type			= MTYPE_PICKER;
+	s_texqual_box.generic.textSize		= MENU_FONT_SIZE;
+	s_texqual_box.generic.x				= x;
+	s_texqual_box.generic.y				= y += MENU_LINE_SIZE;
+	s_texqual_box.generic.name			= "texture quality";
+	s_texqual_box.itemNames				= lmh_names;
+	s_texqual_box.itemValues			= lmh_values;
+	s_texqual_box.generic.cvar			= "r_picmip";
+	s_texqual_box.generic.cvarNoSave	= true;
+	s_texqual_box.generic.cvarClamp		= false;
+	s_texqual_box.generic.statusbar		= "changes maximum texture size (highest = no limit)";
+	s_texqual_box.generic.callback		= M_ShowApplyChanges;
+//	MenuPicker_SetValue (&s_texqual_box, "r_picmip", 0, 0, false);
 /*
-	s_npot_mipmap_box.generic.type		= MTYPE_PICKER;
-	s_npot_mipmap_box.generic.textSize	= MENU_FONT_SIZE;
-	s_npot_mipmap_box.generic.x			= x;
-	s_npot_mipmap_box.generic.y			= y += MENU_LINE_SIZE;
-	s_npot_mipmap_box.generic.name		= "non-power-of-2 mipmaps";
-	s_npot_mipmap_box.itemNames			= yesno_names;
-	s_npot_mipmap_box.generic.statusbar	= "enables non-power-of-2 mipmapped textures (requires driver support)";
-	MenuPicker_SetValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps", 0, 1, true);
-
-	s_sgis_mipmap_box.generic.type		= MTYPE_PICKER;
-	s_sgis_mipmap_box.generic.textSize	= MENU_FONT_SIZE;
-	s_sgis_mipmap_box.generic.x			= x;
-	s_sgis_mipmap_box.generic.y			= y += MENU_LINE_SIZE;
-	s_sgis_mipmap_box.generic.name		= "SGIS mipmaps";
-	s_sgis_mipmap_box.itemNames			= yesno_names;
-	s_sgis_mipmap_box.generic.statusbar	= "enables driver-based mipmap generation";
-	MenuPicker_SetValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap", 0, 1, true);
-
-	s_texcompress_box.generic.type		= MTYPE_PICKER;
-	s_texcompress_box.generic.textSize	= MENU_FONT_SIZE;
-	s_texcompress_box.generic.x			= x;
-	s_texcompress_box.generic.y			= y += MENU_LINE_SIZE;
-	s_texcompress_box.generic.name		= "texture compression";
-	s_texcompress_box.itemNames			= yesno_names;
-	s_texcompress_box.generic.statusbar	= "reduces quality, increases performance (leave off unless needed)";
-	MenuPicker_SetValue (&s_texcompress_box, "r_ext_texture_compression", 0, 1, true);
+	s_texcompress_box.generic.type			= MTYPE_PICKER;
+	s_texcompress_box.generic.textSize		= MENU_FONT_SIZE;
+	s_texcompress_box.generic.x				= x;
+	s_texcompress_box.generic.y				= y += MENU_LINE_SIZE;
+	s_texcompress_box.generic.name			= "texture compression";
+	s_texcompress_box.itemNames				= yesno_names;
+	s_texcompress_box.generic.cvar			= "r_ext_texture_compression";
+	s_texcompress_box.generic.cvarNoSave	= true;
+	s_texcompress_box.generic.statusbar		= "reduces quality, increases performance (leave off unless needed)";
+	s_texcompress_box.generic.callback		= M_ShowApplyChanges;
+//	MenuPicker_SetValue (&s_texcompress_box, "r_ext_texture_compression", 0, 1, true);
 */
 	s_vsync_box.generic.type			= MTYPE_PICKER;
 	s_vsync_box.generic.textSize		= MENU_FONT_SIZE;
 	s_vsync_box.generic.x				= x;
 	s_vsync_box.generic.y				= y += 2*MENU_LINE_SIZE;
 	s_vsync_box.generic.name			= "video sync";
-	s_vsync_box.generic.callback		= VsyncCallback;
+//	s_vsync_box.generic.callback		= VsyncCallback;
 	s_vsync_box.itemNames				= yesno_names;
+	s_vsync_box.generic.cvar			= "r_swapinterval";
 	s_vsync_box.generic.statusbar		= "sync framerate with monitor refresh";
-	MenuPicker_SetValue (&s_vsync_box, "r_swapinterval", 0, 1, true);
-
-	// Knightmare- refresh rate option
-	s_refresh_box.generic.type			= MTYPE_PICKER;
-	s_refresh_box.generic.textSize		= MENU_FONT_SIZE;
-	s_refresh_box.generic.x				= x;
-	s_refresh_box.generic.y				= y += MENU_LINE_SIZE;
-	s_refresh_box.generic.name			= "refresh rate";
-	s_refresh_box.itemNames				= refreshrate_names;
-	s_refresh_box.itemValues			= refreshrate_values;
-	s_refresh_box.generic.statusbar		= "sets refresh rate for fullscreen modes";
-	MenuPicker_SetValue (&s_refresh_box, "r_displayrefresh", 0, 0, false);
+//	MenuPicker_SetValue (&s_vsync_box, "r_swapinterval", 0, 1, true);
 
 	s_adjust_fov_box.generic.type		= MTYPE_PICKER;
 	s_adjust_fov_box.generic.textSize	= MENU_FONT_SIZE;
 	s_adjust_fov_box.generic.x			= x;
 	s_adjust_fov_box.generic.y			= y += MENU_LINE_SIZE;
 	s_adjust_fov_box.generic.name		= "fov autoscaling";
-	s_adjust_fov_box.generic.callback	= AdjustFOVCallback;
+//	s_adjust_fov_box.generic.callback	= AdjustFOVCallback;
 	s_adjust_fov_box.itemNames			= yesno_names;
+	s_adjust_fov_box.generic.cvar		= "cl_widescreen_fov";
 	s_adjust_fov_box.generic.statusbar	= "automatic scaling of fov for widescreen modes";
-	MenuPicker_SetValue (&s_adjust_fov_box, "cl_widescreen_fov", 0, 1, true);
+//	MenuPicker_SetValue (&s_adjust_fov_box, "cl_widescreen_fov", 0, 1, true);
 
 	s_async_box.generic.type			= MTYPE_PICKER;
 	s_async_box.generic.textSize		= MENU_FONT_SIZE;
 	s_async_box.generic.x				= x;
 	s_async_box.generic.y				= y += MENU_LINE_SIZE;
 	s_async_box.generic.name			= "async refresh";
-	s_async_box.generic.callback		= AsyncCallback;
+//	s_async_box.generic.callback		= AsyncCallback;
 	s_async_box.itemNames				= yesno_names;
+	s_async_box.generic.cvar			= "cl_async";
 	s_async_box.generic.statusbar		= "decouples network framerate from render framerate";
-	MenuPicker_SetValue (&s_async_box, "cl_async", 0, 1, true);
+//	MenuPicker_SetValue (&s_async_box, "cl_async", 0, 1, true);
 
 	s_advanced_action.generic.type		= MTYPE_ACTION;
 	s_advanced_action.generic.textSize	= MENU_FONT_SIZE;
 	s_advanced_action.generic.name		= "Advanced Options";
 	s_advanced_action.generic.x			= x;
 	s_advanced_action.generic.y			= y += 3*MENU_LINE_SIZE;
-	s_advanced_action.generic.callback	= M_AdvancedOptions;
+	s_advanced_action.generic.callback	= M_AdvancedVideoOptionsFunc;
 
 	s_defaults_action.generic.type		= MTYPE_ACTION;
 	s_defaults_action.generic.textSize	= MENU_FONT_SIZE;
 	s_defaults_action.generic.name		= "Reset to Defaults";
 	s_defaults_action.generic.x			= x;
 	s_defaults_action.generic.y			= y += 3*MENU_LINE_SIZE;
-	s_defaults_action.generic.callback	= M_ResetVideoDefaults;
+	s_defaults_action.generic.callback	= UI_Defaults_Popup;	// M_ResetVideoDefaults
 	s_defaults_action.generic.statusbar	= "resets all video settings to internal defaults";
 
 	// changed cancel to apply changes, thanx to MrG
@@ -518,7 +567,9 @@ void Menu_Video_Init (void)
 	s_apply_action.generic.name			= "Apply Changes";
 	s_apply_action.generic.x			= x;
 	s_apply_action.generic.y			= y += 2*MENU_LINE_SIZE;
-	s_apply_action.generic.callback		= M_ApplyVideoChanges;
+	s_apply_action.generic.callback		= UI_ApplyChanges_Popup;	// M_ApplyVideoChanges;
+	s_apply_action.generic.statusbar	= "applies changes that require a video restart";
+	s_apply_action.generic.isHidden		= true;
 
 	s_backmain_action.generic.type		= MTYPE_ACTION;
 	s_backmain_action.generic.textSize	= MENU_FONT_SIZE;
@@ -537,14 +588,12 @@ void Menu_Video_Init (void)
 
 	UI_AddMenuItem (&s_video_menu, (void *) &s_fs_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_brightness_slider);
+	UI_AddMenuItem (&s_video_menu, (void *) &s_refresh_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_texfilter_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_aniso_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_texqual_box);
-//	UI_AddMenuItem (&s_video_menu, (void *) &s_npot_mipmap_box);
-//	UI_AddMenuItem (&s_video_menu, (void *) &s_sgis_mipmap_box);
 //	UI_AddMenuItem (&s_video_menu, (void *) &s_texcompress_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_vsync_box);
-	UI_AddMenuItem (&s_video_menu, (void *) &s_refresh_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_adjust_fov_box);
 	UI_AddMenuItem (&s_video_menu, (void *) &s_async_box);
 

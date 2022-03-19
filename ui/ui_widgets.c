@@ -142,7 +142,7 @@ void UI_MenuAction_Setup (menuAction_s *a)
 	a->generic.dynamicWidth = 0;
 	a->generic.dynamicHeight = 0;
 	a->generic.isExtended = false;
-//	a->generic.valueChanged = false;
+	a->generic.valueChanged = false;
 }
 
 //=========================================================
@@ -257,7 +257,7 @@ void UI_MenuKeyBind_Setup (menuKeyBind_s *k)
 	k->generic.dynamicWidth = 0;
 	k->generic.dynamicHeight = 0;
 	k->generic.isExtended = false;
-//	k->generic.valueChanged = false;
+	k->generic.valueChanged = false;
 
 	UI_MenuKeyBind_SetDynamicSize (k);
 	k->grabBind = false;
@@ -316,7 +316,6 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 
 //=========================================================
 
-#if 0
 char *UI_MenuField_GetValue (menuField_s *f)
 {
 	if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp 
@@ -361,7 +360,6 @@ qboolean UI_MenuField_ValueChanged (menuField_s *f)
 
 	return ( strcmp(Cvar_VariableString(f->generic.cvar), f->buffer) != 0 );
 }
-#endif
 
 qboolean UI_MenuField_DoEnter (menuField_s *f)
 {
@@ -476,7 +474,7 @@ void UI_MenuField_Setup (menuField_s *f)
 	f->generic.dynamicWidth = 0;
 	f->generic.dynamicHeight = 0;
 	f->generic.isExtended = false;
-//	f->generic.valueChanged = false;
+	f->generic.valueChanged = false;
 }
 
 qboolean UI_MenuField_Key (menuField_s *f, int key)
@@ -555,11 +553,11 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 		}
 	}
 
-/*	if (!f->generic.cvarNoSave)
+	if (!f->generic.cvarNoSave)
 		UI_MenuField_SaveValue (f);
 	else
 		f->generic.valueChanged = UI_MenuField_ValueChanged (f);
-*/
+
 	return true;
 }
 
@@ -599,12 +597,13 @@ void UI_MenuLabel_Setup (menuLabel_s *l)
 	l->generic.dynamicWidth = 0;
 	l->generic.dynamicHeight = 0;
 	l->generic.isExtended = false;
-//	l->generic.valueChanged = false;
+	l->generic.valueChanged = false;
 	l->generic.flags |= QMF_NOINTERACTION;
 }
 
 //=========================================================
 
+#if 0
 float MenuSlider_GetValue (menuSlider_s *s)
 {
 	if (!s) return 0.0f;
@@ -636,8 +635,8 @@ void MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
 
 	Cvar_SetValue ((char *)varName, ((float)s->curPos * s->increment) + s->baseValue);
 }
+#endif
 
-#if 0
 char *UI_MenuSlider_GetValue (menuSlider_s *s)
 {
 	return va("%f", ((float)s->curPos * s->increment) + s->baseValue);
@@ -671,7 +670,6 @@ qboolean UI_MenuSlider_ValueChanged (menuSlider_s *s)
 
 	return (s->curPos != (int)ceil((Cvar_VariableValue(s->generic.cvar) - s->baseValue) / s->increment));
 }
-#endif
 
 void UI_MenuSlider_CheckSlide (menuSlider_s *s)
 {
@@ -679,11 +677,11 @@ void UI_MenuSlider_CheckSlide (menuSlider_s *s)
 
 	s->curPos = min(max(s->curPos, 0), s->maxPos);
 
-/*	if (!s->generic.cvarNoSave)
+	if (!s->generic.cvarNoSave)
 		UI_MenuSlider_SaveValue (s);
 	else
 		s->generic.valueChanged = UI_MenuSlider_ValueChanged (s);
-*/
+
 	if (s->generic.callback)
 		s->generic.callback (s);
 }
@@ -871,11 +869,12 @@ void UI_MenuSlider_Setup (menuSlider_s *s)
 	s->generic.dynamicWidth = 0;
 	s->generic.dynamicHeight = 0;
 	s->generic.isExtended = false;
-//	s->generic.valueChanged = false;
+	s->generic.valueChanged = false;
 }
 
 //=========================================================
 
+#if 0
 const char *MenuPicker_GetValue (menuPicker_s *p)
 {
 	const char *value;
@@ -952,8 +951,8 @@ void MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
 		}
 	}
 }
+#endif
 
-#if 0
 char *UI_MenuPicker_GetValue (menuPicker_s *p)
 {
 	if (p->bitFlag) {
@@ -974,18 +973,25 @@ void UI_MenuPicker_SetValue (menuPicker_s *p)
 {
 	if (p->generic.cvar && strlen(p->generic.cvar) > 0)
 	{
-		if (p->itemValues)
+		if (p->itemValues) {
 			p->curValue = UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString(p->generic.cvar));
-		else {
-			UI_ClampCvarForControl (&p->generic);
-			p->curValue = Cvar_VariableInteger(p->generic.cvar);
+		}
+		else
+		{
+			if (p->invertValue) {
+				p->curValue = (Cvar_VariableValue(p->generic.cvar) < 0);
+			}
+			else {
+				UI_ClampCvarForControl (&p->generic);
+				p->curValue = Cvar_VariableInteger(p->generic.cvar);
+			}
 		}
 	}
 	else if (p->bitFlag)
 	{
 		menuFramework_s	*menu = p->generic.parent;
 
-		p->curValue = p->invertValue ? !(menu->bitFlags & p->bitFlag) : (menu->bitFlags & p->bitFlag);
+		p->curValue = ( p->invertValue ? !(menu->bitFlags & p->bitFlag) : (menu->bitFlags & p->bitFlag) ) ? 1 : 0;
 	}
 	else if (p->bitFlags != NULL)
 	{
@@ -1011,7 +1017,14 @@ void UI_MenuPicker_SaveValue (menuPicker_s *p)
 				Cvar_Set (p->generic.cvar, va("%s", p->itemValues[p->curValue]));
 		}
 		else
-			Cvar_SetInteger (p->generic.cvar, p->curValue);
+		{
+			if (p->invertValue) {
+				Cvar_SetValue (p->generic.cvar, Cvar_VariableValue(p->generic.cvar) * -1 );
+			}
+			else {
+				Cvar_SetInteger (p->generic.cvar, p->curValue);
+			}
+		}
 	}
 	else if (p->bitFlag)
 	{
@@ -1049,7 +1062,6 @@ qboolean UI_MenuPicker_ValueChanged (menuPicker_s *p)
 		return ( p->curValue != Cvar_VariableInteger(p->generic.cvar) );
 	}
 }
-#endif
 
 void UI_MenuPicker_DoEnter (menuPicker_s *p)
 {
@@ -1060,11 +1072,11 @@ void UI_MenuPicker_DoEnter (menuPicker_s *p)
 	if (p->itemNames[p->curValue] == 0)
 		p->curValue = 0;
 
-/*	if (!p->generic.cvarNoSave)
+	if (!p->generic.cvarNoSave)
 		UI_MenuPicker_SaveValue (p);
 	else
 		p->generic.valueChanged = UI_MenuPicker_ValueChanged (p);
-*/
+
 	if (p->generic.callback)
 		p->generic.callback (p);
 }
@@ -1105,11 +1117,11 @@ void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 			p->curValue = 0; // was --
 	}
 
-/*	if (!p->generic.cvarNoSave)
+	if (!p->generic.cvarNoSave)
 		UI_MenuPicker_SaveValue (p);
 	else
 		p->generic.valueChanged = UI_MenuPicker_ValueChanged (p);
-*/
+
 	if (p->generic.callback)
 		p->generic.callback (p);
 }
@@ -1185,7 +1197,7 @@ void UI_MenuPicker_Setup (menuPicker_s *p)
 	p->generic.dynamicWidth = 0;
 	p->generic.dynamicHeight = 0;
 	p->generic.isExtended = false;
-//	p->generic.valueChanged = false;
+	p->generic.valueChanged = false;
 
 	UI_MenuPicker_SetDynamicSize (p);
 }
@@ -1256,7 +1268,7 @@ void UI_MenuImage_Setup (menuImage_s *i)
 	i->generic.dynamicWidth = 0;
 	i->generic.dynamicHeight = 0;
 	i->generic.isExtended = false;
-//	i->generic.valueChanged = false;
+	i->generic.valueChanged = false;
 	i->generic.flags |= QMF_NOINTERACTION;
 
 /*	if (R_DrawFindPic(i->imageName))
@@ -1361,7 +1373,7 @@ void UI_MenuButton_Setup (menuButton_s *b)
 	b->generic.dynamicWidth = 0;
 	b->generic.dynamicHeight = 0;
 	b->generic.isExtended = false;
-//	b->generic.valueChanged = false;
+	b->generic.valueChanged = false;
 }
 
 //=========================================================
@@ -1413,7 +1425,7 @@ void UI_MenuRectangle_Setup (menuRectangle_s *r)
 	r->generic.dynamicWidth = 0;
 	r->generic.dynamicHeight = 0;
 	r->generic.isExtended = false;
-//	r->generic.valueChanged = false;
+	r->generic.valueChanged = false;
 	r->generic.flags |= QMF_NOINTERACTION;
 }
 
@@ -1564,7 +1576,7 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 	t->generic.dynamicWidth = 0;
 	t->generic.dynamicHeight = 0;
 	t->generic.isExtended = false;
-//	t->generic.valueChanged = false;
+	t->generic.valueChanged = false;
 
 	t->generic.flags |= QMF_NOINTERACTION;
 }
@@ -1718,7 +1730,7 @@ void UI_MenuModelView_Setup (menuModelView_s *m)
 	m->generic.dynamicWidth = 0;
 	m->generic.dynamicHeight = 0;
 	m->generic.isExtended = false;
-//	m->generic.valueChanged = false;
+	m->generic.valueChanged = false;
 
 	m->generic.flags |= QMF_NOINTERACTION;
 }
@@ -1861,7 +1873,7 @@ qboolean UI_ItemHasMouseBounds (void *item)
 	return true;
 }
 
-#if 0
+
 /*
 ==========================
 UI_GetMenuItemValue
@@ -1978,7 +1990,7 @@ void UI_SaveMenuItemValue (void *item)
 		break;
 	}
 }
-#endif
+
 
 /*
 ==========================
@@ -2260,11 +2272,11 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 UI_SlideMenuItem
 =================
 */
-void UI_SlideMenuItem (menuFramework_s *s, int dir)
+char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 {
 	menuCommon_s *item=NULL;
 
-	if (!s)	return;
+	if (!s)	return ui_menu_null_sound;
 
 	item = (menuCommon_s *) UI_ItemAtMenuCursor(s);
 
@@ -2277,10 +2289,10 @@ void UI_SlideMenuItem (menuFramework_s *s, int dir)
 			return ui_menu_null_sound; */
 		case MTYPE_SLIDER:
 			UI_MenuSlider_DoSlide ((menuSlider_s *) item, dir);
-			break;
+			return ui_menu_null_sound;
 		case MTYPE_PICKER:
 			UI_MenuPicker_DoSlide ((menuPicker_s *) item, dir);
-			break;
+			return ui_menu_move_sound;
 	/*	case MTYPE_CHECKBOX:
 			UI_MenuCheckBox_DoSlide ((menuCheckBox_s *)item, dir);
 			return ui_menu_move_sound;
@@ -2290,10 +2302,9 @@ void UI_SlideMenuItem (menuFramework_s *s, int dir)
 		case MTYPE_COMBOBOX:
 			UI_MenuComboBox_DoSlide ((menuComboBox_s *)item, dir);
 			return ui_menu_move_sound; */
-		default:
-			break;
 		}
 	}
+	return ui_menu_null_sound;
 }
 
 #if 0

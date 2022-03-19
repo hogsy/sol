@@ -576,7 +576,15 @@
 				Name="ui"
 				>
 				<File
+					RelativePath="..\..\ui\menu_apply_changes.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\ui\menu_credits.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ui\menu_defaults_confirm.c"
 					>
 				</File>
 				<File

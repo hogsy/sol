@@ -38,7 +38,6 @@ Menu Mouse Cursor - psychospaz
 /*
 =================
 UI_RefreshCursorButtons
-From Q2max
 =================
 */
 void UI_RefreshCursorButtons (void)
@@ -154,7 +153,8 @@ void UI_Mouseover_Check (menuFramework_s *menu)
 		lastitem = ui_mousecursor.menuitem;
 		UI_RefreshCursorLink ();
 
-		for (i = menu->nitems; i >= 0 ; i--)
+	//	for (i = menu->nitems; i >= 0 ; i--)
+		for (i=0; i<=menu->nitems; i++)
 		{
 			if ( UI_Mouseover_CheckItem (menu, i, lastitem) )
 				break;

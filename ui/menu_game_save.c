@@ -64,11 +64,19 @@ void M_SaveGameCallback (void *self)
 
 //=======================================================================
 
+void Menu_SaveGame_Draw (menuFramework_s *menu)
+{
+	M_SaveGameUpdateSaveshot ();
+	UI_AdjustMenuCursor (&s_savegame_menu, 1);
+	UI_DrawMenu (&s_savegame_menu);
+}
+
+
 void Menu_SaveGame_Init (void)
 {
 	int		i, x, y;
 
-	UI_UpdateSavegameData ();
+	UI_UpdateSavegameData ();	// update savestrings and levelshots
 
 	// menu.x = 80, menu.y = 172
 	x = SCREEN_WIDTH*0.5 - 240;
@@ -78,7 +86,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 68;
 	s_savegame_menu.nitems			= 0;
 	s_savegame_menu.isPopup			= false;
-	s_savegame_menu.drawFunc		= UI_DefaultMenuDraw;
+	s_savegame_menu.drawFunc		= Menu_SaveGame_Draw;	// UI_DefaultMenuDraw
 	s_savegame_menu.keyFunc			= UI_DefaultMenuKey;
 	s_savegame_menu.canOpenFunc		= UI_CanOpenSaveMenu;
 	s_savegame_menu.cantOpenMessage	= "You must be in a game to save";
@@ -142,7 +150,7 @@ void Menu_SaveGame_Init (void)
 	UI_AddMenuItem (&s_savegame_menu, &s_savegame_saveshot);
 	UI_AddMenuItem (&s_savegame_menu, &s_savegame_back_action);
 
-	M_SaveGameUpdateSaveshot ();
+//	M_SaveGameUpdateSaveshot ();
 }
 
 

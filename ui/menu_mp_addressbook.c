@@ -41,7 +41,7 @@ static menuAction_s		s_addressbook_back_action;
 
 //=========================================================
 
-void M_AddressBook_SaveEntries (void *unused)
+/*void M_AddressBook_SaveEntries (void *unused)
 {
 	int index;
 	char buffer[20];
@@ -51,26 +51,27 @@ void M_AddressBook_SaveEntries (void *unused)
 		Com_sprintf(buffer, sizeof(buffer), "adr%d", index );
 		Cvar_Set (buffer, s_addressbook_fields[index].buffer);
 	}
-}
+} */
 
 //=========================================================
 
 void Menu_AddressBook_Init (void)
 {
 	int			i, x, y;
+	static char	adrCvarNames[NUM_ADDRESSBOOK_ENTRIES][6];
 
 	// menu.x = 178, menu.y = 164
 	x = SCREEN_WIDTH*0.5 - 142;
 	y = SCREEN_HEIGHT*0.5 - 76; // was 58
 
 	s_addressbook_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 142;
-	s_addressbook_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 76; // was 58
+	s_addressbook_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 76;
 	s_addressbook_menu.nitems		= 0;
 	s_addressbook_menu.isPopup		= false;
 	s_addressbook_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_addressbook_menu.keyFunc		= UI_DefaultMenuKey;
 	s_addressbook_menu.canOpenFunc	= NULL;
-	s_addressbook_menu.onExitFunc	= M_AddressBook_SaveEntries;
+//	s_addressbook_menu.onExitFunc	= M_AddressBook_SaveEntries;
 
 	s_addressbook_banner.generic.type		= MTYPE_IMAGE;
 	s_addressbook_banner.generic.x			= 0;
@@ -86,25 +87,24 @@ void Menu_AddressBook_Init (void)
 
 	for (i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++)
 	{
-		cvar_t *adr;
-		char buffer[20];
+	//	cvar_t *adr;
 
-		Com_sprintf (buffer, sizeof(buffer), "adr%d", i);
+		Com_sprintf (adrCvarNames[i], sizeof(adrCvarNames[i]), "adr%d", i);
+	//	adr = Cvar_Get( adrCvarNames[i], "", CVAR_ARCHIVE );
 
-		adr = Cvar_Get( buffer, "", CVAR_ARCHIVE );
-
-		s_addressbook_fields[i].generic.type = MTYPE_FIELD;
-		s_addressbook_fields[i].generic.textSize = MENU_FONT_SIZE;
-		s_addressbook_fields[i].generic.name = 0;
-		s_addressbook_fields[i].generic.callback = 0;
-		s_addressbook_fields[i].generic.x		= x;
-		s_addressbook_fields[i].generic.y		= y + i * 2.25*MENU_LINE_SIZE;
-		s_addressbook_fields[i].generic.localdata[0] = i;
-		s_addressbook_fields[i].length			= 60;
-		s_addressbook_fields[i].visible_length	= 30;
+		s_addressbook_fields[i].generic.type			= MTYPE_FIELD;
+		s_addressbook_fields[i].generic.textSize		= MENU_FONT_SIZE;
+		s_addressbook_fields[i].generic.name			= 0;
+		s_addressbook_fields[i].generic.callback		= 0;
+		s_addressbook_fields[i].generic.x				= x;
+		s_addressbook_fields[i].generic.y				= y + i * 2.25*MENU_LINE_SIZE;
+		s_addressbook_fields[i].generic.localdata[0]	= i;
+		s_addressbook_fields[i].length					= 60;
+		s_addressbook_fields[i].visible_length			= 30;
+		s_addressbook_fields[i].generic.cvar			= adrCvarNames[i];
 	//	strncpy(s_addressbook_fields[i].buffer, adr->string);
-		Q_strncpyz (s_addressbook_fields[i].buffer, sizeof(s_addressbook_fields[i].buffer), adr->string);
-		s_addressbook_fields[i].cursor = (int)strlen(adr->string);
+	//	Q_strncpyz (s_addressbook_fields[i].buffer, sizeof(s_addressbook_fields[i].buffer), adr->string);
+	//	s_addressbook_fields[i].cursor = (int)strlen(adr->string);
 	}
 
 	s_addressbook_back_action.generic.type = MTYPE_ACTION;

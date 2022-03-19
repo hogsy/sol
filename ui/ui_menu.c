@@ -124,17 +124,17 @@ void UI_PushMenu (menuFramework_s *menu)
 	}
 
 	// set item values for menu
-//	UI_LoadMenuBitFlags (menu);
-//	UI_SetMenuItemValues (menu);
+	UI_LoadMenuBitFlags (menu);
+	UI_SetMenuItemValues (menu);
 
 	if (Cvar_VariableValue ("maxclients") == 1 && Com_ServerState () && !cls.consoleActive) // Knightmare added
 		Cvar_Set ("paused", "1");
 
 	// if just opened menu, and ingame and not DM, grab screen first
-	if (cls.key_dest != key_menu && !Cvar_VariableValue("deathmatch")
-		&& Com_ServerState() == 2) //ss_game
+	if ( (cls.key_dest != key_menu) && !Cvar_VariableValue("deathmatch")
+		&& (Com_ServerState() == 2) ) // ss_game
 		//&& !cl.cinematictime && Com_ServerState())
-		R_GrabScreen();
+		R_GrabScreen ();
 
 	// if this menu is already present, drop back to that level
 	// to avoid stacking menus by hotkeys
@@ -196,6 +196,8 @@ void UI_PopMenu (void)
 	S_StartLocalSound (ui_menu_out_sound);
 	if (ui_menudepth < 1)
 		Com_Error (ERR_FATAL, "UI_PopMenu: depth < 1");
+
+	UI_SetMenuStatusBar (ui_menuState.menu, NULL);	// Clear status bar
 	ui_menudepth--;
 
 	ui_menuState.menu = ui_layers[ui_menudepth].menu;
@@ -205,7 +207,13 @@ void UI_PopMenu (void)
 	UI_RefreshCursorButtons ();
 
 	if (!ui_menudepth)
+	{	// start demo loop here if disconnected
+		if (cls.state == ca_disconnected)
+			Cbuf_AddText ("d1\n");
 		UI_ForceMenuOff ();
+	}
+//	else	// Refresh items in restored menu
+//		UI_RefreshMenuItems ();
 }
 
 
@@ -241,7 +249,7 @@ void UI_CheckAndPopMenu (menuFramework_s *menu)
 	UI_PopMenu ();
 }
 
-#if 0
+
 /*
 =================
 UI_LoadMenuBitFlags
@@ -276,7 +284,7 @@ void UI_SetMenuBitFlags (menuFramework_s *menu, int bit, qboolean set)
 	Cvar_SetValue (menu->flagCvar, menu->bitFlags);
 	Com_sprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
 }
-#endif
+
 
 /*
 ==========================
@@ -430,7 +438,7 @@ void UI_RefreshMenuItems (void)
 		UI_ReregisterMenuItem (item);
 	}
 }
-
+#endif
 
 /*
 =================
@@ -574,7 +582,7 @@ void UI_ApplyChanges_Popup (void *unused)
 {
 	Menu_ApplyChanges_f ();
 }
-#endif
+
 
 /*
 ==========================
@@ -696,6 +704,11 @@ void UI_DrawMenu (menuFramework_s *menu)
 		UI_DrawMenuItem (menu->items[i]);
 	}
 
+	// Check if this menu is drawn behind a popup.
+	// If it is, get outta here.
+	if (menu != ui_menuState.menu)
+		return;
+
 	//
 	// draw item extensions
 	//
@@ -734,7 +747,7 @@ void UI_DrawMenu (menuFramework_s *menu)
 			if ( (item->flags & QMF_LEFT_JUSTIFY) && (item->type == MTYPE_ACTION) )
 				cursorX -= 4*MENU_FONT_SIZE;
 
-			UI_DrawPic (cursorX, menu->y+item->y, item->textSize, item->textSize, ALIGN_CENTER, false, cursor, 255);
+			UI_DrawPic (cursorX, menu->y+item->y, item->textSize, item->textSize, item->scrAlign, false, cursor, 255);
 
 		/*	if (item->flags & QMF_LEFT_JUSTIFY)
 			{
@@ -757,12 +770,14 @@ void UI_DrawMenu (menuFramework_s *menu)
 		{
 		//	if (item->statusbarfunc)
 		//		item->statusbarfunc ( (void *)item );
-			if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
+			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
 				UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
 		//	else if ( (item->type == MTYPE_KEYBINDLIST) && ((menuKeyBindList_s *)item)->grabBind && ((menuKeyBindList_s *)item)->enter_statusbar)
 		//		UI_DrawMenuStatusBar (((menuKeyBindList_s *)item)->enter_statusbar);
 			else if (item->statusbar)
 				UI_DrawMenuStatusBar (item->statusbar);
+			else if ( menu->flagCvar && (strlen(menu->flagCvar) > 0) )
+				UI_DrawMenuStatusBar (menu->bitFlags_statusbar);
 			else
 				UI_DrawMenuStatusBar (menu->statusbar);
 		}
@@ -825,7 +840,6 @@ const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 	switch ( key )
 	{
 	case K_ESCAPE:
-	//	UI_PopMenu ();
 		UI_CheckAndPopMenu (menu);
 		return ui_menu_out_sound;
 	case K_KP_UPARROW:
@@ -855,18 +869,28 @@ const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 	case K_LEFTARROW:
 		if ( menu )
 		{
-			UI_SlideMenuItem (menu, -1);
-			sound = ui_menu_move_sound;
+			sound = UI_SlideMenuItem (menu, -1);
 		}
 		break;
 	case K_KP_RIGHTARROW:
 	case K_RIGHTARROW:
 		if ( menu )
 		{
-			UI_SlideMenuItem (menu, 1);
-			sound = ui_menu_move_sound;
+			sound = UI_SlideMenuItem (menu, 1);
 		}
 		break;
+/*	case K_MWHEELUP:
+		if (menu)
+		{
+			UI_ScrollMenuItem (menu, -1);
+		}
+		break;
+	case K_MWHEELDOWN:
+		if (menu)
+		{
+			UI_ScrollMenuItem (menu, 1);
+		}
+		break; */
 
 	case K_JOY1:
 	case K_JOY2:

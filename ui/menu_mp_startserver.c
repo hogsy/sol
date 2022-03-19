@@ -139,15 +139,18 @@ void Menu_StartServerActionFunc (void *self)
 
 	Q_strncpyz (startmap, sizeof(startmap), strchr( ui_svr_mapnames[s_startmap_list.curValue], '\n' ) + 1);
 
-	maxclients  = atoi( s_maxclients_field.buffer );
-	timelimit	= atoi( s_timelimit_field.buffer );
-	fraglimit	= atoi( s_fraglimit_field.buffer );
+	maxclients  = atoi(s_maxclients_field.buffer);
+	timelimit	= atoi(s_timelimit_field.buffer);
+	fraglimit	= atoi(s_fraglimit_field.buffer);
 
-	Cvar_SetValue( "maxclients", ClampCvar( 0, maxclients, maxclients ) );
-	Cvar_SetValue ("timelimit", ClampCvar( 0, timelimit, timelimit ) );
-	Cvar_SetValue ("fraglimit", ClampCvar( 0, fraglimit, fraglimit ) );
-	Cvar_Set("hostname", s_hostname_field.buffer );
-//	UI_SaveMenuItemValue (&s_hostname_field);
+//	Cvar_SetValue( "maxclients", ClampCvar( 0, maxclients, maxclients ) );
+//	Cvar_SetValue ("timelimit", ClampCvar( 0, timelimit, timelimit ) );
+//	Cvar_SetValue ("fraglimit", ClampCvar( 0, fraglimit, fraglimit ) );
+	Cvar_SetValue ("maxclients", max(0, maxclients));
+	Cvar_SetValue ("timelimit", max(0, timelimit));
+	Cvar_SetValue ("fraglimit", max(0, fraglimit));
+//	Cvar_Set("hostname", s_hostname_field.buffer );
+	UI_SaveMenuItemValue (&s_hostname_field);
 
 	Cvar_SetValue ("deathmatch", s_rules_box.curValue != 1);
 	Cvar_SetValue ("coop", s_rules_box.curValue == 1);
@@ -245,6 +248,7 @@ void Menu_StartServer_Init (void)
 	s_rules_box.generic.x			= x;
 	s_rules_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_rules_box.generic.name		= "rules";
+	s_rules_box.generic.callback	= M_RulesChangeFunc;
 //PGM - rogue games only available with rogue DLL.
 	if ( FS_RoguePath() )
 		s_rules_box.itemNames		= dm_coop_names_rogue;
@@ -261,31 +265,38 @@ void Menu_StartServer_Init (void)
 		s_rules_box.curValue = 1;
 	else
 		s_rules_box.curValue = 0;
-	s_rules_box.generic.callback	= M_RulesChangeFunc;
 
-	s_timelimit_field.generic.type		= MTYPE_FIELD;
-	s_timelimit_field.generic.textSize	= MENU_FONT_SIZE;
-	s_timelimit_field.generic.name		= "time limit";
-	s_timelimit_field.generic.flags		= QMF_NUMBERSONLY;
-	s_timelimit_field.generic.x			= x;
-	s_timelimit_field.generic.y			= y += 2*MENU_FONT_SIZE;
-	s_timelimit_field.generic.statusbar	= "0 = no limit";
-	s_timelimit_field.length			= 4;
-	s_timelimit_field.visible_length	= 4;
-	Q_strncpyz (s_timelimit_field.buffer, sizeof(s_timelimit_field.buffer), Cvar_VariableString("timelimit"));
-	s_timelimit_field.cursor			= (int)strlen( s_timelimit_field.buffer );
+	s_timelimit_field.generic.type			= MTYPE_FIELD;
+	s_timelimit_field.generic.textSize		= MENU_FONT_SIZE;
+	s_timelimit_field.generic.name			= "time limit";
+	s_timelimit_field.generic.flags			= QMF_NUMBERSONLY;
+	s_timelimit_field.generic.x				= x;
+	s_timelimit_field.generic.y				= y += 2*MENU_FONT_SIZE;
+	s_timelimit_field.generic.statusbar		= "0 = no limit";
+	s_timelimit_field.length				= 4;
+	s_timelimit_field.visible_length		= 4;
+	s_timelimit_field.generic.cvar			= "timelimit";
+	s_timelimit_field.generic.cvarNoSave	= true;
+	s_timelimit_field.length				= 4;
+	s_timelimit_field.visible_length		= 4;
+//	Q_strncpyz (s_timelimit_field.buffer, sizeof(s_timelimit_field.buffer), Cvar_VariableString("timelimit"));
+//	s_timelimit_field.cursor				= (int)strlen( s_timelimit_field.buffer );
 
-	s_fraglimit_field.generic.type		= MTYPE_FIELD;
-	s_fraglimit_field.generic.textSize	= MENU_FONT_SIZE;
-	s_fraglimit_field.generic.name		= "frag limit";
-	s_fraglimit_field.generic.flags		= QMF_NUMBERSONLY;
-	s_fraglimit_field.generic.x			= x;
-	s_fraglimit_field.generic.y			= y += 2.25*MENU_FONT_SIZE;
-	s_fraglimit_field.generic.statusbar	= "0 = no limit";
-	s_fraglimit_field.length			= 4;
-	s_fraglimit_field.visible_length	= 4;
-	Q_strncpyz (s_fraglimit_field.buffer, sizeof(s_fraglimit_field.buffer), Cvar_VariableString("fraglimit"));
-	s_fraglimit_field.cursor			= (int)strlen( s_fraglimit_field.buffer );
+	s_fraglimit_field.generic.type			= MTYPE_FIELD;
+	s_fraglimit_field.generic.textSize		= MENU_FONT_SIZE;
+	s_fraglimit_field.generic.name			= "frag limit";
+	s_fraglimit_field.generic.flags			= QMF_NUMBERSONLY;
+	s_fraglimit_field.generic.x				= x;
+	s_fraglimit_field.generic.y				= y += 2.25*MENU_FONT_SIZE;
+	s_fraglimit_field.generic.statusbar		= "0 = no limit";
+	s_fraglimit_field.length				= 4;
+	s_fraglimit_field.visible_length		= 4;
+	s_fraglimit_field.generic.cvar			= "fraglimit";
+	s_fraglimit_field.generic.cvarNoSave	= true;
+	s_fraglimit_field.length				= 4;
+	s_fraglimit_field.visible_length		= 4;
+//	Q_strncpyz (s_fraglimit_field.buffer, sizeof(s_fraglimit_field.buffer), Cvar_VariableString("fraglimit"));
+//	s_fraglimit_field.cursor				= (int)strlen( s_fraglimit_field.buffer );
 
 	/*
 	** maxclients determines the maximum number of players that can join
@@ -300,13 +311,15 @@ void Menu_StartServer_Init (void)
 	s_maxclients_field.generic.x			= x;
 	s_maxclients_field.generic.y			= y += 2.25*MENU_FONT_SIZE;
 	s_maxclients_field.generic.statusbar	= NULL;
+	s_maxclients_field.generic.cvar			= "maxclients";
+	s_maxclients_field.generic.cvarNoSave	= true;
 	s_maxclients_field.length				= 3;
 	s_maxclients_field.visible_length		= 3;
-	if ( Cvar_VariableValue( "maxclients" ) == 1 )
+/*	if ( Cvar_VariableValue( "maxclients" ) == 1 )
 		Q_strncpyz (s_maxclients_field.buffer, sizeof(s_maxclients_field.buffer), "8");
 	else 
 		Q_strncpyz (s_maxclients_field.buffer, sizeof(s_maxclients_field.buffer), Cvar_VariableString("maxclients"));
-	s_maxclients_field.cursor				= (int)strlen( s_maxclients_field.buffer );
+	s_maxclients_field.cursor				= (int)strlen( s_maxclients_field.buffer ); */
 
 	s_hostname_field.generic.type			= MTYPE_FIELD;
 	s_hostname_field.generic.textSize		= MENU_FONT_SIZE;
@@ -315,10 +328,12 @@ void Menu_StartServer_Init (void)
 	s_hostname_field.generic.x				= x;
 	s_hostname_field.generic.y				= y += 2.25*MENU_FONT_SIZE;
 	s_hostname_field.generic.statusbar		= NULL;
+	s_hostname_field.generic.cvar			= "hostname";
+	s_hostname_field.generic.cvarNoSave		= true;
 	s_hostname_field.length					= 16;
 	s_hostname_field.visible_length			= 16;
-	Q_strncpyz (s_hostname_field.buffer, sizeof(s_hostname_field.buffer), Cvar_VariableString("hostname"));
-	s_hostname_field.cursor					= (int)strlen( s_hostname_field.buffer );
+//	Q_strncpyz (s_hostname_field.buffer, sizeof(s_hostname_field.buffer), Cvar_VariableString("hostname"));
+//	s_hostname_field.cursor					= (int)strlen( s_hostname_field.buffer );
 
 	s_dedicated_box.generic.type			= MTYPE_PICKER;
 	s_dedicated_box.generic.textSize		= MENU_FONT_SIZE;
@@ -326,8 +341,8 @@ void Menu_StartServer_Init (void)
 	s_dedicated_box.generic.x				= x;
 	s_dedicated_box.generic.y				= y += 2*MENU_FONT_SIZE;
 	s_dedicated_box.curValue				= 0;	// always start off
-	s_dedicated_box.generic.statusbar		= "makes the server faster, but you can't play on this computer";
 	s_dedicated_box.itemNames				= yesno_names;
+	s_dedicated_box.generic.statusbar		= "makes the server faster, but you can't play on this computer";
 
 	s_startserver_dmoptions_action.generic.type			= MTYPE_ACTION;
 	s_startserver_dmoptions_action.generic.textSize		= MENU_FONT_SIZE;

@@ -71,7 +71,7 @@ void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax)
 	Cvar_SetValue ((char *)varName, ClampCvar( cvarMin, cvarMax, Cvar_VariableValue((char *)varName) ));
 }
 
-#if 0
+
 /*
 ==========================
 UI_ClampCvarForControl
@@ -89,7 +89,7 @@ void UI_ClampCvarForControl (menuCommon_s *item)
 		return;
 	Cvar_SetValue (item->cvar, ClampCvar( cvarMin, cvarMax, Cvar_VariableValue(item->cvar) ));
 }
-#endif
+
 
 /*
 ==========================

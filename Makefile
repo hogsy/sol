@@ -214,7 +214,9 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/snd_stream.o \
 	$(BUILDDIR)/client/m_flash.o \
 	\
+	$(BUILDDIR)/client/menu_apply_changes.o \
 	$(BUILDDIR)/client/menu_credits.o \
+	$(BUILDDIR)/client/menu_defaults_confirm.o \
 	$(BUILDDIR)/client/menu_game.o \
 	$(BUILDDIR)/client/menu_game_load.o \
 	$(BUILDDIR)/client/menu_game_save.o \
@@ -400,7 +402,13 @@ $(BUILDDIR)/client/snd_stream.o :    	$(CLIENT_DIR)/snd_stream.c
 $(BUILDDIR)/client/m_flash.o :    	$(GAME_DIR)/m_flash.c
 	$(DO_CC)
 	
+$(BUILDDIR)/client/menu_apply_changes.o :    	$(UI_DIR)/menu_apply_changes.c
+	$(DO_CC)
+	
 $(BUILDDIR)/client/menu_credits.o :    	$(UI_DIR)/menu_credits.c
+	$(DO_CC)
+	
+$(BUILDDIR)/client/menu_defaults_confirm.o :    	$(UI_DIR)/menu_defaults_confirm.c
 	$(DO_CC)
 	
 $(BUILDDIR)/client/menu_game.o :    	$(UI_DIR)/menu_game.c

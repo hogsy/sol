@@ -784,7 +784,15 @@
 				Name="ui"
 				>
 				<File
+					RelativePath="..\..\ui\menu_apply_changes.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\ui\menu_credits.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ui\menu_defaults_confirm.c"
 					>
 				</File>
 				<File
@@ -902,11 +910,11 @@
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
 			<File
-				RelativePath="..\..\client\anorms.h"
+				RelativePath="..\..\renderer\anorms.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\renderer\anorms.h"
+				RelativePath="..\..\client\anorms.h"
 				>
 			</File>
 			<File

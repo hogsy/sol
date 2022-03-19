@@ -34,12 +34,12 @@ DOWNLOAD OPTIONS BOOK MENU
 */
 static menuFramework_s	s_downloadoptions_menu;
 static menuImage_s		s_downloadoptions_banner;
-static menuLabel_s		s_download_title;
+static menuLabel_s		s_downloadoptions_title;
 static menuPicker_s		s_allow_download_box;
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-static menuPicker_s		s_http_download_box;
-static menuPicker_s		s_http_fallback_box;
+static menuPicker_s		s_allow_http_download_box;
+static menuPicker_s		s_allow_http_fallback_box;
 #endif	// USE_CURL
 
 static menuPicker_s		s_allow_download_maps_box;
@@ -51,7 +51,7 @@ static menuPicker_s		s_allow_download_sounds_box;
 static menuAction_s		s_download_back_action;
 
 //=======================================================================
-
+#if 0
 static void AllowDownloadCallback (void *unused)
 {
 	MenuPicker_SaveValue (&s_allow_download_box, "allow_download");
@@ -60,12 +60,12 @@ static void AllowDownloadCallback (void *unused)
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 static void HTTPDownloadCallback (void *unused)
 {
-	MenuPicker_SaveValue (&s_http_download_box, "cl_http_downloads");
+	MenuPicker_SaveValue (&s_allow_http_download_box, "cl_http_downloads");
 }
 
 static void HTTPFallbackCallback (void *unused)
 {
-	MenuPicker_SaveValue (&s_http_fallback_box, "cl_http_fallback");
+	MenuPicker_SaveValue (&s_allow_http_fallback_box, "cl_http_fallback");
 }
 #endif	// USE_CURL
 
@@ -93,15 +93,15 @@ static void DownloadSoundsCallback (void *unused)
 {
 	MenuPicker_SaveValue (&s_allow_download_sounds_box, "allow_download_sounds");
 }
-
+#endif
 //=======================================================================
-
+#if 0
 static void M_Download_SetMenuItemValues (void)
 {
 	MenuPicker_SetValue (&s_allow_download_box, "allow_download", 0, 1, true);
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-	MenuPicker_SetValue (&s_http_download_box, "cl_http_downloads", 0, 1, true);
-	MenuPicker_SetValue (&s_http_fallback_box, "cl_http_fallback", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_http_download_box, "cl_http_downloads", 0, 1, true);
+	MenuPicker_SetValue (&s_allow_http_fallback_box, "cl_http_fallback", 0, 1, true);
 #endif	// USE_CURL
 	MenuPicker_SetValue (&s_allow_download_maps_box, "allow_download_maps", 0, 1, true);
 	MenuPicker_SetValue (&s_allow_download_textures_24bit_box, "allow_download_textures_24bit", 0, 1, true);
@@ -109,7 +109,7 @@ static void M_Download_SetMenuItemValues (void)
 	MenuPicker_SetValue (&s_allow_download_models_box, "allow_download_models", 0, 1, true);
 	MenuPicker_SetValue (&s_allow_download_sounds_box, "allow_download_sounds", 0, 1, true);
 }
-
+#endif
 //=======================================================================
 
 void Menu_DownloadOptions_Init (void)
@@ -147,59 +147,64 @@ void Menu_DownloadOptions_Init (void)
 	s_downloadoptions_banner.vCentered			= false;
 	s_downloadoptions_banner.generic.isHidden	= false;
 
-	s_download_title.generic.type		= MTYPE_LABEL;
-	s_download_title.generic.textSize	= MENU_HEADER_FONT_SIZE;
-	s_download_title.generic.name		= "Download Options";
-	s_download_title.generic.x			= x + MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_download_title.generic.name); // was 48
-	s_download_title.generic.y			= y;	// - 2*MENU_LINE_SIZE;
+	s_downloadoptions_title.generic.type		= MTYPE_LABEL;
+	s_downloadoptions_title.generic.textSize	= MENU_HEADER_FONT_SIZE;
+	s_downloadoptions_title.generic.name		= "Download Options";
+	s_downloadoptions_title.generic.x			= x + MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_downloadoptions_title.generic.name); // was 48
+	s_downloadoptions_title.generic.y			= y;	// - 2*MENU_LINE_SIZE;
 
-	s_allow_download_box.generic.type		= MTYPE_PICKER;
-	s_allow_download_box.generic.textSize	= MENU_FONT_SIZE;
-	s_allow_download_box.generic.x			= x;
-	s_allow_download_box.generic.y			= y += 4*MENU_LINE_SIZE;
-	s_allow_download_box.generic.name		= "allow downloading";
-	s_allow_download_box.generic.callback	= AllowDownloadCallback;	// DownloadCallback
-	s_allow_download_box.itemNames			= yes_no_names;
-	s_allow_download_box.generic.statusbar	= "enable or disable all downloading";
+	s_allow_download_box.generic.type			= MTYPE_PICKER;
+	s_allow_download_box.generic.textSize		= MENU_FONT_SIZE;
+	s_allow_download_box.generic.x				= x;
+	s_allow_download_box.generic.y				= y += 4*MENU_LINE_SIZE;
+	s_allow_download_box.generic.name			= "allow downloading";
+//	s_allow_download_box.generic.callback		= AllowDownloadCallback;
+	s_allow_download_box.itemNames				= yes_no_names;
+	s_allow_download_box.generic.cvar			= "allow_download";
+	s_allow_download_box.generic.statusbar		= "enable or disable all downloading";
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-	s_http_download_box.generic.type		= MTYPE_PICKER;
-	s_http_download_box.generic.textSize	= MENU_FONT_SIZE;
-	s_http_download_box.generic.x			= x;
-	s_http_download_box.generic.y			= y += MENU_LINE_SIZE;
-	s_http_download_box.generic.name		= "HTTP downloading";
-	s_http_download_box.generic.callback	= HTTPDownloadCallback;	// DownloadCallback
-	s_http_download_box.itemNames			= yes_no_names;
-	s_http_download_box.generic.statusbar	= "use HTTP downloading on supported servers";
+	s_allow_http_download_box.generic.type			= MTYPE_PICKER;
+	s_allow_http_download_box.generic.textSize			= MENU_FONT_SIZE;
+	s_allow_http_download_box.generic.x				= x;
+	s_allow_http_download_box.generic.y				= y += MENU_LINE_SIZE;
+	s_allow_http_download_box.generic.name			= "HTTP downloading";
+//	s_allow_http_download_box.generic.callback		= HTTPDownloadCallback;
+	s_allow_http_download_box.itemNames				= yes_no_names;
+	s_allow_http_download_box.generic.cvar			= "cl_http_downloads";
+	s_allow_http_download_box.generic.statusbar		= "use HTTP downloading on supported servers";
 
-	s_http_fallback_box.generic.type		= MTYPE_PICKER;
-	s_http_fallback_box.generic.textSize	= MENU_FONT_SIZE;
-	s_http_fallback_box.generic.x			= x;
-	s_http_fallback_box.generic.y			= y += MENU_LINE_SIZE;
-	s_http_fallback_box.generic.name		= "HTTP fallback";
-	s_http_fallback_box.generic.callback	= HTTPFallbackCallback;	// DownloadCallback
-	s_http_fallback_box.itemNames			= yes_no_names;
-	s_http_fallback_box.generic.statusbar	= "enable to allow HTTP downloads to fall back to Q2Pro path and UDP";
+	s_allow_http_fallback_box.generic.type			= MTYPE_PICKER;
+	s_allow_http_fallback_box.generic.textSize		= MENU_FONT_SIZE;
+	s_allow_http_fallback_box.generic.x				= x;
+	s_allow_http_fallback_box.generic.y				= y += MENU_LINE_SIZE;
+	s_allow_http_fallback_box.generic.name			= "HTTP fallback";
+//	s_allow_http_fallback_box.generic.callback		= HTTPFallbackCallback;
+	s_allow_http_fallback_box.itemNames				= yes_no_names;
+	s_allow_http_fallback_box.generic.cvar			= "cl_http_fallback";
+	s_allow_http_fallback_box.generic.statusbar		= "enable to allow HTTP downloads to fall back to Q2Pro path and UDP";
 #endif	// USE_CURL
 
-	s_allow_download_maps_box.generic.type		= MTYPE_PICKER;
-	s_allow_download_maps_box.generic.textSize	= MENU_FONT_SIZE;
-	s_allow_download_maps_box.generic.x			= x;
-	s_allow_download_maps_box.generic.y			= y += 2*MENU_LINE_SIZE;
-	s_allow_download_maps_box.generic.name		= "maps/textures";
-	s_allow_download_maps_box.generic.callback	= DownloadMapsCallback;	// DownloadCallback
-	s_allow_download_maps_box.itemNames			= yes_no_names;
-	s_allow_download_maps_box.generic.statusbar	= "enable to allow downloading of maps and textures";
+	s_allow_download_maps_box.generic.type			= MTYPE_PICKER;
+	s_allow_download_maps_box.generic.textSize		= MENU_FONT_SIZE;
+	s_allow_download_maps_box.generic.x				= x;
+	s_allow_download_maps_box.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_allow_download_maps_box.generic.name			= "maps/textures";
+//	s_allow_download_maps_box.generic.callback		= DownloadMapsCallback;
+	s_allow_download_maps_box.itemNames				= yes_no_names;
+	s_allow_download_maps_box.generic.cvar			= "allow_download_maps";
+	s_allow_download_maps_box.generic.statusbar		= "enable to allow downloading of maps and textures";
 
-	// Knightmare- option to allow downloading 24-bit textures
+	// option to allow downloading 24-bit textures
 	s_allow_download_textures_24bit_box.generic.type		= MTYPE_PICKER;
 	s_allow_download_textures_24bit_box.generic.textSize	= MENU_FONT_SIZE;
 	s_allow_download_textures_24bit_box.generic.x			= x;
 	s_allow_download_textures_24bit_box.generic.y			= y += MENU_LINE_SIZE;
 	s_allow_download_textures_24bit_box.generic.name		= "24-bit textures";
-	s_allow_download_textures_24bit_box.generic.callback	= DownloadTextures24BitCallback;	// DownloadCallback
+//	s_allow_download_textures_24bit_box.generic.callback	= DownloadTextures24BitCallback;
 	s_allow_download_textures_24bit_box.generic.statusbar	= "enable to allow downloading of JPG and TGA textures";
 	s_allow_download_textures_24bit_box.itemNames			= yes_no_names;
+	s_allow_download_textures_24bit_box.generic.cvar		= "allow_download_textures_24bit";
 	s_allow_download_textures_24bit_box.generic.statusbar	= "enable to allow downloading of JPG and TGA textures";
 
 	s_allow_download_players_box.generic.type		= MTYPE_PICKER;
@@ -207,8 +212,9 @@ void Menu_DownloadOptions_Init (void)
 	s_allow_download_players_box.generic.x			= x;
 	s_allow_download_players_box.generic.y			= y += MENU_LINE_SIZE;
 	s_allow_download_players_box.generic.name		= "player models/skins";
-	s_allow_download_players_box.generic.callback	= DownloadPlayersCallback;	// DownloadCallback
+//	s_allow_download_players_box.generic.callback	= DownloadPlayersCallback;
 	s_allow_download_players_box.itemNames			= yes_no_names;
+	s_allow_download_players_box.generic.cvar		= "allow_download_players";
 	s_allow_download_players_box.generic.statusbar	= "enable to allow downloading of player models";
 
 	s_allow_download_models_box.generic.type		= MTYPE_PICKER;
@@ -216,8 +222,9 @@ void Menu_DownloadOptions_Init (void)
 	s_allow_download_models_box.generic.x			= x;
 	s_allow_download_models_box.generic.y			= y += MENU_LINE_SIZE;
 	s_allow_download_models_box.generic.name		= "models";
-	s_allow_download_models_box.generic.callback	= DownloadModelsCallback;	// DownloadCallback
+//	s_allow_download_models_box.generic.callback	= DownloadModelsCallback;
 	s_allow_download_models_box.itemNames			= yes_no_names;
+	s_allow_download_models_box.generic.cvar		= "allow_download_models";
 	s_allow_download_models_box.generic.statusbar	= "enable to allow downloading of models";
 
 	s_allow_download_sounds_box.generic.type		= MTYPE_PICKER;
@@ -225,27 +232,28 @@ void Menu_DownloadOptions_Init (void)
 	s_allow_download_sounds_box.generic.x			= x;
 	s_allow_download_sounds_box.generic.y			= y += MENU_LINE_SIZE;
 	s_allow_download_sounds_box.generic.name		= "sounds";
-	s_allow_download_sounds_box.generic.callback	= DownloadSoundsCallback;	// DownloadCallback
+//	s_allow_download_sounds_box.generic.callback	= DownloadSoundsCallback;
 	s_allow_download_sounds_box.itemNames			= yes_no_names;
+	s_allow_download_sounds_box.generic.cvar		= "allow_download_sounds";
 	s_allow_download_sounds_box.generic.statusbar	= "enable to allow downloading of sounds";
 
 	s_download_back_action.generic.type			= MTYPE_ACTION;
 	s_download_back_action.generic.textSize		= MENU_FONT_SIZE;
-	s_download_back_action.generic.flags		= x;				// QMF_LEFT_JUSTIFY
-	s_download_back_action.generic.x			= x + MENU_FONT_SIZE;	// 0
+	s_download_back_action.generic.flags		= QMF_LEFT_JUSTIFY;
+	s_download_back_action.generic.x			= x;	// + MENU_FONT_SIZE;
 	s_download_back_action.generic.y			= 41*MENU_LINE_SIZE;	// y += 3*MENU_LINE_SIZE
 	s_download_back_action.generic.name			= "Back to Multiplayer";
 	s_download_back_action.generic.callback		= UI_BackMenu;
 
-	M_Download_SetMenuItemValues ();
+//	M_Download_SetMenuItemValues ();
 
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_downloadoptions_banner);
-	UI_AddMenuItem (&s_downloadoptions_menu, &s_download_title);
+	UI_AddMenuItem (&s_downloadoptions_menu, &s_downloadoptions_title);
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_box);
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-	UI_AddMenuItem (&s_downloadoptions_menu, &s_http_download_box);
-	UI_AddMenuItem (&s_downloadoptions_menu, &s_http_fallback_box);
+	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_http_download_box);
+	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_http_fallback_box);
 #endif	// USE_CURL
 
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_maps_box);
@@ -253,7 +261,6 @@ void Menu_DownloadOptions_Init (void)
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_players_box);
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_models_box);
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_sounds_box);
-
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_download_back_action );
 }
 

@@ -56,10 +56,10 @@ static menuModelView_s	s_playerconfig_model_display;
 
 #define	NUM_SKINBOX_ITEMS 7
 
-static void Menu_PlayerRateCallback (void *unused)
+/*static void Menu_PlayerRateCallback (void *unused)
 {
 	MenuPicker_SaveValue (&s_playerconfig_rate_box, "rate");
-}
+} */
 
 
 static void Menu_LoadPlayerRailColor (void)
@@ -74,9 +74,9 @@ static void Menu_LoadPlayerRailColor (void)
 		s_playerconfig_railcolor_display[1].imageColor[1] = min(max(railColor[1], 0), 255);
 		s_playerconfig_railcolor_display[1].imageColor[2] = min(max(railColor[2], 0), 255);
 	}
-	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
-	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
-	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue", 0, 256, true);
+//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
+//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
+//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue", 0, 256, true);
 }
 
 
@@ -94,21 +94,21 @@ static void Menu_SavePlayerRailColor (void)
 
 static void Menu_PlayerRailColorRedFunc (void *unused)
 {
-	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred");
+//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorGreenFunc (void *unused)
 {
-	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen");
+//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorBlueFunc (void *unused)
 {
-	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue");
+//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue");
 	Menu_SavePlayerRailColor ();
 }
 
@@ -142,7 +142,7 @@ static void Menu_PlayerHandednessCallback (void *unused)
 	int			i;
 	qboolean	lefthand;
 
-	MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
+//	MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
 
 	// update player model display
 	lefthand = (Cvar_VariableValue("hand") == 1);
@@ -157,7 +157,7 @@ void Menu_PConfigSaveChanges (void *unused)
 	int		mNum, sNum;
 	char	scratch[1024];
 
-	Cvar_Set ("name", s_playerconfig_name_field.buffer);
+//	Cvar_Set ("name", s_playerconfig_name_field.buffer);
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
@@ -234,10 +234,11 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_name_field.generic.callback	= 0;
 	s_playerconfig_name_field.generic.x			= x + -MENU_FONT_SIZE;
 	s_playerconfig_name_field.generic.y			= y;
-	s_playerconfig_name_field.length			= 20;
-	s_playerconfig_name_field.visible_length	= 20;
-	Q_strncpyz (s_playerconfig_name_field.buffer, sizeof(s_playerconfig_name_field.buffer), Cvar_VariableString("name"));
-	s_playerconfig_name_field.cursor = (int)strlen(s_playerconfig_name_field.buffer);
+	s_playerconfig_name_field.length			= 23;	// was 20
+	s_playerconfig_name_field.visible_length	= 23;	// was 20
+	s_playerconfig_name_field.generic.cvar		= "name";
+//	Q_strncpyz (s_playerconfig_name_field.buffer, sizeof(s_playerconfig_name_field.buffer), Cvar_VariableString("name"));
+//	s_playerconfig_name_field.cursor = (int)strlen(s_playerconfig_name_field.buffer);
 
 	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
@@ -286,16 +287,20 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_handedness_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_handedness_box.generic.name			= 0;
 	s_playerconfig_handedness_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
-	s_playerconfig_handedness_box.generic.callback		= Menu_PlayerHandednessCallback;
 	s_playerconfig_handedness_box.itemNames				= handedness_names;
-	MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
+	s_playerconfig_handedness_box.generic.callback		= Menu_PlayerHandednessCallback;
+	s_playerconfig_handedness_box.generic.cvar			= "hand";
+	s_playerconfig_handedness_box.generic.cvarClamp		= true;
+	s_playerconfig_handedness_box.generic.cvarMin		= 0;
+	s_playerconfig_handedness_box.generic.cvarMax		= 2;
+//	MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
 			
-	s_playerconfig_rate_title.generic.type		= MTYPE_LABEL;
-	s_playerconfig_rate_title.generic.textSize	= MENU_FONT_SIZE;
-	s_playerconfig_rate_title.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_playerconfig_rate_title.generic.name		= "connect speed";
-	s_playerconfig_rate_title.generic.x			= x + 6*MENU_FONT_SIZE;
-	s_playerconfig_rate_title.generic.y			= y += 2*MENU_LINE_SIZE;
+	s_playerconfig_rate_title.generic.type			= MTYPE_LABEL;
+	s_playerconfig_rate_title.generic.textSize		= MENU_FONT_SIZE;
+	s_playerconfig_rate_title.generic.flags			= QMF_LEFT_JUSTIFY;
+	s_playerconfig_rate_title.generic.name			= "connect speed";
+	s_playerconfig_rate_title.generic.x				= x + 6*MENU_FONT_SIZE;
+	s_playerconfig_rate_title.generic.y				= y += 2*MENU_LINE_SIZE;
 		
 	s_playerconfig_rate_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_rate_box.generic.textSize		= MENU_FONT_SIZE;
@@ -303,10 +308,12 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_rate_box.generic.name			= 0;
 	s_playerconfig_rate_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
-	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
+//	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
 	s_playerconfig_rate_box.itemNames				= rate_names;
 	s_playerconfig_rate_box.itemValues				= rate_values;
-	MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
+	s_playerconfig_rate_box.generic.cvar			= "rate";
+	s_playerconfig_rate_box.generic.cvarClamp		= false;
+//	MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
 
 	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
@@ -372,6 +379,10 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[0].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[0].increment			= 4.0f;
 	s_playerconfig_railcolor_slider[0].displayAsPercent		= false;
+	s_playerconfig_railcolor_slider[0].generic.cvar			= "ui_player_railred";
+	s_playerconfig_railcolor_slider[0].generic.cvarClamp	= true;
+	s_playerconfig_railcolor_slider[0].generic.cvarMin		= 0;
+	s_playerconfig_railcolor_slider[0].generic.cvarMax		= 256;
 	s_playerconfig_railcolor_slider[0].generic.statusbar	= "changes player's railgun particle effect red component";
 
 	s_playerconfig_railcolor_slider[1].generic.type			= MTYPE_SLIDER;
@@ -384,6 +395,10 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[1].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[1].increment			= 4.0f;
 	s_playerconfig_railcolor_slider[1].displayAsPercent		= false;
+	s_playerconfig_railcolor_slider[1].generic.cvar			= "ui_player_railgreen";
+	s_playerconfig_railcolor_slider[1].generic.cvarClamp	= true;
+	s_playerconfig_railcolor_slider[1].generic.cvarMin		= 0;
+	s_playerconfig_railcolor_slider[1].generic.cvarMax		= 256;
 	s_playerconfig_railcolor_slider[1].generic.statusbar	= "changes player's railgun particle effect green component";
 
 	s_playerconfig_railcolor_slider[2].generic.type			= MTYPE_SLIDER;
@@ -396,6 +411,10 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[2].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[2].increment			= 4.0f;
 	s_playerconfig_railcolor_slider[2].displayAsPercent		= false;
+	s_playerconfig_railcolor_slider[2].generic.cvar			= "ui_player_railblue";
+	s_playerconfig_railcolor_slider[2].generic.cvarClamp	= true;
+	s_playerconfig_railcolor_slider[2].generic.cvarMin		= 0;
+	s_playerconfig_railcolor_slider[2].generic.cvarMax		= 256;
 	s_playerconfig_railcolor_slider[2].generic.statusbar	= "changes player's railgun particle effect blue component";
 
 	s_playerconfig_back_action.generic.type			= MTYPE_ACTION;
