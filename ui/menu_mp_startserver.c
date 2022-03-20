@@ -99,13 +99,13 @@ void M_RulesChangeFunc (void *self)
 		UI_SetCoopMenuMode (true);
 		s_maxclients_field.generic.statusbar = "4 maximum for cooperative";
 	}
-	else if (s_rules_box.curValue == 2) // CTF
+	else if (s_rules_box.curValue == 2)		// CTF
 	{
 		Vector2Set (maxclients_default, 12, -1);	// set default of 12
 		maptype = MAP_CTF;
 		UI_SetCTFMenuMode (true);
 	}
-	else if (s_rules_box.curValue == 3) // 3Team CTF
+	else if (s_rules_box.curValue == 3)		// 3Team CTF
 	{
 		Vector2Set (maxclients_default, 18, -1);	// set default of 18
 		maptype = MAP_3TCTF;
@@ -130,26 +130,15 @@ void M_DMOptionsFunc (void *self)
 	Menu_DMOptions_f ();
 }
 
-void Menu_StartServerActionFunc (void *self)
+void M_StartServerActionFunc (void *self)
 {
 	char	startmap[1024];
-	int		timelimit;
-	int		fraglimit;
-	int		maxclients;
 
 	Q_strncpyz (startmap, sizeof(startmap), strchr( ui_svr_mapnames[s_startmap_list.curValue], '\n' ) + 1);
 
-	maxclients  = atoi(s_maxclients_field.buffer);
-	timelimit	= atoi(s_timelimit_field.buffer);
-	fraglimit	= atoi(s_fraglimit_field.buffer);
-
-//	Cvar_SetValue( "maxclients", ClampCvar( 0, maxclients, maxclients ) );
-//	Cvar_SetValue ("timelimit", ClampCvar( 0, timelimit, timelimit ) );
-//	Cvar_SetValue ("fraglimit", ClampCvar( 0, fraglimit, fraglimit ) );
-	Cvar_SetValue ("maxclients", max(0, maxclients));
-	Cvar_SetValue ("timelimit", max(0, timelimit));
-	Cvar_SetValue ("fraglimit", max(0, fraglimit));
-//	Cvar_Set("hostname", s_hostname_field.buffer );
+	UI_SaveMenuItemValue (&s_maxclients_field);
+	UI_SaveMenuItemValue (&s_timelimit_field);
+	UI_SaveMenuItemValue (&s_fraglimit_field);
 	UI_SaveMenuItemValue (&s_hostname_field);
 
 	Cvar_SetValue ("deathmatch", s_rules_box.curValue != 1);
@@ -249,12 +238,12 @@ void Menu_StartServer_Init (void)
 	s_rules_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_rules_box.generic.name		= "rules";
 	s_rules_box.generic.callback	= M_RulesChangeFunc;
-//PGM - rogue games only available with rogue DLL.
+// PGM - rogue games only available with rogue DLL
 	if ( FS_RoguePath() )
 		s_rules_box.itemNames		= dm_coop_names_rogue;
 	else
 		s_rules_box.itemNames		= dm_coop_names;
-//PGM
+// PGM
 	if (Cvar_VariableValue("ttctf"))
 		s_rules_box.curValue = 3;
 	else if (Cvar_VariableValue("ctf"))
@@ -279,8 +268,6 @@ void Menu_StartServer_Init (void)
 	s_timelimit_field.generic.cvarNoSave	= true;
 	s_timelimit_field.length				= 4;
 	s_timelimit_field.visible_length		= 4;
-//	Q_strncpyz (s_timelimit_field.buffer, sizeof(s_timelimit_field.buffer), Cvar_VariableString("timelimit"));
-//	s_timelimit_field.cursor				= (int)strlen( s_timelimit_field.buffer );
 
 	s_fraglimit_field.generic.type			= MTYPE_FIELD;
 	s_fraglimit_field.generic.textSize		= MENU_FONT_SIZE;
@@ -295,8 +282,6 @@ void Menu_StartServer_Init (void)
 	s_fraglimit_field.generic.cvarNoSave	= true;
 	s_fraglimit_field.length				= 4;
 	s_fraglimit_field.visible_length		= 4;
-//	Q_strncpyz (s_fraglimit_field.buffer, sizeof(s_fraglimit_field.buffer), Cvar_VariableString("fraglimit"));
-//	s_fraglimit_field.cursor				= (int)strlen( s_fraglimit_field.buffer );
 
 	/*
 	** maxclients determines the maximum number of players that can join
@@ -315,11 +300,6 @@ void Menu_StartServer_Init (void)
 	s_maxclients_field.generic.cvarNoSave	= true;
 	s_maxclients_field.length				= 3;
 	s_maxclients_field.visible_length		= 3;
-/*	if ( Cvar_VariableValue( "maxclients" ) == 1 )
-		Q_strncpyz (s_maxclients_field.buffer, sizeof(s_maxclients_field.buffer), "8");
-	else 
-		Q_strncpyz (s_maxclients_field.buffer, sizeof(s_maxclients_field.buffer), Cvar_VariableString("maxclients"));
-	s_maxclients_field.cursor				= (int)strlen( s_maxclients_field.buffer ); */
 
 	s_hostname_field.generic.type			= MTYPE_FIELD;
 	s_hostname_field.generic.textSize		= MENU_FONT_SIZE;
@@ -332,8 +312,6 @@ void Menu_StartServer_Init (void)
 	s_hostname_field.generic.cvarNoSave		= true;
 	s_hostname_field.length					= 16;
 	s_hostname_field.visible_length			= 16;
-//	Q_strncpyz (s_hostname_field.buffer, sizeof(s_hostname_field.buffer), Cvar_VariableString("hostname"));
-//	s_hostname_field.cursor					= (int)strlen( s_hostname_field.buffer );
 
 	s_dedicated_box.generic.type			= MTYPE_PICKER;
 	s_dedicated_box.generic.textSize		= MENU_FONT_SIZE;
@@ -359,7 +337,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_start_action.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_startserver_start_action.generic.x		= x + 4*MENU_FONT_SIZE;
 	s_startserver_start_action.generic.y		= y += 2*MENU_LINE_SIZE;
-	s_startserver_start_action.generic.callback	= Menu_StartServerActionFunc;
+	s_startserver_start_action.generic.callback	= M_StartServerActionFunc;
 
 	s_startserver_back_action.generic.type		= MTYPE_ACTION;
 	s_startserver_back_action.generic.textSize	= MENU_FONT_SIZE;

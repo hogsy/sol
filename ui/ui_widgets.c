@@ -394,9 +394,6 @@ void UI_MenuField_Draw (menuField_s *f)
 	char			tempbuffer[128]="";
 	int				offset;
 
-//	if (f->generic.name)
-//		UI_DrawMenuString (f->generic.x + f->generic.parent->x + LCOLUMN_OFFSET,
-//								f->generic.y + f->generic.parent->y, f->generic.textSize, f->generic.scrAlign, f->generic.name, 255, true, true);
 	// name
 	UI_MenuCommon_DrawItemName (&f->generic, -(2*RCOLUMN_OFFSET), 0, 0, -(FIELD_VOFFSET+MENU_LINE_SIZE), hoverAlpha);
 
@@ -603,40 +600,6 @@ void UI_MenuLabel_Setup (menuLabel_s *l)
 
 //=========================================================
 
-#if 0
-float MenuSlider_GetValue (menuSlider_s *s)
-{
-	if (!s) return 0.0f;
-
-	if (!s->increment)
-		s->increment = 1.0f;
-
-	return ((float)s->curPos * s->increment) + s->baseValue;
-}
-
-void MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
-{
-	if (!s || !varName || varName[0] == '\0')
-		return;
-	if (!s->increment)
-		s->increment = 1.0f;
-
-	if (clamp) {
-		UI_ClampCvar (varName, cvarMin, cvarMax);
-	}
-	s->curPos = (int)ceil((Cvar_VariableValue((char *)varName) - s->baseValue) / s->increment);
-	s->curPos = min(max(s->curPos, 0), s->maxPos);
-}
-
-void MenuSlider_SaveValue (menuSlider_s *s, const char *varName)
-{
-	if (!s || !varName || varName[0] == '\0')
-		return;
-
-	Cvar_SetValue ((char *)varName, ((float)s->curPos * s->increment) + s->baseValue);
-}
-#endif
-
 char *UI_MenuSlider_GetValue (menuSlider_s *s)
 {
 	return va("%f", ((float)s->curPos * s->increment) + s->baseValue);
@@ -785,8 +748,6 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 
 	hoverAlpha = UI_MouseOverAlpha(&s->generic);
 
-//	UI_DrawMenuString (s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-//							s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, s->generic.name, hoverAlpha, true, true);
 	// name and header
 	UI_MenuCommon_DrawItemName (&s->generic, LCOLUMN_OFFSET, 0, RCOLUMN_OFFSET, -MENU_LINE_SIZE, hoverAlpha);
 
@@ -873,85 +834,6 @@ void UI_MenuSlider_Setup (menuSlider_s *s)
 }
 
 //=========================================================
-
-#if 0
-const char *MenuPicker_GetValue (menuPicker_s *p)
-{
-	const char *value;
-
-	if (!p)
-		return NULL;
-
-	if (!p->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: not initialized!\n");
-		return NULL;
-	}
-	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_GetValue: curvalue out of bounds!\n");
-		return NULL;
-	}
-
-	if (p->itemValues) {
-		value = p->itemValues[p->curValue];
-	}
-	else {
-		value = va("%d", p->curValue);
-	}
-
-	return value;
-}
-
-void MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp)
-{
-	if (!p || !varName || varName[0] == '\0')
-		return;
-
-	if (clamp) {
-		UI_ClampCvar (varName, cvarMin, cvarMax);
-	}
-	if (p->itemValues) {
-		p->curValue = UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString((char *)varName));
-	}
-	else
-	{
-		if (p->invertValue) {
-			p->curValue = (Cvar_VariableValue((char *)varName) < 0);
-		}
-		else {
-			p->curValue = (int)min(max(Cvar_VariableValue((char *)varName), cvarMin), cvarMax);
-		}
-	}
-}
-
-void MenuPicker_SaveValue (menuPicker_s *p, const char *varName)
-{
-	if (!p || !varName || varName[0] == '\0')
-		return;
-	if (!p->numItems) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: not initialized!\n");
-		return;
-	}
-	if ( (p->curValue < 0) || (p->curValue >= p->numItems) ) {
-		Com_Printf (S_COLOR_YELLOW"UI_MenuPicker_SaveValue: curvalue out of bounds!\n");
-		return;
-	}
-
-	if (p->itemValues) {
-		// Don't save to cvar if this itemvalue is the wildcard
-		if ( Q_stricmp(va("%s", p->itemValues[p->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
-			Cvar_Set ((char *)varName, va("%s", p->itemValues[p->curValue]));
-	}
-	else
-	{
-		if (p->invertValue) {
-			Cvar_SetValue ((char *)varName, Cvar_VariableValue((char *)varName) * -1 );
-		}
-		else {
-			Cvar_SetInteger ((char *)varName, p->curValue);
-		}
-	}
-}
-#endif
 
 char *UI_MenuPicker_GetValue (menuPicker_s *p)
 {

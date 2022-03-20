@@ -46,28 +46,6 @@ static menuAction_s		s_options_sound_defaults_action;
 static menuAction_s		s_options_sound_back_action;
 
 //=======================================================================
-#if 0
-static void VolumeFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_sound_sfxvolume_slider, "s_volume");
-}
-
-static void MusicVolumeFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_sound_musicvolume_slider, "s_musicvolume");
-}
-
-static void OggMusicFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_sound_oggmusic_box, "cl_ogg_music");
-}
-
-static void CDVolumeFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_sound_cdmusic_box, "cd_nocd");
-}
-#endif
-//=======================================================================
 
 void M_Sound_DrawUpdateMessage (void)
 {
@@ -76,29 +54,15 @@ void M_Sound_DrawUpdateMessage (void)
 
 static void M_UpdateSoundQualityFunc (void *unused)
 {
-//	MenuPicker_SaveValue (&s_options_sound_quality_box, "s_khz");
 	Cvar_SetInteger ("s_loadas8bit", (s_options_sound_quality_box.curValue == 0)); // 11 KHz is 8-bit
-
-//	MenuPicker_SaveValue (&s_options_sound_compatibility_box, "s_primary");
 
 	// show update wait message
 	M_Sound_DrawUpdateMessage ();	
 	CL_Snd_Restart_f ();
 }
 
-#if 0
-static void M_SoundSetMenuItemValues (void)
-{
-	MenuSlider_SetValue (&s_options_sound_sfxvolume_slider, "s_volume", 0.0f, 1.0f, true);
-	MenuSlider_SetValue (&s_options_sound_musicvolume_slider, "s_musicvolume", 0.0f, 1.0f, true);
-	MenuPicker_SetValue (&s_options_sound_oggmusic_box, "cl_ogg_music", 0, 1, true);
-	MenuPicker_SetValue (&s_options_sound_cdmusic_box, "cd_nocd", 0, 0, false);
-	MenuPicker_SetValue (&s_options_sound_quality_box, "s_khz", 0, 0, false);
-	MenuPicker_SetValue (&s_options_sound_compatibility_box, "s_primary", 0, 1, true);
-}
-#endif
+//=======================================================================
 
-//static void M_SoundResetDefaults (void *unused)
 static void M_SoundResetDefaults (void)
 {
 	Cvar_SetToDefault ("s_volume");
@@ -113,7 +77,6 @@ static void M_SoundResetDefaults (void)
 	// show update wait message
 	M_Sound_DrawUpdateMessage ();
 	CL_Snd_Restart_f ();
-//	M_SoundSetMenuItemValues ();
 }
 
 //=======================================================================
@@ -193,7 +156,6 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_sfxvolume_slider.generic.x			= x;
 	s_options_sound_sfxvolume_slider.generic.y			= y += 4*MENU_LINE_SIZE;
 	s_options_sound_sfxvolume_slider.generic.name		= "effects volume";
-//	s_options_sound_sfxvolume_slider.generic.callback	= VolumeFunc;
 	s_options_sound_sfxvolume_slider.maxPos				= 20;
 	s_options_sound_sfxvolume_slider.baseValue			= 0.0f;
 	s_options_sound_sfxvolume_slider.increment			= 0.05f;
@@ -203,14 +165,12 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_sfxvolume_slider.generic.cvarMin	= 0.0f;
 	s_options_sound_sfxvolume_slider.generic.cvarMax	= 1.0f;
 	s_options_sound_sfxvolume_slider.generic.statusbar	= "volume of sound effects";
-//	MenuSlider_SetValue (&s_options_sound_sfxvolume_slider, "s_volume", 0.0f, 1.0f, true);
 
 	s_options_sound_musicvolume_slider.generic.type			= MTYPE_SLIDER;
 	s_options_sound_musicvolume_slider.generic.textSize		= MENU_FONT_SIZE;
 	s_options_sound_musicvolume_slider.generic.x			= x;
 	s_options_sound_musicvolume_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_options_sound_musicvolume_slider.generic.name			= "music volume";
-//	s_options_sound_musicvolume_slider.generic.callback		= MusicVolumeFunc;
 	s_options_sound_musicvolume_slider.maxPos				= 20;
 	s_options_sound_musicvolume_slider.baseValue			= 0.0f;
 	s_options_sound_musicvolume_slider.increment			= 0.05f;
@@ -220,28 +180,24 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_musicvolume_slider.generic.cvarMin		= 0.0f;
 	s_options_sound_musicvolume_slider.generic.cvarMax		= 1.0f;
 	s_options_sound_musicvolume_slider.generic.statusbar	= "volume of ogg vorbis music";
-//	MenuSlider_SetValue (&s_options_sound_musicvolume_slider, "s_musicvolume", 0.0f, 1.0f, true);
 
 	s_options_sound_oggmusic_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_oggmusic_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_sound_oggmusic_box.generic.x			= x;
 	s_options_sound_oggmusic_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_sound_oggmusic_box.generic.name		= "ogg vorbis music";
-//	s_options_sound_oggmusic_box.generic.callback	= OggMusicFunc;
 	s_options_sound_oggmusic_box.itemNames			= enabled_items;
 	s_options_sound_oggmusic_box.generic.cvar		= "cl_ogg_music";
 	s_options_sound_oggmusic_box.generic.cvarClamp	= true;
 	s_options_sound_oggmusic_box.generic.cvarMin	= 0;
 	s_options_sound_oggmusic_box.generic.cvarMax	= 1;
 	s_options_sound_oggmusic_box.generic.statusbar	= "override of CD music with ogg vorbis tracks";
-//	MenuPicker_SetValue (&s_options_sound_oggmusic_box,"cl_ogg_music", 0, 1, true);
 
 	s_options_sound_cdmusic_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_cdmusic_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_sound_cdmusic_box.generic.x			= x;
 	s_options_sound_cdmusic_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_sound_cdmusic_box.generic.name		= "CD music";
-//	s_options_sound_cdmusic_box.generic.callback	= CDVolumeFunc;
 	s_options_sound_cdmusic_box.itemNames			= enabled_items;
 	s_options_sound_cdmusic_box.itemValues			= cd_music_values;
 	s_options_sound_cdmusic_box.generic.cvar		= "cd_nocd";
@@ -249,7 +205,6 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_cdmusic_box.generic.cvarMin		= 0;
 	s_options_sound_cdmusic_box.generic.cvarMax		= 1;
 	s_options_sound_cdmusic_box.generic.statusbar	= "enables or disables CD music";
-//	MenuPicker_SetValue (&s_options_sound_cdmusic_box, "cd_nocd", 0, 0, false);
 
 	s_options_sound_quality_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_quality_box.generic.textSize	= MENU_FONT_SIZE;
@@ -262,7 +217,6 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_quality_box.generic.cvar		= "s_khz";
 	s_options_sound_quality_box.generic.cvarClamp	= false;
 	s_options_sound_quality_box.generic.statusbar	= "changes quality of sound";
-//	MenuPicker_SetValue (&s_options_sound_quality_box, "s_khz", 0, 0, false);
 
 	s_options_sound_compatibility_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_compatibility_box.generic.textSize	= MENU_FONT_SIZE;
@@ -276,7 +230,6 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_compatibility_box.generic.cvarMin	= 0;
 	s_options_sound_compatibility_box.generic.cvarMax	= 1;
 	s_options_sound_compatibility_box.generic.statusbar	= "changes buffering mode of sound system";
-//	MenuPicker_SetValue (&s_options_sound_compatibility_box, "s_primary", 0, 1, true);
 
 	s_options_sound_defaults_action.generic.type		= MTYPE_ACTION;
 	s_options_sound_defaults_action.generic.textSize	= MENU_FONT_SIZE;
@@ -303,8 +256,6 @@ void Menu_Options_Sound_Init (void)
 	UI_AddMenuItem (&s_options_sound_menu, (void *) &s_options_sound_compatibility_box);
 	UI_AddMenuItem (&s_options_sound_menu, (void *) &s_options_sound_defaults_action);
 	UI_AddMenuItem (&s_options_sound_menu, (void *) &s_options_sound_back_action);
-
-//	M_SoundSetMenuItemValues ();
 }
 
 

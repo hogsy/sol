@@ -56,12 +56,6 @@ static menuModelView_s	s_playerconfig_model_display;
 
 #define	NUM_SKINBOX_ITEMS 7
 
-/*static void Menu_PlayerRateCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_playerconfig_rate_box, "rate");
-} */
-
-
 static void Menu_LoadPlayerRailColor (void)
 {
 	color_t	railColor;
@@ -74,9 +68,6 @@ static void Menu_LoadPlayerRailColor (void)
 		s_playerconfig_railcolor_display[1].imageColor[1] = min(max(railColor[1], 0), 255);
 		s_playerconfig_railcolor_display[1].imageColor[2] = min(max(railColor[2], 0), 255);
 	}
-//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred", 0, 256, true);
-//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen", 0, 256, true);
-//	MenuSlider_SetValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue", 0, 256, true);
 }
 
 
@@ -94,21 +85,18 @@ static void Menu_SavePlayerRailColor (void)
 
 static void Menu_PlayerRailColorRedFunc (void *unused)
 {
-//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[0], "ui_player_railred");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorGreenFunc (void *unused)
 {
-//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[1], "ui_player_railgreen");
 	Menu_SavePlayerRailColor ();
 }
 
 
 static void Menu_PlayerRailColorBlueFunc (void *unused)
 {
-//	MenuSlider_SaveValue (&s_playerconfig_railcolor_slider[2], "ui_player_railblue");
 	Menu_SavePlayerRailColor ();
 }
 
@@ -142,8 +130,6 @@ static void Menu_PlayerHandednessCallback (void *unused)
 	int			i;
 	qboolean	lefthand;
 
-//	MenuPicker_SaveValue (&s_playerconfig_handedness_box, "hand");
-
 	// update player model display
 	lefthand = (Cvar_VariableValue("hand") == 1);
 	s_playerconfig_model_display.isMirrored = lefthand;
@@ -156,8 +142,6 @@ void Menu_PConfigSaveChanges (void *unused)
 {
 	int		mNum, sNum;
 	char	scratch[1024];
-
-//	Cvar_Set ("name", s_playerconfig_name_field.buffer);
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
@@ -203,7 +187,7 @@ void Menu_PlayerConfig_Init (void)
 
 	// menu.x = 46, menu.y = 170
 	x = 110;					// SCREEN_WIDTH*0.5 - 210
-	y = 17*MENU_LINE_SIZE;		// SCREEN_HEIGHT*0.5 - 70
+	y = 17*MENU_LINE_SIZE;		// SCREEN_HEIGHT*0.5 - 7*MENU_LINE_SIZE
 
 	s_player_config_menu.x					= 0;	// SCREEN_WIDTH*0.5 - 210;
 	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
@@ -237,8 +221,6 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_name_field.length			= 23;	// was 20
 	s_playerconfig_name_field.visible_length	= 23;	// was 20
 	s_playerconfig_name_field.generic.cvar		= "name";
-//	Q_strncpyz (s_playerconfig_name_field.buffer, sizeof(s_playerconfig_name_field.buffer), Cvar_VariableString("name"));
-//	s_playerconfig_name_field.cursor = (int)strlen(s_playerconfig_name_field.buffer);
 
 	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
@@ -293,7 +275,6 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_handedness_box.generic.cvarClamp		= true;
 	s_playerconfig_handedness_box.generic.cvarMin		= 0;
 	s_playerconfig_handedness_box.generic.cvarMax		= 2;
-//	MenuPicker_SetValue (&s_playerconfig_handedness_box, "hand", 0, 2, true);
 			
 	s_playerconfig_rate_title.generic.type			= MTYPE_LABEL;
 	s_playerconfig_rate_title.generic.textSize		= MENU_FONT_SIZE;
@@ -308,12 +289,10 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_rate_box.generic.name			= 0;
 	s_playerconfig_rate_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
-//	s_playerconfig_rate_box.generic.callback		= Menu_PlayerRateCallback;
 	s_playerconfig_rate_box.itemNames				= rate_names;
 	s_playerconfig_rate_box.itemValues				= rate_values;
 	s_playerconfig_rate_box.generic.cvar			= "rate";
 	s_playerconfig_rate_box.generic.cvarClamp		= false;
-//	MenuPicker_SetValue (&s_playerconfig_rate_box, "rate", 0, 0, false);
 
 	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;

@@ -761,14 +761,7 @@ extern	vec4_t stCoord_arrow_down;
 qboolean UI_MenuField_Key (menuField_s *field, int key);
 const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 //const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
-/*
-float	MenuSlider_GetValue (menuSlider_s *s);
-void	MenuSlider_SetValue (menuSlider_s *s, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
-void	MenuSlider_SaveValue (menuSlider_s *s, const char *varName);
-const char *MenuPicker_GetValue (menuPicker_s *p);
-void	MenuPicker_SetValue (menuPicker_s *p, const char *varName, float cvarMin, float cvarMax, qboolean clamp);
-void	MenuPicker_SaveValue (menuPicker_s *p, const char *varName);
-*/
+
 //void UI_ReregisterMenuItem (void *item);
 void UI_UpdateMenuItemCoords (void *item);
 qboolean UI_ItemCanBeCursorItem (void *item);
@@ -777,14 +770,14 @@ qboolean UI_ItemHasMouseBounds (void *item);
 char *UI_GetMenuItemValue (void *item);
 void UI_SetMenuItemValue (void *item);
 void UI_SaveMenuItemValue (void *item);
-void	UI_DrawMenuItem (void *item);
-void	UI_DrawMenuItemExtension (void *item);
-void	UI_SetMenuItemDynamicSize (void *item);
-int		UI_GetItemMouseoverType (void *item);
-void	UI_InitMenuItem (void *item);
-char	*UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2);
+void UI_DrawMenuItem (void *item);
+void UI_DrawMenuItemExtension (void *item);
+void UI_SetMenuItemDynamicSize (void *item);
+int	UI_GetItemMouseoverType (void *item);
+void UI_InitMenuItem (void *item);
+char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2);
 qboolean UI_SelectMenuItem (menuFramework_s *s);
-char	*UI_SlideMenuItem (menuFramework_s *s, int dir);
+char *UI_SlideMenuItem (menuFramework_s *s, int dir);
 //qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir);
 
 //

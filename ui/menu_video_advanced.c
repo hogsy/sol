@@ -75,170 +75,8 @@ static void M_ShowApplyChanges (void *unused)
 										!s_upscale_font_box.generic.valueChanged );
 }
 
-#if 0
-static void LightMapScaleCallback (void *unused)
-{
-	MenuSlider_SaveValue (&s_lightmapscale_slider, "r_modulate");
-}
-
-/*static void TextureIntensCallback (void *unused)
-{
-	MenuSlider_SaveValue (&s_textureintensity_slider, "r_intensity");
-} */
-
-static void RGBSCaleCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_rgbscale_box, "r_rgbscale");
-}
-
-static void TransLightingCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_trans_lighting_box, "r_trans_lighting");
-}
-
-static void WarpLightingCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_warp_lighting_box, "r_warp_lighting");
-}
-
-static void LightCutoffCallback(void *unused)
-{
-	MenuSlider_SaveValue (&s_lightcutoff_slider, "r_lightcutoff");
-}
-
-static void GlassEnvmapCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_glass_envmap_box, "r_glass_envmaps");
-}
-
-static void SolidAlphaCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_solidalpha_box, "r_solidalpha");
-}
-
-static void TexShaderWarpCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_texshader_warp_box, "r_pixel_shader_warp");
-}
-
-static void WaterWaveCallback (void *unused)
-{
-	MenuSlider_SaveValue (&s_waterwave_slider, "r_waterwave");
-}
-
-static void CausticsCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_caustics_box, "r_caustics");
-}
-
-static void ParticleOverdrawCallback(void *unused)
-{
-	MenuPicker_SaveValue (&s_particle_overdraw_box, "r_particle_overdraw");
-}
-
-static void LightBloomCallback(void *unused)
-{
-	MenuPicker_SaveValue (&s_lightbloom_box, "r_bloom");
-}
-
-static void ModelShadingCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_modelshading_box, "r_model_shading");
-}
-
-static void ShadowsCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_shadows_box, "r_shadows");
-}
-
-static void TwoSideStencilCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_two_side_stencil_box, "r_stencilTwoSide");
-}
-
-static void EntShellCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_ent_shell_box, "r_shelltype");
-}
-
-static void CelShadingCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_celshading_box, "r_celshading");
-}
-
-static void CelShadingWidthCallback (void *unused)
-{
-	MenuSlider_SaveValue (&s_celshading_width_slider, "r_celshading_width");
-}
-
-static void ScreenshotFormatCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_screenshotformat_box, "r_screenshot_format");
-}
-
-static void JPEGScreenshotQualityCallback (void *unused)
-{
-	MenuSlider_SaveValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality");
-}
-
-static void SaveshotSizeCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_saveshotsize_box, "r_saveshotsize");
-}
-
-static void NPOTMipmapCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps");
-}
-
-static void SGISMipmapCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap");
-}
-
-static void UpscaleFontCallback (void *unused)
-{
-	MenuPicker_SaveValue (&s_upscale_font_box, "r_font_upscale");
-}
-#endif
-
 //=======================================================================
 
-#if 0
-static void M_AdvancedVideo_MenuSetValues (void)
-{
-	MenuSlider_SetValue (&s_lightmapscale_slider, "r_modulate", 1, 2, true);
-//	MenuSlider_SetValue (&s_textureintensity_slider, "r_intensity", 1, 2, true);
-	MenuPicker_SetValue (&s_rgbscale_box, "r_rgbscale", 1, 4, true);
-	MenuPicker_SetValue (&s_trans_lighting_box, "r_trans_lighting", 0, 2, true);
-	MenuPicker_SetValue (&s_warp_lighting_box, "r_warp_lighting", 0, 1, true);
-	MenuSlider_SetValue (&s_lightcutoff_slider, "r_lightcutoff", 0, 64, true);
-	MenuPicker_SetValue (&s_glass_envmap_box, "r_glass_envmaps", 0, 1, true);
-	MenuPicker_SetValue (&s_solidalpha_box, "r_solidalpha", 0, 1, true);
-	MenuPicker_SetValue (&s_texshader_warp_box, "r_pixel_shader_warp", 0, 1, true);
-	MenuSlider_SetValue (&s_waterwave_slider, "r_waterwave", 0, 24, true);
-	MenuPicker_SetValue (&s_caustics_box, "r_caustics", 0, 2, true);
-
-	MenuPicker_SetValue (&s_particle_overdraw_box, "r_particle_overdraw", 0, 1, true);
-	MenuPicker_SetValue (&s_lightbloom_box, "r_bloom", 0, 1, true);
-	MenuPicker_SetValue (&s_modelshading_box, "r_model_shading", 0, 3, true);
-	MenuPicker_SetValue (&s_shadows_box, "r_shadows", 0, 3, true);
-	MenuPicker_SetValue (&s_two_side_stencil_box, "r_stencilTwoSide", 0, 1, true);
-	MenuPicker_SetValue (&s_ent_shell_box, "r_shelltype", 0, 2, true);
-	MenuPicker_SetValue (&s_celshading_box, "r_celshading", 0, 1, true);
-	MenuSlider_SetValue (&s_celshading_width_slider, "r_celshading_width", 1, 12, true);
-
-	MenuPicker_SetValue (&s_screenshotformat_box, "r_screenshot_format", 0, 2, false);
-	MenuSlider_SetValue (&s_screenshotjpegquality_slider, "r_screenshot_jpeg_quality", 50, 100, true);
-	MenuPicker_SetValue (&s_saveshotsize_box, "r_saveshotsize", 0, 1, true);
-
-	MenuPicker_SetValue (&s_npot_mipmap_box, "r_nonpoweroftwo_mipmaps", 0, 1, true);
-	MenuPicker_SetValue (&s_sgis_mipmap_box, "r_sgis_generatemipmap", 0, 1, true);
-	MenuPicker_SetValue (&s_upscale_font_box, "r_font_upscale", 0, 2, true);
-}
-#endif
-
-//static void M_ApplyAdvVideoChanges (void *unused)
 static void M_ApplyAdvVideoChanges (void)
 {
 	// hide this again
@@ -252,12 +90,6 @@ static void M_ApplyAdvVideoChanges (void)
 
 	// tell them they're modified so they refresh
 	Cvar_SetModified ("vid_ref", true);
-/*
-	// update for modified r_nonpoweroftwo_mipmaps, r_sgis_generatemipmap, and r_font_upscale
-//	if ( Cvar_IsModified("r_intensity") || Cvar_IsModified("r_font_upscale") )
-	if ( Cvar_IsModified("r_nonpoweroftwo_mipmaps") || Cvar_IsModified("r_sgis_generatemipmap") || Cvar_IsModified("r_font_upscale") )
-		Cvar_SetModified ("vid_ref", true);
-*/
 }
 
 //=======================================================================
@@ -389,7 +221,6 @@ void Menu_Video_Advanced_Init (void)
 	s_lightmapscale_slider.generic.x			= x;
 	s_lightmapscale_slider.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_lightmapscale_slider.generic.name			= "lightmap scale";
-//	s_lightmapscale_slider.generic.callback		= LightMapScaleCallback;
 	s_lightmapscale_slider.maxPos				= 10;
 	s_lightmapscale_slider.baseValue			= 1.0f;
 	s_lightmapscale_slider.increment			= 0.1f;
@@ -405,7 +236,6 @@ void Menu_Video_Advanced_Init (void)
 	s_textureintensity_slider.generic.x			= x;
 	s_textureintensity_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_textureintensity_slider.generic.name		= "texture intensity";
-//	s_textureintensity_slider.generic.callback	= TextureIntensCallback;
 	s_textureintensity_slider.maxPos			= 10;
 	s_textureintensity_slider.baseValue			= 1.0f;
 	s_textureintensity_slider.increment			= 0.1f;
@@ -422,7 +252,6 @@ void Menu_Video_Advanced_Init (void)
 	s_rgbscale_box.generic.x				= x;
 	s_rgbscale_box.generic.y				= y += MENU_LINE_SIZE;
 	s_rgbscale_box.generic.name				= "RGB enhance factor";
-//	s_rgbscale_box.generic.callback			= RGBSCaleCallback;
 	s_rgbscale_box.itemNames				= rgbscale_names;
 	s_rgbscale_box.itemValues				= rgbscale_values;
 	s_rgbscale_box.generic.cvar				= "r_rgbscale";
@@ -436,7 +265,6 @@ void Menu_Video_Advanced_Init (void)
 	s_trans_lighting_box.generic.x			= x;
 	s_trans_lighting_box.generic.y			= y += MENU_LINE_SIZE;
 	s_trans_lighting_box.generic.name		= "translucent lighting";
-//	s_trans_lighting_box.generic.callback	= TransLightingCallback;
 	s_trans_lighting_box.itemNames			= lighting_names;
 	s_trans_lighting_box.generic.cvar		= "r_trans_lighting";
 	s_trans_lighting_box.generic.cvarClamp	= true;
@@ -449,7 +277,6 @@ void Menu_Video_Advanced_Init (void)
 	s_warp_lighting_box.generic.x			= x;
 	s_warp_lighting_box.generic.y			= y += MENU_LINE_SIZE;
 	s_warp_lighting_box.generic.name		= "warp surface lighting";
-//	s_warp_lighting_box.generic.callback	= WarpLightingCallback;
 	s_warp_lighting_box.itemNames			= yesno_names;
 	s_warp_lighting_box.generic.cvar		= "r_warp_lighting";
 	s_warp_lighting_box.generic.statusbar	= "vertex lighting on water and other warping surfaces";
@@ -459,7 +286,6 @@ void Menu_Video_Advanced_Init (void)
 	s_lightcutoff_slider.generic.x			= x;
 	s_lightcutoff_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_lightcutoff_slider.generic.name		= "dynamic light cutoff";
-//	s_lightcutoff_slider.generic.callback	= LightCutoffCallback;
 	s_lightcutoff_slider.maxPos				= 8;
 	s_lightcutoff_slider.baseValue			= 0.0f;
 	s_lightcutoff_slider.increment			= 8.0f;
@@ -475,7 +301,6 @@ void Menu_Video_Advanced_Init (void)
 	s_glass_envmap_box.generic.x			= x;
 	s_glass_envmap_box.generic.y			= y += MENU_LINE_SIZE;
 	s_glass_envmap_box.generic.name			= "glass envmaps";
-//	s_glass_envmap_box.generic.callback		= GlassEnvmapCallback;
 	s_glass_envmap_box.itemNames			= yesno_names;
 	s_glass_envmap_box.generic.cvar			= "r_glass_envmaps";
 	s_glass_envmap_box.generic.statusbar	= "enable environment mapping on transparent surfaces";
@@ -485,7 +310,6 @@ void Menu_Video_Advanced_Init (void)
 	s_solidalpha_box.generic.x				= x;
 	s_solidalpha_box.generic.y				= y += MENU_LINE_SIZE;
 	s_solidalpha_box.generic.name			= "solid alphas";
-//	s_solidalpha_box.generic.callback		= SolidAlphaCallback;
 	s_solidalpha_box.itemNames				= yesno_names;
 	s_solidalpha_box.generic.cvar			= "r_solidalpha";
 	s_solidalpha_box.generic.statusbar		= "enable solid drawing of trans33 + trans66 surfaces";
@@ -495,7 +319,6 @@ void Menu_Video_Advanced_Init (void)
 	s_texshader_warp_box.generic.x			= x;
 	s_texshader_warp_box.generic.y			= y += MENU_LINE_SIZE;
 	s_texshader_warp_box.generic.name		= "texture shader warp";
-//	s_texshader_warp_box.generic.callback	= TexShaderWarpCallback;
 	s_texshader_warp_box.itemNames			= ifsupported_names;
 	s_texshader_warp_box.generic.cvar		= "r_pixel_shader_warp";
 	s_texshader_warp_box.generic.statusbar	= "enables hardware water warping effect";
@@ -505,7 +328,6 @@ void Menu_Video_Advanced_Init (void)
 	s_waterwave_slider.generic.x			= x;
 	s_waterwave_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_waterwave_slider.generic.name			= "water wave size";
-//	s_waterwave_slider.generic.callback		= WaterWaveCallback;
 	s_waterwave_slider.maxPos				= 24;
 	s_waterwave_slider.baseValue			= 0.0f;
 	s_waterwave_slider.increment			= 1.0f;
@@ -521,7 +343,6 @@ void Menu_Video_Advanced_Init (void)
 	s_caustics_box.generic.x				= x;
 	s_caustics_box.generic.y				= y += MENU_LINE_SIZE;
 	s_caustics_box.generic.name				= "underwater caustics";
-//	s_caustics_box.generic.callback			= CausticsCallback;
 	s_caustics_box.itemNames				= caustics_names;
 	s_caustics_box.generic.cvar				= "r_caustics";
 	s_caustics_box.generic.cvarClamp		= true;
@@ -534,7 +355,6 @@ void Menu_Video_Advanced_Init (void)
 	s_particle_overdraw_box.generic.x			= x;
 	s_particle_overdraw_box.generic.y			= y += MENU_LINE_SIZE;
 	s_particle_overdraw_box.generic.name		= "particle overdraw";
-//	s_particle_overdraw_box.generic.callback	= ParticleOverdrawCallback;
 	s_particle_overdraw_box.itemNames			= yesno_names;
 	s_particle_overdraw_box.generic.cvar		= "r_particle_overdraw";
 	s_particle_overdraw_box.generic.statusbar	= "redraw particles over trans surfaces";
@@ -544,7 +364,6 @@ void Menu_Video_Advanced_Init (void)
 	s_lightbloom_box.generic.x				= x;
 	s_lightbloom_box.generic.y				= y += MENU_LINE_SIZE;
 	s_lightbloom_box.generic.name			= "light blooms";
-//	s_lightbloom_box.generic.callback		= LightBloomCallback;
 	s_lightbloom_box.itemNames				= yesno_names;
 	s_lightbloom_box.generic.cvar			= "r_bloom";
 	s_lightbloom_box.generic.statusbar		= "enables blooming of bright lights";
@@ -554,7 +373,6 @@ void Menu_Video_Advanced_Init (void)
 	s_modelshading_box.generic.x			= x;
 	s_modelshading_box.generic.y			= y += MENU_LINE_SIZE;
 	s_modelshading_box.generic.name			= "model shading";
-//	s_modelshading_box.generic.callback		= ModelShadingCallback;
 	s_modelshading_box.itemNames			= shading_names;
 	s_modelshading_box.generic.cvar			= "r_model_shading";
 	s_modelshading_box.generic.cvarClamp	= true;
@@ -567,7 +385,6 @@ void Menu_Video_Advanced_Init (void)
 	s_shadows_box.generic.x					= x;
 	s_shadows_box.generic.y					= y += MENU_LINE_SIZE;
 	s_shadows_box.generic.name				= "entity shadows";
-//	s_shadows_box.generic.callback			= ShadowsCallback;
 	s_shadows_box.itemNames					= shadow_names;
 	s_shadows_box.generic.cvar				= "r_shadows";
 	s_shadows_box.generic.cvarClamp			= true;
@@ -580,7 +397,6 @@ void Menu_Video_Advanced_Init (void)
 	s_two_side_stencil_box.generic.x			= x;
 	s_two_side_stencil_box.generic.y			= y += MENU_LINE_SIZE;
 	s_two_side_stencil_box.generic.name			= "two-sided stenciling";
-//	s_two_side_stencil_box.generic.callback		= TwoSideStencilCallback;
 	s_two_side_stencil_box.itemNames			= ifsupported_names;
 	s_two_side_stencil_box.generic.cvar			= "r_stencilTwoSide";
 	s_two_side_stencil_box.generic.statusbar	= "use single-pass shadow stenciling";
@@ -590,12 +406,11 @@ void Menu_Video_Advanced_Init (void)
 	s_ent_shell_box.generic.x					= x;
 	s_ent_shell_box.generic.y					= y += MENU_LINE_SIZE;
 	s_ent_shell_box.generic.name				= "entity shell type";
-//	s_ent_shell_box.generic.callback			= EntShellCallback;
 	s_ent_shell_box.itemNames					= shell_names;
-	s_ent_shell_box.generic.cvar			= "r_shelltype";
-	s_ent_shell_box.generic.cvarClamp		= true;
-	s_ent_shell_box.generic.cvarMin			= 0;
-	s_ent_shell_box.generic.cvarMax			= 2;
+	s_ent_shell_box.generic.cvar				= "r_shelltype";
+	s_ent_shell_box.generic.cvarClamp			= true;
+	s_ent_shell_box.generic.cvarMin				= 0;
+	s_ent_shell_box.generic.cvarMax				= 2;
 	s_ent_shell_box.generic.statusbar			= "envmap effect may cause instability on ATI cards";
 
 	s_celshading_box.generic.type				= MTYPE_PICKER;
@@ -603,9 +418,8 @@ void Menu_Video_Advanced_Init (void)
 	s_celshading_box.generic.x					= x;
 	s_celshading_box.generic.y					= y += MENU_LINE_SIZE;
 	s_celshading_box.generic.name				= "cel shading";
-//	s_celshading_box.generic.callback			= CelShadingCallback;
 	s_celshading_box.itemNames					= yesno_names;
-	s_celshading_box.generic.cvar			= "r_celshading";
+	s_celshading_box.generic.cvar				= "r_celshading";
 	s_celshading_box.generic.statusbar			= "cartoon-style rendering of models";
 
 	s_celshading_width_slider.generic.type		= MTYPE_SLIDER;
@@ -613,7 +427,6 @@ void Menu_Video_Advanced_Init (void)
 	s_celshading_width_slider.generic.x			= x;
 	s_celshading_width_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_celshading_width_slider.generic.name		= "cel shading width";
-//	s_celshading_width_slider.generic.callback	= CelShadingWidthCallback;
 	s_celshading_width_slider.maxPos			= 11;
 	s_celshading_width_slider.baseValue			= 1.0f;
 	s_celshading_width_slider.increment			= 1.0f;
@@ -629,7 +442,6 @@ void Menu_Video_Advanced_Init (void)
 	s_screenshotformat_box.generic.x			= x;
 	s_screenshotformat_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_screenshotformat_box.generic.name			= "screenshot format";
-//	s_screenshotformat_box.generic.callback		= ScreenshotFormatCallback;
 	s_screenshotformat_box.itemNames			= screenshotformat_names;
 	s_screenshotformat_box.itemValues			= screenshotformat_values;
 	s_screenshotformat_box.generic.cvar			= "r_screenshot_format";
@@ -640,7 +452,6 @@ void Menu_Video_Advanced_Init (void)
 	s_screenshotjpegquality_slider.generic.x			= x;
 	s_screenshotjpegquality_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_screenshotjpegquality_slider.generic.name			= "JPEG screenshot quality";
-//	s_screenshotjpegquality_slider.generic.callback		= JPEGScreenshotQualityCallback;
 	s_screenshotjpegquality_slider.maxPos				= 10;
 	s_screenshotjpegquality_slider.baseValue			= 50.0f;
 	s_screenshotjpegquality_slider.increment			= 5.0f;
@@ -656,7 +467,6 @@ void Menu_Video_Advanced_Init (void)
 	s_saveshotsize_box.generic.x				= x;
 	s_saveshotsize_box.generic.y				= y += MENU_LINE_SIZE;
 	s_saveshotsize_box.generic.name				= "hi-res saveshots";
-//	s_saveshotsize_box.generic.callback			= SaveshotSizeCallback;
 	s_saveshotsize_box.itemNames				= yesno_names;
 	s_saveshotsize_box.generic.cvar				= "r_saveshotsize";
 	s_saveshotsize_box.generic.statusbar		= "hi-res saveshots when running at 800x600 or higher";
@@ -688,7 +498,6 @@ void Menu_Video_Advanced_Init (void)
 	s_upscale_font_box.generic.x				= x;
 	s_upscale_font_box.generic.y				= y += MENU_LINE_SIZE;
 	s_upscale_font_box.generic.name				= "upscale old fonts";
-//	s_upscale_font_box.generic.callback			= UpscaleFontCallback;
 	s_upscale_font_box.itemNames				= font_upscale_names;
 	s_upscale_font_box.generic.cvar				= "r_font_upscale";
 	s_upscale_font_box.generic.cvarNoSave		= true;
@@ -713,8 +522,6 @@ void Menu_Video_Advanced_Init (void)
 	s_back_action.generic.x						= x;
 	s_back_action.generic.y						= y += 2*MENU_LINE_SIZE;
 	s_back_action.generic.callback				= UI_BackMenu;
-
-//	M_AdvancedVideo_MenuSetValues ();
 
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_video_advanced_banner);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_options_advanced_header);

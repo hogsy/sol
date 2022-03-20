@@ -54,69 +54,6 @@ static menuAction_s		s_options_controls_back_action;
 
 //=======================================================================
 
-#if 0
-static void MouseSpeedFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_controls_sensitivity_slider, "sensitivity");
-}
-
-static void AlwaysRunFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_alwaysrun_box, "cl_run");
-}
-
-// Psychospaz's chaseam
-static void ThirdPersonFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_thirdperson_box, "cg_thirdperson");
-}
-
-static void ThirdPersonDistFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist");
-}
-
-static void ThirdPersonOffsetFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset");
-}
-
-static void ThirdPersonAngleFunc (void *unused)
-{
-	MenuSlider_SaveValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle");
-}
-
-static void FreeLookFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_freelook_box, "freelook");
-}
-
-static void InvertMouseFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_invertmouse_box, "m_pitch");
-}
-
-static void AutosensitivityFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_autosensitivity_box, "in_autosensitivity");
-}
-
-static void LookspringFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_lookspring_box, "lookspring");
-}
-
-static void LookstrafeFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_lookstrafe_box, "lookstrafe");
-}
-
-static void JoystickFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_options_controls_joystick_box, "in_joystick");
-}
-#endif
-
 static void CustomizeControlsFunc(void *unused)
 {
 	Menu_Keys_f ();
@@ -124,27 +61,6 @@ static void CustomizeControlsFunc(void *unused)
 
 //=======================================================================
 
-#if 0
-static void M_ControlsSetMenuItemValues (void)
-{
-	MenuSlider_SetValue (&s_options_controls_sensitivity_slider, "sensitivity", 1.0f, 11.0f, false);
-	MenuPicker_SetValue (&s_options_controls_invertmouse_box, "m_pitch", 0, 0, false);
-	MenuPicker_SetValue (&s_options_controls_autosensitivity_box, "in_autosensitivity", 0, 1, true);
-
-	MenuPicker_SetValue (&s_options_controls_thirdperson_box, "cg_thirdperson", 0, 1, true);
-	MenuSlider_SetValue (&s_options_controls_thirdperson_distance_slider, "cg_thirdperson_dist", 10.0f, 150.0f, true);
-	MenuSlider_SetValue (&s_options_controls_thirdperson_offset_slider, "cg_thirdperson_offset", 0.0f, 64.0f, true);
-	MenuSlider_SetValue (&s_options_controls_thirdperson_angle_slider, "cg_thirdperson_angle", 0.0f, 30.0f, true);
-
-	MenuPicker_SetValue (&s_options_controls_alwaysrun_box, "cl_run", 0, 1, true);
-	MenuPicker_SetValue (&s_options_controls_lookspring_box, "lookspring", 0, 1, true);
-	MenuPicker_SetValue (&s_options_controls_lookstrafe_box, "lookstrafe", 0, 1, true);
-	MenuPicker_SetValue (&s_options_controls_freelook_box, "freelook", 0, 1, true);
-	MenuPicker_SetValue (&s_options_controls_joystick_box, "in_joystick", 0, 1, true);
-}
-#endif
-
-//static void M_ControlsResetDefaults (void *unused)
 static void M_ControlsResetDefaults (void)
 {
 //	Cvar_SetToDefault ("sensitivity");
@@ -162,8 +78,6 @@ static void M_ControlsResetDefaults (void)
 
 	Cbuf_AddText ("exec defaultbinds.cfg\n"); // reset default binds
 	Cbuf_Execute ();
-
-//	M_ControlsSetMenuItemValues ();
 }
 
 //=======================================================================
@@ -215,7 +129,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_sensitivity_slider.generic.x			= x;
 	s_options_controls_sensitivity_slider.generic.y			= y += 4*MENU_LINE_SIZE;
 	s_options_controls_sensitivity_slider.generic.name		= "mouse speed";
-//	s_options_controls_sensitivity_slider.generic.callback	= MouseSpeedFunc;
 	s_options_controls_sensitivity_slider.maxPos			= 20;
 	s_options_controls_sensitivity_slider.baseValue			= 1.0f;
 	s_options_controls_sensitivity_slider.increment			= 0.5f;
@@ -231,7 +144,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_invertmouse_box.generic.x			= x;
 	s_options_controls_invertmouse_box.generic.y			= y+=MENU_LINE_SIZE;
 	s_options_controls_invertmouse_box.generic.name			= "invert mouse";
-//	s_options_controls_invertmouse_box.generic.callback		= InvertMouseFunc;
 	s_options_controls_invertmouse_box.itemNames			= yesno_names;
 	s_options_controls_invertmouse_box.invertValue			= true;
 	s_options_controls_invertmouse_box.generic.cvar			= "m_pitch";
@@ -242,7 +154,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_autosensitivity_box.generic.x			= x;
 	s_options_controls_autosensitivity_box.generic.y			= y+=MENU_LINE_SIZE;
 	s_options_controls_autosensitivity_box.generic.name			= "scale mouse to FOV";
-//	s_options_controls_autosensitivity_box.generic.callback		= AutosensitivityFunc;
 	s_options_controls_autosensitivity_box.itemNames			= yesno_names;
 	s_options_controls_autosensitivity_box.generic.cvar			= "in_autosensitivity";
 	s_options_controls_autosensitivity_box.generic.statusbar	= "adjusts mouse sensitivity to zoomed FOV";
@@ -252,7 +163,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_thirdperson_box.generic.x			= x;
 	s_options_controls_thirdperson_box.generic.y			= y+=2*MENU_LINE_SIZE;
 	s_options_controls_thirdperson_box.generic.name			= "third person";
-//	s_options_controls_thirdperson_box.generic.callback		= ThirdPersonFunc;
 	s_options_controls_thirdperson_box.itemNames			= yesno_names;
 	s_options_controls_thirdperson_box.generic.cvar			= "cg_thirdperson";
 	s_options_controls_thirdperson_box.generic.statusbar	= "enables third-person mode";
@@ -262,7 +172,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_thirdperson_distance_slider.generic.x			= x;
 	s_options_controls_thirdperson_distance_slider.generic.y			= y+=MENU_LINE_SIZE;
 	s_options_controls_thirdperson_distance_slider.generic.name			= "camera distance";
-//	s_options_controls_thirdperson_distance_slider.generic.callback		= ThirdPersonDistFunc;
 	s_options_controls_thirdperson_distance_slider.maxPos				= 10;
 	s_options_controls_thirdperson_distance_slider.baseValue			= 25.0f;
 	s_options_controls_thirdperson_distance_slider.increment			= 5.0f;
@@ -278,7 +187,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_thirdperson_offset_slider.generic.x			= x;
 	s_options_controls_thirdperson_offset_slider.generic.y			= y+=MENU_LINE_SIZE;
 	s_options_controls_thirdperson_offset_slider.generic.name		= "camera offset";
-//	s_options_controls_thirdperson_offset_slider.generic.callback	= ThirdPersonOffsetFunc;
 	s_options_controls_thirdperson_offset_slider.maxPos				= 8;
 	s_options_controls_thirdperson_offset_slider.baseValue			= 0.0f;
 	s_options_controls_thirdperson_offset_slider.increment			= 4.0f;
@@ -294,7 +202,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_thirdperson_angle_slider.generic.x			= x;
 	s_options_controls_thirdperson_angle_slider.generic.y			= y+=MENU_LINE_SIZE;
 	s_options_controls_thirdperson_angle_slider.generic.name		= "camera angle";
-//	s_options_controls_thirdperson_angle_slider.generic.callback	= ThirdPersonAngleFunc;
 	s_options_controls_thirdperson_angle_slider.maxPos				= 6;
 	s_options_controls_thirdperson_angle_slider.baseValue			= 0.0f;
 	s_options_controls_thirdperson_angle_slider.increment			= 5.0f;
@@ -310,7 +217,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_alwaysrun_box.generic.x			= x;
 	s_options_controls_alwaysrun_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_options_controls_alwaysrun_box.generic.name		= "always run";
-//	s_options_controls_alwaysrun_box.generic.callback	= AlwaysRunFunc;
 	s_options_controls_alwaysrun_box.itemNames			= yesno_names;
 	s_options_controls_alwaysrun_box.generic.cvar		= "cl_run";
 	s_options_controls_alwaysrun_box.generic.statusbar	= "enables running as default movement";
@@ -320,7 +226,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_lookspring_box.generic.x			= x;
 	s_options_controls_lookspring_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_controls_lookspring_box.generic.name		= "lookspring";
-//	s_options_controls_lookspring_box.generic.callback	= LookspringFunc;
 	s_options_controls_lookspring_box.itemNames			= yesno_names;
 	s_options_controls_lookspring_box.generic.cvar		= "lookspring";
 
@@ -329,7 +234,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_lookstrafe_box.generic.x			= x;
 	s_options_controls_lookstrafe_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_controls_lookstrafe_box.generic.name		= "lookstrafe";
-//	s_options_controls_lookstrafe_box.generic.callback	= LookstrafeFunc;
 	s_options_controls_lookstrafe_box.itemNames			= yesno_names;
 	s_options_controls_lookstrafe_box.generic.cvar		= "lookstrafe";
 
@@ -338,7 +242,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_freelook_box.generic.x			= x;
 	s_options_controls_freelook_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_controls_freelook_box.generic.name		= "free look";
-//	s_options_controls_freelook_box.generic.callback	= FreeLookFunc;
 	s_options_controls_freelook_box.itemNames			= yesno_names;
 	s_options_controls_freelook_box.generic.cvar		= "freelook";
 	s_options_controls_freelook_box.generic.statusbar	= "enables free head movement with mouse";
@@ -348,7 +251,6 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_joystick_box.generic.x			= x;
 	s_options_controls_joystick_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_controls_joystick_box.generic.name		= "use joystick";
-//	s_options_controls_joystick_box.generic.callback	= JoystickFunc;
 	s_options_controls_joystick_box.itemNames			= yesno_names;
 	s_options_controls_joystick_box.generic.cvar		= "in_joystick";
 	s_options_controls_joystick_box.generic.statusbar	= "enables use of joystick";
@@ -392,8 +294,6 @@ void Menu_Options_Controls_Init (void)
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_customize_keys_action);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_defaults_action);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_back_action);
-
-//	M_ControlsSetMenuItemValues ();
 }
 
 

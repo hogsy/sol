@@ -46,13 +46,6 @@ JOIN SERVER MENU
 =============================================================================
 */
 
-// client compatibility option
-/*static void ClientCompatibilityFunc (void *unused)
-{
-	MenuPicker_SaveValue (&s_joinserver_compatibility_box, "cl_servertrick");
-} */
-
-
 void JoinServerFunc (void *self)
 {
 	int	index = (menuAction_s *)self - s_joinserver_server_actions;
@@ -71,14 +64,6 @@ void M_SearchLocalGamesFunc (void *self)
 {
 	UI_SearchLocalGames ();
 }
-
-//=======================================================================
-
-// init client compatibility menu option
-/*static void M_Joinserver_SetMenuItemValues (void)
-{
-	MenuPicker_SetValue (&s_joinserver_compatibility_box, "cl_servertrick", 0, 1, true);
-} */
 
 //=========================================================
 
@@ -129,7 +114,6 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_compatibility_box.generic.name				= "";
 	s_joinserver_compatibility_box.generic.x				= x - 32;
 	s_joinserver_compatibility_box.generic.y				= y += MENU_LINE_SIZE;
-//	s_joinserver_compatibility_box.generic.callback			= ClientCompatibilityFunc;
 	s_joinserver_compatibility_box.itemNames				= compatibility_names;
 	s_joinserver_compatibility_box.generic.cvar				= "cl_servertrick";
 	s_joinserver_compatibility_box.generic.cvarClamp		= true;
@@ -182,8 +166,6 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_back_action.generic.x	= x;
 	s_joinserver_back_action.generic.y	= y += (UI_MAX_LOCAL_SERVERS+2)*MENU_LINE_SIZE;
 	s_joinserver_back_action.generic.callback = UI_BackMenu;
-
-//	M_Joinserver_SetMenuItemValues (); // init item values
 
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_banner);
 	UI_AddMenuItem (&s_joinserver_menu, &s_joinserver_compat_title);
