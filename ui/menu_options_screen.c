@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_LISTVIEW	// enable to use new listView control
+
 /*
 =======================================================================
 
@@ -36,9 +38,15 @@ SCREEN MENU
 static menuFramework_s	s_options_screen_menu;
 static menuImage_s		s_options_screen_banner;
 static menuLabel_s		s_options_screen_header;
+
+#ifdef USE_LISTVIEW
+static menuListView_s	s_options_screen_crosshair_box;
+#else	// USE_LISTVIEW
 static menuPicker_s		s_options_screen_crosshair_box;
 static menuRectangle_s	s_options_screen_crosshair_background;
 static menuButton_s		s_options_screen_crosshair_display;
+#endif	// USE_LISTVIEW
+
 static menuSlider_s		s_options_screen_crosshairscale_slider;
 static menuSlider_s		s_options_screen_crosshairalpha_slider;
 static menuSlider_s		s_options_screen_crosshairpulse_slider;
@@ -51,6 +59,7 @@ static menuAction_s		s_options_screen_back_action;
 
 //=======================================================================
 
+#ifndef USE_LISTVIEW
 static void CrosshairButtonFunc (void *unused)
 {
 	s_options_screen_crosshair_box.curValue++;
@@ -73,6 +82,7 @@ void CrosshairButtonCursor (void *unused)
 {
 	// Do nothing
 }
+#endif	// USE_LISTVIEW
 
 /*static void M_ScriptedHudFunc (void *unused)
 {
@@ -96,13 +106,14 @@ static void M_ScreenResetDefaults (void)
 
 //=======================================================================
 
+#ifndef USE_LISTVIEW
 void Menu_Options_Screen_Draw (menuFramework_s *menu)
 {
 	s_options_screen_crosshair_display.imageName = ui_crosshair_display_names[s_options_screen_crosshair_box.curValue];
 	UI_AdjustMenuCursor (&s_options_screen_menu, 1);
 	UI_DrawMenu (&s_options_screen_menu);
 }
-
+#endif	// USE_LISTVIEW
 
 void Menu_Options_Screen_Init (void)
 {
@@ -122,7 +133,11 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_screen_menu.nitems			= 0;
 	s_options_screen_menu.isPopup			= false;
-	s_options_screen_menu.drawFunc			= Menu_Options_Screen_Draw;	// UI_DefaultMenuDraw
+#ifdef USE_LISTVIEW
+	s_options_screen_menu.drawFunc			= UI_DefaultMenuDraw;
+#else	// USE_LISTVIEW
+	s_options_screen_menu.drawFunc			= Menu_Options_Screen_Draw;
+#endif	// USE_LISTVIEW
 	s_options_screen_menu.keyFunc			= UI_DefaultMenuKey;
 	s_options_screen_menu.canOpenFunc		= NULL;
 	s_options_screen_menu.defaultsFunc		= M_ScreenResetDefaults;
@@ -146,6 +161,45 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_header.generic.x			= x + MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_options_screen_header.generic.name);
 	s_options_screen_header.generic.y			= y;	//  + -2*MENU_LINE_SIZE;
 
+#ifdef USE_LISTVIEW
+	s_options_screen_crosshair_box.generic.type				= MTYPE_LISTVIEW;
+	s_options_screen_crosshair_box.generic.header			= "crosshair";
+	s_options_screen_crosshair_box.generic.x				= x - 16.5*MENU_FONT_SIZE;
+	s_options_screen_crosshair_box.generic.y				= y += 4*MENU_LINE_SIZE;
+	s_options_screen_crosshair_box.generic.name				= 0;
+	s_options_screen_crosshair_box.listViewType				= LISTVIEW_TEXTIMAGE;
+	s_options_screen_crosshair_box.items_x					= 6; 
+	s_options_screen_crosshair_box.items_y					= 1;
+	s_options_screen_crosshair_box.scrollDir				= 0;
+	s_options_screen_crosshair_box.itemWidth				= 38;
+	s_options_screen_crosshair_box.itemHeight				= 38;
+	s_options_screen_crosshair_box.itemSpacing				= 0;
+	s_options_screen_crosshair_box.itemPadding				= 2;
+	s_options_screen_crosshair_box.itemTextSize				= 6;
+	s_options_screen_crosshair_box.border					= 2;
+	s_options_screen_crosshair_box.borderColor[0]			= 60;
+	s_options_screen_crosshair_box.borderColor[1]			= 60;
+	s_options_screen_crosshair_box.borderColor[2]			= 60;
+	s_options_screen_crosshair_box.borderColor[3]			= 255;
+	s_options_screen_crosshair_box.backColor[0]				= 0;
+	s_options_screen_crosshair_box.backColor[1]				= 0;
+	s_options_screen_crosshair_box.backColor[2]				= 0;
+	s_options_screen_crosshair_box.backColor[3]				= 255;
+	s_options_screen_crosshair_box.underImgColor[0]			= 0;
+	s_options_screen_crosshair_box.underImgColor[1]			= 0;
+	s_options_screen_crosshair_box.underImgColor[2]			= 0;
+	s_options_screen_crosshair_box.underImgColor[3]			= 255;
+	s_options_screen_crosshair_box.background				= "/gfx/ui/widgets/listbox_background2.pcx";
+	s_options_screen_crosshair_box.itemNames				= ui_crosshair_names;
+	s_options_screen_crosshair_box.itemValues				= ui_crosshair_values;
+	s_options_screen_crosshair_box.imageNames				= ui_crosshair_display_names;
+	s_options_screen_crosshair_box.curValue					= UI_GetIndexForStringValue(s_options_screen_crosshair_box.itemValues, Cvar_VariableString("crosshair"));
+	s_options_screen_crosshair_box.generic.cvar				= "crosshair";
+	s_options_screen_crosshair_box.generic.cvarClamp		= true;
+	s_options_screen_crosshair_box.generic.cvarMin			= 0;
+	s_options_screen_crosshair_box.generic.cvarMax			= 100;
+	s_options_screen_crosshair_box.generic.statusbar		= "changes crosshair";
+#else	// USE_LISTVIEW
 	s_options_screen_crosshair_box.generic.type				= MTYPE_PICKER;
 	s_options_screen_crosshair_box.generic.textSize			= MENU_FONT_SIZE;
 	s_options_screen_crosshair_box.generic.x				= x;
@@ -192,12 +246,17 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_display.generic.callback			= CrosshairButtonFunc;
 	s_options_screen_crosshair_display.generic.mouse2Callback	= CrosshairButtonMouse2Func;
 	s_options_screen_crosshair_display.generic.cursordraw		= CrosshairButtonCursor;
+#endif	// USE_LISTVIEW
 
 	// Psychospaz's changeable size crosshair
 	s_options_screen_crosshairscale_slider.generic.type			= MTYPE_SLIDER;
 	s_options_screen_crosshairscale_slider.generic.textSize		= MENU_FONT_SIZE;
 	s_options_screen_crosshairscale_slider.generic.x			= x;
+#ifdef USE_LISTVIEW
+	s_options_screen_crosshairscale_slider.generic.y			= y += 7*MENU_LINE_SIZE;
+#else	// USE_LISTVIEW
 	s_options_screen_crosshairscale_slider.generic.y			= y += 5*MENU_LINE_SIZE;
+#endif	// USE_LISTVIEW
 	s_options_screen_crosshairscale_slider.generic.name			= "crosshair scale";
 	s_options_screen_crosshairscale_slider.maxPos				= 19;
 	s_options_screen_crosshairscale_slider.baseValue			= 0.25f;
@@ -308,8 +367,10 @@ void Menu_Options_Screen_Init (void)
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_banner);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_header);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_box);
+#ifndef USE_LISTVIEW
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_background);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshair_display);
+#endif	// USE_LISTVIEW
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairscale_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairalpha_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairpulse_slider);

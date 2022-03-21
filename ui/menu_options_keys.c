@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define USE_KEYBIND_CONTROL
+#define USE_BINDLIST	// enable to use new keyBindList control
 
 /*
 =======================================================================
@@ -35,6 +35,30 @@ KEYS MENU
 =======================================================================
 */
 
+#define UI_KEYBIND_LIST_HEIGHT 26
+#define UI_KEYBIND_LIST_WIDTH 48
+
+#ifdef USE_BINDLIST
+static keyBindSubitem_t ui_binds_vanilla[] = 
+{
+#include "menu_options_keys_baseq2.h"
+};
+
+static keyBindSubitem_t ui_binds_xatrix[] = 
+{
+#include "menu_options_keys_xatrix.h"
+};
+
+static keyBindSubitem_t ui_binds_rogue[] = 
+{
+#include "menu_options_keys_rogue.h"
+};
+
+static keyBindSubitem_t ui_binds_zaero[] = 
+{
+#include "menu_options_keys_zaero.h"
+};
+#else	// USE_BINDLIST
 char *bindnames[][2] =
 {
 {"+attack", 		"attack"},
@@ -65,10 +89,15 @@ char *bindnames[][2] =
 {"cmd help", 		"help computer" }, 
 { 0, 0 }
 };
+#endif	// USE_BINDLIST
 
 static menuFramework_s	s_keys_menu;
 static menuImage_s		s_keys_banner;
+#ifdef USE_BINDLIST
+static menuKeyBindList_s	s_keys_bindList;
+#else
 static menuKeyBind_s	s_keys_binds[64];
+#endif	// USE_BINDLIST
 static menuAction_s		s_keys_back_action;
 
 //=======================================================================
@@ -79,11 +108,15 @@ static void Menu_Keys_Init (void)
 	int		i = 0, x, y;
 
 	// menu.x = 320, menu.y = 168
+#ifdef USE_BINDLIST
+	x = SCREEN_WIDTH*0.5 - (UI_KEYBIND_LIST_WIDTH*MENU_FONT_SIZE + LIST_SCROLLBAR_CONTROL_SIZE) / 2 + 2*MENU_FONT_SIZE;
+#else	// USE_BINDLIST
 	x = SCREEN_WIDTH*0.5;
+#endif	// USE_BINDLIST
 	y = SCREEN_HEIGHT*0.5 - 72;
 
-	s_keys_menu.x			= 0;	// SCREEN_WIDTH*0.5;
-	s_keys_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 72;
+	s_keys_menu.x			= 0;
+	s_keys_menu.y			= 0;
 	s_keys_menu.nitems		= 0;
 	s_keys_menu.isPopup		= false;
 	s_keys_menu.drawFunc	= UI_DefaultMenuDraw;
@@ -102,6 +135,42 @@ static void Menu_Keys_Init (void)
 	s_keys_banner.vCentered			= false;
 	s_keys_banner.generic.isHidden	= false;
 
+#ifdef USE_BINDLIST
+	BINDS_MAX = 26;
+	s_keys_bindList.generic.type		= MTYPE_KEYBINDLIST;
+	s_keys_bindList.generic.name		= "";
+	s_keys_bindList.generic.header		= "";
+	s_keys_bindList.generic.x			= x - 4*MENU_FONT_SIZE;
+	s_keys_bindList.generic.y			= y;
+	s_keys_bindList.useCustomBindList	= true;
+	if ( FS_XatrixPath() )				// Xatrix
+		s_keys_bindList.bindList		= ui_binds_xatrix;
+	else if ( FS_RoguePath() )			// Rogue
+		s_keys_bindList.bindList		= ui_binds_rogue;
+	else if ( FS_ModType("zaero") )		// Zaero
+		s_keys_bindList.bindList		= ui_binds_zaero;
+	else								// Vanilla
+		s_keys_bindList.bindList		= ui_binds_vanilla;
+	s_keys_bindList.lineWidth			= UI_KEYBIND_LIST_WIDTH;
+	s_keys_bindList.itemNameWidth		= UI_KEYBIND_LIST_WIDTH/2 - 1;
+	s_keys_bindList.items_y				= UI_KEYBIND_LIST_HEIGHT;
+	s_keys_bindList.itemSpacing			= 0;
+	s_keys_bindList.itemTextSize		= 8;
+	s_keys_bindList.border				= 2;
+	s_keys_bindList.borderColor[0]		= 60;
+	s_keys_bindList.borderColor[1]		= 60;
+	s_keys_bindList.borderColor[2]		= 60;
+	s_keys_bindList.borderColor[3]		= 255;
+	s_keys_bindList.backColor[0]		= 0;
+	s_keys_bindList.backColor[1]		= 0;
+	s_keys_bindList.backColor[2]		= 0;
+	s_keys_bindList.backColor[3]		= 192;
+	s_keys_bindList.altBackColor[0]		= 10;
+	s_keys_bindList.altBackColor[1]		= 10;
+	s_keys_bindList.altBackColor[2]		= 10;
+	s_keys_bindList.altBackColor[3]		= 192;
+	s_keys_bindList.generic.statusbar	= "enter or mouse1 doubleclick to change, backspace or del to clear";
+#else	// USE_BINDLIST
 	BINDS_MAX = listSize(bindnames);
 	for (i=0; i<BINDS_MAX; i++)
 	{
@@ -114,6 +183,7 @@ static void Menu_Keys_Init (void)
 		s_keys_binds[i].commandName				= bindnames[i][0];
 		s_keys_binds[i].enter_statusbar			= "press a key or button for this action";
 	}
+#endif	// USE_BINDLIST
 
 	s_keys_back_action.generic.type		= MTYPE_ACTION;
 	s_keys_back_action.generic.textSize	= MENU_FONT_SIZE;
@@ -124,8 +194,12 @@ static void Menu_Keys_Init (void)
 	s_keys_back_action.generic.callback	= UI_BackMenu;
 
 	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_banner);
+#ifdef USE_BINDLIST
+	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_bindList);
+#else
 	for (i=0;i<BINDS_MAX;i++)
 		UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_binds[i]);
+#endif	// USE_BINDLIST
 	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_back_action);
 }
 

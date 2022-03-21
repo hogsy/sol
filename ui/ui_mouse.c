@@ -210,8 +210,8 @@ void UI_MouseCursor_Think (void)
 	}
 
 	// clicking on the player model menu...
-	if ( ui_menuState.menu && (ui_menuState.menu->drawFunc == UI_MenuPlayerConfig_Draw) )
-		UI_MenuPlayerConfig_MouseClick ();
+//	if ( ui_menuState.menu && (ui_menuState.menu->drawFunc == UI_MenuPlayerConfig_Draw) )
+//		UI_MenuPlayerConfig_MouseClick ();
 
 	if (sound)
 		S_StartLocalSound (sound);

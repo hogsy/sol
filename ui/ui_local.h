@@ -28,18 +28,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 enum {
 	MTYPE_ACTION=0,
 	MTYPE_KEYBIND,
-//	MTYPE_KEYBINDLIST,
+	MTYPE_KEYBINDLIST,
 	MTYPE_SLIDER,
 	MTYPE_PICKER,
-//	MTYPE_CHECKBOX,
+	MTYPE_CHECKBOX,
 	MTYPE_LABEL,
 	MTYPE_FIELD,
 	MTYPE_IMAGE,
 	MTYPE_BUTTON,
 	MTYPE_RECTANGLE,
-//	MTYPE_LISTBOX,
-//	MTYPE_COMBOBOX,
-//	MTYPE_LISTVIEW,
+	MTYPE_LISTBOX,
+	MTYPE_COMBOBOX,
+	MTYPE_LISTVIEW,
 	MTYPE_TEXTSCROLL,
 	MTYPE_MODELVIEW
 };
@@ -65,10 +65,7 @@ enum {
 	QMF_MOUSEONLY		= 1 << 4,
 	QMF_COLORIMAGE		= 1 << 5,
 	QMF_DISABLED		= 1 << 6,
-	QMF_NOINTERACTION	= 1 << 7,
-	// to be removed
-	QMF_SKINLIST		= 1 << 8,
-	QMF_GRAYED			= 1 << 9
+	QMF_NOINTERACTION	= 1 << 7
 };
 
 //
@@ -143,6 +140,7 @@ typedef struct
 	float					dynamicWidth;	// for size of changing list items
 	float					dynamicHeight;	// for size of changing list items
 	qboolean				isHidden;		// for hiding items
+//	qboolean				isDisabled;
 	qboolean				isExtended;		// for items that have pop-put parts
 	qboolean				isCursorItem;	// for cursor items
 	int						cursorItemOffset[2];
@@ -157,9 +155,9 @@ typedef struct
 
 	void (*callback)		(void *self);
 	void (*mouse2Callback)	(void *self);
-//	void (*dblClkCallback)	(void *self);
-	void (*statusbarfunc)	(void *self);
-	void (*ownerdraw)		(void *self);
+	void (*dblClkCallback)	(void *self);
+//	void (*statusbarfunc)	(void *self);
+//	void (*ownerdraw)		(void *self);
 	void (*cursordraw)		(void *self);
 } menuCommon_s;
 
@@ -187,6 +185,7 @@ typedef struct
 
 	float			range;
 	float			barTopLeft[2];		// for checking if cursor is directly on slider
+//	float			barBotRight[2];
 	qboolean		displayAsPercent;
 } menuSlider_s;
 
@@ -599,12 +598,12 @@ extern keyBindListHandle_t ui_customKeyBindList;
 
 //=======================================================
 
-#define	UI_MAX_SAVEGAMES	25 // was 15, 21
+#define	UI_MAX_SAVEGAMES	25 // was 15, 25
 #define	EMPTY_GAME_STRING	"<EMPTY>"
 
-extern char		ui_savestrings[UI_MAX_SAVEGAMES][32];
-extern qboolean	ui_savevalid[UI_MAX_SAVEGAMES+1];
-extern qboolean	ui_saveshotvalid[UI_MAX_SAVEGAMES+1];
+extern char *ui_savegame_names[UI_MAX_SAVEGAMES];
+extern char	*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
+extern char		ui_savestrings[UI_MAX_SAVEGAMES][64];
 
 //=======================================================
 
@@ -616,7 +615,7 @@ extern int		ui_num_servers;
 
 // user readable information
 extern char ui_local_server_names[UI_MAX_LOCAL_SERVERS][UI_LOCAL_SERVER_NAMELEN];
-//extern char	*ui_serverlist_names[UI_MAX_LOCAL_SERVERS+1];
+extern char	*ui_serverlist_names[UI_MAX_LOCAL_SERVERS+1];
 
 // network address
 extern netadr_t ui_local_server_netadr[UI_MAX_LOCAL_SERVERS];
@@ -681,6 +680,8 @@ extern int ui_numplayercolors;
 */
 //=======================================================
 
+void UI_TextColor (int colornum, qboolean scrollbar, int *red, int *green, int *blue);
+void UI_TextColorHighlight (int colornum, int *red, int *green, int *blue);
 qboolean UI_IsValidImageFilename (char *name);
 void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax);
 void UI_ClampCvarForControl (menuCommon_s *item);
@@ -715,8 +716,8 @@ void UI_SortCrosshairs (char **list, int len);
 void UI_LoadCrosshairs (void);
 void UI_FreeCrosshairs (void);
 
-//void UI_LoadKeyBindList (void);
-//void UI_FreeKeyBindList (void);
+void UI_LoadKeyBindList (void);
+void UI_FreeKeyBindList (void);
 
 char *UI_UpdateSaveshot (int index);
 void UI_UpdateSavegameData (void);
@@ -760,7 +761,7 @@ extern	vec4_t stCoord_arrow_down;
 
 qboolean UI_MenuField_Key (menuField_s *field, int key);
 const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
-//const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
+const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
 
 //void UI_ReregisterMenuItem (void *item);
 void UI_UpdateMenuItemCoords (void *item);
@@ -778,7 +779,7 @@ void UI_InitMenuItem (void *item);
 char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2);
 qboolean UI_SelectMenuItem (menuFramework_s *s);
 char *UI_SlideMenuItem (menuFramework_s *s, int dir);
-//qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir);
+qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir);
 
 //
 // ui_mouse.c

@@ -40,6 +40,110 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /*
+================
+UI_TextColor
+This sets the text color for scrollbars,
+defers to CL_ function for all others.
+================
+*/
+void UI_TextColor (int colornum, qboolean scrollbar, int *red, int *green, int *blue)
+{
+	if (!red || !green || !blue) // paranoia
+		return;
+
+	if (!scrollbar) {
+		CL_TextColor (colornum, red, green, blue);
+		return;
+	}
+
+	switch (colornum)
+	{
+		case 1:		// red
+			*red =	255;
+			*green=	20;
+			*blue =	20;
+			break;
+		case 2:		// green
+			*red =	0;
+			*green=	255;
+			*blue =	90;
+			break;
+		case 3:		// yellow
+			*red =	255;
+			*green=	255;
+			*blue =	0;
+			break;
+		case 4:		// blue
+			*red =	0;
+			*green=	60;
+			*blue =	255;
+			break;
+		case 5:		// cyan
+			*red =	0;
+			*green=	255;
+			*blue =	255;
+			break;
+		case 6:		// magenta
+			*red =	255;
+			*green=	0;
+			*blue =	255;
+			break;
+		case 9:		// orange
+			*red =	255;
+			*green=	135;
+			*blue =	0;
+			break;
+		case 10:	// violet
+			*red =	160;
+			*green=	20;
+			*blue =	255;
+			break;
+		case 11:	// indigo
+			*red =	80;
+			*green=	0;
+			*blue =	255;
+			break;
+		case 12:	// viridian
+			*red =	80;
+			*green=	255;
+			*blue =	180;
+			break;
+		case 13:	// pink
+			*red =	255;
+			*green=	125;
+			*blue =	175;
+			break;
+		case 0:		// gray
+		case 7:		// white
+		case 8:		// black
+		case 14:	// silver
+		default:	// white
+			*red =	255;
+			*green=	255;
+			*blue =	255;
+			break;
+	}
+}
+
+
+/*
+==========================
+UI_TextColorHighlight
+==========================
+*/
+void UI_TextColorHighlight (int colornum, int *red, int *green, int *blue)
+{
+	if (!red || !green || !blue) // paranoia
+		return;
+
+	UI_TextColor (colornum, false, red, green, blue);
+	*red *= 0.7;
+	*green *= 0.7;
+	*blue *= 0.7;
+}
+
+
+/*
 ==========================
 UI_IsValidImageFilename
 ==========================
@@ -102,20 +206,20 @@ int UI_GetCurValueForControl (menuCommon_s *item)
 
 	switch (item->type)
 	{
-//	case MTYPE_KEYBINDLIST:
-//		return ((menuKeyBindList_s *)item)->curValue;
+	case MTYPE_KEYBINDLIST:
+		return ((menuKeyBindList_s *)item)->curValue;
 	case MTYPE_SLIDER:
 		return ((menuSlider_s *)item)->curPos;
 	case MTYPE_PICKER:
 		return ((menuPicker_s *)item)->curValue;
-//	case MTYPE_CHECKBOX:
-//		return ((menuCheckBox_s *)item)->curValue;
-//	case MTYPE_LISTBOX:
-//		return ((menuListBox_s *)item)->curValue;
-//	case MTYPE_COMBOBOX:
-//		return ((menuComboBox_s *)item)->curValue;
-//	case MTYPE_LISTVIEW:
-//		return ((menuListView_s *)item)->curValue;
+	case MTYPE_CHECKBOX:
+		return ((menuCheckBox_s *)item)->curValue;
+	case MTYPE_LISTBOX:
+		return ((menuListBox_s *)item)->curValue;
+	case MTYPE_COMBOBOX:
+		return ((menuComboBox_s *)item)->curValue;
+	case MTYPE_LISTVIEW:
+		return ((menuListView_s *)item)->curValue;
 	default:
 		return 0;
 	}
@@ -684,8 +788,8 @@ void UI_GetVideoModes (void)
 	int			i, j=0, w=0, h=0, firstMode=0, numModes=0;
 	float		aspect;
 	char		*tok, resBuf[12], aspectBuf[8], nameBuf[20];
-//	qboolean	surround = false;
-//	cvar_t		*surround_threshold = Cvar_Get ("scr_surroundthreshold", "3.6", 0);
+	qboolean	surround = false;
+	cvar_t		*surround_threshold = Cvar_Get ("scr_surroundthreshold", "3.6", 0);
 
 	// count video modes >= 640x480
 	for (i=0; i<UI_MAX_VIDMODES; i++)
@@ -706,8 +810,8 @@ void UI_GetVideoModes (void)
 //	memset (ui_video_modes, 0, (numModes+2) * sizeof(char *));
 
 	// add custom resolution item
-//	ui_resolution_names[0] = UI_CopyString ("custom      ???");
-	ui_resolution_names[0] = UI_CopyString ("[custom   ] [ ??? ]");
+	ui_resolution_names[0] = UI_CopyString ("custom      ???");
+//	ui_resolution_names[0] = UI_CopyString ("[custom   ] [ ??? ]");
 	ui_video_modes[0] = UI_CopyString ("-1");	
 
 	// add to lists
@@ -725,10 +829,10 @@ void UI_GetVideoModes (void)
 			Com_sprintf (resBuf, sizeof(resBuf), "%dx%d", w, h);
 
 			// catch surround modes
-		/*	if (aspect > surround_threshold->value) {	// 3.6f
+			if (aspect > surround_threshold->value) {	// 3.6f
 				aspect /= 3.0f;
 				surround = true;
-			} */
+			}
 			if (aspect > 2.39f)
 				tok = "24:10";
 			else if (aspect > 2.3f)
@@ -750,13 +854,13 @@ void UI_GetVideoModes (void)
 			else
 				tok = va("%3.1f:1", aspect);
 
-		/*	if (surround)
+			if (surround)
 				Com_sprintf (aspectBuf, sizeof(aspectBuf), "3x%s", tok);
-			else */
+			else
 				Com_sprintf (aspectBuf, sizeof(aspectBuf), "%s", tok);
 
-		//	Com_sprintf (nameBuf, sizeof(nameBuf), "%-12s%s", resBuf, aspectBuf);
-			Com_sprintf (nameBuf, sizeof(nameBuf), "[%-9s] [%-5s]", resBuf, aspectBuf);
+			Com_sprintf (nameBuf, sizeof(nameBuf), "%-12s%s", resBuf, aspectBuf);
+		//	Com_sprintf (nameBuf, sizeof(nameBuf), "[%-9s] [%-5s]", resBuf, aspectBuf);
 
 			ui_resolution_names[j] = UI_CopyString (nameBuf);
 			ui_video_modes[j] = UI_CopyString (va("%i", i));	
@@ -1302,8 +1406,6 @@ void UI_FreeCrosshairs (void)
 =======================================================================
 */
 
-// TODO: Enable this when keyBindList control is working
-#if 0
 keyBindListHandle_t ui_customKeyBindList;
 
 /*
@@ -1603,7 +1705,6 @@ void UI_FreeKeyBindList (void)
 		ui_customKeyBindList.numKeyBinds = 0;
 	}
 }
-#endif
 
 /*
 =============================================================================
@@ -1613,7 +1714,9 @@ SAVEGAME / SAVESHOT HANDLING
 =============================================================================
 */
 
-char		ui_savestrings[UI_MAX_SAVEGAMES][32];
+char		*ui_savegame_names[UI_MAX_SAVEGAMES];
+char		*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
+char		ui_savestrings[UI_MAX_SAVEGAMES][64];	// was 32
 qboolean	ui_savevalid[UI_MAX_SAVEGAMES+1];
 time_t		ui_savetimestamps[UI_MAX_SAVEGAMES];
 qboolean	ui_savechanged[UI_MAX_SAVEGAMES];
@@ -1633,7 +1736,9 @@ void UI_Load_Savestrings (qboolean update)
 	FILE	*fp;
 	fileHandle_t	f;
 	char	name[MAX_OSPATH];
+	char	comment[32];
 	char	mapname[MAX_TOKEN_CHARS];
+	char	infoHeader[10];
 	char	*ch;
 	time_t	old_timestamp;
 	struct	stat	st;
@@ -1666,19 +1771,22 @@ void UI_Load_Savestrings (qboolean update)
 		//	Com_sprintf (name, sizeof(name), "save/kmq2save%03i/server.ssv", i);
 			Com_sprintf (name, sizeof(name), SAVEDIRNAME"/kmq2save%03i/server.ssv", i);
 			FS_FOpenFile (name, &f, FS_READ);
-			if (!f)
-			{
-				//Com_Printf("Save file %s not found.\n", name);
+			if (!f) {
 				Q_strncpyz (ui_savestrings[i], sizeof(ui_savestrings[i]), EMPTY_GAME_STRING);
 				ui_savevalid[i] = false;
 				ui_savetimestamps[i] = 0;
 			}
 			else
 			{
-				FS_Read (ui_savestrings[i], sizeof(ui_savestrings[i]), f);
+			//	FS_Read (ui_savestrings[i], sizeof(ui_savestrings[i]), f);
+				FS_Read (comment, sizeof(comment), f);
+				Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s", comment);
 
-				if (i==0) { // grab mapname
-					FS_Read (mapname, sizeof(mapname), f);
+				// grab mapname
+				FS_Read (mapname, sizeof(mapname), f);
+				if (i == 0)
+				{
+				//	FS_Read (mapname, sizeof(mapname), f);
 					if (mapname[0] == '*') // skip * marker
 						Com_sprintf (ui_mapname, sizeof(ui_mapname), mapname+1);
 					else
@@ -1686,12 +1794,45 @@ void UI_Load_Savestrings (qboolean update)
 					if (ch = strchr (ui_mapname, '$'))
 						*ch = 0; // terminate string at $ marker
 				}
+
+				// read extra save info if present
+				FS_Read (infoHeader, sizeof(infoHeader), f);
+				if ( !strncmp(infoHeader, "KMQ2SSV", 7) )
+				{
+					char	comment2[32], datestring[20];
+					struct	tm		savedate;
+					int		hour;
+
+					FS_Read (&savedate, sizeof(struct tm), f);
+					FS_Read (comment, sizeof(comment), f);
+					FS_Read (comment2, sizeof(comment2), f);
+
+					hour = savedate.tm_hour;
+					if (hour > 12) hour -= 12;
+					if (hour == 0) hour += 12;
+					Com_sprintf (datestring, sizeof(datestring), "%2i/%2i/%4i %2i:%i%i %s", savedate.tm_mon+1, savedate.tm_mday, savedate.tm_year+1900,
+								hour, savedate.tm_min/10, savedate.tm_min%10, (savedate.tm_hour > 12) ? "PM" : "AM");
+
+					if (strlen(comment2) > 0)
+						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s %s", comment, comment2, datestring);
+					else
+						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s", comment, datestring);
+				}
 				FS_FCloseFile(f);
 				ui_savevalid[i] = true;
 			}
 		}
 		ui_savechanged[i] = (ui_savetimestamps[i] != old_timestamp);
 	}
+
+	// create pointer arrays for load and save menus
+	ui_loadgame_names[UI_MAX_SAVEGAMES] = NULL;
+	for (i = 0; i < UI_MAX_SAVEGAMES; i++)
+		ui_loadgame_names[i] = ui_savestrings[i];
+
+	ui_savegame_names[UI_MAX_SAVEGAMES-1] = NULL;
+	for (i = 0; i < UI_MAX_SAVEGAMES-1; i++)
+		ui_savegame_names[i] = ui_savestrings[i+1];	// don't include the autosave slot
 }
 
 
@@ -1740,19 +1881,19 @@ UI_UpdateSaveshot
 char *UI_UpdateSaveshot (int index)
 {
 	// check index
-//	if (index < 0 || index >= UI_MAX_SAVEGAMES)
-	if (index < 0 || index > UI_MAX_SAVEGAMES)
+	if (index < 0 || index >= UI_MAX_SAVEGAMES)
+//	if (index < 0 || index > UI_MAX_SAVEGAMES)
 		return NULL;
 
 	if ( ui_savevalid[index] && ui_saveshotvalid[index] ) {
 		if ( index == 0 )
-			Com_sprintf(ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
+			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
 		else
-		//	Com_sprintf(ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
-			Com_sprintf(ui_saveload_shotname, sizeof(ui_saveload_shotname), "/"SAVEDIRNAME"/kmq2save%03i/shot.jpg", index);
+		//	Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
+			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/"SAVEDIRNAME"/kmq2save%03i/shot.jpg", index);
 	}
 	else if ( ui_saveshotvalid[UI_MAX_SAVEGAMES] )
-		Com_sprintf(ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
+		Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
 	else	// no saveshot or nullshot
 		return NULL;
 
@@ -1789,7 +1930,7 @@ void UI_InitSavegameData (void)
 	UI_ValidateSaveshots ();	// register saveshots
 
 	// register null saveshot, this is only done once
-	if (R_DrawFindPic("/gfx/ui/noscreen.pcx"))
+	if ( R_DrawFindPic(UI_NOSCREEN_NAME) )
 		ui_saveshotvalid[UI_MAX_SAVEGAMES] = true;
 	else
 		ui_saveshotvalid[UI_MAX_SAVEGAMES] = false;
@@ -1851,7 +1992,7 @@ int		ui_num_servers;
 
 // user readable information
 char ui_local_server_names[UI_MAX_LOCAL_SERVERS][UI_LOCAL_SERVER_NAMELEN];
-//char	*ui_serverlist_names[UI_MAX_LOCAL_SERVERS+1];
+char	*ui_serverlist_names[UI_MAX_LOCAL_SERVERS+1];
 
 // network address
 netadr_t ui_local_server_netadr[UI_MAX_LOCAL_SERVERS];
@@ -1999,10 +2140,10 @@ void UI_InitServerList (void)
 {
 	int		i;
 
-//	ui_serverlist_names[UI_MAX_LOCAL_SERVERS] = NULL;
+	ui_serverlist_names[UI_MAX_LOCAL_SERVERS] = NULL;
 	for ( i = 0; i < UI_MAX_LOCAL_SERVERS; i++ ) {
 		Com_sprintf (ui_local_server_names[i], sizeof(ui_local_server_names[i]), NO_SERVER_STRING);
-	//	ui_serverlist_names[i] = ui_local_server_names[i];
+		ui_serverlist_names[i] = ui_local_server_names[i];
 	}
 }
 

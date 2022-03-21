@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_LISTBOX	// enable to use new listBox control
+
 /*
 =============================================================================
 
@@ -34,9 +36,15 @@ START SERVER MENU
 */
 static menuFramework_s s_startserver_menu;
 static menuImage_s		s_startserver_banner;
+#ifdef USE_LISTBOX
+static menuListBox_s	s_startmap_list;
+static menuComboBox_s	s_rules_box;
+#else	// USE_LISTBOX
 static menuPicker_s		s_startmap_list;
+static menuPicker_s		s_rules_box;
+#endif	// USE_LISTBOX
 static menuImage_s		s_startserver_mapshot;
-menuPicker_s			s_rules_box;
+static menuComboBox_s	s_rules_box;
 static menuField_s		s_timelimit_field;
 static menuField_s		s_fraglimit_field;
 static menuField_s		s_maxclients_field;
@@ -180,13 +188,13 @@ void Menu_StartServer_Init (void)
 	int		x, y;
 	
 	// menu.x = 168, menu.y = 150
-	x = SCREEN_WIDTH*0.5 - 140;
+	x = SCREEN_WIDTH*0.5 - 152;	// was -140
 	y = SCREEN_HEIGHT*0.5 - 9*MENU_LINE_SIZE;
 
 	//
 	// initialize the menu stuff
 	//
-	s_startserver_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 140;
+	s_startserver_menu.x			= 0;
 	s_startserver_menu.y			= 0;
 	s_startserver_menu.nitems		= 0;
 	s_startserver_menu.isPopup		= false;
@@ -207,6 +215,32 @@ void Menu_StartServer_Init (void)
 	s_startserver_banner.vCentered			= false;
 	s_startserver_banner.generic.isHidden	= false;
 
+#ifdef USE_LISTBOX
+	s_startmap_list.generic.type		= MTYPE_LISTBOX;
+	s_startmap_list.generic.x			= x;
+	s_startmap_list.generic.y			= y;
+	s_startmap_list.generic.name		= "initial map";
+	s_startmap_list.itemNames			= ui_svr_mapnames;
+	s_startmap_list.generic.callback	= M_StartmapChangeFunc;
+	s_startmap_list.itemWidth			= 40;
+	s_startmap_list.itemHeight			= 2;
+	s_startmap_list.items_y				= 5;
+	s_startmap_list.itemSpacing			= 0;
+	s_startmap_list.itemTextSize		= 8;
+	s_startmap_list.border				= 2;
+	s_startmap_list.borderColor[0]		= 60;
+	s_startmap_list.borderColor[1]		= 60;
+	s_startmap_list.borderColor[2]		= 60;
+	s_startmap_list.borderColor[3]		= 255;
+	s_startmap_list.backColor[0]		= 0;
+	s_startmap_list.backColor[1]		= 0;
+	s_startmap_list.backColor[2]		= 0;
+	s_startmap_list.backColor[3]		= 192;
+	s_startmap_list.altBackColor[0]		= 10;
+	s_startmap_list.altBackColor[1]		= 10;
+	s_startmap_list.altBackColor[2]		= 10;
+	s_startmap_list.altBackColor[3]		= 192;
+#else	// USE_LISTBOX
 	s_startmap_list.generic.type		= MTYPE_PICKER;
 	s_startmap_list.generic.textSize	= MENU_FONT_SIZE;
 	s_startmap_list.generic.x			= x;
@@ -214,13 +248,20 @@ void Menu_StartServer_Init (void)
 	s_startmap_list.generic.name		= "initial map";
 	s_startmap_list.itemNames			= ui_svr_mapnames;
 	s_startmap_list.generic.callback	= M_StartmapChangeFunc;
+#endif	// USE_LISTBOX
 
 //	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
 	s_startserver_mapshot.generic.type		= MTYPE_IMAGE;
 	s_startserver_mapshot.generic.x			= x + 23*MENU_FONT_SIZE+2;	// +186
+#ifdef USE_LISTBOX
+	s_startserver_mapshot.generic.y			= y + 10.6*MENU_LINE_SIZE;	// was 88
+	s_startserver_mapshot.width				= 220;
+	s_startserver_mapshot.height			= 165;
+#else	// USE_LISTBOX
 	s_startserver_mapshot.generic.y			= y + 2.2*MENU_LINE_SIZE;	// +22
 	s_startserver_mapshot.width				= 240;	// 200
 	s_startserver_mapshot.height			= 180;	// 150
+#endif	// USE_LISTBOX
 	s_startserver_mapshot.imageName			= UI_NOSCREEN_NAME;
 	s_startserver_mapshot.alpha				= 255;
 	s_startserver_mapshot.border			= 2;
@@ -232,12 +273,33 @@ void Menu_StartServer_Init (void)
 	s_startserver_mapshot.vCentered			= false;
 	s_startserver_mapshot.generic.isHidden	= false;
 
+#ifdef USE_LISTBOX
+	s_rules_box.generic.type		= MTYPE_COMBOBOX;
+	s_rules_box.generic.x			= x;
+	s_rules_box.generic.y			= y += 10.5*MENU_LINE_SIZE; // was 8.5
+	s_rules_box.generic.name		= "rules";
+	s_rules_box.generic.callback	= M_RulesChangeFunc;
+	s_rules_box.items_y				= 5;
+	s_rules_box.itemWidth			= 12;
+	s_rules_box.itemSpacing			= 1;
+	s_rules_box.itemTextSize		= 8;
+	s_rules_box.border				= 1;
+	s_rules_box.borderColor[0]		= 60;
+	s_rules_box.borderColor[1]		= 60;
+	s_rules_box.borderColor[2]		= 60;
+	s_rules_box.borderColor[3]		= 255;
+	s_rules_box.backColor[0]		= 0;
+	s_rules_box.backColor[1]		= 0;
+	s_rules_box.backColor[2]		= 0;
+	s_rules_box.backColor[3]		= 192;
+#else	// USE_LISTBOX
 	s_rules_box.generic.type		= MTYPE_PICKER;
 	s_rules_box.generic.textSize	= MENU_FONT_SIZE;
 	s_rules_box.generic.x			= x;
 	s_rules_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_rules_box.generic.name		= "rules";
 	s_rules_box.generic.callback	= M_RulesChangeFunc;
+#endif	// USE_LISTBOX
 // PGM - rogue games only available with rogue DLL
 	if ( FS_RoguePath() )
 		s_rules_box.itemNames		= dm_coop_names_rogue;
@@ -260,7 +322,7 @@ void Menu_StartServer_Init (void)
 	s_timelimit_field.generic.name			= "time limit";
 	s_timelimit_field.generic.flags			= QMF_NUMBERSONLY;
 	s_timelimit_field.generic.x				= x;
-	s_timelimit_field.generic.y				= y += 2*MENU_FONT_SIZE;
+	s_timelimit_field.generic.y				= y += 2.5*MENU_FONT_SIZE;	// was 2*MENU_FONT_SIZE
 	s_timelimit_field.generic.statusbar		= "0 = no limit";
 	s_timelimit_field.length				= 4;
 	s_timelimit_field.visible_length		= 4;

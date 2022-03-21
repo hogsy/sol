@@ -344,16 +344,16 @@ void UI_SetGrabBindItem (menuFramework_s *menu, menuCommon_s *item)
 			else // clear grab flag if it's not the one
 				((menuKeyBind_s *)it)->grabBind = false;
 		}
-	/*	else if (it->type == MTYPE_KEYBINDLIST) 
+		else if (it->type == MTYPE_KEYBINDLIST) 
 		{
 			if (it == item) {
 				((menuKeyBindList_s *)it)->grabBind = true;
-				m->grabBindCursor = i;
+				menu->grabBindCursor = i;
 				found = true;
 			}
 			else // clear grab flag if it's not the one
 				((menuKeyBindList_s *)it)->grabBind = false;
-		} */
+		}
 	}
 
 	if (!found)
@@ -379,8 +379,8 @@ void UI_ClearGrabBindItem (menuFramework_s *menu)
 		it = (menuCommon_s *)menu->items[i];
 		if (it->type == MTYPE_KEYBIND)
 			((menuKeyBind_s *)it)->grabBind = false;
-	//	else if (it->type == MTYPE_KEYBINDLIST)
-	//		((menuKeyBindList_s *)it)->grabBind = false;
+		else if (it->type == MTYPE_KEYBINDLIST)
+			((menuKeyBindList_s *)it)->grabBind = false;
 	}
 }
 
@@ -401,13 +401,13 @@ qboolean UI_HasValidGrabBindItem (menuFramework_s *menu)
 		&& (((menuKeyBind_s *)menu->items[menu->grabBindCursor])->grabBind) )
 		return true;
 
-/*	if ( (menu->grabBindCursor != -1)
+	if ( (menu->grabBindCursor != -1)
 		&& (menu->grabBindCursor >= 0)
 		&& (menu->grabBindCursor < menu->nitems)
 		&& (((menuCommon_s *)menu->items[menu->grabBindCursor])->type == MTYPE_KEYBINDLIST)
 		&& (((menuKeyBindList_s *)menu->items[menu->grabBindCursor])->grabBind) )
 		return true;
-*/
+
 	return false;
 }
 
@@ -772,8 +772,8 @@ void UI_DrawMenu (menuFramework_s *menu)
 		//		item->statusbarfunc ( (void *)item );
 			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind && ((menuKeyBind_s *)item)->enter_statusbar)
 				UI_DrawMenuStatusBar (((menuKeyBind_s *)item)->enter_statusbar);
-		//	else if ( (item->type == MTYPE_KEYBINDLIST) && ((menuKeyBindList_s *)item)->grabBind && ((menuKeyBindList_s *)item)->enter_statusbar)
-		//		UI_DrawMenuStatusBar (((menuKeyBindList_s *)item)->enter_statusbar);
+			else if ( (item->type == MTYPE_KEYBINDLIST) && ((menuKeyBindList_s *)item)->grabBind && ((menuKeyBindList_s *)item)->enter_statusbar)
+				UI_DrawMenuStatusBar (((menuKeyBindList_s *)item)->enter_statusbar);
 			else if (item->statusbar)
 				UI_DrawMenuStatusBar (item->statusbar);
 			else if ( menu->flagCvar && (strlen(menu->flagCvar) > 0) )
@@ -827,13 +827,13 @@ const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 				else
 					sound = NULL;
 			}
-		/*	else if (item->type == MTYPE_KEYBINDLIST)
+			else if (item->type == MTYPE_KEYBINDLIST)
 			{
 				if ( (sound = UI_MenuKeyBindList_Key((menuKeyBindList_s *)item, key)) != ui_menu_null_sound )
 					return sound;
 				else
 					sound = NULL;
-			} */
+			}
 		}
 	}
 
@@ -879,7 +879,7 @@ const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 			sound = UI_SlideMenuItem (menu, 1);
 		}
 		break;
-/*	case K_MWHEELUP:
+	case K_MWHEELUP:
 		if (menu)
 		{
 			UI_ScrollMenuItem (menu, -1);
@@ -890,7 +890,7 @@ const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 		{
 			UI_ScrollMenuItem (menu, 1);
 		}
-		break; */
+		break;
 
 	case K_JOY1:
 	case K_JOY2:

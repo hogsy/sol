@@ -25,17 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-static	void	UI_MenuAction_DoEnter (menuAction_s *a);
-static	void	UI_MenuAction_Draw (menuAction_s *a);
-static	void	UI_MenuLabel_Draw (menuLabel_s *s);
-static	void	UI_MenuSlider_DoSlide (menuSlider_s *s, int dir);
-static	void	UI_MenuSlider_Draw (menuSlider_s *s);
-static	void	UI_MenuPicker_DoEnter (menuPicker_s *p);
-static	void	UI_MenuPicker_Draw (menuPicker_s *p);
-static	void	UI_MenuPicker_DoSlide (menuPicker_s *p, int dir);
-
-#define RCOLUMN_OFFSET  MENU_FONT_SIZE*2	// was 16
-#define LCOLUMN_OFFSET -MENU_FONT_SIZE*2	// was -16
+static int	scrollBarColor[4] = {0, 0, 0, 192};
 
 vec4_t		stCoord_arrow_left = {0.0, 0.0, 0.25, 0.25};
 vec4_t		stCoord_arrow_right = {0.25, 0.0, 0.5, 0.25};
@@ -50,6 +40,341 @@ vec4_t		stCoord_slider_left = {0.0, 0.0, 0.125, 1.0};
 vec4_t		stCoord_slider_center = {0.125, 0.0, 0.375, 1.0};
 vec4_t		stCoord_slider_right = {0.375, 0.0, 0.5, 1.0};
 vec4_t		stCoord_slider_knob = {0.5, 0.0, 0.625, 1.0};
+
+//======================================================
+
+void UI_MenuScrollBar_SetPos (widgetScroll_s *scroll, int visibleItems, int numItems, int curValue)
+{
+	if (!scroll)	return;
+	if (!scroll->scrollEnabled || curValue < 0) {
+		scroll->scrollPos = 0;
+		return;
+	}
+
+	scroll->scrollPos = max( min( (curValue-(visibleItems/2)), (numItems-visibleItems) ), 0);
+}
+
+qboolean UI_MenuScrollBar_Increment (widgetScroll_s *scroll, int dir)
+{
+	int oldPos;
+
+	if (!scroll)
+		return false;
+
+	oldPos = scroll->scrollPos;
+	scroll->scrollPos = min(max(scroll->scrollPos+dir, scroll->scrollMin), scroll->scrollMax);
+	return (scroll->scrollPos != oldPos);
+}
+
+void UI_MenuScrollBar_ClickPos (widgetScroll_s *scroll, menuCommon_s *item, float barStart, float barEnd)
+{
+	float	clickPos, barLength;
+
+	if (!scroll)	return;
+
+	if (scroll->scrollType == SCROLL_X) {
+		SCR_ScaleCoords (&barStart, NULL, NULL, NULL, item->scrAlign);
+		SCR_ScaleCoords (&barEnd, NULL, NULL, NULL, item->scrAlign);
+	}
+	else { // SCROLL_Y
+		SCR_ScaleCoords (NULL, &barStart, NULL, NULL, item->scrAlign);
+		SCR_ScaleCoords (NULL, &barEnd, NULL, NULL, item->scrAlign);
+	}
+	barLength = barEnd - barStart;
+	clickPos = ((scroll->scrollType == SCROLL_X) ? ui_mousecursor.x : ui_mousecursor.y) - barStart;
+	scroll->scrollPos = (clickPos / barLength) * (scroll->scrollMax - scroll->scrollMin + 1);
+	scroll->scrollPos = min(max(scroll->scrollPos, scroll->scrollMin), scroll->scrollMax);
+}
+
+qboolean UI_MenuScrollBar_Click (widgetScroll_s *scroll, menuCommon_s *item)
+{
+	int		button_size = LIST_SCROLLBAR_CONTROL_SIZE;
+	int		x, y, w, h;
+
+	if (!scroll)	return false;
+
+	x = scroll->scrollTopLeft[0];
+	y = scroll->scrollTopLeft[1];
+	w = scroll->scrollBotRight[0] - scroll->scrollTopLeft[0];
+	h = scroll->scrollBotRight[1] - scroll->scrollTopLeft[1];
+
+	if ( UI_MouseOverSubItem(x, y, w, h, item->scrAlign) )
+	{
+		if (!scroll->scrollEnabled) // check if enabled
+			return true;
+
+		if (scroll->scrollType == SCROLL_X)
+		{
+			// left arrow
+			if ( UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign) )
+				UI_MenuScrollBar_Increment (scroll, -1);
+			// right arrow
+			else if ( UI_MouseOverSubItem(scroll->scrollBotRight[0]-button_size, scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign) )
+				UI_MenuScrollBar_Increment (scroll, 1);
+			else // on knob area
+				UI_MenuScrollBar_ClickPos (scroll, item, scroll->scrollTopLeft[0]+button_size, scroll->scrollBotRight[0]-button_size);
+		}
+		else // SCROLL_Y
+		{
+			// up arrow
+			if ( UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign) )
+				UI_MenuScrollBar_Increment (scroll, -1);
+			// down arrow
+			else if ( UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollBotRight[1]-button_size, button_size, button_size, item->scrAlign) )
+				UI_MenuScrollBar_Increment (scroll, 1);
+			else // on knob area
+				UI_MenuScrollBar_ClickPos (scroll, item, scroll->scrollTopLeft[1]+button_size, scroll->scrollBotRight[1]-button_size);
+		}
+		return true;
+	}
+	return false;
+}
+
+qboolean UI_ItemHasScrollBar (menuCommon_s *item)
+{
+	if (!item)	return false;
+
+	switch (item->type)
+	{
+		case MTYPE_KEYBINDLIST:
+			return ( ((menuKeyBindList_s *)item)->scrollState.scrollEnabled );
+		case MTYPE_LISTBOX:
+			return ( ((menuListBox_s *)item)->scrollState.scrollEnabled );
+		case MTYPE_LISTVIEW:
+			return ( ((menuListView_s *)item)->scrollState.scrollEnabled );
+		case MTYPE_COMBOBOX:
+			return ( ((menuCommon_s *)item)->isExtended && ((menuComboBox_s *)item)->scrollState.scrollEnabled );
+		default:
+			return false;
+	}
+}
+
+/*qboolean UI_MouseOverScrollableItem (menuFramework_s *m)
+{
+	menuCommon_s *item;
+
+	if (!ui_mousecursor.menuitem)
+		return false;
+
+	item = (menuCommon_s *)ui_mousecursor.menuitem;
+
+	return UI_ItemHasScrollBar (item);
+} */
+
+qboolean UI_MouseOverScrollKnob (menuCommon_s *item)
+{
+	widgetScroll_s	*scroll;
+	int				button_size = LIST_SCROLLBAR_CONTROL_SIZE;
+	int				x, y, w, h;
+
+	if (!item)	return false;
+
+	switch (item->type)
+	{
+		case MTYPE_KEYBINDLIST:
+			scroll = &((menuKeyBindList_s *)item)->scrollState;
+			break;
+		case MTYPE_LISTBOX:
+			scroll = &((menuListBox_s *)item)->scrollState;
+			break;
+		case MTYPE_LISTVIEW:
+			scroll = &((menuListView_s *)item)->scrollState;
+			break;
+		case MTYPE_COMBOBOX:
+			scroll = &((menuComboBox_s *)item)->scrollState;
+			break;
+		default:
+			return false;
+	}
+
+	if (!scroll)	return false;
+	if (!scroll->scrollEnabled)	return false;
+
+	if (scroll->scrollType == SCROLL_X)
+	{
+		x = scroll->scrollTopLeft[0] + button_size;
+		y = scroll->scrollTopLeft[1];
+		w = scroll->scrollBotRight[0] - scroll->scrollTopLeft[0] - button_size*2;
+		h = scroll->scrollBotRight[1] - scroll->scrollTopLeft[1];
+
+	}
+	else // SCROLL_Y
+	{
+		x = scroll->scrollTopLeft[0];
+		y = scroll->scrollTopLeft[1] + button_size;
+		w = scroll->scrollBotRight[0] - scroll->scrollTopLeft[0];
+		h = scroll->scrollBotRight[1] - scroll->scrollTopLeft[1] - button_size*2;
+	}
+	if ( UI_MouseOverSubItem(x, y, w, h, item->scrAlign) )
+		return true;
+	else
+		return false;
+}
+
+void UI_ClickItemScrollBar (menuCommon_s *item)
+{
+	widgetScroll_s	*scroll;
+
+	if (!item)	return;
+
+	switch (item->type)
+	{
+	case MTYPE_KEYBINDLIST:
+		scroll = &((menuKeyBindList_s *)item)->scrollState;
+		break;
+	case MTYPE_LISTBOX:
+		scroll = &((menuListBox_s *)item)->scrollState;
+		break;
+	case MTYPE_LISTVIEW:
+		scroll = &((menuListView_s *)item)->scrollState;
+		break;
+	case MTYPE_COMBOBOX:
+		scroll = &((menuComboBox_s *)item)->scrollState;
+		break;
+	default:
+		return;
+	}
+
+	if (!scroll)	return;
+	if (!scroll->scrollEnabled)	return;
+
+	UI_MenuScrollBar_Click (scroll, item);
+}
+
+void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_x, int box_y, int boxWidth, int boxHeight)
+{
+	int			button_size = LIST_SCROLLBAR_CONTROL_SIZE;
+	int			i, barWidth, barHeight, sliderPos, red, green, blue, hoverAlpha;
+	float		t_ofs[2];
+	color_t		arrowColor;
+	vec4_t		arrowTemp[2];
+	qboolean	mouseClick, mouseOverArrow1, mouseOverArrow2, arrow1_pulse, arrow2_pulse;
+
+	if (!scroll)	return;
+
+	hoverAlpha = UI_MouseOverAlpha(ui_mousecursor.menuitem);
+	mouseClick = ( ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1] );
+//	UI_TextColor (alt_text_color->value, true, &red, &green, &blue);
+	UI_TextColor (alt_text_color->integer, true, &red, &green, &blue);
+
+	if (scroll->scrollEnabled) {
+		Vector4Set (arrowColor, red, green, blue, 255);
+		t_ofs[0] = t_ofs[1] = 0;
+	}
+	else {
+		Vector4Set (arrowColor, 150, 150, 150, 255);
+		t_ofs[0] = t_ofs[1] = 0.25;
+	}
+
+	if (scroll->scrollType == SCROLL_X)
+	{
+		mouseOverArrow1 = UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign);
+		mouseOverArrow2 = UI_MouseOverSubItem(scroll->scrollBotRight[0]-button_size, scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign);
+		// left arrow glow
+		arrow1_pulse = scroll->scrollEnabled && mouseOverArrow1 && !mouseClick;
+		if (scroll->scrollEnabled && mouseOverArrow1 && mouseClick)
+			t_ofs[0] = 0.5;
+		// right arrow glow
+		arrow2_pulse = scroll->scrollEnabled && mouseOverArrow2 && !mouseClick;
+		if (scroll->scrollEnabled && mouseOverArrow2 && mouseClick)
+			t_ofs[1] = 0.5;
+
+		Vector4Copy (stCoord_arrow_left, arrowTemp[0]);
+		Vector4Copy (stCoord_arrow_right, arrowTemp[1]);
+		for (i=0; i<2; i++) {
+			arrowTemp[i][1] += t_ofs[i];
+			arrowTemp[i][3] += t_ofs[i];
+		}
+		barWidth = boxWidth - (2*button_size);
+		sliderPos = (barWidth-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+
+		// scrolling area
+		UI_DrawFill (box_x, box_y+boxHeight-LIST_SCROLLBAR_SIZE,
+			boxWidth, LIST_SCROLLBAR_SIZE, item->scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
+
+		// left arrow
+		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
+		UI_DrawPicST (box_x, box_y+boxHeight-button_size, button_size, button_size,
+					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+	//	UI_DrawPicST (box_x, box_y+boxHeight-button_size, button_size, button_size,
+	//				0, 0+t_ofs[0], 0.25, 0.25+t_ofs[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+
+		// right arrow
+		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
+		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
+					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
+	//				0.25, 0+t_ofs[1], 0.5, 0.25+t_ofs[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		arrowColor[4] = 255;
+
+		// scroll knob
+		if (scroll->scrollEnabled)
+			UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
+						stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		//	UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
+		//				0, 0.75, 0.25, 1, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+
+	}
+	else // SCROLL_Y
+	{
+		mouseOverArrow1 = UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollTopLeft[1], button_size, button_size, item->scrAlign);
+		mouseOverArrow2 = UI_MouseOverSubItem(scroll->scrollTopLeft[0], scroll->scrollBotRight[1]-button_size, button_size, button_size, item->scrAlign);
+		// up arrow glow
+		arrow1_pulse = scroll->scrollEnabled && mouseOverArrow1 && !mouseClick;
+		if (scroll->scrollEnabled && mouseOverArrow1 && mouseClick)
+			t_ofs[0] = 0.5;
+		// down arrow glow
+		arrow2_pulse = scroll->scrollEnabled && mouseOverArrow2 && !mouseClick;
+		if (scroll->scrollEnabled && mouseOverArrow2 && mouseClick)
+			t_ofs[1] = 0.5;
+
+		Vector4Copy (stCoord_arrow_up, arrowTemp[0]);
+		Vector4Copy (stCoord_arrow_down, arrowTemp[1]);
+		for (i=0; i<2; i++) {
+			arrowTemp[i][1] += t_ofs[i];
+			arrowTemp[i][3] += t_ofs[i];
+		}
+		barHeight = boxHeight - (2*button_size);
+		sliderPos = (barHeight-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+
+		// scrolling area
+		UI_DrawFill (box_x+boxWidth-LIST_SCROLLBAR_SIZE, box_y,
+					LIST_SCROLLBAR_SIZE, boxHeight, item->scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
+
+		// up arrow
+		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
+		UI_DrawPicST (box_x+boxWidth-button_size, box_y, button_size, button_size,
+					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y, button_size, button_size,
+	//				0.5, 0+t_ofs[0], 0.75, 0.25+t_ofs[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+
+		// down arrow
+		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
+		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
+					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
+	//				0.75, 0+t_ofs[1], 1, 0.25+t_ofs[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		arrowColor[4] = 255;
+
+		// scroll knob
+		if (scroll->scrollEnabled)
+			UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
+						stCoord_scrollKnob_v, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
+		//				0.25, 0.75, 0.5, 1, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+	}
+
+	if (ui_debug_itembounds->integer)
+	{
+		int		x, y, w, h;
+		x = scroll->scrollTopLeft[0];
+		y = scroll->scrollTopLeft[1];
+		w = scroll->scrollBotRight[0] - scroll->scrollTopLeft[0];
+		h = scroll->scrollBotRight[1] - scroll->scrollTopLeft[1];
+		UI_DrawFill (x, y, w, h, item->scrAlign, false, 255,0,0,128);
+	}
+
+}
 
 //======================================================
 
@@ -71,8 +396,6 @@ void UI_MenuCommon_DrawItemName (menuCommon_s *c, int nameX, int nameY, int head
 
 void UI_MenuAction_DoEnter (menuAction_s *a)
 {
-	if (!a) return;
-
 	if (a->generic.callback)
 		a->generic.callback (a);
 }
@@ -83,7 +406,6 @@ char *UI_MenuAction_Click (menuAction_s *a, qboolean mouse2)
 	if (!a->usesMouse2 && mouse2)
 		return ui_menu_null_sound;
 
-//	UI_MenuAction_DoEnter (a);
 	if ( mouse2 && a->generic.mouse2Callback )
 		a->generic.mouse2Callback (a);
 	else if (a->generic.callback)
@@ -94,32 +416,15 @@ char *UI_MenuAction_Click (menuAction_s *a, qboolean mouse2)
 
 void UI_MenuAction_Draw (menuAction_s *a)
 {
-	int		alpha;
+	menuFramework_s	*menu = a->generic.parent;
+	int				alpha = UI_MouseOverAlpha(&a->generic);
 
-	if (!a) return;
+	UI_DrawMenuString (menu->x + a->generic.x + LCOLUMN_OFFSET, menu->y + a->generic.y,
+					a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha,
+					!(a->generic.flags & QMF_LEFT_JUSTIFY), (a->generic.flags & QMF_ALTCOLOR));
 
-	alpha = UI_MouseOverAlpha(&a->generic);
-
-	if (a->generic.flags & QMF_LEFT_JUSTIFY)
-	{
-		if (a->generic.flags & QMF_GRAYED)
-			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-			a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, false, true);
-		else
-			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-							a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, false, false);
-	}
-	else
-	{
-		if (a->generic.flags & QMF_GRAYED)
-			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, true, true);
-		else
-			UI_DrawMenuString (a->generic.x + a->generic.parent->x + LCOLUMN_OFFSET,
-								a->generic.y + a->generic.parent->y, a->generic.textSize, a->generic.scrAlign, a->generic.name, alpha, true, false);
-	}
-	if (a->generic.ownerdraw)
-		a->generic.ownerdraw(a);
+//	if (a->generic.ownerdraw)
+//		a->generic.ownerdraw (a);
 }
 
 void UI_MenuAction_Setup (menuAction_s *a)
@@ -308,6 +613,334 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 	case K_DEL:
 	case K_KP_DEL:
 		UI_UnbindCommand (k->commandName); // delete bindings
+		return ui_menu_out_sound;
+	default:
+		return ui_menu_null_sound;
+	}
+}
+
+//=========================================================
+
+static keyBindSubitem_t ui_binds_null[] = 
+{
+{ "null",	"No Bind Commands Found",	0, 0 },
+{ 0, 0,	0, 0 }
+};
+
+void UI_MenuKeyBindList_DoEnter (menuKeyBindList_s *k)
+{
+	menuFramework_s	*menu = k->generic.parent;
+
+	if (!menu)	return;
+
+	// catch invalid selected index
+	if ( (k->curValue < 0) && (k->curValue >= k->numItems) ) {
+		return;
+	}
+
+	UI_FindKeysForCommand ((char *)k->bindList[k->curValue].commandName, k->bindList[k->curValue].keys);
+
+//	if (k->keys[1] != -1)
+//		UI_UnbindCommand (k->commandName);
+
+	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
+		
+	if (k->generic.dblClkCallback)
+		k->generic.dblClkCallback (k);
+}
+
+void UI_MenuKeyBindList_DoSlide (menuKeyBindList_s *k, int dir)
+{
+	int		visibleLines, startItem;
+
+	if (!k->bindList || k->numItems < 1)
+		return;
+
+	k->curValue += dir;
+
+	if (k->generic.flags & QMF_NOLOOP) // don't allow looping around
+	{
+		if (k->curValue < 0)
+			k->curValue = 0;
+		else if (k->curValue >= k->numItems)
+			k->curValue = k->numItems-1;
+	}
+	else {
+		if (k->curValue < 0)
+			k->curValue = k->numItems-1;
+		else if (k->curValue >= k->numItems)
+			k->curValue = 0;
+	}
+
+	// scroll if needed
+	startItem = k->scrollState.scrollPos;
+	visibleLines = k->items_y;
+	while (k->curValue < startItem) {
+		UI_MenuScrollBar_Increment (&k->scrollState, -1);
+		startItem = k->scrollState.scrollPos;
+	}
+	while ( k->curValue > (startItem+visibleLines-1) ) {
+		UI_MenuScrollBar_Increment (&k->scrollState, 1);
+		startItem = k->scrollState.scrollPos;
+	}
+
+	if (k->generic.callback)
+		k->generic.callback (k);
+}
+
+char *UI_MenuKeyBindList_Click (menuKeyBindList_s *k, qboolean mouse2)
+{
+	int			i, oldCurValue, y, itemWidth, itemHeight, visibleLines, startItem, itemIncrement;
+	char		*s = ui_menu_null_sound;
+
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return s;
+
+	// clicked on scroll bar
+	if ( UI_MenuScrollBar_Click(&k->scrollState, &k->generic) ) {
+		s = ui_menu_move_sound;
+	}
+	else // clicked on one of the items
+	{
+		itemWidth = k->lineWidth * MENU_FONT_SIZE;
+		itemHeight = k->itemHeight * MENU_LINE_SIZE;
+		startItem = k->scrollState.scrollPos;
+		visibleLines = k->items_y;
+		itemIncrement = itemHeight + k->itemSpacing;
+		for (i=startItem; i<k->numItems && i<(startItem+visibleLines); i++)
+		{
+			y = k->generic.topLeft[1] + (i-startItem)*itemIncrement;
+			if ( UI_MouseOverSubItem(k->generic.topLeft[0], y, itemWidth, itemIncrement, k->generic.scrAlign) )
+			{
+				oldCurValue = k->curValue;
+				k->curValue = i;
+				s = ui_menu_move_sound;
+
+				if (oldCurValue != k->curValue) {	// new subitem
+					ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 1;	// was 0
+					if (k->generic.callback)
+						k->generic.callback (k);
+				}
+
+				if (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 2) {	// && k->generic.dblClkCallback)
+					UI_MenuKeyBindList_DoEnter (k);
+				}
+
+				break;
+			}
+		}
+	}
+	return s;
+}
+
+void UI_MenuKeyBindList_Draw (menuKeyBindList_s *k)
+{
+//	menuFramework_s	*menu = k->generic.parent;
+	int				i, x, xofs, y, itemWidth, itemHeight, boxWidth, boxHeight, visibleLines, startItem, itemIncrement;
+	int				hc[3];
+	int				hoverAlpha;
+	char			buf[512];
+	const char		*keyName1, *keyName2;
+	qboolean		itemPulse;
+
+	UI_TextColorHighlight (Cvar_VariableInteger("alt_text_color"), &hc[0], &hc[1], &hc[2]);
+	hoverAlpha	= UI_MouseOverAlpha(&k->generic);
+	itemWidth	= k->lineWidth * MENU_FONT_SIZE;
+	itemHeight	= k->itemHeight * MENU_LINE_SIZE;
+	boxWidth	= k->generic.botRight[0] - k->generic.topLeft[0];
+	boxHeight	= k->generic.botRight[1] - k->generic.topLeft[1];
+
+	// name and header
+	UI_MenuCommon_DrawItemName (&k->generic, -(2*RCOLUMN_OFFSET+k->border), 0, 0, -(k->border + MENU_LINE_SIZE), hoverAlpha);
+
+	// border and background
+	if (k->border > 0)
+	{
+		if (k->backColor[3] == 255) // just fill whole area for border if not trans
+			UI_DrawFill (k->generic.topLeft[0]-k->border, k->generic.topLeft[1]-k->border,
+							boxWidth+(k->border*2), boxHeight+(k->border*2), k->generic.scrAlign, true, k->borderColor[0], k->borderColor[1], k->borderColor[2], k->borderColor[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)k->generic.topLeft[0], (float)k->generic.topLeft[1], (float)boxWidth, (float)boxHeight,
+							(float)k->border, k->generic.scrAlign, true, k->borderColor[0], k->borderColor[1], k->borderColor[2], k->borderColor[3]);
+	}
+	if ( !(k->altBackColor[3] > 0) )
+		UI_DrawFill (k->generic.topLeft[0], k->generic.topLeft[1], boxWidth, boxHeight,
+						k->generic.scrAlign, true, k->backColor[0], k->backColor[1], k->backColor[2], k->backColor[3]);
+
+	// scrollbar
+	UI_MenuScrollBar_Draw (&k->generic, &k->scrollState, k->generic.topLeft[0], k->generic.topLeft[1], boxWidth, boxHeight); 
+
+	// items
+	x = k->generic.topLeft[0];
+	startItem = k->scrollState.scrollPos;
+	visibleLines = k->items_y;
+	itemIncrement = itemHeight + k->itemSpacing;
+	for (i=startItem; i<k->numItems && i<(startItem+visibleLines); i++)
+	{
+		y = k->generic.topLeft[1]+(i-startItem)*itemIncrement;
+		itemPulse = UI_MouseOverSubItem(x, y, itemWidth, itemIncrement, k->generic.scrAlign);
+
+		if (i == k->curValue)
+			UI_DrawFill (x, y, itemWidth, itemHeight, k->generic.scrAlign, false, hc[0], hc[1], hc[2], hoverAlpha);
+		else if (k->altBackColor[3] > 0) {
+			if (i % 2 == 1)
+				UI_DrawFill (x, y, itemWidth, itemHeight, k->generic.scrAlign, true, k->altBackColor[0], k->altBackColor[1], k->altBackColor[2], k->altBackColor[3]);
+			else
+				UI_DrawFill (x, y, itemWidth, itemHeight, k->generic.scrAlign, true, k->backColor[0], k->backColor[1], k->backColor[2], k->backColor[3]);
+		}
+		// bind name
+		if (k->bindList[i].commandName)
+		{
+			UI_FindKeysForCommand ((char *)k->bindList[i].commandName, k->bindList[i].keys);
+
+			xofs = LISTBOX_ITEM_PADDING;
+			UI_DrawMenuString (x+xofs, y+LISTBOX_ITEM_PADDING,
+								MENU_FONT_SIZE, k->generic.scrAlign, k->bindList[i].displayName, itemPulse ? hoverAlpha : 255, false, false);
+
+			xofs = LISTBOX_ITEM_PADDING + (k->itemNameWidth + 1) * MENU_FONT_SIZE;
+			if ( (i == k->curValue) && k->grabBind ) {
+				Com_sprintf (buf, sizeof(buf), " = ");
+			}
+			else
+				Com_sprintf (buf, sizeof(buf), "   ");
+
+			if (k->bindList[i].keys[0] == -1) {
+				Q_strncatz (buf, sizeof(buf), "???");
+			}
+			else
+			{
+				keyName1 = Key_KeynumToString (k->bindList[i].keys[0]);
+				Q_strncatz (buf, sizeof(buf), keyName1);
+
+				if (k->bindList[i].keys[1] != -1) {
+					keyName2 = Key_KeynumToString (k->bindList[i].keys[1]);
+					Q_strncatz (buf, sizeof(buf), " or ");
+					Q_strncatz (buf, sizeof(buf), keyName2);
+				}
+			}
+			UI_DrawMenuString (x+xofs, y+LISTBOX_ITEM_PADDING, MENU_FONT_SIZE, k->generic.scrAlign, buf, itemPulse ? hoverAlpha : 255, false, false);
+		}
+		else
+			Com_Printf ("UI_MenuKeyBindList_Draw: keyBindSubitem has no commandName!\n");
+
+	}
+}
+
+void UI_MenuKeyBindList_Setup (menuKeyBindList_s *k)
+{
+	menuFramework_s	*menu = k->generic.parent;
+	int				i, boxWidth, boxHeight;
+
+	if (!menu)	return;
+
+	// use bind list from external file if loaded
+	if ( k->useCustomBindList && ui_customKeyBindList.bindList && (ui_customKeyBindList.numKeyBinds > 0) ) {
+		k->bindListBackup = k->bindList;
+		k->bindList = ui_customKeyBindList.bindList;
+	}
+
+	// catch null bindlist
+	if (!k->bindList) {
+		Com_Printf ("UI_MenuKeyBindList_Setup: keyBindList has no bindList!\n");
+		k->bindList = ui_binds_null;
+		k->bindListIsFromFile = false;
+	}
+
+	// count # of items
+	k->numItems = 0;
+	for (i=0; k->bindList[i].commandName; i++)
+		k->numItems++;
+
+	// clamp curValue
+	k->curValue = min(max(k->curValue, 0), k->numItems-1);
+
+	k->items_y		= max(k->items_y, 3);		// must be at least 3 lines tall
+	k->lineWidth	= min(max(k->lineWidth, 20), 100);	// must be at least 20 chars wide
+	k->itemNameWidth =  min(max(k->itemNameWidth, k->lineWidth/4), k->lineWidth*0.75f);	// name must be at least 25% of width, max 75%
+//	k->itemHeight	= max(k->itemHeight, 1);	// must be at least 1 line high
+	k->itemHeight	= 1;						// item height is always 1 line
+	k->itemSpacing	= max(k->itemSpacing, 0);
+	k->itemTextSize	= max(k->itemTextSize, 4);
+	k->border		= max(k->border, 0);
+
+	boxWidth	= k->lineWidth * MENU_FONT_SIZE + LIST_SCROLLBAR_SIZE;
+	boxHeight	= k->items_y * (k->itemHeight*MENU_LINE_SIZE + k->itemSpacing) + k->itemSpacing;
+
+	// set min and max coords
+	k->generic.topLeft[0] = menu->x + k->generic.x + RCOLUMN_OFFSET + k->border;
+	k->generic.topLeft[1] = menu->y + k->generic.y;
+	k->generic.botRight[0] = k->generic.topLeft[0] + boxWidth;
+	k->generic.botRight[1] = k->generic.topLeft[1] + boxHeight;
+	k->generic.dynamicWidth = 0;
+	k->generic.dynamicHeight = 0;
+	k->generic.isExtended = false;
+	k->generic.valueChanged = false;
+
+	k->scrollState.scrollType = SCROLL_Y; // always scrolls vertically
+	k->scrollState.scrollEnabled = (k->numItems > k->items_y);
+	k->scrollState.scrollMin = 0;
+	k->scrollState.scrollMax = max((k->numItems - k->items_y), 0);
+	k->scrollState.scrollTopLeft[0] = k->generic.topLeft[0] + boxWidth - LIST_SCROLLBAR_SIZE;
+	k->scrollState.scrollTopLeft[1] = k->generic.topLeft[1];
+	k->scrollState.scrollBotRight[0] = k->generic.botRight[0];
+	k->scrollState.scrollBotRight[1] = k->generic.botRight[1];
+	UI_MenuScrollBar_SetPos (&k->scrollState, k->items_y, k->numItems, k->curValue);
+//	k->generic.flags |= QMF_MOUSEONLY;
+
+	k->grabBind = false;
+}
+
+const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key)
+{
+	menuFramework_s	*menu = k->generic.parent;
+
+	if (!menu)	return ui_menu_null_sound;
+
+	// catch invalid selected index
+	if ( (k->curValue < 0) && (k->curValue >= k->numItems) ) {
+		return ui_menu_null_sound;
+	}
+
+	// pressing mouse1 to pick a new bind wont force bind/unbind itself - spaz
+	if ( UI_HasValidGrabBindItem(menu) && k->grabBind
+		&& !(ui_mousecursor.buttonused[MOUSEBUTTON1] && key == K_MOUSE1) )
+	{
+		// grab key here
+		if (key != K_ESCAPE && key != '`')
+		{
+			char cmd[1024];
+			
+			if (k->bindList[k->curValue].keys[1] != -1)	// if two keys are already bound to this, clear them
+				UI_UnbindCommand ((char *)k->bindList[k->curValue].commandName);
+			Com_sprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->bindList[k->curValue].commandName);
+			Cbuf_InsertText (cmd);
+		}
+
+		// don't let selecting with mouse buttons screw everything up
+		UI_RefreshCursorButtons ();
+		if (key == K_MOUSE1)
+			ui_mousecursor.buttonclicks[MOUSEBUTTON1] = -1;
+
+		if (menu)
+			UI_ClearGrabBindItem (menu);
+
+		return ui_menu_out_sound;
+	}
+
+	switch (key)
+	{
+	case K_ESCAPE:
+		UI_CheckAndPopMenu (menu);
+		return ui_menu_out_sound;
+	case K_ENTER:
+	case K_KP_ENTER:
+		UI_MenuKeyBindList_DoEnter (k);
+		return ui_menu_in_sound;
+	case K_BACKSPACE:
+	case K_DEL:
+	case K_KP_DEL:
+		UI_UnbindCommand ((char *)k->bindList[k->curValue].commandName); // delete bindings
 		return ui_menu_out_sound;
 	default:
 		return ui_menu_null_sound;
@@ -963,21 +1596,6 @@ void UI_MenuPicker_DoEnter (menuPicker_s *p)
 		p->generic.callback (p);
 }
 
-char *UI_MenuPicker_Click (menuPicker_s *p, qboolean mouse2)
-{
-	if (!p || !p->itemNames || !p->numItems)
-		return ui_menu_null_sound;
-
-	if (mouse2) {
-		UI_MenuPicker_DoSlide (p, -1);
-	}
-	else {
-		UI_MenuPicker_DoSlide (p, 1);
-	}
-
-	return ui_menu_move_sound;
-}
-
 void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 {
 	if (!p || !p->itemNames || !p->numItems)
@@ -985,7 +1603,7 @@ void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 
 	p->curValue += dir;
 
-	if (p->generic.flags & QMF_SKINLIST) // don't allow looping around for skin lists
+	if (p->generic.flags & QMF_NOLOOP) // don't allow looping around
 	{
 		if (p->curValue < 0)
 			p->curValue = 0;
@@ -1007,7 +1625,22 @@ void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 	if (p->generic.callback)
 		p->generic.callback (p);
 }
- 
+
+char *UI_MenuPicker_Click (menuPicker_s *p, qboolean mouse2)
+{
+	if (!p || !p->itemNames || !p->numItems)
+		return ui_menu_null_sound;
+
+	if (mouse2) {
+		UI_MenuPicker_DoSlide (p, -1);
+	}
+	else {
+		UI_MenuPicker_DoSlide (p, 1);
+	}
+
+	return ui_menu_move_sound;
+}
+
 void UI_MenuPicker_Draw (menuPicker_s *p)
 {
 	int		alpha;
@@ -1029,12 +1662,10 @@ void UI_MenuPicker_Draw (menuPicker_s *p)
 	}
 	else
 	{
-	//	strncpy(buffer, p->itemnames[p->curvalue]);
 		Q_strncpyz (buffer, sizeof(buffer), p->itemNames[p->curValue]);
 		*strchr(buffer, '\n') = 0;
 		UI_DrawMenuString (p->generic.x + p->generic.parent->x + RCOLUMN_OFFSET,
 						p->generic.y + p->generic.parent->y, p->generic.textSize, p->generic.scrAlign, buffer, alpha, false, false);
-	//	strncpy(buffer, strchr( p->itemnames[p->curvalue], '\n' ) + 1 );
 		Q_strncpyz (buffer, sizeof(buffer), strchr( p->itemNames[p->curValue], '\n' ) + 1);
 		UI_DrawMenuString (p->generic.x + p->generic.parent->x + RCOLUMN_OFFSET,
 						p->generic.y + p->generic.parent->y + MENU_LINE_SIZE, p->generic.textSize, p->generic.scrAlign, buffer, alpha, false, false);
@@ -1082,6 +1713,146 @@ void UI_MenuPicker_Setup (menuPicker_s *p)
 	p->generic.valueChanged = false;
 
 	UI_MenuPicker_SetDynamicSize (p);
+}
+
+//=========================================================
+
+char *UI_MenuCheckBox_GetValue (menuCheckBox_s *c)
+{
+	if (c->bitFlag) {
+		return va("%i", (c->curValue ? (!c->invertValue) : c->invertValue) ? c->bitFlag : 0);
+	}
+	else {
+		if (c->invertValue)
+			return va("%i", c->curValue ? -1 : 1 );
+		else
+			return va("%f", c->baseValue + ((float)c->curValue * c->increment));
+	}
+}
+
+void UI_MenuCheckBox_SetValue (menuCheckBox_s *c)
+{
+	if (c->generic.cvar && strlen(c->generic.cvar) > 0)
+	{
+		if (c->invertValue) {
+			c->curValue	= (Cvar_VariableValue(c->generic.cvar) < 0);
+		}
+		else {
+			UI_ClampCvarForControl (&c->generic);
+			c->curValue	= (Cvar_VariableValue(c->generic.cvar) != c->baseValue);
+		}
+	}
+	else if (c->bitFlag)
+	{
+		menuFramework_s	*menu = c->generic.parent;
+
+		c->curValue = ( c->invertValue ? !(menu->bitFlags & c->bitFlag) : (menu->bitFlags & c->bitFlag) ) ? 1 : 0;
+	}
+}
+
+void UI_MenuCheckBox_SaveValue (menuCheckBox_s *c)
+{
+	if (c->generic.cvar && strlen(c->generic.cvar) > 0)
+	{
+		if (c->invertValue)
+			Cvar_SetValue (c->generic.cvar, Cvar_VariableValue(c->generic.cvar) * -1 );
+		else
+			Cvar_SetValue (c->generic.cvar, c->baseValue + ((float)c->curValue * c->increment));
+	}
+	else if (c->bitFlag)
+	{
+		menuFramework_s	*menu = c->generic.parent;
+
+		UI_SetMenuBitFlags (menu, c->bitFlag, (c->curValue ? (!c->invertValue) : c->invertValue));
+	}
+	c->generic.valueChanged = false;
+}
+
+qboolean UI_MenuCheckBox_ValueChanged (menuCheckBox_s *c)
+{
+	if (c->bitFlag)				// doesn't apply to bitflags
+		return false;
+	if (!c->generic.cvar || !strlen(c->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!c->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+
+	if (c->invertValue)
+		return ( c->curValue != (Cvar_VariableValue(c->generic.cvar) < 0) );
+	else {
+		UI_ClampCvarForControl (&c->generic);
+		return ( c->curValue != (Cvar_VariableValue(c->generic.cvar) != c->baseValue) );
+	}
+}
+
+void UI_MenuCheckBox_DoEnter (menuCheckBox_s *c)
+{
+	c->curValue = !c->curValue;
+
+	if (!c->generic.cvarNoSave)
+		UI_MenuCheckBox_SaveValue (c);
+	else
+		c->generic.valueChanged = UI_MenuCheckBox_ValueChanged (c);
+
+	if (c->generic.callback)
+		c->generic.callback (c);
+}
+
+char *UI_MenuCheckBox_Click (menuCheckBox_s *c, qboolean mouse2)
+{
+	UI_MenuCheckBox_DoEnter (c);
+
+	return ui_menu_move_sound;
+}
+
+void UI_MenuCheckBox_DoSlide (menuCheckBox_s *c, int unused)
+{
+	UI_MenuCheckBox_DoEnter (c);
+}
+
+void UI_MenuCheckBox_Draw (menuCheckBox_s *c)
+{
+	menuFramework_s	*menu = c->generic.parent;
+	int				alpha = UI_MouseOverAlpha(&c->generic);
+	char			*boxPic;
+	qboolean		left = (c->generic.flags & QMF_LEFT_JUSTIFY);
+
+	boxPic =  (c->curValue) ? UI_CHECKBOX_ON_PIC : UI_CHECKBOX_OFF_PIC;
+
+	if (c->generic.name)
+		UI_DrawMenuString (menu->x + c->generic.x + (left ? (2*RCOLUMN_OFFSET + MENU_FONT_SIZE + 2) : LCOLUMN_OFFSET),
+							menu->y + c->generic.y, MENU_FONT_SIZE, c->generic.scrAlign, c->generic.name, alpha, !left, true);
+
+	UI_DrawPic (menu->x + c->generic.x + RCOLUMN_OFFSET,
+				menu->y + c->generic.y-CHECKBOX_V_OFFSET, CHECKBOX_WIDTH, CHECKBOX_HEIGHT,
+				c->generic.scrAlign, false, boxPic, 255);	
+}
+
+void UI_MenuCheckBox_Setup (menuCheckBox_s *c)
+{
+	menuFramework_s	*menu = c->generic.parent;
+	int				nameWidth;
+
+	nameWidth = (c->generic.name) ? (int)strlen(c->generic.name)*MENU_FONT_SIZE : 0;
+	if (!c->baseValue)	c->baseValue = 0.0f;
+	if (!c->increment)	c->increment = 1.0f;
+
+	// set min and max coords
+	c->generic.topLeft[0] = menu->x + c->generic.x;
+	c->generic.topLeft[1] = menu->y + c->generic.y;
+	c->generic.botRight[0] = c->generic.topLeft[0] + RCOLUMN_OFFSET + CHECKBOX_WIDTH;
+	c->generic.botRight[1] = c->generic.topLeft[1] + MENU_FONT_SIZE;
+	c->generic.dynamicWidth = 0;
+	c->generic.dynamicHeight = 0;
+	c->generic.isExtended = false;
+	c->generic.valueChanged = false;
+
+	if (c->generic.name) {
+		if (c->generic.flags & QMF_LEFT_JUSTIFY)
+			c->generic.botRight[0] += (nameWidth + RCOLUMN_OFFSET);	
+		else
+			c->generic.topLeft[0] -= (nameWidth + RCOLUMN_OFFSET);
+	}
 }
 
 //=========================================================
@@ -1309,6 +2080,956 @@ void UI_MenuRectangle_Setup (menuRectangle_s *r)
 	r->generic.isExtended = false;
 	r->generic.valueChanged = false;
 	r->generic.flags |= QMF_NOINTERACTION;
+}
+
+//=========================================================
+
+char *UI_MenuListBox_GetValue (menuListBox_s *l)
+{
+	if (l->itemValues)
+		return va("%s", l->itemValues[l->curValue]);
+	else
+		return va("%i", l->curValue);
+}
+
+void UI_MenuListBox_SetValue (menuListBox_s *l)
+{
+	if (l->generic.cvar && strlen(l->generic.cvar) > 0)
+	{
+		if (l->itemValues)
+			l->curValue = UI_GetIndexForStringValue(l->itemValues, Cvar_VariableString(l->generic.cvar));
+		else {
+			UI_ClampCvarForControl (&l->generic);
+			l->curValue = Cvar_VariableInteger(l->generic.cvar);
+		}
+		UI_MenuScrollBar_SetPos (&l->scrollState, l->items_y, l->numItems, l->curValue);
+	}
+}
+
+void UI_MenuListBox_SaveValue (menuListBox_s *l)
+{
+	if (l->generic.cvar && strlen(l->generic.cvar) > 0)
+	{
+		if (l->itemValues) {
+			// Don't save to cvar if this itemvalue is the wildcard
+			if ( Q_stricmp(va("%s", l->itemValues[l->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+				Cvar_Set (l->generic.cvar, va("%s", l->itemValues[l->curValue]));
+		}
+		else
+			Cvar_SetInteger (l->generic.cvar, l->curValue);
+	}
+	l->generic.valueChanged = false;
+}
+
+qboolean UI_MenuListBox_ValueChanged (menuListBox_s *l)
+{
+	if (!l->generic.cvar || !strlen(l->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!l->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+		
+	if (l->itemValues)
+		return ( l->curValue != UI_GetIndexForStringValue(l->itemValues, Cvar_VariableString(l->generic.cvar)) );
+	else {
+		UI_ClampCvarForControl (&l->generic);
+		return ( l->curValue != Cvar_VariableInteger(l->generic.cvar) );
+	}
+}
+
+void UI_MenuListBox_DoEnter (menuListBox_s *l)
+{
+	if (l->generic.dblClkCallback)
+		l->generic.dblClkCallback (l);
+}
+
+void UI_MenuListBox_DoSlide (menuListBox_s *l, int dir)
+{
+	int		visibleLines, startItem;
+
+	if (!l->itemNames || !l->numItems)
+		return;
+
+	l->curValue += dir;
+
+	if (l->generic.flags & QMF_NOLOOP) // don't allow looping around
+	{
+		if (l->curValue < 0)
+			l->curValue = 0;
+		else if (l->curValue >= l->numItems)
+			l->curValue = l->numItems-1;
+	}
+	else {
+		if (l->curValue < 0)
+			l->curValue = l->numItems-1;
+		else if (l->curValue >= l->numItems)
+			l->curValue = 0;
+	}
+
+	// scroll if needed
+	startItem = l->scrollState.scrollPos;
+	visibleLines = l->items_y;
+	while (l->curValue < startItem) {
+		UI_MenuScrollBar_Increment (&l->scrollState, -1);
+		startItem = l->scrollState.scrollPos;
+	}
+	while ( l->curValue > (startItem+visibleLines-1) ) {
+		UI_MenuScrollBar_Increment (&l->scrollState, 1);
+		startItem = l->scrollState.scrollPos;
+	}
+
+	if (!l->generic.cvarNoSave)
+		UI_MenuListBox_SaveValue (l);
+	else
+		l->generic.valueChanged = UI_MenuListBox_ValueChanged (l);
+
+	if (l->generic.callback)
+		l->generic.callback (l);
+}
+
+char *UI_MenuListBox_Click (menuListBox_s *l, qboolean mouse2)
+{
+	int			i, oldCurValue, y, itemWidth, itemHeight, visibleLines, startItem, itemIncrement;
+	char		*s = ui_menu_null_sound;
+
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return s;
+
+	// clicked on scroll bar
+	if ( UI_MenuScrollBar_Click(&l->scrollState, &l->generic) ) {
+		s = ui_menu_move_sound;
+	}
+	else // clicked on one of the items
+	{
+		itemWidth = l->itemWidth * MENU_FONT_SIZE;
+		itemHeight = l->itemHeight * MENU_LINE_SIZE;
+		startItem = l->scrollState.scrollPos;
+		visibleLines = l->items_y;
+		itemIncrement = itemHeight + l->itemSpacing;
+		for (i=startItem; i<l->numItems && i<(startItem+visibleLines); i++)
+		{
+			y = l->generic.topLeft[1] + (i-startItem)*itemIncrement;
+			if ( UI_MouseOverSubItem(l->generic.topLeft[0], y, itemWidth, itemIncrement, l->generic.scrAlign) )
+			{
+				oldCurValue = l->curValue;
+				l->curValue = i;
+				s = ui_menu_move_sound;
+
+				if (!l->generic.cvarNoSave)
+					UI_MenuListBox_SaveValue (l);
+				else
+					l->generic.valueChanged = UI_MenuListBox_ValueChanged (l);
+
+				if (oldCurValue != l->curValue) {	// new subitem
+					ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 1;	// was 0
+					if (l->generic.callback)
+						l->generic.callback (l);
+				}
+
+				if ( (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 2) && l->generic.dblClkCallback )
+					l->generic.dblClkCallback (l);
+
+				break;
+			}
+		}
+	}
+	return s;
+}
+
+void UI_MenuListBox_Draw (menuListBox_s *l)
+{
+//	menuFramework_s	*menu = l->generic.parent;
+	int				i, j, x, y, itemWidth, itemHeight, boxWidth, boxHeight, visibleLines, startItem, itemIncrement;
+	int				hc[3];
+	int				hoverAlpha;
+	char			*p, buf1[512], buf2[100];
+	qboolean		img_background = (l->background && strlen(l->background) > 0);
+	qboolean		itemPulse;
+
+	UI_TextColorHighlight (Cvar_VariableInteger("alt_text_color"), &hc[0], &hc[1], &hc[2]);
+	hoverAlpha	= UI_MouseOverAlpha(&l->generic);
+	itemWidth	= l->itemWidth * MENU_FONT_SIZE;
+	itemHeight	= l->itemHeight * MENU_LINE_SIZE;
+	boxWidth	= l->generic.botRight[0] - l->generic.topLeft[0];
+	boxHeight	= l->generic.botRight[1] - l->generic.topLeft[1];
+
+	// name and header
+	UI_MenuCommon_DrawItemName (&l->generic, -(2*RCOLUMN_OFFSET+l->border), 0, 0, -(l->border + MENU_LINE_SIZE), hoverAlpha);
+
+	// border and background
+	if (l->border > 0)
+	{
+		if (l->backColor[3] == 255 || img_background) // just fill whole area for border if not trans
+			UI_DrawFill (l->generic.topLeft[0]-l->border, l->generic.topLeft[1]-l->border,
+							boxWidth+(l->border*2), boxHeight+(l->border*2), l->generic.scrAlign, true, l->borderColor[0], l->borderColor[1], l->borderColor[2], l->borderColor[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)l->generic.topLeft[0], (float)l->generic.topLeft[1], (float)boxWidth, (float)boxHeight,
+							(float)l->border, l->generic.scrAlign, true, l->borderColor[0], l->borderColor[1], l->borderColor[2], l->borderColor[3]);
+	}
+	if (img_background)
+		UI_DrawTiledPic (l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight,
+						l->generic.scrAlign, true, (char *)l->background, (float)(l->backColor[3]/255.0f));
+	else if ( !(l->altBackColor[3] > 0) )
+		UI_DrawFill (l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight,
+						l->generic.scrAlign, true, l->backColor[0], l->backColor[1], l->backColor[2], l->backColor[3]);
+
+	// scrollbar
+	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight); 
+
+	// items
+	x = l->generic.topLeft[0];
+	startItem = l->scrollState.scrollPos;
+	visibleLines = l->items_y;
+	itemIncrement = itemHeight + l->itemSpacing;
+	for (i=startItem; i<l->numItems && i<(startItem+visibleLines); i++)
+	{
+		y = l->generic.topLeft[1]+(i-startItem)*itemIncrement;
+		itemPulse = UI_MouseOverSubItem(x, y, itemWidth, itemIncrement, l->generic.scrAlign);
+
+		if (i == l->curValue)
+			UI_DrawFill (x, y, itemWidth, itemHeight, l->generic.scrAlign, false, hc[0], hc[1], hc[2], hoverAlpha);
+		else if (l->altBackColor[3] > 0) {
+			if (i % 2 == 1)
+				UI_DrawFill (x, y, itemWidth, itemHeight, l->generic.scrAlign, true, l->altBackColor[0], l->altBackColor[1], l->altBackColor[2], l->altBackColor[3]);
+			else
+				UI_DrawFill (x, y, itemWidth, itemHeight, l->generic.scrAlign, true, l->backColor[0], l->backColor[1], l->backColor[2], l->backColor[3]);
+		}	
+
+		if (l->itemHeight > 1)
+		{
+		//	strncpy(buf1, l->itemNames[i]);
+			Q_strncpyz(buf1, sizeof(buf1), l->itemNames[i]);
+			p = strtok(buf1, "\n");
+			for (j=0; j<l->itemHeight; j++)
+			{
+				if (!p)	break;
+				strncpy(buf2, va("%s\0", p), l->itemWidth);
+				UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING+j*MENU_LINE_SIZE,
+									MENU_FONT_SIZE, l->generic.scrAlign, buf2, itemPulse ? hoverAlpha : 255, false, false);
+				p = strtok(NULL, "\n");
+			}
+		}
+		else {
+			UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING,
+								MENU_FONT_SIZE, l->generic.scrAlign, l->itemNames[i], itemPulse ? hoverAlpha : 255, false, false);
+			// debug output
+		//	if ( !strncmp(l->itemNames[i], "^9", 2) )
+		//		Com_Printf("UI_MenuListBox_Draw: drawing orange item text %s\n", l->itemNames[i]);
+		}
+	}
+}
+
+void UI_MenuListBox_Setup (menuListBox_s *l)
+{
+	menuFramework_s	*menu = l->generic.parent;
+	int				i, /*numValues,*/ boxWidth, boxHeight;
+
+	// count # of items
+	for (i=0; l->itemNames[i]; i++);
+		l->numItems = i;
+
+	// clamp curValue
+	l->curValue = min(max(l->curValue, 0), l->numItems-1);
+
+	l->items_y		= max(l->items_y, 3);		// must be at least 3 lines tall
+	l->itemWidth	= min(max(l->itemWidth, 6), 100);	// must be at least 6 chars wide
+	l->itemHeight	= max(l->itemHeight, 1);	// must be at least 1 line high
+	l->itemSpacing	= max(l->itemSpacing, 0);
+	l->itemTextSize	= max(l->itemTextSize, 4);
+	l->border		= max(l->border, 0);
+
+	boxWidth	= l->itemWidth * MENU_FONT_SIZE + LIST_SCROLLBAR_SIZE;
+	boxHeight	= l->items_y * (l->itemHeight*MENU_LINE_SIZE + l->itemSpacing) + l->itemSpacing;
+
+	// set min and max coords
+	l->generic.topLeft[0] = menu->x + l->generic.x + RCOLUMN_OFFSET + l->border;
+	l->generic.topLeft[1] = menu->y + l->generic.y;
+	l->generic.botRight[0] = l->generic.topLeft[0] + boxWidth;
+	l->generic.botRight[1] = l->generic.topLeft[1] + boxHeight;
+	l->generic.dynamicWidth = 0;
+	l->generic.dynamicHeight = 0;
+	l->generic.isExtended = false;
+	l->generic.valueChanged = false;
+
+	l->scrollState.scrollType = SCROLL_Y; // always scrolls vertically
+	l->scrollState.scrollEnabled = (l->numItems > l->items_y);
+	l->scrollState.scrollMin = 0;
+	l->scrollState.scrollMax = max((l->numItems - l->items_y), 0);
+	l->scrollState.scrollTopLeft[0] = l->generic.topLeft[0] + boxWidth - LIST_SCROLLBAR_SIZE;
+	l->scrollState.scrollTopLeft[1] = l->generic.topLeft[1];
+	l->scrollState.scrollBotRight[0] = l->generic.botRight[0];
+	l->scrollState.scrollBotRight[1] = l->generic.botRight[1];
+	UI_MenuScrollBar_SetPos (&l->scrollState, l->items_y, l->numItems, l->curValue);
+
+//	l->generic.flags |= QMF_MOUSEONLY;
+}
+
+//=========================================================
+
+char *UI_MenuComboBox_GetValue (menuComboBox_s *c)
+{
+	if (c->itemValues)
+		return va("%s", c->itemValues[c->curValue]);
+	else
+		return va("%i", c->curValue);
+}
+
+void UI_MenuComboBox_SetValue (menuComboBox_s *c)
+{
+	if (c->generic.cvar && strlen(c->generic.cvar) > 0)
+	{
+		if (c->itemValues)
+			c->curValue = UI_GetIndexForStringValue(c->itemValues, Cvar_VariableString(c->generic.cvar));
+		else {
+			UI_ClampCvarForControl (&c->generic);
+			c->curValue = Cvar_VariableInteger(c->generic.cvar);
+		}
+	}
+	else if (c->bitFlags != NULL)
+	{
+		menuFramework_s	*menu = c->generic.parent;
+		int				i, foundBit=0;
+
+		for (i=1; i<c->numItems; i++)
+			if (menu->bitFlags & c->bitFlags[i]) {
+				foundBit = i;
+				break;
+			}
+		c->curValue = foundBit;
+	}
+}
+
+void UI_MenuComboBox_SaveValue (menuComboBox_s *c)
+{
+	if (c->generic.cvar && strlen(c->generic.cvar) > 0)
+	{
+		if (c->itemValues) {
+			// Don't save to cvar if this itemvalue is the wildcard
+			if ( Q_stricmp(va("%s", c->itemValues[c->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+				Cvar_Set (c->generic.cvar, va("%s", c->itemValues[c->curValue]));
+		}
+		else
+			Cvar_SetInteger (c->generic.cvar, c->curValue);
+	}
+	else if (c->bitFlags != NULL)
+	{
+		menuFramework_s	*menu = c->generic.parent;
+		int				i, clearBits=0;
+
+		for (i=1; i<c->numItems; i++)
+			clearBits |= c->bitFlags[i];
+
+		UI_SetMenuBitFlags (menu, clearBits, false);
+		UI_SetMenuBitFlags (menu, c->bitFlags[c->curValue], true);
+	}
+	c->generic.valueChanged = false;
+}
+
+qboolean UI_MenuComboBox_ValueChanged (menuComboBox_s *c)
+{
+	if (c->bitFlags != NULL)	// doesn't apply to bitflags
+		return false;
+	if (!c->generic.cvar || !strlen(c->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!c->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+		
+	if (c->itemValues)
+		return ( c->curValue != UI_GetIndexForStringValue(c->itemValues, Cvar_VariableString(c->generic.cvar)) );
+	else {
+		UI_ClampCvarForControl (&c->generic);
+		return ( c->curValue != Cvar_VariableInteger(c->generic.cvar) );
+	}
+}
+
+void UI_MenuComboBox_DoSlide (menuComboBox_s *c, int dir)
+{
+	if (!c->itemNames || !c->numItems)
+		return;
+
+	c->curValue += dir;
+
+	if (c->generic.flags & QMF_NOLOOP) // don't allow looping around
+	{
+		if (c->curValue < 0)
+			c->curValue = 0;
+		else if (c->itemNames[c->curValue] == 0)
+			c->curValue--;
+	}
+	else {
+		if (c->curValue < 0)
+			c->curValue = c->numItems-1;
+		else if (c->itemNames[c->curValue] == 0)
+			c->curValue = 0;
+	}
+
+	if (c->generic.isExtended)
+		UI_MenuScrollBar_SetPos (&c->scrollState, c->items_y, c->numItems, c->curValue);
+
+	if (!c->generic.cvarNoSave)
+		UI_MenuComboBox_SaveValue (c);
+	else
+		c->generic.valueChanged = UI_MenuComboBox_ValueChanged (c);
+
+	if (c->generic.callback)
+		c->generic.callback (c);
+}
+
+char *UI_MenuComboBox_Click (menuComboBox_s *c, qboolean mouse2)
+{
+	int			i, itemWidth, visibleLines, startItem, itemIncrement;
+	int			x, y, w, h;
+	char		*s = ui_menu_null_sound;
+
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return s;
+
+	if (c->generic.isExtended && c->scrollState.scrollEnabled)
+	{	// clicked on scroll bar
+		if ( UI_MenuScrollBar_Click(&c->scrollState, &c->generic) )
+			return ui_menu_move_sound;
+	}
+	x = c->generic.topLeft[0];
+	y = c->generic.topLeft[1];
+	w = c->generic.botRight[0] - c->generic.topLeft[0];
+	h = c->generic.botRight[1] - c->generic.topLeft[1];
+	if ( UI_MouseOverSubItem(x, y, w, h, c->generic.scrAlign) ) // clicked on the top
+	{
+		c->generic.isExtended = !c->generic.isExtended;
+		if (c->generic.isExtended)
+			UI_MenuScrollBar_SetPos (&c->scrollState, c->items_y, c->numItems, c->curValue);
+		s = ui_menu_move_sound;
+	}
+	else if (c->generic.isExtended) // clicked on one of the items
+	{
+		itemWidth = c->generic.botRight[0] - c->generic.topLeft[0] - ((c->scrollState.scrollEnabled) ? LIST_SCROLLBAR_SIZE : 0);
+		startItem = c->scrollState.scrollPos;
+		visibleLines = c->items_y;
+		itemIncrement = MENU_LINE_SIZE + c->itemSpacing;
+		for (i=startItem; i<c->numItems && i<(startItem+visibleLines); i++)
+		{
+			y = c->generic.botRight[1] + c->border + (i-startItem)*itemIncrement;
+			if ( UI_MouseOverSubItem(c->generic.topLeft[0], y, itemWidth, itemIncrement, c->generic.scrAlign) )
+			{
+				c->curValue = i;
+				c->generic.isExtended = false; // retract box once item is selected
+				s = ui_menu_move_sound;
+
+				if (!c->generic.cvarNoSave)
+					UI_MenuComboBox_SaveValue (c);
+				else
+					c->generic.valueChanged = UI_MenuComboBox_ValueChanged (c);
+
+				if (c->generic.callback)
+					c->generic.callback (c);
+				break;
+			}
+		}
+	}
+	return s;
+}
+
+void UI_MenuComboBox_Draw (menuComboBox_s *c)
+{
+	menuFramework_s	*menu = c->generic.parent;
+	int				x, y, itemWidth, fieldWidth, fieldHeight;
+	int				button_size = LIST_SCROLLBAR_CONTROL_SIZE;
+	int				red, green, blue, hoverAlpha;
+	float			t_ofs;
+	color_t			arrowColor;
+	vec4_t			arrowTemp;
+	qboolean		mouseClick, mouseOver, itemPulse;
+
+	hoverAlpha		= UI_MouseOverAlpha(&c->generic);
+	itemWidth		= c->itemWidth * MENU_FONT_SIZE;
+	fieldWidth		= c->generic.botRight[0] - c->generic.topLeft[0];
+	fieldHeight		= c->generic.botRight[1] - c->generic.topLeft[1];
+//	UI_TextColor (alt_text_color->value, true, &red, &green, &blue);
+	UI_TextColor (alt_text_color->integer, true, &red, &green, &blue);
+	Vector4Set (arrowColor, red, green, blue, hoverAlpha);
+
+	// name and header
+	UI_MenuCommon_DrawItemName (&c->generic, -(2*RCOLUMN_OFFSET+c->border), 0, 0, -(c->border + MENU_LINE_SIZE), hoverAlpha);
+
+	// border and background
+	if (c->border > 0)
+	{
+		if (c->backColor[3] == 255) // just fill whole area for border if not trans
+			UI_DrawFill (c->generic.topLeft[0]-c->border, c->generic.topLeft[1]-c->border, fieldWidth+(c->border*2), fieldHeight+(c->border*2),
+							c->generic.scrAlign, true, c->borderColor[0],c->borderColor[1],c->borderColor[2],c->borderColor[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)c->generic.topLeft[0], (float)c->generic.topLeft[1], (float)fieldWidth, (float)fieldHeight,
+							(float)c->border, c->generic.scrAlign, true, c->borderColor[0],c->borderColor[1],c->borderColor[2],c->borderColor[3]);
+	}
+	UI_DrawFill (c->generic.topLeft[0], c->generic.topLeft[1], fieldWidth, fieldHeight,
+				c->generic.scrAlign, true, c->backColor[0],c->backColor[1],c->backColor[2],c->backColor[3]);
+
+	// current item
+	x = c->generic.topLeft[0];
+	y = c->generic.topLeft[1];
+	mouseClick	= ( ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1] );
+	mouseOver = UI_MouseOverSubItem(x, y, fieldWidth, fieldHeight, c->generic.scrAlign);
+	itemPulse = mouseOver && !mouseClick;
+	if (mouseOver && mouseClick)
+		t_ofs = 0.5;
+	else
+		t_ofs = 0;
+
+	UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING+c->itemSpacing,
+						MENU_FONT_SIZE, c->generic.scrAlign, c->itemNames[c->curValue], itemPulse ? hoverAlpha : 255, false, false);
+	
+	Vector4Copy (stCoord_arrow_down, arrowTemp);
+	arrowTemp[1] += t_ofs;
+	arrowTemp[3] += t_ofs;
+	// drop down arrow
+	UI_DrawFill (x+itemWidth, y, button_size, button_size, c->generic.scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
+	UI_DrawPicST (x+itemWidth, y, button_size, button_size, arrowTemp, c->generic.scrAlign, false, arrowColor, UI_ARROWS_PIC);
+//	UI_DrawPicST (x+itemWidth, y, button_size, button_size, 0.75, 0+t_ofs, 1, 0.25+t_ofs, c->generic.scrAlign, false, arrowColor, UI_ARROWS_PIC);
+
+	// catch loss of focus
+	if ( ((ui_mousecursor.menuitem != NULL) && (ui_mousecursor.menuitem != c))
+		|| ((menuCommon_s *)c) != UI_ItemAtMenuCursor(menu) )
+		c->generic.isExtended = false;
+}
+
+void UI_MenuComboBox_DrawExtension (menuComboBox_s *c)
+{
+//	menuFramework_s	*menu = c->generic.parent;
+	int				x, y, itemWidth, fieldWidth, fieldHeight, boxTop, boxHeight;
+	int				i, visibleLines, startItem, itemIncrement;
+	int				hc[3];
+	int				hoverAlpha;
+//	byte			*borderColor = c->borderColor;
+//	byte			*backColor = c->backColor;
+	qboolean		itemPulse;
+
+	UI_TextColorHighlight (Cvar_VariableInteger("alt_text_color"), &hc[0], &hc[1], &hc[2]);
+	hoverAlpha	= UI_MouseOverAlpha(&c->generic);
+	itemWidth	= c->itemWidth * MENU_FONT_SIZE + ((!c->scrollState.scrollEnabled) ? LIST_SCROLLBAR_SIZE : 0);
+	fieldWidth	= c->generic.botRight[0] - c->generic.topLeft[0];
+	fieldHeight = c->generic.botRight[1] - c->generic.topLeft[1];
+	boxTop		= c->generic.topLeft[1] + fieldHeight + c->border;
+	boxHeight	= c->dropHeight - c->border;
+
+	// border and background
+	if (c->border > 0)
+	{
+		if (c->backColor[3] == 255)	// just fill whole area for border if not trans
+			UI_DrawFill (c->generic.topLeft[0]-c->border, boxTop, fieldWidth+(c->border*2), boxHeight+c->border,
+							c->generic.scrAlign, true, c->borderColor[0],c->borderColor[1],c->borderColor[2],c->borderColor[3]);
+		else	// have to draw actual border
+			UI_DrawBorder ((float)c->generic.topLeft[0], (float)boxTop, (float)fieldWidth, (float)boxHeight,
+							(float)c->border, c->generic.scrAlign, true, c->borderColor[0],c->borderColor[1],c->borderColor[2],c->borderColor[3]);
+	}
+	UI_DrawFill (c->generic.topLeft[0], boxTop, fieldWidth, boxHeight,
+					c->generic.scrAlign, true, c->backColor[0],c->backColor[1],c->backColor[2],c->backColor[3]);
+
+	// scrollbar
+	if (c->scrollState.scrollEnabled)
+		UI_MenuScrollBar_Draw (&c->generic, &c->scrollState, c->generic.topLeft[0], boxTop, fieldWidth, boxHeight); 
+
+	// items
+	x = c->generic.topLeft[0];
+	startItem = c->scrollState.scrollPos;
+	visibleLines = min(c->items_y, c->numItems);	
+	itemIncrement = MENU_LINE_SIZE + c->itemSpacing;
+	for (i=startItem; i<c->numItems && i<(startItem+visibleLines); i++)
+	{
+		y = boxTop+(i-startItem)*itemIncrement;
+		itemPulse = UI_MouseOverSubItem(x, y, itemWidth, itemIncrement, c->generic.scrAlign);
+
+		if (i == c->curValue)
+			UI_DrawFill (x, y, itemWidth, MENU_LINE_SIZE, c->generic.scrAlign, false, hc[0], hc[1], hc[2], hoverAlpha);
+
+		UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING,
+							MENU_FONT_SIZE, c->generic.scrAlign, c->itemNames[i], itemPulse ? hoverAlpha : 255, false, false);
+	}
+}
+
+void UI_MenuComboBox_SetDynamicSize (menuComboBox_s *c)
+{
+	c->generic.dynamicHeight = (c->generic.isExtended) ? c->dropHeight : 0;
+}
+
+void UI_MenuComboBox_Setup (menuComboBox_s *c)
+{
+	menuFramework_s	*menu = c->generic.parent;
+	int				i, fieldWidth, fieldHeight;
+
+	// count # of items
+	for (i=0; c->itemNames[i]; i++);
+		c->numItems = i;
+
+	// clamp curValue
+	c->curValue = min(max(c->curValue, 0), c->numItems-1);
+
+	c->items_y		= max(c->items_y, 3);		// must be at least 3 lines tall
+	c->items_y		= min(c->items_y, c->numItems);	// must not be taller than # of items
+	c->itemWidth	= min(max(c->itemWidth, 4), 100);	// must be at least 4 chars wide
+	c->itemSpacing	= max(c->itemSpacing, 0);
+	c->itemTextSize	= max (c->itemTextSize, 4);
+	c->border		= max(c->border, 0);
+
+	fieldWidth		= c->itemWidth * MENU_FONT_SIZE + LIST_SCROLLBAR_SIZE;
+	fieldHeight		= max((MENU_LINE_SIZE + c->itemSpacing*2), LIST_SCROLLBAR_CONTROL_SIZE);
+	c->dropHeight	= c->border + c->items_y * (MENU_LINE_SIZE + c->itemSpacing) - c->itemSpacing;
+
+	// set min and max coords
+	c->generic.topLeft[0] = menu->x + c->generic.x + RCOLUMN_OFFSET + c->border;
+	c->generic.topLeft[1] = menu->y + c->generic.y;
+	c->generic.botRight[0] = c->generic.topLeft[0] + fieldWidth;
+	c->generic.botRight[1] = c->generic.topLeft[1] + fieldHeight;
+	c->generic.dynamicWidth = 0;
+	c->generic.dynamicHeight = 0;
+	c->generic.isExtended = false;
+	c->generic.valueChanged = false;
+
+	c->scrollState.scrollType = SCROLL_Y; // always scrolls vertically
+	c->scrollState.scrollEnabled = (c->numItems > c->items_y);
+	c->scrollState.scrollMin = 0;
+	c->scrollState.scrollMax = max((c->numItems - c->items_y), 0);
+	c->scrollState.scrollTopLeft[0] = c->generic.topLeft[0] + fieldWidth - LIST_SCROLLBAR_SIZE;
+	c->scrollState.scrollTopLeft[1] = c->generic.botRight[1] + c->border;
+	c->scrollState.scrollBotRight[0] = c->generic.botRight[0];
+	c->scrollState.scrollBotRight[1] = c->generic.botRight[1] + c->dropHeight;
+	UI_MenuScrollBar_SetPos (&c->scrollState, c->items_y, c->numItems, c->curValue);
+
+	c->generic.flags |= QMF_NOLOOP;
+}
+
+//=========================================================
+
+char *UI_MenuListView_GetValue (menuListView_s *l)
+{
+	if (l->itemValues)
+		return va("%s", l->itemValues[l->curValue]);
+	else
+		return va("%i", l->curValue);
+}
+
+void UI_MenuListView_SetValue (menuListView_s *l)
+{
+	int	scrollUnits;
+
+	if (l->generic.cvar && strlen(l->generic.cvar) > 0)
+	{
+		if (l->itemValues)
+			l->curValue = UI_GetIndexForStringValue(l->itemValues, Cvar_VariableString(l->generic.cvar));
+		else {
+			UI_ClampCvarForControl (&l->generic);
+			l->curValue = Cvar_VariableInteger(l->generic.cvar);
+		}
+
+		if (l->scrollState.scrollType == SCROLL_X)
+			scrollUnits = (l->numItems / l->items_y) + ((l->numItems % l->items_y > 0) ? 1 : 0);
+		else // SCROLL_Y
+			scrollUnits = (l->numItems / l->items_x) + ((l->numItems % l->items_x > 0) ? 1 : 0);
+
+		if (l->scrollState.scrollType == SCROLL_X)
+			UI_MenuScrollBar_SetPos (&l->scrollState, l->items_x, scrollUnits, l->curValue/l->items_y);
+		else // SCROLL_Y
+			UI_MenuScrollBar_SetPos (&l->scrollState, l->items_y, scrollUnits, l->curValue/l->items_x);
+	}
+}
+
+void UI_MenuListView_SaveValue (menuListView_s *l)
+{
+	if (l->generic.cvar && strlen(l->generic.cvar) > 0)
+	{
+		if (l->itemValues) {
+			// Don't save to cvar if this itemvalue is the wildcard
+			if ( Q_stricmp(va("%s", l->itemValues[l->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+				Cvar_Set (l->generic.cvar, va("%s", l->itemValues[l->curValue]));
+		}
+		else
+			Cvar_SetInteger (l->generic.cvar, l->curValue);
+	}
+	l->generic.valueChanged = false;
+}
+
+qboolean UI_MenuListView_ValueChanged (menuListView_s *l)
+{
+	if (!l->generic.cvar || !strlen(l->generic.cvar))	// must have a valid cvar
+		return false;
+	if (!l->generic.cvarNoSave)	// only for cvarNoSave items
+		return false;
+
+	if (l->itemValues)
+		return ( l->curValue != UI_GetIndexForStringValue(l->itemValues, Cvar_VariableString(l->generic.cvar)) );
+	else {
+		UI_ClampCvarForControl (&l->generic);
+		return ( l->curValue != Cvar_VariableInteger(l->generic.cvar) );
+	}
+}
+
+char *UI_MenuListView_Click (menuListView_s *l, qboolean mouse2)
+{
+	int			i, j, oldCurValue, x, y, lineSize, itemWidth, itemHeight, realItemHeight;
+	int			startItem, visibleItems[2], itemIncrement[2];
+	qboolean	scrollX, foundSelected = false;
+	char		*s = ui_menu_null_sound;
+
+	// return if it's just a mouse2 click
+	if (mouse2)
+		return s;
+
+	// clicked on scroll bar
+	if ( UI_MenuScrollBar_Click(&l->scrollState, &l->generic) ) {
+		s = ui_menu_move_sound;
+	}
+	else // clicked on one of the items
+	{
+		scrollX			= (l->scrollState.scrollType == SCROLL_X);
+		lineSize		= l->itemTextSize + 2;
+		itemWidth		= l->itemWidth;
+		itemHeight		= l->itemHeight;
+		realItemHeight	= itemHeight + ((l->listViewType == LISTVIEW_TEXTIMAGE) ? lineSize : 0);
+
+		if (scrollX)
+		{
+			visibleItems[0] = l->items_x;
+			visibleItems[1] = l->items_y;
+			itemIncrement[0] = itemWidth + l->itemSpacing;
+			itemIncrement[1] = realItemHeight + l->itemSpacing;
+		}
+		else // scrollY
+		{
+			visibleItems[0] = l->items_y;
+			visibleItems[1] = l->items_x;
+			itemIncrement[0] = realItemHeight + l->itemSpacing;
+			itemIncrement[1] = itemWidth + l->itemSpacing;
+		}
+
+		startItem = l->scrollState.scrollPos*visibleItems[1];
+		for (j=0; j<visibleItems[0]; j++)
+		{
+			if (scrollX)
+				x = l->generic.topLeft[0] + j*itemIncrement[0];
+			else
+				y = l->generic.topLeft[1] + j*itemIncrement[0];
+			for (i=startItem; i<l->numItems && i<(startItem+visibleItems[1]); i++)
+			{
+				if (scrollX)
+					y = l->generic.topLeft[1] + (i-startItem)*itemIncrement[1];
+				else
+					x = l->generic.topLeft[0] + (i-startItem)*itemIncrement[1];
+
+				if ( UI_MouseOverSubItem(x, y, itemWidth, realItemHeight, l->generic.scrAlign) )
+				{
+					oldCurValue = l->curValue;
+					l->curValue = i;
+					s = ui_menu_move_sound;
+
+					if (!l->generic.cvarNoSave)
+						UI_MenuListView_SaveValue (l);
+					else
+						l->generic.valueChanged = UI_MenuListView_ValueChanged (l);
+
+					if (oldCurValue != l->curValue) {	// new subitem
+						ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 1;	// was 0
+						if (l->generic.callback)
+							l->generic.callback (l);
+					}
+
+					if ( (ui_mousecursor.buttonclicks[MOUSEBUTTON1] == 2) && l->generic.dblClkCallback )
+						l->generic.dblClkCallback (l);
+
+					foundSelected = true;
+					break;
+				}
+			}
+			startItem += visibleItems[1];
+			if (foundSelected)
+				break;
+		}
+	}
+	return s;
+}
+
+void UI_MenuListView_Draw (menuListView_s *l)
+{
+//	menuFramework_s	*menu = l->generic.parent;
+	int				i, j, x, y, lineSize, itemWidth, itemHeight, realItemHeight, boxWidth, boxHeight;
+	int				startItem, visibleItems[2], itemIncrement[2];
+	int				hc[3];
+	int				hoverAlpha, copyLen;
+	char			buf[64];
+	qboolean		img_background = (l->background && strlen(l->background) > 0);
+	qboolean		scrollX, itemPulse;
+
+	// The player setup mwnu can change the imageNames and itemNames lists,
+	// so these need to be checked to make sure they're not null.
+	if (!l->imageNames)	return;
+	if ((l->listViewType == LISTVIEW_TEXTIMAGE) && !l->itemNames)	return;
+
+	UI_TextColorHighlight (Cvar_VariableInteger("alt_text_color"), &hc[0], &hc[1], &hc[2]);
+	scrollX			= (l->scrollState.scrollType == SCROLL_X);
+	hoverAlpha		= UI_MouseOverAlpha(&l->generic);
+	lineSize		= l->itemTextSize + 2;
+	itemWidth		= l->itemWidth;
+	itemHeight		= l->itemHeight;
+	realItemHeight	= itemHeight + ((l->listViewType == LISTVIEW_TEXTIMAGE) ? lineSize : 0);
+	boxWidth		= l->generic.botRight[0] - l->generic.topLeft[0];
+	boxHeight		= l->generic.botRight[1] - l->generic.topLeft[1];
+
+	// name and header
+	UI_MenuCommon_DrawItemName (&l->generic, -(2*RCOLUMN_OFFSET+l->border), 0, 0, -(l->border + MENU_LINE_SIZE), hoverAlpha);
+
+	// border and background
+	if (l->border > 0)
+	{
+		if (l->backColor[3] == 255 || img_background) // just fill whole area for border if not trans
+			UI_DrawFill (l->generic.topLeft[0]-l->border, l->generic.topLeft[1]-l->border, boxWidth+(l->border*2), boxHeight+(l->border*2),
+							l->generic.scrAlign, true, l->borderColor[0],l->borderColor[1],l->borderColor[2],l->borderColor[3]);
+		else // have to do each side
+			UI_DrawBorder ((float)l->generic.topLeft[0], (float)l->generic.topLeft[1], (float)boxWidth, (float)boxHeight,
+							(float)l->border, l->generic.scrAlign, true, l->borderColor[0],l->borderColor[1],l->borderColor[2],l->borderColor[3]);
+	}
+	if (img_background)
+		UI_DrawTiledPic (l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight, l->generic.scrAlign, true,
+						(char *)l->background, (float)(l->backColor[3]/255.0f));
+	else
+		UI_DrawFill (l->generic.topLeft[0], l->generic.topLeft[1],
+						boxWidth, boxHeight, l->generic.scrAlign, true, l->backColor[0],l->backColor[1],l->backColor[2],l->backColor[3]);
+
+	// scrollbar
+	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight); 
+
+	// items
+	if (scrollX)
+	{
+		visibleItems[0] = l->items_x;
+		visibleItems[1] = l->items_y;
+		itemIncrement[0] = itemWidth + l->itemSpacing;
+		itemIncrement[1] = realItemHeight + l->itemSpacing;
+	}
+	else // scrollY
+	{
+		visibleItems[0] = l->items_y;
+		visibleItems[1] = l->items_x;
+		itemIncrement[0] = realItemHeight + l->itemSpacing;
+		itemIncrement[1] = itemWidth + l->itemSpacing;
+	}
+
+	startItem = l->scrollState.scrollPos*visibleItems[1];
+	for (j=0; j<visibleItems[0]; j++)
+	{
+		if (scrollX)
+			x = l->generic.topLeft[0] + j*itemIncrement[0];
+		else
+			y = l->generic.topLeft[1] + j*itemIncrement[0];
+		for (i=startItem; i<l->numItems && i<(startItem+visibleItems[1]); i++)
+		{
+			if (scrollX)
+				y = l->generic.topLeft[1] + (i-startItem)*itemIncrement[1];
+			else
+				x = l->generic.topLeft[0] + (i-startItem)*itemIncrement[1];
+
+			itemPulse = UI_MouseOverSubItem(x, y, itemWidth, realItemHeight, l->generic.scrAlign);
+
+			if (i == l->curValue)
+				UI_DrawFill (x, y, itemWidth, realItemHeight, l->generic.scrAlign, false, hc[0], hc[1], hc[2], hoverAlpha);
+			
+			if (l->underImgColor[3] > 0)
+				UI_DrawFill (x+l->itemPadding, y+l->itemPadding, itemWidth-l->itemPadding*2, itemHeight-l->itemPadding*2,
+							l->generic.scrAlign, false, l->underImgColor[0], l->underImgColor[1], l->underImgColor[2], l->underImgColor[3]);
+			if ( (l->generic.flags & QMF_COLORIMAGE) && (l->imageColors != NULL) )
+				UI_DrawColoredPic (x+l->itemPadding, y+l->itemPadding, itemWidth-l->itemPadding*2, itemHeight-l->itemPadding*2,
+							l->generic.scrAlign, false, l->imageColors[i], (char *)l->imageNames[i]);
+			else
+				UI_DrawPic (x+l->itemPadding, y+l->itemPadding, itemWidth-l->itemPadding*2, itemHeight-l->itemPadding*2,
+							l->generic.scrAlign, false, (char *)l->imageNames[i], 1.0f);	// itemPulse ? (float)hoverAlpha*DIV255 : 1.0f);
+			if ( l->listViewType == LISTVIEW_TEXTIMAGE && l->itemNames && l->itemNames[i] && strlen(l->itemNames[i]) )
+			{
+				copyLen = min((itemWidth-l->itemPadding*2)/l->itemTextSize, sizeof(buf));
+				strncpy(buf, l->itemNames[i], copyLen);
+				buf[min(copyLen, sizeof(buf)-1)] = '\0';
+				UI_DrawMenuString (x+l->itemPadding, y+realItemHeight-l->itemPadding-(lineSize-1),
+									l->itemTextSize, l->generic.scrAlign, buf, itemPulse ? hoverAlpha : 255, false, false);
+			}
+		}
+		startItem += visibleItems[1];
+	}
+}
+
+void UI_MenuListView_Setup (menuListView_s *l)
+{
+	menuFramework_s	*menu = l->generic.parent;
+	int				i, numImages=0, numColors=0, numNames=0, lineSize, realItemHeight, boxWidth, boxHeight, scrollUnits;
+
+	// count # of items
+	for (i=0; l->imageNames[i]; i++);
+		numImages = i;
+	if (l->imageColors != NULL) {
+		l->generic.flags |= QMF_COLORIMAGE;
+		for (i=0; l->imageColors[i][3] != 0; i++);
+			numColors = i;
+	}
+	if (l->itemNames != NULL) {
+		for (i=0; l->itemNames[i]; i++);
+			numNames = i;
+	}
+
+	l->numItems = numImages;
+
+	// clamp curValue
+	l->curValue = min(max(l->curValue, 0), l->numItems-1);
+
+	// check if not enough item names
+	if (l->listViewType == LISTVIEW_TEXTIMAGE && numNames < l->numItems)
+		l->listViewType = LISTVIEW_IMAGE;
+	// check if not enough image colors
+	if ( (l->generic.flags & QMF_COLORIMAGE) && (numColors < numImages) )
+		l->generic.flags &= ~QMF_COLORIMAGE;
+
+	l->scrollState.scrollType = (l->scrollDir == 0) ? SCROLL_X : SCROLL_Y;
+	l->items_x		= max(l->items_x, 1);
+	l->items_y		= max(l->items_y, 1);
+	l->itemWidth	= min(max(l->itemWidth, 16), 128);	// must be at least 16 px wide
+	l->itemHeight	= min(max(l->itemHeight, 16), 128);	// must be at least 16 px tall
+	l->itemSpacing	= max(l->itemSpacing, 0);
+	l->itemPadding	= min(max(l->itemPadding, 0), min(l->itemWidth,l->itemHeight)/3);
+	l->itemTextSize	= max (l->itemTextSize, 4);
+	l->border		= max(l->border, 0);
+
+	lineSize = l->itemTextSize + 2;
+	realItemHeight = l->itemHeight + ((l->listViewType == LISTVIEW_TEXTIMAGE) ? lineSize : 0);
+	boxWidth	= l->items_x * (l->itemWidth + l->itemSpacing)
+						+ l->itemSpacing + ((l->scrollState.scrollType == SCROLL_Y)?LIST_SCROLLBAR_SIZE:0);
+	boxHeight	= l->items_y * (realItemHeight + l->itemSpacing)
+						+ l->itemSpacing + ((l->scrollState.scrollType == SCROLL_X)?LIST_SCROLLBAR_SIZE:0);
+
+	// set min and max coords
+	l->generic.topLeft[0] = menu->x + l->generic.x + RCOLUMN_OFFSET + l->border;
+	l->generic.topLeft[1] = menu->y + l->generic.y;
+	l->generic.botRight[0] = l->generic.topLeft[0] + boxWidth;
+	l->generic.botRight[1] = l->generic.topLeft[1] + boxHeight;
+	l->generic.dynamicWidth = 0;
+	l->generic.dynamicHeight = 0;
+	l->generic.isExtended = false;
+	l->generic.valueChanged = false;
+
+	if (l->scrollState.scrollType == SCROLL_X)
+		scrollUnits = (l->numItems / l->items_y) + ((l->numItems % l->items_y > 0) ? 1 : 0);
+	else // SCROLL_Y
+		scrollUnits = (l->numItems / l->items_x) + ((l->numItems % l->items_x > 0) ? 1 : 0);
+
+	l->scrollState.scrollEnabled = (l->scrollState.scrollType == SCROLL_X) ? (scrollUnits > l->items_x) : (scrollUnits > l->items_y);
+	l->scrollState.scrollMin = 0;
+	l->scrollState.scrollMax = max( ((l->scrollState.scrollType == SCROLL_X) ? (scrollUnits - l->items_x) : (scrollUnits - l->items_y)), 0);
+
+	if (l->scrollState.scrollType == SCROLL_X)
+		UI_MenuScrollBar_SetPos (&l->scrollState, l->items_x, scrollUnits, l->curValue/l->items_y);
+	else // SCROLL_Y
+		UI_MenuScrollBar_SetPos (&l->scrollState, l->items_y, scrollUnits, l->curValue/l->items_x);
+
+	l->scrollState.scrollTopLeft[0] = l->generic.topLeft[0] + ((l->scrollState.scrollType == SCROLL_Y) ? (boxWidth - LIST_SCROLLBAR_SIZE) : 0);
+	l->scrollState.scrollTopLeft[1] = l->generic.topLeft[1] + ((l->scrollState.scrollType == SCROLL_X) ? (boxHeight - LIST_SCROLLBAR_SIZE) : 0);
+	l->scrollState.scrollBotRight[0] = l->generic.botRight[0];
+	l->scrollState.scrollBotRight[1] = l->generic.botRight[1];
+
+	l->generic.flags |= QMF_MOUSEONLY;
 }
 
 //=========================================================
@@ -1777,7 +3498,7 @@ char *UI_GetMenuItemValue (void *item)
 	case MTYPE_PICKER:
 		return UI_MenuPicker_GetValue ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_CHECKBOX:
+	case MTYPE_CHECKBOX:
 		return UI_MenuCheckBox_GetValue ((menuCheckBox_s *)item);
 		break;
 	case MTYPE_LISTBOX:
@@ -1788,7 +3509,7 @@ char *UI_GetMenuItemValue (void *item)
 		break;
 	case MTYPE_LISTVIEW:
 		return UI_MenuListView_GetValue ((menuListView_s *)item);
-		break; */
+		break;
 	default:
 		return "";
 	}
@@ -1817,7 +3538,7 @@ void UI_SetMenuItemValue (void *item)
 	case MTYPE_PICKER:
 		UI_MenuPicker_SetValue ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_CHECKBOX:
+	case MTYPE_CHECKBOX:
 		UI_MenuCheckBox_SetValue ((menuCheckBox_s *)item);
 		break;
 	case MTYPE_LISTBOX:
@@ -1828,7 +3549,7 @@ void UI_SetMenuItemValue (void *item)
 		break;
 	case MTYPE_LISTVIEW:
 		UI_MenuListView_SetValue ((menuListView_s *)item);
-		break; */
+		break;
 	default:
 		break;
 	}
@@ -1856,7 +3577,7 @@ void UI_SaveMenuItemValue (void *item)
 	case MTYPE_PICKER:
 		UI_MenuPicker_SaveValue ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_CHECKBOX:
+	case MTYPE_CHECKBOX:
 		UI_MenuCheckBox_SaveValue ((menuCheckBox_s *)item);
 		break;
 	case MTYPE_LISTBOX:
@@ -1867,7 +3588,7 @@ void UI_SaveMenuItemValue (void *item)
 		break;
 	case MTYPE_LISTVIEW:
 		UI_MenuListView_SaveValue ((menuListView_s *)item);
-		break; */
+		break;
 	default:
 		break;
 	}
@@ -1896,9 +3617,9 @@ void UI_DrawMenuItem (void *item)
 	case MTYPE_KEYBIND:
 		UI_MenuKeyBind_Draw ((menuKeyBind_s *)item);
 		break;
-/*	case MTYPE_KEYBINDLIST:
+	case MTYPE_KEYBINDLIST:
 		UI_MenuKeyBindList_Draw ((menuKeyBindList_s *)item);
-		break; */
+		break;
 	case MTYPE_FIELD:
 		UI_MenuField_Draw ((menuField_s *)item);
 		break;
@@ -1908,9 +3629,9 @@ void UI_DrawMenuItem (void *item)
 	case MTYPE_PICKER:
 		UI_MenuPicker_Draw ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_CHECKBOX:
+	case MTYPE_CHECKBOX:
 		UI_MenuCheckBox_Draw ((menuCheckBox_s *)item);
-		break; */
+		break;
 	case MTYPE_LABEL:
 		UI_MenuLabel_Draw ((menuLabel_s *)item);
 		break;
@@ -1923,7 +3644,7 @@ void UI_DrawMenuItem (void *item)
 	case MTYPE_RECTANGLE:
 		UI_MenuRectangle_Draw ((menuRectangle_s *)item);
 		break;
-/*	case MTYPE_LISTBOX:
+	case MTYPE_LISTBOX:
 		UI_MenuListBox_Draw ((menuListBox_s *)item);
 		break;
 	case MTYPE_COMBOBOX:
@@ -1931,7 +3652,7 @@ void UI_DrawMenuItem (void *item)
 		break;
 	case MTYPE_LISTVIEW:
 		UI_MenuListView_Draw ((menuListView_s *)item);
-		break; */
+		break;
 	case MTYPE_TEXTSCROLL:
 		UI_MenuTextScroll_Draw ((menuTextScroll_s *)item);
 		break;
@@ -1959,9 +3680,9 @@ void UI_DrawMenuItemExtension (void *item)
 
 	switch ( ((menuCommon_s *)item)->type )
 	{
-/*	case MTYPE_COMBOBOX:
+	case MTYPE_COMBOBOX:
 		UI_MenuComboBox_DrawExtension ((menuComboBox_s *)item);
-		break; */
+		break;
 	default:
 		break;
 	}
@@ -1986,9 +3707,9 @@ void UI_SetMenuItemDynamicSize (void *item)
 	case MTYPE_PICKER:
 		UI_MenuPicker_SetDynamicSize ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_COMBOBOX:
+	case MTYPE_COMBOBOX:
 		UI_MenuComboBox_SetDynamicSize ((menuComboBox_s *)item);
-		break; */
+		break;
 	default:
 		break;
 	}
@@ -2011,24 +3732,24 @@ int UI_GetItemMouseoverType (void *item)
 		case MTYPE_ACTION:
 		case MTYPE_KEYBIND:
 			return MENUITEM_ACTION;
-	/*	case MTYPE_KEYBINDLIST:
-			return MENUITEM_KEYBINDLIST; */
+		case MTYPE_KEYBINDLIST:
+			return MENUITEM_KEYBINDLIST;
 		case MTYPE_SLIDER:
 			return MENUITEM_SLIDER;
 		case MTYPE_PICKER:
 			return MENUITEM_PICKER;
-	/*	case MTYPE_CHECKBOX:
-			return MENUITEM_CHECKBOX; */
+		case MTYPE_CHECKBOX:
+			return MENUITEM_CHECKBOX;
 		case MTYPE_FIELD:
 			return MENUITEM_TEXT;
 		case MTYPE_BUTTON:
 			return MENUITEM_BUTTON;
-	/*	case MTYPE_LISTBOX:
+		case MTYPE_LISTBOX:
 			return MENUITEM_LISTBOX;
 		case MTYPE_COMBOBOX:
 			return MENUITEM_COMBOBOX;
 		case MTYPE_LISTVIEW:
-			return MENUITEM_LISTVIEW; */
+			return MENUITEM_LISTVIEW;
 		default:
 			return MENUITEM_NONE;
 	}
@@ -2045,12 +3766,12 @@ char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 {
 	char *s;
 
-/*	if ( UI_MouseOverScrollKnob(item) && !mouse2 )
+	if ( UI_MouseOverScrollKnob(item) && !mouse2 )
 	{
 	//	Com_Printf ("Dragging scroll bar\n");
 		UI_ClickItemScrollBar (item);
 		return ui_menu_drag_sound;
-	} */
+	}
 
 	if (item)
 	{
@@ -2062,9 +3783,9 @@ char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 		case MTYPE_KEYBIND:
 			s = UI_MenuKeyBind_Click ( (menuKeyBind_s *)item, mouse2 );
 			break;
-	/*	case MTYPE_KEYBINDLIST:
+		case MTYPE_KEYBINDLIST:
 			s = UI_MenuKeyBindList_Click ( (menuKeyBindList_s *)item, mouse2 );
-			break; */
+			break;
 		case MTYPE_SLIDER:
 			s = UI_MenuSlider_Click ( (menuSlider_s *)item, mouse2 );
 			break;
@@ -2074,13 +3795,13 @@ char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 		case MTYPE_FIELD:
 			s = UI_MenuField_Click ( (menuField_s *)item, mouse2 );
 			break;
-	/*	case MTYPE_CHECKBOX:
+		case MTYPE_CHECKBOX:
 			s = UI_MenuCheckBox_Click ( (menuCheckBox_s *)item, mouse2 );
-			break; */
+			break;
 		case MTYPE_BUTTON:
 			s = UI_MenuButton_Click ( (menuButton_s *)item, mouse2 );
 			break;
-	/*	case MTYPE_LISTBOX:
+		case MTYPE_LISTBOX:
 			s = UI_MenuListBox_Click ( (menuListBox_s *)item, mouse2 );
 			break;
 		case MTYPE_COMBOBOX:
@@ -2088,7 +3809,7 @@ char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 			break;
 		case MTYPE_LISTVIEW:
 			s = UI_MenuListView_Click ( (menuListView_s *)item, mouse2 );
-			break; */
+			break;
 		default:
 			s = ui_menu_null_sound;
 			break;
@@ -2124,9 +3845,9 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 		case MTYPE_KEYBIND:
 			UI_MenuKeyBind_DoEnter ((menuKeyBind_s *)item);
 			return true;
-	/*	case MTYPE_KEYBINDLIST:
+		case MTYPE_KEYBINDLIST:
 			UI_MenuKeyBindList_DoEnter ( (menuKeyBindList_s *)item );
-			return true; */
+			return true;
 		case MTYPE_FIELD:
 			return UI_MenuField_DoEnter ((menuField_s *)item) ;
 		case MTYPE_PICKER:
@@ -2135,12 +3856,12 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 		case MTYPE_BUTTON:
 			UI_MenuButton_DoEnter ((menuButton_s *)item);
 			break;
-	/*	case MTYPE_CHECKBOX:
+		case MTYPE_CHECKBOX:
 			UI_MenuCheckBox_DoEnter ( (menuCheckBox_s *)item );
 			return false;
 		case MTYPE_LISTBOX:
 			UI_MenuListBox_DoEnter ( (menuListBox_s *)item );
-			return true; */
+			return true;
 		default:
 			break;
 		}
@@ -2166,16 +3887,16 @@ char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 	{
 		switch (item->type)
 		{
-	/*	case MTYPE_KEYBINDLIST:
+		case MTYPE_KEYBINDLIST:
 			UI_MenuKeyBindList_DoSlide ((menuKeyBindList_s *)item, dir);
-			return ui_menu_null_sound; */
+			return ui_menu_null_sound;
 		case MTYPE_SLIDER:
 			UI_MenuSlider_DoSlide ((menuSlider_s *) item, dir);
 			return ui_menu_null_sound;
 		case MTYPE_PICKER:
 			UI_MenuPicker_DoSlide ((menuPicker_s *) item, dir);
 			return ui_menu_move_sound;
-	/*	case MTYPE_CHECKBOX:
+		case MTYPE_CHECKBOX:
 			UI_MenuCheckBox_DoSlide ((menuCheckBox_s *)item, dir);
 			return ui_menu_move_sound;
 		case MTYPE_LISTBOX:
@@ -2183,13 +3904,13 @@ char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 			return ui_menu_move_sound;
 		case MTYPE_COMBOBOX:
 			UI_MenuComboBox_DoSlide ((menuComboBox_s *)item, dir);
-			return ui_menu_move_sound; */
+			return ui_menu_move_sound;
 		}
 	}
 	return ui_menu_null_sound;
 }
 
-#if 0
+#if 1
 /*
 =================
 UI_ScrollMenuItem
@@ -2208,14 +3929,14 @@ qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir)
 
 	switch (item->type)
 	{
-/*	case MTYPE_KEYBINDLIST:
+	case MTYPE_KEYBINDLIST:
 		return UI_MenuScrollBar_Increment (&((menuKeyBindList_s *)item)->scrollState, dir);
 	case MTYPE_LISTBOX:
 		return UI_MenuScrollBar_Increment (&((menuListBox_s *)item)->scrollState, dir);
 	case MTYPE_COMBOBOX:
 		return UI_MenuScrollBar_Increment (&((menuComboBox_s *)item)->scrollState, dir);
 	case MTYPE_LISTVIEW:
-		return UI_MenuScrollBar_Increment (&((menuListView_s *)item)->scrollState, dir); */
+		return UI_MenuScrollBar_Increment (&((menuListView_s *)item)->scrollState, dir);
 	default:
 		return false;
 	}
@@ -2251,18 +3972,18 @@ void UI_InitMenuItem (void *item)
 	case MTYPE_KEYBIND:
 		UI_MenuKeyBind_Setup ((menuKeyBind_s *)item);
 		break;
-/*	case MTYPE_KEYBINDLIST:
+	case MTYPE_KEYBINDLIST:
 		UI_MenuKeyBindList_Setup ((menuKeyBindList_s *)item);
-		break; */
+		break;
 	case MTYPE_SLIDER:
 		UI_MenuSlider_Setup ((menuSlider_s *)item);
 		break;
 	case MTYPE_PICKER:
 		UI_MenuPicker_Setup ((menuPicker_s *)item);
 		break;
-/*	case MTYPE_CHECKBOX:
+	case MTYPE_CHECKBOX:
 		UI_MenuCheckBox_Setup ((menuCheckBox_s *)item);
-		break; */
+		break;
 	case MTYPE_LABEL:
 		UI_MenuLabel_Setup ((menuLabel_s *)item);
 		break;
@@ -2278,7 +3999,7 @@ void UI_InitMenuItem (void *item)
 	case MTYPE_RECTANGLE:
 		UI_MenuRectangle_Setup ((menuRectangle_s *)item);
 		break;
-/*	case MTYPE_LISTBOX:
+	case MTYPE_LISTBOX:
 		UI_MenuListBox_Setup ((menuListBox_s *)item);
 		break;
 	case MTYPE_COMBOBOX:
@@ -2286,7 +4007,7 @@ void UI_InitMenuItem (void *item)
 		break;
 	case MTYPE_LISTVIEW:
 		UI_MenuListView_Setup ((menuListView_s *)item);
-		break; */
+		break;
 	case MTYPE_TEXTSCROLL:
 		UI_MenuTextScroll_Setup ((menuTextScroll_s *)item);
 		break;

@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_LISTVIEW	// enable to use new listView control
+
 /*
 =============================================================================
 
@@ -37,24 +39,32 @@ extern menuFramework_s	s_multiplayer_menu;
 static menuFramework_s	s_player_config_menu;
 static menuImage_s		s_playerconfig_banner;
 static menuField_s		s_playerconfig_name_field;
+
+static menuLabel_s		s_playerconfig_model_title;
 static menuPicker_s		s_playerconfig_model_box;
+
+static menuLabel_s		s_playerconfig_skin_title;
 static menuPicker_s		s_playerconfig_skin_box;
+
+static menuLabel_s		s_playerconfig_hand_title;
 static menuPicker_s		s_playerconfig_handedness_box;
+
+static menuLabel_s		s_playerconfig_rate_title;
 static menuPicker_s		s_playerconfig_rate_box;
+
+static menuLabel_s		s_playerconfig_railcolor_title;
 static menuRectangle_s	s_playerconfig_railcolor_background;
 static menuImage_s		s_playerconfig_railcolor_display[2];
 static menuSlider_s		s_playerconfig_railcolor_slider[3];
-static menuLabel_s		s_playerconfig_skin_title;
-static menuLabel_s		s_playerconfig_model_title;
-static menuLabel_s		s_playerconfig_hand_title;
-static menuLabel_s		s_playerconfig_rate_title;
-static menuLabel_s		s_playerconfig_railcolor_title;
+
+#ifdef USE_LISTVIEW
+static menuListView_s	s_playerconfig_skin_display;
+#endif	// USE_LISTVIEW
+
 static menuAction_s		s_playerconfig_back_action;
 static menuModelView_s	s_playerconfig_model_display;
 
 //=======================================================================
-
-#define	NUM_SKINBOX_ITEMS 7
 
 static void Menu_LoadPlayerRailColor (void)
 {
@@ -108,9 +118,18 @@ static void Menu_PlayerModelCallback (void *unused)
 	mNum = s_playerconfig_model_box.curValue;
 	s_playerconfig_skin_box.itemNames = ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_box.curValue = 0;
+	UI_InitMenuItem (&s_playerconfig_skin_box);
+#ifdef USE_LISTVIEW
+	s_playerconfig_skin_display.itemNames = ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_display.imageNames = ui_pmi[mNum].skinIconNames;
+	s_playerconfig_skin_display.curValue = 0;
+	UI_InitMenuItem (&s_playerconfig_skin_display);
+#endif	// USE_LISTVIEW
 	sNum = s_playerconfig_skin_box.curValue;
-
 	UI_UpdatePlayerModelInfo (mNum, sNum);
+
+	// update player model display
+	UI_InitMenuItem (&s_playerconfig_model_display);
 }
 
 
@@ -120,10 +139,30 @@ static void Menu_PlayerSkinCallback (void *unused)
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
-
+#ifdef USE_LISTVIEW
+	s_playerconfig_skin_display.curValue = sNum;
+	UI_InitMenuItem (&s_playerconfig_skin_display);
+#endif	// USE_LISTVIEW
 	UI_UpdatePlayerSkinInfo (mNum, sNum);
+
+	// update player model display
+	UI_InitMenuItem (&s_playerconfig_model_display);
 }
 
+#ifdef USE_LISTVIEW
+static void Menu_PlayerSkinViewCallback (void *unused)
+{
+	int		mNum, sNum;
+
+	mNum = s_playerconfig_model_box.curValue;
+	sNum = s_playerconfig_skin_display.curValue;
+	s_playerconfig_skin_box.curValue = sNum;
+	UI_UpdatePlayerSkinInfo (mNum, sNum);
+
+	// update player model display
+	UI_InitMenuItem (&s_playerconfig_model_display);
+}
+#endif	// USE_LISTVIEW
 
 static void Menu_PlayerHandednessCallback (void *unused)
 {
@@ -193,7 +232,11 @@ void Menu_PlayerConfig_Init (void)
 	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
 	s_player_config_menu.nitems				= 0;
 	s_player_config_menu.isPopup			= false;
-	s_player_config_menu.drawFunc			= UI_MenuPlayerConfig_Draw;	// UI_DefaultMenuDraw
+#ifdef USE_LISTVIEW
+	s_player_config_menu.drawFunc			= UI_DefaultMenuDraw;
+#else	// USE_LISTVIEW
+	s_player_config_menu.drawFunc			= UI_MenuPlayerConfig_Draw;
+#endif	// USE_LISTVIEW
 	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
 	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
 	s_player_config_menu.cantOpenMessage	= "No valid player models found";
@@ -250,11 +293,11 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_box.generic.x				= x + -8*MENU_FONT_SIZE;
 	s_playerconfig_skin_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_skin_box.generic.name			= 0;
-	s_playerconfig_skin_box.generic.callback		= Menu_PlayerSkinCallback; // Knightmare added, was 0
+	s_playerconfig_skin_box.generic.callback		= Menu_PlayerSkinCallback;
 	s_playerconfig_skin_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
 	s_playerconfig_skin_box.curValue				= sNum;
 	s_playerconfig_skin_box.itemNames				= ui_pmi[mNum].skinDisplayNames;
-	s_playerconfig_skin_box.generic.flags			|= QMF_SKINLIST;
+	s_playerconfig_skin_box.generic.flags			|= QMF_NOLOOP;
 	
 	s_playerconfig_hand_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_hand_title.generic.textSize	= MENU_FONT_SIZE;
@@ -396,6 +439,37 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[2].generic.cvarMax		= 256;
 	s_playerconfig_railcolor_slider[2].generic.statusbar	= "changes player's railgun particle effect blue component";
 
+#ifdef USE_LISTVIEW
+	s_playerconfig_skin_display.generic.type		= MTYPE_LISTVIEW;
+//	s_playerconfig_skin_display.generic.header		= "skin";
+	s_playerconfig_skin_display.generic.x			= SCREEN_WIDTH*0.5 - 24;
+	s_playerconfig_skin_display.generic.y			= SCREEN_HEIGHT - 110;
+	s_playerconfig_skin_display.generic.name		= 0;
+	s_playerconfig_skin_display.listViewType		= LISTVIEW_IMAGE;
+	s_playerconfig_skin_display.items_x				= 7;
+	s_playerconfig_skin_display.items_y				= 1;
+	s_playerconfig_skin_display.scrollDir			= 0;
+	s_playerconfig_skin_display.itemWidth			= 36;
+	s_playerconfig_skin_display.itemHeight			= 36;
+	s_playerconfig_skin_display.itemSpacing			= 0;
+	s_playerconfig_skin_display.itemPadding			= 2;
+	s_playerconfig_skin_display.itemTextSize		= 4;
+	s_playerconfig_skin_display.border				= 1;
+	s_playerconfig_skin_display.borderColor[0]		= 0;
+	s_playerconfig_skin_display.borderColor[1]		= 0;
+	s_playerconfig_skin_display.borderColor[2]		= 0;
+	s_playerconfig_skin_display.borderColor[3]		= 255;
+	s_playerconfig_skin_display.backColor[0]		= 0;
+	s_playerconfig_skin_display.backColor[1]		= 0;
+	s_playerconfig_skin_display.backColor[2]		= 0;
+	s_playerconfig_skin_display.backColor[3]		= 255;
+	s_playerconfig_skin_display.background			= "/gfx/ui/widgets/listbox_background.pcx";
+	s_playerconfig_skin_display.curValue			= sNum;
+	s_playerconfig_skin_display.itemNames			= ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_display.imageNames			= ui_pmi[mNum].skinIconNames;
+	s_playerconfig_skin_display.generic.callback	= Menu_PlayerSkinViewCallback;
+#endif	// USE_LISTVIEW
+
 	s_playerconfig_back_action.generic.type			= MTYPE_ACTION;
 	s_playerconfig_back_action.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_back_action.generic.name			= "Back to Multiplayer";
@@ -448,6 +522,9 @@ void Menu_PlayerConfig_Init (void)
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[0]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[1]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[2]);
+#ifdef USE_LISTVIEW
+	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_skin_display);
+#endif	// USE_LISTVIEW
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_back_action);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_display);
 
@@ -457,6 +534,8 @@ void Menu_PlayerConfig_Init (void)
 
 //=======================================================================
 
+#ifndef USE_LISTVIEW
+#define	NUM_SKINBOX_ITEMS 7
 qboolean Menu_PlayerConfig_CheckIncrement (int dir, float x, float y, float w, float h)
 {
 	float min[2], max[2], x1, y1, w1, h1;
@@ -617,7 +696,7 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 			ui_pmi[s_playerconfig_model_box.curValue].skinDisplayNames[i] );
 
 		if (i == s_playerconfig_skin_box.curValue)
-			UI_DrawFill (icon_x + icon_offset-1, icon_y-1, 34, 34, ALIGN_CENTER, false, color[0], color[1] ,color[2], 255);
+			UI_DrawFill (icon_x + icon_offset-1, icon_y-1, 34, 34, ALIGN_CENTER, false, color[0], color[1], color[2], 255);
 		UI_DrawPic (icon_x + icon_offset, icon_y, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
 		icon_offset += 34;
 	}
@@ -637,9 +716,11 @@ void Menu_PlayerConfig_DrawSkinSelection (void)
 	UI_DrawPicST (icon_x+icon_offset+5, icon_y+2, 32, 32, arrowTemp[1], ALIGN_CENTER, false, arrowColor, UI_ARROWS_PIC);
 //	UI_DrawPic (icon_x+icon_offset+5, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
 }
+#endif	// USE_LISTVIEW
 
 //=======================================================================
 
+#ifndef USE_LISTVIEW
 void UI_MenuPlayerConfig_Draw (menuFramework_s *menu)
 {
 	UI_AdjustMenuCursor (&s_player_config_menu, 1);
@@ -648,6 +729,7 @@ void UI_MenuPlayerConfig_Draw (menuFramework_s *menu)
 	// skin selection preview
 	Menu_PlayerConfig_DrawSkinSelection ();
 }
+#endif	// USE_LISTVIEW
 
 
 void Menu_PlayerConfig_f (void)

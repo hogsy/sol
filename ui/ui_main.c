@@ -235,8 +235,8 @@ void UI_Precache (void)
 
 	// GUI elements
 	R_DrawFindPic ("/gfx/ui/widgets/listbox_background.pcx");
-//	R_DrawFindPic (UI_CHECKBOX_ON_PIC);
-//	R_DrawFindPic (UI_CHECKBOX_OFF_PIC);
+	R_DrawFindPic (UI_CHECKBOX_ON_PIC);
+	R_DrawFindPic (UI_CHECKBOX_OFF_PIC);
 	R_DrawFindPic (UI_FIELD_PIC);
 	R_DrawFindPic (UI_TEXTBOX_PIC);
 	R_DrawFindPic (UI_SLIDER_PIC);
@@ -282,7 +282,7 @@ void UI_Init (void)
 	UI_LoadFontNames ();	// load font list
 //	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
-//	UI_LoadKeyBindList ();	// load key bind list
+	UI_LoadKeyBindList ();	// load key bind list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList();		// load map list
 	UI_LoadPlayerModels (); // load player models
@@ -335,7 +335,7 @@ void UI_Shutdown (void)
 	UI_FreeFontNames ();
 //	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
-//	UI_FreeKeyBindList ();
+	UI_FreeKeyBindList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
@@ -387,7 +387,7 @@ void UI_RefreshData (void)
 	UI_FreeFontNames ();
 //	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
-//	UI_FreeKeyBindList ();
+	UI_FreeKeyBindList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
@@ -396,7 +396,7 @@ void UI_RefreshData (void)
 	UI_LoadFontNames ();	// load font list
 //	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
-//	UI_LoadKeyBindList ();	// load key bind list
+	UI_LoadKeyBindList ();	// load key bind list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList ();		// load map list
 	UI_LoadPlayerModels (); // load player models
