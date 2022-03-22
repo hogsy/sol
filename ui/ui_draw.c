@@ -52,58 +52,6 @@ void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *st
 	UI_DrawString (x, y, size, align, newstring, FONT_UI, alpha);
 }
 
-#if 0
-/*
-=============
-UI_DrawString
-=============
-*/
-void UI_DrawString (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha)
-{
-	SCR_DrawString (x, y, size, align, string, font, alpha);
-}
-
-
-/*
-=============
-UI_DrawStringDark
-=============
-*/
-void UI_DrawStringDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha)
-{
-	char	newstring[1024];
-
-	Com_sprintf (newstring, sizeof(newstring), S_COLOR_ALT"%s", string);
-	SCR_DrawString (x, y, size, align, newstring, font, alpha);
-}
-
-
-/*
-=============
-UI_DrawStringR2L
-=============
-*/
-void UI_DrawStringR2L (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha)
-{
-	x -= stringLen(string)*size;	// MENU_FONT_SIZE
-	SCR_DrawString (x, y, size, align, string, font, alpha);
-}
-
-
-/*
-=============
-UI_DrawStringR2LDark
-=============
-*/
-void UI_DrawStringR2LDark (int x, int y, int size, scralign_t align, const char *string, fontslot_t font, int alpha)
-{
-	char	newstring[1024];
-
-	Com_sprintf (newstring, sizeof(newstring), S_COLOR_ALT"%s", string);
-	x -= stringLen(string)*size;	// MENU_FONT_SIZE
-	SCR_DrawString (x, y, size, align, newstring, font, alpha);
-}
-#endif
 
 /*
 =============
@@ -122,6 +70,16 @@ void UI_DrawMenuStatusBar (const char *string)
 	}
 	else
 		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, MENU_FONT_SIZE+4, ALIGN_BOTTOM_STRETCH, false, 0,0,0,255 );	// go 1 pixel past screen bottom to prevent gap from scaling
+}
+
+
+/*
+==========================
+UI_DrawMenuNullCursor
+==========================
+*/
+void UI_DrawMenuNullCursor (void *self)
+{
 }
 
 

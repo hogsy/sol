@@ -50,25 +50,25 @@ static menuAction_s		s_game_back_action;
 static void EasyGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "0");
-	UIStartSPGame ();
+	UI_StartSPGame ();
 }
 
 static void MediumGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "1");
-	UIStartSPGame ();
+	UI_StartSPGame ();
 }
 
 static void HardGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "2");
-	UIStartSPGame ();
+	UI_StartSPGame ();
 }
 
 static void NitemareGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "3");
-	UIStartSPGame ();
+	UI_StartSPGame ();
 }
 
 static void LoadGameFunc (void *unused)

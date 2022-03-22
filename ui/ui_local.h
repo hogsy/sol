@@ -131,7 +131,7 @@ typedef struct
 
 	menuFramework_s			*parent;
 	int						cursor_offset;
-	int						localdata[4];
+//	int						localdata[4];
 	int						textSize;
 	unsigned				flags;
 
@@ -176,13 +176,10 @@ typedef struct
 {
 	menuCommon_s	generic;
 
-	// Knightmare added
 	unsigned int	maxPos;
 	int				curPos;
 	float			baseValue;
 	float			increment;
-	// end Knightmare
-
 	float			range;
 	float			barTopLeft[2];		// for checking if cursor is directly on slider
 //	float			barBotRight[2];
@@ -193,13 +190,13 @@ typedef struct
 {
 	menuCommon_s	generic;
 
-	qboolean		invertValue;	// Knightmare added
+	qboolean		invertValue;
 	int				curValue;
 	int				bitFlag;		// for dmflags bit toggle
 	const int		*bitFlags;
 
 	const char		**itemNames;
-	const char		**itemValues;	// Knightmare added
+	const char		**itemValues;
 	int				numItems;
 } menuPicker_s;
 
@@ -503,24 +500,9 @@ typedef struct
 	struct image_s	*skin[MODELVIEW_MAX_MODELS];
 } menuModelView_s;
 
-typedef struct
-{
-	float	min[2];
-	float	max[2];
-	int		index;
-} buttonmenuobject_t;
-
-typedef struct
-{
-	int		min[2];
-	int		max[2];
-	void	(*OpenMenu)(void);
-} mainmenuobject_t;
-
 //=======================================================
 
 // Knightmare- added Psychospaz's menu cursor
-//cursor - psychospaz
 #define MENU_CURSOR_BUTTON_MAX 2
 
 #define MENUITEM_NONE			0
@@ -598,17 +580,17 @@ extern keyBindListHandle_t ui_customKeyBindList;
 
 //=======================================================
 
-#define	UI_MAX_SAVEGAMES	25 // was 15, 25
+#define	UI_MAX_SAVEGAMES	257 // increased from 15, 21
 #define	EMPTY_GAME_STRING	"<EMPTY>"
 
 extern char *ui_savegame_names[UI_MAX_SAVEGAMES];
 extern char	*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
-extern char		ui_savestrings[UI_MAX_SAVEGAMES][64];
+extern char	ui_savestrings[UI_MAX_SAVEGAMES][64];
 
 //=======================================================
 
 #define UI_MAX_LOCAL_SERVERS 12
-#define UI_LOCAL_SERVER_NAMELEN 80
+#define UI_LOCAL_SERVER_NAMELEN 64	// was 80
 #define	NO_SERVER_STRING	"<no server>"
 
 extern int		ui_num_servers;
@@ -665,10 +647,6 @@ extern playermodelinfo_s ui_pmi[MAX_PLAYERMODELS];
 extern char *ui_pmnames[MAX_PLAYERMODELS];
 extern int ui_numplayermodels;
 
-extern struct model_s *ui_playermodel;
-extern struct model_s *ui_weaponmodel;
-extern struct image_s *ui_playerskin;
-
 extern char	ui_playerconfig_playermodelname[MAX_QPATH];
 extern char	ui_playerconfig_playerskinname[MAX_QPATH];
 extern char	ui_playerconfig_weaponmodelname[MAX_QPATH];
@@ -683,7 +661,6 @@ extern int ui_numplayercolors;
 void UI_TextColor (int colornum, qboolean scrollbar, int *red, int *green, int *blue);
 void UI_TextColorHighlight (int colornum, int *red, int *green, int *blue);
 qboolean UI_IsValidImageFilename (char *name);
-void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax);
 void UI_ClampCvarForControl (menuCommon_s *item);
 int UI_GetCurValueForControl (menuCommon_s *item);
 int	UI_GetIndexForStringValue (const char **item_values, char *value);
@@ -696,7 +673,7 @@ void UI_SetMenuStatusBar (menuFramework_s *s, const char *string);
 void UI_SetMenuCurrentItemStatusBar (menuFramework_s *m, const char *string);
 int	 UI_TallyMenuSlots (menuFramework_s *menu);
 
-void UIStartSPGame (void);
+void UI_StartSPGame (void);
 void UI_StartServer (char *startmap, qboolean dedicated);
 void UI_LoadMod (char *modName);
 
@@ -754,11 +731,6 @@ qboolean UI_HaveValidPlayerModels (void *unused);
 //
 // ui_widgets.c
 //
-extern	vec4_t stCoord_arrow_left;
-extern	vec4_t stCoord_arrow_right;
-extern	vec4_t stCoord_arrow_up;
-extern	vec4_t stCoord_arrow_down;
-
 qboolean UI_MenuField_Key (menuField_s *field, int key);
 const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
@@ -804,8 +776,6 @@ extern menulayer_t	ui_layers[MAX_MENU_DEPTH];
 extern int			ui_menudepth;
 extern menulayer_t	ui_menuState;
 
-void UI_AddButton (buttonmenuobject_t *thisObj, int index, float x, float y, float w, float h);
-void UI_AddMainButton (mainmenuobject_t *thisObj, int index, int x, int y, char *name);
 void UI_PushMenu (menuFramework_s *menu);
 void UI_ForceMenuOff (void);
 void UI_PopMenu (void);
@@ -854,20 +824,24 @@ void UI_RefreshData (void);
 #define UI_DrawPicST(x, y, w, h, st, a, r, c,  p)		SCR_DrawOffsetPicST(x, y, w, h, vec2_origin, st, a, r, c, p)
 #define UI_DrawOffsetPicST								SCR_DrawOffsetPicST
 #define UI_DrawTiledPic									SCR_DrawTiledPic
-#define UI_DrawChar(x, y, s, t, n, r, g, b, a, i, l)	SCR_DrawChar(x, y, s, t, n, FONT_UI, r, g, b, a, i, l)
+#define UI_DrawChar(x, y, s, t, n, r, g, b, a, i, l)	SCR_DrawSizedChar(x, y, s, t, n, FONT_UI, r, g, b, a, i, l)
 #define UI_DrawString									SCR_DrawString
 
 void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *string, int alpha, qboolean R2L, qboolean altColor);
 void UI_DrawMenuStatusBar (const char *string);
+void UI_DrawMenuNullCursor (void *self);
 void UI_DrawMenuTextBox (int x, int y, int width, int lines);
 void UI_DrawPopupMessage (char *message);
 void UI_Draw_Cursor (void);
 
 //
-// ui_main.c
+// menu_main.c
 //
 #define NUM_MAINMENU_CURSOR_FRAMES 15
 
+//
+// Global
+//
 #define MOUSEBUTTON1 0
 #define MOUSEBUTTON2 1
 
@@ -875,6 +849,7 @@ void UI_Draw_Cursor (void);
 #define UI_BACKGROUND_NAME	"/gfx/ui/menu_background.pcx"
 #define UI_NOSCREEN_NAME	"/gfx/ui/noscreen.pcx"
 
+// old mouse cursors, no longer used
 #define UI_MOUSECURSOR_MAIN_PIC		"/gfx/ui/cursors/m_cur_main.pcx"
 #define UI_MOUSECURSOR_HOVER_PIC	"/gfx/ui/cursors/m_cur_hover.pcx"
 #define UI_MOUSECURSOR_CLICK_PIC	"/gfx/ui/cursors/m_cur_click.pcx"
@@ -898,8 +873,8 @@ void UI_Draw_Cursor (void);
 #define UI_APPLYCHANGES_MESSAGE2	"Continue?"
 
 #define UI_ITEMVALUE_WILDCARD		"???"
-#define	UI_CUSTOMCOLOR_PIC			"/gfx/ui/custom_color.pcx"
-#define	UI_SOLIDWHITE_PIC			"/gfx/ui/solidwhite.pcx"
+#define	UI_CUSTOMCOLOR_PIC			"/gfx/ui/misc/custom_color.pcx"
+#define	UI_SOLIDWHITE_PIC			"/gfx/ui/misc/solidwhite.pcx"
 #define	UI_RAILCORE_PIC				"/gfx/ui/misc/rail_core.pcx"
 #define	UI_RAILSPIRAL_PIC			"/gfx/ui/misc/rail_spiral.pcx"
 
@@ -915,7 +890,7 @@ extern	cvar_t	*ui_player_railred;
 extern	cvar_t	*ui_player_railgreen;
 extern	cvar_t	*ui_player_railblue;
 
-// moved these declarations to ui_subsystem.c to avoid redundancy
+// moved these declarations to ui_main.c to avoid redundancy
 extern	char *ui_menu_null_sound;
 extern	char *ui_menu_in_sound;
 extern	char *ui_menu_move_sound;
@@ -950,14 +925,7 @@ void Menu_Main_f (void);
 		void Menu_Options_Effects_f (void);
 		void Menu_Options_Interface_f (void);
 	void Menu_Quit_f (void);
-	void Menu_Credits( void );
 	void Menu_DefaultsConfirm_f (void);
 	void Menu_ApplyChanges_f (void);
-
-//
-// ui_mp_playersetup.c
-//
-void UI_MenuPlayerConfig_Draw (menuFramework_s *menu);
-void UI_MenuPlayerConfig_MouseClick (void);
 
 #endif	// __UI_LOCAL_H__

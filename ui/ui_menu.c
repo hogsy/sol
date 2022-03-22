@@ -39,63 +39,6 @@ MENU HANDLING
 
 /*
 =================
-UI_AddButton
-From Q2max
-=================
-*/
-void UI_AddButton (buttonmenuobject_t *thisObj, int index, float x, float y, float w, float h)
-{
-	float x1, y1, w1, h1;
-
-	x1 = x;	y1 = y;	w1 = w;	h1 = h;
-	SCR_ScaleCoords (&x1, &y1, &w1, &h1, ALIGN_CENTER);
-	thisObj->min[0] = x1;	thisObj->max[0] = x1 + w1;
-	thisObj->min[1] = y1;	thisObj->max[1] = y1 + h1;
-	thisObj->index = index;
-}
-
-
-/*
-=============
-UI_AddMainButton
-From Q2max
-=============
-*/
-void UI_AddMainButton (mainmenuobject_t *thisObj, int index, int x, int y, char *name)
-{
-	int		w, h;
-	float	x1, y1, w1, h1;
-
-	R_DrawGetPicSize (&w, &h, name);
-	
-	x1 = x; y1 = y; w1 = w; h1 = h;
-	SCR_ScaleCoords (&x1, &y1, &w1, &h1, ALIGN_CENTER);
-	thisObj->min[0] = x1;	thisObj->max[0] = x1 + w1;
-	thisObj->min[1] = y1;	thisObj->max[1] = y1 + h1;
-
-	switch (index)
-	{
-	case 0:
-		thisObj->OpenMenu = Menu_Game_f;
-		break;
-	case 1:
-		thisObj->OpenMenu = Menu_Multiplayer_f;
-		break;
-	case 2:
-		thisObj->OpenMenu = Menu_Options_f;
-		break;
-	case 3:
-		thisObj->OpenMenu = Menu_Video_f;
-		break;
-	case 4:
-		thisObj->OpenMenu = Menu_Quit_f;
-		break;
-	}
-}
-
-
-/*
-=================
 UI_PushMenu
 =================
 */

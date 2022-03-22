@@ -107,13 +107,13 @@ static void Menu_Keys_Init (void)
 	int		BINDS_MAX;
 	int		i = 0, x, y;
 
-	// menu.x = 320, menu.y = 168
+	// menu.x = 320, menu.y = 162
 #ifdef USE_BINDLIST
 	x = SCREEN_WIDTH*0.5 - (UI_KEYBIND_LIST_WIDTH*MENU_FONT_SIZE + LIST_SCROLLBAR_CONTROL_SIZE) / 2 + 2*MENU_FONT_SIZE;
 #else	// USE_BINDLIST
 	x = SCREEN_WIDTH*0.5;
 #endif	// USE_BINDLIST
-	y = SCREEN_HEIGHT*0.5 - 72;
+	y = SCREEN_HEIGHT*0.5 - 78;
 
 	s_keys_menu.x			= 0;
 	s_keys_menu.y			= 0;

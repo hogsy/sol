@@ -3910,7 +3910,7 @@ char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 	return ui_menu_null_sound;
 }
 
-#if 1
+
 /*
 =================
 UI_ScrollMenuItem
@@ -3941,7 +3941,7 @@ qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir)
 		return false;
 	}
 }
-#endif
+
 
 /*
 ==========================

@@ -80,7 +80,6 @@ void Menu_AddressBook_Init (void)
 		s_addressbook_fields[i].generic.callback		= 0;
 		s_addressbook_fields[i].generic.x				= x;
 		s_addressbook_fields[i].generic.y				= y + i * 2.25*MENU_LINE_SIZE;
-		s_addressbook_fields[i].generic.localdata[0]	= i;
 		s_addressbook_fields[i].length					= 60;
 		s_addressbook_fields[i].visible_length			= 30;
 		s_addressbook_fields[i].generic.cvar			= adrCvarNames[i];

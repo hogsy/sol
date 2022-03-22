@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-#define USE_LISTVIEW	// enable to use new listView control
-
 /*
 =============================================================================
 
@@ -34,33 +32,23 @@ PLAYER CONFIG MENU
 
 =============================================================================
 */
-extern menuFramework_s	s_multiplayer_menu;
 
 static menuFramework_s	s_player_config_menu;
 static menuImage_s		s_playerconfig_banner;
 static menuField_s		s_playerconfig_name_field;
-
 static menuLabel_s		s_playerconfig_model_title;
 static menuPicker_s		s_playerconfig_model_box;
-
 static menuLabel_s		s_playerconfig_skin_title;
 static menuPicker_s		s_playerconfig_skin_box;
-
 static menuLabel_s		s_playerconfig_hand_title;
 static menuPicker_s		s_playerconfig_handedness_box;
-
 static menuLabel_s		s_playerconfig_rate_title;
 static menuPicker_s		s_playerconfig_rate_box;
-
 static menuLabel_s		s_playerconfig_railcolor_title;
 static menuRectangle_s	s_playerconfig_railcolor_background;
 static menuImage_s		s_playerconfig_railcolor_display[2];
 static menuSlider_s		s_playerconfig_railcolor_slider[3];
-
-#ifdef USE_LISTVIEW
 static menuListView_s	s_playerconfig_skin_display;
-#endif	// USE_LISTVIEW
-
 static menuAction_s		s_playerconfig_back_action;
 static menuModelView_s	s_playerconfig_model_display;
 
@@ -81,7 +69,7 @@ static void Menu_LoadPlayerRailColor (void)
 }
 
 
-static void Menu_SavePlayerRailColor (void)
+static void Menu_SavePlayerRailColor (void *unused)
 {
 	Cvar_Set ( "color1", va("%02X%02X%02X",
 			min(max(Cvar_VariableInteger("ui_player_railred"), 0), 255),
@@ -93,38 +81,23 @@ static void Menu_SavePlayerRailColor (void)
 }
 
 
-static void Menu_PlayerRailColorRedFunc (void *unused)
-{
-	Menu_SavePlayerRailColor ();
-}
-
-
-static void Menu_PlayerRailColorGreenFunc (void *unused)
-{
-	Menu_SavePlayerRailColor ();
-}
-
-
-static void Menu_PlayerRailColorBlueFunc (void *unused)
-{
-	Menu_SavePlayerRailColor ();
-}
-
-
 static void Menu_PlayerModelCallback (void *unused)
 {
 	int		mNum, sNum;
 
 	mNum = s_playerconfig_model_box.curValue;
+
+	// update skin picker
 	s_playerconfig_skin_box.itemNames = ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_box.curValue = 0;
 	UI_InitMenuItem (&s_playerconfig_skin_box);
-#ifdef USE_LISTVIEW
+
+	// update skin listview
 	s_playerconfig_skin_display.itemNames = ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_display.imageNames = ui_pmi[mNum].skinIconNames;
 	s_playerconfig_skin_display.curValue = 0;
 	UI_InitMenuItem (&s_playerconfig_skin_display);
-#endif	// USE_LISTVIEW
+
 	sNum = s_playerconfig_skin_box.curValue;
 	UI_UpdatePlayerModelInfo (mNum, sNum);
 
@@ -139,30 +112,32 @@ static void Menu_PlayerSkinCallback (void *unused)
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
-#ifdef USE_LISTVIEW
+	UI_UpdatePlayerSkinInfo (mNum, sNum);
+
+	// update skin listview
 	s_playerconfig_skin_display.curValue = sNum;
 	UI_InitMenuItem (&s_playerconfig_skin_display);
-#endif	// USE_LISTVIEW
-	UI_UpdatePlayerSkinInfo (mNum, sNum);
 
 	// update player model display
 	UI_InitMenuItem (&s_playerconfig_model_display);
 }
 
-#ifdef USE_LISTVIEW
+
 static void Menu_PlayerSkinViewCallback (void *unused)
 {
 	int		mNum, sNum;
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_display.curValue;
-	s_playerconfig_skin_box.curValue = sNum;
 	UI_UpdatePlayerSkinInfo (mNum, sNum);
+
+	// update skin picker
+	s_playerconfig_skin_box.curValue = sNum;
 
 	// update player model display
 	UI_InitMenuItem (&s_playerconfig_model_display);
 }
-#endif	// USE_LISTVIEW
+
 
 static void Menu_PlayerHandednessCallback (void *unused)
 {
@@ -228,15 +203,11 @@ void Menu_PlayerConfig_Init (void)
 	x = 110;					// SCREEN_WIDTH*0.5 - 210
 	y = 17*MENU_LINE_SIZE;		// SCREEN_HEIGHT*0.5 - 7*MENU_LINE_SIZE
 
-	s_player_config_menu.x					= 0;	// SCREEN_WIDTH*0.5 - 210;
-	s_player_config_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 70;
+	s_player_config_menu.x					= 0;
+	s_player_config_menu.y					= 0;
 	s_player_config_menu.nitems				= 0;
 	s_player_config_menu.isPopup			= false;
-#ifdef USE_LISTVIEW
 	s_player_config_menu.drawFunc			= UI_DefaultMenuDraw;
-#else	// USE_LISTVIEW
-	s_player_config_menu.drawFunc			= UI_MenuPlayerConfig_Draw;
-#endif	// USE_LISTVIEW
 	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
 	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;
 	s_player_config_menu.cantOpenMessage	= "No valid player models found";
@@ -396,7 +367,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[0].generic.x			= x + 0*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[0].generic.y			= y += 4.5*MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[0].generic.name			= "red";
-	s_playerconfig_railcolor_slider[0].generic.callback		= Menu_PlayerRailColorRedFunc;
+	s_playerconfig_railcolor_slider[0].generic.callback		= Menu_SavePlayerRailColor;
 	s_playerconfig_railcolor_slider[0].maxPos				= 64;
 	s_playerconfig_railcolor_slider[0].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[0].increment			= 4.0f;
@@ -412,7 +383,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[1].generic.x			= x + 0*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.name			= "green";
-	s_playerconfig_railcolor_slider[1].generic.callback		= Menu_PlayerRailColorGreenFunc;
+	s_playerconfig_railcolor_slider[1].generic.callback		= Menu_SavePlayerRailColor;
 	s_playerconfig_railcolor_slider[1].maxPos				= 64;
 	s_playerconfig_railcolor_slider[1].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[1].increment			= 4.0f;
@@ -428,7 +399,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[2].generic.x			= x + 0*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.name			= "blue";
-	s_playerconfig_railcolor_slider[2].generic.callback		= Menu_PlayerRailColorBlueFunc;
+	s_playerconfig_railcolor_slider[2].generic.callback		= Menu_SavePlayerRailColor;
 	s_playerconfig_railcolor_slider[2].maxPos				= 64;
 	s_playerconfig_railcolor_slider[2].baseValue			= 0.0f;
 	s_playerconfig_railcolor_slider[2].increment			= 4.0f;
@@ -439,7 +410,6 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_slider[2].generic.cvarMax		= 256;
 	s_playerconfig_railcolor_slider[2].generic.statusbar	= "changes player's railgun particle effect blue component";
 
-#ifdef USE_LISTVIEW
 	s_playerconfig_skin_display.generic.type		= MTYPE_LISTVIEW;
 //	s_playerconfig_skin_display.generic.header		= "skin";
 	s_playerconfig_skin_display.generic.x			= SCREEN_WIDTH*0.5 - 24;
@@ -468,7 +438,6 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_display.itemNames			= ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_display.imageNames			= ui_pmi[mNum].skinIconNames;
 	s_playerconfig_skin_display.generic.callback	= Menu_PlayerSkinViewCallback;
-#endif	// USE_LISTVIEW
 
 	s_playerconfig_back_action.generic.type			= MTYPE_ACTION;
 	s_playerconfig_back_action.generic.textSize		= MENU_FONT_SIZE;
@@ -522,214 +491,13 @@ void Menu_PlayerConfig_Init (void)
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[0]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[1]);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_slider[2]);
-#ifdef USE_LISTVIEW
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_skin_display);
-#endif	// USE_LISTVIEW
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_back_action);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_display);
 
 	// get color components from color1 cvar
 	Menu_LoadPlayerRailColor ();
 }
-
-//=======================================================================
-
-#ifndef USE_LISTVIEW
-#define	NUM_SKINBOX_ITEMS 7
-qboolean Menu_PlayerConfig_CheckIncrement (int dir, float x, float y, float w, float h)
-{
-	float min[2], max[2], x1, y1, w1, h1;
-	char *sound = NULL;
-
-	x1 = x;	y1 = y;	w1 = w;	h1 = h;
-	SCR_ScaleCoords (&x1, &y1, &w1, &h1, ALIGN_CENTER);
-	min[0] = x1;	max[0] = x1 + w1;
-	min[1] = y1;	max[1] = y1 + h1;
-
-	if ( (ui_mousecursor.x >= min[0]) && (ui_mousecursor.x <= max[0]) &&
-		(ui_mousecursor.y >= min[1]) && (ui_mousecursor.y <= max[1]) &&
-		!ui_mousecursor.buttonused[MOUSEBUTTON1] &&
-		ui_mousecursor.buttonclicks[MOUSEBUTTON1]==1)
-	{
-		if (dir) // dir == 1 is left
-		{
-			if (s_playerconfig_skin_box.curValue > 0)
-				s_playerconfig_skin_box.curValue--;
-		}
-		else
-		{
-			if (s_playerconfig_skin_box.curValue < ui_pmi[s_playerconfig_model_box.curValue].nskins)
-				s_playerconfig_skin_box.curValue++;
-		}
-
-		sound = ui_menu_move_sound;
-		ui_mousecursor.buttonused[MOUSEBUTTON1] = true;
-		ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 0;
-
-		if ( sound )
-			S_StartLocalSound( sound );
-		Menu_PlayerSkinCallback (NULL);
-
-		return true;
-	}
-	return false;
-}
-
-
-void UI_MenuPlayerConfig_MouseClick (void)
-{
-	float	icon_x = SCREEN_WIDTH*0.5 - 5, // width - 325
-			icon_y = SCREEN_HEIGHT - 108,
-			icon_offset = 0;
-	int		i, count;
-	char	*sound = NULL;
-	buttonmenuobject_t buttons[NUM_SKINBOX_ITEMS];
-
-	for (i=0; i<NUM_SKINBOX_ITEMS; i++)
-		buttons[i].index =- 1;
-
-	if ( (ui_pmi[s_playerconfig_model_box.curValue].nskins < NUM_SKINBOX_ITEMS) || (s_playerconfig_skin_box.curValue < 4) )
-		i = 0;
-	else if (s_playerconfig_skin_box.curValue > ui_pmi[s_playerconfig_model_box.curValue].nskins-4)
-		i = ui_pmi[s_playerconfig_model_box.curValue].nskins-NUM_SKINBOX_ITEMS;
-	else
-		i = s_playerconfig_skin_box.curValue-3;
-
-	if (i > 0)
-		if (Menu_PlayerConfig_CheckIncrement (1, icon_x-39, icon_y, 32, 32))
-			return;
-
-	for (count=0; count<NUM_SKINBOX_ITEMS; i++,count++)
-	{
-		if ( (i < 0) || (i >= ui_pmi[s_playerconfig_model_box.curValue].nskins) )
-			continue;
-
-		UI_AddButton (&buttons[count], i, icon_x+icon_offset, icon_y, 32, 32);
-		icon_offset += 34;
-	}
-
-	icon_offset = NUM_SKINBOX_ITEMS*34;
-	if (ui_pmi[s_playerconfig_model_box.curValue].nskins-i > 0)
-		if (Menu_PlayerConfig_CheckIncrement (0, icon_x+icon_offset+5, icon_y, 32, 32))
-			return;
-
-	for (i=0; i<NUM_SKINBOX_ITEMS; i++)
-	{
-		if (buttons[i].index == -1)
-			continue;
-
-		if ( (ui_mousecursor.x >= buttons[i].min[0]) && (ui_mousecursor.x <= buttons[i].max[0]) &&
-			(ui_mousecursor.y >= buttons[i].min[1]) && (ui_mousecursor.y <= buttons[i].max[1]) )
-		{
-			if (!ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1]==1)
-			{
-				s_playerconfig_skin_box.curValue = buttons[i].index;
-
-				sound = ui_menu_move_sound;
-				ui_mousecursor.buttonused[MOUSEBUTTON1] = true;
-				ui_mousecursor.buttonclicks[MOUSEBUTTON1] = 0;
-
-				if (sound)
-					S_StartLocalSound (sound);
-				Menu_PlayerSkinCallback (NULL);
-
-				return;
-			}
-			break;
-		}
-	}
-}
-
-
-void Menu_PlayerConfig_DrawSkinSelection (void)
-{
-	char		scratch[MAX_QPATH];
-	float		icon_x = SCREEN_WIDTH*0.5 - 5; // width - 325
-	float		icon_y = SCREEN_HEIGHT - 108;
-	float		icon_offset = 0;
-	float		x, y, w, h;
-	int			i, count, color[3];
-	color_t		arrowColor;
-	vec4_t		arrowTemp[2];
-
-	CL_TextColor ((int)Cvar_VariableValue("alt_text_color"), &color[0], &color[1], &color[2]);
-	Vector4Copy (stCoord_arrow_left, arrowTemp[0]);
-	Vector4Copy (stCoord_arrow_right, arrowTemp[1]);
-
-	if ( (ui_pmi[s_playerconfig_model_box.curValue].nskins < NUM_SKINBOX_ITEMS) || (s_playerconfig_skin_box.curValue < 4) )
-		i = 0;
-	else if ( s_playerconfig_skin_box.curValue > (ui_pmi[s_playerconfig_model_box.curValue].nskins - 4) )
-		i = ui_pmi[s_playerconfig_model_box.curValue].nskins-NUM_SKINBOX_ITEMS;
-	else
-		i = s_playerconfig_skin_box.curValue - 3;
-
-	// left arrow
-	if (i > 0) {
-		Vector4Set (arrowColor, color[0], color[1], color[2], 255);
-	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_left.pcx");
-	}
-	else {
-		Vector4Set (arrowColor, 150, 150, 150, 255);
-		arrowTemp[0][1] += 0.25;
-		arrowTemp[0][3] += 0.25;
-	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_left_d.pcx");
-	}
-	UI_DrawPicST (icon_x-39, icon_y+2, 32, 32, arrowTemp[0], ALIGN_CENTER, false, arrowColor, UI_ARROWS_PIC);
-//	UI_DrawPic (icon_x-39, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
-
-	// background
-	UI_DrawFill (icon_x-3, icon_y-3, NUM_SKINBOX_ITEMS*34+4, 38, ALIGN_CENTER, false, 0, 0, 0, 255);
-	if (R_DrawFindPic("/gfx/ui/widgets/listbox_background.pcx")) {
-		x = icon_x-2;	y = icon_y-2;	w = NUM_SKINBOX_ITEMS * 34 + 2;	h = 36;
-		UI_DrawTiledPic (x, y, w, h, ALIGN_CENTER, true, "/gfx/ui/widgets/listbox_background.pcx", 255);
-	}
-	else
-		UI_DrawFill (icon_x-2, icon_y-2, NUM_SKINBOX_ITEMS*34+2, 36, ALIGN_CENTER, false, 60, 60, 60, 255);
-		
-	for (count=0; count<NUM_SKINBOX_ITEMS; i++,count++)
-	{
-		if ( (i < 0) || (i >= ui_pmi[s_playerconfig_model_box.curValue].nskins) )
-			continue;
-
-		Com_sprintf (scratch, sizeof(scratch), "/players/%s/%s_i.pcx", 
-			ui_pmi[s_playerconfig_model_box.curValue].directory,
-			ui_pmi[s_playerconfig_model_box.curValue].skinDisplayNames[i] );
-
-		if (i == s_playerconfig_skin_box.curValue)
-			UI_DrawFill (icon_x + icon_offset-1, icon_y-1, 34, 34, ALIGN_CENTER, false, color[0], color[1], color[2], 255);
-		UI_DrawPic (icon_x + icon_offset, icon_y, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
-		icon_offset += 34;
-	}
-
-	// right arrow
-	icon_offset = NUM_SKINBOX_ITEMS*34;
-	if ( ui_pmi[s_playerconfig_model_box.curValue].nskins-i > 0 ) {
-		Vector4Set (arrowColor, color[0], color[1], color[2], 255);
-	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_right.pcx");
-	}
-	else {
-		Vector4Set (arrowColor, 150, 150, 150, 255);
-		arrowTemp[1][1] += 0.25;
-		arrowTemp[1][3] += 0.25;
-	//	Com_sprintf (scratch, sizeof(scratch), "/gfx/ui/arrows/arrow_right_d.pcx");
-	}
-	UI_DrawPicST (icon_x+icon_offset+5, icon_y+2, 32, 32, arrowTemp[1], ALIGN_CENTER, false, arrowColor, UI_ARROWS_PIC);
-//	UI_DrawPic (icon_x+icon_offset+5, icon_y+2, 32, 32,  ALIGN_CENTER, false, scratch, 1.0);
-}
-#endif	// USE_LISTVIEW
-
-//=======================================================================
-
-#ifndef USE_LISTVIEW
-void UI_MenuPlayerConfig_Draw (menuFramework_s *menu)
-{
-	UI_AdjustMenuCursor (&s_player_config_menu, 1);
-	UI_DrawMenu (&s_player_config_menu);
-
-	// skin selection preview
-	Menu_PlayerConfig_DrawSkinSelection ();
-}
-#endif	// USE_LISTVIEW
 
 
 void Menu_PlayerConfig_f (void)

@@ -167,17 +167,6 @@ qboolean UI_IsValidImageFilename (char *name)
 
 /*
 ==========================
-UI_ClampCvar
-==========================
-*/
-void UI_ClampCvar (const char *varName, float cvarMin, float cvarMax)
-{
-	Cvar_SetValue ((char *)varName, ClampCvar( cvarMin, cvarMax, Cvar_VariableValue((char *)varName) ));
-}
-
-
-/*
-==========================
 UI_ClampCvarForControl
 ==========================
 */
@@ -432,7 +421,7 @@ int UI_TallyMenuSlots (menuFramework_s *menu)
 UI_StartSPGame
 ===============
 */
-void UIStartSPGame (void)
+void UI_StartSPGame (void)
 {
 	// disable updates and start the cinematic going
 	cl.servercount = -1;
@@ -1716,7 +1705,7 @@ SAVEGAME / SAVESHOT HANDLING
 
 char		*ui_savegame_names[UI_MAX_SAVEGAMES];
 char		*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
-char		ui_savestrings[UI_MAX_SAVEGAMES][64];	// was 32
+char		ui_savestrings[UI_MAX_SAVEGAMES][64];
 qboolean	ui_savevalid[UI_MAX_SAVEGAMES+1];
 time_t		ui_savetimestamps[UI_MAX_SAVEGAMES];
 qboolean	ui_savechanged[UI_MAX_SAVEGAMES];
