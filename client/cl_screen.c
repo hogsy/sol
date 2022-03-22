@@ -977,12 +977,27 @@ SCR_DrawChar
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawChar (float x, float y, int size, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last)
+void SCR_DrawChar (float x, float y, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last)
+{
+	float	scale = SCR_GetScreenScale();
+
+	SCR_ScaleCoords (&x, &y, NULL, NULL, align);
+	R_DrawChar(x, y, num, font, scale, red, green, blue, alpha, italic, last);
+}
+
+
+/*
+================
+SCR_DrawSizedChar
+Coordinates are 640*480 virtual values
+=================
+*/
+void SCR_DrawSizedChar (float x, float y, int size, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last)
 {
 	float	scale = SCR_ScaledScreen((float)size / (float)MENU_FONT_SIZE);	// SCR_GetScreenScale()
 
 	SCR_ScaleCoords (&x, &y, NULL, NULL, align);
-	R_DrawChar(x, y, num, font, scale, red, green, blue, alpha, italic, last);
+	R_DrawChar (x, y, num, font, scale, red, green, blue, alpha, italic, last);
 }
 
 
