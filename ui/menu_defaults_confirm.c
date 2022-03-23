@@ -79,7 +79,7 @@ void Menu_DefaultsConfirm_Init (void)
 	s_defaults_banner.generic.type		= MTYPE_IMAGE;
 	s_defaults_banner.generic.x			= 0;
 	s_defaults_banner.generic.y			= 20;
-	s_defaults_banner.width				= 182;
+	s_defaults_banner.width				= 212;
 	s_defaults_banner.height			= 25;
 	s_defaults_banner.imageName			= "/pics/areyousure.pcx";
 	s_defaults_banner.alpha				= 255;

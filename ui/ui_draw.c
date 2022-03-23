@@ -54,9 +54,9 @@ void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *st
 
 
 /*
-=============
+==========================
 UI_DrawMenuStatusBar
-=============
+==========================
 */
 void UI_DrawMenuStatusBar (const char *string)
 {
@@ -64,12 +64,12 @@ void UI_DrawMenuStatusBar (const char *string)
 	{
 		int l = (int)strlen( string );
 
-		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, MENU_FONT_SIZE+4, ALIGN_BOTTOM_STRETCH, false, 60,60,60,255 );	// go 1 pixel past screen bottom to prevent gap from scaling
+		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, MENU_FONT_SIZE+3, ALIGN_BOTTOM_STRETCH, true, 60,60,60,255 );
 		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, 1, ALIGN_BOTTOM_STRETCH, false, 0,0,0,255 );
 		UI_DrawString (SCREEN_WIDTH/2-(l/2)*MENU_FONT_SIZE, SCREEN_HEIGHT-(MENU_FONT_SIZE+1), MENU_FONT_SIZE, ALIGN_BOTTOM, string, FONT_UI, 255 );
 	}
 	else
-		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, MENU_FONT_SIZE+4, ALIGN_BOTTOM_STRETCH, false, 0,0,0,255 );	// go 1 pixel past screen bottom to prevent gap from scaling
+		UI_DrawFill (0, SCREEN_HEIGHT-(MENU_FONT_SIZE+3), SCREEN_WIDTH, MENU_FONT_SIZE+3, ALIGN_BOTTOM_STRETCH, true, 0,0,0,255 );
 }
 
 
@@ -84,9 +84,9 @@ void UI_DrawMenuNullCursor (void *self)
 
 
 /*
-=============
+==========================
 UI_DrawMenuTextBox
-=============
+==========================
 */
 void UI_DrawMenuTextBox (int x, int y, int width, int lines)
 {

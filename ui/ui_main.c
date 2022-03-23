@@ -70,23 +70,20 @@ void UI_Draw (void)
 	// dim everything behind it down
 	if (cl.cinematictime > 0 || cls.state == ca_disconnected)
 	{
-		if (R_DrawFindPic(UI_BACKGROUND_NAME))
-		{
-		//	R_DrawStretchPic (0, 0, viddef.width, viddef.height, UI_BACKGROUND_NAME, 1.0f);
-			R_DrawFill (0, 0, viddef.width, viddef.height, 0, 0, 0, 255);
-			UI_DrawPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, false, UI_BACKGROUND_NAME, 1.0f);
+		if (R_DrawFindPic(UI_BACKGROUND_NAME)) {
+			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
+			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, 1.0f);
 		}
 		else
-			R_DrawFill (0,0,viddef.width, viddef.height, 0, 0, 0, 255);
+			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
 	}
 	// ingame menu uses alpha
 	else if (R_DrawFindPic(UI_BACKGROUND_NAME))
-	//	R_DrawStretchPic (0, 0, viddef.width, viddef.height, UI_BACKGROUND_NAME, ui_background_alpha->value);
-		UI_DrawPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, false, UI_BACKGROUND_NAME, ui_background_alpha->value);
+		SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, ui_background_alpha->value);
 	else
-		R_DrawFill (0, 0, viddef.width, viddef.height, 0, 0, 0, (int)(ui_background_alpha->value*255.0f));
+		SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, true, 0, 0, 0, (int)(ui_background_alpha->value*255));
 
-	// Knigthmare- added Psychospaz's mouse support
+	// added Psychospaz's mouse support
 	UI_RefreshCursorMenu ();
 
 	// draw it
@@ -106,7 +103,7 @@ void UI_Draw (void)
 		ui_entersound = false;
 	}
 
-	// Knigthmare- added Psychospaz's mouse support
+	// added Psychospaz's mouse support
 	// menu cursor for mouse usage :)
 	UI_Draw_Cursor();
 }
@@ -230,7 +227,7 @@ void UI_Precache (void)
 	R_DrawFindPic ("/pics/m_banner_video.pcx");
 //	R_DrawFindPic ("/pics/m_banner_mods.pcx");
 	R_DrawFindPic ("/pics/quit.pcx");
-//	R_DrawFindPic ("/pics/areyousure.pcx");
+	R_DrawFindPic ("/pics/areyousure.pcx");
 //	R_DrawFindPic ("/pics/yn.pcx");
 
 	// GUI elements
@@ -251,7 +248,7 @@ UI_Init
 */
 void UI_Init (void)
 {
-	// init this cvar here so M_Print can use it
+	// init this cvar here so UI_Print can use it
 	if (!alt_text_color)
 		alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
 

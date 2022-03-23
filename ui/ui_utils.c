@@ -260,10 +260,10 @@ int UI_MouseOverAlpha (menuCommon_s *m)
 	{
 		int alpha;
 
-		alpha = 125 + 25 * cos(anglemod(cl.time*0.005));
+		alpha = 195 + 60 * cos(anglemod(cl.time*0.005));
 
-		if (alpha>255) alpha = 255;
-		if (alpha<0) alpha = 0;
+		if (alpha > 255) alpha = 255;
+		if (alpha < 0) alpha = 0;
 
 		return alpha;
 	}
@@ -356,8 +356,10 @@ UI_ItemAtMenuCursor
 */
 void *UI_ItemAtMenuCursor (menuFramework_s *m)
 {
-	if (m->cursor < 0 || m->cursor >= m->nitems)
-		return 0;
+	if (!m)	return NULL;
+
+	if ( (m->cursor < 0) || (m->cursor >= m->nitems) )
+		return NULL;
 
 	return m->items[m->cursor];
 }
@@ -399,8 +401,7 @@ UI_TallyMenuSlots
 */
 int UI_TallyMenuSlots (menuFramework_s *menu)
 {
-	int i;
-	int total = 0;
+	int	i, total = 0;
 
 	for (i = 0; i < menu->nitems; i++)
 		total++;
@@ -1706,7 +1707,7 @@ SAVEGAME / SAVESHOT HANDLING
 char		*ui_savegame_names[UI_MAX_SAVEGAMES];
 char		*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
 char		ui_savestrings[UI_MAX_SAVEGAMES][64];
-qboolean	ui_savevalid[UI_MAX_SAVEGAMES+1];
+qboolean	ui_savevalid[UI_MAX_SAVEGAMES];
 time_t		ui_savetimestamps[UI_MAX_SAVEGAMES];
 qboolean	ui_savechanged[UI_MAX_SAVEGAMES];
 qboolean	ui_saveshotvalid[UI_MAX_SAVEGAMES+1];
@@ -1734,7 +1735,7 @@ void UI_Load_Savestrings (qboolean update)
 
 	for (i=0; i<UI_MAX_SAVEGAMES; i++)
 	{
-	//	Com_sprintf (name, sizeof(name), "%s/save/kmq2save%03i/server.ssv", FS_Savegamedir(), i);	// was FS_Gamedir()
+	//	Com_sprintf (name, sizeof(name), "%s/save/kmq2save%03i/server.ssv", FS_Savegamedir(), i);
 		Com_sprintf (name, sizeof(name), "%s/"SAVEDIRNAME"/kmq2save%03i/server.ssv", FS_Savegamedir(), i);	// was FS_Gamedir()
 
 		old_timestamp = ui_savetimestamps[i];
@@ -1841,7 +1842,7 @@ void UI_ValidateSaveshots (void)
 			continue;
 		if ( ui_savevalid[i] )
 		{
-			if (i == 0)
+			if (i == 0)	// mapshot for autosave
 				Com_sprintf(shotname, sizeof(shotname), "/levelshots/%s.pcx", ui_mapname);
 			else
 			{	// free previously loaded shots
@@ -1871,7 +1872,6 @@ char *UI_UpdateSaveshot (int index)
 {
 	// check index
 	if (index < 0 || index >= UI_MAX_SAVEGAMES)
-//	if (index < 0 || index > UI_MAX_SAVEGAMES)
 		return NULL;
 
 	if ( ui_savevalid[index] && ui_saveshotvalid[index] ) {
@@ -1923,8 +1923,6 @@ void UI_InitSavegameData (void)
 		ui_saveshotvalid[UI_MAX_SAVEGAMES] = true;
 	else
 		ui_saveshotvalid[UI_MAX_SAVEGAMES] = false;
-
-	ui_savevalid[UI_MAX_SAVEGAMES] = false;	// this element is always false to handle the back action
 }
 
 
@@ -2014,16 +2012,20 @@ void UI_AddToServerList (netadr_t adr, char *info)
 	while ( *info == ' ' )
 		info++;
 
+	// FIXME: How to check if address is a loopback?
+//	if ( adr.type == NA_LOOPBACK )
+//		return;
+
 	// Ignore if duplicated
 	for (i=0; i<ui_num_servers; i++)
-        if ( strncmp(info, &ui_local_server_names[i][11], sizeof(ui_local_server_names[0])-10)==0 )	// crashes here
+        if ( strncmp(info, &ui_local_server_names[i][11], sizeof(ui_local_server_names[0])-10) == 0 )
 			return;
 
     iPing = 0 ;
 	for (i=0 ; i<UI_MAX_LOCAL_SERVERS ; i++)
     {
-        if ( memcmp(&adr.ip, &global_adr_server_netadr[i].ip, sizeof(adr.ip))==0 
-             && adr.port == global_adr_server_netadr[i].port )
+        if ( (memcmp(&adr.ip, &global_adr_server_netadr[i].ip, sizeof(adr.ip)) == 0)
+             && (adr.port == global_adr_server_netadr[i].port) )
         {
             // bookmark server
             iPing = Sys_Milliseconds() - global_adr_server_time[i] ;
@@ -2087,7 +2089,6 @@ void UI_SearchLocalGames (void)
 
 	ui_num_servers = 0;
 	for (i=0 ; i<UI_MAX_LOCAL_SERVERS ; i++)
-	//	strncpy (ui_local_server_names[i], NO_SERVER_STRING);
 		Q_strncpyz (ui_local_server_names[i], sizeof(ui_local_server_names[i]), NO_SERVER_STRING);
 
 	UI_DrawPopupMessage ("Searching for local servers.\nThis could take up to a minute,\nso please be patient.");
@@ -2155,15 +2156,13 @@ gametype_names_t gametype_names[] =
 #define MAPLIST_FORMAT "%s\n%s"
 
 maptype_t ui_svr_maptype;
-static int	ui_svr_nummaps;
-char **ui_svr_mapnames;
+char **ui_svr_mapnames = NULL;
 static int	ui_svr_maplist_sizes[NUM_MAPTYPES] = {0, 0, 0, 0};
 static char	**ui_svr_maplists[NUM_MAPTYPES] = {NULL, NULL, NULL, NULL};
-int	ui_svr_listfile_nummaps;
-static char **ui_svr_listfile_mapnames;
-static int	ui_svr_arena_nummaps[NUM_MAPTYPES];
-static char **ui_svr_arena_mapnames[NUM_MAPTYPES];
-//static	byte *ui_svr_mapshotvalid; // levelshot truth table
+int	ui_svr_listfile_nummaps = 0;
+static char **ui_svr_listfile_mapnames = NULL;
+static int	ui_svr_arena_nummaps[NUM_MAPTYPES] = {0, 0, 0, 0};
+static char **ui_svr_arena_mapnames[NUM_MAPTYPES] = {NULL, NULL, NULL, NULL};
 static	byte *ui_svr_mapshotvalid[NUM_MAPTYPES] = {NULL, NULL, NULL, NULL};	// levelshot truth tables
 char ui_startserver_shotname [MAX_QPATH];
 qboolean	ui_svr_coop = false;
@@ -2529,8 +2528,10 @@ void UI_LoadMapList (void)
 	//
 	// free existing list
 	//
-	if (ui_svr_listfile_mapnames)
+	if (ui_svr_listfile_mapnames) {
 		UI_FreeAssetList (ui_svr_listfile_mapnames, ui_svr_listfile_nummaps);
+	}
+	ui_svr_listfile_mapnames = NULL;
 	ui_svr_listfile_nummaps = 0;
 
 	//
@@ -2621,7 +2622,7 @@ void UI_LoadMapList (void)
 		}
 	}
 
-	ui_svr_maptype = MAP_DM; // init maptype
+	ui_svr_maptype = MAP_DM; // initial maptype
 	ui_svr_mapnames = ui_svr_maplists[ui_svr_maptype];
 
 	UI_BuildStartSeverLevelshotTables ();
@@ -2834,7 +2835,7 @@ qboolean UI_CTF_MenuMode (void)
 
 playermodelinfo_s ui_pmi[MAX_PLAYERMODELS];
 char *ui_pmnames[MAX_PLAYERMODELS];
-int ui_numplayermodels;
+int ui_numplayermodels = 0;
 
 // save skins and models here so as to not have to re-register every frame
 struct model_s *ui_playermodel;
@@ -2888,7 +2889,6 @@ static qboolean UI_IconOfSkinExists (char *skin, char **files, int nfiles, char 
 	Q_strncpyz (scratch, sizeof(scratch), skin);
 	*strrchr(scratch, '.') = 0;
 	Q_strncatz (scratch, sizeof(scratch), suffix);
-//	strncat(scratch, "_i.pcx");
 
 	for (i = 0; i < nfiles; i++)
 	{
@@ -2930,7 +2930,7 @@ UI_PlayerConfig_ScanDirectories
 */
 static qboolean UI_PlayerConfig_ScanDirectories (void)
 {
-	char findname[1024];
+	char findName[1024];
 	char scratch[1024];
 	int ndirs = 0, npms = 0;
 	char **dirnames;
@@ -2948,9 +2948,9 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 		do 
 		{
 			path = FS_NextPath(path);
-			Com_sprintf( findname, sizeof(findname), "%s/players/*.*", path );
+			Com_sprintf (findName, sizeof(findName), "%s/players/*.*", path);
 
-			if ( (dirnames = FS_ListFiles(findname, &ndirs, SFF_SUBDIR, 0)) != 0 )
+			if ( (dirnames = FS_ListFiles(findName, &ndirs, SFF_SUBDIR, 0)) != 0 )
 				break;
 		} while (path);
 
@@ -3007,7 +3007,6 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			Sys_FindClose();
 
 			// verify the existence of at least one skin
-		//	strncpy (scratch, va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
 			Q_strncpyz (scratch, sizeof(scratch), va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"
 			imagenames = FS_ListFiles (scratch, &nimagefiles, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
 
@@ -3031,8 +3030,6 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			b = strrchr(dirnames[i], '\\');
 			c = (a > b) ? a : b;
 
-		//	strncpy (ui_pmi[ui_numplayermodels].displayname, c+1, MAX_DISPLAYNAME-1);
-		//	strncpy (ui_pmi[ui_numplayermodels].directory, c+1);
 			Q_strncpyz (ui_pmi[ui_numplayermodels].displayname, sizeof(ui_pmi[ui_numplayermodels].displayname), c+1);
 			Q_strncpyz (ui_pmi[ui_numplayermodels].directory, sizeof(ui_pmi[ui_numplayermodels].directory), c+1);
 
@@ -3088,9 +3085,9 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 
 	// if no valid player models found in path,
 	// try next path, if there is one
-	} while (path);	// (s_numplayermodels == 0 && path);
+	} while (path);	// (ui_numplayermodels == 0 && path);
 
-	return true;	//** DMP warning fix
+	return true;	// DMP warning fix
 }
 
 #if 0

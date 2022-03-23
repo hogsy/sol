@@ -199,8 +199,8 @@ void Menu_PlayerConfig_Init (void)
 	// get model and skin index and precache them
 	UI_InitPlayerModelInfo (&mNum, &sNum);
 
-	// menu.x = 46, menu.y = 170
-	x = 110;					// SCREEN_WIDTH*0.5 - 210
+	// menu.x = 38, menu.y = 170
+	x = 4.75*MENU_FONT_SIZE;	// SCREEN_WIDTH*0.5 - 282
 	y = 17*MENU_LINE_SIZE;		// SCREEN_HEIGHT*0.5 - 7*MENU_LINE_SIZE
 
 	s_player_config_menu.x					= 0;
@@ -227,25 +227,26 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_name_field.generic.type		= MTYPE_FIELD;
 	s_playerconfig_name_field.generic.textSize	= MENU_FONT_SIZE;
-	s_playerconfig_name_field.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_playerconfig_name_field.generic.name		= "name";
+	s_playerconfig_name_field.generic.flags		= 0;
+//	s_playerconfig_name_field.generic.name		= "name";
+	s_playerconfig_name_field.generic.header	= "name";
 	s_playerconfig_name_field.generic.callback	= 0;
-	s_playerconfig_name_field.generic.x			= x + -MENU_FONT_SIZE;
+	s_playerconfig_name_field.generic.x			= x;
 	s_playerconfig_name_field.generic.y			= y;
-	s_playerconfig_name_field.length			= 23;	// was 20
-	s_playerconfig_name_field.visible_length	= 23;	// was 20
+	s_playerconfig_name_field.length			= 23;
+	s_playerconfig_name_field.visible_length	= 23;
 	s_playerconfig_name_field.generic.cvar		= "name";
 
 	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_model_title.generic.name		= "model";
-	s_playerconfig_model_title.generic.x		= x + -2*MENU_FONT_SIZE;
+	s_playerconfig_model_title.generic.x		= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.y		= y += 3*MENU_LINE_SIZE;
 	
 	s_playerconfig_model_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_model_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_model_box.generic.x				= x + -8*MENU_FONT_SIZE;
+	s_playerconfig_model_box.generic.x				= x;
 	s_playerconfig_model_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_model_box.generic.callback		= Menu_PlayerModelCallback;
 	s_playerconfig_model_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
@@ -256,12 +257,12 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_skin_title.generic.name		= "skin";
-	s_playerconfig_skin_title.generic.x			= x + -3*MENU_FONT_SIZE;
+	s_playerconfig_skin_title.generic.x			= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_skin_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
 	s_playerconfig_skin_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_skin_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_skin_box.generic.x				= x + -8*MENU_FONT_SIZE;
+	s_playerconfig_skin_box.generic.x				= x;
 	s_playerconfig_skin_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_skin_box.generic.name			= 0;
 	s_playerconfig_skin_box.generic.callback		= Menu_PlayerSkinCallback;
@@ -274,12 +275,12 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_hand_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_playerconfig_hand_title.generic.name		= "handedness";
-	s_playerconfig_hand_title.generic.x			= x + 3*MENU_FONT_SIZE;
+	s_playerconfig_hand_title.generic.x			= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_hand_title.generic.y			= y += 2*MENU_LINE_SIZE;
 	
 	s_playerconfig_handedness_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_handedness_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_handedness_box.generic.x				= x + -8*MENU_FONT_SIZE;
+	s_playerconfig_handedness_box.generic.x				= x;
 	s_playerconfig_handedness_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_handedness_box.generic.name			= 0;
 	s_playerconfig_handedness_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
@@ -294,12 +295,12 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_title.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.flags			= QMF_LEFT_JUSTIFY;
 	s_playerconfig_rate_title.generic.name			= "connect speed";
-	s_playerconfig_rate_title.generic.x				= x + 6*MENU_FONT_SIZE;
+	s_playerconfig_rate_title.generic.x				= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_rate_title.generic.y				= y += 2*MENU_LINE_SIZE;
 		
 	s_playerconfig_rate_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_rate_box.generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_rate_box.generic.x				= x + -8*MENU_FONT_SIZE;
+	s_playerconfig_rate_box.generic.x				= x;
 	s_playerconfig_rate_box.generic.y				= y += MENU_LINE_SIZE;
 	s_playerconfig_rate_box.generic.name			= 0;
 	s_playerconfig_rate_box.generic.cursor_offset	= -1*MENU_FONT_SIZE;
@@ -312,11 +313,11 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_railcolor_title.generic.name		= "railgun effect color";
-	s_playerconfig_railcolor_title.generic.x		= x + 13*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_title.generic.x		= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.y		= y += 2*MENU_LINE_SIZE;
 
 	s_playerconfig_railcolor_background.generic.type		= MTYPE_RECTANGLE;
-	s_playerconfig_railcolor_background.generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_background.generic.x			= x + 2*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_background.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_playerconfig_railcolor_background.width				= 160;
 	s_playerconfig_railcolor_background.height				= 40;
@@ -334,7 +335,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_background.generic.isHidden	= false;
 
 	s_playerconfig_railcolor_display[0].generic.type		= MTYPE_IMAGE;
-	s_playerconfig_railcolor_display[0].generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_display[0].generic.x			= x + 2*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_display[0].generic.y			= y;
 	s_playerconfig_railcolor_display[0].width				= 160;
 	s_playerconfig_railcolor_display[0].height				= 40;
@@ -346,7 +347,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_display[0].generic.isHidden	= false;
 
 	s_playerconfig_railcolor_display[1].generic.type		= MTYPE_IMAGE;
-	s_playerconfig_railcolor_display[1].generic.x			= x + -6*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_display[1].generic.x			= x + 2*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_display[1].generic.y			= y;
 	s_playerconfig_railcolor_display[1].width				= 160;
 	s_playerconfig_railcolor_display[1].height				= 40;
@@ -364,7 +365,7 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_railcolor_slider[0].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[0].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[0].generic.x			= x + 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[0].generic.x			= x + 9*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[0].generic.y			= y += 4.5*MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[0].generic.name			= "red";
 	s_playerconfig_railcolor_slider[0].generic.callback		= Menu_SavePlayerRailColor;
@@ -380,7 +381,7 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_railcolor_slider[1].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[1].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[1].generic.x			= x + 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[1].generic.x			= x + 9*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[1].generic.name			= "green";
 	s_playerconfig_railcolor_slider[1].generic.callback		= Menu_SavePlayerRailColor;
@@ -396,7 +397,7 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_railcolor_slider[2].generic.type			= MTYPE_SLIDER;
 	s_playerconfig_railcolor_slider[2].generic.textSize		= MENU_FONT_SIZE;
-	s_playerconfig_railcolor_slider[2].generic.x			= x + 0*MENU_FONT_SIZE;
+	s_playerconfig_railcolor_slider[2].generic.x			= x + 9*MENU_FONT_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.y			= y += MENU_LINE_SIZE;
 	s_playerconfig_railcolor_slider[2].generic.name			= "blue";
 	s_playerconfig_railcolor_slider[2].generic.callback		= Menu_SavePlayerRailColor;
@@ -412,7 +413,7 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_skin_display.generic.type		= MTYPE_LISTVIEW;
 //	s_playerconfig_skin_display.generic.header		= "skin";
-	s_playerconfig_skin_display.generic.x			= SCREEN_WIDTH*0.5 - 24;
+	s_playerconfig_skin_display.generic.x			= SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
 	s_playerconfig_skin_display.generic.y			= SCREEN_HEIGHT - 110;
 	s_playerconfig_skin_display.generic.name		= 0;
 	s_playerconfig_skin_display.listViewType		= LISTVIEW_IMAGE;
@@ -443,7 +444,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_back_action.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_back_action.generic.name			= "Back to Multiplayer";
 	s_playerconfig_back_action.generic.flags		= QMF_LEFT_JUSTIFY;
-	s_playerconfig_back_action.generic.x			= x + -5*MENU_FONT_SIZE;
+	s_playerconfig_back_action.generic.x			= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_back_action.generic.y			= y += 3*MENU_LINE_SIZE;
 	s_playerconfig_back_action.generic.statusbar	= NULL;
 	s_playerconfig_back_action.generic.callback		= UI_BackMenu;

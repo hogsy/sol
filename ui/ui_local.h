@@ -77,11 +77,11 @@ enum {
 #define FIELD_VOFFSET MENU_FONT_SIZE/2
 
 #define SLIDER_RANGE 10
-#define SLIDER_HEIGHT 8
+#define SLIDER_HEIGHT 8	// 10
 #define SLIDER_ENDCAP_WIDTH 5 // was 8
 #define SLIDER_SECTION_WIDTH 10 // was 8
 #define SLIDER_KNOB_WIDTH 5 // was 8
-#define SLIDER_V_OFFSET (SLIDER_HEIGHT-MENU_FONT_SIZE)/2
+#define SLIDER_V_OFFSET 1	// (SLIDER_HEIGHT-MENU_FONT_SIZE)/2
 
 #define CHECKBOX_WIDTH 10
 #define CHECKBOX_HEIGHT 10
@@ -580,7 +580,7 @@ extern keyBindListHandle_t ui_customKeyBindList;
 
 //=======================================================
 
-#define	UI_MAX_SAVEGAMES	257 // increased from 15, 21
+#define	UI_MAX_SAVEGAMES	257 // increased from 15, 21, 129
 #define	EMPTY_GAME_STRING	"<EMPTY>"
 
 extern char *ui_savegame_names[UI_MAX_SAVEGAMES];
@@ -590,7 +590,7 @@ extern char	ui_savestrings[UI_MAX_SAVEGAMES][64];
 //=======================================================
 
 #define UI_MAX_LOCAL_SERVERS 12
-#define UI_LOCAL_SERVER_NAMELEN 64	// was 80
+#define UI_LOCAL_SERVER_NAMELEN 64
 #define	NO_SERVER_STRING	"<no server>"
 
 extern int		ui_num_servers;

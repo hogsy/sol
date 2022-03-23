@@ -41,7 +41,7 @@ vec4_t		stCoord_slider_center = {0.125, 0.0, 0.375, 1.0};
 vec4_t		stCoord_slider_right = {0.375, 0.0, 0.5, 1.0};
 vec4_t		stCoord_slider_knob = {0.5, 0.0, 0.625, 1.0};
 
-//======================================================
+//=========================================================
 
 void UI_MenuScrollBar_SetPos (widgetScroll_s *scroll, int visibleItems, int numItems, int curValue)
 {
@@ -486,6 +486,8 @@ void UI_MenuKeyBind_Draw (menuKeyBind_s *k)
 	int				x, alpha = UI_MouseOverAlpha(&k->generic);
 	const char		*keyName1, *keyName2;
 
+	if (!menu)	return;
+
 	UI_DrawMenuString (menu->x + k->generic.x + LCOLUMN_OFFSET,
 						menu->y + k->generic.y, MENU_FONT_SIZE, k->generic.scrAlign, k->generic.name, alpha,
 						!(k->generic.flags & QMF_LEFT_JUSTIFY), (k->generic.flags & QMF_ALTCOLOR));
@@ -602,7 +604,6 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 	switch (key)
 	{
 	case K_ESCAPE:
-	//	UI_PopMenu ();
 		UI_CheckAndPopMenu (menu);
 		return ui_menu_out_sound;
 	case K_ENTER:
@@ -1048,48 +1049,51 @@ void UI_MenuField_Draw (menuField_s *f)
 		offset = (int)strlen(tempbuffer);
 	}
 
-	if (ui_new_textfield->integer)
-	{
-		UI_DrawPicST (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_left,
-						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
-		UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_right,
-						f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
+	// draw left
+	if (ui_new_textfield->integer) {
+		UI_DrawPicST (menu->x + f->generic.x + RCOLUMN_OFFSET, menu->y + f->generic.y - FIELD_VOFFSET,
+					f->generic.textSize, f->generic.textSize*2, stCoord_field_left, f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 	}
-	else
-	{
-		UI_DrawChar (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 18, 255, 255, 255, 255, false, false);
-		UI_DrawChar (f->generic.x + f->generic.parent->x + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 24, 255, 255, 255, 255, false, false);
-		UI_DrawChar (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 20, 255, 255, 255, 255, false, false);
-		UI_DrawChar (f->generic.x + f->generic.parent->x + (1+f->visible_length)*f->generic.textSize + RCOLUMN_OFFSET,
-					f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 26, 255, 255, 255, 255, false, false);
+	else {
+		UI_DrawChar (menu->x + f->generic.x + RCOLUMN_OFFSET, menu->y + f->generic.y - FIELD_VOFFSET,
+					f->generic.textSize, f->generic.scrAlign, 18, 255, 255, 255, 255, false, false);
+		UI_DrawChar (menu->x + f->generic.x + RCOLUMN_OFFSET, menu->y + f->generic.y + FIELD_VOFFSET,
+					f->generic.textSize, f->generic.scrAlign, 24, 255, 255, 255, 255, false, false);
 	}
 
+	// draw center
 	for (i = 0; i < f->visible_length; i++)
 	{
 		if (ui_new_textfield->integer) {
-			UI_DrawPicST (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
-							f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.textSize*2, stCoord_field_center,
-							f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
+			UI_DrawPicST (menu->x + f->generic.x + (3+i)*f->generic.textSize, menu->y + f->generic.y - FIELD_VOFFSET,
+						f->generic.textSize, f->generic.textSize*2, stCoord_field_center, f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
 		}
 		else {
-			UI_DrawChar (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y - 4, f->generic.textSize, f->generic.scrAlign, 19, 255, 255, 255, 255, false, false);
-			UI_DrawChar (f->generic.x + f->generic.parent->x + (1+i)*f->generic.textSize + RCOLUMN_OFFSET,
-						f->generic.y + f->generic.parent->y + 4, f->generic.textSize, f->generic.scrAlign, 25, 255, 255, 255, 255, false, (i==(f->visible_length-1)));
+			UI_DrawChar (menu->x + f->generic.x + (3+i)*f->generic.textSize, menu->y + f->generic.y - FIELD_VOFFSET,
+						f->generic.textSize, f->generic.scrAlign, 19, 255, 255, 255, 255, false, false);
+			UI_DrawChar (menu->x + f->generic.x + (3+i)*f->generic.textSize, menu->y + f->generic.y + FIELD_VOFFSET,
+						f->generic.textSize, f->generic.scrAlign, 25, 255, 255, 255, 255, false, false);
 		}
 	}
 
+	// draw right
+	if (ui_new_textfield->integer) {
+		UI_DrawPicST (menu->x + f->generic.x + (3+f->visible_length)*f->generic.textSize, menu->y + f->generic.y - FIELD_VOFFSET,
+					f->generic.textSize, f->generic.textSize*2, stCoord_field_right, f->generic.scrAlign, true, color_identity, UI_FIELD_PIC);
+	}
+	else {
+		UI_DrawChar (menu->x + f->generic.x + (3+f->visible_length)*f->generic.textSize, menu->y + f->generic.y - FIELD_VOFFSET,
+					f->generic.textSize, f->generic.scrAlign, 20, 255, 255, 255, 255, false, false);
+		UI_DrawChar (menu->x + f->generic.x + (3+f->visible_length)*f->generic.textSize, menu->y + f->generic.y + FIELD_VOFFSET,
+					f->generic.textSize, f->generic.scrAlign, 26, 255, 255, 255, 255, false, true);
+	}
+
 	// add cursor thingie
-	if ( (UI_ItemAtMenuCursor(f->generic.parent) == f)  && ((int)(Sys_Milliseconds()/250))&1 )
+	if ( (UI_ItemAtMenuCursor(menu) == f)  && (((int)(Sys_Milliseconds()/250)) & 1) )
 		Com_sprintf (tempbuffer, sizeof(tempbuffer), "%s%c", tempbuffer, 11);
 
-	UI_DrawMenuString (f->generic.x + f->generic.parent->x + f->generic.textSize*3,
-						f->generic.y + f->generic.parent->y, f->generic.textSize, f->generic.scrAlign, tempbuffer, hoverAlpha, false, false);
+	UI_DrawMenuString (menu->x + f->generic.x + (int)(f->generic.textSize*2.5),
+						menu->y + f->generic.y, f->generic.textSize, f->generic.scrAlign, tempbuffer, hoverAlpha, false, false);
 }
 
 void UI_MenuField_Setup (menuField_s *f)
@@ -1180,6 +1184,7 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 				if (f->cursor > f->visible_length)
 					f->visible_offset++;
 			}
+			break;
 		}
 	}
 
@@ -1195,15 +1200,15 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 
 void UI_MenuLabel_Draw (menuLabel_s *l)
 {
-	int alpha;
+	menuFramework_s	*menu = l->generic.parent;
+	int				alpha = UI_MouseOverAlpha(&l->generic);
+	qboolean		left = (l->generic.flags & QMF_LEFT_JUSTIFY);
 
-	if (!l) return;
+	if (!l->generic.name)
+		return;
 
-	alpha = UI_MouseOverAlpha(&l->generic);
-
-	if (l->generic.name)
-		UI_DrawMenuString (l->generic.x + l->generic.parent->x,
-								l->generic.y + l->generic.parent->y, l->generic.textSize, l->generic.scrAlign, l->generic.name, alpha, true, true);
+	UI_DrawMenuString (menu->x + l->generic.x + (left ? LCOLUMN_OFFSET : 0), menu->y + l->generic.y,
+						l->generic.textSize, l->generic.scrAlign, l->generic.name, alpha, !left, true);
 }
 
 void UI_MenuLabel_Setup (menuLabel_s *l)
@@ -1373,13 +1378,10 @@ char *UI_MenuSlider_Click (menuSlider_s *s, qboolean mouse2)
 
 void UI_MenuSlider_Draw (menuSlider_s *s)
 {
-	int		i, x, y, hoverAlpha;
+//	menuFramework_s	*menu = s->generic.parent;
+	int		i, x, y, hoverAlpha = UI_MouseOverAlpha(&s->generic);
 	float	tmpValue;
 	char	valueText[8];
-
-	if (!s) return;
-
-	hoverAlpha = UI_MouseOverAlpha(&s->generic);
 
 	// name and header
 	UI_MenuCommon_DrawItemName (&s->generic, LCOLUMN_OFFSET, 0, RCOLUMN_OFFSET, -MENU_LINE_SIZE, hoverAlpha);
@@ -1396,35 +1398,35 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 	if (s->range > 1)
 		s->range = 1;
 
-	x = s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET;
-	y = s->generic.y + s->generic.parent->y;
+	x = s->generic.topLeft[0] + RCOLUMN_OFFSET;
+	y = s->generic.topLeft[1] - SLIDER_V_OFFSET;
 
 	// draw left
 	UI_DrawPicST (x, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_left, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
-//	UI_DrawChar (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 128, 255,255,255,255, false, false);
+					stCoord_slider_left, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
+//	UI_DrawChar (s->generic.topLeft[0] + RCOLUMN_OFFSET,
+//				s->generic.topLeft[1], s->generic.textSize, s->generic.scrAlign, 128, 255,255,255,255, false, false);
 
 	// draw center
 	x += SLIDER_ENDCAP_WIDTH;
 	for (i = 0; i < SLIDER_RANGE; i++) {
 		UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_SECTION_WIDTH, SLIDER_HEIGHT,
-							stCoord_slider_center, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
-	//	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
-	//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 129, 255,255,255,255, false, false);
+						stCoord_slider_center, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
+	//	UI_DrawChar (s->generic.topLeft[0] + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
+	//				s->generic.topLeft[1], s->generic.textSize, s->generic.scrAlign, 129, 255,255,255,255, false, false);
 	}
 
 	// draw right
 	UI_DrawPicST (x + i*SLIDER_SECTION_WIDTH, y, SLIDER_ENDCAP_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_right, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
-//	UI_DrawChar (s->generic.x + s->generic.parent->x + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 130, 255,255,255,255, false, false);
+					stCoord_slider_right, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
+//	UI_DrawChar (s->generic.topLeft[0] + (i+1)*s->generic.textSize + RCOLUMN_OFFSET,
+//				s->generic.topLeft[1], s->generic.textSize, s->generic.scrAlign, 130, 255,255,255,255, false, false);
 
 	// draw knob
 	UI_DrawPicST (x + SLIDER_RANGE*SLIDER_SECTION_WIDTH*s->range - (SLIDER_KNOB_WIDTH/2), y, SLIDER_KNOB_WIDTH, SLIDER_HEIGHT,
-						stCoord_slider_knob, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
-//	UI_DrawChar (s->generic.x + s->generic.parent->x + s->generic.textSize*((SLIDER_RANGE-1)*s->range+1) + RCOLUMN_OFFSET,
-//				s->generic.y + s->generic.parent->y, s->generic.textSize, s->generic.scrAlign, 131, 255,255,255,255, false, true);
+					stCoord_slider_knob, s->generic.scrAlign, true, color_identity, UI_SLIDER_PIC);
+//	UI_DrawChar (s->generic.topLeft[0] + s->generic.textSize*((SLIDER_RANGE-1)*s->range+1) + RCOLUMN_OFFSET,
+//				s->generic.topLeft[1], s->generic.textSize, s->generic.scrAlign, 131, 255,255,255,255, false, true);
 
 	// draw value
 	tmpValue = s->curPos * s->increment + s->baseValue;
@@ -1438,10 +1440,10 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 		else
 			Com_sprintf (valueText, sizeof(valueText), "%4.2f", tmpValue);
 	}
-	UI_DrawMenuString (s->generic.x + s->generic.parent->x + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
-						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
-//	UI_DrawMenuString (s->generic.x + s->generic.parent->x + s->generic.textSize*SLIDER_RANGE + RCOLUMN_OFFSET + 2.5*MENU_FONT_SIZE,
-//						s->generic.y + s->generic.parent->y + 1, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
+	UI_DrawMenuString (s->generic.topLeft[0] + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
+						s->generic.topLeft[1] + SLIDER_V_OFFSET, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
+//	UI_DrawMenuString (s->generic.topLeft[0] + s->generic.textSize*SLIDER_RANGE + RCOLUMN_OFFSET + 2.5*MENU_FONT_SIZE,
+//						s->generic.topLeft[1] + SLIDER_V_OFFSET, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
 }
 
 void UI_MenuSlider_Setup (menuSlider_s *s)
@@ -3262,7 +3264,6 @@ void UI_MenuModelView_Draw (menuModelView_s *m)
 		VectorCopy (m->modelOrigin[i], ent->origin);
 		VectorCopy (ent->origin, ent->oldorigin);
 		ent->frame = m->modelFrame[i] + ((int)(cl.time*0.01f) % (m->modelFrameNumbers[i]+1)); // m->modelFrameTime[i]
-	//	ent->oldframe = 
 		ent->backlerp = 0.0f;
 		for (j=0; j<3; j++)
 			ent->angles[j] = m->modelBaseAngles[i][j] + cl.time*m->modelRotation[i][j];
@@ -3855,15 +3856,13 @@ qboolean UI_SelectMenuItem (menuFramework_s *s)
 			return false;
 		case MTYPE_BUTTON:
 			UI_MenuButton_DoEnter ((menuButton_s *)item);
-			break;
+			return true;
 		case MTYPE_CHECKBOX:
 			UI_MenuCheckBox_DoEnter ( (menuCheckBox_s *)item );
 			return false;
 		case MTYPE_LISTBOX:
 			UI_MenuListBox_DoEnter ( (menuListBox_s *)item );
 			return true;
-		default:
-			break;
 		}
 	}
 	return false;
@@ -3892,7 +3891,7 @@ char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 			return ui_menu_null_sound;
 		case MTYPE_SLIDER:
 			UI_MenuSlider_DoSlide ((menuSlider_s *) item, dir);
-			return ui_menu_null_sound;
+			return ui_menu_move_sound;
 		case MTYPE_PICKER:
 			UI_MenuPicker_DoSlide ((menuPicker_s *) item, dir);
 			return ui_menu_move_sound;

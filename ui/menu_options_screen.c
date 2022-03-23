@@ -77,11 +77,6 @@ static void CrosshairButtonMouse2Func (void *unused)
 	UI_SaveMenuItemValue (&s_options_screen_crosshair_box);
 //	UI_SlideMenuItem ((void *) &s_options_screen_crosshair_box, -1);
 }
-
-void CrosshairButtonCursor (void *unused)
-{
-	// Do nothing
-}
 #endif	// USE_LISTVIEW
 
 /*static void M_ScriptedHudFunc (void *unused)
@@ -245,7 +240,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_display.generic.isHidden			= false;
 	s_options_screen_crosshair_display.generic.callback			= CrosshairButtonFunc;
 	s_options_screen_crosshair_display.generic.mouse2Callback	= CrosshairButtonMouse2Func;
-	s_options_screen_crosshair_display.generic.cursordraw		= CrosshairButtonCursor;
+	s_options_screen_crosshair_display.generic.cursordraw		= UI_DrawMenuNullCursor;
 #endif	// USE_LISTVIEW
 
 	// Psychospaz's changeable size crosshair
