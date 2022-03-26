@@ -331,7 +331,7 @@ void BecomeExplosion1(edict_t *self)
 	if (strcmp(self->classname, "item_flag_team2") == 0)
 	{
 		CTFResetFlag(CTF_TEAM2); // this will free self!
-		gi_bprintf(PRINT_HIGH, "The %s flag has returned!\n", CTFTeamName(CTF_TEAM1));
+		gi_bprintf(PRINT_HIGH, "The %s flag has returned!\n", CTFTeamName(CTF_TEAM2));
 		return;
 	}
 	// techs are important too
