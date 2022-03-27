@@ -51,8 +51,8 @@ modInfo
 }
 
 This script specifies that that the title of the mod is "Meadow Rumble II: Revenge of the Ovinomancer",
-the game folder for the mod is mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders,
-by setting the basegame, basegame2, and basegame3 cvars.
+that the game folder for the mod is named mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders.
+The latter is done by the menu internally setting the basegame, basegame2, and basegame3 cvars.
 
 
 ================================
@@ -84,7 +84,6 @@ keyBindList
 		commandName "+use"
 		displayName "Activate"
 	}
-	keyBind
 	.
 	.
 	.
@@ -93,10 +92,11 @@ keyBindList
 The file opens with the identifier "keyBindList", followed by a left curly brace.  It is terminated at the end
 of the list with a right curly brace.
 
-Each key bind is opened with the identifier "keyBind", and is opened with another left curly brace, and closed
-with a right curly brace.  Each key bind has two bits of data- a "commandName" that sets the command to bind,
+Individual key binds are opened with the identifier "keyBind", followed with another left curly brace, and they are
+closed with a right curly brace.  Each key bind has two values- a "commandName" that sets the command to bind,
 and a "displayName" that sets the name displayed in the key bind menu.
 
 Lines starting with a "//" are comments that are ignored.
 
-There is no limit on the number of key binds that can be in this file.
+The dots represent additional keybinds that can be added.  There is no limit on the number of key binds that can
+be placed in this file.

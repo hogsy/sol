@@ -1,4 +1,4 @@
-KMQuake2 0.21 supports the scripting of HUD layouts.
+KMQuake2 0.20u8 supports the scripting of HUD layouts.
 
 The script file has a .hud extension, and goes under scripts/huds.
 

@@ -1745,14 +1745,17 @@ void UI_BuildModList (void)
 		if ( !Q_strcasecmp(modDir, BASEDIRNAME) )
 			continue;
 	
-		// Must have a pak or pk3 file, or a maps dir
+		// Must have a pak or pk3 file, a maps dir, or a modinfo.def file
 		if ( !Sys_FindFirst( va("%s/*.pak", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
 			Sys_FindClose();
 			if ( !Sys_FindFirst( va("%s/*.pk3", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
 				Sys_FindClose();
 				if ( !Sys_FindFirst( va("%s/maps", dirnames[i]), SFF_SUBDIR, 0) ) {
 					Sys_FindClose();
-					continue;
+					if ( !Sys_FindFirst( va("%s/modinfo.def", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
+						Sys_FindClose();
+						continue;
+					}
 				}
 			}
 		}
