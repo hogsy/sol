@@ -294,6 +294,7 @@
     <ClCompile Include="..\..\client\cl_event.c" />
     <ClCompile Include="..\..\client\cl_http.c" />
     <ClCompile Include="..\..\client\cl_hud.c" />
+    <ClCompile Include="..\..\client\cl_hud_script.c" />
     <ClCompile Include="..\..\client\cl_input.c" />
     <ClCompile Include="..\..\client\cl_keys.c" />
     <ClCompile Include="..\..\client\cl_lights.c" />
@@ -363,6 +364,7 @@
     <ClCompile Include="..\..\ui\menu_game_load.c" />
     <ClCompile Include="..\..\ui\menu_game_save.c" />
     <ClCompile Include="..\..\ui\menu_main.c" />
+    <ClCompile Include="..\..\ui\menu_mods.c" />
     <ClCompile Include="..\..\ui\menu_mp_addressbook.c" />
     <ClCompile Include="..\..\ui\menu_mp_dmoptions.c" />
     <ClCompile Include="..\..\ui\menu_mp_download.c" />

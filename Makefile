@@ -196,6 +196,7 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/cl_http.o \
 	$(BUILDDIR)/client/cl_input.o \
 	$(BUILDDIR)/client/cl_hud.o \
+	$(BUILDDIR)/client/cl_hud_script.o \
 	$(BUILDDIR)/client/cl_keys.o \
 	$(BUILDDIR)/client/cl_lights.o \
 	$(BUILDDIR)/client/cl_loc.o \
@@ -221,6 +222,7 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/menu_game_load.o \
 	$(BUILDDIR)/client/menu_game_save.o \
 	$(BUILDDIR)/client/menu_main.o \
+	$(BUILDDIR)/client/menu_mods.o \
 	$(BUILDDIR)/client/menu_mp_addressbook.o \
 	$(BUILDDIR)/client/menu_mp_dmoptions.o \
 	$(BUILDDIR)/client/menu_mp_download.o \
@@ -351,6 +353,9 @@ $(BUILDDIR)/client/cl_input.o :   	$(CLIENT_DIR)/cl_input.c
 $(BUILDDIR)/client/cl_hud.o :     	$(CLIENT_DIR)/cl_hud.c
 	$(DO_CC)
 
+$(BUILDDIR)/client/cl_hud_script.o :     	$(CLIENT_DIR)/cl_hud_script.c
+	$(DO_CC)
+
 $(BUILDDIR)/client/cl_keys.o :       	$(CLIENT_DIR)/cl_keys.c
 	$(DO_CC)
 
@@ -421,6 +426,9 @@ $(BUILDDIR)/client/menu_game_save.o :    	$(UI_DIR)/menu_game_save.c
 	$(DO_CC)
 	
 $(BUILDDIR)/client/menu_main.o :    	$(UI_DIR)/menu_main.c
+	$(DO_CC)
+	
+$(BUILDDIR)/client/menu_mods.o :    	$(UI_DIR)/menu_mods.c
 	$(DO_CC)
 	
 $(BUILDDIR)/client/menu_mp_addressbook.o :    	$(UI_DIR)/menu_mp_addressbook.c

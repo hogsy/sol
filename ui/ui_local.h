@@ -551,14 +551,11 @@ extern char	**ui_video_modes;
 extern char	**ui_aniso_names;
 extern char	**ui_aniso_values;
 
-//extern char	**ui_mod_names;
-//extern char	**ui_mod_values;
-
 extern char **ui_font_names;
 extern int	ui_numfonts;
 
-//extern char **ui_hud_names;
-//extern int	ui_numhuds;
+extern char **ui_hud_names;
+extern int	ui_numhuds;
 
 extern char **ui_crosshair_names;
 extern char **ui_crosshair_display_names;
@@ -577,6 +574,24 @@ typedef struct {
 } keyBindListHandle_t;
 
 extern keyBindListHandle_t ui_customKeyBindList;
+
+//=======================================================
+
+typedef struct {
+	char		*gameDir;
+	char		*baseGame;
+	char		*baseGame2;
+	char		*baseGame3;
+	char		*quakePath;
+	char		*quakePath2;
+	char		*quakePath3;
+	qboolean	isUnsupported;
+} modInfo_t;
+
+extern modInfo_t *ui_mod_info;
+extern char	**ui_mod_names;
+extern char	**ui_mod_values;
+extern int ui_num_mods;
 
 //=======================================================
 
@@ -676,18 +691,16 @@ int	 UI_TallyMenuSlots (menuFramework_s *menu);
 void UI_StartSPGame (void);
 void UI_StartServer (char *startmap, qboolean dedicated);
 void UI_LoadMod (char *modName);
+void UI_LoadModFromList (int index);
 
 void UI_GetVideoInfo (void);
 void UI_FreeVideoInfo (void);
 
-//void UI_GetModList (void);
-//void UI_FreeModList (void);
-
 void UI_LoadFontNames (void);
 void UI_FreeFontNames (void);
 
-//void UI_LoadHudNames (void);
-//void UI_FreeHudNames (void);
+void UI_LoadHudNames (void);
+void UI_FreeHudNames (void);
 
 void UI_SortCrosshairs (char **list, int len);
 void UI_LoadCrosshairs (void);
@@ -695,6 +708,9 @@ void UI_FreeCrosshairs (void);
 
 void UI_LoadKeyBindList (void);
 void UI_FreeKeyBindList (void);
+
+void UI_GetModList (void);
+void UI_FreeModList (void);
 
 char *UI_UpdateSaveshot (int index);
 void UI_UpdateSavegameData (void);
@@ -916,7 +932,7 @@ void Menu_Main_f (void);
 		void Menu_DownloadOptions_f (void);
 	void Menu_Video_f (void);
 		void Menu_Video_Advanced_f (void);
-//	void Menu_Mods_f (void);
+	void Menu_Mods_f (void);
 	void Menu_Options_f (void);
 		void Menu_Options_Sound_f (void);
 		void Menu_Options_Controls_f (void);

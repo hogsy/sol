@@ -22,6 +22,21 @@ Changes as of v0.20 update 8:
 	
 - Added Windows DPI scaling detection from Yamagi Quake2.
 
+- Added support for scripted HUDs.  HUDs can be selected from the screen options menu.
+	Some sample HUDs are included in kmquake2_extras.pk3.  See kmq2_hud_scripting.txt for more info.
+	
+- Added dumpstatuslayout command to dump status bar layout string.  Useful for extracting reference data to
+	modify HUD scripts for compatibility with mods that have customized status bar layouts.  Usage:
+	dumpstatuslayout <filename>
+		    	
+- Reworked mouse handling, image drawing, and controls in the menus, with a general revamp of menu implementation.
+
+- Added support for custom key bind lists in customize controls menu.
+
+- Added mods menu.
+
+- Added a bunch of triple-monitor surround modes to video mode list.
+
 - Now reads/writes savegames, config files, demos, etc. to <userprofile>/Saved Games/KMQuake2 on Windows Vista
 	and later, and to My Documents/My Games/KMQuake2 on Windows 2000/XP/2003.
 	Autodownloaded files are now written to <userprofile>/Downloads/KMQuake2 on Windows Vista and later,

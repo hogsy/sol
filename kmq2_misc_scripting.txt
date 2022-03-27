@@ -1,0 +1,102 @@
+================================
+
+	ARENA SCRIPTING
+	
+================================
+
+KMQuake2 0.20u8 supports loading Quake3-style .arena files, both from inside pak/pk3 files, and from
+loose files outside of paks.
+
+The name of the script file is the same as the bsp it contains information for, but with a .arena extension.
+For example, the arena script for highlandcastle_b3.bsp is named highlandcastle_b3.arena.
+
+Here's an example of an arena script for this map:
+
+{
+map				"highlandcastle_b3"
+longname		"Castle in the Highlands"
+type			"dm teamdm"
+}
+
+This script specifies that the name of the .bsp file to load is highlandcastle_b3.bsp, the map title to display
+in the start server menu is "Castle in the Highlands", and the game mode supported is deathmatch.
+
+The start server menu's maplist is filtered by the currently selected gametype.  Here are the valid type tokens:
+	Deathmatch:		dm teamdm ffa team
+	Cooperative:	coop
+	CTF:			ctf
+	3Team CTF:		3tctf
+	
+================================
+
+	MODINFO SCRIPTING
+	
+================================
+
+KMQuake2 0.20u8 features a Mods menu that allows in-game switching of the loaded mod or gamedir, without
+overwriting settings or key binds.
+
+This menu also reads info on each mod from a text file named modinfo.def, located inside the game folder for
+each mod.
+
+Here's an example of a modinfo script:
+
+modInfo
+{
+	title		"Meadow Rumble II: Revenge of the Ovinomancer"
+	gameDir		"mwrumble2"
+	baseGame	"xatrix"
+	baseGame2	"rogue"
+	baseGame3	"zaero"	
+}
+
+This script specifies that that the title of the mod is "Meadow Rumble II: Revenge of the Ovinomancer",
+the game folder for the mod is mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders,
+by setting the basegame, basegame2, and basegame3 cvars.
+
+
+================================
+
+	KEYBIND LIST SCRIPTING
+
+================================
+
+KMQuake2 0.20u8 features a new key binding menu with a scrolling list, allowing a large number of keys to be
+bound.  This menu supports loading its list of key binds from a filenamed scripts/ui/keybinds.def.
+
+Here's an example of a keybind list file:
+
+keyBindList
+{
+	// Basic Q2 binds
+	keyBind
+	{
+		commandName "+attack"
+		displayName "Attack"
+	}
+	keyBind
+	{
+		commandName "+attack2"
+		displayName "Alternate Attack"
+	}
+	keyBind
+	{
+		commandName "+use"
+		displayName "Activate"
+	}
+	keyBind
+	.
+	.
+	.
+}
+
+The file opens with the identifier "keyBindList", followed by a left curly brace.  It is terminated at the end
+of the list with a right curly brace.
+
+Each key bind is opened with the identifier "keyBind", and is opened with another left curly brace, and closed
+with a right curly brace.  Each key bind has two bits of data- a "commandName" that sets the command to bind,
+and a "displayName" that sets the name displayed in the key bind menu.
+
+Lines starting with a "//" are comments that are ignored.
+
+There is no limit on the number of key binds that can be in this file.

@@ -42,7 +42,7 @@ static menuButton_s		s_main_game_button;
 static menuButton_s		s_main_multiplayer_button;
 static menuButton_s		s_main_options_button;
 static menuButton_s		s_main_video_button;
-//static menuButton_s		s_main_mods_button;
+static menuButton_s		s_main_mods_button;
 static menuButton_s		s_main_quit_button;
 static menuModelView_s	s_main_cursor;
 
@@ -68,10 +68,10 @@ static void M_MainVideoFunc (void *unused)
 	Menu_Video_f ();
 }
 
-/*static void M_MainModsFunc (void *unused)
+static void M_MainModsFunc (void *unused)
 {
 	Menu_Mods_f ();
-} */
+}
 
 static void M_MainQuitFunc (void *unused)
 {
@@ -175,7 +175,7 @@ void Menu_Main_Init (void)
 	s_main_video_button.usesMouse2			= false;
 	s_main_video_button.generic.callback	= M_MainVideoFunc;
 //	s_main_video_button.generic.statusbar	= "change display/graphics settings";
-/*
+
 	s_main_mods_button.generic.type			= MTYPE_BUTTON;
 	s_main_mods_button.generic.x			= x;
 	s_main_mods_button.generic.y			= y+=MAIN_MENU_ITEM_SPACE;
@@ -189,7 +189,7 @@ void Menu_Main_Init (void)
 	s_main_mods_button.usesMouse2			= false;
 	s_main_mods_button.generic.callback		= M_MainModsFunc;
 //	s_main_mods_button.generic.statusbar	= "load a modification";
-*/
+
 	s_main_quit_button.generic.type			= MTYPE_BUTTON;
 	s_main_quit_button.generic.x			= x;
 	s_main_quit_button.generic.y			= y+=MAIN_MENU_ITEM_SPACE;
@@ -251,7 +251,7 @@ void Menu_Main_Init (void)
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_multiplayer_button);
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_options_button);
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_video_button);
-//	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_mods_button);
+	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_mods_button);
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_quit_button);
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_cursor);
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_plaque);

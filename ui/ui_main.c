@@ -205,8 +205,8 @@ void UI_Precache (void)
 	R_DrawFindPic ("/pics/m_main_options_sel.pcx");
 	R_DrawFindPic ("/pics/m_main_video.pcx");
 	R_DrawFindPic ("/pics/m_main_video_sel.pcx");
-//	R_DrawFindPic ("/pics/m_main_mods.pcx");
-//	R_DrawFindPic ("/pics/m_main_mods_sel.pcx");
+	R_DrawFindPic ("/pics/m_main_mods.pcx");
+	R_DrawFindPic ("/pics/m_main_mods_sel.pcx");
 	R_DrawFindPic ("/pics/m_main_quit.pcx");
 	R_DrawFindPic ("/pics/m_main_quit_sel.pcx");
 	R_DrawFindPic ("/pics/m_main_plaque.pcx");
@@ -225,7 +225,7 @@ void UI_Precache (void)
 	R_DrawFindPic ("/pics/m_banner_options.pcx");
 	R_DrawFindPic ("/pics/m_banner_customize.pcx");
 	R_DrawFindPic ("/pics/m_banner_video.pcx");
-//	R_DrawFindPic ("/pics/m_banner_mods.pcx");
+	R_DrawFindPic ("/pics/m_banner_mods.pcx");
 	R_DrawFindPic ("/pics/quit.pcx");
 	R_DrawFindPic ("/pics/areyousure.pcx");
 //	R_DrawFindPic ("/pics/yn.pcx");
@@ -275,11 +275,11 @@ void UI_Init (void)
 	Cvar_SetDescription ("ui_player_railblue", "Temp cvar for setting blue color component of player's railgun trail.  Values range 0-255.");
 
 	UI_GetVideoInfo ();		// build video mode list
-//	UI_GetModList ();		// load mods list
 	UI_LoadFontNames ();	// load font list
-//	UI_LoadHudNames ();		// load hud list
+	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
 	UI_LoadKeyBindList ();	// load key bind list
+	UI_GetModList ();		// load mods list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList();		// load map list
 	UI_LoadPlayerModels (); // load player models
@@ -301,7 +301,7 @@ void UI_Init (void)
 		Cmd_AddCommand ("menu_downloadoptions", Menu_DownloadOptions_f);
 	Cmd_AddCommand ("menu_video", Menu_Video_f);
 		Cmd_AddCommand ("menu_video_advanced", Menu_Video_Advanced_f);
-//	Cmd_AddCommand ("menu_mods", Menu_Mods_f);
+	Cmd_AddCommand ("menu_mods", Menu_Mods_f);
 	Cmd_AddCommand ("menu_options", Menu_Options_f);
 		Cmd_AddCommand ("menu_sound", Menu_Options_Sound_f);
 		Cmd_AddCommand ("menu_controls", Menu_Options_Controls_f);
@@ -328,11 +328,11 @@ void UI_Shutdown (void)
 		return;
 
 	UI_FreeVideoInfo ();
-//	UI_FreeModList ();
 	UI_FreeFontNames ();
-//	UI_FreeHudNames ();
+	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
 	UI_FreeKeyBindList ();
+	UI_FreeModList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
@@ -350,7 +350,7 @@ void UI_Shutdown (void)
 	Cmd_RemoveCommand ("menu_downloadoptions");
 	Cmd_RemoveCommand ("menu_video");
 	Cmd_RemoveCommand ("menu_video_advanced");
-//	Cmd_RemoveCommand ("menu_mods");
+	Cmd_RemoveCommand ("menu_mods");
 	Cmd_RemoveCommand ("menu_options");
 	Cmd_RemoveCommand ("menu_sound");
 	Cmd_RemoveCommand ("menu_controls");
@@ -380,20 +380,20 @@ void UI_RefreshData (void)
 	UI_ForceMenuOff ();
 
 	UI_FreeVideoInfo ();
-//	UI_FreeModList ();
 	UI_FreeFontNames ();
-//	UI_FreeHudNames ();
+	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
 	UI_FreeKeyBindList ();
+	UI_FreeModList ();
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
 	UI_GetVideoInfo ();		// build video mode list
-//	UI_GetModList ();		// load mods list
 	UI_LoadFontNames ();	// load font list
-//	UI_LoadHudNames ();		// load hud list
+	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
 	UI_LoadKeyBindList ();	// load key bind list
+	UI_GetModList ();		// load mods list
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList ();		// load map list
 	UI_LoadPlayerModels (); // load player models

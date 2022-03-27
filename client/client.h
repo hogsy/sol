@@ -988,6 +988,8 @@ extern clientMedia_t clMedia;
 
 void CL_RegisterTEntSounds (void);
 void CL_RegisterTEntModels (void);
+void CL_ClearTEnts (void);
+void CL_ShutdownTEntMedia (void);
 void CL_SmokeAndFlash(vec3_t origin);
 
 
@@ -997,7 +999,8 @@ void CL_SmokeAndFlash(vec3_t origin);
 void CL_InitPrediction (void);
 void CL_PredictMove (void);
 void CL_CheckPredictionError (void);
-//Knightmare added
+void CL_PredictMovement (void);
+// Knightmare added
 trace_t CL_Trace (vec3_t start, vec3_t end, float size,  int contentmask);
 trace_t CL_BrushTrace (vec3_t start, vec3_t end, float size,  int contentmask);
 trace_t CL_PMTrace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end);
@@ -1145,12 +1148,15 @@ void CL_LocHelp_f (void);
 //
 // menus
 //
+extern	char *ui_currentweaponmodel;
+
 void UI_Init (void);
 void UI_Shutdown (void);
 void UI_Draw (void);
 void UI_Keydown (int key);
 qboolean UI_MenuHasGrabBind (void);
 void UI_ForceMenuOff (void);
+//void UI_RefreshMenuItems (void);
 void UI_AddToServerList (netadr_t adr, char *info);
 void UI_RootMenu (void);
 
@@ -1159,10 +1165,6 @@ void UI_RootMenu (void);
 //
 void CL_ParseInventory (void);
 
-//
-// cl_pred.c
-//
-void CL_PredictMovement (void);
 
 #if id386
 void x86_TimerStart( void );

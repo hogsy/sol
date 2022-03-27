@@ -88,18 +88,6 @@ void Hud_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offs
 	CL_DrawStringFromCharsPic (x, y, w, h, scaledOffset, width, string, color, pic, flags);
 }
 
-//=======================================================
-
-/*
-================
-CL_SetHudVariant
-================
-*/
-void CL_SetHudVariant (void)
-{
-	// Just a dummy function for now
-}
-
 /*
 ===============================================================
 
@@ -803,11 +791,11 @@ is based on the stats array.
 */
 void CL_DrawStatus (void)
 {
-/*	if ( Hud_ScriptIsLoaded() )
+	if ( Hud_ScriptIsLoaded() )
 	{
 		Hud_DrawHud ();
 		return;
-	} */
+	}
 	CL_ExecuteLayoutString (cl.configstrings[CS_STATUSBAR], true);
 }
 

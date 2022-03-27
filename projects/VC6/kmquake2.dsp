@@ -161,6 +161,10 @@ SOURCE=..\..\client\cl_hud.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\client\cl_hud_script.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\client\cl_input.c
 # End Source File
 # Begin Source File
@@ -474,6 +478,10 @@ SOURCE=..\..\ui\menu_game_save.c
 # Begin Source File
 
 SOURCE=..\..\ui\menu_main.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\ui\menu_mods.c
 # End Source File
 # Begin Source File
 

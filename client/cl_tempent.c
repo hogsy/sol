@@ -268,6 +268,7 @@ void CL_RegisterTEntModels (void)
 	R_DrawFindPic ("a_grenades");
 }	
 
+
 /*
 =================
 CL_ClearTEnts
@@ -284,6 +285,19 @@ void CL_ClearTEnts (void)
 	memset (cl_sustains, 0, sizeof(cl_sustains));
 //ROGUE
 }
+
+
+/*
+=================
+CL_ShutdownTEntMedia
+=================
+*/
+void CL_ShutdownTEntMedia (void)
+{
+	// just zero everything
+	memset (&clMedia, 0, sizeof(clMedia));
+}
+
 
 /*
 =================

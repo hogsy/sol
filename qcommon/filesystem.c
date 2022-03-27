@@ -2584,11 +2584,11 @@ void FS_InitFilesystem (void)
 	Cvar_SetDescription ("xatrixgame", "Enables Xatrix-specific features in start server menu when not running under the Xatrix gamedir.");
 	fs_roguegame = Cvar_Get("roguegame", "0", CVAR_LATCH);
 	Cvar_SetDescription ("roguegame", "Enables Rogue-specific features in start server menu when not running under the Rogue gamedir.");
-	fs_basegamedir = Cvar_Get ("basegame", "", CVAR_LATCH);
+	fs_basegamedir = Cvar_Get ("basegame", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("basegame", "Additional game data path.  Use in conjunction with game to load content from one mod while running another.");
-	fs_basegamedir2 = Cvar_Get ("basegame2", "", CVAR_LATCH);
+	fs_basegamedir2 = Cvar_Get ("basegame2", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("basegame2", "Second additional game data path.  Use in conjunction with basegame and game to load content from two mods while running another.");
-	fs_basegamedir3 = Cvar_Get ("basegame3", "", CVAR_LATCH);	// Knightmare added
+	fs_basegamedir3 = Cvar_Get ("basegame3", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("basegame3", "Third additional game data path.  Use in conjunction with basegame2, basegame, and game to load content from three mods while running another.");
 	fs_gamedirvar = Cvar_Get ("game", "", CVAR_LATCH|CVAR_SERVERINFO|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("game", "Sets the mod/game dir.  Only set this from the command line with \"+set game <moddir>\".  Use the \"changegame\" command to change game folders while KMQuake2 is running.");

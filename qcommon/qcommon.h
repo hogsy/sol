@@ -927,6 +927,7 @@ void		FS_CreatePath (const char *path);
 void		FS_DeletePath (const char *path);
 char		*FS_NextPath (const char *prevPath);
 char		*FS_NextGamePath (const char *prevPath);
+int			FS_FileLength (FILE *f);
 char		**FS_ListFiles (const char *findname, int *numfiles, unsigned musthave, unsigned canthave);
 void		FS_FreeFileList (char **list, int n);
 qboolean	FS_ItemInList (const char *check, int num, const char **list);

@@ -398,7 +398,6 @@ CL_PrepRefresh
 Call before entering a new level, or after changing dlls
 =================
 */
-qboolean needLoadingPlaque (void);
 void CL_PrepRefresh (void)
 {
 	char		mapname[64];
@@ -406,7 +405,7 @@ void CL_PrepRefresh (void)
 	char		pname[MAX_QPATH];
 	float		rotate;
 	vec3_t		axis;
-	qboolean	newPlaque = needLoadingPlaque();
+	qboolean	newPlaque = SCR_NeedLoadingPlaque();
 
 	if (!cl.configstrings[CS_MODELS+1][0])
 		return;		// no map loaded

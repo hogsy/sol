@@ -49,6 +49,7 @@ static menuButton_s		s_options_screen_crosshair_display;
 
 static menuSlider_s		s_options_screen_crosshairscale_slider;
 static menuSlider_s		s_options_screen_crosshairalpha_slider;
+static menuComboBox_s	s_options_screen_scripted_hud_box;
 static menuSlider_s		s_options_screen_crosshairpulse_slider;
 static menuSlider_s		s_options_screen_hudscale_slider;
 static menuSlider_s		s_options_screen_hudalpha_slider;
@@ -79,10 +80,10 @@ static void CrosshairButtonMouse2Func (void *unused)
 }
 #endif	// USE_LISTVIEW
 
-/*static void M_ScriptedHudFunc (void *unused)
+static void M_ScriptedHudFunc (void *unused)
 {
 	CL_SetHud ( UI_GetMenuItemValue(&s_options_screen_scripted_hud_box) );
-} */
+}
 
 //=======================================================================
 
@@ -92,7 +93,7 @@ static void M_ScreenResetDefaults (void)
 	Cvar_SetToDefault ("crosshair_scale");
 	Cvar_SetToDefault ("crosshair_alpha");
 	Cvar_SetToDefault ("crosshair_pulse");
-//	CL_SetDefaultHud ();
+	CL_SetDefaultHud ();
 	Cvar_SetToDefault ("scr_hudsize");
 	Cvar_SetToDefault ("scr_hudalpha");
 	Cvar_SetToDefault ("scr_hudsqueezedigits");
@@ -293,11 +294,37 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshairpulse_slider.generic.cvarMax		= 0.5f;
 	s_options_screen_crosshairpulse_slider.generic.statusbar	= "changes pulse amplitude of crosshair";
 
+	// scripted hud option
+	s_options_screen_scripted_hud_box.generic.type			= MTYPE_COMBOBOX;
+	s_options_screen_scripted_hud_box.generic.x				= x;
+	s_options_screen_scripted_hud_box.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_options_screen_scripted_hud_box.generic.name			= "HUD script";
+	s_options_screen_scripted_hud_box.itemNames				= ui_hud_names;
+	s_options_screen_scripted_hud_box.itemValues			= ui_hud_names;
+	s_options_screen_scripted_hud_box.items_y				= 10;
+	s_options_screen_scripted_hud_box.itemWidth				= 18;
+	s_options_screen_scripted_hud_box.itemSpacing			= 1;
+	s_options_screen_scripted_hud_box.itemTextSize			= 8;
+	s_options_screen_scripted_hud_box.border				= 1;
+	s_options_screen_scripted_hud_box.borderColor[0]		= 60;
+	s_options_screen_scripted_hud_box.borderColor[1]		= 60;
+	s_options_screen_scripted_hud_box.borderColor[2]		= 60;
+	s_options_screen_scripted_hud_box.borderColor[3]		= 255;
+	s_options_screen_scripted_hud_box.backColor[0]			= 0;
+	s_options_screen_scripted_hud_box.backColor[1]			= 0;
+	s_options_screen_scripted_hud_box.backColor[2]			= 0;
+	s_options_screen_scripted_hud_box.backColor[3]			= 192;
+	s_options_screen_scripted_hud_box.generic.callback		= M_ScriptedHudFunc;
+	s_options_screen_scripted_hud_box.generic.cvar			= "cl_hud";
+	s_options_screen_scripted_hud_box.generic.cvarClamp		= false;
+	s_options_screen_scripted_hud_box.generic.cvarNoSave	= true;
+	s_options_screen_scripted_hud_box.generic.statusbar		= "changes HUD to available scripted versions";
+
 	// hud scaling option
 	s_options_screen_hudscale_slider.generic.type			= MTYPE_SLIDER;
 	s_options_screen_hudscale_slider.generic.textSize		= MENU_FONT_SIZE;
 	s_options_screen_hudscale_slider.generic.x				= x;
-	s_options_screen_hudscale_slider.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_options_screen_hudscale_slider.generic.y				= y += 1.5*MENU_LINE_SIZE;	// was 2*MENU_LINE_SIZE
 	s_options_screen_hudscale_slider.generic.name			= "status bar scale";
 	s_options_screen_hudscale_slider.maxPos					= 8;
 	s_options_screen_hudscale_slider.baseValue				= 0.0f;
@@ -369,6 +396,7 @@ void Menu_Options_Screen_Init (void)
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairscale_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairalpha_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_crosshairpulse_slider);
+	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_scripted_hud_box);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_hudscale_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_hudalpha_slider);
 	UI_AddMenuItem (&s_options_screen_menu, (void *) &s_options_screen_hudsqueezedigits_box);

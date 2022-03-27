@@ -490,9 +490,34 @@ UI_LoadMod
 */
 void UI_LoadMod (char *modName)
 {
-	if ( Q_strcasecmp(Cvar_VariableString("game"), modName) ) {
+	if ( Q_strcasecmp(Cvar_VariableString("game"), modName) != 0 ) {
 		UI_ForceMenuOff ();
 		Cbuf_AddText (va("changegame %s\n", modName) );
+	}
+}
+
+
+/*
+===============
+UI_LoadModFromList
+===============
+*/
+void UI_LoadModFromList (int index)
+{
+	// bounds check
+	if ( (index < 0) || (index >= ui_num_mods) )
+		return;
+
+	if ( Q_strcasecmp(Cvar_VariableString("game"), ui_mod_info[index].gameDir) != 0 )
+	{
+		UI_ForceMenuOff ();
+		Cvar_ForceSet ("basegame", ui_mod_info[index].baseGame);
+		Cvar_ForceSet ("basegame2", ui_mod_info[index].baseGame2);
+		Cvar_ForceSet ("basegame3", ui_mod_info[index].baseGame3);
+	//	Cvar_ForceSet ("quakepath", ui_mod_info[index].quakePath);
+	//	Cvar_ForceSet ("quakepath2", ui_mod_info[index].quakePath2);
+	//	Cvar_ForceSet ("quakepath3", ui_mod_info[index].quakePath3);
+		Cbuf_AddText ( va("changegame %s\n", ui_mod_info[index].gameDir) );
 	}
 }
 
@@ -964,188 +989,6 @@ void UI_FreeVideoInfo (void)
 /*
 =======================================================================
 
-	MOD LIST LOADING
-
-=======================================================================
-*/
-
-// TODO: Enable this when mod menu is ready
-#if 0
-#define UI_MAX_MODS 256
-
-char		**ui_mod_names = NULL;
-char		**ui_mod_values = NULL;
-qboolean	ui_mod_isUnsupported[UI_MAX_MODS];
-int			ui_num_mods = 0;
-
-/*
-==========================
-UI_BuildModList
-==========================
-*/
-void UI_BuildModList (void)
-{
-	char		findName[1024];
-	char		modDesc[1024];
-	char		modFormatedName[1024];
-	char		**dirnames;
-	char		*modDir, *modName;
-	FILE		*f;
-	int			count = 0, ndirs = 0, nmods = 0;
-	int			i;
-	qboolean	unsupportedMod;
-
-	ui_mod_names = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
-	ui_mod_values = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
-//	memset (ui_mod_names, 0, sizeof(char *) * (UI_MAX_MODS+1));
-//	memset (ui_mod_values, 0, sizeof(char *) * (UI_MAX_MODS+1));
-
-	// add baseq2 first
-	ui_mod_names[0] = UI_CopyString("Quake II (vanilla)"); 
-	ui_mod_values[0] = UI_CopyString(BASEDIRNAME);
-	ui_mod_isUnsupported[0] = false;
-	count++;
-
-	// get a list of directories
-	Com_sprintf(findName, sizeof(findName), "%s/*.*", FS_HomePath());
-	dirnames = FS_ListFiles (findName, &ndirs, SFF_SUBDIR, 0);
-	if (!dirnames) {
-		ui_num_mods = count;
-		return;
-	}
-		
-	// go through the directories
-	nmods = ndirs;
-	if (nmods > UI_MAX_MODS)
-		nmods = UI_MAX_MODS;
-	if ( (count + nmods) > UI_MAX_MODS )
-		nmods = UI_MAX_MODS - count;
-
-	for (i = 0; i < nmods; i++)
-	{
-		if (dirnames[i] == 0)
-			continue;
-			
-		modDir = COM_SkipPath(dirnames[i]);
-		
-		// Ignore baseq2
-		if ( !Q_strcasecmp(modDir, BASEDIRNAME) )
-			continue;
-	
-		// Must have a pak or pk3 file, or a maps dir
-		if ( !Sys_FindFirst( va("%s/*.pak", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-			Sys_FindClose();
-			if ( !Sys_FindFirst( va("%s/*.pk3", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-				Sys_FindClose();
-				if ( !Sys_FindFirst( va("%s/maps", dirnames[i]), SFF_SUBDIR, 0) ) {
-					Sys_FindClose();
-					continue;
-				}
-			}
-		}
-		Sys_FindClose();
-
-		// check if this mod has a gamex86.dll/gamei386.so without an equivalent KMQ2 dll/so
-		unsupportedMod = false;
-		if ( Sys_FindFirst( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
-		{
-			Sys_FindClose();
-			if ( !Sys_FindFirst( va("%s/"KMQ2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-				Sys_FindClose();
-				unsupportedMod = true;
-			//	Com_Printf ("UI_BuildModList: mod %s has an unsupported game library.\n", modDir);
-			}
-		}
-		Sys_FindClose();
-
-		// try to load description.txt
-		f = fopen( va("%s/description.txt", dirnames[i]), "rb");
-		if (f != NULL) {
-			fgets(modDesc, sizeof(modDesc), f);
-			fclose(f);
-			modName = modDesc;
-		}
-		else if ( !Q_strcasecmp(modDir, "ctf") )
-			modName = "Quake II: Capture The Flag";
-		else if ( !Q_strcasecmp(modDir, "rogue") )
-			modName = "Quake II: Ground Zero";
-		else if ( !Q_strcasecmp(modDir, "xatrix") )
-			modName = "Quake II: The Reckoning";
-		else if ( !Q_strcasecmp(modDir, "zaero") )
-			modName = "Zaero Mission Pack";
-		else if ( !Q_strcasecmp(modDir, "3zb2") )
-			modName ="3rd Zigrock Bot II";
-		else if ( !Q_strcasecmp(modDir, "gen") )
-			modName = "Generations";
-		else if ( !Q_strcasecmp(modDir, "ra2") )
-			modName = "Rocket Arena 2";
-		else if ( !Q_strcasecmp(modDir, "bots") )
-			modName = "Battle of the Sexes";
-		else if ( !Q_strcasecmp(modDir, "lmctf") )
-			modName = "Loki's Minions CTF";
-		else if ( !Q_strcasecmp(modDir, "wf") )
-			modName = "Weapons Factory";
-		else if ( !Q_strcasecmp(modDir, "wod") )
-			modName = "Weapons of Destruction";
-		else if ( !Q_strcasecmp(modDir, "rts") )
-			modName = "Rob the Strogg";
-		else
-			modName = modDir;
-
-		if (unsupportedMod)
-			Com_sprintf (modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
-		else
-			Q_strncpyz (modFormatedName, sizeof(modFormatedName), modName);
-
-		if ( !UI_ItemInAssetList(modDir, count, ui_mod_values) )
-		{
-		//	UI_InsertInAssetList (ui_mod_names, modName, count, 1, false);	// start=1 so first item stays first!
-			UI_InsertInAssetList (ui_mod_names, modFormatedName, count, 1, false);	// start=1 so first item stays first!
-			UI_InsertInAssetList (ui_mod_values, modDir, count, 1, false);	// start=1 so first item stays first!
-			count++;
-			ui_mod_isUnsupported[count] = unsupportedMod;
-		}
-	}
-	
-	if (dirnames)
-		FS_FreeFileList (dirnames, ndirs);
-
-	ui_num_mods = count;
-}
-
-
-/*
-==========================
-UI_GetModList
-==========================
-*/
-void UI_GetModList (void)
-{
-	UI_BuildModList ();
-//	Com_Printf ("UI_GetModList: found %i mod dirs\n", ui_num_mods);
-}
-
-
-/*
-==========================
-UI_FreeModList
-==========================
-*/
-void UI_FreeModList (void)
-{
-	if (ui_num_mods > 0) {
-		UI_FreeAssetList (ui_mod_names, ui_num_mods);
-		UI_FreeAssetList (ui_mod_values, ui_num_mods);
-	}
-	ui_mod_names = NULL;
-	ui_mod_values = NULL;
-	ui_num_mods = 0;
-}
-#endif
-
-/*
-=======================================================================
-
 	FONT LOADING
 
 =======================================================================
@@ -1199,8 +1042,6 @@ void UI_FreeFontNames (void)
 =======================================================================
 */
 
-// TODO: Enable this when HUD loading is working
-#if 0
 #define UI_MAX_HUDS 128
 char **ui_hud_names = NULL;
 int	ui_numhuds = 0;
@@ -1245,7 +1086,6 @@ void UI_FreeHudNames (void)
 	ui_hud_names = NULL;
 	ui_numhuds = 0;
 }
-#endif
 
 /*
 =======================================================================
@@ -1568,7 +1408,7 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
 		{
 			// only one keyBindList per file!
 			if (foundKeyBindList) {
-				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: found extra 'keyBindList' in keybind list %s\n", tok, handle->fileName);
+				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: found extra 'keyBindList' in keybind list %s\n", handle->fileName);
 				return false;
 			}
 			foundKeyBindList = true;
@@ -1694,6 +1534,365 @@ void UI_FreeKeyBindList (void)
 		ui_customKeyBindList.maxKeyBinds = 0;
 		ui_customKeyBindList.numKeyBinds = 0;
 	}
+}
+
+/*
+=======================================================================
+
+	MOD LIST LOADING
+
+=======================================================================
+*/
+
+#define UI_MAX_MODS 256
+#define MAX_MODINFO_TEXT 8192
+
+char		**ui_mod_names = NULL;
+char		**ui_mod_values = NULL;
+modInfo_t	*ui_mod_info = NULL;
+int			ui_num_mods = 0;
+
+/*
+==========================
+UI_ParseModInfoFromFile
+==========================
+*/
+qboolean UI_ParseModInfoFromFile (const char *filename, char *gameDir, char *modTitle, char *baseGame, char *baseGame2, char *baseGame3,
+								  char *quakePath, char *quakePath2, char *quakePath3, size_t bufSize)
+{
+	int				len;
+	fileHandle_t	f;
+	char			buf[MAX_MODINFO_TEXT];
+	char			*s, *token, *dest;
+	qboolean		foundModInfo = false;
+
+	// sanity check pointers and bufSize
+	if ( !filename || !gameDir || !modTitle || !baseGame || !baseGame2 || !baseGame3 ||
+		!quakePath || !quakePath2 || !quakePath3 || (bufSize < 1) )
+		return false;
+
+	// clear buffers
+	gameDir[0] = modTitle[0] = 0;
+	baseGame[0] = baseGame2[0] = baseGame3[0] = 0;
+	quakePath[0] = quakePath2[0] = quakePath3[0] = 0;
+
+	len = FS_FOpenFile (filename, &f, FS_READ);
+	if (!f) {
+	//	Com_Printf ("UI_ParseModInfoFromFile: file not found: %s\n", filename);
+		return false;
+	}
+	if (len >= MAX_MODINFO_TEXT) {
+		Com_Printf (S_COLOR_RED"UI_ParseModInfoFromFile: file too large: %s is %i, max allowed is %i", filename, len, MAX_MODINFO_TEXT);
+		FS_FCloseFile (f);
+		return false;
+	}
+
+	FS_Read (buf, len, f);
+	buf[len] = 0;
+	FS_FCloseFile (f);
+
+//	Com_Printf ("UI_ParseModInfoFromFile: loaded file %s of size %i\n", filename, len);
+
+	s = buf;
+	while (s < (buf + len))
+	{
+		token = COM_ParseExt (&s, true);
+		if (!token[0])
+			break;
+
+		if ( !Q_strcasecmp(token, "modInfo") )
+		{
+			// only one modInfo per file!
+			if (foundModInfo) {
+				Com_Printf ("UI_ParseModInfoFromFile: found extra 'modInfo' in file %s\n", filename);
+				return false;
+			}
+			foundModInfo = true;
+
+			token = COM_ParseExt (&s, true);
+			if (token[0] != '{') {
+				Com_Printf ("UI_ParseModInfoFromFile: found %s when expecting '{' in file %s\n", token, filename);
+				return false;
+			}
+
+			// go through all the parms
+			while (s < (buf + len))
+			{
+				dest = NULL;
+				token = COM_ParseExt (&s, true);
+				if ( !token[0] || !s ) {
+					Com_Printf ("UI_ParseModInfoFromFile: EOF without closing brace in file %s\n", filename);
+					break;
+				}
+				if (token[0] == '}')
+					break;
+
+				if ( !Q_strcasecmp(token, "gameDir") )
+					dest = gameDir;
+				else if ( !Q_strcasecmp(token, "title") )
+					dest = modTitle;
+				else if ( !Q_strcasecmp(token, "baseGame") )
+					dest = baseGame;
+				else if ( !Q_strcasecmp(token, "baseGame2") )
+					dest = baseGame2;
+				else if ( !Q_strcasecmp(token, "baseGame3") )
+					dest = baseGame3;
+				else if ( !Q_strcasecmp(token, "quakePath") )
+					dest = quakePath;
+				else if ( !Q_strcasecmp(token, "quakePath2") )
+					dest = quakePath2;
+				else if ( !Q_strcasecmp(token, "quakePath3") )
+					dest = quakePath3;
+				else
+					Com_Printf ("UI_ParseModInfoFromFile: unknown parameter '%s' in file %s\n", token, filename);
+
+				if (dest)
+				{
+					token = COM_ParseExt (&s, true);
+					if (!token[0]) {
+						Com_Printf ("UI_ParseModInfoFromFile: unexpected EOF in file %s\n", filename);
+						return false;
+					}
+					if (token[0] == '}') {
+						Com_Printf ("UI_ParseModInfoFromFile: closing brace without data in file %s\n", filename);
+						break;
+					}
+					if (!s) {
+						Com_Printf ("UI_ParseModInfoFromFile: EOF without closing brace in file %s\n", filename);
+						break;
+					}
+					Q_strncpyz (dest, bufSize, token);
+				}
+			}
+		}
+		// ignore any crap after the modInfo
+		else if ( !foundModInfo ) {
+			Com_Printf ("UI_ParseModInfoFromFile: unknown command '%s' while looking for 'modInfo' in file %s\n", token, filename);
+			return false;
+		}
+	}
+	if (strlen(gameDir) == 0) {
+		Com_Printf (S_COLOR_ORANGE "UI_ParseModInfoFromFile: 'gameDir' not found in file %s\n", filename);
+		return false;
+	}
+	if (strlen(modTitle) == 0) {
+		Com_Printf (S_COLOR_ORANGE "UI_ParseModInfoFromFile: 'title' not found in file %s\n", filename);
+		return false;
+	}
+	return true;
+}
+
+
+/*
+==========================
+UI_BuildModList
+==========================
+*/
+void UI_BuildModList (void)
+{
+	char		findName[1024];
+	char		infoFile[MAX_OSPATH];
+	char		modDesc[MAX_TOKEN_CHARS];
+	char		modFormatedName[MAX_TOKEN_CHARS];
+	char		**dirnames;
+	char		*modDir, *modName;
+	char		gameDir[MAX_TOKEN_CHARS], baseGame[MAX_TOKEN_CHARS], baseGame2[MAX_TOKEN_CHARS], baseGame3[MAX_TOKEN_CHARS];
+	char		quakePath[MAX_TOKEN_CHARS], quakePath2[MAX_TOKEN_CHARS], quakePath3[MAX_TOKEN_CHARS];
+	int			count = 0, ndirs = 0, nmods = 0;
+	int			i;
+	qboolean	unsupportedMod;
+
+	ui_mod_names = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
+	ui_mod_values = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
+	ui_mod_info = UI_Malloc(sizeof(modInfo_t) * (UI_MAX_MODS+1));
+
+	// add baseq2 first
+	ui_mod_names[0] = UI_CopyString("Quake II (vanilla)"); 
+	ui_mod_values[0] = UI_CopyString(BASEDIRNAME);
+	ui_mod_info[0].gameDir = UI_CopyString(BASEDIRNAME);
+	ui_mod_info[0].baseGame = UI_CopyString("");
+	ui_mod_info[0].baseGame2 = UI_CopyString("");
+	ui_mod_info[0].baseGame3 = UI_CopyString("");
+	ui_mod_info[0].quakePath = UI_CopyString("");
+	ui_mod_info[0].quakePath2 = UI_CopyString("");
+	ui_mod_info[0].quakePath3 = UI_CopyString("");
+	ui_mod_info[0].isUnsupported = false;
+	count++;
+
+	// get a list of directories
+	Com_sprintf(findName, sizeof(findName), "%s/*.*", FS_HomePath());
+	dirnames = FS_ListFiles (findName, &ndirs, SFF_SUBDIR, 0);
+	if (!dirnames) {
+		ui_num_mods = count;
+		return;
+	}
+		
+	// go through the directories
+	nmods = ndirs;
+	if (nmods > UI_MAX_MODS)
+		nmods = UI_MAX_MODS;
+	if ( (count + nmods) > UI_MAX_MODS )
+		nmods = UI_MAX_MODS - count;
+
+	for (i = 0; i < nmods; i++)
+	{
+		if (dirnames[i] == 0)
+			continue;
+			
+		modDir = COM_SkipPath(dirnames[i]);
+		
+		// Ignore baseq2
+		if ( !Q_strcasecmp(modDir, BASEDIRNAME) )
+			continue;
+	
+		// Must have a pak or pk3 file, or a maps dir
+		if ( !Sys_FindFirst( va("%s/*.pak", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
+			Sys_FindClose();
+			if ( !Sys_FindFirst( va("%s/*.pk3", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
+				Sys_FindClose();
+				if ( !Sys_FindFirst( va("%s/maps", dirnames[i]), SFF_SUBDIR, 0) ) {
+					Sys_FindClose();
+					continue;
+				}
+			}
+		}
+		Sys_FindClose();
+
+		// check if this mod has a gamex86.dll/gamei386.so without an equivalent KMQ2 dll/so
+		unsupportedMod = false;
+		if ( Sys_FindFirst( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
+		{
+			Sys_FindClose();
+			if ( !Sys_FindFirst( va("%s/"KMQ2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
+				Sys_FindClose();
+				unsupportedMod = true;
+			//	Com_Printf ("UI_BuildModList: mod %s has an unsupported game library.\n", modDir);
+			}
+		}
+		Sys_FindClose();
+
+		// clear optional fields
+		baseGame[0] = baseGame2[0] = baseGame3[0] = 0;
+		quakePath[0] = quakePath2[0] = quakePath3[0] = 0;
+
+		// try to load and parse modinfo.def
+		Com_sprintf (infoFile, sizeof(infoFile), "../%s/modinfo.def", modDir);
+		if ( UI_ParseModInfoFromFile(infoFile, gameDir, modDesc, baseGame, baseGame2, baseGame3,
+										quakePath, quakePath2, quakePath3, MAX_TOKEN_CHARS) )
+		{
+		//	Com_Printf ("UI_BuildModList: loaded modinfo file %s\n  gameDir: %s modDesc: \"%s\"^r\n", infoFile, gameDir, modDesc);
+		//	Com_Printf ("  baseGame: %s baseGame2: %s baseGame3: %s\n", baseGame, baseGame2, baseGame3);
+		//	Com_Printf ("  quakePath: %s quakePath2: %s quakePath3: %s\n", quakePath, quakePath2, quakePath3);
+			// catch gameDir in modinfo not matching game path
+			if ( Q_strcasecmp(modDir, gameDir) != 0 ) {
+				Com_Printf (S_COLOR_ORANGE"UI_BuildModList: modinfo file %s has conflicting 'gameDir' value: %s\n", infoFile, gameDir);
+			}
+			modName = modDesc;
+		}
+		else if ( !Q_strcasecmp(modDir, "ctf") )
+			modName = "Quake II: Capture The Flag";
+		else if ( !Q_strcasecmp(modDir, "xatrix") )
+			modName = "Quake II: The Reckoning";
+		else if ( !Q_strcasecmp(modDir, "rogue") )
+			modName = "Quake II: Ground Zero";
+		else if ( !Q_strcasecmp(modDir, "zaero") )
+			modName = "Zaero Mission Pack";
+		else if ( !Q_strcasecmp(modDir, "3zb2") )
+			modName = "3rd Zigrock Bot II";
+		else if ( !Q_strcasecmp(modDir, "awaken2") )
+			modName = "Awakening II: The Resurrection";
+		else if ( !Q_strcasecmp(modDir, "ra2") )
+			modName = "Rocket Arena 2";
+		else if ( !Q_strcasecmp(modDir, "bots") )
+			modName = "Battle of the Sexes";
+		else if ( !Q_strcasecmp(modDir, "lmctf") )
+			modName = "Loki's Minions CTF";
+		else if ( !Q_strcasecmp(modDir, "wf") )
+			modName = "Weapons Factory";
+		else if ( !Q_strcasecmp(modDir, "wod") )
+			modName = "Weapons of Destruction";
+		else if ( !Q_strcasecmp(modDir, "rts") )
+			modName = "Rob the Strogg";
+		else
+			modName = modDir;
+
+		if (unsupportedMod)
+			Com_sprintf (modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
+		else
+			Q_strncpyz (modFormatedName, sizeof(modFormatedName), modName);
+
+		if ( !UI_ItemInAssetList(modDir, count, ui_mod_values) )
+		{
+			UI_InsertInAssetList (ui_mod_names, modFormatedName, count, 1, false);	// start=1 so first item stays first!
+			UI_InsertInAssetList (ui_mod_values, modDir, count, 1, false);	// start=1 so first item stays first!
+			ui_mod_info[count].gameDir = UI_CopyString(modDir);
+			ui_mod_info[count].baseGame = UI_CopyString(baseGame);
+			ui_mod_info[count].baseGame2 = UI_CopyString(baseGame2);
+			ui_mod_info[count].baseGame3 = UI_CopyString(baseGame3);
+			ui_mod_info[count].quakePath = UI_CopyString(quakePath);
+			ui_mod_info[count].quakePath2 = UI_CopyString(quakePath2);
+			ui_mod_info[count].quakePath3 = UI_CopyString(quakePath3);
+			ui_mod_info[count].isUnsupported = unsupportedMod;
+			count++;
+		}
+	}
+	
+	if (dirnames)
+		FS_FreeFileList (dirnames, ndirs);
+
+	ui_num_mods = count;
+}
+
+
+/*
+==========================
+UI_GetModList
+==========================
+*/
+void UI_GetModList (void)
+{
+	UI_BuildModList ();
+//	Com_Printf ("UI_GetModList: found %i mod dirs\n", ui_num_mods);
+}
+
+
+/*
+==========================
+UI_FreeModList
+==========================
+*/
+void UI_FreeModList (void)
+{
+	int		i;
+
+	if (ui_num_mods > 0)
+	{
+		UI_FreeAssetList (ui_mod_names, ui_num_mods);
+		UI_FreeAssetList (ui_mod_values, ui_num_mods);
+		// free modInfo table
+		for (i = 0; i < ui_num_mods; i++)
+		{
+			UI_Free (ui_mod_info[i].gameDir);
+			UI_Free (ui_mod_info[i].baseGame);
+			UI_Free (ui_mod_info[i].baseGame2);
+			UI_Free (ui_mod_info[i].baseGame3);
+			UI_Free (ui_mod_info[i].quakePath);
+			UI_Free (ui_mod_info[i].quakePath2);
+			UI_Free (ui_mod_info[i].quakePath3);
+			ui_mod_info[i].gameDir = NULL;
+			ui_mod_info[i].baseGame = NULL;
+			ui_mod_info[i].baseGame2 = NULL;
+			ui_mod_info[i].baseGame3 = NULL;
+			ui_mod_info[i].quakePath = NULL;
+			ui_mod_info[i].quakePath2 = NULL;
+			ui_mod_info[i].quakePath3 = NULL;
+		}
+		UI_Free (ui_mod_info);
+	}
+	ui_mod_names = NULL;
+	ui_mod_values = NULL;
+	ui_mod_info = NULL;
+	ui_num_mods = 0;
 }
 
 /*
@@ -2178,20 +2377,27 @@ UI_ParseArenaFromFile
 Partially from Q3 source
 ===============
 */
-qboolean UI_ParseArenaFromFile (char *filename, char *shortname, char *longname, char *gametypes, size_t bufSize)
+qboolean UI_ParseArenaFromFile (const char *filename, char *shortname, char *longname, char *gametypes, size_t bufSize)
 {
 	int				len;
 	fileHandle_t	f;
 	char			buf[MAX_ARENAS_TEXT];
 	char			*s, *token, *dest;
 
+	// sanity check pointers and bufSize
+	if ( !filename || !shortname || !longname || !gametypes || (bufSize < 1) )
+		return false;
+
+	// zero buffers
+	shortname[0] = longname[0] = gametypes[0] = 0;
+
 	len = FS_FOpenFile (filename, &f, FS_READ);
 	if (!f) {
-		Com_Printf (S_COLOR_RED "UI_ParseArenaFromFile: file not found: %s\n", filename);
+		Com_Printf (S_COLOR_RED"UI_ParseArenaFromFile: file not found: %s\n", filename);
 		return false;
 	}
 	if (len >= MAX_ARENAS_TEXT) {
-		Com_Printf (S_COLOR_RED "UI_ParseArenaFromFile: file too large: %s is %i, max allowed is %i", filename, len, MAX_ARENAS_TEXT);
+		Com_Printf (S_COLOR_RED"UI_ParseArenaFromFile: file too large: %s is %i, max allowed is %i", filename, len, MAX_ARENAS_TEXT);
 		FS_FCloseFile (f);
 		return false;
 	}
@@ -2202,13 +2408,13 @@ qboolean UI_ParseArenaFromFile (char *filename, char *shortname, char *longname,
 
 	s = buf;
 	// get the opening curly brace
-	token = COM_Parse (&s);
-	if (!token) {
-		Com_Printf ("UI_ParseArenaFromFile: unexpected EOF\n");
+	token = COM_ParseExt (&s, true);
+	if ( !token[0] || !s ) {
+		Com_Printf ("UI_ParseArenaFromFile: unexpected EOF in file %s\n", filename);
 		return false;
 	}
 	if (token[0] != '{') {
-		Com_Printf ("UI_ParseArenaFromFile: found %s when expecting {\n", token);
+		Com_Printf ("UI_ParseArenaFromFile: found %s when expecting '{' in file %s\n", token, filename);
 		return false;
 	}
 
@@ -2216,44 +2422,48 @@ qboolean UI_ParseArenaFromFile (char *filename, char *shortname, char *longname,
 	while (s < (buf + len))
 	{
 		dest = NULL;
-		token = COM_Parse (&s);
-		if (token && (token[0] == '}')) break;
-		if (!token || !s) {
-			Com_Printf ("UI_ParseArenaFromFile: EOF without closing brace\n");
+		token = COM_ParseExt (&s, true);
+		if ( !token[0] || !s ) {
+			Com_Printf ("UI_ParseArenaFromFile: EOF without closing brace in file %s\n", filename);
 			break;
 		}
+		if (token[0] == '}')
+			break;
 
-		if (!Q_strcasecmp(token, "map"))
+		if ( !Q_strcasecmp(token, "map") )
 			dest = shortname;
-		else if (!Q_strcasecmp(token, "longname"))
+		else if ( !Q_strcasecmp(token, "longname") )
 			dest = longname;
-		else if (!Q_strcasecmp(token, "type"))
+		else if ( !Q_strcasecmp(token, "type") )
 			dest = gametypes;
+		else
+			Com_Printf ("UI_ParseArenaFromFile: unknown parameter '%s' in file %s\n", token, filename);
+
 		if (dest)
 		{
-			token = COM_Parse (&s);
-			if (!token) {
-				Com_Printf ("UI_ParseArenaFromFile: unexpected EOF\n");
+			token = COM_ParseExt (&s, true);
+			if (!token[0]) {
+				Com_Printf ("UI_ParseArenaFromFile: unexpected EOF in file %s\n", filename);
 				return false;
 			}
 			if (token[0] == '}') {
-				Com_Printf ("UI_ParseArenaFromFile: closing brace without data\n");
+				Com_Printf ("UI_ParseArenaFromFile: closing brace without data in file %s\n", filename);
 				break;
 			}
 			if (!s) {
-				Com_Printf ("UI_ParseArenaFromFile: EOF without closing brace\n");
+				Com_Printf ("UI_ParseArenaFromFile: EOF without closing brace in file %s\n", filename);
 				break;
 			}
-		//	strncpy(dest, token);
 			Q_strncpyz (dest, bufSize, token);
 		}
 	}
-	if (!shortname || !strlen(shortname)) {
-		Com_Printf (S_COLOR_RED "UI_ParseArenaFromFile: %s: map field not found\n", filename);
+	if (strlen(shortname) == 0) {
+		Com_Printf (S_COLOR_RED "UI_ParseArenaFromFile: %s: 'map' parm not found\n", filename);
 		return false;
 	}
-	if (!strlen(longname))
-		longname = shortname;
+	if (strlen(longname) == 0) {
+		Q_strncpyz (longname, bufSize, shortname);
+	}
 	return true;
 }
 
@@ -2537,11 +2747,11 @@ void UI_LoadMapList (void)
 	//
 	// load the list of map names
 	//
-	Com_sprintf( mapsname, sizeof( mapsname ), "%s/maps.lst", FS_Gamedir() );	// FIXME: should this be FS_Savegamedir()?
-	if ( ( fp = fopen( mapsname, "rb" ) ) == 0 )
+	Com_sprintf( mapsname, sizeof(mapsname), "%s/maps.lst", FS_Gamedir() );	// FIXME: should this be FS_Savegamedir()?
+	if ( ( fp = fopen(mapsname, "rb") ) == 0 )
 	{
-		if ( ( length = FS_LoadFile( "maps.lst", ( void ** ) &buffer ) ) == -1 )
-			Com_Error( ERR_DROP, "couldn't find maps.lst\n" );
+		if ( ( length = FS_LoadFile("maps.lst", (void **)&buffer)) == -1 )
+			Com_Error (ERR_DROP, "couldn't find maps.lst\n");
 	}
 	else
 	{

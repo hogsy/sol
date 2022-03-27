@@ -55,9 +55,32 @@ typedef struct
 	float min;
 } screenscale_t;
 
+//
+// scripted status bar stuff, from Quake2Evolved
+//
 #define	STAT_MINUS		10	// num frame for '-' stats digit
 #define CHAR_WIDTH		16
 
+#define HUD_MAX_RENAMESETS			8
+#define HUD_MAX_ITEMGROUPS			128
+#define	HUD_GROUP_MAX_VARIANTS		16
+#define	HUD_GROUP_MAX_SKIPIFSTATS	8
+#define HUD_SKIPIFSTAT_MAX_CMPS		2
+#define	HUD_MAX_DRAWITEMS			32
+#define	HUD_ITEM_MAX_SKIPIFSTATS	2
+#define HUD_MAX_COLOR_RANGES		8
+
+#define	HUD_STATSTRING		1
+#define	HUD_STATNUMBER		2
+#define	HUD_STATVALUE		4
+#define	HUD_STATMINRANGE	8
+#define	HUD_STATMAXRANGE	16
+#define	HUD_STATSHADER		32
+#define	HUD_WEAPONMODELSHADER	64
+#define	HUD_PLAYERNAMESTRING	128
+
+#define HUD_RANGETYPE_ABSOLUTE  0
+#define HUD_RANGETYPE_RELATIVE  1
 
 // flags for hud drawing items
 #define DSF_FORCECOLOR			1
@@ -74,6 +97,142 @@ typedef struct
 #define	DSF_MASKSHADER			2048	// uses shaderMinus for mask image
 #define	DSF_ADDITIVESHADER		4096	// specifies additive blending
 
+typedef enum 
+{
+	HUD_GREATER,
+	HUD_LESS,
+	HUD_GEQUAL,
+	HUD_LEQUAL,
+	HUD_EQUAL,
+	HUD_NOTEQUAL,
+	HUD_AND,
+	HUD_NOTAND
+} hudCmpFunc_t;
+
+typedef enum
+{
+	HUD_DRAWPIC,
+	HUD_DRAWSTRING,
+	HUD_DRAWNUMBER,
+	HUD_DRAWBAR
+} hudDrawType_t;
+
+typedef enum
+{
+	HUD_LEFTTORIGHT,
+	HUD_RIGHTTOLEFT,
+	HUD_BOTTOMTOTOP,
+	HUD_TOPTOBOTTOM
+} hudFillDir_t;
+
+typedef struct {
+	color_t		color;
+	color_t		blinkColor;
+	float		low;
+	float		high;
+} colorRangeDef_t;
+
+typedef struct {
+	color_t		color;
+	int			stat;
+	int			bit;
+} statFlash_t;
+
+typedef struct {
+	char		oldName[MAX_QPATH];
+	char		newName[MAX_QPATH];
+	unsigned int	oldNameHash;
+	unsigned int	newNameHash;
+	qboolean	isWildcard;
+} hudRenameItem_t;
+
+typedef struct hudRenameCacheItem_s {
+	char		oldName[MAX_QPATH];
+	char		newName[MAX_QPATH];
+	unsigned int	oldNameHash;
+	unsigned int	newNameHash;
+	struct hudRenameCacheItem_s	*next;
+} hudRenameCacheItem_t;
+
+typedef struct {
+	char			name[MAX_QPATH];
+	int				maxRenameItems;
+	int				numRenameItems;
+	hudRenameItem_t	*renameItems;
+	hudRenameCacheItem_t	*renameCacheHead;
+	hudRenameCacheItem_t	*renameCacheTail;
+} hudRenameSet_t;
+
+typedef struct {
+	char			name[MAX_QPATH];
+} hudVariant_t;
+
+typedef struct {
+	int				numCmps;
+	int				stat[HUD_SKIPIFSTAT_MAX_CMPS];
+	hudCmpFunc_t	func[HUD_SKIPIFSTAT_MAX_CMPS];
+	int				value[HUD_SKIPIFSTAT_MAX_CMPS];
+} hudSkipIfStat_t;
+
+typedef struct {
+	char			name[MAX_QPATH];
+	hudDrawType_t	type;
+	int				rect[4];
+	scralign_t		scrnAlignment;
+	int				size[2];
+	int				range[2];
+	float			offset[2];
+	float			skew[2];
+	float			scroll[2];
+	float			padding;
+	hudFillDir_t	fillDir;
+	color_t			color;
+	color_t			blinkColor;
+	statFlash_t		statFlash;
+	hudSkipIfStat_t	skipIfStats[HUD_ITEM_MAX_SKIPIFSTATS];
+	int				numSkipIfStats;
+	int				flags;
+	int				fromStat;
+	int				numColorRanges;
+	int				colorRangeType;
+	int				colorRangeStat;
+	int				colorRangeMaxStat;
+	colorRangeDef_t	colorRanges[HUD_MAX_COLOR_RANGES];
+	char			string[64];
+	int				number;
+	int				value;
+	char			shader[MAX_QPATH];
+	char			shaderMinus[MAX_QPATH];
+	int				stringStat;
+	int				numberStat;
+	int				valueStat;
+	int				minRangeStat;
+	int				maxRangeStat;
+	float			minRangeStatMult;
+	float			maxRangeStatMult;
+	int				shaderStat;
+	char			shaderRenameSet[MAX_QPATH];
+} hudDrawItem_t;
+
+typedef struct {
+	char			name[MAX_QPATH];
+	qboolean		onlyMultiPlayer;
+	hudVariant_t	variants[HUD_GROUP_MAX_VARIANTS];
+	int				numVariants;
+	hudSkipIfStat_t	skipIfStats[HUD_GROUP_MAX_SKIPIFSTATS];
+	int				numSkipIfStats;
+	hudDrawItem_t	*drawItems[HUD_MAX_DRAWITEMS];
+	int				numDrawItems;
+} hudItemGroup_t;
+
+typedef struct {
+	char			name[MAX_QPATH];
+	char			overridePath[MAX_QPATH];
+	hudItemGroup_t	*itemGroups[HUD_MAX_ITEMGROUPS];
+	int				numItemGroups;
+} hudDef_t;
+//	end scripted status bar stuff
+
 
 // Psychospaz's scaled menu stuff
 #define SCREEN_WIDTH	640.0f
@@ -82,7 +241,7 @@ typedef struct
 
 // rendered size of console font - everthing adjusts to this...
 #define	FONT_SIZE		SCR_ScaledScreen(con_font_size->value)
-#define CON_FONT_SCALE	SCR_ScaledScreen(con_font_size->value)/8.0f
+#define CON_FONT_SCALE	SCR_ScaledScreen(con_font_size->value)/8
 
 #define MENU_FONT_SIZE	8
 #define MENU_LINE_SIZE	10
@@ -128,6 +287,8 @@ void	SCR_UpdateScreen (void);
 void	SCR_SizeUp (void);
 void	SCR_SizeDown (void);
 void	SCR_CenterPrint (char *str);
+
+qboolean SCR_NeedLoadingPlaque (void);
 void	SCR_BeginLoadingPlaque (void);
 void	SCR_EndLoadingPlaque (void);
 
@@ -138,10 +299,15 @@ void	SCR_TouchPics (void);
 void	SCR_RunLetterbox (void);
 void	SCR_RunConsole (void);
 
+void	SCR_InitHudScale (void);
+float	SCR_ScaledHud (float param);
+float	SCR_GetHudScale (void);
+
 void	SCR_InitScreenScale (void);
-void	SCR_ScaleCoords (float *x, float *y, float *w, float *h, scralign_t align);
 float	SCR_ScaledScreen (float param);
 float	SCR_GetScreenScale (void);
+void	SCR_ScaleCoords (float *x, float *y, float *w, float *h, scralign_t align);
+void	SCR_GetPicPosWidth (char *pic, int *x, int *w);
 
 void	SCR_DrawFill (float x, float y, float width, float height, scralign_t align, qboolean roundOut, int red, int green, int blue, int alpha);
 void	SCR_DrawBorder (float x, float y, float width, float height, float borderSize, scralign_t align, qboolean roundOut, int red, int green, int blue, int alpha);
@@ -170,13 +336,16 @@ void	CL_DrawStatus (void);
 void	CL_DrawLayout (void);
 void	CL_DrawInventory (void);
 
-//void	CL_LoadHud (qboolean startup);
-//void	CL_FreeHud (void);
-//void	CL_SetHud (const char *value);
-//void	CL_SetDefaultHud (void);
+//
+// cl_hud_script.c
+//
+void	CL_LoadHud (qboolean startup);
+void	CL_FreeHud (void);
+void	CL_SetHud (const char *value);
+void	CL_SetDefaultHud (void);
 void	CL_SetHudVariant (void);
-//qboolean Hud_ScriptIsLoaded (void);
-//void	Hud_DrawHud (void);
+qboolean Hud_ScriptIsLoaded (void);
+void	Hud_DrawHud (void);
 
 //
 // cl_cin.c
