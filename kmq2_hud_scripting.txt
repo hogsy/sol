@@ -4,8 +4,8 @@ The script file has a .hud extension, and goes under scripts/huds.
 
 Single-line (//) and block comments (/* */) are supported.  The included hud scripts have a block comment at the beginning that lists the stat numbers used in the default game DLL.  It's a good idea to copy this to each new script file for quick reference.
 
-Inside the script file, there are two types of top-level items that can be decared, hudDefs and renameSetDefs.  There can only be one hudDef, but up to four renameSetDefs.
 
+Inside the script file, there are two types of top-level items that can be decared, hudDefs and renameSetDefs.  There can only be one hudDef, but up to eight renameSetDefs.
 
 Rename sets are used to rename images from the default status bar for HUD items that specify a particular rename set.  This is useful if you want a hud item that uses a special set of images, such as larger image of the current weapon.
 
