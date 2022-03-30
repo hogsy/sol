@@ -61,9 +61,11 @@ Menu dogtags, HUD numbers, and F1 computer icon by Pieter Verhoeven
 
 Menu screen by MDK
 
-Load screen by Christopher "Sherpa" Owen
+Load screen by Fabian Rosten
 
 Weapon glow skins in kmquake2_extras.pk3 by Odium and Kman and from Quake2XP
+
+Doom3 HUD by Odium
 
 Uses Zlib compression library, (C) 1995-2017 Jean-loup Gailly and Mark Adler
 
