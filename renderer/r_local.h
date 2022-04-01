@@ -45,7 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../client/ref.h"
 
-
 #include "qgl.h"
 
 // up / down
@@ -54,6 +53,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	YAW		1
 // fall over
 #define	ROLL	2
+
+//#define	WARP_LIGHTMAPS	// whether to support lightmaps on warp surfaces
 
 #ifndef __VIDDEF_T
 #define __VIDDEF_T
@@ -472,14 +473,15 @@ typedef struct
 	int			type;
 	int			current_lightmap_texture;
 
-	msurface_t	*lightmap_surfaces[MAX_LIGHTMAPS];
+//	msurface_t	*lightmap_surfaces[MAX_LIGHTMAPS];
 
 	int			allocated[LM_BLOCK_WIDTH];
 
 	// the lightmap texture data needs to be kept in
 	// main memory so texsubimage can update properly
+#ifndef BATCH_LM_UPDATES
 	unsigned	lightmap_buffer[LM_BLOCK_WIDTH*LM_BLOCK_HEIGHT];
-#ifdef BATCH_LM_UPDATES	// Knightmare added
+#else	// BATCH_LM_UPDATES
 	unsigned	*lightmap_update[MAX_LIGHTMAPS];
 	rect_t		lightrect[MAX_LIGHTMAPS];
 	qboolean	modified[MAX_LIGHTMAPS];
@@ -509,7 +511,6 @@ void R_BeginBuildingLightmaps (model_t *m);
 extern	model_t	*r_worldmodel;
 
 extern	unsigned	d_8to24table[256];
-extern	float		d_8to24tablef[256][3]; //Knightmare added
 
 extern	int		registration_sequence;
 
@@ -558,12 +559,9 @@ void R_DrawBrushModel (entity_t *e);
 void R_DrawSpriteModel (entity_t *e);
 void R_DrawBeam( entity_t *e );
 void R_DrawWorld (void);
-void R_RenderDlights (void);
 void R_DrawAllAlphaSurfaces (void);
-void R_RenderBrushPoly (msurface_t *fa);
 void R_InitMedia (void);
 void R_DrawInitLocal (void);
-void R_SubdivideSurface (msurface_t *fa);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e, qboolean full);
 int R_RollMult (void);
@@ -668,15 +666,14 @@ extern GLuint vertex_programs[NUM_VERTEX_PROGRAM];
 //
 // r_warp.c
 //
-//glpoly_t *WaterWarpPolyVerts (glpoly_t *p);
-void R_InitDSTTex (void);
-void R_DrawWarpSurface (msurface_t *fa, float alpha, qboolean render);
+void R_SubdivideSurface (msurface_t *surf);
+void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render);
 
 
 //
 // r_sky.c
 //
-void R_AddSkySurface (msurface_t *fa);
+void R_AddSkySurface (msurface_t *surf);
 void R_ClearSkyBox (void);
 void R_DrawSkyBox (void);
 
@@ -686,19 +683,15 @@ void R_DrawSkyBox (void);
 //
 //extern	surfaceHandle_t	r_surfaceHandles[MAX_SURFACE_HANDLES];
 
+image_t *R_TextureAnimation (msurface_t *surf);
 void R_DrawWorld (void);
 void R_DrawAllAlphaSurfaces (void);
-void R_RenderBrushPoly (msurface_t *fa);
 void R_DrawBrushModel (entity_t *e);
 void R_MarkLeaves (void);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_BuildPolygonFromSurface (msurface_t *surf);
 void R_ResetVertextLights_f (void);
 void R_BuildVertexLight (msurface_t *surf);
-#ifdef BATCH_LM_UPDATES
-void R_UpdateSurfaceLightmap (msurface_t *surf);
-void R_RebuildLightmaps (void);
-#endif
 
 
 // 
@@ -748,7 +741,6 @@ void	r_DrawStretchRaw (int x, int y, int w, int h, int cols, int rows, byte *dat
 // r_image.c
 //
 int		Draw_GetPalette (void);
-//void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
 void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight);
 struct image_s *R_RegisterSkin (char *name);
 
@@ -762,13 +754,10 @@ image_t	*R_FindImage (char *name, imagetype_t type);
 void GL_UpdateAnisoMode (void);
 void GL_TextureMode( char *string );
 void R_ImageList_f (void);
-//void	GL_SetTexturePalette( unsigned palette[256] );
 void R_InitFailedImgList (void);
 void R_InitImages (void);
 void R_ShutdownImages (void);
 void R_FreeUnusedImages (void);
-//void GL_TextureAlphaMode( char *string );
-//void GL_TextureSolidMode( char *string );
 
 //
 // r_upscale.c
@@ -797,47 +786,6 @@ void R_SetFogVars (qboolean enable, int model, int density,
 /*
 ** GL config stuff
 */
-/*#define GL_RENDERER_VOODOO		0x00000001
-#define GL_RENDERER_VOODOO2   	0x00000002
-#define GL_RENDERER_VOODOO_RUSH	0x00000004
-#define GL_RENDERER_BANSHEE		0x00000008
-#define	GL_RENDERER_3DFX		0x0000000F
-
-#define GL_RENDERER_PCX1		0x00000010
-#define GL_RENDERER_PCX2		0x00000020
-#define GL_RENDERER_PMX			0x00000040
-#define	GL_RENDERER_POWERVR		0x00000070
-
-#define GL_RENDERER_PERMEDIA2	0x00000100
-#define GL_RENDERER_GLINT_MX	0x00000200
-#define GL_RENDERER_GLINT_TX	0x00000400
-#define GL_RENDERER_3DLABS_MISC	0x00000800
-#define	GL_RENDERER_3DLABS		0x00000F00
-
-#define GL_RENDERER_REALIZM		0x00001000
-#define GL_RENDERER_REALIZM2	0x00002000
-#define	GL_RENDERER_INTERGRAPH	0x00003000
-
-#define GL_RENDERER_3DPRO		0x00004000
-#define GL_RENDERER_REAL3D		0x00008000
-#define GL_RENDERER_RIVA128		0x00010000
-#define GL_RENDERER_DYPIC		0x00020000
-
-#define GL_RENDERER_V1000		0x00040000
-#define GL_RENDERER_V2100		0x00080000
-#define GL_RENDERER_V2200		0x00100000
-#define	GL_RENDERER_RENDITION	0x001C0000
-
-#define GL_RENDERER_O2          0x00100000
-#define GL_RENDERER_IMPACT      0x00200000
-#define GL_RENDERER_RE			0x00400000
-#define GL_RENDERER_IR			0x00800000
-#define	GL_RENDERER_SGI			0x00F00000
-
-#define GL_RENDERER_MCD			0x01000000
-#define GL_RENDERER_OTHER		0x80000000*/
-
-
 enum {
 	GLREND_DEFAULT		= 1 << 0,
 

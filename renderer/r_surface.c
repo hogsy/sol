@@ -1408,8 +1408,7 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	qglColor3f (1,1,1);
-	memset (gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
+	qglColor3f (1.0f, 1.0f, 1.0f);
 
 	VectorSubtract (r_newrefdef.vieworg, e->origin, modelorg);
 	if (rotated)
@@ -1678,7 +1677,6 @@ void R_DrawWorld (void)
 	glState.currenttextures[0] = glState.currenttextures[1] = -1;
 
 	qglColor3f (1,1,1);
-	memset (gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
 	R_ClearSkyBox ();
 
 	R_RecursiveWorldNode (r_worldmodel->nodes);

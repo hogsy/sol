@@ -230,15 +230,12 @@ void R_SubdivideSurface (msurface_t *surf)
 
 //=========================================================
 
-
-
 // speed up sin calculations - Ed
 float	r_turbsin[] =
 {
 	#include "warpsin.h"
 };
 #define TURBSCALE (256.0 / (2 * M_PI))
-
 
 
 #if 0
@@ -297,8 +294,6 @@ void R_InitDSTTex (void)
 //end MrG
 #endif
 
-
-image_t *R_TextureAnimation (msurface_t *surf);
 
 /*
 =============

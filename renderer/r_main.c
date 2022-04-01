@@ -705,7 +705,7 @@ void R_RenderView (refdef_t *fd)
 	{
 		GL_Disable (GL_ALPHA_TEST);
 
-		R_RenderDlights();
+		R_RenderDlights ();
 
 		if (r_transrendersort->integer) {
 		//	R_BuildParticleList ();
@@ -2421,7 +2421,6 @@ void R_SetPalette ( const unsigned char *palette)
 			rp[i*4+3] = 0xff;
 		}
 	}
-	//GL_SetTexturePalette( r_rawpalette );
 
 	qglClearColor (0,0,0,0);
 	qglClear (GL_COLOR_BUFFER_BIT);

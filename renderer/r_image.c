@@ -58,39 +58,12 @@ static unsigned char gammatable[256];
 cvar_t		*r_intensity;
 
 unsigned	d_8to24table[256];
-float		d_8to24tablef[256][3]; // Knightmare- MrG's Vertex array stuff
 
 qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type);
 qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type);
 
 int		gl_filter_min;
 int		gl_filter_max;
-
-#if 0
-void GL_SetTexturePalette (unsigned palette[256])
-{
-	int i;
-	unsigned char temptable[768];
-
-	if ( qglColorTableEXT )//&& gl_ext_palettedtexture->value )
-	{
-		for ( i = 0; i < 256; i++ )
-		{
-			temptable[i*3+0] = ( palette[i] >> 0 ) & 0xff;
-			temptable[i*3+1] = ( palette[i] >> 8 ) & 0xff;
-			temptable[i*3+2] = ( palette[i] >> 16 ) & 0xff;
-		}
-
-		qglColorTableEXT( GL_SHARED_TEXTURE_PALETTE_EXT,
-						   GL_RGB,
-						   256,
-						   GL_RGB,
-						   GL_UNSIGNED_BYTE,
-						   temptable );
-	}
-}
-#endif
-
 
 typedef struct
 {
@@ -109,38 +82,6 @@ glmode_t gl_modes[] = {
 
 #define NUM_GL_MODES (sizeof(gl_modes) / sizeof (glmode_t))
 
-#if 0	// removed
-typedef struct
-{
-	char *name;
-	int mode;
-} gltmode_t;
-
-gltmode_t gl_alpha_modes[] = {
-	{"default", 4},
-	{"GL_RGBA", GL_RGBA},
-	{"GL_RGBA8", GL_RGBA8},
-	{"GL_RGB5_A1", GL_RGB5_A1},
-	{"GL_RGBA4", GL_RGBA4},
-	{"GL_RGBA2", GL_RGBA2},
-};
-
-#define NUM_GL_ALPHA_MODES (sizeof(gl_alpha_modes) / sizeof (gltmode_t))
-
-gltmode_t gl_solid_modes[] = {
-	{"default", 3},
-	{"GL_RGB", GL_RGB},
-	{"GL_RGB8", GL_RGB8},
-	{"GL_RGB5", GL_RGB5},
-	{"GL_RGB4", GL_RGB4},
-	{"GL_R3_G3_B2", GL_R3_G3_B2},
-#ifdef GL_RGB2_EXT
-	{"GL_RGB2", GL_RGB2_EXT},
-#endif
-};
-
-#define NUM_GL_SOLID_MODES (sizeof(gl_solid_modes) / sizeof (gltmode_t))
-#endif
 
 /*
 ===============
@@ -173,6 +114,7 @@ void GL_UpdateAnisoMode (void)
 		}
 	}
 }
+
 
 /*
 ===============
@@ -2666,9 +2608,6 @@ void R_InitImages (void)
 
 	registration_sequence = 1;
 
-	// init intensity conversions
-	//r_intensity = Cvar_Get ("r_intensity", "2", CVAR_ARCHIVE);
-
 	// Knightmare- added Vic's RGB brightening
 	if (glConfig.mtexcombine)
 		r_intensity = Cvar_Get ("r_intensity", "1", 0);
@@ -2694,7 +2633,6 @@ void R_InitImages (void)
 	} */
 
 	if (glConfig.rendType == GLREND_VOODOO)
-	//if ( glConfig.renderer & ( GL_RENDERER_VOODOO | GL_RENDERER_VOODOO2 ) )
 	{
 		g = 1.0F;
 	}

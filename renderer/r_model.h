@@ -72,8 +72,8 @@ typedef struct
 #define SURF_UNDERSLIME		0x200
 #define SURF_UNDERLAVA		0x400
 #define SURF_MASK_CAUSTIC	(SURF_UNDERWATER|SURF_UNDERSLIME|SURF_UNDERLAVA)
-// Psychospaz's envmapping
-#define SURF_ENVMAP			0x800
+#define SURF_ENVMAP			0x800	// Psychospaz's envmapping
+#define	SURF_DRAWFOG		0x1000
 
 // !!! if this is changed, it must be changed in asm_draw.h too !!!
 typedef struct

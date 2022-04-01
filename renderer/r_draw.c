@@ -898,7 +898,7 @@ void R_DrawStretchRaw (int x, int y, int w, int h, int cols, int rows, byte *dat
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if ( (glConfig.renderer == GL_RENDERER_MCD) || (glConfig.renderer & GL_RENDERER_RENDITION) ) 
+	if ( (glConfig.rendType == GLREND_MCD) || (glConfig.rendType == GLREND_RENDITION) ) 
 		GL_Disable (GL_ALPHA_TEST);
 
 	// Draw it
@@ -927,7 +927,7 @@ void R_DrawStretchRaw (int x, int y, int w, int h, int cols, int rows, byte *dat
 	}
 	RB_RenderMeshGeneric (false);
 
-	if ( (glConfig.renderer == GL_RENDERER_MCD) || (glConfig.renderer & GL_RENDERER_RENDITION) ) 
+	if ( (glConfig.rendType == GLREND_MCD) || (glConfig.rendType == GLREND_RENDITION) ) 
 		GL_Enable (GL_ALPHA_TEST);
 }
 #endif // ROQ_SUPPORT

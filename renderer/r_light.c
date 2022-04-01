@@ -29,7 +29,7 @@ int	r_dlightframecount;
 gllightmapstate_t gl_lms;
 
 static void		LM_InitBlock (void);
-static void		LM_UploadBlock (qboolean dynamic);
+static void		LM_UploadBlock (void);
 static qboolean	LM_AllocBlock (int w, int h, int *x, int *y);
 
 //#define	DLIGHT_CUTOFF	64	// Knightmare- no longer hard-coded
@@ -886,63 +886,25 @@ static void LM_InitBlock (void)
 LM_UploadBlock
 ================
 */
-static void LM_UploadBlock (qboolean dynamic)
+static void LM_UploadBlock (void)
 {
-	int texture;
-	int height = 0;
-
-	if ( dynamic )
-	{
-		texture = 0;
-	}
-	else
-	{
-		texture = gl_lms.current_lightmap_texture;
-	}
-
-	GL_Bind( glState.lightmap_textures + texture );
+	GL_Bind (glState.lightmap_textures + gl_lms.current_lightmap_texture);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if ( dynamic )
-	{
-		int i;
-
-		for ( i = 0; i < LM_BLOCK_WIDTH; i++ )
-		{
-			if ( gl_lms.allocated[i] > height )
-				height = gl_lms.allocated[i];
-		}
-
-		qglTexSubImage2D( GL_TEXTURE_2D, 
-						  0,
-						  0, 0,
-						  LM_BLOCK_WIDTH, height,
-						  gl_lms.format,
-						  gl_lms.type,
-	//					  GL_LIGHTMAP_FORMAT,
-	//					  GL_UNSIGNED_BYTE,
-						  gl_lms.lightmap_buffer );
-	}
-	else
-	{
-		qglTexImage2D( GL_TEXTURE_2D, 
-					   0, 
-					   gl_lms.internal_format,
-					   LM_BLOCK_WIDTH, LM_BLOCK_HEIGHT, 
-					   0, 
-					   gl_lms.format,
-					   gl_lms.type,
-	//				   GL_LIGHTMAP_FORMAT, 
-	//				   GL_UNSIGNED_BYTE, 
+	qglTexImage2D( GL_TEXTURE_2D, 0, 
+				   gl_lms.internal_format,
+				   LM_BLOCK_WIDTH, LM_BLOCK_HEIGHT, 
+				   0, 
+	//			   GL_LIGHTMAP_FORMAT, GL_LIGHTMAP_TYPE, 
+					   gl_lms.format, gl_lms.type,
 #ifdef BATCH_LM_UPDATES
-					   gl_lms.lightmap_update[gl_lms.current_lightmap_texture] );
+				   gl_lms.lightmap_update[gl_lms.current_lightmap_texture] );
 #else
-					   gl_lms.lightmap_buffer );
+				   gl_lms.lightmap_buffer );
 #endif	// BATCH_LM_UPDATES
-		if ( ++gl_lms.current_lightmap_texture == MAX_LIGHTMAPS )
-			VID_Error( ERR_DROP, "LM_UploadBlock() - MAX_LIGHTMAPS exceeded\n" );
-	}
+	if ( ++gl_lms.current_lightmap_texture == MAX_LIGHTMAPS )
+		VID_Error( ERR_DROP, "LM_UploadBlock() - MAX_LIGHTMAPS exceeded\n" );
 }
 
 
@@ -1353,7 +1315,7 @@ void R_CreateSurfaceLightmap (msurface_t *surf)
 
 	if ( !LM_AllocBlock (smax, tmax, &surf->light_s, &surf->light_t) )
 	{
-		LM_UploadBlock (false);
+		LM_UploadBlock ();
 		LM_InitBlock();
 		if ( !LM_AllocBlock (smax, tmax, &surf->light_s, &surf->light_t) )
 		{
@@ -1522,6 +1484,6 @@ R_EndBuildingLightmaps
 */
 void R_EndBuildingLightmaps (void)
 {
-	LM_UploadBlock (false);
+	LM_UploadBlock ();
 	GL_EnableMultitexture (false);
 }
