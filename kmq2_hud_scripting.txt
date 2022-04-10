@@ -180,15 +180,15 @@ padding <pad>					- Sets the size of the base area for a bar, which is always fi
 range <range>					- Sets the minimum and maximum values for a bar.
 minRange <min>					- Sets just the minimum value for a bar.
 maxRange <min>					- Sets just the maximum value for a bar.
-minRange fromStat <stat> [statCap <lower> <upper> statMult <mult>]	- Sets the minimum value for a bar from a stat value.
+minRange fromStat <stat> [statClamp <lower> <upper> statMult <mult>]	- Sets the minimum value for a bar from a stat value.
 																	Falls back to that set by range if the stat is 0.
-																	statCap specifies lower and upper limits for the minRange,
+																	statClamp specifies lower and upper limits for the minRange,
 																	to normalize the bar's appearance in case its range is controlled
 																	by a cvar, which may be set to an extreme value.
 																	statMult specifies a multiplier for the stat value.
-maxRange fromStat <stat> [statCap <lower> <upper> statMult <mult>]	- Sets the maximum value for a bar from a stat value.
+maxRange fromStat <stat> [statClamp <lower> <upper> statMult <mult>]	- Sets the maximum value for a bar from a stat value.
 																	Falls back to that set by range if the stat is 0.
-																	statCap specifies lower and upper limits for the maxRange,
+																	statClamp specifies lower and upper limits for the maxRange,
 																	to normalize the bar's appearance in case its range is controlled
 																	by a cvar, which may be set to an extreme value.
 																	statMult specifies a multiplier for the stat value.

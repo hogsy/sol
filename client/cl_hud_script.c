@@ -393,15 +393,15 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 		tok = COM_ParseExt (script, false);
 		while (tok[0])
 		{
-			if ( Q_strcasecmp(tok, "statCap") == 0 )
+			if ( !Q_strcasecmp(tok, "statClamp") )
 			{
 				for (i=0; i<2; i++) {
-					if ( !Hud_Parse_Int(&drawItem->minRangeStatCap[i], script) ) {
-						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing 'statCap' parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+					if ( !Hud_Parse_Int(&drawItem->minRangeStatClamp[i], script) ) {
+						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing 'statClamp' parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 						return false;
 					}
 				}
-				drawItem->fromStat |= HUD_STATMINRANGECAP;
+				drawItem->fromStat |= HUD_STATMINRANGECLAMP;
 			}
 			else if ( Q_strcasecmp(tok, "statMult") == 0 )
 			{
@@ -414,7 +414,7 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 				}
 			}
 			else {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: expected 'statMult' or 'statCap', found '%s' for 'minRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
+				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: expected 'statMult' or 'statClamp', found '%s' for 'minRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 				return false;
 			}
 			tok = COM_ParseExt (script, false);
@@ -454,15 +454,15 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 		tok = COM_ParseExt (script, false);
 		while (tok[0])
 		{
-			if ( Q_strcasecmp(tok, "statCap") == 0 )
+			if ( !Q_strcasecmp(tok, "statClamp") )
 			{
 				for (i=0; i<2; i++) {
-				if ( !Hud_Parse_Int(&drawItem->maxRangeStatCap[i], script) ) {
-					Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing 'statCap' parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
-					return false;
+					if ( !Hud_Parse_Int(&drawItem->maxRangeStatClamp[i], script) ) {
+						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing 'statClamp' parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+						return false;
+					}
 				}
-				}
-				drawItem->fromStat |= HUD_STATMAXRANGECAP;
+				drawItem->fromStat |= HUD_STATMAXRANGECLAMP;
 			}
 			else if ( Q_strcasecmp(tok, "statMult") == 0 )
 			{
@@ -475,7 +475,7 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 				}
 			}
 			else {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: expected 'statMult' or 'statCap', found '%s' for 'maxRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
+				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: expected 'statMult' or 'statClamp', found '%s' for 'maxRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 				return false;
 			}
 			tok = COM_ParseExt (script, false);
@@ -2243,8 +2243,8 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 
 		if (drawItem->fromStat & HUD_STATMINRANGE)
 		{
-			if (drawItem->fromStat & HUD_STATMINRANGECAP)
-				minTemp = min(max(cl.frame.playerstate.stats[drawItem->minRangeStat], drawItem->minRangeStatCap[0]), drawItem->minRangeStatCap[1]);
+			if (drawItem->fromStat & HUD_STATMINRANGECLAMP)
+				minTemp = min(max(cl.frame.playerstate.stats[drawItem->minRangeStat], drawItem->minRangeStatClamp[0]), drawItem->minRangeStatClamp[1]);
 			else
 				minTemp = cl.frame.playerstate.stats[drawItem->minRangeStat];
 			minVal = (cl.frame.playerstate.stats[drawItem->minRangeStat]) ? (int)((float)minTemp * drawItem->minRangeStatMult) : drawItem->range[0];
@@ -2254,8 +2254,8 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 
 		if (drawItem->fromStat & HUD_STATMAXRANGE)
 		{
-			if (drawItem->fromStat & HUD_STATMAXRANGECAP)
-				maxTemp = min(max(cl.frame.playerstate.stats[drawItem->maxRangeStat], drawItem->maxRangeStatCap[0]), drawItem->maxRangeStatCap[1]);
+			if (drawItem->fromStat & HUD_STATMAXRANGECLAMP)
+				maxTemp = min(max(cl.frame.playerstate.stats[drawItem->maxRangeStat], drawItem->maxRangeStatClamp[0]), drawItem->maxRangeStatClamp[1]);
 			else
 				maxTemp = cl.frame.playerstate.stats[drawItem->maxRangeStat];
 			maxVal = (cl.frame.playerstate.stats[drawItem->maxRangeStat]) ? (int)((float)maxTemp * drawItem->maxRangeStatMult) : drawItem->range[1];

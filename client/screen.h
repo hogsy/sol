@@ -75,8 +75,8 @@ typedef struct
 #define	HUD_STATVALUE			4
 #define	HUD_STATMINRANGE		8
 #define	HUD_STATMAXRANGE		16
-#define	HUD_STATMINRANGECAP		32
-#define	HUD_STATMAXRANGECAP		64
+#define	HUD_STATMINRANGECLAMP	32
+#define	HUD_STATMAXRANGECLAMP	64
 #define	HUD_STATSHADER			128
 #define	HUD_WEAPONMODELSHADER	256
 #define	HUD_PLAYERNAMESTRING	512
@@ -210,8 +210,8 @@ typedef struct {
 	int				valueStat;
 	int				minRangeStat;
 	int				maxRangeStat;
-	int				minRangeStatCap[2];
-	int				maxRangeStatCap[2];
+	int				minRangeStatClamp[2];
+	int				maxRangeStatClamp[2];
 	float			minRangeStatMult;
 	float			maxRangeStatMult;
 	int				shaderStat;
