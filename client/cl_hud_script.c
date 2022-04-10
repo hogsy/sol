@@ -373,6 +373,7 @@ Hud_ParseItem_MinRange
 */
 qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 {
+	int		i;
 	char	*tok;
 
 	tok = COM_ParseExt (script, false);
@@ -390,16 +391,33 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 		drawItem->fromStat |= HUD_STATMINRANGE;
 		drawItem->minRangeStatMult = 1.0f;
 		tok = COM_ParseExt (script, false);
-		if (tok[0])
+		while (tok[0])
 		{
-			if ( Q_strcasecmp(tok, "statMult") ) {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: expected 'statMult', found '%s' instead in 'minRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
+			if ( Q_strcasecmp(tok, "statCap") == 0 )
+			{
+				for (i=0; i<2; i++) {
+					if ( !Hud_Parse_Int(&drawItem->minRangeStatCap[i], script) ) {
+						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing 'statCap' parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+						return false;
+					}
+				}
+				drawItem->fromStat |= HUD_STATMINRANGECAP;
+			}
+			else if ( Q_strcasecmp(tok, "statMult") == 0 )
+			{
+				if ( Hud_Parse_Float(&drawItem->minRangeStatMult, script) ) {
+					// do nothing here
+				}
+				else {
+					Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing 'statMult' parameter for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+					return false;
+				}
+			}
+			else {
+				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: expected 'statMult' or 'statCap', found '%s' for 'minRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 				return false;
 			}
-			if ( !Hud_Parse_Float(&drawItem->minRangeStatMult, script) ) {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
-				return false;
-			}
+			tok = COM_ParseExt (script, false);
 		}
 	}
 	else
@@ -416,6 +434,7 @@ Hud_ParseItem_MaxRange
 */
 qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 {
+	int		i;
 	char	*tok;
 
 	tok = COM_ParseExt (script, false);
@@ -433,16 +452,33 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 		drawItem->fromStat |= HUD_STATMAXRANGE;
 		drawItem->maxRangeStatMult = 1.0f;
 		tok = COM_ParseExt (script, false);
-		if (tok[0])
+		while (tok[0])
 		{
-			if ( Q_strcasecmp(tok, "statMult") ) {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: expected 'statMult', found '%s' instead in 'maxRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
+			if ( Q_strcasecmp(tok, "statCap") == 0 )
+			{
+				for (i=0; i<2; i++) {
+				if ( !Hud_Parse_Int(&drawItem->maxRangeStatCap[i], script) ) {
+					Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing 'statCap' parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+					return false;
+				}
+				}
+				drawItem->fromStat |= HUD_STATMAXRANGECAP;
+			}
+			else if ( Q_strcasecmp(tok, "statMult") == 0 )
+			{
+				if ( Hud_Parse_Float(&drawItem->maxRangeStatMult, script) ) {
+					// do nothing here
+				}
+				else {
+					Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing 'statMult' parameter for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
+					return false;
+				}
+			}
+			else {
+				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: expected 'statMult' or 'statCap', found '%s' for 'maxRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 				return false;
 			}
-			if ( !Hud_Parse_Float(&drawItem->maxRangeStatMult, script) ) {
-				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
-				return false;
-			}
+			tok = COM_ParseExt (script, false);
 		}
 	}
 	else
@@ -1940,6 +1976,7 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 	char			shader[MAX_QPATH], shaderMinus[MAX_QPATH];
 	int				index, max_configstrings, max_images, cs_images;
 	int				i, number, value, width, l, frame;
+	int				minTemp, maxTemp;
 	float			refVal;
 	vec4_t			texCoord;
 	vec2_t			offset;
@@ -2205,23 +2242,32 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 			value = drawItem->value;
 
 		if (drawItem->fromStat & HUD_STATMINRANGE)
-			minVal = (cl.frame.playerstate.stats[drawItem->minRangeStat]) ? (int)((float)cl.frame.playerstate.stats[drawItem->minRangeStat] * drawItem->minRangeStatMult) : drawItem->range[0];
+		{
+			if (drawItem->fromStat & HUD_STATMINRANGECAP)
+				minTemp = min(max(cl.frame.playerstate.stats[drawItem->minRangeStat], drawItem->minRangeStatCap[0]), drawItem->minRangeStatCap[1]);
+			else
+				minTemp = cl.frame.playerstate.stats[drawItem->minRangeStat];
+			minVal = (cl.frame.playerstate.stats[drawItem->minRangeStat]) ? (int)((float)minTemp * drawItem->minRangeStatMult) : drawItem->range[0];
+		}
 		else
 			minVal = drawItem->range[0];
 
 		if (drawItem->fromStat & HUD_STATMAXRANGE)
-			maxVal = (cl.frame.playerstate.stats[drawItem->maxRangeStat]) ? (int)((float)cl.frame.playerstate.stats[drawItem->maxRangeStat] * drawItem->maxRangeStatMult) : drawItem->range[1];
+		{
+			if (drawItem->fromStat & HUD_STATMAXRANGECAP)
+				maxTemp = min(max(cl.frame.playerstate.stats[drawItem->maxRangeStat], drawItem->maxRangeStatCap[0]), drawItem->maxRangeStatCap[1]);
+			else
+				maxTemp = cl.frame.playerstate.stats[drawItem->maxRangeStat];
+			maxVal = (cl.frame.playerstate.stats[drawItem->maxRangeStat]) ? (int)((float)maxTemp * drawItem->maxRangeStatMult) : drawItem->range[1];
+		}
 		else
 			maxVal = drawItem->range[1];
 
-	//	value = min(max(value, drawItem->range[0]), drawItem->range[1]) - drawItem->range[0];
 		value = min(max(value, minVal), maxVal) - minVal;
-	//	if ( (drawItem->range[1] - drawItem->range[0]) > 0)
 		if ( (maxVal - minVal) > 0)
 		{
-		//	percent = (float)value / (drawItem->range[1] - drawItem->range[0]);
-			percent = (float)value / (maxVal - minVal);
-			if (!percent)
+			percent = (float)value / (float)(maxVal - minVal);
+			if (percent <= 0.0f)
 				return;
 
 			percent = max(min(percent, 1.0f), 0.0f);

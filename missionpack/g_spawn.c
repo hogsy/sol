@@ -1991,7 +1991,7 @@ char *single_statusbar =
 
 // timer
 "if 9 "
-"	xv	230 " //was xv 262
+"	xv	230 " // was xv 262
 "	num	4	10 "
 "	xv	296 "
 "	pic	9 "
@@ -2063,7 +2063,7 @@ char *dm_statusbar =
 
 // timer
 "if 9 "
-"	xv	230 " //was 246
+"	xv	230 " // was 246
 "	num	4	10 "
 "	xv	296 "
 "	pic	9 "

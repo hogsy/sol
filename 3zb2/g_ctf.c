@@ -62,8 +62,8 @@ char *ctf_statusbar =
 
 // timer
 "if 9 "
-  "xv 246 "
-  "num 2 10 "
+  "xv 230 "
+  "num 4 10 "
   "xv 296 "
   "pic 9 "
 "endif "

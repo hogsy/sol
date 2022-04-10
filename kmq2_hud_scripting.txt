@@ -4,8 +4,8 @@ The script file has a .hud extension, and goes under scripts/huds.
 
 Single-line (//) and block comments (/* */) are supported.  The included hud scripts have a block comment at the beginning that lists the stat numbers used in the default game DLL.  It's a good idea to copy this to each new script file for quick reference.
 
-
 Inside the script file, there are two types of top-level items that can be decared, hudDefs and renameSetDefs.  There can only be one hudDef, but up to eight renameSetDefs.
+
 
 Rename sets are used to rename images from the default status bar for HUD items that specify a particular rename set.  This is useful if you want a hud item that uses a special set of images, such as larger image of the current weapon.
 
@@ -180,10 +180,18 @@ padding <pad>					- Sets the size of the base area for a bar, which is always fi
 range <range>					- Sets the minimum and maximum values for a bar.
 minRange <min>					- Sets just the minimum value for a bar.
 maxRange <min>					- Sets just the maximum value for a bar.
-minRange fromStat <stat> [statMult <mult>]	- Sets the minimum value for a bar from a stat value.  Falls back to that set by range if the stat is 0.
-											statMult specifies a multiplier for the stat value.
-maxRange fromStat <stat> [statMult <mult>]	- Sets the maximum value for a bar from a stat value.  Falls back to that set by range if the stat is 0.
-											statMult specifies a multiplier for the stat value.
+minRange fromStat <stat> [statCap <lower> <upper> statMult <mult>]	- Sets the minimum value for a bar from a stat value.
+																	Falls back to that set by range if the stat is 0.
+																	statCap specifies lower and upper limits for the minRange,
+																	to normalize the bar's appearance in case its range is controlled
+																	by a cvar, which may be set to an extreme value.
+																	statMult specifies a multiplier for the stat value.
+maxRange fromStat <stat> [statCap <lower> <upper> statMult <mult>]	- Sets the maximum value for a bar from a stat value.
+																	Falls back to that set by range if the stat is 0.
+																	statCap specifies lower and upper limits for the maxRange,
+																	to normalize the bar's appearance in case its range is controlled
+																	by a cvar, which may be set to an extreme value.
+																	statMult specifies a multiplier for the stat value.
 color <rgba> [blink <rgba>]		- The color of the item, using a red-green-blue-alpha tuple that is normalized between 0 and 1.  A second
 								 blink tuple can be added to make the item flash.
 

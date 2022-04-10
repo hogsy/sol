@@ -520,12 +520,12 @@ void InitGame (void)
 	// Lazarus saved cvars that we may or may not manipulate, but need to
 	// restore to original values upon map exit.
 	lazarus_cd_loop = gi.cvar("lazarus_cd_loop", "0", 0);
-	lazarus_gl_clear= gi.cvar("lazarus_gl_clear","0", 0);
-	lazarus_pitch   = gi.cvar("lazarus_pitch",   "0", 0);
-	lazarus_yaw     = gi.cvar("lazarus_yaw",     "0", 0);
-	lazarus_joyp    = gi.cvar("lazarus_joyp",    "0", 0);
-	lazarus_joyy    = gi.cvar("lazarus_joyy",    "0", 0);
-	lazarus_cl_gun  = gi.cvar("lazarus_cl_gun",  "0", 0);
+	lazarus_gl_clear= gi.cvar("lazarus_gl_clear", "0", 0);
+	lazarus_pitch   = gi.cvar("lazarus_pitch", "0", 0);
+	lazarus_yaw     = gi.cvar("lazarus_yaw", "0", 0);
+	lazarus_joyp    = gi.cvar("lazarus_joyp", "0", 0);
+	lazarus_joyy    = gi.cvar("lazarus_joyy", "0", 0);
+	lazarus_cl_gun  = gi.cvar("lazarus_cl_gun", "0", 0);
 	lazarus_crosshair = gi.cvar("lazarus_crosshair", "0", 0);
 
 	/*if (lazarus_gl_clear->value)

@@ -1849,7 +1849,7 @@ void SP_worldspawn (edict_t *ent)
 	// value for obscuring HOM with fog... "good" is driver-dependent
 	if (ent->fogclip)
 	{
-		if(gl_driver && !Q_stricmp(gl_driver->string,"3dfxgl"))
+		if ( gl_driver && !Q_stricmp(gl_driver->string, "3dfxgl") )
 			gi.cvar_forceset("gl_clear", "0");
 		else
 			gi.cvar_forceset("gl_clear", "1");

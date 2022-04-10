@@ -725,9 +725,9 @@ char *single_statusbar =
 "	yb	-50 "
 "endif "
 
-// timer
+// timer (was xv 262)
 "if 9 "
-"	xv	262 "
+"	xv	230 "
 "	num	4	10 "
 "	xv	296 "
 "	pic	9 "
@@ -794,9 +794,9 @@ char *dm_statusbar =
 "	yb	-50 "
 "endif "
 
-// timer
+// timer (was xv 246)
 "if 9 "
-"	xv	246 "
+"	xv	230 "
 "	num	4	10 "
 "	xv	296 "
 "	pic	9 "

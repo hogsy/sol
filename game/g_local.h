@@ -1778,7 +1778,7 @@ struct edict_s
 	float		damage_debounce_time;
 	float		gravity_debounce_time;		// used by item_ movement commands to prevent
 											// monsters from dropping to floor
-	float		fly_sound_debounce_time;	//move to clientinfo
+	float		fly_sound_debounce_time;	// move to clientinfo
 	float		last_move_time;
 
 	int			health;
