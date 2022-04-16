@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_COMBOBOX
+
 /*
 =======================================================================
 
@@ -40,11 +42,25 @@ static menuSlider_s		s_options_interface_conalpha_slider;
 //static menuSlider_s	s_options_interface_conheight_slider;
 static menuSlider_s		s_options_interface_menumouse_slider;
 static menuSlider_s		s_options_interface_menualpha_slider;
+
+#ifdef USE_COMBOBOX
+static menuComboBox_s	s_options_interface_confont_box;
+#else
 static menuPicker_s		s_options_interface_confont_box;
+#endif	// USE_COMBOBOX
+
 static menuSlider_s		s_options_interface_fontsize_slider;
+
+#ifdef USE_COMBOBOX
+static menuComboBox_s	s_options_interface_uifont_box;
+static menuComboBox_s	s_options_interface_scrfont_box;
+static menuComboBox_s	s_options_interface_alt_text_color_box;
+#else
 static menuPicker_s		s_options_interface_uifont_box;
 static menuPicker_s		s_options_interface_scrfont_box;
 static menuPicker_s		s_options_interface_alt_text_color_box;
+#endif	// USE_COMBOBOX
+
 static menuPicker_s		s_options_interface_simple_loadscreen_box;
 static menuPicker_s		s_options_interface_newconback_box;
 static menuPicker_s		s_options_interface_noalttab_box;
@@ -146,7 +162,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_menualpha_slider.generic.type		= MTYPE_SLIDER;
 	s_options_interface_menualpha_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_menualpha_slider.generic.x			= x;
-	s_options_interface_menualpha_slider.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_interface_menualpha_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_options_interface_menualpha_slider.generic.name		= "ingame menu transparency";
 	s_options_interface_menualpha_slider.maxPos				= 20;
 	s_options_interface_menualpha_slider.baseValue			= 0.0f;
@@ -158,21 +174,46 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_menualpha_slider.generic.cvarMax	= 1.0f;
 	s_options_interface_menualpha_slider.generic.statusbar	= "changes opacity of menu background";
 
+#ifdef USE_COMBOBOX
+	s_options_interface_confont_box.generic.type			= MTYPE_COMBOBOX;
+	s_options_interface_confont_box.generic.x				= x;
+	s_options_interface_confont_box.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_options_interface_confont_box.generic.name			= "console font";
+	s_options_interface_confont_box.itemNames				= ui_font_names;
+	s_options_interface_confont_box.itemValues				= ui_font_names;
+	s_options_interface_confont_box.items_y					= 10;
+	s_options_interface_confont_box.itemWidth				= 16;
+	s_options_interface_confont_box.itemSpacing				= 1;
+	s_options_interface_confont_box.itemTextSize			= 8;
+	s_options_interface_confont_box.border					= 1;
+	s_options_interface_confont_box.borderColor[0]			= 60;
+	s_options_interface_confont_box.borderColor[1]			= 60;
+	s_options_interface_confont_box.borderColor[2]			= 60;
+	s_options_interface_confont_box.borderColor[3]			= 255;
+	s_options_interface_confont_box.backColor[0]			= 0;
+	s_options_interface_confont_box.backColor[1]			= 0;
+	s_options_interface_confont_box.backColor[2]			= 0;
+	s_options_interface_confont_box.backColor[3]			= 192;
+	s_options_interface_confont_box.generic.cvar			= "con_font";
+	s_options_interface_confont_box.generic.cvarClamp		= false;
+	s_options_interface_confont_box.generic.statusbar		= "changes font of console text";
+#else	// USE_COMBOBOX
 	s_options_interface_confont_box.generic.type			= MTYPE_PICKER;
 	s_options_interface_confont_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_confont_box.generic.x				= x;
-	s_options_interface_confont_box.generic.y				= y+=2*MENU_LINE_SIZE;
+	s_options_interface_confont_box.generic.y				= y += 2*MENU_LINE_SIZE;
 	s_options_interface_confont_box.generic.name			= "console font";
 	s_options_interface_confont_box.itemNames				= ui_font_names;
 	s_options_interface_confont_box.itemValues				= ui_font_names;
 	s_options_interface_confont_box.generic.cvar			= "con_font";
 	s_options_interface_confont_box.generic.cvarClamp		= false;
 	s_options_interface_confont_box.generic.statusbar		= "changes font of console text";
+#endif	// USE_COMBOBOX
 
 	s_options_interface_fontsize_slider.generic.type		= MTYPE_SLIDER;
 	s_options_interface_fontsize_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_fontsize_slider.generic.x			= x;
-	s_options_interface_fontsize_slider.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_interface_fontsize_slider.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_options_interface_fontsize_slider.generic.name		= "console font size";
 	s_options_interface_fontsize_slider.maxPos				= 5;
 	s_options_interface_fontsize_slider.baseValue			= 6.0f;
@@ -184,10 +225,81 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_fontsize_slider.generic.cvarMax		= 16;
 	s_options_interface_fontsize_slider.generic.statusbar	= "changes size of console text";
 
+#ifdef USE_COMBOBOX
+	s_options_interface_uifont_box.generic.type				= MTYPE_COMBOBOX;
+	s_options_interface_uifont_box.generic.x				= x;
+	s_options_interface_uifont_box.generic.y				= y += 1.2*MENU_LINE_SIZE;
+	s_options_interface_uifont_box.generic.name				= "menu font";
+	s_options_interface_uifont_box.itemNames				= ui_font_names;
+	s_options_interface_uifont_box.itemValues				= ui_font_names;
+	s_options_interface_uifont_box.items_y					= 10;
+	s_options_interface_uifont_box.itemWidth				= 16;
+	s_options_interface_uifont_box.itemSpacing				= 1;
+	s_options_interface_uifont_box.itemTextSize				= 8;
+	s_options_interface_uifont_box.border					= 1;
+	s_options_interface_uifont_box.borderColor[0]			= 60;
+	s_options_interface_uifont_box.borderColor[1]			= 60;
+	s_options_interface_uifont_box.borderColor[2]			= 60;
+	s_options_interface_uifont_box.borderColor[3]			= 255;
+	s_options_interface_uifont_box.backColor[0]				= 0;
+	s_options_interface_uifont_box.backColor[1]				= 0;
+	s_options_interface_uifont_box.backColor[2]				= 0;
+	s_options_interface_uifont_box.backColor[3]				= 192;
+	s_options_interface_uifont_box.generic.cvar				= "ui_font";
+	s_options_interface_uifont_box.generic.cvarClamp		= false;
+	s_options_interface_uifont_box.generic.statusbar		= "changes font of menu text";
+
+	s_options_interface_scrfont_box.generic.type			= MTYPE_COMBOBOX;
+	s_options_interface_scrfont_box.generic.x				= x;
+	s_options_interface_scrfont_box.generic.y				= y += 1.5*MENU_LINE_SIZE;
+	s_options_interface_scrfont_box.generic.name			= "HUD font";
+	s_options_interface_scrfont_box.itemNames				= ui_font_names;
+	s_options_interface_scrfont_box.itemValues				= ui_font_names;
+	s_options_interface_scrfont_box.items_y					= 10;
+	s_options_interface_scrfont_box.itemWidth				= 16;
+	s_options_interface_scrfont_box.itemSpacing				= 1;
+	s_options_interface_scrfont_box.itemTextSize			= 8;
+	s_options_interface_scrfont_box.border					= 1;
+	s_options_interface_scrfont_box.borderColor[0]			= 60;
+	s_options_interface_scrfont_box.borderColor[1]			= 60;
+	s_options_interface_scrfont_box.borderColor[2]			= 60;
+	s_options_interface_scrfont_box.borderColor[3]			= 255;
+	s_options_interface_scrfont_box.backColor[0]			= 0;
+	s_options_interface_scrfont_box.backColor[1]			= 0;
+	s_options_interface_scrfont_box.backColor[2]			= 0;
+	s_options_interface_scrfont_box.backColor[3]			= 192;
+	s_options_interface_scrfont_box.generic.cvar			= "scr_font";
+	s_options_interface_scrfont_box.generic.cvarClamp		= false;
+	s_options_interface_scrfont_box.generic.statusbar		= "changes font of HUD text";
+
+	s_options_interface_alt_text_color_box.generic.type			= MTYPE_COMBOBOX;
+	s_options_interface_alt_text_color_box.generic.x			= x;
+	s_options_interface_alt_text_color_box.generic.y			= y += 1.5*MENU_LINE_SIZE;
+	s_options_interface_alt_text_color_box.generic.name			= "alt text color";
+	s_options_interface_alt_text_color_box.itemNames			= textcolor_names;
+	s_options_interface_alt_text_color_box.items_y				= 10;
+	s_options_interface_alt_text_color_box.itemWidth			= 9;
+	s_options_interface_alt_text_color_box.itemSpacing			= 1;
+	s_options_interface_alt_text_color_box.itemTextSize			= 8;
+	s_options_interface_alt_text_color_box.border				= 1;
+	s_options_interface_alt_text_color_box.borderColor[0]		= 60;
+	s_options_interface_alt_text_color_box.borderColor[1]		= 60;
+	s_options_interface_alt_text_color_box.borderColor[2]		= 60;
+	s_options_interface_alt_text_color_box.borderColor[3]		= 255;
+	s_options_interface_alt_text_color_box.backColor[0]			= 0;
+	s_options_interface_alt_text_color_box.backColor[1]			= 0;
+	s_options_interface_alt_text_color_box.backColor[2]			= 0;
+	s_options_interface_alt_text_color_box.backColor[3]			= 192;
+	s_options_interface_alt_text_color_box.generic.cvar			= "alt_text_color";
+	s_options_interface_alt_text_color_box.generic.cvarClamp	= true;
+	s_options_interface_alt_text_color_box.generic.cvarMin		= 0;
+	s_options_interface_alt_text_color_box.generic.cvarMax		= 14;
+	s_options_interface_alt_text_color_box.generic.statusbar	= "changes color of highlighted text";
+#else	// USE_COMBOBOX
 	s_options_interface_uifont_box.generic.type				= MTYPE_PICKER;
 	s_options_interface_uifont_box.generic.textSize			= MENU_FONT_SIZE;
 	s_options_interface_uifont_box.generic.x				= x;
-	s_options_interface_uifont_box.generic.y				= y+=MENU_LINE_SIZE;
+	s_options_interface_uifont_box.generic.y				= y += MENU_LINE_SIZE;
 	s_options_interface_uifont_box.generic.name				= "menu font";
 	s_options_interface_uifont_box.itemNames				= ui_font_names;
 	s_options_interface_uifont_box.itemValues				= ui_font_names;
@@ -198,7 +310,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_scrfont_box.generic.type			= MTYPE_PICKER;
 	s_options_interface_scrfont_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_scrfont_box.generic.x				= x;
-	s_options_interface_scrfont_box.generic.y				= y+=MENU_LINE_SIZE;
+	s_options_interface_scrfont_box.generic.y				= y += MENU_LINE_SIZE;
 	s_options_interface_scrfont_box.generic.name			= "HUD font";
 	s_options_interface_scrfont_box.itemNames				= ui_font_names;
 	s_options_interface_scrfont_box.itemValues				= ui_font_names;
@@ -209,7 +321,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_alt_text_color_box.generic.type			= MTYPE_PICKER;
 	s_options_interface_alt_text_color_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_alt_text_color_box.generic.x			= x;
-	s_options_interface_alt_text_color_box.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_interface_alt_text_color_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_interface_alt_text_color_box.generic.name			= "alt text color";
 	s_options_interface_alt_text_color_box.itemNames			= textcolor_names;
 	s_options_interface_alt_text_color_box.generic.cvar			= "alt_text_color";
@@ -217,11 +329,12 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_alt_text_color_box.generic.cvarMin		= 0;
 	s_options_interface_alt_text_color_box.generic.cvarMax		= 9;
 	s_options_interface_alt_text_color_box.generic.statusbar	= "changes color of highlighted text";
+#endif	// USE_COMBOBOX
 
 	s_options_interface_conalpha_slider.generic.type		= MTYPE_SLIDER;
 	s_options_interface_conalpha_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_conalpha_slider.generic.x			= x;
-	s_options_interface_conalpha_slider.generic.y			= y+=2*MENU_LINE_SIZE;
+	s_options_interface_conalpha_slider.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_options_interface_conalpha_slider.generic.name		= "console transparency";
 	s_options_interface_conalpha_slider.maxPos				= 20;
 	s_options_interface_conalpha_slider.baseValue			= 0.0f;
@@ -236,7 +349,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_conheight_slider.generic.type		= MTYPE_SLIDER;
 	s_options_interface_conheight_slider.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_conheight_slider.generic.x			= x;
-	s_options_interface_conheight_slider.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_interface_conheight_slider.generic.y			= y += MENU_LINE_SIZE;
 	s_options_interface_conheight_slider.generic.name		= "console height";
 	s_options_interface_conheight_slider.maxPos				= 10;
 	s_options_interface_conheight_slider.baseValue			= 0.25f;
@@ -251,7 +364,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_simple_loadscreen_box.generic.type		= MTYPE_PICKER;
 	s_options_interface_simple_loadscreen_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_interface_simple_loadscreen_box.generic.x			= x;
-	s_options_interface_simple_loadscreen_box.generic.y			= y+=2*MENU_LINE_SIZE;
+	s_options_interface_simple_loadscreen_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_options_interface_simple_loadscreen_box.generic.name		= "simple load screens";
 	s_options_interface_simple_loadscreen_box.itemNames			= yesno_names;
 	s_options_interface_simple_loadscreen_box.generic.cvar		= "scr_simple_loadscreen";
@@ -260,7 +373,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_newconback_box.generic.type			= MTYPE_PICKER;
 	s_options_interface_newconback_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_interface_newconback_box.generic.x			= x;
-	s_options_interface_newconback_box.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_interface_newconback_box.generic.y			= y += MENU_LINE_SIZE;
 	s_options_interface_newconback_box.generic.name			= "new console background";
 	s_options_interface_newconback_box.itemNames			= yesno_names;
 	s_options_interface_newconback_box.generic.cvar			= "scr_newconback";

@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_COMBOBOX
+
 /*
 =======================================================================
 
@@ -36,14 +38,26 @@ EFFECTS MENU
 static menuFramework_s	s_options_effects_menu;
 static menuImage_s		s_options_effects_banner;
 static menuLabel_s		s_options_effects_header;
+
+#ifdef USE_COMBOBOX
+static menuComboBox_s	s_options_effects_blood_box;
+#else
 static menuPicker_s		s_options_effects_blood_box;
+#endif	// USE_COMBOBOX
+
 static menuPicker_s		s_options_effects_oldexplosions_box;
 static menuPicker_s		s_options_effects_plasmaexplosound_box;
 static menuPicker_s		s_options_effects_itembob_box;
 static menuPicker_s		s_options_effects_footstep_box;
 static menuSlider_s		s_options_effects_decal_slider;
 static menuSlider_s		s_options_effects_particle_comp_slider;
+
+#ifdef USE_COMBOBOX
+static menuComboBox_s	s_options_effects_railtrail_box;
+#else
 static menuPicker_s		s_options_effects_railtrail_box;
+#endif	// USE_COMBOBOX
+
 static menuSlider_s		s_options_effects_railcolor_slider[3];
 static menuAction_s		s_options_effects_defaults_action;
 static menuAction_s		s_options_effects_back_action;
@@ -125,6 +139,31 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_header.generic.x				= x + MENU_HEADER_FONT_SIZE/2 * (int)strlen(s_options_effects_header.generic.name);
 	s_options_effects_header.generic.y				= y;	//  + -2*MENU_LINE_SIZE
 	
+#ifdef USE_COMBOBOX
+	s_options_effects_blood_box.generic.type		= MTYPE_COMBOBOX;
+	s_options_effects_blood_box.generic.x			= x;
+	s_options_effects_blood_box.generic.y			= y += 4*MENU_LINE_SIZE;
+	s_options_effects_blood_box.generic.name		= "blood type";
+	s_options_effects_blood_box.itemNames			= blood_names;
+	s_options_effects_blood_box.items_y				= 5;
+	s_options_effects_blood_box.itemWidth			= 6;
+	s_options_effects_blood_box.itemSpacing			= 1;
+	s_options_effects_blood_box.itemTextSize		= 8;
+	s_options_effects_blood_box.border				= 1;
+	s_options_effects_blood_box.borderColor[0]		= 60;
+	s_options_effects_blood_box.borderColor[1]		= 60;
+	s_options_effects_blood_box.borderColor[2]		= 60;
+	s_options_effects_blood_box.borderColor[3]		= 255;
+	s_options_effects_blood_box.backColor[0]		= 0;
+	s_options_effects_blood_box.backColor[1]		= 0;
+	s_options_effects_blood_box.backColor[2]		= 0;
+	s_options_effects_blood_box.backColor[3]		= 192;
+	s_options_effects_blood_box.generic.cvar		= "cl_blood";
+	s_options_effects_blood_box.generic.cvarClamp	= true;
+	s_options_effects_blood_box.generic.cvarMin		= 0;
+	s_options_effects_blood_box.generic.cvarMax		= 4;
+	s_options_effects_blood_box.generic.statusbar	= "changes blood effect type";
+#else	// USE_COMBOBOX
 	s_options_effects_blood_box.generic.type		= MTYPE_PICKER;
 	s_options_effects_blood_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_effects_blood_box.generic.x			= x;
@@ -136,6 +175,7 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_blood_box.generic.cvarMin		= 0;
 	s_options_effects_blood_box.generic.cvarMax		= 4;
 	s_options_effects_blood_box.generic.statusbar	= "changes blood effect type";
+#endif	// USE_COMBOBOX
 
 	s_options_effects_oldexplosions_box.generic.type		= MTYPE_PICKER;
 	s_options_effects_oldexplosions_box.generic.textSize	= MENU_FONT_SIZE;
@@ -205,6 +245,31 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_particle_comp_slider.generic.statusbar	= "lower = faster performance";
 
 	// Psychospaz's changeable rail trail
+#ifdef USE_COMBOBOX
+	s_options_effects_railtrail_box.generic.type			= MTYPE_COMBOBOX;
+	s_options_effects_railtrail_box.generic.x				= x;
+	s_options_effects_railtrail_box.generic.y				= y += 2*MENU_LINE_SIZE;
+	s_options_effects_railtrail_box.generic.name			= "rail trail type";
+	s_options_effects_railtrail_box.itemNames				= railtrail_names;
+	s_options_effects_railtrail_box.items_y					= 3;
+	s_options_effects_railtrail_box.itemWidth				= 16;
+	s_options_effects_railtrail_box.itemSpacing				= 1;
+	s_options_effects_railtrail_box.itemTextSize			= 8;
+	s_options_effects_railtrail_box.border					= 1;
+	s_options_effects_railtrail_box.borderColor[0]			= 60;
+	s_options_effects_railtrail_box.borderColor[1]			= 60;
+	s_options_effects_railtrail_box.borderColor[2]			= 60;
+	s_options_effects_railtrail_box.borderColor[3]			= 255;
+	s_options_effects_railtrail_box.backColor[0]			= 0;
+	s_options_effects_railtrail_box.backColor[1]			= 0;
+	s_options_effects_railtrail_box.backColor[2]			= 0;
+	s_options_effects_railtrail_box.backColor[3]			= 192;
+	s_options_effects_railtrail_box.generic.cvar			= "cl_railtype";
+	s_options_effects_railtrail_box.generic.cvarClamp		= true;
+	s_options_effects_railtrail_box.generic.cvarMin			= 0;
+	s_options_effects_railtrail_box.generic.cvarMax			= 2;
+	s_options_effects_railtrail_box.generic.statusbar		= "changes railgun particle effect";
+#else	// USE_COMBOBOX
 	s_options_effects_railtrail_box.generic.type			= MTYPE_PICKER;
 	s_options_effects_railtrail_box.generic.textSize		= MENU_FONT_SIZE;
 	s_options_effects_railtrail_box.generic.x				= x;
@@ -216,11 +281,12 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_railtrail_box.generic.cvarMin			= 0;
 	s_options_effects_railtrail_box.generic.cvarMax			= 2;
 	s_options_effects_railtrail_box.generic.statusbar		= "changes railgun particle effect";
+#endif	// USE_COMBOBOX
 
 	s_options_effects_railcolor_slider[0].generic.type		= MTYPE_SLIDER;
 	s_options_effects_railcolor_slider[0].generic.textSize	= MENU_FONT_SIZE;
 	s_options_effects_railcolor_slider[0].generic.x			= x;
-	s_options_effects_railcolor_slider[0].generic.y			= y += MENU_LINE_SIZE;
+	s_options_effects_railcolor_slider[0].generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_options_effects_railcolor_slider[0].generic.name		= "rail trail: red";
 	s_options_effects_railcolor_slider[0].maxPos			= 64;
 	s_options_effects_railcolor_slider[0].baseValue			= 0.0f;

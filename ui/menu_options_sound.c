@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_COMBOBOX
+
 /*
 =======================================================================
 
@@ -40,8 +42,15 @@ static menuSlider_s		s_options_sound_sfxvolume_slider;
 static menuSlider_s		s_options_sound_musicvolume_slider;
 static menuPicker_s		s_options_sound_oggmusic_box;
 static menuPicker_s		s_options_sound_cdmusic_box;
+
+#ifdef USE_COMBOBOX
+static menuComboBox_s	s_options_sound_quality_box;
+static menuComboBox_s	s_options_sound_compatibility_box;
+#else
 static menuPicker_s		s_options_sound_quality_box;
 static menuPicker_s		s_options_sound_compatibility_box;
+#endif	// USE_COMBOBOX
+
 static menuAction_s		s_options_sound_defaults_action;
 static menuAction_s		s_options_sound_back_action;
 
@@ -184,7 +193,7 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_oggmusic_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_oggmusic_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_sound_oggmusic_box.generic.x			= x;
-	s_options_sound_oggmusic_box.generic.y			= y += MENU_LINE_SIZE;
+	s_options_sound_oggmusic_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_options_sound_oggmusic_box.generic.name		= "ogg vorbis music";
 	s_options_sound_oggmusic_box.itemNames			= enabled_items;
 	s_options_sound_oggmusic_box.generic.cvar		= "cl_ogg_music";
@@ -206,10 +215,60 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_cdmusic_box.generic.cvarMax		= 1;
 	s_options_sound_cdmusic_box.generic.statusbar	= "enables or disables CD music";
 
+#ifdef USE_COMBOBOX
+	s_options_sound_quality_box.generic.type		= MTYPE_COMBOBOX;
+	s_options_sound_quality_box.generic.x			= x;
+	s_options_sound_quality_box.generic.y			= y += 2*MENU_LINE_SIZE;
+	s_options_sound_quality_box.generic.name		= "sound quality";
+	s_options_sound_quality_box.itemNames			= quality_items;
+	s_options_sound_quality_box.itemValues			= quality_values;
+	s_options_sound_quality_box.items_y				= 4;
+	s_options_sound_quality_box.itemWidth			= 23;
+	s_options_sound_quality_box.itemSpacing			= 1;
+	s_options_sound_quality_box.itemTextSize		= 8;
+	s_options_sound_quality_box.border				= 1;
+	s_options_sound_quality_box.borderColor[0]		= 60;
+	s_options_sound_quality_box.borderColor[1]		= 60;
+	s_options_sound_quality_box.borderColor[2]		= 60;
+	s_options_sound_quality_box.borderColor[3]		= 255;
+	s_options_sound_quality_box.backColor[0]		= 0;
+	s_options_sound_quality_box.backColor[1]		= 0;
+	s_options_sound_quality_box.backColor[2]		= 0;
+	s_options_sound_quality_box.backColor[3]		= 192;
+	s_options_sound_quality_box.generic.callback	= M_UpdateSoundQualityFunc;
+	s_options_sound_quality_box.generic.cvar		= "s_khz";
+	s_options_sound_quality_box.generic.cvarClamp	= false;
+	s_options_sound_quality_box.generic.statusbar	= "changes quality of sound";
+
+	s_options_sound_compatibility_box.generic.type		= MTYPE_COMBOBOX;
+	s_options_sound_compatibility_box.generic.x			= x;
+	s_options_sound_compatibility_box.generic.y			= y += 1.5*MENU_LINE_SIZE;
+	s_options_sound_compatibility_box.generic.name		= "sound compatibility";
+	s_options_sound_compatibility_box.itemNames			= compatibility_items;
+	s_options_sound_compatibility_box.items_y			= 2;
+	s_options_sound_compatibility_box.itemWidth			= 18;
+	s_options_sound_compatibility_box.itemSpacing		= 1;
+	s_options_sound_compatibility_box.itemTextSize		= 8;
+	s_options_sound_compatibility_box.border			= 1;
+	s_options_sound_compatibility_box.borderColor[0]	= 60;
+	s_options_sound_compatibility_box.borderColor[1]	= 60;
+	s_options_sound_compatibility_box.borderColor[2]	= 60;
+	s_options_sound_compatibility_box.borderColor[3]	= 255;
+	s_options_sound_compatibility_box.backColor[0]		= 0;
+	s_options_sound_compatibility_box.backColor[1]		= 0;
+	s_options_sound_compatibility_box.backColor[2]		= 0;
+	s_options_sound_compatibility_box.backColor[3]		= 192;
+	s_options_sound_compatibility_box.generic.callback	= M_UpdateSoundQualityFunc;
+	s_options_sound_compatibility_box.generic.cvar		= "s_primary";
+	s_options_sound_compatibility_box.generic.cvarClamp	= true;
+	s_options_sound_compatibility_box.generic.cvarMin	= 0;
+	s_options_sound_compatibility_box.generic.cvarMax	= 1;
+	s_options_sound_compatibility_box.generic.statusbar	= "changes buffering mode of sound system";
+#else	// USE_COMBOBOX
 	s_options_sound_quality_box.generic.type		= MTYPE_PICKER;
 	s_options_sound_quality_box.generic.textSize	= MENU_FONT_SIZE;
 	s_options_sound_quality_box.generic.x			= x;
-	s_options_sound_quality_box.generic.y			= y += MENU_LINE_SIZE;
+	s_options_sound_quality_box.generic.y			= y += 2*MENU_LINE_SIZE;
 	s_options_sound_quality_box.generic.name		= "sound quality";
 	s_options_sound_quality_box.generic.callback	= M_UpdateSoundQualityFunc;
 	s_options_sound_quality_box.itemNames			= quality_items;
@@ -230,6 +289,7 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_compatibility_box.generic.cvarMin	= 0;
 	s_options_sound_compatibility_box.generic.cvarMax	= 1;
 	s_options_sound_compatibility_box.generic.statusbar	= "changes buffering mode of sound system";
+#endif	// USE_COMBOBOX
 
 	s_options_sound_defaults_action.generic.type		= MTYPE_ACTION;
 	s_options_sound_defaults_action.generic.textSize	= MENU_FONT_SIZE;
