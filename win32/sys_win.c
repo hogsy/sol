@@ -1225,8 +1225,12 @@ void Sys_Init (void)
 {
 	OSVERSIONINFOEX	osInfo;
 	SYSTEM_INFO		sysInfo;
-	MEMORYSTATUS	memStatus;	// Knightmare added
-	char			string[128];	// Knightmare added
+	MEMORYSTATUS	memStatus;
+	char			string[128];
+#if (_MSC_VER >= 1300)
+	MEMORYSTATUSEX	memStatusEX;
+	char			stringEx[128];
+#endif
 
 #if 0
 	// allocate a named semaphore on the client so the
@@ -1409,9 +1413,20 @@ void Sys_Init (void)
 
 	// Get physical memory
 	GlobalMemoryStatus (&memStatus);
+#if (_MSC_VER >= 1300)
+	memStatusEX.dwLength = sizeof(memStatusEX);
+	GlobalMemoryStatusEx (&memStatusEX);
+	Q_strncpyz (stringEx, sizeof(stringEx), va("%u", (memStatusEX.ullTotalPhys >> 20)));
+	Q_strncpyz (string, sizeof(string), va("%u", (memStatus.dwTotalPhys >> 20)));
+	Com_Printf ("Memory: %s MB (%s MB accessible)\n", stringEx, string);
+	Cvar_Get ("sys_ramMegs", stringEx, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_Get ("sys_ramMegs_perApp", string, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+#else
 	Q_strncpyz (string, sizeof(string), va("%u", (memStatus.dwTotalPhys >> 20)));
 	Com_Printf ("Memory: %s MB\n", string);
 	Cvar_Get ("sys_ramMegs", string, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_Get ("sys_ramMegs_avail", string, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+#endif
 // end Q2E detection
 
 #ifndef NEW_DED_CONSOLE

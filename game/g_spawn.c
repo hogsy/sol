@@ -1592,7 +1592,7 @@ char *dm_statusbar =
 "num 3 14 "
 
 // tech
-"yb -129 "
+"yb -75 "
 "if 26 "
   "xr -26 "
   "pic 26 "

@@ -485,11 +485,6 @@ void WhatIsIt (edict_t *ent)
 	}
 }
 
-static char *tnames[] = {
-	"item_tech1", "item_tech2", "item_tech3", "item_tech4", "item_tech5", "item_tech6",
-	NULL
-};
-
 /*
 ===============
 G_SetStats
@@ -779,18 +774,18 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_ZOOM] = 0;
 
 //ZOID
-	SetCTFStats(ent);
+	SetCTFStats (ent);
 //ZOID
 
 	// Knightmare- show tech icon if in DM
-	if (deathmatch->value && !ctf->value)
+	if ( deathmatch->value && !(int)ctf->value )
 	{
 		int i = 0;
 		gitem_t *tech;
 
 		ent->client->ps.stats[STAT_CTF_TECH] = 0;
-		while (tnames[i]) {
-			if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+		while (ctf_tnames[i]) {
+			if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 				ent->client->pers.inventory[ITEM_INDEX(tech)])
 			{
 				ent->client->ps.stats[STAT_CTF_TECH] = gi.imageindex(tech->icon);

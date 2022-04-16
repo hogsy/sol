@@ -211,8 +211,8 @@ char *ctf_statusbar =
 
 // have flag graph
 "if 21 "
-  "yt 26 "
-  "xr -24 "
+  "yt 28 "	// was yt 26
+  "xr -26 "	// was xr -24
   "pic 21 "
 "endif "
 
@@ -370,14 +370,14 @@ char *ttctf_statusbar =
 // have flag graph
 "if 21 "
   "yt 26 "
-  "xr -26 "
+  "xr -28 "	// was xr -26
   "pic 21 "
 "endif "
 
 // have flag graph2
 "if 35 "
   "yt 26 "
-  "xr -51 "
+  "xr -54 "	// was xr -51
   "pic 35 "
 "endif "
 
@@ -416,7 +416,7 @@ char *ttctf_statusbar =
 
 #define TECHTYPES 6
 
-static char *tnames[] = {
+/*static*/ char *ctf_tnames[] = {
 	"item_tech1", "item_tech2", "item_tech3", "item_tech4", "item_tech5", "item_tech6",
 	NULL
 };
@@ -1828,8 +1828,8 @@ void SetCTFStats (edict_t *ent)
 	// tech icon
 	i = 0;
 	ent->client->ps.stats[STAT_CTF_TECH] = 0;
-	while (tnames[i]) {
-		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+	while (ctf_tnames[i]) {
+		if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			ent->client->pers.inventory[ITEM_INDEX(tech)]) {
 			ent->client->ps.stats[STAT_CTF_TECH] = gi.imageindex(tech->icon);
 			break;
@@ -2936,8 +2936,8 @@ gitem_t *CTFWhat_Tech (edict_t *ent)
 	int i;
 
 	i = 0;
-	while (tnames[i]) {
-		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+	while (ctf_tnames[i]) {
+		if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			ent->client->pers.inventory[ITEM_INDEX(tech)]) {
 			return tech;
 		}
@@ -2952,9 +2952,9 @@ qboolean CTFPickup_Tech (edict_t *ent, edict_t *other)
 	int i;
 
 	i = 0;
-	while (tnames[i])
+	while (ctf_tnames[i])
 	{
-		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+		if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			other->client->pers.inventory[ITEM_INDEX(tech)]) {
 			CTFHasTech(other);
 			return false; // has this one
@@ -3034,9 +3034,9 @@ void CTFDeadDropTech (edict_t *ent)
 	int i;
 
 	i = 0;
-	while (tnames[i])
+	while (ctf_tnames[i])
 	{
-		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+		if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			ent->client->pers.inventory[ITEM_INDEX(tech)])
 		{
 			dropped = Drop_Item(ent, tech);
@@ -3079,9 +3079,9 @@ int TechCount (void)
 		if (cl_ent->inuse)
 		{
 			j = 0;
-			while (tnames[j])
+			while (ctf_tnames[j])
 			{
-				if ((tech = FindItemByClassname(tnames[j])) != NULL &&
+				if ((tech = FindItemByClassname(ctf_tnames[j])) != NULL &&
 					cl_ent->client->pers.inventory[ITEM_INDEX(tech)])
 					count++;
 				j++;
@@ -3117,7 +3117,7 @@ int NumOfTech (int index)
 		cl_ent = g_edicts + 1 + i;
 		if (cl_ent->inuse)
 		{
-			if ((tech = FindItemByClassname(tnames[index])) != NULL &&
+			if ((tech = FindItemByClassname(ctf_tnames[index])) != NULL &&
 				cl_ent->client->pers.inventory[ITEM_INDEX(tech)])
 				count++;
 		}
@@ -3149,10 +3149,10 @@ void SpawnMoreTechs (int oldtechcount, int newtechcount, int numtechtypes)
 //	gi.dprintf ("tech number to start on: %d\n", (i+1));
 	while ( (j < numtechtypes) || ((j < tech_max->value) && (j < newtechcount)) )
 	{
-		while ( (tnames[i]) &&
+		while ( (ctf_tnames[i]) &&
 				((j < numtechtypes) || ((j < tech_max->value) && (j < newtechcount))) )
 		{
-			if (((tech = FindItemByClassname(tnames[i])) != NULL &&
+			if (((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 				 (spot = FindTechSpawn()) != NULL)
 				&& ((int)(tech_flags->value) & (0x1 << i)))
 			{
@@ -3188,7 +3188,7 @@ void RemoveTechs (int oldtechcount, int newtechcount, int numtechtypes)
 
 	j = oldtechcount;
 //	gi.dprintf ("tech number to start removing on: %d\n", (i+1));
-	while ((tnames[i]) && (j > newtechcount)) //leave at least 1 of each tech
+	while ((ctf_tnames[i]) && (j > newtechcount)) //leave at least 1 of each tech
 	{
 		removed = 0; //flag to remove only one tech per pass
 		mapent = g_edicts+1; //skip the worldspawn
@@ -3196,7 +3196,7 @@ void RemoveTechs (int oldtechcount, int newtechcount, int numtechtypes)
 		{
 			if (!mapent->classname)
 				continue;
-			if (!strcmp(mapent->classname, tnames[i]))
+			if (!strcmp(mapent->classname, ctf_tnames[i]))
 			{
 				//gi.dprintf ("Removing tech%d\n", (i+1));
 				G_FreeEdict(mapent);
@@ -3237,7 +3237,7 @@ void CheckNumTechs (void)
 
 	// count number of tech types enabled
 	i = 0;
-	while (tnames[i]) {
+	while (ctf_tnames[i]) {
 		if ((int)(tech_flags->value) & (0x1 << i))
 			numtechtypes++;
 		i++;
@@ -3323,9 +3323,9 @@ void CheckNumTechs (void)
 	}
 
 	i = 0;
-	while (tnames[i])
+	while (ctf_tnames[i])
 	{
-		if ( (tech = FindItemByClassname(tnames[i])) != NULL &&
+		if ( (tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			(spot = FindTechSpawn()) != NULL
 			&& ((int)tech_flags->value & (0x1 << i)) )
 			SpawnTech(tech, spot);
@@ -3888,8 +3888,8 @@ struct {
 
 	// see if the player has a tech powerup
 	i = 0;
-	while (tnames[i]) {
-		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
+	while (ctf_tnames[i]) {
+		if ((tech = FindItemByClassname(ctf_tnames[i])) != NULL &&
 			who->client->pers.inventory[ITEM_INDEX(tech)]) {
 			Com_sprintf (buf, bufSize, "the %s", tech->pickup_name);
 			return;

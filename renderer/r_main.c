@@ -27,6 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void R_Clear (void);
 
+#if defined(__APPLE__) || (MACOSX)
+#include <ctype.h>
+extern void strlwr (char *theString);
+#endif // __APPLE__ || MACOSX
+
 viddef_t	vid;
 
 model_t		*r_worldmodel;
@@ -1041,7 +1046,11 @@ void R_Register (void)
 	Cvar_SetDescription ("r_log", "Enables logging of OpenGL API calls.");
 	r_bitdepth = Cvar_Get( "r_bitdepth", "0", 0 );
 	Cvar_SetDescription ("r_bitdepth", "Sets color bit depth.  0 = desktop setting.");
+#if defined(__APPLE__) || (MACOSX)
+	r_mode = Cvar_Get( "r_mode", "0", CVAR_ARCHIVE );
+#else
 	r_mode = Cvar_Get( "r_mode", "6", CVAR_ARCHIVE );
+#endif // __APPLE__ || MACOSX
 	Cvar_SetDescription ("r_mode", "Sets enumerated video mode for renderer.  -1 = custom mode.");
 #ifdef _WIN32	// desktop-resolution display mode
 	r_mode_desktop = Cvar_Get( "r_mode_desktop", "0", CVAR_ARCHIVE );
@@ -1882,11 +1891,12 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	// place default error
 	memcpy (reason, "Unknown failure on intialization!\0", 34);
 
-#ifdef _WIN32
+//#ifdef _WIN32
+#if defined (_WIN32) || (__APPLE__) || (MACOSX)
 	// output system info
 	VID_Printf (PRINT_ALL, "OS: %s\n", Cvar_VariableString("sys_osVersion"));
 	VID_Printf (PRINT_ALL, "CPU: %s\n", Cvar_VariableString("sys_cpuString"));
-	VID_Printf (PRINT_ALL, "RAM: %s MB\n", Cvar_VariableString("sys_ramMegs"));
+	VID_Printf (PRINT_ALL, "RAM: %s MB (%s MB accessible)\n", Cvar_VariableString("sys_ramMegs"), Cvar_VariableString("sys_ramMegs_perApp"));
 #endif
 
 	// initialize our QGL dynamic bindings
