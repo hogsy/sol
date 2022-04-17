@@ -487,7 +487,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int maxSize)
 	char				vendor[16];
 //	int					numLogicalCores=1, numCores=1;
 	int					maxExtFunc, stdBits, features, moreFeatures, extFeatures;
-	int					family, extFamily, model, extModel;
+	int					family, extFamily, model, extModel, stepping;
 	unsigned __int64	start, end, counter, stop, frequency;
 	unsigned			speed;
 	qboolean			hasMMX, hasMMXExt, has3DNow, has3DNowExt, hasSSE, hasSSE2, hasSSE3, hasSSE41, hasSSE42, hasSSE4a, hasAVX;
@@ -622,6 +622,7 @@ NoExtFunction:
 		extFamily = (stdBits >> 20) & 255;
 		extModel = (stdBits >> 16) & 15;
 	}
+	stepping = (stdBits) & 15;
 
 	if (!Q_stricmp(vendor, "AuthenticAMD"))
 	{
@@ -985,8 +986,12 @@ NoExtFunction:
 						Q_strncatz(cpuString, maxSize, " Core i5/i3 6xx / Core i3 5xx");
 					else if (extModel == 0x45)	// Haswell ULT
 						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 4xxxU");
-					else if (extModel == 0x55)	// Skylake-X, Cascade Lake-X
-						Q_strncatz(cpuString, maxSize, " Core i9/i7 79xx/78xx or Core i9 10xxx");
+					else if (extModel == 0x55) {
+						if (stepping == 0x4)		// Skylake-X, stepping = 4
+							Q_strncatz(cpuString, maxSize, " Core i9/i7 79xx/78xx or 99xx/98xx");
+						else if (stepping == 0x7)	// Cascade Lake-X, stepping = 7
+							Q_strncatz(cpuString, maxSize, " Core i9 10xxx");
+					}
 					else if (extModel == 0xA5)	// Comet Lake
 						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 10xxx");
 					break;
@@ -1037,8 +1042,14 @@ NoExtFunction:
 						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 10xxG7");
 					else if (extModel == 0x8E)	// Kaby Lake U/Y
 						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 7xxxU");
-					else if (extModel == 0x9E)	// Coffee Lake
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 8xxx");
+					else if (extModel == 0x9E) {
+						if (stepping == 0x9)		// Kaby Lake, stepping = 9
+							Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 7xxx");
+						else if (stepping == 0xA)	// Coffee Lake, stepping = 10
+							Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 8xxx");
+						else if (stepping == 0xC)	// Coffee Lake refresh, stepping = 12
+							Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 9xxx");
+					}
 					break;
 				case 15:	
 					if (extModel == 0x0F)		// Conroe / Kentsfield (Merom)
@@ -1047,10 +1058,6 @@ NoExtFunction:
 						Q_strncatz(cpuString, maxSize, " Core i7 59xx / 58xx");
 					else if (extModel == 0x4F)	// Broadwell-E
 						Q_strncatz(cpuString, maxSize, " Core i7 69xx / 68xx");
-					else if (extModel == 0x5E)	// Kaby Lake
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 7xxx");
-					else if (extModel == 0x9E)	// Kaby Lake-X
-						Q_strncatz(cpuString, maxSize, " Core i7/i5 7xxx");
 					break;
 				default:
 					break;
