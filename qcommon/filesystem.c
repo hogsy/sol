@@ -2116,11 +2116,11 @@ void FS_AddPaksInDirectory (const char *dir)
 	}
     //
     // NeVo - pak3's!
-    // add any pk3 files in the format pak0.pk3 pak1.pk3, ...
+    // add any pk3 files in the format kmq2_pak00.pk3 kmq2_pak01.pk3, ...
     //
     for (i=0; i<100; i++)    // Pooy - paks can now go up to 100
     {
-        Com_sprintf (packPath, sizeof(packPath), "%s/pak%i.pk3", dir, i);
+        Com_sprintf (packPath, sizeof(packPath), "%s/kmq2_pak%02i.pk3", dir, i);
         FS_AddPK3File (packPath, false);
     }
 
@@ -2130,11 +2130,11 @@ void FS_AddPaksInDirectory (const char *dir)
             case 0:
 			default:
                 // Standard Quake II pack file '.pak'
-                Com_sprintf( findname, sizeof(findname), "%s/%s", dir, "*.pak" );
+                Com_sprintf (findname, sizeof(findname), "%s/%s", dir, "*.pak");
                 break;
             case 1: 
                 // Quake III pack file '.pk3'
-                Com_sprintf( findname, sizeof(findname), "%s/%s", dir, "*.pk3" );
+                Com_sprintf (findname, sizeof(findname), "%s/%s", dir, "*.pk3");
                 break;
         }
 		// VoiD -S- *.pack support
@@ -2155,9 +2155,9 @@ void FS_AddPaksInDirectory (const char *dir)
 				qboolean numberedpak = false;
 				for (k=0; k<100; k++)
 				{
-					Com_sprintf( buf, sizeof(buf), "/pak%i.pak", k);
-					Com_sprintf( buf2, sizeof(buf2), "/pak%i.pk3", k);
-					if ( strstr(dirnames[j], buf) || strstr(dirnames[j], buf2)) {
+					Com_sprintf (buf, sizeof(buf), "/pak%i.pak", k);
+					Com_sprintf (buf2, sizeof(buf2), "/kmq2_pak%02i.pk3", k);
+					if ( strstr(dirnames[j], buf) || strstr(dirnames[j], buf2) ) {
 						numberedpak = true;
 						break;
 					}

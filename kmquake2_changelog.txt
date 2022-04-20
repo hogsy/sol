@@ -23,7 +23,7 @@ Changes as of v0.20 update 8:
 - Added Windows DPI scaling detection from Yamagi Quake2.
 
 - Added support for scripted HUDs.  HUDs can be selected from the screen options menu.
-	Some sample HUDs are included in kmquake2_extras.pk3.  See kmq2_hud_scripting.txt for more info.
+	Some sample HUDs are included in kmq2_pak01.pk3.  See kmq2_hud_scripting.txt for more info.
 	
 - Added dumpstatuslayout command to dump status bar layout string.  Useful for extracting reference data to
 	modify HUD scripts for compatibility with mods that have customized status bar layouts.  Usage:
@@ -189,7 +189,7 @@ Changes as of v0.20 update 8:
 	
 - Cleaned up memory allocation and fixed railgun infinite loop (hang) bug in all included game DLLs.
 
-- Added the CTF tech models and sounds to kmquake2_extras.pk3 so the techs can be readily used in deathmatch.
+- Added the CTF tech models and sounds to kmq2_pak01.pk3 so the techs can be readily used in deathmatch.
 	This includes the two new techs from 3 Team CTF.
 
 ------------------------------------

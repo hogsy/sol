@@ -4,7 +4,7 @@ KMQuake2 v0.20 with update 8
 Readme.txt
 ------------------------------
 Enhanced Quake2 OpenGL-only engine with integrated Lazarus support
-(kmquake2.exe & kmq2gamex86.dll && kmquake2.pk3)
+(kmquake2.exe & kmq2gamex86.dll & kmq2_pak00.pk3 & kmq2_pak01.pk3)
 
 	By Knightmare (knightmare66@yahoo.com)
 
@@ -63,7 +63,7 @@ Menu screen by MDK
 
 Load screen by Fabian Rosten
 
-Weapon glow skins in kmquake2_extras.pk3 by Odium and Kman and from Quake2XP
+Weapon glow skins in kmq2_pak01.pk3 by Odium and Kman and from Quake2XP
 
 Doom3 HUD by Odium
 
