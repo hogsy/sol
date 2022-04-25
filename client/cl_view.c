@@ -586,6 +586,9 @@ void CL_PrepRefresh (void)
 	R_SetSky (cl.configstrings[CS_SKY], rotate, axis);
 	Com_Printf ("                                     \r");
 
+	// refresh any models in open menu to avoid freeing them
+	UI_RefreshMenuItems ();
+
 	// the renderer can now free unneeded stuff
 	R_EndRegistration ();
 

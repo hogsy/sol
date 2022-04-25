@@ -768,6 +768,7 @@ void	R_BeginRegistration (char *map);
 struct model_s *R_RegisterModel (char *name);
 struct image_s *R_RegisterSkin (char *name);
 struct image_s *R_DrawFindPic (char *name);
+qboolean R_ModelIsValid (struct model_s *model);
 
 void	R_FreePic (char *name); // Knightmare added
 void	R_SetSky (char *name, float rotate, vec3_t axis);
@@ -1156,7 +1157,7 @@ void UI_Draw (void);
 void UI_Keydown (int key);
 qboolean UI_MenuHasGrabBind (void);
 void UI_ForceMenuOff (void);
-//void UI_RefreshMenuItems (void);
+void UI_RefreshMenuItems (void);
 void UI_AddToServerList (netadr_t adr, char *info);
 void UI_RootMenu (void);
 

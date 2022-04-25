@@ -751,7 +751,7 @@ qboolean UI_MenuField_Key (menuField_s *field, int key);
 const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key);
 const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key);
 
-//void UI_ReregisterMenuItem (void *item);
+void UI_ReregisterMenuItem (void *item);
 void UI_UpdateMenuItemCoords (void *item);
 qboolean UI_ItemCanBeCursorItem (void *item);
 qboolean UI_ItemIsValidCursorPosition (void *item);
@@ -803,7 +803,7 @@ void UI_AddMenuItem (menuFramework_s *menu, void *item);
 void UI_SetGrabBindItem (menuFramework_s *menu, menuCommon_s *c);
 void UI_ClearGrabBindItem (menuFramework_s *menu);
 qboolean UI_HasValidGrabBindItem (menuFramework_s *menu);
-//void UI_RefreshMenuItems (void);
+void UI_RefreshMenuItems (void);
 void UI_SetMenuItemValues (menuFramework_s	*menu);
 void UI_SetMenuDefaults (void);
 const char *UI_GetDefaultsMessage (void);

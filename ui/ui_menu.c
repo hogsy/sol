@@ -155,8 +155,8 @@ void UI_PopMenu (void)
 			Cbuf_AddText ("d1\n");
 		UI_ForceMenuOff ();
 	}
-//	else	// Refresh items in restored menu
-//		UI_RefreshMenuItems ();
+	else	// Refresh items in restored menu
+		UI_RefreshMenuItems ();
 }
 
 
@@ -354,7 +354,35 @@ qboolean UI_HasValidGrabBindItem (menuFramework_s *menu)
 	return false;
 }
 
-#if 0
+
+/*
+=================
+UI_RefreshItemsForMenu
+
+Refreshes models for the given menu.
+=================
+*/
+void UI_RefreshItemsForMenu (menuFramework_s *menu)
+{
+	int				i;
+	menuCommon_s	*item;
+
+	if (!menu)	return;
+
+	// Check if this menu is a popup.
+	// If it is, refresh menu beneath.
+	if ( menu->isPopup && (ui_menudepth > 1) && ui_layers[ui_menudepth-1].menu )
+		UI_RefreshItemsForMenu (ui_layers[ui_menudepth-1].menu);
+
+	for (i=0; i<menu->nitems; i++)
+	{
+		item = menu->items[i];
+		if (!item)	continue;
+		UI_ReregisterMenuItem (item);
+	}
+}
+
+
 /*
 =================
 UI_RefreshMenuItems
@@ -365,23 +393,16 @@ Called after a vid restart.
 */
 void UI_RefreshMenuItems (void)
 {
-	int				i;
 	menuFramework_s	*menu;
-	menuCommon_s	*item;
 
 	if (cls.key_dest != key_menu)	return;
 
 	menu = ui_menuState.menu;
 	if (!menu)	return;
 
-	for (i=0; i<menu->nitems; i++)
-	{
-		item = menu->items[i];
-		if (!item)	continue;
-		UI_ReregisterMenuItem (item);
-	}
+	UI_RefreshItemsForMenu (menu);
 }
-#endif
+
 
 /*
 =================

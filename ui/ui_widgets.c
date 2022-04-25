@@ -3188,7 +3188,7 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 
 //=========================================================
 
-#if 0
+
 void UI_MenuModelView_Reregister (menuModelView_s *m)
 {
 	int				i;
@@ -3207,16 +3207,16 @@ void UI_MenuModelView_Reregister (menuModelView_s *m)
 		}
 	}
 }
-#endif
+
 
 void UI_MenuModelView_Draw (menuModelView_s *m)
 {
-//	menuFramework_s	*menu = m->generic.parent;
+	menuFramework_s	*menu = m->generic.parent;
 	int				i, j, entnum;
 	refdef_t		refdef;
 	float			rx, ry, rw, rh;
 	entity_t		entity[MODELVIEW_MAX_MODELS], *ent;
-//	qboolean		reRegister;
+	qboolean		reRegister;
 	char			scratch[MAX_QPATH];
 
 	memset(&refdef, 0, sizeof(refdef));
@@ -3245,18 +3245,17 @@ void UI_MenuModelView_Draw (menuModelView_s *m)
 		memset (&entity[entnum], 0, sizeof(entity[entnum]));
 
 		// model pointer may become invalid after a vid_restart
-	//	reRegister = (!R_ModelIsValid(m->model[i]));
-	//	if (reRegister) {
+		reRegister = ( !R_ModelIsValid(m->model[i]) );
+		if (reRegister) {
 			Com_sprintf (scratch, sizeof(scratch),  m->modelName[i]);
 			m->model[i] = R_RegisterModel(scratch);
-	//	}
+		}
 		ent->model = m->model[i];
-	//	if (m->skin[i]) {
-		if (m->skinName[i] && strlen(m->skinName[i])) {
-		//	if (reRegister) {
+		if (m->skin[i]) {
+			if (reRegister) {
 				Com_sprintf (scratch, sizeof(scratch),  m->skinName[i]);
 				m->skin[i] = R_RegisterSkin (scratch);
-		//	}
+			}
 			ent->skin = m->skin[i];
 		}
 
@@ -3341,7 +3340,7 @@ void UI_MenuModelView_Setup (menuModelView_s *m)
 
 //=========================================================
 
-#if 0
+
 /*
 ==========================
 UI_ReregisterMenuItem
@@ -3359,7 +3358,7 @@ void UI_ReregisterMenuItem (void *item)
 		break;
 	}
 }
-#endif
+
 
 /*
 ==========================

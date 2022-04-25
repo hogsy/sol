@@ -2895,6 +2895,34 @@ void R_EndRegistration (void)
 }
 
 
+/*
+@@@@@@@@@@@@@@@@@@@@@
+R_ModelIsValid
+
+@@@@@@@@@@@@@@@@@@@@@
+*/
+qboolean R_ModelIsValid (struct model_s *model)
+{
+	if (!model)	return false;
+
+	// This shouldn't be possible due to re-registration by UI_RefreshMenuItems(),
+	// which is called from CL_PrepRefresh(), but just to be sure...
+	if (model->registration_sequence != registration_sequence)
+		return false;
+
+	switch (model->type)
+	{
+	case mod_alias:
+	case mod_sprite:
+		return ((model->skins[0][0] != NULL) && (model->extradata != NULL));
+	case mod_brush:
+		return ((model->numframes == 2) && (model->extradata != NULL));
+	default:
+		return false;
+	}
+	return false;
+}
+
 //=============================================================================
 
 
