@@ -33,6 +33,8 @@ vec4_t		stCoord_arrow_up = {0.5, 0.0, 0.75, 0.25};
 vec4_t		stCoord_arrow_down = {0.75, 0.0, 1, 0.25};
 vec4_t		stCoord_scrollKnob_h = {0.0, 0.75, 0.25, 1.0};
 vec4_t		stCoord_scrollKnob_v = {0.25, 0.75, 0.5, 1.0};
+vec4_t		stCoord_checkbox_off = {0.0, 0.0, 0.5, 1.0};
+vec4_t		stCoord_checkbox_on = {0.5, 0.0, 1.0, 1.0};
 vec4_t		stCoord_field_left = {0.0, 0.0, 0.25, 1.0};
 vec4_t		stCoord_field_center = {0.25, 0.0, 0.5, 1.0};
 vec4_t		stCoord_field_right = {0.5, 0.0, 0.75, 1.0};
@@ -1816,18 +1818,15 @@ void UI_MenuCheckBox_Draw (menuCheckBox_s *c)
 {
 	menuFramework_s	*menu = c->generic.parent;
 	int				alpha = UI_MouseOverAlpha(&c->generic);
-	char			*boxPic;
 	qboolean		left = (c->generic.flags & QMF_LEFT_JUSTIFY);
-
-	boxPic =  (c->curValue) ? UI_CHECKBOX_ON_PIC : UI_CHECKBOX_OFF_PIC;
 
 	if (c->generic.name)
 		UI_DrawMenuString (menu->x + c->generic.x + (left ? (2*RCOLUMN_OFFSET + MENU_FONT_SIZE + 2) : LCOLUMN_OFFSET),
 							menu->y + c->generic.y, MENU_FONT_SIZE, c->generic.scrAlign, c->generic.name, alpha, !left, true);
 
-	UI_DrawPic (menu->x + c->generic.x + RCOLUMN_OFFSET,
+	UI_DrawPicST (menu->x + c->generic.x + RCOLUMN_OFFSET,
 				menu->y + c->generic.y-CHECKBOX_V_OFFSET, CHECKBOX_WIDTH, CHECKBOX_HEIGHT,
-				c->generic.scrAlign, false, boxPic, 255);	
+				(c->curValue) ? stCoord_checkbox_on : stCoord_checkbox_off, c->generic.scrAlign, false, color_identity, UI_CHECKBOX_PIC);	
 }
 
 void UI_MenuCheckBox_Setup (menuCheckBox_s *c)

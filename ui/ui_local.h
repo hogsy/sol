@@ -877,8 +877,7 @@ void UI_Draw_Cursor (void);
 #define UI_ITEMCURSOR_KEYBIND_PIC	"/gfx/ui/cursors/cursor_menuitem_keybind.pcx"
 #define UI_ITEMCURSOR_BLINK_PIC		"/gfx/ui/cursors/cursor_menuitem_blink.pcx"
 
-#define UI_CHECKBOX_ON_PIC			"/gfx/ui/widgets/checkbox_on.pcx"
-#define UI_CHECKBOX_OFF_PIC			"/gfx/ui/widgets/checkbox_off.pcx"
+#define UI_CHECKBOX_PIC				"/gfx/ui/widgets/checkbox.pcx"
 #define UI_FIELD_PIC				"/gfx/ui/widgets/field.pcx"
 #define UI_TEXTBOX_PIC				"/gfx/ui/widgets/textbox.pcx"
 #define UI_SLIDER_PIC				"/gfx/ui/widgets/slider.pcx"

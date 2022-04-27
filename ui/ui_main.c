@@ -232,8 +232,7 @@ void UI_Precache (void)
 
 	// GUI elements
 	R_DrawFindPic ("/gfx/ui/widgets/listbox_background.pcx");
-	R_DrawFindPic (UI_CHECKBOX_ON_PIC);
-	R_DrawFindPic (UI_CHECKBOX_OFF_PIC);
+	R_DrawFindPic (UI_CHECKBOX_PIC);
 	R_DrawFindPic (UI_FIELD_PIC);
 	R_DrawFindPic (UI_TEXTBOX_PIC);
 	R_DrawFindPic (UI_SLIDER_PIC);
