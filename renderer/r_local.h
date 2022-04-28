@@ -744,15 +744,15 @@ int		Draw_GetPalette (void);
 void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight);
 struct image_s *R_RegisterSkin (char *name);
 
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
+void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 // Knightmare added
-void LoadTGA (char *name, byte **pic, int *width, int *height);
-void LoadJPG (char *filename, byte **pic, int *width, int *height);
+void LoadTGA (const char *name, byte **pic, int *width, int *height);
+void LoadJPG (const char *filename, byte **pic, int *width, int *height);
 
-image_t *R_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 image_t	*R_FindImage (char *name, imagetype_t type);
 void GL_UpdateAnisoMode (void);
-void GL_TextureMode( char *string );
+void GL_TextureMode (char *string);
 void R_ImageList_f (void);
 void R_InitFailedImgList (void);
 void R_InitImages (void);

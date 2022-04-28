@@ -361,7 +361,7 @@ PCX LOADING
 LoadPCX
 ==============
 */
-void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height)
+void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height)
 {
 	byte	*raw;
 	pcx_t	*pcx;
@@ -503,7 +503,7 @@ R_LoadTGA
 NiceAss: LoadTGA() from Q2Ice, it supports more formats
 =============
 */
-void R_LoadTGA( char *filename, byte **pic, int *width, int *height )
+void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 {
    int         w, h, x, y, i, temp1, temp2;
    int         realrow, truerow, baserow, size, interleave, origin;
@@ -788,7 +788,7 @@ PixEncode:
 R_LoadTGA
 =============
 */
-void R_LoadTGA (char *name, byte **pic, int *width, int *height)
+void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 {
 	int		columns, rows, numPixels;
 	byte	*pixbuf;
@@ -1104,7 +1104,7 @@ void PNGAPI R_ReadPNGData (png_structp png, png_bytep data, png_size_t length)
 R_LoadPNG
 ==============
 */
-void R_LoadPNG (char *filename, byte **pic, int *width, int *height) 
+void R_LoadPNG (const char *filename, byte **pic, int *width, int *height) 
 {
 	png_structp	png;
 	png_infop	pnginfo;
@@ -1259,7 +1259,7 @@ void jpeg_mem_src (j_decompress_ptr cinfo, const byte *mem, size_t len)
 R_LoadJPG
 ==============
 */
-void R_LoadJPG (char *filename, byte **pic, int *width, int *height)
+void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 {
 	struct jpeg_decompress_struct	cinfo;
 	struct jpeg_error_mgr			jerr;
@@ -2059,7 +2059,7 @@ This is also used as an entry point for the generated notexture
 Nexus  - changes for hires-textures
 ================
 */
-image_t *R_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits)
+image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits)
 {
 	image_t		*image;
 	int			i;
@@ -2201,10 +2201,13 @@ void R_InitFailedImgList (void)
 R_CheckImgFailed
 ===============
 */
-qboolean R_CheckImgFailed (char *name)
+qboolean R_CheckImgFailed (const char *name)
 {
 	int				i;
 	unsigned int	hash;
+
+	if ( !name || (name[0] == '\0') )
+		return true;
 
 	hash = Com_HashFileName(name, 0, false);
 	for (i=0; i<NUM_FAIL_IMAGES; i++)
@@ -2227,8 +2230,11 @@ qboolean R_CheckImgFailed (char *name)
 R_AddToFailedImgList
 ===============
 */
-void R_AddToFailedImgList (char *name)
+void R_AddToFailedImgList (const char *name)
 {
+	if ( !name || (name[0] == '\0') )
+		return;
+
 	if (!strncmp(name, "save/", 5)) // don't add saveshots
 		return;
 
@@ -2248,7 +2254,7 @@ void R_AddToFailedImgList (char *name)
 R_LoadWal
 ================
 */
-image_t *R_LoadWal (char *name, imagetype_t type)
+image_t *R_LoadWal (const char *name, imagetype_t type)
 {
 	miptex_t	*mt;
 	int			width, height, ofs;
@@ -2414,9 +2420,9 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 		}
 	}
 #endif	// PNG_SUPPORT
-	else if (!strcmp(name+len-4, ".jpg")) // Heffo - JPEG support
+	else if ( !strcmp(name+len-4, ".jpg") ) // Heffo - JPEG support
 	{
-		R_LoadJPG(name, &pic, &width, &height);
+		R_LoadJPG (name, &pic, &width, &height);
 		if (pic)
 			image = R_LoadPic(name, pic, width, height, type, 32);
 		else

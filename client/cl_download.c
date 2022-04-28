@@ -896,6 +896,9 @@ qboolean CL_CheckDownloadFailed (const char *name)
 {
 	int		i;
 
+	if ( !name || (name[0] == '\0') )
+		return true;
+
 	for (i=0; i<NUM_FAIL_DLDS; i++)
 		if ( (strlen(lastFailedDownload[i]) > 0) && !strcmp(name, lastFailedDownload[i]) )
 		{	// we already tried downlaoding this, server didn't have it
@@ -915,6 +918,9 @@ void CL_AddToFailedDownloadList (const char *name)
 {
 	int			i;
 	qboolean	found = false;
+
+	if ( !name || (name[0] == '\0') )
+		return;
 
 	// check if this name is already in the table
 	for (i=0; i<NUM_FAIL_DLDS; i++)
@@ -952,6 +958,9 @@ qboolean CL_CheckOrDownloadFile (const char *filename)
 	int		len; // Knightmare added
 	char	s[128];
 	//int	i;
+
+	if ( !filename || (filename[0] == '\0') )
+		return true;
 
 	if (strstr (filename, ".."))
 	{

@@ -511,10 +511,13 @@ void Mod_InitFailedTexList (void)
 Mod_CheckTexFailed
 ===============
 */
-qboolean Mod_CheckTexFailed (char *name)
+qboolean Mod_CheckTexFailed (const char *name)
 {
 	int				i;
 	unsigned int	hash;
+
+	if ( !name || (name[0] == '\0') )
+		return true;
 
 	hash = Com_HashFileName(name, 0, false);
 	for (i=0; i<NUM_FAIL_TEXTURES; i++)
@@ -535,8 +538,11 @@ qboolean Mod_CheckTexFailed (char *name)
 Mod_AddToFailedTexList
 ===============
 */
-void Mod_AddToFailedTexList (char *name)
+void Mod_AddToFailedTexList (const char *name)
 {
+	if ( !name || (name[0] == '\0') )
+		return;
+
 	Com_sprintf(lastFailedTexture[failedTexListIndex], sizeof(lastFailedTexture[failedTexListIndex]), "%s", name);
 	lastFailedTextureHash[failedTexListIndex] = Com_HashFileName(name, 0, false);
 	failedTexListIndex++;
@@ -553,7 +559,7 @@ A wrapper function that uses a failed list
 to speed map load times
 ===============
 */
-image_t	*Mod_FindTexture (char *name, imagetype_t type)
+image_t	*Mod_FindTexture (const char *name, imagetype_t type)
 {
 	image_t	*image;
 
@@ -561,7 +567,7 @@ image_t	*Mod_FindTexture (char *name, imagetype_t type)
 	if (Mod_CheckTexFailed (name))
 		return glMedia.notexture;
 
-	image = R_FindImage (name, type);
+	image = R_FindImage ((char *)name, type);
 
 	if (!image || (image == glMedia.notexture))
 		Mod_AddToFailedTexList (name);
@@ -1024,7 +1030,7 @@ void Mod_LoadLeafs (lump_t *l)
 		out->nummarksurfaces = LittleShort(in->numleaffaces);
 		
 		// underwater flag for caustics
-		//if (out->contents & (CONTENTS_WATER|CONTENTS_SLIME) )
+	//	if (out->contents & (CONTENTS_WATER|CONTENTS_SLIME) )
 		if (out->contents & (MASK_WATER) )
 		{	unsigned int flag;
 			if (out->contents & CONTENTS_LAVA)
