@@ -512,6 +512,9 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
    byte      tmp[2], r, g, b, a, j, k, l;
    byte      *dst, *ColorMap, *data, *pdata;
 
+	if ( !filename || (filename[0] == '\0') )
+		return;
+
    // load file
    FS_LoadFile( filename, &data );
 
@@ -1114,6 +1117,9 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 
 	*pic = NULL;
 
+	if ( !filename || (filename[0] == '\0') )
+		return;
+
 	len = FS_LoadFile (filename, (void **)&raw);
 
 	if (!raw)
@@ -1265,6 +1271,9 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	struct jpeg_error_mgr			jerr;
 	byte							*rawdata, *rgbadata, *scanline, *p, *q;
 	int								rawsize, i;
+
+	if ( !filename || (filename[0] == '\0') )
+		return;
 
 	// Load JPEG file into memory
 	rawsize = FS_LoadFile(filename, (void **)&rawdata);
@@ -2260,12 +2269,15 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 	int			width, height, ofs;
 	image_t		*image;
 
+	if ( !name || (name[0] == '\0') )
+		return NULL;
+
 	FS_LoadFile (name, (void **)&mt);
 	if (!mt)
 	{
 		if (type == it_wall)
 			VID_Printf (PRINT_ALL, "R_FindImage: can't load %s\n", name);
-		//return glMedia.notexture;
+	//	return glMedia.notexture;
 		return NULL;
 	}
 
@@ -2298,10 +2310,10 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 	char	s[128];
 	char	*tmp;
 
-	if (!name)
+	if ( !name || (name[0] == '\0') )
 		return NULL;
 	len = (int)strlen(name);
-	if (len<5)
+	if (len < 5)
 		return NULL;
 
 	// fix up bad image paths
@@ -2428,22 +2440,6 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 		else
 			image = NULL;
 	}
-	/*else if (!strcmp(name+len-4, ".cin")) // Heffo
-	{										// WHY .cin files? because we can!
-		cinematics_t *newcin;
-
-		newcin = CIN_OpenCin(name);
-		if(!newcin)
-			return NULL;
-
-		pic = malloc(256*256*4);
-		memset(pic, 192, (256*256*4));
-
-		image = R_LoadPic (name, pic, 256, 256, type, 32);
-
-		newcin->texnum = image->texnum;
-		image->is_cin = true;
-	}*/
 	else
 		image = NULL;
 
@@ -2510,13 +2506,8 @@ void R_FreeUnusedImages (void)
 			continue;		// used this sequence
 		if (!image->registration_sequence)
 			continue;		// free image_t slot
-	//	if (image->type == it_pic)
 		if ( (image->type == it_pic) || (image->type == it_font) || (image->type == it_scrap) )
 			continue;		// don't free pics or fonts
-
-		//Heffo - Free Cinematic
-		//if(image->is_cin)
-		//	CIN_FreeCin(image->texnum);
 
 		// free it
 		qglDeleteTextures (1, &image->texnum);
@@ -2694,12 +2685,7 @@ void R_FreePic (char *name)
 		if (image->type != it_pic)
 			continue;		// only free pics
 		if (!strcmp(name, image->name))
-		{
-			//Heffo - Free Cinematic
-			//if (image->is_cin)
-			//	CIN_FreeCin(image->texnum);
-
-			// free it
+		{	// free it
 			qglDeleteTextures (1, &image->texnum);
 			memset (image, 0, sizeof(*image));
 			return; //we're done here
@@ -2722,13 +2708,8 @@ void R_ShutdownImages (void)
 		if (!image->registration_sequence)
 			continue;		// free image_t slot
 
-		//Heffo - Free Cinematic
-		//if (image->is_cin)
-		//	CIN_FreeCin(image->texnum);
-
 		// free it
 		qglDeleteTextures (1, &image->texnum);
 		memset (image, 0, sizeof(*image));
 	}
 }
-
