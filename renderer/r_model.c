@@ -563,6 +563,9 @@ image_t	*Mod_FindTexture (const char *name, imagetype_t type)
 {
 	image_t	*image;
 
+	if ( !name || (name[0] == '\0') )
+		return glMedia.notexture;
+
 	// don't try again to load a texture that just failed
 	if (Mod_CheckTexFailed (name))
 		return glMedia.notexture;
