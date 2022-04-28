@@ -86,9 +86,12 @@ void CL_InitFailedHTTPDownloadList (void)
 CL_CheckHTTPDownloadFailed
 ===============
 */
-qboolean CL_CheckHTTPDownloadFailed (char *name)
+qboolean CL_CheckHTTPDownloadFailed (const char *name)
 {
 	int		i;
+
+	if ( !name || (name[0] == '\0') )
+		return true;
 
 	for (i=0; i<NUM_FAIL_DLDS; i++)
 		if ( (strlen(lastFailedHTTPDownload[i]) > 0) && !strcmp(name, lastFailedHTTPDownload[i]) )
@@ -105,10 +108,13 @@ qboolean CL_CheckHTTPDownloadFailed (char *name)
 CL_AddToFailedHTTPDownloadList
 ===============
 */
-void CL_AddToFailedHTTPDownloadList (char *name)
+void CL_AddToFailedHTTPDownloadList (const char *name)
 {
 	int			i;
 	qboolean	found = false;
+
+	if ( !name || (name[0] == '\0') )
+		return;
 
 	// check if this name is already in the table
 	for (i=0; i<NUM_FAIL_DLDS; i++)
