@@ -224,10 +224,6 @@
 				Name="sound"
 				>
 				<File
-					RelativePath="..\..\win32\cd_win.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\client\snd_dma.c"
 					>
 				</File>
@@ -244,7 +240,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\snd_win.c"
+					RelativePath="..\..\win32\win_cd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_snd.c"
 					>
 				</File>
 			</Filter>
@@ -440,31 +440,35 @@
 				Name="system"
 				>
 				<File
-					RelativePath="..\..\win32\conproc.c"
+					RelativePath="..\..\win32\win_conproc.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\in_win.c"
+					RelativePath="..\..\win32\win_input.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\net_wins.c"
+					RelativePath="..\..\win32\win_net.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\q_shwin.c"
+					RelativePath="..\..\win32\win_qsh.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\sys_console.c"
+					RelativePath="..\..\win32\win_dedconsole.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\sys_win.c"
+					RelativePath="..\..\win32\win_main.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\vid_dll.c"
+					RelativePath="..\..\win32\win_vid.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_wndproc.c"
 					>
 				</File>
 			</Filter>
@@ -472,11 +476,11 @@
 				Name="renderer"
 				>
 				<File
-					RelativePath="..\..\win32\glw_imp.c"
+					RelativePath="..\..\win32\win_glimp.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\win32\qgl_win.c"
+					RelativePath="..\..\win32\win_qgl.c"
 					>
 				</File>
 				<File
@@ -714,18 +718,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\renderer\anorms.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\renderer\anormtab.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\qcommon\bspfile.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\client\cdaudio.h"
 				>
 			</File>
@@ -735,10 +727,6 @@
 			</File>
 			<File
 				RelativePath="..\..\client\client.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\win32\conproc.h"
 				>
 			</File>
 			<File
@@ -767,6 +755,10 @@
 			</File>
 			<File
 				RelativePath="..\..\client\particles.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\client\q2palette.h"
 				>
 			</File>
 			<File
@@ -814,6 +806,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\client\snd_ogg.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\client\sound.h"
 				>
 			</File>
@@ -826,15 +822,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\renderer\vlights.h"
+				RelativePath="..\..\qcommon\vid_modes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\renderer\warpsin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\qcommon\wildcard.h"
+				RelativePath="..\..\win32\win_glw.h"
 				>
 			</File>
 			<File

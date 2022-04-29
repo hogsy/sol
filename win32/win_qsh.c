@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+// win_qsh.c -- windows memory management and file API layer
+
 #include "../qcommon/qcommon.h"
 #include "winquake.h"
 #include <errno.h>

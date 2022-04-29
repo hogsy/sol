@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// sys_win.h
+// win_main.c
 
 #include "../qcommon/qcommon.h"
 #include "winquake.h"
@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <io.h>
 #include <conio.h>
 #include <shlobj.h>
-#include "../win32/conproc.h"
+#include "win_conproc.h"
 
 // [Slipyx] mingw support for _controlfp. from float.h. these would be defined
 // if __STRICT_ANSI__ was undefined before including float.h, but i just copied

@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// New dedicated server and debug console
+// win_dedconsole.c- New dedicated server and debug console
 
 #include "../qcommon/qcommon.h"
 #include "resource.h"

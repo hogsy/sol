@@ -64,9 +64,6 @@ extern DWORD gSndBufSize;
 extern HWND			cl_hwnd;
 extern qboolean		ActiveApp, Minimized;
 
-void IN_Activate (qboolean active);
-void IN_MouseEvent (int mstate);
-
 extern int		window_center_x, window_center_y;
 extern RECT		window_rect;
 
@@ -74,8 +71,25 @@ extern RECT		window_rect;
 extern cvar_t		*win_use_profile_dir;
 void Sys_InitPrefDir (void);
 
-extern HWND		hwnd_dialog; // Knightmare added
+// win_wndproc.c
+void WIN_SetAltTab (void);
+LONG WINAPI MainWndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+// win_vid.c
+extern qboolean		kmgl_active;
+extern cvar_t		*win_noalttab;
+extern cvar_t		*win_alttab_restore_desktop;	// Knightmare- whether to restore desktop resolution on alt-tab
+extern cvar_t		*vid_xpos;
+extern cvar_t		*vid_ypos;
+extern cvar_t		*vid_fullscreen;
+
+// win_input.c
+int IN_MapKey (int key);
+void IN_Activate (qboolean active);
+void IN_MouseEvent (int mstate);
+void IN_MouseWheel (int dir);
+
+// win_dedconsole.c
 #define NEW_DED_CONSOLE // enable new dedicated console
 
 #ifdef NEW_DED_CONSOLE

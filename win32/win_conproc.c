@@ -20,11 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// conproc.c -- support for qhost
+// win_conproc.c -- support for qhost
 #include <stdio.h>
 #include <process.h>
 #include <windows.h>
-#include "conproc.h"
+#include "win_conproc.h"
 
 #define CCOM_WRITE_TEXT		0x2
 // Param1 : Text

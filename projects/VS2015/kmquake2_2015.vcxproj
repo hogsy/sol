@@ -388,17 +388,18 @@
     <ClCompile Include="..\..\ui\ui_mouse.c" />
     <ClCompile Include="..\..\ui\ui_utils.c" />
     <ClCompile Include="..\..\ui\ui_widgets.c" />
-    <ClCompile Include="..\..\win32\cd_win.c" />
-    <ClCompile Include="..\..\win32\conproc.c" />
-    <ClCompile Include="..\..\win32\glw_imp.c" />
-    <ClCompile Include="..\..\win32\in_win.c" />
-    <ClCompile Include="..\..\win32\net_wins.c" />
-    <ClCompile Include="..\..\win32\qgl_win.c" />
-    <ClCompile Include="..\..\win32\q_shwin.c" />
-    <ClCompile Include="..\..\win32\snd_win.c" />
-    <ClCompile Include="..\..\win32\sys_console.c" />
-    <ClCompile Include="..\..\win32\sys_win.c" />
-    <ClCompile Include="..\..\win32\vid_dll.c" />
+    <ClCompile Include="..\..\win32\win_cd.c" />
+    <ClCompile Include="..\..\win32\win_conproc.c" />
+    <ClCompile Include="..\..\win32\win_glimp.c" />
+    <ClCompile Include="..\..\win32\win_input.c" />
+    <ClCompile Include="..\..\win32\win_net.c" />
+    <ClCompile Include="..\..\win32\win_qgl.c" />
+    <ClCompile Include="..\..\win32\win_qsh.c" />
+    <ClCompile Include="..\..\win32\win_snd.c" />
+    <ClCompile Include="..\..\win32\win_dedconsole.c" />
+    <ClCompile Include="..\..\win32\win_main.c" />
+    <ClCompile Include="..\..\win32\win_vid.c" />
+    <ClCompile Include="..\..\win32\win_wndproc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\anorms.h" />
@@ -416,23 +417,18 @@
     <ClInclude Include="..\..\client\vid.h" />
     <ClInclude Include="..\..\game\game.h" />
     <ClInclude Include="..\..\game\q_shared.h" />
-    <ClInclude Include="..\..\qcommon\bspfile.h" />
     <ClInclude Include="..\..\qcommon\filesystem.h" />
     <ClInclude Include="..\..\qcommon\qcommon.h" />
     <ClInclude Include="..\..\qcommon\qfiles.h" />
-    <ClInclude Include="..\..\qcommon\wildcard.h" />
-    <ClInclude Include="..\..\renderer\anorms.h" />
-    <ClInclude Include="..\..\renderer\anormtab.h" />
+    <ClInclude Include="..\..\qcommon\vid_modes.h" />
     <ClInclude Include="..\..\renderer\glext.h" />
     <ClInclude Include="..\..\renderer\qgl.h" />
     <ClInclude Include="..\..\renderer\r_alias.h" />
     <ClInclude Include="..\..\renderer\r_local.h" />
     <ClInclude Include="..\..\renderer\r_model.h" />
-    <ClInclude Include="..\..\renderer\vlights.h" />
-    <ClInclude Include="..\..\renderer\warpsin.h" />
     <ClInclude Include="..\..\server\server.h" />
     <ClInclude Include="..\..\ui\ui_local.h" />
-    <ClInclude Include="..\..\win32\conproc.h" />
+    <ClInclude Include="..\..\win32\win_glw.h" />
     <ClInclude Include="..\..\win32\winquake.h" />
   </ItemGroup>
   <ItemGroup>

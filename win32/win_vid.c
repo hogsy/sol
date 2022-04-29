@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+// win_vid.c
+
 // Main windowed and fullscreen graphics interface module. This module
 // is used for both the software and OpenGL rendering versions of the
 // Quake refresh engine.
@@ -28,36 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "..\client\client.h"
 #include "winquake.h"
-//#include "zmouse.h"
-
-
-#ifndef WM_MOUSEWHEEL
-#define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS 
-#endif
-
-static UINT MSH_MOUSEWHEEL;
-
-//PGM
-int	vidref_val;
-//PGM
-
-// Backslash's Mouse buttons 4 & 5 support
-/* These are #ifdefed out for non-Win2K in the February 2001 version of
-   MS's platform SDK, but we need them for compilation. . . */
-#ifndef WM_XBUTTONDOWN
-   #define WM_XBUTTONDOWN      0x020B
-   #define WM_XBUTTONUP      0x020C
-#endif
-#ifndef MK_XBUTTON1
-   #define MK_XBUTTON1         0x0020
-   #define MK_XBUTTON2         0x0040
-#endif
-// end Mouse buttons 4 & 5 support
-
-// Logitech mouse support
-//#define WM_MWHOOK (WM_USER + 1)
-//int MW_Hook_Message (long buttons);
-// end Logitech mouse support
 
 // Console variables that we need to access from this module
 cvar_t		*scanforcd; // Knightmare- just here to enable command line option without error
@@ -73,61 +45,24 @@ cvar_t		*r_customheight;
 cvar_t		*r_mode_desktop;	// desktop-resolution display mode
 
 // Global variables used internally by this module
+int			vidref_val;			// PGM
 viddef_t	viddef;				// global video state; used by other modules
 qboolean	kmgl_active = 0;
 
-HWND        cl_hwnd;            // Main window handle for life of program
+typedef struct vidmode_s
+{
+	const char *description;
+	int         width, height;
+	int         mode;
+} vidmode_t;
+
+// Knightmare- added 1280x1024, 1400x1050, 856x480, 1024x480 modes
+vidmode_t vid_modes[] =
+{
+#include "../qcommon/vid_modes.h"
+};
 
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
-
-LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
-
-static qboolean s_alttab_disabled;
-extern	unsigned	sys_msg_time;
-
-/*
-** WIN32 helper functions
-*/
-extern qboolean s_win95;
-
-static void WIN_DisableAltTab( void )
-{
-	if ( s_alttab_disabled )
-		return;
-
-	if ( s_win95 )
-	{
-		BOOL old;
-
-		SystemParametersInfo( SPI_SCREENSAVERRUNNING, 1, &old, 0 );
-	}
-	else
-	{
-		RegisterHotKey( 0, 0, MOD_ALT, VK_TAB );
-		RegisterHotKey( 0, 1, MOD_ALT, VK_RETURN );
-	}
-	s_alttab_disabled = true;
-}
-
-static void WIN_EnableAltTab( void )
-{
-	if ( s_alttab_disabled )
-	{
-		if ( s_win95 )
-		{
-			BOOL old;
-
-			SystemParametersInfo( SPI_SCREENSAVERRUNNING, 0, &old, 0 );
-		}
-		else
-		{
-			UnregisterHotKey( 0, 0 );
-			UnregisterHotKey( 0, 1 );
-		}
-
-		s_alttab_disabled = false;
-	}
-}
 
 /*
 ==========================================================================
@@ -137,6 +72,11 @@ DLL GLUE
 ==========================================================================
 */
 
+/*
+==============
+ VID_Printf
+==============
+*/
 #define	MAXPRINTMSG	8192 // was 4096
 void VID_Printf (int print_level, char *fmt, ...)
 {
@@ -164,6 +104,11 @@ void VID_Printf (int print_level, char *fmt, ...)
 	}
 }
 
+/*
+==============
+VID_Error
+==============
+*/
 void VID_Error (int err_level, char *fmt, ...)
 {
 	va_list		argptr;
@@ -179,337 +124,6 @@ void VID_Error (int err_level, char *fmt, ...)
 }
 
 //==========================================================================
-
-byte        scantokey[128] = 
-					{ 
-//  0           1       2			3			4       5				6			7 
-//  8           9       A			B			C       D				E			F 
-	0,			27,     '1',		'2',		'3',    '4',			'5',		'6', 
-	'7',		'8',    '9',		'0',		'-',    '=',			K_BACKSPACE,9,		    // 0 
-	'q',		'w',    'e',		'r',		't',    'y',			'u',		'i', 
-	'o',		'p',    '[',		']',		13 ,    K_CTRL,			'a',		's',		// 1 
-	'd',		'f',    'g',		'h',		'j',    'k',			'l',		';', 
-	'\'',		'`',    K_SHIFT,	'\\',		'z',    'x',			'c',		'v',		// 2 
-	'b',		'n',    'm',		',',		'.',    '/',			K_SHIFT,	K_KP_MULT,	// KP_MULT was '*'
-	K_ALT,		' ',	K_CAPSLOCK,	K_F1,		K_F2,	K_F3,			K_F4,		K_F5,	    // 3 
-	K_F6,		K_F7,	K_F8,		K_F9,		K_F10,  K_PAUSE,		K_SCROLLOCK,K_HOME, 
-	K_UPARROW,	K_PGUP,	K_KP_MINUS,	K_LEFTARROW,K_KP_5,	K_RIGHTARROW,	K_KP_PLUS,	K_END,      // 4 
-	K_DOWNARROW,K_PGDN,	K_INS,		K_DEL,		0,		0,				0,			K_F11, 
-	K_F12,		0,		0,			0,			0,		0,				0,			0,			// 5
-	0,			0,		0,			0,			0,		0,				0,			0, 
-	0,			0,		0,			0,			0,		0,				0,			0,			// 6 
-	0,			0,		0,			0,			0,		0,				0,			0, 
-	0,			0,		0,			0,			0,		0,				0,			0			// 7 
-}; 
-
-/*
-=======
-MapKey
-
-Map from windows to quake keynums
-=======
-*/
-int MapKey (int key)
-{
-	int result;
-	int modified = ( key >> 16 ) & 255;
-	qboolean is_extended = false;
-
-	if ( modified > 127)
-		return 0;
-
-	if ( key & ( 1 << 24 ) )
-		is_extended = true;
-
-	result = scantokey[modified];
-
-	if ( !is_extended )
-	{
-		switch ( result )
-		{
-		case K_HOME:
-			return K_KP_HOME;
-		case K_UPARROW:
-			return K_KP_UPARROW;
-		case K_PGUP:
-			return K_KP_PGUP;
-		case K_LEFTARROW:
-			return K_KP_LEFTARROW;
-		case K_RIGHTARROW:
-			return K_KP_RIGHTARROW;
-		case K_END:
-			return K_KP_END;
-		case K_DOWNARROW:
-			return K_KP_DOWNARROW;
-		case K_PGDN:
-			return K_KP_PGDN;
-		case K_INS:
-			return K_KP_INS;
-		case K_DEL:
-			return K_KP_DEL;
-		default:
-			return result;
-		}
-	}
-	else
-	{
-		switch ( result )
-		{
-		case 0x0D:
-			return K_KP_ENTER;
-		case 0x2F:
-			return K_KP_SLASH;
-		case 0xAF:
-			return K_KP_PLUS;
-		case K_PAUSE:
-			return K_NUMLOCK;
-		}
-		return result;
-	}
-}
-
-void AppActivate (BOOL fActive, BOOL minimize)
-{
-	Minimized = minimize;
-
-	Key_ClearStates();
-
-	// we don't want to act like we're active if we're minimized
-	if (fActive && !Minimized)
-		ActiveApp = true;
-	else
-		ActiveApp = false;
-
-	// minimize/restore mouse-capture on demand
-	if (!ActiveApp)
-	{
-		IN_Activate (false);
-		CDAudio_Activate (false);
-		S_Activate (false);
-
-	//	if ( win_noalttab->value )
-		if ( win_noalttab->integer )
-		{
-			WIN_EnableAltTab();
-		}
-	}
-	else
-	{
-		IN_Activate (true);
-		CDAudio_Activate (true);
-		S_Activate (true);
-	//	if ( win_noalttab->value )
-		if ( win_noalttab->integer )
-		{
-			WIN_DisableAltTab();
-		}
-	}
-}
-
-/*
-====================
-MainWndProc
-
-main window procedure
-====================
-*/
-LONG WINAPI MainWndProc (
-    HWND    hWnd,
-    UINT    uMsg,
-    WPARAM  wParam,
-    LPARAM  lParam)
-{
-	LONG			lRet = 0;
-
-	if ( uMsg == MSH_MOUSEWHEEL )
-	{
-		if ( ( ( int ) wParam ) > 0 )
-		{
-			Key_Event( K_MWHEELUP, true, sys_msg_time );
-			Key_Event( K_MWHEELUP, false, sys_msg_time );
-		}
-		else
-		{
-			Key_Event( K_MWHEELDOWN, true, sys_msg_time );
-			Key_Event( K_MWHEELDOWN, false, sys_msg_time );
-		}
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-	}
-
-	switch (uMsg)
-	{
-	case WM_MOUSEWHEEL:
-		//
-		// this chunk of code theoretically only works under NT4 and Win98
-		// since this message doesn't exist under Win95
-		//
-		if ( ( short ) HIWORD( wParam ) > 0 )
-		{
-			Key_Event( K_MWHEELUP, true, sys_msg_time );
-			Key_Event( K_MWHEELUP, false, sys_msg_time );
-		}
-		else
-		{
-			Key_Event( K_MWHEELDOWN, true, sys_msg_time );
-			Key_Event( K_MWHEELDOWN, false, sys_msg_time );
-		}
-		break;
-
-	case WM_HOTKEY:
-		return 0;
-
-	case WM_CREATE:
-		cl_hwnd = hWnd;
-
-		MSH_MOUSEWHEEL = RegisterWindowMessage("MSWHEEL_ROLLMSG"); 
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-	case WM_PAINT:
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-	case WM_DESTROY:
-		// let sound and input know about this?
-		cl_hwnd = NULL;
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-	case WM_ACTIVATE:
-		{
-			int	fActive, fMinimized;
-
-			// KJB: Watch this for problems in fullscreen modes with Alt-tabbing.
-			fActive = LOWORD(wParam);
-			fMinimized = (BOOL) HIWORD(wParam);
-
-			AppActivate( fActive != WA_INACTIVE, fMinimized);
-
-			if ( kmgl_active )
-				GLimp_AppActivate ( !( fActive == WA_INACTIVE ) );
-		}
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-	case WM_MOVE:
-		{
-			int		xPos, yPos;
-			RECT r;
-			int		style;
-
-			if (!vid_fullscreen->integer)
-			{
-				xPos = (short) LOWORD(lParam);    // horizontal position 
-				yPos = (short) HIWORD(lParam);    // vertical position 
-
-				r.left   = 0;
-				r.top    = 0;
-				r.right  = 1;
-				r.bottom = 1;
-
-				style = GetWindowLongPtr( hWnd, GWL_STYLE );
-				AdjustWindowRect( &r, style, FALSE );
-
-				Cvar_SetValue( "vid_xpos", xPos + r.left);
-				Cvar_SetValue( "vid_ypos", yPos + r.top);
-				vid_xpos->modified = false;
-				vid_ypos->modified = false;
-				if (ActiveApp)
-					IN_Activate (true);
-			}
-		}
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-// this is complicated because Win32 seems to pack multiple mouse events into
-// one update sometimes, so we always check all states and look for events
-	case WM_LBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONDOWN:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONDOWN:
-	case WM_MBUTTONUP:
-	case WM_XBUTTONDOWN:// Backslash's imouse explorer buttons
-	case WM_XBUTTONUP:	// Backslash's imouse explorer buttons 
-	case WM_MOUSEMOVE:
-	// Logitech mouse support
-	//case WM_MWHOOK:
-		{
-			int	temp;
-
-			temp = 0;
-
-			if (wParam & MK_LBUTTON)
-				temp |= 1;
-
-			if (wParam & MK_RBUTTON)
-				temp |= 2;
-
-			if (wParam & MK_MBUTTON)
-				temp |= 4;
-			// Mouse buttons 4 & 5 support
-			if (wParam & MK_XBUTTON1)
-				temp |= 8;
-
-			if (wParam & MK_XBUTTON2)
-				temp |= 16;
-			// end Mouse buttons 4 & 5 support
-
-			// Logitech mouse support
-			//if (uMsg == WM_MWHOOK)
-			//	temp |= MW_Hook_Message (lParam);
-
-			IN_MouseEvent (temp);
-		}
-		break;
-
-	/*case WM_SYSCOMMAND:
-		if ( wParam == SC_SCREENSAVE )
-			return 0;
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);*/
-	// Idle's fix
-	case WM_SYSCOMMAND:
-		switch (wParam & 0xfffffff0)	// bitshifter's fix for screensaver bug
-		{
-		case SC_SCREENSAVE:
-		case SC_MONITORPOWER:
-			return 0;
-		case SC_CLOSE:
-			CL_Quit_f ();
-		//case SC_MAXIMIZE:
-		//	Cvar_SetValue ("vid_fullscreen", 1);
-		//	return 0;
-		}
-		return DefWindowProc (hWnd, uMsg, wParam, lParam);
-
-	case WM_SYSKEYDOWN:
-		if ( wParam == 13 )
-		{
-			if ( vid_fullscreen )
-			{
-				Cvar_SetValue( "vid_fullscreen", !vid_fullscreen->integer );
-			}
-			return 0;
-		}
-		// fall through
-	case WM_KEYDOWN:
-		Key_Event( MapKey( lParam ), true, sys_msg_time);
-		break;
-
-	case WM_SYSKEYUP:
-	case WM_KEYUP:
-		Key_Event( MapKey( lParam ), false, sys_msg_time);
-		break;
-
-	case MM_MCINOTIFY:
-		{
-			LONG CDAudio_MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-			lRet = CDAudio_MessageHandler (hWnd, uMsg, wParam, lParam);
-		}
-		break;
-
-	default:	// pass all unhandled messages to DefWindowProc
-        return DefWindowProc (hWnd, uMsg, wParam, lParam);
-    }
-
-    /* return 0 if handled message, 1 if not */
-    return DefWindowProc( hWnd, uMsg, wParam, lParam );
-}
 
 /*
 ============
@@ -535,20 +149,6 @@ void VID_Front_f( void )
 	SetWindowLongPtr( cl_hwnd, GWL_EXSTYLE, WS_EX_TOPMOST );
 	SetForegroundWindow( cl_hwnd );
 }
-
-
-typedef struct vidmode_s
-{
-	const char *description;
-	int         width, height;
-	int         mode;
-} vidmode_t;
-
-// Knightmare- added 1280x1024, 1400x1050, 856x480, 1024x480 modes
-vidmode_t vid_modes[] =
-{
-#include "../qcommon/vid_modes.h"
-};
 
 /*
 ==============
@@ -586,6 +186,25 @@ qboolean VID_GetModeInfo (int *width, int *height, int mode)
 	*height = vid_modes[mode].height;
 
 	return true;
+}
+
+/*
+==============
+VID_ModeList_f
+==============
+*/
+void VID_ModeList_f (void)
+{
+	int		i;
+
+	VID_Printf (PRINT_ALL, "\n");
+	for (i = 0; i < VID_NUM_MODES; i++) {
+		if ( (vid_modes[i].width < 640) || (vid_modes[i].height < 480) )
+			VID_Printf (PRINT_ALL, "%s (hidden)\n", vid_modes[i].description );
+		else
+			VID_Printf (PRINT_ALL, "%s\n", vid_modes[i].description );
+	}
+	VID_Printf (PRINT_ALL, "\n");
 }
 
 /*
@@ -728,15 +347,15 @@ void VID_CheckChanges (void)
 {
 	if ( win_noalttab->modified )
 	{
-	//	if ( win_noalttab->value )
-		if ( win_noalttab->integer )
+		WIN_SetAltTab ();
+	/*	if ( win_noalttab->integer )
 			WIN_DisableAltTab();
 		else
 			WIN_EnableAltTab();
-		win_noalttab->modified = false;
+		win_noalttab->modified = false; */
 	}
 
-	//update changed vid_ref
+	// update changed vid_ref
 	UpdateVideoRef ();
 
 	// update our window position
@@ -790,6 +409,7 @@ void VID_Init (void)
 	/* Add some console commands that we want to handle */
 	Cmd_AddCommand ("vid_restart", VID_Restart_f);
 	Cmd_AddCommand ("vid_front", VID_Front_f);
+	Cmd_AddCommand ("vid_modelist", VID_ModeList_f);
 
 	/* Disable the 3Dfx splash screen */
 	//putenv("FX_GLIDE_NO_SPLASH=0");

@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /*
-** QGL_WIN.C
+** win_qgl.c
 **
 ** This file implements the operating system binding of GL to QGL function
 ** pointers.  When doing a port of Quake2 you must implement the following
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <float.h>
 #include "../renderer/r_local.h"
-#include "glw_win.h"
+#include "win_glw.h"
 
 int   ( WINAPI * qwglChoosePixelFormat )(HDC, CONST PIXELFORMATDESCRIPTOR *);
 int   ( WINAPI * qwglDescribePixelFormat) (HDC, int, UINT, LPPIXELFORMATDESCRIPTOR);

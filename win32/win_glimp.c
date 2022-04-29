@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /*
-** GLW_IMP.C
+** win_glimp.C
 **
 ** This file contains ALL Win32 specific stuff having to do with the
 ** OpenGL refresh.  When a port is being made the following functions
@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <windows.h>
 #include "../renderer/r_local.h"
 #include "resource.h"
-#include "glw_win.h"
+#include "win_glw.h"
 #include "winquake.h"
 
 static qboolean GLimp_SwitchFullscreen( int width, int height );

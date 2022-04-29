@@ -97,10 +97,6 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\win32\cd_win.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\client\snd_dma.c
 # End Source File
 # Begin Source File
@@ -117,7 +113,11 @@ SOURCE=..\..\client\snd_stream.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\snd_win.c
+SOURCE=..\..\win32\win_cd.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\win32\win_snd.c
 # End Source File
 # End Group
 # Begin Group "client"
@@ -313,44 +313,40 @@ SOURCE=..\..\server\sv_world.c
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\win32\conproc.c
+SOURCE=..\..\win32\win_conproc.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\in_win.c
+SOURCE=..\..\win32\win_dedconsole.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\net_wins.c
+SOURCE=..\..\win32\win_input.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\q_shwin.c
+SOURCE=..\..\win32\win_main.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\sys_console.c
+SOURCE=..\..\win32\win_net.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\sys_win.c
+SOURCE=..\..\win32\win_qsh.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\win32\vid_dll.c
+SOURCE=..\..\win32\win_vid.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\win32\win_wndproc.c
 # End Source File
 # End Group
 # Begin Group "renderer"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\win32\glw_imp.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\win32\qgl_win.c
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\renderer\r_alias.c
@@ -447,6 +443,14 @@ SOURCE=..\..\renderer\r_vlights.c
 
 SOURCE=..\..\renderer\r_warp.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\win32\win_glimp.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\win32\win_qgl.c
+# End Source File
 # End Group
 # Begin Group "ui"
 
@@ -525,7 +529,7 @@ SOURCE=..\..\ui\menu_options_effects.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\ui\ui_options_interface.c
+SOURCE=..\..\ui\menu_options_interface.c
 # End Source File
 # Begin Source File
 
@@ -586,18 +590,6 @@ SOURCE=..\..\client\anorms.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\renderer\anorms.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\renderer\anormtab.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\qcommon\bspfile.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\client\cdaudio.h
 # End Source File
 # Begin Source File
@@ -607,10 +599,6 @@ SOURCE=..\..\client\cinematic.h
 # Begin Source File
 
 SOURCE=..\..\client\client.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\win32\conproc.h
 # End Source File
 # Begin Source File
 
@@ -710,19 +698,7 @@ SOURCE=..\..\qcommon\vid_modes.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\renderer\vlights.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\renderer\warpsin.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\qcommon\wildcard.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\win32\winnewerror.h
+SOURCE=..\..\win32\win_glw.h
 # End Source File
 # Begin Source File
 
