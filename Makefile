@@ -269,12 +269,12 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/sv_user.o \
 	$(BUILDDIR)/client/sv_world.o \
 	\
-	$(BUILDDIR)/client/qsh_unix.o \
-	$(BUILDDIR)/client/vid_so.o \
-	$(BUILDDIR)/client/sys_unix.o \
-	$(BUILDDIR)/client/glob.o \
-	$(BUILDDIR)/client/in_unix.o \
-	$(BUILDDIR)/client/net_udp.o \
+	$(BUILDDIR)/client/unix_qsh.o \
+	$(BUILDDIR)/client/unix_vid.o \
+	$(BUILDDIR)/client/unix_main.o \
+	$(BUILDDIR)/client/unix_glob.o \
+	$(BUILDDIR)/client/unix_input.o \
+	$(BUILDDIR)/client/unix_net.o \
 	\
 	$(BUILDDIR)/client/q_shared.o \
 	$(BUILDDIR)/client/pmove.o \
@@ -303,15 +303,15 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/ref_gl/r_upscale.o \
 	$(BUILDDIR)/ref_gl/r_vlights.o \
 	$(BUILDDIR)/ref_gl/r_warp.o \
-	$(BUILDDIR)/ref_gl/gl_sdl.o \
+	$(BUILDDIR)/ref_gl/sdl_gl.o \
 	\
-	$(BUILDDIR)/ref_gl/qgl_unix.o \
-	$(BUILDDIR)/client/snd_sdl.o
+	$(BUILDDIR)/ref_gl/unix_qgl.o \
+	$(BUILDDIR)/client/sdl_snd.o
 
 	ifeq ($(OSTYPE),Darwin)
 	QUAKE2_OBJS += $(BUILDDIR)/client/cd_null.o
 else
-	QUAKE2_OBJS += $(BUILDDIR)/client/cd_unix.o
+	QUAKE2_OBJS += $(BUILDDIR)/client/unix_cd.o
 endif
 
 QUAKE2_AS_OBJS = \
@@ -557,37 +557,37 @@ $(BUILDDIR)/client/sv_user.o :    	$(SERVER_DIR)/sv_user.c
 $(BUILDDIR)/client/sv_world.o :   	$(SERVER_DIR)/sv_world.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/cd_unix.o :   	$(UNIX_DIR)/cd_unix.c
+$(BUILDDIR)/client/unix_cd.o :   	$(UNIX_DIR)/unix_cd.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/cd_null.o :   	$(NULL_DIR)/cd_null.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/qsh_unix.o :  	$(UNIX_DIR)/qsh_unix.c
+$(BUILDDIR)/client/unix_qsh.o :  	$(UNIX_DIR)/unix_qsh.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/vid_so.o :     	$(UNIX_DIR)/vid_so.c
+$(BUILDDIR)/client/unix_vid.o :     	$(UNIX_DIR)/unix_vid.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/snd_unix.o :  	$(UNIX_DIR)/snd_unix.c
+$(BUILDDIR)/client/unix_snd.o :  	$(UNIX_DIR)/unix_snd.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/snd_mixa.o :   	$(UNIX_DIR)/snd_mixa.s
 	$(DO_AS)
 
-$(BUILDDIR)/client/sys_unix.o :  	$(UNIX_DIR)/sys_unix.c
+$(BUILDDIR)/client/unix_main.o :  	$(UNIX_DIR)/unix_main.c
 	$(DO_CC) $(SDLCFLAGS)
 
-$(BUILDDIR)/client/glob.o :       	$(UNIX_DIR)/glob.c
+$(BUILDDIR)/client/unix_glob.o :       	$(UNIX_DIR)/unix_glob.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/in_unix.o :       	$(UNIX_DIR)/in_unix.c
+$(BUILDDIR)/client/unix_input.o :       	$(UNIX_DIR)/unix_input.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/net_udp.o :    	$(UNIX_DIR)/net_udp.c
+$(BUILDDIR)/client/unix_net.o :    	$(UNIX_DIR)/unix_net.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/snd_sdl.o :    	$(UNIX_DIR)/snd_sdl.c
+$(BUILDDIR)/client/sdl_snd.o :    	$(UNIX_DIR)/sdl_snd.c
 	$(DO_CC) $(SDLCFLAGS)
 
 $(BUILDDIR)/client/zip.o :		$(UNIX_DIR)/zip/zip.c
@@ -674,7 +674,7 @@ $(BUILDDIR)/ref_gl/r_warp.o :        	$(REF_GL_DIR)/r_warp.c
 $(BUILDDIR)/ref_gl/gl_sdl.o :      	$(UNIX_DIR)/gl_sdl.c
 	$(DO_GL_SHLIB_CC) $(SDLCFLAGS)
 
-$(BUILDDIR)/ref_gl/qgl_unix.o :      	$(UNIX_DIR)/qgl_unix.c
+$(BUILDDIR)/ref_gl/unix_qgl.o :      	$(UNIX_DIR)/unix_qgl.c
 	$(DO_GL_SHLIB_CC)
 
 #############################################################################
@@ -705,10 +705,10 @@ Q2DED_OBJS = \
 	$(BUILDDIR)/ded/sv_user.o \
 	$(BUILDDIR)/ded/sv_world.o \
 	\
-	$(BUILDDIR)/ded/qsh_unix.o \
-	$(BUILDDIR)/ded/sys_unix.o \
-	$(BUILDDIR)/ded/glob.o \
-	$(BUILDDIR)/ded/net_udp.o \
+	$(BUILDDIR)/ded/unix_qsh.o \
+	$(BUILDDIR)/ded/unix_main.o \
+	$(BUILDDIR)/ded/unix_glob.o \
+	$(BUILDDIR)/ded/unix_net.o \
 	\
 	$(BUILDDIR)/ded/q_shared.o \
 	$(BUILDDIR)/ded/pmove.o \
@@ -785,16 +785,16 @@ $(BUILDDIR)/ded/sv_user.o :    $(SERVER_DIR)/sv_user.c
 $(BUILDDIR)/ded/sv_world.o :   $(SERVER_DIR)/sv_world.c
 	$(DO_DED_CC)
 
-$(BUILDDIR)/ded/qsh_unix.o :   $(UNIX_DIR)/qsh_unix.c
+$(BUILDDIR)/ded/unix_qsh.o :   $(UNIX_DIR)/unix_qsh.c
 	$(DO_DED_CC)
 
-$(BUILDDIR)/ded/sys_unix.o :   $(UNIX_DIR)/sys_unix.c
+$(BUILDDIR)/ded/unix_main.o :   $(UNIX_DIR)/unix_main.c
 	$(DO_DED_CC)
 
-$(BUILDDIR)/ded/glob.o :       $(UNIX_DIR)/glob.c
+$(BUILDDIR)/ded/unix_glob.o :       $(UNIX_DIR)/unix_glob.c
 	$(DO_DED_CC)
 
-$(BUILDDIR)/ded/net_udp.o :    $(UNIX_DIR)/net_udp.c
+$(BUILDDIR)/ded/unix_net.o :    $(UNIX_DIR)/unix_net.c
 	$(DO_DED_CC)
 
 $(BUILDDIR)/ded/cd_null.o :    $(NULL_DIR)/cd_null.c    

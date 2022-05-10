@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// in_unix.c -- unix mouse and joystick code
+// unix_input.c -- unix mouse and joystick code
 
 #include "../client/client.h"
 #include "../ui/ui_local.h"

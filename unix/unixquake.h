@@ -20,23 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__APPLE__)
-#error You shouldn't be including this file on non-Linux platforms
+// unixquake.h: Unix-specific Quake2 header file
+
+#ifndef WINDOWNAME
+#define WINDOWNAME "KMQuake2"
 #endif
-
-#ifndef __GLW_UNIX_H__
-#define __GLW_UNIX_H__
-
-typedef struct
-{
-	SDL_Window *glWindow;
-	SDL_GLContext glContext;
-
-	FILE *log_fp;
-} glwstate_t;
-
-extern glwstate_t glw_state;
-
-extern cvar_t	*in_doubleclicktime;	// reset time for double click
-
-#endif	// __GLW_UNIX_H__
+#ifndef SAVENAME
+#define SAVENAME "quake2"
+#endif

@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// winquake.h: Win32-specific Quake header file
+// winquake.h: Win32-specific Quake2 header file
 
 #pragma warning( disable : 4229 )  // mgraph gets this
 

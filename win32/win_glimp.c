@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /*
-** win_glimp.C
+** win_glimp.c
 **
 ** This file contains ALL Win32 specific stuff having to do with the
 ** OpenGL refresh.  When a port is being made the following functions

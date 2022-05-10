@@ -20,8 +20,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+// unix_glob.c
+
 #include <stdio.h>
-#include "glob.h"
+#include "unix_glob.h"
 
 /* Like glob_match, but match PATTERN against any final segment of TEXT.  */
 static int glob_match_after_star(char *pattern, char *text)

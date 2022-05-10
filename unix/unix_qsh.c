@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+// unix_qsh.c -- unix memory management and file API layer
+
 /* For mremap() - must be before sys/mman.h include! */
 #if defined(__linux__) && !defined(_GNU_SOURCE)
  #define _GNU_SOURCE
@@ -35,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/time.h>
 #include <ctype.h>
 
-#include "glob.h"
+#include "unix_glob.h"
 
 #include "../qcommon/qcommon.h"
 

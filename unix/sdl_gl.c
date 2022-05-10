@@ -1,10 +1,12 @@
+// sdl_gl.c
+
 #include <stdio.h>
 #include "../renderer/r_local.h"
 #include "../client/client.h"
 #include "../ui/ui_local.h"
 
 #include <SDL.h>
-#include "glw_unix.h"
+#include "unix_glw.h"
 
 glwstate_t glw_state;
 

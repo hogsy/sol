@@ -1,5 +1,5 @@
 /*
-	snd_sdl.c
+	sdl_snd.c
 
 	Sound code taken from SDLQuake and modified to work with Quake2
 	Robert Bäuml 2001-12-25

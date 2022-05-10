@@ -20,21 +20,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-/*
-** qgl_unix.c
-**
-** This file implements the operating system binding of GL to QGL function
-** pointers.  When doing a port of Quake2 you must implement the following
-** two functions:
-**
-** QGL_Init() - loads libraries, assigns function pointers, etc.
-** QGL_Shutdown() - unloads libraries, NULLs function pointers
-*/
+
+// unix_qgl.c
+
+// This file implements the operating system binding of GL to QGL function
+// pointers.  When doing a port of Quake2 you must implement the following
+// two functions:
+
+// QGL_Init() - loads libraries, assigns function pointers, etc.
+// QGL_Shutdown() - unloads libraries, NULLs function pointers
+
 #include <float.h>
 #include "../renderer/r_local.h"
+#include "unixquake.h"
 
 #include <SDL.h>
-#include "glw_unix.h"
+#include "unix_glw.h"
 
 
 /*
