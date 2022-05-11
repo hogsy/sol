@@ -1407,9 +1407,12 @@ void CL_AddPacketEntities (frame_t *frame)
 			isclientviewer = true;
 
 			// EF_FLAG1|EF_FLAG2 is a special case for EF_FLAG3...  plus de fromage!
+			// EF_FLAG1|EF_GREENGIB is a special case for EF_FLAG4
 			if (effects & EF_FLAG1) {
 				if (effects & EF_FLAG2)
 					V_AddLight (ent.origin, 255, 0.1, 1.0, 0.1);
+				else if (effects & EF_GREENGIB)
+					V_AddLight (ent.origin, 255, 1.0, 1.0, 0.1);
 				else
 					V_AddLight (ent.origin, 225, 1.0, 0.1, 0.1);
 			}
@@ -1748,19 +1751,25 @@ void CL_AddPacketEntities (frame_t *frame)
 				// EF_FLAG1|EF_FLAG2 is a special case for EF_FLAG3...  More cheese!
 				if (effects & EF_FLAG2)
 				{	//Knightmare- Psychospaz's enhanced particle code
-					CL_FlagTrail (cent->lerp_origin, ent.origin, false, true);
+					CL_FlagTrail (cent->lerp_origin, ent.origin, 0, 255, 0);
 					V_AddLight (ent.origin, 255, 0.1, 1, 0.1);
+				}
+				// EF_FLAG1|EF_GREENGIB is a special case for EF_FLAG4
+				else if (effects & EF_GREENGIB)
+				{
+					CL_FlagTrail (cent->lerp_origin, ent.origin, 255, 255, 0);
+					V_AddLight (ent.origin, 255, 1, 1, 0.1);
 				}
 				else
 				{	// Knightmare- Psychospaz's enhanced particle code
-					CL_FlagTrail (cent->lerp_origin, ent.origin, true, false);
+					CL_FlagTrail (cent->lerp_origin, ent.origin, 255, 0, 0);
 					V_AddLight (ent.origin, 225, 1, 0.1, 0.1);
 				}
 				// end Knightmare
 			}
 			else if (effects & EF_FLAG2)
 			{	// Knightmare- Psychospaz's enhanced particle code
-				CL_FlagTrail (cent->lerp_origin, ent.origin, false, false);
+				CL_FlagTrail (cent->lerp_origin, ent.origin, 0, 0, 255);
 				V_AddLight (ent.origin, 225, 0.1, 0.1, 1);
 			}
 //======

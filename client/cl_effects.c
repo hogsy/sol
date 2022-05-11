@@ -1626,7 +1626,7 @@ void CL_QuadTrail (vec3_t start, vec3_t end)
 CL_FlagTrail
 ===============
 */
-void CL_FlagTrail (vec3_t start, vec3_t end, qboolean isred, qboolean isgreen)
+void CL_FlagTrail (vec3_t start, vec3_t end, int red, int green, int blue)
 {
 	vec3_t		move;
 	vec3_t		vec;
@@ -1649,8 +1649,8 @@ void CL_FlagTrail (vec3_t start, vec3_t end, qboolean isred, qboolean isgreen)
 			move[0] + crand()*16, move[1] + crand()*16, move[2] + crand()*16,
 			crand()*5,	crand()*5, crand()*5,
 			0,		0,		0,
-			(isred)?255:0, (isgreen)?255:0, (!isred && !isgreen)?255:0,
-			0,	0,	0,
+			red,	green,	blue,
+			0,		0,		0,
 			1,		-1.0 / (0.8+frand()*0.2),
 			GL_SRC_ALPHA, GL_ONE,
 			1,			0,			

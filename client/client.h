@@ -1082,7 +1082,7 @@ void CL_BlasterParticles (vec3_t org, vec3_t dir, int count, float size,
 void CL_QuadTrail (vec3_t start, vec3_t end);
 void CL_RailTrail (vec3_t start, vec3_t end, int red, int green, int blue);
 void CL_BubbleTrail (vec3_t start, vec3_t end);
-void CL_FlagTrail (vec3_t start, vec3_t end, qboolean isred, qboolean isgreen);
+void CL_FlagTrail (vec3_t start, vec3_t end, int red, int green, int blue);
 void CL_IonripperTrail (vec3_t start, vec3_t end); // RAFAEL
 // ========
 // PGM
