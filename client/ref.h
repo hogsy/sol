@@ -34,10 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define DIV256 0.00390625
 #define DIV512 0.001953125
 
-#define Vector4Set(v, w, x, y, z)	(v[0]=(w), v[1]=(x), v[2]=(y), v[3]=(z))
-#define Vector2Set(v, x, y)	(v[0]=(x), v[1]=(y))
-#define Vector2Copy(v, w)	(w[0]=v[0], w[1]=v[1])
-
 #define	MAX_DLIGHTS		64 // was 32
 #define	MAX_ENTITIES	2048 // was 128
 #define	MAX_PARTICLES	8192 // was 4096
@@ -102,7 +98,7 @@ typedef struct entity_s
 {
 	struct model_s		*model;			// opaque type outside refresh
 	float				angles[3];
-	//vec3_t				axis[3];		// Rotation vectors
+//	vec3_t				axis[3];		// Rotation vectors
 
 	// most recent data
 	float				origin[3];		// also used as RF_BEAM's "from"
@@ -228,7 +224,8 @@ typedef struct
 	int			red;
 	int			green;
 	int			blue;
-} foginfo_t;	// end Knightmare
+} foginfo_t;
+// end Knightmare
 
 typedef struct
 {
@@ -243,6 +240,7 @@ typedef struct
 	float		fov_x, fov_y;
 	float		vieworg[3];
 	float		viewangles[3];
+//	vec3_t		viewaxis[3];		// From Q2E
 	float		blend[4];			// rgba 0-1 full screen blend
 	float		time;				// time is uesed to auto animate
 	int			rdflags;			// RDF_UNDERWATER, etc

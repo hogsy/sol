@@ -471,9 +471,9 @@ void SP_monster_dog (edict_t *self)
 	VectorSet (self->maxs, 16, 16, 8);
 
 	if (!self->health)
-		self->health = 50;
+		self->health = 30;
 	if (!self->gib_health)
-		self->gib_health = -100;
+		self->gib_health = -40;
 	if (!self->mass)
 		self->mass = 80;
 
