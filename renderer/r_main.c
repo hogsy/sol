@@ -995,7 +995,7 @@ void R_Register (void)
 	Cvar_SetDescription ("r_ignorehwgamma", "Disables hardware gamma control when set to 1.");
 	r_displayrefresh = Cvar_Get ("r_displayrefresh", "0", CVAR_ARCHIVE); // refresh rate control
 	Cvar_SetDescription ("r_displayrefresh", "Sets display refresh rate.");
-	AssertCvarRange (r_displayrefresh, 0, 240, true);
+	AssertCvarRange (r_displayrefresh, 0, 500, true);
 	r_speeds = Cvar_Get ("r_speeds", "0", 0);
 	Cvar_SetDescription ("r_speeds", "Enables output of rendering surface/polygon total for surfaces, entities, and particles.");
 

@@ -201,10 +201,13 @@ void Menu_Video_Init (void)
 		"160Hz",
 		"165Hz",
 		"180Hz",
+		"200Hz",
 		"240Hz",
+		"360Hz",
+		"500Hz",
 		0
 	};
-	static const char *refreshrate_values[] = 
+	static const char *refreshrate_values[] =
 	{
 		"0",
 		"60",
@@ -220,7 +223,10 @@ void Menu_Video_Init (void)
 		"160",
 		"165",
 		"180",
+		"200",
 		"240",
+		"360",
+		"500",
 		0
 	};
 	static const char *texfilter_names[] =
