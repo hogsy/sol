@@ -570,8 +570,7 @@ CL_ParseLightning
 // Psychspaz's enhanced particles
 int CL_ParseLightning (void)
 {
-
-	vec3_t	start, end; // move,vec
+	vec3_t	start, end;		// move,vec
 	int		srcEnt, dstEnt; // len, dec
 	
 	srcEnt = MSG_ReadShort (&net_message);
@@ -580,7 +579,49 @@ int CL_ParseLightning (void)
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
 
-	CL_LightningBeam (start, end, srcEnt, dstEnt, 5);
+	if (cl_old_explosions->integer)
+	{
+		beam_t	*b;
+		int		i;
+
+		// override any beam with the same source AND destination entities
+		for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
+		{
+			if (b->entity == srcEnt && b->dest_entity == dstEnt)
+			{
+			//	Com_Printf("%d: OVERRIDE  %d -> %d\n", cl.time, srcEnt, destEnt);
+				b->entity = srcEnt;
+				b->dest_entity = dstEnt;
+				b->model = clMedia.mod_lightning;
+				b->endtime = cl.time + 200;
+				VectorCopy (start, b->start);
+				VectorCopy (end, b->end);
+				VectorClear (b->offset);
+				return srcEnt;
+			}
+		}
+
+		// find a free beam
+		for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
+		{
+			if (!b->model || b->endtime < cl.time)
+			{
+			//	Com_Printf("%d: NORMAL  %d -> %d\n", cl.time, srcEnt, destEnt);
+				b->entity = srcEnt;
+				b->dest_entity = dstEnt;
+				b->model = clMedia.mod_lightning;
+				b->endtime = cl.time + 200;
+				VectorCopy (start, b->start);
+				VectorCopy (end, b->end);
+				VectorClear (b->offset);
+				return srcEnt;
+			}
+		}
+		Com_Printf ("beam list overflow!\n");	
+	}
+	else {
+		CL_LightningBeam (start, end, srcEnt, dstEnt, 5);
+	}
 		
 	return srcEnt;
 }

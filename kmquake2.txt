@@ -90,7 +90,7 @@ Key Features
 - Supports server-side control of looped sound attenuation
 - Includes default Lazarus DLL with ACE bots, CTF and 3Team CTF support
 - Uses modified Quake2maX particle effects
-- Improved menus and console (uses some code from Quake2maX)
+- Improved menus and console
 - Streamlined, more memory-efficent adaptation of decal system from Quake2maX
 - TGA, PNG, and JPG texture, skin, and pic autoloading
 - Autoscaling of hi-res replacement textures
