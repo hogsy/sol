@@ -808,11 +808,27 @@ char *COM_SkipPath (char *pathname)
 COM_StripExtension
 ============
 */
-void COM_StripExtension (char *in, char *out)
+void COM_StripExtension (char *in, char *out, size_t outSize)
 {
-	while (*in && *in != '.')
+/*	while (*in && *in != '.')
 		*out++ = *in++;
 	*out = 0;
+*/
+	char	*s, *last;
+
+	s = last = in + strlen(in);
+	while (*s != '/' && *s != '\\' && s != in)
+	{
+		if (*s == '.'){
+			last = s;
+			break;
+		}
+		s--;
+	}
+
+	Com_strcpy(out, outSize, in);
+	if (last-in < outSize)
+		out[last-in] = 0;
 }
 
 /*
@@ -841,7 +857,7 @@ char *COM_FileExtension (char *in)
 COM_FileBase
 ============
 */
-void COM_FileBase (char *in, char *out)
+void COM_FileBase (char *in, char *out, size_t outSize)
 {
 	char *s, *s2;
 	
@@ -858,8 +874,11 @@ void COM_FileBase (char *in, char *out)
 	else
 	{
 		s--;
-		strncpy (out,s2+1, s-s2);
-		out[s-s2] = 0;
+	//	strncpy (out,s2+1, s-s2);
+	//	out[s-s2] = 0;
+		Com_strcpy (out, outSize, s2+1);
+		if (s-s2 < outSize)
+			out[s-s2] = 0;
 	}
 }
 
@@ -870,7 +889,7 @@ COM_FilePath
 Returns the path up to, but not including the last /
 ============
 */
-void COM_FilePath (char *in, char *out)
+void COM_FilePath (char *in, char *out, size_t outSize)
 {
 	char *s;
 	
@@ -879,8 +898,11 @@ void COM_FilePath (char *in, char *out)
 	while (s != in && *s != '/')
 		s--;
 
-	strncpy (out,in, s-in);
-	out[s-in] = 0;
+//	strncpy (out, in, s-in);
+//	out[s-in] = 0;
+	Com_strcpy (out, outSize, in);
+	if (s-in < outSize)
+		out[s-in] = 0;
 }
 
 
@@ -1516,7 +1538,9 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 
 	Com_sprintf (newi, sizeof(newi), "\\%s\\%s", key, value);
 
-	if (strlen(newi) + strlen(s) > maxsize)
+	// Knightmare- according to Maraakate, this can overflow
+//	if (strlen(newi) + strlen(s) > maxsize)
+	if (strlen(newi) + strlen(s) >= maxsize)
 	{
 		Com_Printf ("Info string length exceeded\n");
 		return;
