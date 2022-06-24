@@ -254,9 +254,9 @@ int	UI_GetIndexForStringValue (const char **item_values, char *value)
 UI_MouseOverAlpha
 ==========================
 */
-int UI_MouseOverAlpha (menuCommon_s *m)
+int UI_MouseOverAlpha (menuCommon_s *menu)
 {
-	if (ui_mousecursor.menuitem == m)
+	if (ui_mousecursor.menuitem == menu)
 	{
 		int alpha;
 
@@ -354,14 +354,14 @@ void UI_FindKeysForCommand (char *command, int *twokeys)
 UI_ItemAtMenuCursor
 =================
 */
-void *UI_ItemAtMenuCursor (menuFramework_s *m)
+void *UI_ItemAtMenuCursor (menuFramework_s *menu)
 {
-	if (!m)	return NULL;
+	if (!menu)	return NULL;
 
-	if ( (m->cursor < 0) || (m->cursor >= m->nitems) )
+	if ( (menu->cursor < 0) || (menu->cursor >= menu->nitems) )
 		return NULL;
 
-	return m->items[m->cursor];
+	return menu->items[menu->cursor];
 }
 
 
@@ -370,11 +370,11 @@ void *UI_ItemAtMenuCursor (menuFramework_s *m)
 UI_SetMenuStatusBar
 =================
 */
-void UI_SetMenuStatusBar (menuFramework_s *m, const char *string)
+void UI_SetMenuStatusBar (menuFramework_s *menu, const char *string)
 {
-	if (!m)	return;
+	if (!menu)	return;
 
-	m->statusbar = string;
+	menu->statusbar = string;
 }
 
 
@@ -383,13 +383,13 @@ void UI_SetMenuStatusBar (menuFramework_s *m, const char *string)
 UI_SetMenuCurrentItemStatusBar
 =================
 */
-void UI_SetMenuCurrentItemStatusBar (menuFramework_s *m, const char *string)
+void UI_SetMenuCurrentItemStatusBar (menuFramework_s *menu, const char *string)
 {	
 	menuCommon_s *curItem;
 
-	if (!m)	return;
+	if (!menu)	return;
 
-	if ( (curItem = (menuCommon_s *)UI_ItemAtMenuCursor(m)) != NULL )
+	if ( (curItem = (menuCommon_s *)UI_ItemAtMenuCursor(menu)) != NULL )
 		curItem->statusbar = string;
 }
 
@@ -401,7 +401,9 @@ UI_TallyMenuSlots
 */
 int UI_TallyMenuSlots (menuFramework_s *menu)
 {
-	int	i, total = 0;
+	int		i, total = 0;
+
+	if (!menu)	return 0;
 
 	for (i = 0; i < menu->nitems; i++)
 		total++;

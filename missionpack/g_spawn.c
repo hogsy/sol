@@ -2305,9 +2305,9 @@ void SP_worldspawn (edict_t *ent)
 	if (ent->fogclip)
 	{
 		if ( gl_driver && !Q_stricmp(gl_driver->string, "3dfxgl") )
-			gi.cvar_forceset("gl_clear", "0");
+			gi.cvar_forceset (GL_CLEAR_CVAR, "0");
 		else
-			gi.cvar_forceset("gl_clear", "1");
+			gi.cvar_forceset (GL_CLEAR_CVAR, "1");
 	}
 
 	// FMOD 3D sound attenuation:

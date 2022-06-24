@@ -93,6 +93,8 @@ Changes as of v0.20 update 8:
 		
 - Renamed cvars hud_scale, hud_alpha, and hud_squeezedigits to scr_hudsize, scr_hudalpha, and scr_hudsqueezedigits.
 
+- Renamed cvar gl_clear to r_clear.
+
 - Can now stream Ogg Vorbis soundtracks from inside .pak files.  Streaming from inside .pk3s was previously supported.
 
 - Added dedicated server option to start server menu.
@@ -123,7 +125,7 @@ Changes as of v0.20 update 8:
 - Added SGIS mipmaps menu option and cvar r_sgis_generatemipmap, for toggling SGIS mipmap generation.  Default is 1,
 	set to 0 and use vid_restart to disable.
 	
-- Added changeable gl_clear color controlled by cvars r_clearcolor_r, r_clearcolor_g, and r_clearcolor_b.
+- Added changeable r_clear color controlled by cvars r_clearcolor_r, r_clearcolor_g, and r_clearcolor_b.
 	Values are normalized (0-1).
 	
 - Added doubled entity lighting to mimic Q2's original entity lighting.  Set the cvar r_entity_doublelight to 1 to enable this.

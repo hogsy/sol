@@ -804,7 +804,7 @@ extern	cvar_t	*jump_kick;
 extern	cvar_t	*lazarus_cd_loop;
 extern	cvar_t	*lazarus_cl_gun;
 extern	cvar_t	*lazarus_crosshair;
-extern	cvar_t	*lazarus_gl_clear;
+extern	cvar_t	*lazarus_r_clear;
 extern	cvar_t	*lazarus_joyp;
 extern	cvar_t	*lazarus_joyy;
 extern	cvar_t	*lazarus_pitch;

@@ -109,8 +109,9 @@ void GL_UpdateAnisoMode (void)
 		{
 			GL_Bind (glt->texnum);
 			// Set anisotropic filter if supported and enabled
-			if (glConfig.anisotropic && r_anisotropic->value)
+			if (glConfig.anisotropic && r_anisotropic->value) {
 				qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_anisotropic->value);
+			}
 		}
 	}
 }
@@ -262,7 +263,7 @@ void R_ImageList_f (void)
 			VID_Printf (PRINT_ALL, "C");
 			break;
 		case it_part:
-			VID_Printf (PRINT_ALL, "P");
+			VID_Printf (PRINT_ALL, "R");
 			break;
 		default:
 			VID_Printf (PRINT_ALL, " ");
@@ -378,8 +379,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 	//
 	len = FS_LoadFile (filename, (void **)&raw);
 	if (!raw)
-	{
-		// Knightmare- skip this unless developer >= 2 because it spams the console
+	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
 			VID_Printf (PRINT_DEVELOPER, "Bad pcx file %s\n", filename);
 		return;
@@ -468,24 +468,24 @@ TARGA LOADING
 */
 
 // Definitions for image types
-#define TGA_Null      0   // no image data
-#define TGA_Map         1   // Uncompressed, color-mapped images
-#define TGA_RGB         2   // Uncompressed, RGB images
-#define TGA_Mono      3   // Uncompressed, black and white images
-#define TGA_RLEMap      9   // Runlength encoded color-mapped images
-#define TGA_RLERGB      10   // Runlength encoded RGB images
-#define TGA_RLEMono      11   // Compressed, black and white images
-#define TGA_CompMap      32   // Compressed color-mapped data, using Huffman, Delta, and runlength encoding
-#define TGA_CompMap4   33   // Compressed color-mapped data, using Huffman, Delta, and runlength encoding. 4-pass quadtree-type process
+#define TGA_Null		0   // no image data
+#define TGA_Map			1   // Uncompressed, color-mapped images
+#define TGA_RGB			2   // Uncompressed, RGB images
+#define TGA_Mono		3   // Uncompressed, black and white images
+#define TGA_RLEMap		9   // Runlength encoded color-mapped images
+#define TGA_RLERGB		10   // Runlength encoded RGB images
+#define TGA_RLEMono		11   // Compressed, black and white images
+#define TGA_CompMap		32   // Compressed color-mapped data, using Huffman, Delta, and runlength encoding
+#define TGA_CompMap4	33   // Compressed color-mapped data, using Huffman, Delta, and runlength encoding. 4-pass quadtree-type process
 // Definitions for interleave flag
-#define TGA_IL_None      0   // non-interleaved
-#define TGA_IL_Two      1   // two-way (even/odd) interleaving
-#define TGA_IL_Four      2   // four way interleaving
-#define TGA_IL_Reserved   3   // reserved
+#define TGA_IL_None		0   // non-interleaved
+#define TGA_IL_Two		1   // two-way (even/odd) interleaving
+#define TGA_IL_Four		2   // four way interleaving
+#define TGA_IL_Reserved	3   // reserved
 // Definitions for origin flag
-#define TGA_O_UPPER      0   // Origin in lower left-hand corner
-#define TGA_O_LOWER      1   // Origin in upper left-hand corner
-#define MAXCOLORS 16384
+#define TGA_O_UPPER		0   // Origin in lower left-hand corner
+#define TGA_O_LOWER		1   // Origin in upper left-hand corner
+#define MAXCOLORS		16384
 
 typedef struct _TargaHeader {
 	unsigned char 	id_length, colormap_type, image_type;
@@ -505,168 +505,186 @@ NiceAss: LoadTGA() from Q2Ice, it supports more formats
 */
 void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 {
-   int         w, h, x, y, i, temp1, temp2;
-   int         realrow, truerow, baserow, size, interleave, origin;
-   int         pixel_size, map_idx, mapped, rlencoded, RLE_count, RLE_flag;
-   TargaHeader   header;
-   byte      tmp[2], r, g, b, a, j, k, l;
-   byte      *dst, *ColorMap, *data, *pdata;
+	int				w, h, x, y, i, temp1, temp2;
+	int				realrow, truerow, baserow, interleave, origin;
+	int				pixel_size, map_idx, RLE_count, RLE_flag;
+	size_t			picSize;
+	qboolean		isColorMapped, RL_encoded; 
+	TargaHeader		header;
+	byte			tmp[2], r, g, b, a, j, k, l;
+	byte			*data, *pdata, *dst, *ColorMap;
 
 	if ( !filename || (filename[0] == '\0') )
 		return;
 
-   // load file
-   FS_LoadFile( filename, &data );
+	// load file
+	FS_LoadFile (filename, &data);
+	if (!data)
+	{	// Knightmare- skip this unless developer >= 2 because it spams the console
+		if (developer->integer > 1)
+			VID_Printf (PRINT_DEVELOPER, "R_LoadTGA (%s): Bad tga file\n", filename);
+		return;
+	}
 
-   if ( !data )
-      return;
+	pdata = data;
 
-   pdata = data;
+	header.id_length = *pdata++;
+	header.colormap_type = *pdata++;
+	header.image_type = *pdata++;
 
-   header.id_length = *pdata++;
-   header.colormap_type = *pdata++;
-   header.image_type = *pdata++;
-   
-   tmp[0] = pdata[0];
-   tmp[1] = pdata[1];
-   header.colormap_index = LittleShort( *((short *)tmp) );
-   pdata+=2;
-   tmp[0] = pdata[0];
-   tmp[1] = pdata[1];
-   header.colormap_length = LittleShort( *((short *)tmp) );
-   pdata+=2;
-   header.colormap_size = *pdata++;
-   header.x_origin = LittleShort( *((short *)pdata) );
-   pdata+=2;
-   header.y_origin = LittleShort( *((short *)pdata) );
-   pdata+=2;
-   header.width = LittleShort( *((short *)pdata) );
-   pdata+=2;
-   header.height = LittleShort( *((short *)pdata) );
-   pdata+=2;
-   header.pixel_size = *pdata++;
-   header.attributes = *pdata++;
+	tmp[0] = pdata[0];
+	tmp[1] = pdata[1];
+	header.colormap_index = LittleShort( *((short *)tmp) );
+	pdata+=2;
+	tmp[0] = pdata[0];
+	tmp[1] = pdata[1];
+	header.colormap_length = LittleShort( *((short *)tmp) );
+	pdata+=2;
+	header.colormap_size = *pdata++;
+	header.x_origin = LittleShort( *((short *)pdata) );
+	pdata+=2;
+	header.y_origin = LittleShort( *((short *)pdata) );
+	pdata+=2;
+	header.width = LittleShort( *((short *)pdata) );
+	pdata+=2;
+	header.height = LittleShort( *((short *)pdata) );
+	pdata+=2;
+	header.pixel_size = *pdata++;
+	header.attributes = *pdata++;
 
-   if( header.id_length )
-      pdata += header.id_length;
+	if ( header.id_length )
+		pdata += header.id_length;
 
-   // validate TGA type
-   switch( header.image_type ) {
-      case TGA_Map:
-      case TGA_RGB:
-      case TGA_Mono:
-      case TGA_RLEMap:
-      case TGA_RLERGB:
-      case TGA_RLEMono:
-         break;
-      default:
-         VID_Error ( ERR_DROP, "R_LoadTGA: Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n" );
-         return;
-   }
+	// validate TGA type
+	switch ( header.image_type )
+	{
+	case TGA_Map:
+	case TGA_RGB:
+	case TGA_Mono:
+	case TGA_RLEMap:
+	case TGA_RLERGB:
+	case TGA_RLEMono:
+		break;
+	default:
+		FS_FreeFile (data);
+	//	VID_Error ( ERR_DROP, "R_LoadTGA: Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n" );
+		VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n", filename);
+		return;
+	}
 
-   // validate color depth
-   switch( header.pixel_size ) {
-      case 8:
-      case 15:
-      case 16:
-      case 24:
-      case 32:
-         break;
-      default:
-         VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n" );
-         return;
-   }
+	// validate color depth
+	switch ( header.pixel_size )
+	{
+	case 8:
+	case 15:
+	case 16:
+	case 24:
+	case 32:
+		break;
+	default:
+		FS_FreeFile (data);
+	//	VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n" );
+		VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n", filename);
+		return;
+	}
 
    r = g = b = a = l = 0;
 
    // if required, read the color map information
    ColorMap = NULL;
-   mapped = ( header.image_type == TGA_Map || header.image_type == TGA_RLEMap || header.image_type == TGA_CompMap || header.image_type == TGA_CompMap4 ) && header.colormap_type == 1;
-   if( mapped ) {
-      // validate colormap size
-      switch( header.colormap_size ) {
-         case 8:
-         case 16:
-         case 32:
-         case 24:
-            break;
-         default:
-            VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 16, 24 and 32 bit colormaps supported\n" );
-            return;
-      }
+   isColorMapped = ( (header.image_type == TGA_Map) || (header.image_type == TGA_RLEMap) /*|| (header.image_type == TGA_CompMap) || (header.image_type == TGA_CompMap4)*/ )
+					&& (header.colormap_type == 1);
+   if ( isColorMapped )
+   {
+		// validate colormap size
+		switch( header.colormap_size )
+		{
+		case 8:
+		case 16:
+		case 24:
+		case 32:
+			break;
+		default:
+			FS_FreeFile (data);
+		//	VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 16, 24 and 32 bit colormaps supported\n" );
+			VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only 8, 16, 24 and 32 bit colormaps supported\n", filename);
+			return;
+		}
 
-      temp1 = header.colormap_index;
-      temp2 = header.colormap_length;
-      if( (temp1 + temp2 + 1) >= MAXCOLORS ) {
-         FS_FreeFile( data );
-         return;
-      }
-      ColorMap = (byte *)malloc( MAXCOLORS * 4 );
-      map_idx = 0;
-      for( i = temp1; i < temp1 + temp2; ++i, map_idx += 4 ) {
-         // read appropriate number of bytes, break into rgb & put in map
-         switch( header.colormap_size ) {
-            case 8:
-               r = g = b = *pdata++;
-               a = 255;
-               break;
-            case 15:
-               j = *pdata++;
-               k = *pdata++;
-               l = ((unsigned int) k << 8) + j;
-               r = (byte) ( ((k & 0x7C) >> 2) << 3 );
-               g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
-               b = (byte) ( (j & 0x1F) << 3 );
-               a = 255;
-               break;
-            case 16:
-               j = *pdata++;
-               k = *pdata++;
-               l = ((unsigned int) k << 8) + j;
-               r = (byte) ( ((k & 0x7C) >> 2) << 3 );
-               g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
-               b = (byte) ( (j & 0x1F) << 3 );
-               a = (k & 0x80) ? 255 : 0;
-               break;
-            case 24:
-               b = *pdata++;
-               g = *pdata++;
-               r = *pdata++;
-               a = 255;
-               l = 0;
-               break;
-            case 32:
-               b = *pdata++;
-               g = *pdata++;
-               r = *pdata++;
-               a = *pdata++;
-               l = 0;
-               break;
-         }
-         ColorMap[map_idx + 0] = r;
-         ColorMap[map_idx + 1] = g;
-         ColorMap[map_idx + 2] = b;
-         ColorMap[map_idx + 3] = a;
-      }
-   }
+		temp1 = header.colormap_index;
+		temp2 = header.colormap_length;
+		if ( (temp1 + temp2 + 1) >= MAXCOLORS ) {
+			FS_FreeFile (data);
+			VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Color map exceeds %i colors\n", filename, MAXCOLORS);
+			return;
+		}
+		ColorMap = (byte *)malloc(MAXCOLORS * 4);
+		map_idx = 0;
+		for ( i = temp1; i < temp1 + temp2; ++i, map_idx += 4 )
+		{
+			// read appropriate number of bytes, break into rgb & put in map
+			switch ( header.colormap_size )
+			{
+			case 8:
+				r = g = b = *pdata++;
+				a = 255;
+				break;
+				case 15:
+				j = *pdata++;
+				k = *pdata++;
+				l = ((unsigned int) k << 8) + j;
+				r = (byte) ( ((k & 0x7C) >> 2) << 3 );
+				g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
+				b = (byte) ( (j & 0x1F) << 3 );
+				a = 255;
+				break;
+			case 16:
+				j = *pdata++;
+				k = *pdata++;
+				l = ((unsigned int) k << 8) + j;
+				r = (byte) ( ((k & 0x7C) >> 2) << 3 );
+				g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
+				b = (byte) ( (j & 0x1F) << 3 );
+				a = (k & 0x80) ? 255 : 0;
+				break;
+			case 24:
+				b = *pdata++;
+				g = *pdata++;
+				r = *pdata++;
+				a = 255;
+				l = 0;
+				break;
+			case 32:
+				b = *pdata++;
+				g = *pdata++;
+				r = *pdata++;
+				a = *pdata++;
+				l = 0;
+				break;
+			}
+			ColorMap[map_idx + 0] = r;
+			ColorMap[map_idx + 1] = g;
+			ColorMap[map_idx + 2] = b;
+			ColorMap[map_idx + 3] = a;
+		}
+	}
 
    // check run-length encoding
-   rlencoded = header.image_type == TGA_RLEMap || header.image_type == TGA_RLERGB || header.image_type == TGA_RLEMono;
+   RL_encoded = (header.image_type == TGA_RLEMap) || (header.image_type == TGA_RLERGB) || (header.image_type == TGA_RLEMono);
    RLE_count = 0;
    RLE_flag = 0;
 
    w = header.width;
    h = header.height;
 
-   if( width )
-      *width = w;
-   if( height )
-      *height = h;
+   if ( width )
+	   *width = w;
+   if ( height )
+	   *height = h;
 
-   size = w * h * 4;
-   *pic = (byte *)malloc( size );
-
-   memset( *pic, 0, size );
+   picSize = w * h * 4;
+   *pic = (byte *)malloc(picSize);
+   memset (*pic, 0, picSize);
 
    // read the Targa file body and convert to portable format
    pixel_size = header.pixel_size;
@@ -674,114 +692,126 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
    interleave = (header.attributes & 0xC0) >> 6;
    truerow = 0;
    baserow = 0;
-   for( y = 0; y < h; y++ ) {
-      realrow = truerow;
-      if( origin == TGA_O_UPPER )
-         realrow = h - realrow - 1;
+   for (y = 0; y < h; y++)
+   {
+	   realrow = truerow;
+	   if (origin == TGA_O_UPPER)
+		   realrow = h - realrow - 1;
 
-      dst = *pic + realrow * w * 4;
+	   dst = *pic + realrow * w * 4;
 
-      for( x = 0; x < w; x++ ) {
-         // check if run length encoded
-         if( rlencoded ) {
-            if( !RLE_count ) {
-               // have to restart run
-               i = *pdata++;
-               RLE_flag = (i & 0x80);
-               if( !RLE_flag ) {
-                  // stream of unencoded pixels
-                  RLE_count = i + 1;
-               } else {
-                  // single pixel replicated
-                  RLE_count = i - 127;
-               }
-               // decrement count & get pixel
-               --RLE_count;
-            } else {
-               // have already read count & (at least) first pixel
-               --RLE_count;
-               if( RLE_flag )
-                  // replicated pixels
-                  goto PixEncode;
-            }
-         }
+	   for ( x = 0; x < w; x++ )
+	   {
+		   // check if run length encoded
+		   if ( RL_encoded )
+		   {
+			   if ( !RLE_count )
+			   {
+				   // have to restart run
+				   i = *pdata++;
+				   RLE_flag = (i & 0x80);
+				   if ( !RLE_flag ) {
+					   // stream of unencoded pixels
+					   RLE_count = i + 1;
+				   }
+				   else {
+					   // single pixel replicated
+					   RLE_count = i - 127;
+				   }
+				   // decrement count & get pixel
+				   --RLE_count;
+			   }
+			   else {
+				   // have already read count & (at least) first pixel
+				   --RLE_count;
+				   if( RLE_flag )
+					   // replicated pixels
+					   goto PixEncode;
+			   }
+		   }
 
-         // read appropriate number of bytes, break into RGB
-         switch( pixel_size ) {
-            case 8:
-               r = g = b = l = *pdata++;
-               a = 255;
-               break;
-            case 15:
-               j = *pdata++;
-               k = *pdata++;
-               l = ((unsigned int) k << 8) + j;
-               r = (byte) ( ((k & 0x7C) >> 2) << 3 );
-               g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
-               b = (byte) ( (j & 0x1F) << 3 );
-               a = 255;
-               break;
-            case 16:
-               j = *pdata++;
-               k = *pdata++;
-               l = ((unsigned int) k << 8) + j;
-               r = (byte) ( ((k & 0x7C) >> 2) << 3 );
-               g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
-               b = (byte) ( (j & 0x1F) << 3 );
-               a = 255;
-               break;
-            case 24:
-               b = *pdata++;
-               g = *pdata++;
-               r = *pdata++;
-               a = 255;
-               l = 0;
-               break;
-            case 32:
-               b = *pdata++;
-               g = *pdata++;
-               r = *pdata++;
-               a = *pdata++;
-               l = 0;
-               break;
-            default:
-               VID_Error( ERR_DROP, "Illegal pixel_size '%d' in file '%s'\n", filename );
-               return;
-         }
+		 // read appropriate number of bytes, break into RGB
+		 switch( pixel_size ) {
+			case 8:
+				r = g = b = l = *pdata++;
+				a = 255;
+				break;
+			case 15:
+				j = *pdata++;
+				k = *pdata++;
+				l = ((unsigned int) k << 8) + j;
+				r = (byte) ( ((k & 0x7C) >> 2) << 3 );
+				g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
+				b = (byte) ( (j & 0x1F) << 3 );
+				a = 255;
+				break;
+			case 16:
+				j = *pdata++;
+				k = *pdata++;
+				l = ((unsigned int) k << 8) + j;
+				r = (byte) ( ((k & 0x7C) >> 2) << 3 );
+				g = (byte) ( (((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3 );
+				b = (byte) ( (j & 0x1F) << 3 );
+				a = 255;
+				break;
+			case 24:
+				b = *pdata++;
+				g = *pdata++;
+				r = *pdata++;
+				a = 255;
+				l = 0;
+				break;
+			case 32:
+				b = *pdata++;
+				g = *pdata++;
+				r = *pdata++;
+				a = *pdata++;
+				l = 0;
+				break;
+			default:
+				if (isColorMapped)
+					free (ColorMap);
+				free (pic);
+				*pic = NULL;
+				FS_FreeFile (data);
+			//	VID_Error ( ERR_DROP, "Illegal pixel_size '%d' in file '%s'\n", pixel_size, filename );
+				VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Illegal pixel_size '%d'\n", filename, pixel_size );
+				return;
+		 }
 
 PixEncode:
-         if ( mapped )
-         {
-            map_idx = l * 4;
-            *dst++ = ColorMap[map_idx + 0];
-            *dst++ = ColorMap[map_idx + 1];
-            *dst++ = ColorMap[map_idx + 2];
-            *dst++ = ColorMap[map_idx + 3];
-         }
-         else
-         {
-            *dst++ = r;
-            *dst++ = g;
-            *dst++ = b;
-            *dst++ = a;
-         }
-      }
+		 if ( isColorMapped )
+		 {
+			 map_idx = l * 4;
+			 *dst++ = ColorMap[map_idx + 0];
+			 *dst++ = ColorMap[map_idx + 1];
+			 *dst++ = ColorMap[map_idx + 2];
+			 *dst++ = ColorMap[map_idx + 3];
+		 }
+		 else
+		 {
+			 *dst++ = r;
+			 *dst++ = g;
+			 *dst++ = b;
+			 *dst++ = a;
+		 }
+	  }
 
-      if (interleave == TGA_IL_Four)
-         truerow += 4;
-      else if (interleave == TGA_IL_Two)
-         truerow += 2;
-      else
-         truerow++;
+	  if (interleave == TGA_IL_Four)
+		  truerow += 4;
+	  else if (interleave == TGA_IL_Two)
+		  truerow += 2;
+	  else
+		  truerow++;
 
-      if (truerow >= h)
-         truerow = ++baserow;
-   }
+	  if (truerow >= h)
+		  truerow = ++baserow;
+	}
 
-   if (mapped)
-      free (ColorMap);
+	if (isColorMapped)
+		free (ColorMap);
    
-   FS_FreeFile (data);
+	FS_FreeFile (data);
 }
 
 #else
@@ -810,8 +840,9 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 	//
 	length = FS_LoadFile (name, (void **)&buffer);
 	if (!buffer)
-	{	// Knightmare- removed this because it spams the console
-		//VID_Printf (PRINT_DEVELOPER, "Bad tga file %s\n", name);
+	{	// Knightmare- skip this unless developer >= 2 because it spams the console
+		if (developer->integer > 1)
+			VID_Printf (PRINT_DEVELOPER, "Bad tga file %s\n", name);
 		return;
 	}
 
@@ -1035,33 +1066,34 @@ typedef struct png_handle_s
 	double	lastModified;
 	int		transparent;
 } png_handle_t;
-png_handle_t	*r_png_handle = 0;
+
+png_handle_t	*r_png_handle = NULL;
 
 void R_InitializePNGData (void) 
 {
-	size_t /*long*/	*cvaluep; //ub
+	size_t /*long*/*cvaluep; //ub
 	int /*long*/	y;
 
 	// Initialize Data and RowPtrs
 	if (r_png_handle->data) 
 	{
 		free (r_png_handle->data);
-		r_png_handle->data = 0;
+		r_png_handle->data = NULL;
 	}
 	if (r_png_handle->fRowPtrs) 
 	{
 		free (r_png_handle->fRowPtrs);
-		r_png_handle->fRowPtrs = 0;
+		r_png_handle->fRowPtrs = NULL;
 	}
 	r_png_handle->data = malloc(r_png_handle->height * r_png_handle->fRowBytes ); // DL Added 30/5/2000
 	r_png_handle->fRowPtrs = malloc(sizeof(void*) * r_png_handle->height);
 
-	if ((r_png_handle->data)&&(r_png_handle->fRowPtrs)) 
+	if ( (r_png_handle->data) && (r_png_handle->fRowPtrs) ) 
 	{
 		cvaluep = (size_t /*long*/*)r_png_handle->fRowPtrs;    
-		for (y=0; y<r_png_handle->height; y++)
+		for (y=0; y < r_png_handle->height; y++)
 		{
-			cvaluep[y] = (size_t /*long*/)r_png_handle->data + ( y * (size_t /*long*/)r_png_handle->fRowBytes ); //DL Added 08/07/2000      
+			cvaluep[y] = (size_t /*long*/)r_png_handle->data + ( y * (size_t /*long*/)r_png_handle->fRowBytes ); // DL Added 08/07/2000      
 		}
 	}
 }
@@ -1071,8 +1103,8 @@ void R_CreatePNG (void)
 	if (r_png_handle)
 		return;
 	r_png_handle = malloc(sizeof(png_handle_t));
-	r_png_handle->data    = 0;
-	r_png_handle->fRowPtrs = 0;
+	r_png_handle->data    = NULL;
+	r_png_handle->fRowPtrs = NULL;
 	r_png_handle->height  = 0;
 	r_png_handle->width   = 0;
 	r_png_handle->colorType = PNG_COLOR_TYPE_RGBA;	// was PNG_COLOR_TYPE_RGB
@@ -1093,8 +1125,8 @@ void R_DestroyPNG (qboolean keepData)
 	r_png_handle = NULL;
 }
 
-void PNGAPI R_ReadPNGData (png_structp png, png_bytep data, png_size_t length) 
-{	// called by pnglib
+void PNGAPI R_ReadPNGData (png_structp png, png_bytep data, png_size_t length)	// called by libpng
+{
 	int	i;
 
 	for (i=0; i<length; i++) 
@@ -1129,17 +1161,22 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		return;
 	}
 
-	if ( png_sig_cmp(raw,0,4) ) 
-		return;  
-
-	png = png_create_read_struct (PNG_LIBPNG_VER_STRING,0,0,0);
-	if (!png) 
+	if ( png_sig_cmp(raw, 0, 4) ) {
+		FS_FreeFile ((void *)raw);
 		return;
+	}
+
+	png = png_create_read_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+	if (!png) { 
+		FS_FreeFile ((void *)raw);
+		return;
+	}
 
 	pnginfo = png_create_info_struct (png);
 
 	if (!pnginfo) {
-		png_destroy_read_struct (&png,&pnginfo,0);
+		png_destroy_read_struct (&png, &pnginfo, 0);
+		FS_FreeFile ((void *)raw);
 		return;
 	}
 
@@ -1148,7 +1185,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	R_CreatePNG (); // creates the r_png_handle struct
 
 	r_png_handle->tmpBuf = raw; //buf = whole file content
-	r_png_handle->tmpi=0; 
+	r_png_handle->tmpi = 0; 
 	png_set_read_fn (png, ioBuffer, R_ReadPNGData);
 	png_read_info (png, pnginfo);
 
@@ -1157,8 +1194,8 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	// ...removed bgColor code here...
 
 	if (r_png_handle->colorType == PNG_COLOR_TYPE_PALETTE)  
-		png_set_palette_to_rgb(png);
-	if (r_png_handle->colorType == PNG_COLOR_TYPE_GRAY && r_png_handle->bitDepth < 8) 
+		png_set_palette_to_rgb (png);
+	if ( (r_png_handle->colorType == PNG_COLOR_TYPE_GRAY) && (r_png_handle->bitDepth < 8) )
 	//	png_set_gray_1_2_4_to_8 (png);
 		PNG_GRAYFUNC_1_2_4_to_8 (png);
 
@@ -1178,17 +1215,17 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		png_set_expand (png);
 
 	// hax: expand 24bit to 32bit
-	if (r_png_handle->bitDepth == 8 && r_png_handle->colorType == PNG_COLOR_TYPE_RGB) 
-		png_set_filler (png,255, PNG_FILLER_AFTER);
+	if ( (r_png_handle->bitDepth == 8) && (r_png_handle->colorType == PNG_COLOR_TYPE_RGB) )
+		png_set_filler (png, 255, PNG_FILLER_AFTER);
 
 	// update the info structure
-	png_read_update_info( png, pnginfo );
+	png_read_update_info (png, pnginfo);
 
 	r_png_handle->fRowBytes = (int)png_get_rowbytes (png, pnginfo);
 	r_png_handle->bytesPerPixel = png_get_channels (png, pnginfo);  // DL Added 30/08/2000
 
 	R_InitializePNGData ();
-	if ((r_png_handle->data)&&(r_png_handle->fRowPtrs))
+	if ( (r_png_handle->data) && (r_png_handle->fRowPtrs) )
 		png_read_image (png, (png_bytepp)r_png_handle->fRowPtrs);
 
 	png_read_end (png, pnginfo); // read last information chunks
@@ -1196,14 +1233,14 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	png_destroy_read_struct (&png, &pnginfo, 0);
 
 	// only load 32 bit by now...
-	if (r_png_handle->bitDepth == 8)
-	{
-		*pic= r_png_handle->data;
-		*width = r_png_handle->width;
-		*height = r_png_handle->height;
+	if (r_png_handle->bitDepth == 8) {
+		*pic = r_png_handle->data;
+		if (width)
+			*width = r_png_handle->width;
+		if (height)
+			*height = r_png_handle->height;
 	}
-	else
-	{
+	else {
 		VID_Printf (PRINT_DEVELOPER, "Bad png color depth: %s\n", filename);
 		*pic = NULL;
 		free (r_png_handle->data);
@@ -1236,7 +1273,6 @@ unsigned char jpg_fill_input_buffer (j_decompress_ptr cinfo)
 
 void jpg_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-        
     cinfo->src->next_input_byte += (size_t) num_bytes;
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
 
@@ -1278,10 +1314,9 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	// Load JPEG file into memory
 	rawsize = FS_LoadFile(filename, (void **)&rawdata);
 	if (!rawdata)
-	{
-		// Knightmare- skip this unless developer >= 2 because it spams the console
+	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "Bad jpg file %s\n", filename);
+			VID_Printf (PRINT_DEVELOPER, "R_LoadJPG: Bad jpg file %s\n", filename);
 		return;	
 	}
 
@@ -1289,9 +1324,9 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	if (	rawdata[6] != 'J'
 		||	rawdata[7] != 'F'
 		||	rawdata[8] != 'I'
-		||	rawdata[9] != 'F') {
-		VID_Printf (PRINT_ALL, "Bad jpg file %s\n", filename);
-		FS_FreeFile (rawdata);
+		||	rawdata[9] != 'F' ) {
+		VID_Printf (PRINT_ALL, "R_LoadJPG: Bad jpg file %s\n", filename);
+		FS_FreeFile(rawdata);
 		return;
 	}
 
@@ -1303,7 +1338,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	jpeg_mem_src (&cinfo, rawdata, rawsize);
 
 	// Process JPEG header
-	jpeg_read_header (&cinfo, true); // bombs out here
+	jpeg_read_header (&cinfo, true);
 
 	// Start Decompression
 	jpeg_start_decompress (&cinfo);
@@ -1311,7 +1346,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	// Check Color Components
 	if (cinfo.output_components != 3)
 	{
-		VID_Printf (PRINT_ALL, "Invalid JPEG color components in %s\n", filename);
+		VID_Printf (PRINT_ALL, "R_LoadJPG: Invalid JPEG color components in %s\n", filename);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
@@ -1321,20 +1356,23 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	rgbadata = malloc(cinfo.output_width * cinfo.output_height * 4);
 	if (!rgbadata)
 	{
-		VID_Printf (PRINT_ALL, "Insufficient RAM for JPEG buffer\n");
+		VID_Printf (PRINT_ALL, "R_LoadJPG: Insufficient RAM for JPEG buffer for %s\n", filename);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
 	}
 
 	// Pass sizes to output
-	*width = cinfo.output_width; *height = cinfo.output_height;
+	if (width)
+		*width = cinfo.output_width;
+	if (height)
+		*height = cinfo.output_height;
 
 	// Allocate Scanline buffer
 	scanline = malloc(cinfo.output_width * 3);
 	if (!scanline)
 	{
-		VID_Printf (PRINT_ALL, "Insufficient RAM for JPEG scanline buffer\n");
+		VID_Printf (PRINT_ALL, "R_LoadJPG: Insufficient RAM for JPEG scanline buffer for %s\n", filename);
 		free (rgbadata);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
@@ -1387,7 +1425,7 @@ IMAGE FLOOD FILLING
 
 /*
 =================
-Mod_FloodFillSkin
+R_FloodFillSkin
 
 Fill background pixels so mipmapping doesn't have haloes
 =================
@@ -1612,7 +1650,7 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 }*/
 
 
-#define MAX_UPSAMPLE_FACTOR	5	// limit to 5 (32x scaling)
+#define MAX_UPSAMPLE_FACTOR	6	// limit to 6 (64x scaling)
 /*
 ================
 GL_UpscaleTexture
@@ -1729,7 +1767,7 @@ void GL_MipMap (byte *in, int width, int height)
 	}
 }
 
-
+#if 0
 /*
 ================
 GL_BuildPalettedTexture
@@ -1754,7 +1792,7 @@ void GL_BuildPalettedTexture (unsigned char *paletted_texture, unsigned char *sc
 		scaled += 4;
 	}
 }
-
+#endif
 
 /*
 ===============
@@ -1794,7 +1832,7 @@ int NearestPowerOf2 (int size)
 		i <<= 1;
 		if (size == i)
 			return i;
-		if (size > i && size < (i << 1)) 
+		if ( (size > i) && (size < (i << 1)) ) 
 		{
 			if (size >= ((i + (i << 1))/2))
 				return i << 1;
@@ -1910,7 +1948,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 		while (1) {
 			if ( ((scaled_width * 2) > idealImgRes) && ((scaled_height * 2) > idealImgRes) )
 				break;
-			if (upscaleFactor >= MAX_UPSAMPLE_FACTOR)	// don't go past 32x scaling
+			if (upscaleFactor >= MAX_UPSAMPLE_FACTOR)	// don't go past 64x scaling
 				break;
 			scaled_width <<= 1;
 			scaled_height <<= 1;
@@ -1964,27 +2002,50 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 	} 
 	else
 		qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+
 #else	// USE_GLU_MIPMAP
 	qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 	if (mipmap)
 	{
-		int		mip_width, mip_height, miplevel = 0;
+		int			mip_width, mip_height, miplevel = 0;
+		unsigned 	*mip_scaled = NULL;
+		qboolean	mip_resampled = false;
 
+/*		if (isNPOT)	// resample NPOT tetures to POT dimensions before mipping
+		{
+			mip_width = NearestPowerOf2 (scaled_width);
+			mip_height = NearestPowerOf2 (scaled_height);
+			mip_scaled = malloc((mip_width * mip_height) * 4);
+			GL_ResampleTexture (scaled, scaled_width, scaled_height, mip_scaled, mip_width, mip_height);
+			mip_resampled = true;
+		}
+		else {
+			mip_width = scaled_width;
+			mip_height = scaled_height;
+			mip_scaled = scaled;
+			mip_resampled = false;
+		}
+*/
 		mip_width = scaled_width;	mip_height = scaled_height;
+		mip_scaled = scaled;
 		while (mip_width > 1 || mip_height > 1)
 		{
-			GL_MipMap ((byte *)scaled, mip_width, mip_height);
+			GL_MipMap ((byte *)mip_scaled, mip_width, mip_height);
 			mip_width = max(mip_width>>1, 1);
 			mip_height = max(mip_height>>1, 1);
 			miplevel++;
-			qglTexImage2D (GL_TEXTURE_2D, miplevel, comp, mip_width, mip_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+			qglTexImage2D (GL_TEXTURE_2D, miplevel, comp, mip_width, mip_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip_scaled);
 		}
+
+	//	if (mip_resampled)
+	//		free (mip_scaled);
 	}
 #endif	// USE_GLU_MIPMAP
 
 //	if (scaled_width != width || scaled_height != height)
 	if (resampled)
 		free (scaled);
+	scaled = NULL;
 
 	upload_width = scaled_width;	upload_height = scaled_height;
 
@@ -2134,8 +2195,7 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	}	
 
 	// load little pics into the scrap
-	if ( (image->type == it_pic) && (bits == 8)
-		&& (image->width < 64) && (image->height < 64) )
+	if ( (image->type == it_pic) && (bits == 8) && (image->width < 64) && (image->height < 64) )
 	{
 		int		x, y;
 		int		i, j, k;
@@ -2302,13 +2362,13 @@ Finds or loads the given image
 */
 image_t	*R_FindImage (char *name, imagetype_t type)
 {
-	image_t	*image;
-	int		i, len;
-	byte	*pic, *palette;
+	image_t			*image;
+	int				i, len;
+	byte			*pic, *palette;
+	int				width, height;
 	unsigned int	hash;
-	int		width, height;
-	char	s[128];
-	char	*tmp;
+	char			s[MAX_OSPATH];
+	char			*tmp;
 
 	if ( !name || (name[0] == '\0') )
 		return NULL;
@@ -2371,7 +2431,6 @@ image_t	*R_FindImage (char *name, imagetype_t type)
 	// search for TGAs or JPGs to replace .pcx and .wal images
 	if (!strcmp(name+len-4, ".pcx") || !strcmp(name+len-4, ".wal"))
 	{
-	//	strncpy(s, name);
 		Q_strncpyz (s, sizeof(s), name);
 		s[len-3]='t'; s[len-2]='g'; s[len-1]='a';
 		image = R_FindImage(s,type);
@@ -2497,7 +2556,7 @@ void R_FreeUnusedImages (void)
 	glMedia.particlebeam->registration_sequence = registration_sequence;
 
 	for (i=0; i<PARTICLE_TYPES; i++)
-		if (glMedia.particletextures[i]) // dont mess with null ones silly :p
+		if (glMedia.particletextures[i]) // don't mess with null ones silly :p
 			glMedia.particletextures[i]->registration_sequence = registration_sequence;
 
 	for (i=0, image=gltextures; i<numgltextures; i++, image++)
@@ -2605,13 +2664,13 @@ void R_InitImages (void)
 
 	registration_sequence = 1;
 
-	// Knightmare- added Vic's RGB brightening
+	// init intensity conversions
+	// added Vic's RGB brightening
 	if (glConfig.mtexcombine)
 		r_intensity = Cvar_Get ("r_intensity", "1", 0);
 	else
 		r_intensity = Cvar_Get ("r_intensity", "2", 0);
 	Cvar_SetDescription ("r_intensity", "Sets intensity value for gamma table.  Value range is >= 1.");
-	// end Knightmare
 
 	if ( r_intensity->value <= 1 )
 		Cvar_Set( "r_intensity", "1" );
@@ -2622,12 +2681,14 @@ void R_InitImages (void)
 
 	Draw_GetPalette ();
 
-/*	if (qglColorTableEXT)
+#if 0
+	if (qglColorTableEXT)
 	{
 		FS_LoadFile( "pics/16to8.dat", &glState.d_16to8table );
 		if ( !glState.d_16to8table )
 			VID_Error( ERR_FATAL, "Couldn't load pics/16to8.pcx");
-	} */
+	}
+#endif
 
 	if (glConfig.rendType == GLREND_VOODOO)
 	{

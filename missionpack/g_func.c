@@ -967,7 +967,10 @@ edict_t *plat_spawn_inside_trigger (edict_t *ent)
 	tmax[2] = ent->maxs[2] + 8;
 
 	// Knightmare- for PLAT_LOW_TRIGGER, we need to add st.lip, not subtract it!
-//	tmin[2] = tmax[2] - (ent->pos1[2] - ent->pos2[2] + st.lip);
+/*	tmin[2] = tmax[2] - (ent->pos1[2] - ent->pos2[2] + st.lip);
+
+	if (ent->spawnflags & PLAT_LOW_TRIGGER)
+		tmax[2] = tmin[2] + 8; */
 
 	if (ent->spawnflags & PLAT_LOW_TRIGGER) {
 		tmin[2] = tmax[2] - (ent->pos1[2] - ent->pos2[2]) + st.lip;

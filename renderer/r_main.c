@@ -69,7 +69,7 @@ vec3_t	r_origin;
 
 float	r_world_matrix[16];
 float	r_base_world_matrix[16];
-vec4_t	r_clearColor = {0, 0.5, 0.5, 0.5};				// for gl_clear
+vec4_t	r_clearColor = {0, 0.5, 0.5, 0.5};				// for r_clear
 
 GLdouble	r_farz;	// Knightmare- variable sky range, made this a global var
 
@@ -82,7 +82,7 @@ int		r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
 
 cvar_t	*gl_allow_software;
 cvar_t  *gl_driver;
-cvar_t	*gl_clear;
+cvar_t	*r_clear;
 
 // Psychospaz's console font size option
 extern cvar_t	*con_font_size;
@@ -423,13 +423,13 @@ void R_SetupFrame (void)
 	// clear out the portion of the screen that the NOWORLDMODEL defines
 	/*if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
 	{
-		GL_Enable( GL_SCISSOR_TEST );
-		qglClearColor( 0.3, 0.3, 0.3, 1 );
-		qglScissor( r_newrefdef.x, vid.height - r_newrefdef.height - r_newrefdef.y, r_newrefdef.width, r_newrefdef.height );
-		qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	//	qglClearColor( 1, 0, 0.5, 0.5 );
+		GL_Enable (GL_SCISSOR_TEST);
+		qglClearColor (0.3, 0.3, 0.3, 1);
+		qglScissor (r_newrefdef.x, vid.height - r_newrefdef.height - r_newrefdef.y, r_newrefdef.width, r_newrefdef.height);
+		qglClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//	qglClearColor (1, 0, 0.5, 0.5);
 		qglClearColor (r_clearColor[0], r_clearColor[1], r_clearColor[2], r_clearColor[3]);
-		GL_Disable( GL_SCISSOR_TEST );
+		GL_Disable (GL_SCISSOR_TEST);
 	}*/
 }
 
@@ -466,13 +466,13 @@ void R_SetupGL (void)
 //	GLdouble boxsize;
 
 	// Knightmare- update r_modulate in real time
-    if (r_modulate->modified && (r_worldmodel)) //Don't do this if no map is loaded
+    if ( r_modulate->modified && (r_worldmodel) ) //Don't do this if no map is loaded
 	{
 		msurface_t *surf; 
 		int i;
 		
-        for (i=0,surf = r_worldmodel->surfaces; i<r_worldmodel->numsurfaces; i++,surf++)
-            surf->cached_light[0]=0; 
+        for (i=0, surf = r_worldmodel->surfaces; i<r_worldmodel->numsurfaces; i++, surf++)
+            surf->cached_light[0] = 0; 
 
         r_modulate->modified = 0; 
 	} 
@@ -510,9 +510,9 @@ void R_SetupGL (void)
 			if (farz >= 65536) //don't make it larger than this
 				break;
 		}
-		farz *= 2.0; //double since boxsize is distance from camera to edge of skybox
-					//not total size of skybox
-		VID_Printf(PRINT_DEVELOPER, "farz now set to %g\n", farz);
+		farz *= 2.0;	// double since boxsize is distance from camera to edge of skybox
+						// not total size of skybox
+		VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farz);
 		r_farz = farz;	// save to global var
 	}
 	// end Knightmare
@@ -571,14 +571,14 @@ void R_Clear (void)
 {
 	GLbitfield	clearBits = 0;	// bitshifter's consolidation
 
-	if (gl_clear->integer)
+	if (r_clear->integer)
 		clearBits |= GL_COLOR_BUFFER_BIT;
 
 	if (r_ztrick->integer)
 	{
 		static int trickframe;
 
-	//	if (gl_clear->integer)
+	//	if (r_clear->integer)
 	//		qglClear (GL_COLOR_BUFFER_BIT);
 
 		trickframe++;
@@ -597,7 +597,7 @@ void R_Clear (void)
 	}
 	else
 	{
-	//	if (gl_clear->integer)
+	//	if (r_clear->integer)
 	//		qglClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//	else
 	//		qglClear (GL_DEPTH_BUFFER_BIT);
@@ -973,8 +973,8 @@ void R_Register (void)
 	Cvar_SetDescription ("gl_driver", "Sets driver for OpenGL.  This should stay as \"opengl32\".");
 	gl_allow_software = Cvar_Get( "gl_allow_software", "0", 0 );
 	Cvar_SetDescription ("gl_allow_software", "Whether to allow software implementations of OpenGL.");
-	gl_clear = Cvar_Get ("gl_clear", "0", 0);
-	Cvar_SetDescription ("gl_clear", "Enables clearing of the screen to prevent HOM effects.");
+	r_clear = Cvar_Get ("r_clear", "0", 0);
+	Cvar_SetDescription ("r_clear", "Enables clearing of the screen to prevent HOM effects.");
 
 	r_lefthand = Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
 	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_CHEAT);
@@ -1228,11 +1228,11 @@ void R_Register (void)
 
 	// Changable color for r_clearcolor (enabled by gl_clar)
 	r_clearcolor_r = Cvar_Get( "r_clearcolor_r", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_r", "Sets red component (normalized) of background color used with gl_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ("r_clearcolor_r", "Sets red component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
 	r_clearcolor_g = Cvar_Get( "r_clearcolor_g", "0.5", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_g", "Sets green component (normalized) of background color used with gl_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ("r_clearcolor_g", "Sets green component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
 	r_clearcolor_b = Cvar_Get( "r_clearcolor_b", "0.5", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_b", "Sets blue component (normalized) of background color used with gl_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ("r_clearcolor_b", "Sets blue component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
 
 	r_bloom = Cvar_Get( "r_bloom", "0", CVAR_ARCHIVE );	// BLOOMS
 	Cvar_SetDescription ("r_bloom", "Enables bloom postprocess effect.");
@@ -2432,7 +2432,7 @@ void R_SetPalette ( const unsigned char *palette)
 		}
 	}
 
-	qglClearColor (0,0,0,0);
+	qglClearColor (0, 0, 0, 0);
 	qglClear (GL_COLOR_BUFFER_BIT);
 //	qglClearColor (1,0, 0.5 , 0.5);
 	qglClearColor (r_clearColor[0], r_clearColor[1], r_clearColor[2], r_clearColor[3]);

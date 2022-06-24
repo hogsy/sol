@@ -1843,24 +1843,24 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("mud/wade_mud1.wav");
 	gi.soundindex ("mud/wade_mud2.wav");
 
-	Lights();
+	Lights ();
 
 	// Fog clipping - if "fogclip" is non-zero, force gl_clear to a good
 	// value for obscuring HOM with fog... "good" is driver-dependent
 	if (ent->fogclip)
 	{
 		if ( gl_driver && !Q_stricmp(gl_driver->string, "3dfxgl") )
-			gi.cvar_forceset("gl_clear", "0");
+			gi.cvar_forceset (GL_CLEAR_CVAR, "0");
 		else
-			gi.cvar_forceset("gl_clear", "1");
+			gi.cvar_forceset (GL_CLEAR_CVAR, "1");
 	}
 
 	// cvar overrides for effects flags:
-	if(alert_sounds->value)
+	if (alert_sounds->value)
 		world->effects |= FX_WORLDSPAWN_ALERTSOUNDS;
-	if(corpse_fade->value)
+	if (corpse_fade->value)
 		world->effects |= FX_WORLDSPAWN_CORPSEFADE;
-	if(jump_kick->value)
+	if (jump_kick->value)
 		world->effects |= FX_WORLDSPAWN_JUMPKICK;
 }
 
@@ -1868,7 +1868,7 @@ void SP_worldspawn (edict_t *ent)
 
 int nohud = 0;
 
-void Hud_On()
+void Hud_On (void)
 {
 	if (deathmatch->value)
 		gi.configstring (CS_STATUSBAR, dm_statusbar);
@@ -1877,17 +1877,17 @@ void Hud_On()
 	nohud = 0;
 }
 
-void Hud_Off()
+void Hud_Off (void)
 {
 	gi.configstring (CS_STATUSBAR, NULL);
 	nohud = 1;
 }
 
-void Cmd_ToggleHud ()
+void Cmd_ToggleHud (void)
 {
 	if (deathmatch->value)
 		return;
-  if (nohud)
+	if (nohud)
 		Hud_On();
 	else
 		Hud_Off();

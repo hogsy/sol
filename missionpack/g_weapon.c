@@ -1580,8 +1580,8 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage, edict_t *home_target)
 {
-	edict_t	*rocket;
-	qboolean homing = false;
+	edict_t		*rocket;
+	qboolean	homing = false;
 
 	rocket = G_Spawn();
 	VectorCopy (start, rocket->s.origin);
@@ -1614,8 +1614,8 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 //	else
 		rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 
-	if (strstr(self->classname,"monster_") && (self->spawnflags & SF_MONSTER_SPECIAL)
-		&& strcmp(self->classname, "monster_turret"))
+	if ( !strncmp(self->classname, "monster_", 8) && (self->spawnflags & SF_MONSTER_SPECIAL)
+		&& (strcmp(self->classname, "monster_turret") != 0) )
 		homing = true;
 	// Knightmare- use different skin, not different model, for homing rocket
 	if (home_target || (self->client && self->client->pers.fire_mode) || homing)
@@ -1634,7 +1634,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->dmg_radius = damage_radius;
 	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
 
-	if (home_target)
+	if ( home_target || homing )
 	{
 		// homers are shootable
 		VectorSet(rocket->mins, -10, -3, 0);
@@ -1654,7 +1654,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 		if (self->client)
 		{
 			self->client->homing_rocket = rocket;
-//			check_dodge (self, rocket->s.origin, dir, speed);
+		//	check_dodge (self, rocket->s.origin, dir, speed);
 		}
 		Rocket_Evade (rocket, dir, speed);
 	}

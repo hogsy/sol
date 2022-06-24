@@ -141,7 +141,7 @@ typedef struct
 	float					dynamicHeight;	// for size of changing list items
 	qboolean				isHidden;		// for hiding items
 //	qboolean				isDisabled;
-	qboolean				isExtended;		// for items that have pop-put parts
+	qboolean				isExtended;		// for items that have pop-out parts
 	qboolean				isCursorItem;	// for cursor items
 	int						cursorItemOffset[2];
 	const char				*statusbar;
@@ -683,9 +683,9 @@ int UI_MouseOverAlpha (menuCommon_s *m);
 qboolean UI_MouseOverSubItem (int x, int y, int w, int h, scralign_t align);
 void UI_UnbindCommand (char *command);
 void UI_FindKeysForCommand (char *command, int *twokeys);
-void *UI_ItemAtMenuCursor (menuFramework_s *m);
-void UI_SetMenuStatusBar (menuFramework_s *s, const char *string);
-void UI_SetMenuCurrentItemStatusBar (menuFramework_s *m, const char *string);
+void *UI_ItemAtMenuCursor (menuFramework_s *menu);
+void UI_SetMenuStatusBar (menuFramework_s *menu, const char *string);
+void UI_SetMenuCurrentItemStatusBar (menuFramework_s *menu, const char *string);
 int	 UI_TallyMenuSlots (menuFramework_s *menu);
 
 void UI_StartSPGame (void);

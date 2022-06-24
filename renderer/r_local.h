@@ -236,8 +236,8 @@ extern	GLdouble	r_farz;	// Knightmare- variable sky range, made this a global va
 extern	refdef_t	r_newrefdef;
 extern	int		r_viewcluster, r_viewcluster2, r_oldviewcluster, r_oldviewcluster2;
 
-extern	cvar_t	*gl_clear;
 extern  cvar_t  *gl_driver;
+extern	cvar_t	*r_clear;
 
 extern	cvar_t	*r_norefresh;
 extern	cvar_t	*r_lefthand;
@@ -393,7 +393,7 @@ extern	int		c_visible_textures;
 
 extern	float	r_world_matrix[16];
 
-extern	vec4_t	r_clearColor;			// for gl_clear
+extern	vec4_t	r_clearColor;			// for r_clear
 
 // entity sorting struct
 typedef struct sortedelement_s sortedelement_t;
@@ -871,7 +871,7 @@ typedef struct
 
 	int				prev_mode;
 
-	unsigned char	*d_16to8table;
+//	unsigned char	*d_16to8table;
 
 	int				lightmap_textures;
 

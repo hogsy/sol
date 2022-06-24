@@ -515,27 +515,27 @@ void InitGame (void)
 	rotate_distance = gi.cvar("rotate_distance", "1", CVAR_SERVERINFO);
 
 	// GL stuff
-	gl_clear = gi.cvar("gl_clear", "0", 0);
+	gl_clear = gi.cvar(GL_CLEAR_CVAR, "0", 0);
 
 	// Lazarus saved cvars that we may or may not manipulate, but need to
 	// restore to original values upon map exit.
-	lazarus_cd_loop = gi.cvar("lazarus_cd_loop", "0", 0);
-	lazarus_gl_clear= gi.cvar("lazarus_gl_clear", "0", 0);
-	lazarus_pitch   = gi.cvar("lazarus_pitch", "0", 0);
-	lazarus_yaw     = gi.cvar("lazarus_yaw", "0", 0);
-	lazarus_joyp    = gi.cvar("lazarus_joyp", "0", 0);
-	lazarus_joyy    = gi.cvar("lazarus_joyy", "0", 0);
-	lazarus_cl_gun  = gi.cvar("lazarus_cl_gun", "0", 0);
-	lazarus_crosshair = gi.cvar("lazarus_crosshair", "0", 0);
+	lazarus_cd_loop		= gi.cvar("lazarus_cd_loop", "0", 0);
+	lazarus_r_clear		= gi.cvar("lazarus_r_clear", "0", 0);
+	lazarus_pitch		= gi.cvar("lazarus_pitch", "0", 0);
+	lazarus_yaw			= gi.cvar("lazarus_yaw", "0", 0);
+	lazarus_joyp		= gi.cvar("lazarus_joyp", "0", 0);
+	lazarus_joyy		= gi.cvar("lazarus_joyy", "0", 0);
+	lazarus_cl_gun		= gi.cvar("lazarus_cl_gun", "0", 0);
+	lazarus_crosshair	= gi.cvar("lazarus_crosshair", "0", 0);
 
-	/*if (lazarus_gl_clear->value)
-		gi.cvar_forceset("gl_clear",         va("%d", lazarus_gl_clear->value));
+/*	if (lazarus_r_clear->value)
+		gi.cvar_forceset(GL_CLEAR_CVAR,         va("%d", lazarus_r_clear->value));
 	else
-		gi.cvar_forceset("lazarus_gl_clear", va("%d", gl_clear->value));*/
+		gi.cvar_forceset("lazarus_r_clear", va("%d", gl_clear->value)); */
 
 	if (!deathmatch->value && !coop->value)
 	{
-		/*if (lazarus_pitch->value) {
+	/*	if (lazarus_pitch->value) {
 			gi.cvar_forceset("cd_loopcount",         va("%d", (int)(lazarus_cd_loop->value)));
 			gi.cvar_forceset("m_pitch",              va("%f", lazarus_pitch->value));
 			gi.cvar_forceset("m_yaw",                va("%f", lazarus_yaw->value));
@@ -543,7 +543,7 @@ void InitGame (void)
 			gi.cvar_forceset("crosshair",            va("%d", (int)(lazarus_crosshair->value)));
 		}
 		else
-		{*/
+		{ */
 			gi.cvar_forceset("lazarus_cd_loop",        va("%d", (int)(cd_loopcount->value)));
 #ifndef KMQUAKE2_ENGINE_MOD // engine has zoom mode and autosensitivity
 			gi.cvar_forceset("lazarus_pitch",          va("%f", m_pitch->value));

@@ -25,9 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
-menulayer_t	ui_menuState;
 menulayer_t	ui_layers[MAX_MENU_DEPTH];
 int			ui_menudepth;
+menulayer_t	ui_menuState;
 
 /*
 =======================================================================

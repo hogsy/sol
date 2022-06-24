@@ -88,7 +88,7 @@ cvar_t	*jump_kick;
 cvar_t	*lazarus_cd_loop;
 cvar_t	*lazarus_cl_gun;
 cvar_t	*lazarus_crosshair;
-cvar_t	*lazarus_gl_clear;
+cvar_t	*lazarus_r_clear;
 cvar_t	*lazarus_joyp;
 cvar_t	*lazarus_joyy;
 cvar_t	*lazarus_pitch;
@@ -152,7 +152,7 @@ void ShutdownGame (void)
 		gi.cvar_forceset("m_pitch", va("%f",lazarus_pitch->value));
 #endif
 	//	gi.cvar_forceset("cd_loopcount", va("%d", lazarus_cd_loop->value));
-	//	gi.cvar_forceset("gl_clear", va("%d", lazarus_gl_clear->value));
+	//	gi.cvar_forceset("gl_clear", va("%d", lazarus_r_clear->value));
 	}
 
 	// Lazarus: Turn off fog if it's on

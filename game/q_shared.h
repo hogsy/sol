@@ -165,6 +165,12 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 #define CLIENT_THIRDPERSON_CVAR "cg_thirdperson"
 //#define CLIENT_THIRDPERSON_CVAR "cl_3dcam"
 
+#ifdef KMQUAKE2_ENGINE_MOD
+#define GL_CLEAR_CVAR	"r_clear"
+#else
+#define GL_CLEAR_CVAR	"gl_clear"
+#endif
+
 #define MAX_CUSTOM_ANIMS	1024	// This sets the size of an mmove_t array that is saved
 									// to the level file, so it affects savegame compatibility.
 
