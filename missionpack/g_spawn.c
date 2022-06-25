@@ -811,85 +811,102 @@ void ED_CallSpawn (edict_t *ent)
 //PGM
 
 	// FIXME - PMM classnames hack
-	if (!strcmp(ent->classname, "weapon_nailgun"))
+	if ( !strcmp(ent->classname, "weapon_nailgun") )
 		ent->classname = (FindItem("ETF Rifle"))->classname;
-	if (!strcmp(ent->classname, "ammo_nails"))
+	if ( !strcmp(ent->classname, "ammo_nails") )
 		ent->classname = (FindItem("Flechettes"))->classname;
-	if (!strcmp(ent->classname, "weapon_heatbeam"))
+	if ( !strcmp(ent->classname, "weapon_heatbeam") )
 		ent->classname = (FindItem("Plasma Beam"))->classname;
 	// PMM
 
 	// replace brains in Reckoning
 	gamedir = gi.cvar("game", "", 0);
-	if (gamedir->string && !Q_stricmp(gamedir->string, "xatrix")
-		&& (level.maptype == MAPTYPE_XATRIX) && !strcmp(ent->classname, "monster_brain"))
+	if ( gamedir->string && !Q_stricmp(gamedir->string, "xatrix")
+		&& (level.maptype == MAPTYPE_XATRIX) && !strcmp(ent->classname, "monster_brain") )
 		ent->classname = "monster_brain_beta";
 
-	// Knightmare- mission pack monster replacement
-	if (mp_monster_replace->value)
-	{	// gladiator
-		if (!strcmp(ent->classname, "monster_gladiator"))
+	// Knightmare- mission pack monster replacement by cvar
+	if ( (int)mp_monster_replace->value > 0 )
+	{	// gladiator (replacing all of them in a map makes it too hard, so vary based on skill level)
+		if ( !strcmp(ent->classname, "monster_gladiator") && (random() < ((skill->value + 1.0f) * 0.15f)) )
 		{
 			ent->classname = "monster_gladb";
-			if (st.item && mp_monster_ammo_replace->value)
-				if (!strcmp(st.item, "ammo_slugs")) //replace ammo
-				{
-					ent->item = FindItemByClassname ("ammo_magslug");
-					st.item = NULL;
+			if ( st.item && mp_monster_ammo_replace->value ) {
+				if ( !strcmp(st.item, "ammo_slugs") ) {
+					st.item = "ammo_magslug";
 				}
+			}
 		}
 		// brain
 		if (!strcmp(ent->classname, "monster_brain"))
 			ent->classname = "monster_brain_beta";
 		// soldiers
-		if (!strcmp(ent->classname, "monster_soldier_light"))
+		if ( !strcmp(ent->classname, "monster_soldier_light") )
 		{
 			ent->classname = "monster_soldier_ripper";
-			if (st.item && mp_monster_ammo_replace->value)
-				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets"))
-				{
-					ent->item = FindItemByClassname ("ammo_cells");
-					st.item = NULL;
+			if ( st.item && mp_monster_ammo_replace->value ) {
+				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets") ) {
+					st.item = "ammo_cells";
 				}
+			}
 		}
-		if (!strcmp(ent->classname, "monster_soldier"))
+		if ( !strcmp(ent->classname, "monster_soldier") )
 		{
 			ent->classname = "monster_soldier_hypergun";
-			if (st.item && mp_monster_ammo_replace->value)
-				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets"))
-				{
-					ent->item = FindItemByClassname ("ammo_cells");
-					st.item = NULL;
+			if ( st.item && mp_monster_ammo_replace->value ) {
+				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets") ) {
+					st.item = "ammo_cells";
 				}
+			}
 		}
-		if (!strcmp(ent->classname, "monster_soldier_ss"))
+		if ( !strcmp(ent->classname, "monster_soldier_ss") )
 		{
 			ent->classname = "monster_soldier_lasergun";
-			if (st.item && mp_monster_ammo_replace->value)
-				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets"))
-				{
-					ent->item = FindItemByClassname ("ammo_cells");
-					st.item = NULL;
+			if ( st.item && mp_monster_ammo_replace->value ) {
+				if ( !strcmp(st.item, "ammo_shells") || !strcmp(st.item, "ammo_bullets") ) {
+					st.item = "ammo_cells";
 				}
+			}
 		}
 		// icarus
-		if (!strcmp(ent->classname, "monster_hover"))
+		if ( !strcmp(ent->classname, "monster_hover") ) {
 			ent->classname = "monster_daedalus";
+		}
 		// supertank
-		if (!strcmp(ent->classname, "monster_supertank"))
+		if ( !strcmp(ent->classname, "monster_supertank") ) {
 			ent->classname = "monster_boss5";
+		}
 		// chick
-		if (!strcmp(ent->classname, "monster_chick"))
+		if ( !strcmp(ent->classname, "monster_chick") )
+		{
 			ent->classname = "monster_chick_heat";
+			if ( st.item && mp_monster_ammo_replace->value ) {
+				if ( !strcmp(st.item, "ammo_rockets") ) {
+					st.item = "ammo_homing_missiles";
+				}
+			}
+		}
 		// medic
-		if (!strcmp(ent->classname, "monster_medic")
+		if ( !strcmp(ent->classname, "monster_medic")
 			// don't spawn another medic commander from medic commander
-			&& !(ent->monsterinfo.monsterflags & MFL_DO_NOT_COUNT))
+			&& !(ent->monsterinfo.monsterflags & MFL_DO_NOT_COUNT) ) {
 			ent->classname = "monster_medic_commander";
+		}
 		// gunner
-		if ( !strcmp(ent->classname, "monster_gunner") ) {
+		if ( !strcmp(ent->classname, "monster_gunner") )
+		{
 			if (random() < ((skill->value + 1.0f) * 0.15f))
+			{
 				ent->classname = "monster_gunner_tactician";
+				if ( st.item && mp_monster_ammo_replace->value ) {
+					if ( !strcmp(st.item, "ammo_bullets") ) {
+						st.item = "ammo_cells";
+					}
+					else if ( !strcmp(st.item, "ammo_grenades") ) {
+						st.item = "ammo_prox";
+					}
+				}
+			}
 			else
 				ent->spawnflags |= SF_MONSTER_SPECIAL;
 		}
@@ -972,7 +989,7 @@ ED_NewString
 char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
-	int		i,l;
+	int		i, l;
 	
 	l = (int)strlen(string) + 1;
 
@@ -980,9 +997,9 @@ char *ED_NewString (char *string)
 
 	new_p = newb;
 
-	for (i=0 ; i< l ; i++)
+	for (i = 0; i < l; i++)
 	{
-		if (string[i] == '\\' && i < l-1)
+		if ( (string[i] == '\\') && (i < l-1) )
 		{
 			i++;
 			if (string[i] == 'n')
@@ -1689,7 +1706,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	LoadAliasData();
 //	gi.dprintf ("Size of alias data: %i\n", alias_data_size);
 
-// parse ents
+	// parse ents
 	while (1)
 	{
 		// parse the opening brace	
@@ -1707,16 +1724,16 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		entities = ED_ParseEdict (entities, ent);
 
 		// yet another map hack
-		if (!Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27"))
+		if ( !Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27") )
 			ent->spawnflags &= ~SPAWNFLAG_NOT_HARD;
 		
 		// ROGUE
-		//ahh, the joys of map hacks .. 
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_door_rotating") && ent->targetname && !Q_stricmp(ent->targetname, "t265"))
+		// ahh, the joys of map hacks .. 
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_door_rotating") && ent->targetname && !Q_stricmp(ent->targetname, "t265") )
 			ent->spawnflags &= ~SPAWNFLAG_NOT_COOP;
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "trigger_always") && ent->target && !Q_stricmp(ent->target, "t265"))
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "trigger_always") && ent->target && !Q_stricmp(ent->target, "t265") )
 			ent->spawnflags |= SPAWNFLAG_NOT_COOP;
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_wall") && !Q_stricmp(ent->model, "*15"))
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_wall") && !Q_stricmp(ent->model, "*15") )
 			ent->spawnflags |= SPAWNFLAG_NOT_COOP;
 		// rogue
 		
@@ -1804,15 +1821,15 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 //PGM
 		ED_CallSpawn (ent);
 
-		//Knightmare- remove IR visible attrib from mine lights and banners
+		// Knightmare- remove IR visible attrib from mine lights and banners
 		if ( !strcmp(ent->classname, "light_mine1") || !strcmp(ent->classname, "light_mine2")
 			|| !strcmp(ent->classname, "misc_banner") )
 			ent->s.renderfx &= ~RF_IR_VISIBLE;
 
 		// David Hyde's code for the origin offset
-		VectorAdd(ent->absmin, ent->absmax, ent->origin_offset);
-		VectorScale(ent->origin_offset, 0.5, ent->origin_offset);
-		VectorSubtract(ent->origin_offset, ent->s.origin, ent->origin_offset);
+		VectorAdd (ent->absmin, ent->absmax, ent->origin_offset);
+		VectorScale (ent->origin_offset, 0.5, ent->origin_offset);
+		VectorSubtract (ent->origin_offset, ent->s.origin, ent->origin_offset);
 	}	
 
 	// Knightmare- unload the alias script file
@@ -1843,11 +1860,11 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	G_FindTeams ();
 
 	// DWH
-	G_FindCraneParts();
+	G_FindCraneParts ();
 
 	PlayerTrail_Init ();
 
-// ROGUE
+	// ROGUE
 	if (deathmatch->value)
 	{
 		if (randomrespawn && randomrespawn->value)
@@ -1855,17 +1872,17 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	}
 	else
 	{
-		InitHintPaths();	// if there aren't hintpaths on this map, enable quick aborts
+		InitHintPaths ();	// if there aren't hintpaths on this map, enable quick aborts
 	}
-// ROGUE
+	// ROGUE
 
-// ROGUE	-- allow dm games to do init stuff right before game starts.
+	// ROGUE	-- allow dm games to do init stuff right before game starts.
 	if (deathmatch->value && gamerules && gamerules->value)
 	{
 		if (DMGame.PostInitSetup)
 			DMGame.PostInitSetup ();
 	}
-// ROGUE
+	// ROGUE
 
 	// Lazarus movewith init
 /*	for (i=1, ent=g_edicts+i; i < globals.num_edicts; i++, ent++)
@@ -1897,8 +1914,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			 ent->movewith_ent = G_Find (ent->movewith_ent, FOFS(targetname), ent->movewith);
 		if (ent->movewith_ent)
 			movewith_init (ent->movewith_ent);
-	}
-*/
+	} */
+
 /*	for(i=1, ent=g_edicts+i; i < globals.num_edicts; i++, ent++)
 	{
 		gi.dprintf("%s:%s - movewith=%s, movewith_ent=%s:%s, movewith_next=%s:%s\n====================\n",
@@ -1914,7 +1931,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	// Knightmare added
 	if (game.transition_ents)
 	{
-		LoadTransitionEnts();
+		LoadTransitionEnts ();
 	}
 
 	actor_files ();
@@ -2416,20 +2433,20 @@ void SP_worldspawn (edict_t *ent)
 //
 // CreateMonster
 //
-edict_t *CreateMonster(vec3_t origin, vec3_t angles, char *classname)
+edict_t *CreateMonster (vec3_t origin, vec3_t angles, char *classname)
 {
 	edict_t		*newEnt;
 
 	newEnt = G_Spawn();
 
-	VectorCopy(origin, newEnt->s.origin);
-	VectorCopy(angles, newEnt->s.angles);
+	VectorCopy (origin, newEnt->s.origin);
+	VectorCopy (angles, newEnt->s.angles);
 	newEnt->classname = ED_NewString (classname);
 	//newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 	newEnt->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
-	VectorSet(newEnt->gravityVector, 0, 0, -1);
-	ED_CallSpawn(newEnt);
+	VectorSet (newEnt->gravityVector, 0, 0, -1);
+	ED_CallSpawn (newEnt);
 	newEnt->s.renderfx |= RF_IR_VISIBLE;
 
 	return newEnt;
@@ -2763,13 +2780,13 @@ void DetermineBBox (char *classname, vec3_t mins, vec3_t maxs)
 
 	newEnt = G_Spawn();
 
-	VectorCopy(vec3_origin, newEnt->s.origin);
-	VectorCopy(vec3_origin, newEnt->s.angles);
+	VectorCopy (vec3_origin, newEnt->s.origin);
+	VectorCopy (vec3_origin, newEnt->s.angles);
 	newEnt->classname = ED_NewString (classname);
-	//newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
+//	newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 	newEnt->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
-	ED_CallSpawn(newEnt);
+	ED_CallSpawn (newEnt);
 	
 	VectorCopy (newEnt->mins, mins);
 	VectorCopy (newEnt->maxs, maxs);

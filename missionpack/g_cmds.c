@@ -220,17 +220,17 @@ void ShiftItem (edict_t *ent, int direction)
 
 	if (!ent->client) return;
 
-	target = LookingAt(ent,0,NULL,NULL);
+	target = LookingAt(ent, 0, NULL, NULL);
 	if (!target) return;
 
 	ent->client->shift_dir = direction;
 	
-	VectorClear(move);
-	VectorCopy(ent->s.origin,start);
-	VectorAdd(target->s.origin,target->origin_offset,end);
-	VectorSubtract(end,start,forward);
-	VectorNormalize(forward);
-	VectorScale(forward,shift_distance->value,forward);
+	VectorClear (move);
+	VectorCopy (ent->s.origin, start);
+	VectorAdd (target->s.origin, target->origin_offset, end);
+	VectorSubtract (end, start, forward);
+	VectorNormalize (forward);
+	VectorScale (forward, shift_distance->value, forward);
 	if (direction & 1)
 	{
 		if (fabs(forward[0]) > fabs(forward[1]))
@@ -266,11 +266,11 @@ void ShiftItem (edict_t *ent, int direction)
 		move[2] -= shift_distance->value;
 
 	if (direction & 64) {
-		if ( target->movetype == MOVETYPE_TOSS     ||
+		if ( target->movetype == MOVETYPE_TOSS    ||
 			target->movetype == MOVETYPE_BOUNCE   ||
 			target->movetype == MOVETYPE_STEP     ||
 			target->movetype == MOVETYPE_PUSHABLE ||
-			target->movetype == MOVETYPE_DEBRIS      ) {
+			target->movetype == MOVETYPE_DEBRIS ) {
 			M_droptofloor(target);
 		}
 	}
@@ -291,7 +291,7 @@ void ShiftItem (edict_t *ent, int direction)
 		if (target->s.angles[ROLL] <   0) target->s.angles[ROLL] += 360;
 	}
 
-	VectorAdd(target->s.origin,move,target->s.origin);
+	VectorAdd (target->s.origin, move, target->s.origin);
 	if (!(direction & 64)) target->gravity_debounce_time = level.time + 1.0;
 	gi.linkentity(target);
 }
@@ -2098,11 +2098,11 @@ void ClientCommand (edict_t *ent)
 		//	f = fopen(parm, "w");
 			SavegameDirRelativePath (parm, filename, sizeof(filename));
 			Com_strcat (filename, sizeof(filename), ".txt");
-			gi.dprintf("Writing entity list to %s... ", filename);
+			gi.dprintf ("Writing entity list to %s... ", filename);
 			f = fopen(filename, "w");
 			if (f)
 			{
-				fprintf(f, "Movetype codes\n"
+				fprintf (f, "Movetype codes\n"
 					      " 0 MOVETYPE_NONE\n"
 						  " 1 MOVETYPE_NOCLIP\n"
 						  " 2 MOVETYPE_PUSH       (most moving brush models)\n"
@@ -2117,12 +2117,12 @@ void ClientCommand (edict_t *ent)
 						  "11 MOVETYPE_PUSHABLE   (Lazarus func_pushable)\n"
 						  "12 MOVETYPE_DEBRIS     (Lazarus target_rocks)\n"
 						  "13 MOVETYPE_RAIN       (Lazarus precipitation)\n\n");
-				fprintf(f, "Solid codes\n"
+				fprintf (f, "Solid codes\n"
 					      " 0 SOLID_NOT       no interaction with other objects\n"
 						  " 1 SOLID_TRIGGER   trigger fields, pickups\n"
 						  " 2 SOLID_BBOX      solid point entities\n"
 						  " 3 SOLID_BSP       brush models\n\n");
-				fprintf(f, "CONTENT_ codes (clipmask)\n"
+				fprintf (f, "CONTENT_ codes (clipmask)\n"
 					      " 0x00000001 SOLID\n"
 						  " 0x00000002 WINDOW\n"
 						  " 0x00000004 AUX\n"
@@ -2145,23 +2145,23 @@ void ClientCommand (edict_t *ent)
 						  " 0x08000000 DETAIL\n"
 						  " 0x10000000 TRANSLUCENT\n"
 						  " 0x20000000 LADDER\n\n");
-				fprintf(f, "NOTE: \"freed\" indicates an empty slot in the edicts array.\n\n");
+				fprintf (f, "NOTE: \"freed\" indicates an empty slot in the edicts array.\n\n");
 
-				fprintf(f, "============================================================\n");
+				fprintf (f, "============================================================\n");
 				count = 0;
 				for (i=0, e=&g_edicts[0]; i<globals.num_edicts; i++, e++)
 				{
-					VectorAdd(e->s.origin,e->origin_offset,origin);
-					fprintf(f, "entity #%d, classname = %s at %s, velocity = %s\n", i,
+					VectorAdd (e->s.origin, e->origin_offset, origin);
+					fprintf (f, "entity #%d, classname = %s at %s, velocity = %s\n", i,
 						( (e->classname && (e->classname[0] != 0)) ? e->classname : "<noclass>"),
 						vtos(origin), vtos(e->velocity));
-					fprintf(f, "health=%d, mass=%d, dmg=%d, wait=%g, angles=%s\n", e->health, e->mass, e->dmg, e->wait, vtos(e->s.angles));
-					fprintf(f, "targetname=%s, target=%s, spawnflags=0x%04x\n",
+					fprintf (f, "health=%d, mass=%d, dmg=%d, wait=%g, angles=%s\n", e->health, e->mass, e->dmg, e->wait, vtos(e->s.angles));
+					fprintf (f, "targetname=%s, target=%s, spawnflags=0x%04x\n",
 						( (e->targetname && (e->targetname[0] != 0)) ? e->targetname : "<noname>"),
 						( (e->target && (e->target[0] != 0)) ? e->target : "<noname>"),
 						e->spawnflags);
-					fprintf(f, "absmin, absmax, size=%s, %s, %s\n", vtos(e->absmin), vtos(e->absmax), vtos(e->size));
-					fprintf(f, "groundentity=%s\n",
+					fprintf (f, "absmin, absmax, size=%s, %s, %s\n", vtos(e->absmin), vtos(e->absmax), vtos(e->size));
+					fprintf (f, "groundentity=%s\n",
 					//	(e->groundentity ? e->groundentity->classname : "NULL"));
 						(e->groundentity ? ( (e->groundentity->classname && (e->groundentity->classname[0] != 0)) ? e->groundentity->classname : "<noclass>" ) : "NULL"));
 					if (e->classname)
@@ -2170,12 +2170,12 @@ void ClientCommand (edict_t *ent)
 						if (!Q_stricmp(e->classname, "target_changelevel"))
 							fprintf(f, "map=%s\n", (e->map && (e->map[0] != 0)) ? e->map : "<nomap>");
 					}
-					fprintf(f, "movetype=%d, solid=%d, clipmask=0x%08x\n", e->movetype, e->solid, e->clipmask);
-					fprintf(f, "================================================================================\n");
+					fprintf (f, "movetype=%d, solid=%d, clipmask=0x%08x\n", e->movetype, e->solid, e->clipmask);
+					fprintf (f, "================================================================================\n");
 					if (e->inuse) count++;
 				}
-				fprintf(f, "Total number of entities = %d\n", count);
-				fclose(f);
+				fprintf (f, "Total number of entities = %d\n", count);
+				fclose (f);
 				gi.dprintf("done!\n");
 			}
 			else {
@@ -2423,16 +2423,16 @@ void ClientCommand (edict_t *ent)
 			if (!viewing) 
 				return;
 			VectorAdd (viewing->s.origin, viewing->origin_offset, origin);
-			gi.dprintf("classname = %s at %s, velocity = %s\n",
+			gi.dprintf ("classname = %s at %s, velocity = %s\n",
 				( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
 				vtos(origin), vtos(viewing->velocity));
-			gi.dprintf("health=%d, mass=%d, dmg=%d, wait=%g, sounds=%d, angles=%s, movetype=%d\n", viewing->health, viewing->mass, viewing->dmg, viewing->wait, viewing->sounds, vtos(viewing->s.angles), viewing->movetype);
-			gi.dprintf("targetname=%s, target=%s, spawnflags=0x%04x\n",
+			gi.dprintf ("health=%d, mass=%d, dmg=%d, wait=%g, sounds=%d, angles=%s, movetype=%d\n", viewing->health, viewing->mass, viewing->dmg, viewing->wait, viewing->sounds, vtos(viewing->s.angles), viewing->movetype);
+			gi.dprintf ("targetname=%s, target=%s, spawnflags=0x%04x\n",
 				( (viewing->targetname && (viewing->targetname[0] != 0)) ? viewing->targetname : "<noname>"),
 				( (viewing->target && (viewing->target[0] != 0)) ? viewing->target : "<noname>"),
 				viewing->spawnflags);
-			gi.dprintf("absmin, absmax, size=%s, %s, %s, range=%g\n", vtos(viewing->absmin), vtos(viewing->absmax), vtos(viewing->size), range);
-			gi.dprintf("groundentity=%s\n", (viewing->groundentity ? viewing->groundentity->classname : "NULL"));
+			gi.dprintf ("absmin, absmax, size=%s, %s, %s, range=%g\n", vtos(viewing->absmin), vtos(viewing->absmax), vtos(viewing->size), range);
+			gi.dprintf ("groundentity=%s\n", (viewing->groundentity ? viewing->groundentity->classname : "NULL"));
 		}
 		else if (!Q_stricmp(cmd, "item_left"))
 			ShiftItem (ent, 1);
