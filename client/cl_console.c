@@ -26,7 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 console_t	con;
 
+cvar_t		*con_font_size;
 cvar_t		*con_notifytime;
+
 qboolean	newconback_found = false;	// whether to draw Q3-style console
 
 extern	char	key_lines[32][MAXCMDLINE];
@@ -77,13 +79,13 @@ void Con_ToggleConsole_f (void)
 	Key_ClearTyping ();
 	Con_ClearNotify ();
 
+//	if (cls.key_dest == key_console)
 	if (cls.consoleActive) // Knightmare changed
-	//if (cls.key_dest == key_console)
 	{
 		cls.consoleActive = false; // Knightmare added
 
-		//UI_ForceMenuOff ();
-		//if (cls.key_dest != key_menu)
+	//	UI_ForceMenuOff ();
+	//	if (cls.key_dest != key_menu)
 		if (Cvar_VariableValue ("maxclients") == 1 
 			&& Com_ServerState () && cls.key_dest != key_menu)
 				Cvar_Set ("paused", "0");
@@ -91,8 +93,8 @@ void Con_ToggleConsole_f (void)
 	else
 	{
 		cls.consoleActive = true; // Knightmare added
-		//UI_ForceMenuOff ();
-		//cls.key_dest = key_console;	
+	//	UI_ForceMenuOff ();
+	//	cls.key_dest = key_console;	
 
 		if (Cvar_VariableValue ("maxclients") == 1 
 			&& Com_ServerState () && cls.key_dest != key_menu)
@@ -109,19 +111,19 @@ void Con_ToggleChat_f (void)
 {
 	Key_ClearTyping ();
 
+//	if (cls.key_dest == key_console)
 	if (cls.consoleActive) // Knightmare added
-	//if (cls.key_dest == key_console)
 	{
 		if (cls.state == ca_active)
 		{
 			UI_ForceMenuOff ();
-			cls.consoleActive = false; // Knightmare added
+			cls.consoleActive = false;	// Knightmare added
 			cls.key_dest = key_game;
 		}
 	}
 	else
-		//cls.key_dest = key_console;
-		cls.consoleActive = true; // Knightmare added
+	//	cls.key_dest = key_console;
+		cls.consoleActive = true;		// Knightmare added
 
 	Con_ClearNotify ();
 }
@@ -318,10 +320,12 @@ void Con_Init (void)
 	con.linewidth = -1;
 	con.backedit = 0;
 
+	// init this cvar first, as it's used by Con_CheckResize()
+	con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
+	Cvar_SetDescription ("con_font_size", "Sets size of console font.  Values > 8 are larger than default, while values < 8 are smaller.");
+
 	Con_CheckResize ();
 	
-	Com_Printf ("Console initialized.\n");
-
 //
 // register our commands
 //
@@ -343,6 +347,8 @@ void Con_Init (void)
 #endif	// PNG_SUPPORT
 		|| (FS_LoadFile("gfx/ui/newconback.jpg", NULL) != -1) )
 		newconback_found = true;
+
+	Com_Printf ("Console initialized.\n");
 
 	con.initialized = true;
 }

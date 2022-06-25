@@ -85,7 +85,7 @@ cvar_t  *gl_driver;
 cvar_t	*r_clear;
 
 // Psychospaz's console font size option
-extern cvar_t	*con_font_size;
+//cvar_t	*con_font_size;
 cvar_t	*con_font;
 cvar_t	*scr_font;
 cvar_t	*ui_font;

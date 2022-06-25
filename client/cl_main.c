@@ -114,7 +114,6 @@ cvar_t	*cl_footstep_override;
 cvar_t	*r_decals;		// decal quantity
 cvar_t	*r_decal_life;  // decal duration in seconds
 
-cvar_t	*con_font_size;
 cvar_t	*alt_text_color;
 
 // whether to try to play OGGs instead of CD tracks
@@ -2103,8 +2102,6 @@ void CL_InitLocal (void)
 	r_decal_life = Cvar_Get ("r_decal_life", "1000", CVAR_ARCHIVE);
 	Cvar_SetDescription ("r_decal_life", "Sets duration in seconds of decals.");
 
-	con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
-	Cvar_SetDescription ("con_font_size", "Sets size of console font.  Values > 8 are larger than default, while values < 8 are smaller.");
 	alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
 	Cvar_SetDescription ("alt_text_color", "Sets color of high-bit highlighted text.");
 

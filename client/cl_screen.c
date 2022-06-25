@@ -147,7 +147,6 @@ void SCR_InitHudScale (void)
 	float	refWidth, refHeight;
 	int		sizeIndex;
 
-//	sizeIndex = min(max((int)scr_hudsize->value, 0), HUDSCALE_NUM_SIZES-1);
 	sizeIndex = min(max(scr_hudsize->integer, 0), HUDSCALE_NUM_SIZES-1);
 
 	if (sizeIndex == 0) {
@@ -161,28 +160,20 @@ void SCR_InitHudScale (void)
 
 	// don't scale if < refWidth, then it would be smaller
 	if ( viddef.width > refWidth && viddef.height > refHeight ) {
-	//	hudScale.x = (float)viddef.width / refWidth;
-	//	hudScale.y = (float)viddef.height / refHeight;
-	//	hudScale.min = min(hudScale.x, hudScale.y); // use smaller value instead of average
 		scr_hudScale = min( ((float)viddef.width / refWidth), ((float)viddef.height / refHeight) );
 	}
 	else {
-	//	hudScale.x = 1.0f;
-	//	hudScale.y = 1.0f;
-	//	hudScale.min = 1.0f;
 		scr_hudScale = 1.0f;
 	}
 }
 
 float SCR_ScaledHud (float param)
 {
-//	return param*hudScale.min;
 	return param * scr_hudScale;
 }
 
 float SCR_GetHudScale (void)
 {
-//	return hudScale.min;
 	return scr_hudScale;
 }
 
@@ -237,9 +228,6 @@ SCR_InitScreenScale
 */
 void SCR_InitScreenScale (void)
 {
-//	screenScale.x = (float)viddef.width / SCREEN_WIDTH;
-//	screenScale.y = (float)viddef.height / SCREEN_HEIGHT;
-//	screenScale.min = min(screenScale.x, screenScale.y); // use smaller value instead of average
 	scr_screenScale = min( ((float)viddef.width / SCREEN_WIDTH), ((float)viddef.height / SCREEN_HEIGHT) );
 	scr_screenAspect = (float)viddef.width / (float)viddef.height;
 }
@@ -247,14 +235,12 @@ void SCR_InitScreenScale (void)
 
 float SCR_ScaledScreen (float param)
 {
-//	return param * screenScale.min;
 	return param * scr_screenScale;
 }
 
 
 float SCR_GetScreenScale (void)
 {
-//	return screenScale.min;
 	return scr_screenScale;
 }
 

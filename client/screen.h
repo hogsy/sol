@@ -243,7 +243,7 @@ typedef struct {
 #define SCREEN_HEIGHT	480.0f
 #define STANDARD_ASPECT_RATIO ((float)SCREEN_WIDTH/(float)SCREEN_HEIGHT)
 
-// rendered size of console font - everthing adjusts to this...
+// rendered size of console font - everything adjusts to this...
 #define	FONT_SIZE		SCR_ScaledScreen(con_font_size->value)
 #define CON_FONT_SCALE	SCR_ScaledScreen(con_font_size->value)/8
 

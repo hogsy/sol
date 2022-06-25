@@ -456,7 +456,6 @@ extern	cvar_t	*cl_footstep_override;
 extern	cvar_t	*r_decals; // decal control
 extern	cvar_t	*r_decal_life; // decal duration in seconds
 
-extern	cvar_t	*con_font_size;
 extern	cvar_t	*alt_text_color;
 
 //Knightmare 12/28/2001- BramBo's FPS counter

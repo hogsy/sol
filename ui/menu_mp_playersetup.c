@@ -36,14 +36,20 @@ PLAYER CONFIG MENU
 static menuFramework_s	s_player_config_menu;
 static menuImage_s		s_playerconfig_banner;
 static menuField_s		s_playerconfig_name_field;
-static menuLabel_s		s_playerconfig_model_title;
-static menuPicker_s		s_playerconfig_model_box;
-static menuLabel_s		s_playerconfig_skin_title;
-static menuPicker_s		s_playerconfig_skin_box;
-static menuLabel_s		s_playerconfig_hand_title;
-static menuPicker_s		s_playerconfig_handedness_box;
-static menuLabel_s		s_playerconfig_rate_title;
-static menuPicker_s		s_playerconfig_rate_box;
+
+//static menuLabel_s		s_playerconfig_model_title;
+//static menuPicker_s		s_playerconfig_model_box;
+//static menuLabel_s		s_playerconfig_skin_title;
+//static menuPicker_s		s_playerconfig_skin_box;
+//static menuLabel_s		s_playerconfig_hand_title;
+//static menuPicker_s		s_playerconfig_handedness_box;
+//static menuLabel_s		s_playerconfig_rate_title;
+//static menuPicker_s		s_playerconfig_rate_box;
+static menuComboBox_s	s_playerconfig_model_box;
+static menuComboBox_s	s_playerconfig_skin_box;
+static menuComboBox_s	s_playerconfig_handedness_box;
+static menuComboBox_s	s_playerconfig_rate_box;
+
 static menuLabel_s		s_playerconfig_railcolor_title;
 static menuRectangle_s	s_playerconfig_railcolor_background;
 static menuImage_s		s_playerconfig_railcolor_display[2];
@@ -227,23 +233,23 @@ void Menu_PlayerConfig_Init (void)
 
 	s_playerconfig_name_field.generic.type		= MTYPE_FIELD;
 	s_playerconfig_name_field.generic.textSize	= MENU_FONT_SIZE;
-	s_playerconfig_name_field.generic.flags		= 0;
-//	s_playerconfig_name_field.generic.name		= "name";
 	s_playerconfig_name_field.generic.header	= "name";
-	s_playerconfig_name_field.generic.callback	= 0;
+	s_playerconfig_name_field.generic.name		= 0;	// "name"
 	s_playerconfig_name_field.generic.x			= x;
 	s_playerconfig_name_field.generic.y			= y;
+	s_playerconfig_name_field.generic.flags		= 0;
+	s_playerconfig_name_field.generic.callback	= 0;
 	s_playerconfig_name_field.length			= 23;
 	s_playerconfig_name_field.visible_length	= 23;
 	s_playerconfig_name_field.generic.cvar		= "name";
-
+/*
 	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_model_title.generic.name		= "model";
 	s_playerconfig_model_title.generic.x		= x + 4*MENU_FONT_SIZE;
 	s_playerconfig_model_title.generic.y		= y += 3*MENU_LINE_SIZE;
-	
+
 	s_playerconfig_model_box.generic.type			= MTYPE_PICKER;
 	s_playerconfig_model_box.generic.textSize		= MENU_FONT_SIZE;
 	s_playerconfig_model_box.generic.x				= x;
@@ -308,13 +314,106 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_rate_box.itemValues				= rate_values;
 	s_playerconfig_rate_box.generic.cvar			= "rate";
 	s_playerconfig_rate_box.generic.cvarClamp		= false;
+*/
+
+	s_playerconfig_model_box.generic.type		= MTYPE_COMBOBOX;
+	s_playerconfig_model_box.generic.header		= "model";
+	s_playerconfig_model_box.generic.name		= 0;
+	s_playerconfig_model_box.generic.x			= x;
+	s_playerconfig_model_box.generic.y			= y += 3*MENU_LINE_SIZE;
+	s_playerconfig_model_box.items_y			= 10;
+	s_playerconfig_model_box.itemWidth			= 16;
+	s_playerconfig_model_box.itemSpacing		= 1;
+	s_playerconfig_model_box.itemTextSize		= 8;
+	s_playerconfig_model_box.border				= 1;
+	s_playerconfig_model_box.borderColor[0]		= 60;
+	s_playerconfig_model_box.borderColor[1]		= 60;
+	s_playerconfig_model_box.borderColor[2]		= 60;
+	s_playerconfig_model_box.borderColor[3]		= 255;
+	s_playerconfig_model_box.backColor[0]		= 0;
+	s_playerconfig_model_box.backColor[1]		= 0;
+	s_playerconfig_model_box.backColor[2]		= 0;
+	s_playerconfig_model_box.backColor[3]		= 224;
+	s_playerconfig_model_box.curValue			= mNum;
+	s_playerconfig_model_box.itemNames			= ui_pmnames;
+	s_playerconfig_model_box.generic.callback	= Menu_PlayerModelCallback;
+
+	s_playerconfig_skin_box.generic.type		= MTYPE_COMBOBOX;
+	s_playerconfig_skin_box.generic.header		= "skin";
+	s_playerconfig_skin_box.generic.name		= 0;
+	s_playerconfig_skin_box.generic.x			= x;
+	s_playerconfig_skin_box.generic.y			= y += 3*MENU_LINE_SIZE;
+	s_playerconfig_skin_box.items_y				= 10;
+	s_playerconfig_skin_box.itemWidth			= 16;
+	s_playerconfig_skin_box.itemSpacing			= 1;
+	s_playerconfig_skin_box.itemTextSize		= 8;
+	s_playerconfig_skin_box.border				= 1;
+	s_playerconfig_skin_box.borderColor[0]		= 60;
+	s_playerconfig_skin_box.borderColor[1]		= 60;
+	s_playerconfig_skin_box.borderColor[2]		= 60;
+	s_playerconfig_skin_box.borderColor[3]		= 255;
+	s_playerconfig_skin_box.backColor[0]		= 0;
+	s_playerconfig_skin_box.backColor[1]		= 0;
+	s_playerconfig_skin_box.backColor[2]		= 0;
+	s_playerconfig_skin_box.backColor[3]		= 224;
+	s_playerconfig_skin_box.curValue			= sNum;
+	s_playerconfig_skin_box.itemNames			= ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_box.generic.callback	= Menu_PlayerSkinCallback;
+
+	s_playerconfig_handedness_box.generic.type		= MTYPE_COMBOBOX;
+	s_playerconfig_handedness_box.generic.header	= "handedness";
+	s_playerconfig_handedness_box.generic.name		= 0;
+	s_playerconfig_handedness_box.generic.x			= x;
+	s_playerconfig_handedness_box.generic.y			= y += 3*MENU_LINE_SIZE;
+	s_playerconfig_handedness_box.items_y			= 3;
+	s_playerconfig_handedness_box.itemWidth			= 7;
+	s_playerconfig_handedness_box.itemSpacing		= 1;
+	s_playerconfig_handedness_box.itemTextSize		= 8;
+	s_playerconfig_handedness_box.border			= 1;
+	s_playerconfig_handedness_box.borderColor[0]	= 60;
+	s_playerconfig_handedness_box.borderColor[1]	= 60;
+	s_playerconfig_handedness_box.borderColor[2]	= 60;
+	s_playerconfig_handedness_box.borderColor[3]	= 255;
+	s_playerconfig_handedness_box.backColor[0]		= 0;
+	s_playerconfig_handedness_box.backColor[1]		= 0;
+	s_playerconfig_handedness_box.backColor[2]		= 0;
+	s_playerconfig_handedness_box.backColor[3]		= 224;
+	s_playerconfig_handedness_box.itemNames			= handedness_names;
+	s_playerconfig_handedness_box.generic.callback	= Menu_PlayerHandednessCallback;
+	s_playerconfig_handedness_box.generic.cvar		= "hand";
+	s_playerconfig_handedness_box.generic.cvarClamp	= true;
+	s_playerconfig_handedness_box.generic.cvarMin	= 0;
+	s_playerconfig_handedness_box.generic.cvarMax	= 2;
+		
+	s_playerconfig_rate_box.generic.type		= MTYPE_COMBOBOX;
+	s_playerconfig_rate_box.generic.header		= "connect speed";
+	s_playerconfig_rate_box.generic.name		= 0;
+	s_playerconfig_rate_box.generic.x			= x;
+	s_playerconfig_rate_box.generic.y			= y += 3*MENU_LINE_SIZE;
+	s_playerconfig_rate_box.items_y				= 7;
+	s_playerconfig_rate_box.itemWidth			= 16;
+	s_playerconfig_rate_box.itemSpacing			= 1;
+	s_playerconfig_rate_box.itemTextSize		= 8;
+	s_playerconfig_rate_box.border				= 1;
+	s_playerconfig_rate_box.borderColor[0]		= 60;
+	s_playerconfig_rate_box.borderColor[1]		= 60;
+	s_playerconfig_rate_box.borderColor[2]		= 60;
+	s_playerconfig_rate_box.borderColor[3]		= 255;
+	s_playerconfig_rate_box.backColor[0]		= 0;
+	s_playerconfig_rate_box.backColor[1]		= 0;
+	s_playerconfig_rate_box.backColor[2]		= 0;
+	s_playerconfig_rate_box.backColor[3]		= 224;
+	s_playerconfig_rate_box.itemNames			= rate_names;
+	s_playerconfig_rate_box.itemValues			= rate_values;
+	s_playerconfig_rate_box.generic.cvar		= "rate";
+	s_playerconfig_rate_box.generic.cvarClamp	= false;
 
 	s_playerconfig_railcolor_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_railcolor_title.generic.textSize	= MENU_FONT_SIZE;
 	s_playerconfig_railcolor_title.generic.flags	= QMF_LEFT_JUSTIFY;
 	s_playerconfig_railcolor_title.generic.name		= "railgun effect color";
 	s_playerconfig_railcolor_title.generic.x		= x + 4*MENU_FONT_SIZE;
-	s_playerconfig_railcolor_title.generic.y		= y += 2*MENU_LINE_SIZE;
+	s_playerconfig_railcolor_title.generic.y		= y += 3*MENU_LINE_SIZE;
 
 	s_playerconfig_railcolor_background.generic.type		= MTYPE_RECTANGLE;
 	s_playerconfig_railcolor_background.generic.x			= x + 2*MENU_FONT_SIZE;
@@ -474,16 +573,16 @@ void Menu_PlayerConfig_Init (void)
 
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_banner);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_name_field);
-	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_title);
+//	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_model_box);
 	if ( s_playerconfig_skin_box.itemNames )
 	{
-		UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_skin_title);
+	//	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_skin_title);
 		UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_skin_box);
 	}
-	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_hand_title);
+//	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_hand_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_handedness_box);
-	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_rate_title);
+//	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_rate_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_rate_box);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_title);
 	UI_AddMenuItem (&s_player_config_menu, &s_playerconfig_railcolor_background);

@@ -259,10 +259,8 @@ void Menu_Video_Init (void)
 		"0",
 		0
 	};
-	int		x, y;
 
-	if ( !con_font_size )
-		con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
+	int		x, y;
 
 	// menu.x = 320, menu.y = 160
 	x = SCREEN_WIDTH*0.5;
