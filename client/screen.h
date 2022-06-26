@@ -262,6 +262,8 @@ extern	float		scr_letterbox_lines;		// lines of letterbox to display
 extern	qboolean	scr_letterbox_active;
 extern	qboolean	scr_hidehud;
 
+extern	qboolean	scr_initialized;	// ready to draw
+
 extern	int			sb_lines;
 
 extern	cvar_t		*scr_viewsize;

@@ -254,11 +254,23 @@ void Con_CheckResize (void)
 {
 	int		i, j, width, oldwidth, oldtotallines, numlines, numchars;
 	char	tbuf[CON_TEXTSIZE];
+	float	conWidth = SCREEN_WIDTH;
 
-	if (con_font_size)
-		width = viddef.width/FONT_SIZE - 2;
-	else	 // (viddef.width / 8) - 2
-		width = (viddef.width >> 3) - 2;
+	if (scr_initialized)
+	{	// scale from SCREEN_WIDTH for eyefinity centered console
+		SCR_ScaleCoords (NULL, NULL, &conWidth, NULL, ALIGN_STRETCH);
+		if (con_font_size)
+			width = ((int)conWidth)/FONT_SIZE - 2;
+		else
+			width = (((int)conWidth)>> 3) - 2;
+		// end eyefinity centered console
+	}
+	else {
+		if (con_font_size)
+			width = viddef.width/FONT_SIZE - 2;
+		else	 // (viddef.width / 8) - 2
+			width = (viddef.width >> 3) - 2;
+	}
 	width = min((MAXCMDLINE - 2), width);	// clamp width to MAXCMDLINE - 2 to prevent buffer overflow
 
 	if (width == con.linewidth)
