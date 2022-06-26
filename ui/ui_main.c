@@ -179,6 +179,7 @@ void UI_Precache (void)
 	R_DrawFindPic ("/pics/downloading.pcx");
 	R_DrawFindPic ("/pics/downloading_bar.pcx");
 	R_DrawFindPic ("/pics/loading_led1.pcx");
+	R_DrawFindPic ("/pics/pause.pcx");
 
 	// cursors
 //	R_DrawFindPic (UI_MOUSECURSOR_MAIN_PIC);

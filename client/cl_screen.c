@@ -1604,11 +1604,11 @@ void SCR_Init (void)
 //
 // register our commands
 //
-	Cmd_AddCommand ("timerefresh",SCR_TimeRefresh_f);
-	Cmd_AddCommand ("loading",SCR_Loading_f);
-	Cmd_AddCommand ("sizeup",SCR_SizeUp_f);
-	Cmd_AddCommand ("sizedown",SCR_SizeDown_f);
-	Cmd_AddCommand ("sky",SCR_Sky_f);
+	Cmd_AddCommand ("timerefresh", SCR_TimeRefresh_f);
+	Cmd_AddCommand ("loading", SCR_Loading_f);
+	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
+	Cmd_AddCommand ("sizedown", SCR_SizeDown_f);
+	Cmd_AddCommand ("sky", SCR_Sky_f);
 	Cmd_AddCommand ("sethud", SCR_SetHud_f);
 	Cmd_AddCommand ("dumpstatuslayout", SCR_DumpStatusLayout_f);
 	Cmd_AddCommand ("dumpgenerallayout", SCR_DumpGeneralLayout_f);

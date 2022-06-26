@@ -242,8 +242,8 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 		else
 			l = width;
 	}
-	digitWidth = fieldScale*(float)HUD_CHAR_WIDTH;
-	digitOffset = width*scaleForScreen(HUD_CHAR_WIDTH) - l*digitWidth;
+	digitWidth = fieldScale * (float)HUD_CHAR_WIDTH;
+	digitOffset = width*scaleForScreen(HUD_CHAR_WIDTH) - l * digitWidth;
 //	x += 2 + scaleForScreen(HUD_CHAR_WIDTH)*max(width - l, 0);
 	x += 2 + digitOffset;
 //	flashWidth = (l*digitWidth >  width*scaleForScreen(HUD_CHAR_WIDTH)) ? l*digitWidth : width*scaleForScreen(HUD_CHAR_WIDTH);
