@@ -254,7 +254,7 @@ typedef enum
 #define AI_CROUCH               0x40000000
 #define AI_EVADE_GRENADE		0x80000000
 
-// Knightmare- thes are for aiflags2
+// Knightmare- these are for aiflags2
 #define AI2_FREEFORALL           0x00000001	// Set by target_monsterbattle, lets dmgteam monsters
                                             // attack monsters on opposion dmgteam
 #define AI2_RANGE_PAUSE          0x00000002

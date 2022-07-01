@@ -788,12 +788,10 @@ void sentien_do_laser (edict_t *self)
 
 void sentien_attack (edict_t *self)
 {
-
 	vec3_t	vec;
-	float	range;
-	float	r;
+	float	range, r;
 
-   sentien_laser_off (self->flash);
+	sentien_laser_off (self->flash);
 
 //	sentien_run(self); // to test walking
 //	return;
@@ -803,17 +801,16 @@ void sentien_attack (edict_t *self)
 
 	r = random();
 
-	if (range <= 128)
+	if (range <= 128) {
 		self->monsterinfo.currentmove = &sentien_move_pre_blast_attack;
-	else if (range <= 500)
-	{
+	}
+	else if (range <= 500) {
 		if (r < 0.50)
 			self->monsterinfo.currentmove = &sentien_move_pre_blast_attack;
 		else 
 			self->monsterinfo.currentmove = &sentien_move_pre_laser_attack;
 	}
-	else
-	{
+	else {
 		if (r < 0.25)
 			self->monsterinfo.currentmove = &sentien_move_pre_blast_attack;
 		else 
@@ -847,7 +844,6 @@ void sentien_fend_hold (edict_t *self)
 	}
 }
 
-
 mframe_t sentien_frames_fend [] =
 {
 	ai_move, 0,  sentian_sound_fend,
@@ -870,23 +866,33 @@ mmove_t sentien_move_fend = {FRAME_dodgeStart, FRAME_dodgeEnd, sentien_frames_fe
 
 void sentien_fend (edict_t *self, edict_t *attacker, float eta, trace_t *tr)
 {
+	int		skilllevel = min((int)skill->value, 3);
+
 	// don't flinch if attacking
-	if (self->monsterinfo.currentmove == &sentien_move_laser_attack ||
-			self->monsterinfo.currentmove == &sentien_move_blast_attack)
+//	if (self->monsterinfo.currentmove == &sentien_move_laser_attack ||
+//			self->monsterinfo.currentmove == &sentien_move_blast_attack)
+//		return;
+	// Knightmare- do this based on frames
+	if ( (self->s.frame >= FRAME_blastPreStart) && (self->s.frame <= FRAME_blastPostEnd) )
+		return;
+	if ( (self->s.frame >= FRAME_laserPreStart) && (self->s.frame <= FRAME_laserPostEnd) )
+		return;
+	// Knightmare- check dodgetimeout here intead of in check_dodge()
+	if (level.time < self->monsterinfo.dodgetimeout)
 		return;
 
-	if (skill->value == 0)
-	{
+	// Knightmare- set dodgetimeout here intead of in check_dodge()
+	self->monsterinfo.dodgetimeout = level.time + ((4 + skilllevel) * 1.5);
+
+	if (skill->value == 0) {
 		if (random() > 0.45)
 			return;
 	}
-	else if (skill->value == 1)
-	{
+	else if (skill->value == 1) {
 		if (random() > 0.60)
 			return;
 	}
-	else
-	{
+	else {
 		if (random() > 0.80)
 			return;
 	}
@@ -971,8 +977,7 @@ void sentien_pain (edict_t *self, edict_t *other, float kick, int damage)
 		sentian_sound_pain1(self);
 	else if (r < 0.66)
 		sentian_sound_pain2(self);
-	else
-	{
+	else {
 	//	sentian_sound_pain3(self);
 	}
 
@@ -987,8 +992,13 @@ void sentien_pain (edict_t *self, edict_t *other, float kick, int damage)
 	if (skill->value >= 1)
 	{
 		// don't flinch if attacking
-		if (self->monsterinfo.currentmove == &sentien_move_laser_attack ||
-				self->monsterinfo.currentmove == &sentien_move_blast_attack)
+	//	if (self->monsterinfo.currentmove == &sentien_move_laser_attack ||
+	//			self->monsterinfo.currentmove == &sentien_move_blast_attack)
+	//		return;
+		// Knightmare- do this based on frames
+		if ( (self->s.frame >= FRAME_blastPreStart) && (self->s.frame <= FRAME_blastPostEnd) )
+			return;
+		if ( (self->s.frame >= FRAME_laserPreStart) && (self->s.frame <= FRAME_laserPostEnd) )
 			return;
 	}
 	if (skill->value == 3)
@@ -997,14 +1007,19 @@ void sentien_pain (edict_t *self, edict_t *other, float kick, int damage)
 	sentien_laser_off (self->flash);
 
 	r = random();
-	if (damage > 60 && r < 0.3)
+	if ( (damage > 60) && (r < 0.3) ) {
 		self->monsterinfo.currentmove = &sentien_move_pain3;
-	else if (damage > 30 && r < 0.5)
+		self->pain_debounce_time = level.time + 5;	// Knightmare- increase debounce, as this pain anim takes 2.1s
+	}
+	else if ( (damage > 30) && (r < 0.5) ) {
 		self->monsterinfo.currentmove = &sentien_move_pain2;
-	else if (r < 0.7)
+		self->pain_debounce_time = level.time + 3;
+	}
+	else if (r < 0.7) {
 		self->monsterinfo.currentmove = &sentien_move_pain1;
-
-	self->pain_debounce_time = level.time + 3;
+		self->pain_debounce_time = level.time + 3;
+	}
+//	self->pain_debounce_time = level.time + 3;
 }
 
 /*=========================================================================
@@ -1266,7 +1281,7 @@ void SP_monster_sentien (edict_t *self)
 	self->monsterinfo.sight = NULL;
 	self->monsterinfo.idle = NULL;
 
-	self->monsterinfo.reducedDamageAmount = 0.85;
+	self->monsterinfo.reducedDamageAmount = 0.35;	// was 0.85
 
 	// Lazarus
 	if (!self->blood_type)

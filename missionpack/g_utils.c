@@ -378,7 +378,7 @@ This is just a convenience function
 for making temporary vectors for function calls
 =============
 */
-float	*tv (float x, float y, float z)
+float *tv (float x, float y, float z)
 {
 	static	int		index;
 	static	vec3_t	vecs[8];
@@ -405,7 +405,7 @@ This is just a convenience function
 for printing vectors
 =============
 */
-char	*vtos (vec3_t v)
+char *vtos (vec3_t v)
 {
 	static	int		index;
 	static	char	str[8][32];

@@ -1036,7 +1036,7 @@ void medic_cable_attack (edict_t *self)
 		abortHeal (self, true, false, false);
 		return;
 	}
-	//Knightmare- don't heal insanes or actors or critters
+	// Knightmare- don't heal insanes or actors or critters
 	if (!strcmp (self->enemy->classname, "misc_insane") || !strcmp (self->enemy->classname, "misc_actor")
 		|| !strcmp (self->enemy->classname, "monster_mutant") || !strcmp (self->enemy->classname, "monster_flipper") 
 		|| !strcmp (self->enemy->classname, "monster_gekk"))

@@ -317,7 +317,7 @@ void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage,
 	gib->avelocity[2] = random()*600;
 
 	gib->think = gib_fade; //Knightmare- gib fade, was G_FreeEdict
-	gib->nextthink = level.time + 10 + random()*10;
+	gib->nextthink = level.time + 10 + random() * 10;
 
 //PGM
 	gib->s.renderfx |= RF_IR_VISIBLE;
@@ -610,7 +610,7 @@ void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin, in
 	chunk->avelocity[1] = random()*600;
 	chunk->avelocity[2] = random()*600;
 	chunk->think = gib_fade; // Knightmare- gib fade, was G_FreeEdict
-	chunk->nextthink = level.time + 8 + random()*10;
+	chunk->nextthink = level.time + 8 + random() * 10;
 //	chunk->s.frame = 0;
 	chunk->s.frame = frame;	// Knightmare added
 	chunk->flags = 0;
@@ -636,7 +636,7 @@ void debris_delayed_start (edict_t *debris)
 	if (g_edicts[1].linkcount)
 	{
 		debris->think = gib_fade;
-		debris->nextthink = level.time + 8 + random()*5;
+		debris->nextthink = level.time + 8 + random() * 5;
 	}
 	else
 	{

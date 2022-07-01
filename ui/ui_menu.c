@@ -702,7 +702,7 @@ void UI_DrawMenu (menuFramework_s *menu)
 			char	*cursor;
 			int		cursorX;
 
-			if (item->type == MTYPE_KEYBIND && ((menuKeyBind_s *)item)->grabBind)
+			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind)
 				cursor = UI_ITEMCURSOR_KEYBIND_PIC;
 			else
 				cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
@@ -772,8 +772,8 @@ UI_DefaultMenuKey
 */
 const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 {
-	const char *sound = NULL;
-	menuCommon_s *item;
+	const char		*sound = NULL;
+	menuCommon_s	*item;
 
 	if ( menu )
 	{

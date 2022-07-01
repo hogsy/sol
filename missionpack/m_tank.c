@@ -278,9 +278,10 @@ void tank_pain (edict_t *self, edict_t *other, float kick, int damage)
 	if (level.time < self->pain_debounce_time)
 		return;
 
-	if (damage <= 30)
+	if (damage <= 30) {
 		if (random() > 0.2)
 			return;
+	}
 	
 	// If hard or nightmare, don't go into pain while attacking
 	if ( skill->value >= 2)

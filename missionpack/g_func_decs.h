@@ -1591,6 +1591,7 @@ extern void SP_trap ( edict_t * trap ) ;
 extern void trap_delayed_start ( edict_t * trap ) ;
 extern void fire_trap ( edict_t * self , vec3_t start , vec3_t aimdir , int damage , int speed , float timer , float damage_radius , qboolean held ) ;
 extern void Trap_Think ( edict_t * ent ) ;
+extern void Foodcube_Think ( edict_t * self ) ;
 extern void SP_phalanx_plasma ( edict_t * ph_plasma ) ;
 extern void phalanx_plasma_delayed_start ( edict_t * ph_plasma ) ;
 extern void fire_phalanx_plasma ( edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage ) ;

@@ -1945,7 +1945,8 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 	if ( ( (type == it_font) && r_font_upscale->integer ) || ( (type == it_scrap) && r_scrap_upscale->integer )
 		&& (scaled_width == scaled_height) && ((scaled_width * 2) <= idealImgRes) )	// scale up fonts
 	{
-		while (1) {
+		while (1)
+		{
 			if ( ((scaled_width * 2) > idealImgRes) && ((scaled_height * 2) > idealImgRes) )
 				break;
 			if (upscaleFactor >= MAX_UPSAMPLE_FACTOR)	// don't go past 64x scaling
@@ -1957,7 +1958,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 		if (upscaleFactor > 0)
 		{
 			upscaleFactor = min(upscaleFactor, MAX_UPSAMPLE_FACTOR);	// clamp to max upscale factor
-			VID_Printf (PRINT_DEVELOPER, "GL_Upload32: scaling font image from %dx%d to %dx%d.\n", width, height, scaled_width, scaled_height);
+			VID_Printf (PRINT_DEVELOPER, "GL_Upload32: scaling font or scrap image from %dx%d to %dx%d.\n", width, height, scaled_width, scaled_height);
 			scaled = malloc((scaled_width * scaled_height) * 4);
 			if (type == it_font)
 				GL_UpscaleTexture (data, width, height, scaled, upscaleFactor, (r_font_upscale->integer >= 2));

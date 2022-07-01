@@ -415,24 +415,40 @@ TRAP
 ==============================================================================
 */
 
-extern void SP_item_foodcube (edict_t *best);
+extern void SP_item_foodcube (edict_t *self);
 
-extern int	gibsthisframe;
-extern int lastgibframe;
+// Knightmare added
+void Foodcube_Think (edict_t *self)
+{
+	// do nothing until we're on ground and stationary
+	if ( !self->groundentity || (VectorLength(self->velocity) > 0) ) {
+		self->nextthink = level.time + 0.1;
+		return;
+	}
+	
+//	gi.dprintf ("foodcube_think: converting to item\n");
+	VectorClear	(self->mins);
+	VectorClear (self->maxs);
+	self->think = NULL;
+	self->nextthink = 0;
+	SP_item_foodcube (self);
+}
+
 
 void Trap_Think (edict_t *ent)
 {
 	edict_t	*target = NULL;
 	edict_t	*best = NULL;
+	edict_t	*foodcube = NULL;
 	vec3_t	vec;
 	int		len, i;
 	int		oldlen = 8000;
-//	vec3_t	forward, right, up;
+	vec3_t	forward, right, up;
 	
 	if (ent->timestamp < level.time)
 	{
 		ent->s.frame = 6;
-	//	BecomeExplosion1(ent);
+	//	BecomeExplosion1 (ent);
 		// note to self
 		// cause explosion damage???
 		return;
@@ -456,10 +472,9 @@ void Trap_Think (edict_t *ent)
 
 			for (i=0; i<3; i++)
 			{
-				
 				// Knightmare- forget this, enough gibs are spawned already.
 				// Lazarus: Prevent gib showers from causing SZ_GetSpace: overflow
-			/*	if (level.framenum > lastgibframe)
+				if (level.framenum > lastgibframe)
 				{
 					gibsthisframe = 0;
 					lastgibframe = level.framenum;
@@ -469,8 +484,8 @@ void Trap_Think (edict_t *ent)
 				{
 					best = G_Spawn();
 
-				//	if (strcmp (ent->enemy->classname, "monster_gekk") == 0)
-					if (ent->enemy->blood_type == 1)
+				//	if (ent->enemy->blood_type == 1)
+					if (strcmp (ent->enemy->classname, "monster_gekk") == 0)
 					{
 						best->s.modelindex = gi.modelindex ("models/objects/gekkgib/torso/tris.md2");	
 					//	best->s.effects |= TE_GREENBLOOD;
@@ -497,10 +512,10 @@ void Trap_Think (edict_t *ent)
 
 					AngleVectors (ent->s.angles, forward, right, up);
 				
-					RotatePointAroundVector( vec, up, right, ((360.0/3)* i)+ent->delay);
-					VectorMA (vec, ent->wait/2, vec, vec);
-					VectorAdd(vec, ent->s.origin, vec);
-					VectorAdd(vec, forward, best->s.origin);
+					RotatePointAroundVector (vec, up, right, ((360.0/3)* i)+ent->delay);
+					VectorMA (vec, ent->wait / 2, vec, vec);
+					VectorAdd (vec, ent->s.origin, vec);
+					VectorAdd (vec, forward, best->s.origin);
   
 					best->s.origin[2] = ent->s.origin[2] + ent->wait;
 				
@@ -522,27 +537,37 @@ void Trap_Think (edict_t *ent)
 						best->waterlevel = 1;
 
 				//	best->nextthink = level.time + 0.1;
-					best->nextthink = level.time + 10 + random()*10;
+					best->nextthink = level.time + 2 + random() * 1;
 				//	best->think = G_FreeEdict;
 					best->think = gib_fade;
 					gi.linkentity (best);
-				} */
-
-				best = G_Spawn ();
-				VectorCopy (ent->s.origin, best->s.origin);
-				best->s.origin[2]+= 32;
-				SP_item_foodcube (best);
-				best->velocity[2] = 400;
-				best->count = 20; //was best->mass
-				gi.linkentity (best);
-				if (ent->timestamp < (level.time - 1)) //close if time is just about up
-					ent->s.frame++;
-				else //go back to previous state
-					ent->s.frame = 4;
+				}
 			}
-				
+
+			foodcube = G_Spawn ();
+			VectorCopy (ent->s.origin, foodcube->s.origin);
+			foodcube->s.origin[2] += 32;
+		//	SP_item_foodcube (foodcube);
+			// Knightmare- fix for droptofloor: startsolid error
+			// spawn as a bbox entity, then change to item once on floor
+			foodcube->s.modelindex = gi.modelindex("models/objects/trapfx/tris.md2");
+			VectorSet (foodcube->mins, -4, -4, -16);
+			VectorSet (foodcube->maxs, 4, 4, -12);
+			foodcube->solid = SOLID_TRIGGER;
+			foodcube->movetype = MOVETYPE_TOSS;
+			foodcube->think = Foodcube_Think;
+			foodcube->nextthink = level.time + 0.5;
+			// end Knightmare
+			foodcube->velocity[2] = 400;
+			foodcube->count = max(ent->mass, 20);	// was ent->mass
+			gi.linkentity (foodcube);
+			
 		//	if (ent->wait < 19)
 		//		ent->s.frame++;
+			if (ent->timestamp < (level.time - 1)) // close if time is just about up
+				ent->s.frame++;
+			else // go back to previous state
+				ent->s.frame = 4;
 
 			return;
 		}
@@ -552,13 +577,13 @@ void Trap_Think (edict_t *ent)
 			ent->nextthink = level.time + 1.0;
 			ent->think = G_FreeEdict;
 
-		/*	best = G_Spawn ();
-			SP_item_foodcube (best);
-			VectorCopy (ent->s.origin, best->s.origin);
-			best->s.origin[2]+= 16;
-			best->velocity[2] = 400;
-			best->count = ent->mass;
-			gi.linkentity (best);
+		/*	foodcube = G_Spawn ();
+			SP_item_foodcube (foodcube);
+			VectorCopy (ent->s.origin, foodcube->s.origin);
+			foodcube->s.origin[2]+= 16;
+			foodcube->velocity[2] = 400;
+			foodcube->count = ent->mass;
+			gi.linkentity (foodcube);
 		*/
 			return;
 		}
@@ -583,12 +608,15 @@ void Trap_Think (edict_t *ent)
 			continue;
 		if (!(target->svflags & SVF_MONSTER) && !target->client)
 			continue;
-		// if (target == ent->owner)
-		//	continue;
+	//	if (target == ent->owner)
+	//		continue;
 		if (target->health <= 0)
 			continue;
 		if (!visible (ent, target))
 		 	continue;
+		// Knightmare- ignore crucified insanes
+		if ( (Q_stricmp(target->classname, "misc_insane") == 0) && (target->moreflags & FL2_CRUCIFIED) )
+			continue;
 		if (!best)
 		{
 			best = target;
@@ -648,7 +676,7 @@ void Trap_Think (edict_t *ent)
 			}
 			else
 			{
-				BecomeExplosion1(ent);
+				BecomeExplosion1 (ent);
 				// note to self
 				// cause explosion damage???
 				return;

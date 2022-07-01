@@ -1591,6 +1591,7 @@
 {"trap_delayed_start", (byte *)trap_delayed_start},
 {"fire_trap", (byte *)fire_trap},
 {"Trap_Think", (byte *)Trap_Think},
+{"Foodcube_Think", (byte *)Foodcube_Think},
 {"SP_phalanx_plasma", (byte *)SP_phalanx_plasma},
 {"phalanx_plasma_delayed_start", (byte *)phalanx_plasma_delayed_start},
 {"fire_phalanx_plasma", (byte *)fire_phalanx_plasma},
