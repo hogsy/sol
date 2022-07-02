@@ -547,7 +547,7 @@ void R_DrawPic (drawStruct_t ds)
 
 	image = R_DrawFindPic (ds.pic);
 	if (!image) {
-		VID_Printf (PRINT_ALL, "Can't find pic: %s\n", ds.pic);
+		VID_Printf (PRINT_DEVELOPER, "Can't find pic: %s\n", ds.pic);	// was PRINT_ALL
 		return;
 	}
 
@@ -582,7 +582,7 @@ void R_DrawPic (drawStruct_t ds)
 
 		if (maskImage != NULL)
 		{
-		//	VID_Printf (PRINT_ALL, "Drawing pic with mask: %s\n", pic);
+		//	VID_Printf (PRINT_DEVELOPER, "Drawing pic with mask: %s\n", pic);
 			drawParms.blend = true;
 			drawParms.blendfunc_src = GL_SRC_ALPHA;
 			drawParms.blendfunc_dst = GL_ONE;

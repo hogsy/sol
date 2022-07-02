@@ -2308,7 +2308,7 @@ void R_AddToFailedImgList (const char *name)
 	if (!strncmp(name, "save/", 5)) // don't add saveshots
 		return;
 
-	//VID_Printf (PRINT_ALL, "R_AddToFailedImgList: adding %s to failed to load list\n", name);
+//	VID_Printf (PRINT_ALL, "R_AddToFailedImgList: adding %s to failed to load list\n", name);
 
 	Com_sprintf(lastFailedImage[failedImgListIndex], sizeof(lastFailedImage[failedImgListIndex]), "%s", name);
 	lastFailedImageHash[failedImgListIndex] = Com_HashFileName(name, 0, false);
