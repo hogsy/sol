@@ -1860,8 +1860,10 @@ void UI_MenuCheckBox_Setup (menuCheckBox_s *c)
 
 void UI_MenuImage_Draw (menuImage_s *i)
 {
+	int				curAnimFrame;
+	char			*animPicName;
 //	menuFramework_s	*menu = i->generic.parent;
-	byte	*bc = i->borderColor;
+	byte			*bc = i->borderColor;
 
 	if (i->border > 0)
 	{
@@ -1872,7 +1874,12 @@ void UI_MenuImage_Draw (menuImage_s *i)
 			UI_DrawBorder ((float)i->generic.topLeft[0], (float)i->generic.topLeft[1], (float)i->width, (float)i->height,
 							(float)i->border, i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
-	if (i->imageName && strlen(i->imageName) > 0) {
+	if (i->isAnimated) {
+		curAnimFrame = (int)((cls.realtime - i->start_time) * i->animTimeScale) % i->numAnimFrames;
+		animPicName = va(i->animTemplate, curAnimFrame);
+		UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
+	}
+	else if (i->imageName && strlen(i->imageName) > 0) {
 		if (i->overrideColor)
 			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
 		else
@@ -1894,13 +1901,17 @@ void UI_MenuImage_UpdateCoords (menuImage_s *i)
 
 void UI_MenuImage_Setup (menuImage_s *i)
 {
+	int				idx;
 	menuFramework_s	*menu = i->generic.parent;
 
 	// automatic sizing
 	if (i->width == -1 || i->height == -1)
 	{
-		int w, h;
-		R_DrawGetPicSize (&w, &h, i->imageName);
+		int		w, h;
+		if ( i->animTemplate && (strlen(i->animTemplate) > 0) )
+			R_DrawGetPicSize (&w, &h, va(i->animTemplate, 0));
+		else
+			R_DrawGetPicSize (&w, &h, i->imageName);
 		if (i->width == -1)
 			i->width = w;
 		if (i->height == -1)
@@ -1916,6 +1927,20 @@ void UI_MenuImage_Setup (menuImage_s *i)
 		i->generic.x = (SCREEN_WIDTH/2 - i->width/2) - menu->x;
 	if (i->vCentered)
 		i->generic.y = (SCREEN_HEIGHT/2 - i->height/2) - menu->y;
+
+	// setup animation
+	if ( i->animTemplate && (strlen(i->animTemplate) > 0) )
+	{
+		i->numAnimFrames = max(i->numAnimFrames, 1);
+		for (idx = 0; idx < i->numAnimFrames; idx++)
+			R_DrawFindPic (va(i->animTemplate, idx));
+		i->animTimeScale = min(max(i->animTimeScale, 0.01f), 0.25f);		// anim speed must be between 100 and 4 fps
+		i->start_time = cls.realtime;
+		i->isAnimated = true;
+	}
+	else {
+		i->isAnimated = false;
+	}
 
 	// set min and max coords
 	UI_MenuImage_UpdateCoords (i);

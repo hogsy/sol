@@ -241,6 +241,13 @@ typedef struct
 	int				height;
 	char			*imageName;
 //	qboolean		imageValid;
+
+	qboolean		isAnimated;
+	char			*animTemplate;
+	int				numAnimFrames;
+	float			animTimeScale;
+	int				start_time;
+
 	byte			alpha;
 	int				border;
 	byte			borderColor[4];
@@ -258,6 +265,7 @@ typedef struct
 	int				height;
 	char			*imageName;
 	char			*hoverImageName;
+
 	byte			alpha;
 	int				border;
 	byte			borderColor[4];

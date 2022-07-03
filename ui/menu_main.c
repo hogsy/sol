@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../client/client.h"
 #include "ui_local.h"
 
+#define USE_MODELVIEW_CURSOR
+
 /*
 =======================================================================
 
@@ -44,7 +46,11 @@ static menuButton_s		s_main_options_button;
 static menuButton_s		s_main_video_button;
 static menuButton_s		s_main_mods_button;
 static menuButton_s		s_main_quit_button;
+#ifdef USE_MODELVIEW_CURSOR
 static menuModelView_s	s_main_cursor;
+#else
+static menuImage_s		s_main_cursor;
+#endif	// USE_MODELVIEW_CURSOR
 
 //=======================================================================
 
@@ -204,6 +210,7 @@ void Menu_Main_Init (void)
 	s_main_quit_button.generic.callback		= M_MainQuitFunc;
 //	s_main_quit_button.generic.statusbar	= "exit Quake II";
 
+#ifdef USE_MODELVIEW_CURSOR
 	s_main_cursor.generic.type				= MTYPE_MODELVIEW;
 	s_main_cursor.generic.x					= 220; // -27
 	s_main_cursor.generic.y					= 142; // -1
@@ -217,11 +224,29 @@ void Menu_Main_Init (void)
 	s_main_cursor.modelName[0]				= "models/ui/quad_cursor.md2";
 	VectorSet (s_main_cursor.modelOrigin[0], 40, 0, -18);
 	VectorSet (s_main_cursor.modelBaseAngles[0], 0, 0, 0);
-	VectorSet (s_main_cursor.modelRotation[0], 0, 0.1, 0);
+	VectorSet (s_main_cursor.modelRotation[0], 0, 0.15, 0);
 	s_main_cursor.modelFrame[0]				= 0;
 	s_main_cursor.modelFrameNumbers[0]		= 0;
 	s_main_cursor.entFlags[0]				= RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
 	s_main_cursor.generic.isHidden			= false;
+#else	// USE_MODELVIEW_CURSOR
+	s_main_cursor.generic.type				= MTYPE_IMAGE;
+	s_main_cursor.generic.x					= 220; // -27
+	s_main_cursor.generic.y					= 142; // -1
+	s_main_cursor.generic.name				= 0;
+	s_main_cursor.generic.isCursorItem		= true;
+	Vector2Set (s_main_cursor.generic.cursorItemOffset, -26, 1);
+	s_main_cursor.width						= -1;	// 22
+	s_main_cursor.height					= -1;	// 29
+	s_main_cursor.animTemplate				= "/pics/m_cursor%d.pcx";
+	s_main_cursor.numAnimFrames				= NUM_MAINMENU_CURSOR_FRAMES;
+	s_main_cursor.animTimeScale				= 0.01f;
+	s_main_cursor.alpha						= 255;
+	s_main_cursor.border					= 0;
+	s_main_cursor.hCentered					= false;
+	s_main_cursor.vCentered					= false;
+	s_main_cursor.generic.isHidden			= false;
+#endif	// USE_MODELVIEW_CURSOR
 
 	s_main_plaque.generic.type				= MTYPE_IMAGE;
 	s_main_plaque.generic.x					= x - 69;
