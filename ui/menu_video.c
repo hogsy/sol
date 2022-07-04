@@ -376,7 +376,7 @@ void Menu_Video_Init (void)
 	s_fs_box.generic.cvarClamp		= true;
 	s_fs_box.generic.cvarMin		= 0;
 	s_fs_box.generic.cvarMax		= 2;
-	s_fs_box.generic.statusbar		= "changes bettween fullscreen, borderless window, and windowed display";
+	s_fs_box.generic.statusbar		= "changes between fullscreen, borderless window, and windowed display";
 	s_fs_box.generic.callback		= M_ShowApplyChanges;
 
 	s_brightness_slider.generic.type		= MTYPE_SLIDER;

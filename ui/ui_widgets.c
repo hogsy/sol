@@ -968,7 +968,8 @@ void UI_MenuField_SetValue (menuField_s *f)
 		if (f->generic.flags & QMF_NUMBERSONLY)
 			UI_ClampCvarForControl (&f->generic);
 
-		strncpy (f->buffer, Cvar_VariableString(f->generic.cvar), sizeof(f->buffer));
+	//	strncpy (f->buffer, Cvar_VariableString(f->generic.cvar), sizeof(f->buffer));
+		Q_strncpyz (f->buffer, sizeof(f->buffer), Cvar_VariableString(f->generic.cvar));
 		f->cursor = (int)strlen(Cvar_VariableString(f->generic.cvar));
 	}
 }
@@ -1879,7 +1880,7 @@ void UI_MenuImage_Draw (menuImage_s *i)
 		animPicName = va(i->animTemplate, curAnimFrame);
 		UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
 	}
-	else if (i->imageName && strlen(i->imageName) > 0) {
+	else if ( i->imageName && (strlen(i->imageName) > 0) ) {
 		if (i->overrideColor)
 			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
 		else
@@ -1995,14 +1996,14 @@ void UI_MenuButton_Draw (menuButton_s *b)
 			UI_DrawBorder ((float)b->generic.topLeft[0], (float)b->generic.topLeft[1], (float)b->width, (float)b->height,
 							(float)b->border, b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
-	if ( (b == ui_mousecursor.menuitem || b == UI_ItemAtMenuCursor(menu))
+	if ( ( (b == ui_mousecursor.menuitem) || (b == UI_ItemAtMenuCursor(menu)) )
 		&& (b->hoverImageName && strlen(b->hoverImageName) > 0) ) {
 		if (b->overrideColor)
 			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
 		else
 			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
 	}
-	else if (b->imageName && strlen(b->imageName) > 0) {
+	else if ( b->imageName && (strlen(b->imageName) > 0) ) {
 		if (b->overrideColor)
 			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
 		else

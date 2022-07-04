@@ -116,12 +116,14 @@ typedef struct image_s
 } image_t;
 
 #define	MAX_LIGHTMAPS	256	// change by Brendon Chung, was 128
+#define	MAX_SCRAPS		32	// was 1
 
 #define	TEXNUM_LIGHTMAPS	1024
 //#define	TEXNUM_SCRAPS		1152
 //#define	TEXNUM_IMAGES		1153
-#define	TEXNUM_SCRAPS		TEXNUM_LIGHTMAPS + MAX_LIGHTMAPS
-#define	TEXNUM_IMAGES		TEXNUM_SCRAPS + 1
+#define	TEXNUM_SCRAPS		(TEXNUM_LIGHTMAPS + MAX_LIGHTMAPS)
+//#define	TEXNUM_IMAGES		(TEXNUM_SCRAPS + 1)
+#define	TEXNUM_IMAGES		(TEXNUM_SCRAPS + MAX_SCRAPS)
 
 #define	MAX_GLTEXTURES	16384	// 4096 // Knightmare increased, was 1024
 

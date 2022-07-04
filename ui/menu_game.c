@@ -42,46 +42,45 @@ static menuAction_s		s_nitemare_game_action;
 static menuAction_s		s_load_game_action;
 static menuAction_s		s_save_game_action;
 static menuAction_s		s_credits_action;
-static menuLabel_s		s_blankline;
 static menuAction_s		s_game_back_action;
 
 //=======================================================================
 
-static void EasyGameFunc (void *data)
+static void M_EasyGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "0");
 	UI_StartSPGame ();
 }
 
-static void MediumGameFunc (void *data)
+static void M_MediumGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "1");
 	UI_StartSPGame ();
 }
 
-static void HardGameFunc (void *data)
+static void M_HardGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "2");
 	UI_StartSPGame ();
 }
 
-static void NitemareGameFunc (void *data)
+static void M_NitemareGameFunc (void *data)
 {
 	Cvar_ForceSet ("skill", "3");
 	UI_StartSPGame ();
 }
 
-static void LoadGameFunc (void *unused)
+static void M_LoadGameFunc (void *unused)
 {
 	Menu_LoadGame_f ();
 }
 
-static void SaveGameFunc (void *unused)
+static void M_SaveGameFunc (void *unused)
 {
 	Menu_SaveGame_f ();
 }
 
-static void CreditsFunc (void *unused)
+static void M_CreditsFunc (void *unused)
 {
 	Menu_Credits_f ();
 }
@@ -122,7 +121,7 @@ void Menu_Game_Init (void)
 	s_easy_game_action.generic.x			= x;
 	s_easy_game_action.generic.y			= y; // 0
 	s_easy_game_action.generic.name			= "Easy";
-	s_easy_game_action.generic.callback		= EasyGameFunc;
+	s_easy_game_action.generic.callback		= M_EasyGameFunc;
 
 	s_medium_game_action.generic.type		= MTYPE_ACTION;
 	s_medium_game_action.generic.textSize	= MENU_HEADER_FONT_SIZE;
@@ -130,7 +129,7 @@ void Menu_Game_Init (void)
 	s_medium_game_action.generic.x			= x;
 	s_medium_game_action.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_medium_game_action.generic.name		= "Medium";
-	s_medium_game_action.generic.callback	= MediumGameFunc;
+	s_medium_game_action.generic.callback	= M_MediumGameFunc;
 
 	s_hard_game_action.generic.type			= MTYPE_ACTION;
 	s_hard_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
@@ -138,7 +137,7 @@ void Menu_Game_Init (void)
 	s_hard_game_action.generic.x			= x;
 	s_hard_game_action.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_hard_game_action.generic.name			= "Hard";
-	s_hard_game_action.generic.callback		= HardGameFunc;
+	s_hard_game_action.generic.callback		= M_HardGameFunc;
 
 	s_nitemare_game_action.generic.type			= MTYPE_ACTION;
 	s_nitemare_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
@@ -146,18 +145,15 @@ void Menu_Game_Init (void)
 	s_nitemare_game_action.generic.x			= x;
 	s_nitemare_game_action.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_nitemare_game_action.generic.name			= "Nightmare";
-	s_nitemare_game_action.generic.callback		= NitemareGameFunc;
-
-	s_blankline.generic.type				= MTYPE_LABEL;
-	s_blankline.generic.textSize			= MENU_FONT_SIZE;
+	s_nitemare_game_action.generic.callback		= M_NitemareGameFunc;
 
 	s_load_game_action.generic.type			= MTYPE_ACTION;
 	s_load_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
 	s_load_game_action.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_load_game_action.generic.x			= x;
-	s_load_game_action.generic.y			= y += 2*MENU_HEADER_LINE_SIZE;	// 2*MENU_LINE_SIZE
+	s_load_game_action.generic.y			= y += 2*MENU_HEADER_LINE_SIZE;
 	s_load_game_action.generic.name			= "Load Game";
-	s_load_game_action.generic.callback		= LoadGameFunc;
+	s_load_game_action.generic.callback		= M_LoadGameFunc;
 
 	s_save_game_action.generic.type			= MTYPE_ACTION;
 	s_save_game_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
@@ -165,21 +161,21 @@ void Menu_Game_Init (void)
 	s_save_game_action.generic.x			= x;
 	s_save_game_action.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_save_game_action.generic.name			= "Save Game";
-	s_save_game_action.generic.callback		= SaveGameFunc;
+	s_save_game_action.generic.callback		= M_SaveGameFunc;
 
 	s_credits_action.generic.type			= MTYPE_ACTION;
 	s_credits_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
 	s_credits_action.generic.flags			= QMF_LEFT_JUSTIFY;
 	s_credits_action.generic.x				= x;
-	s_credits_action.generic.y				= y += 2*MENU_HEADER_LINE_SIZE;	// 1.5*MENU_LINE_SIZE
+	s_credits_action.generic.y				= y += 2*MENU_HEADER_LINE_SIZE;
 	s_credits_action.generic.name			= "Credits";
-	s_credits_action.generic.callback		= CreditsFunc;
+	s_credits_action.generic.callback		= M_CreditsFunc;
 
 	s_game_back_action.generic.type			= MTYPE_ACTION;
 	s_game_back_action.generic.textSize		= MENU_HEADER_FONT_SIZE;
 	s_game_back_action.generic.flags		= QMF_LEFT_JUSTIFY;
 	s_game_back_action.generic.x			= x;
-	s_game_back_action.generic.y			= y += 3*MENU_HEADER_LINE_SIZE;	// 2*MENU_LINE_SIZE
+	s_game_back_action.generic.y			= y += 3*MENU_HEADER_LINE_SIZE;
 	s_game_back_action.generic.name			= "Back to Main";
 	s_game_back_action.generic.callback		= UI_BackMenu;
 
@@ -189,12 +185,9 @@ void Menu_Game_Init (void)
 	UI_AddMenuItem (&s_game_menu, (void *) &s_hard_game_action);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_nitemare_game_action);
 
-	UI_AddMenuItem (&s_game_menu, (void *) &s_blankline);
-
 	UI_AddMenuItem (&s_game_menu, (void *) &s_load_game_action);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_save_game_action);
 
-	UI_AddMenuItem (&s_game_menu, (void *) &s_blankline);
 	UI_AddMenuItem (&s_game_menu, (void *) &s_credits_action);
 
 	UI_AddMenuItem (&s_game_menu, (void *) &s_game_back_action);

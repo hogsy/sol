@@ -250,7 +250,7 @@ void Menu_DMOptions_Init (void)
 	s_friendlyfire_box.bitFlag			= DF_NO_FRIENDLY_FIRE;
 	s_friendlyfire_box.invertValue		= true;
 
-	// Knightmare added
+	// Xatrix
 	if ( FS_XatrixPath() )
 	{
 		s_quadfire_drop_box.generic.type		= MTYPE_PICKER;
@@ -262,9 +262,7 @@ void Menu_DMOptions_Init (void)
 		s_quadfire_drop_box.bitFlag				= DF_QUADFIRE_DROP;
 		s_quadfire_drop_box.invertValue			= false;
 	}
-//============
-//ROGUE
-	// Knightmare 12/23/2001
+	// Rogue
 	else if ( FS_RoguePath() )
 	{
 		s_no_mines_box.generic.type			= MTYPE_PICKER;
@@ -303,8 +301,7 @@ void Menu_DMOptions_Init (void)
 		s_no_spheres_box.bitFlag			= DF_NO_SPHERES;
 		s_no_spheres_box.invertValue		= false;
 	}
-//ROGUE
-//============
+	// CTF
 	else if ( UI_CTF_MenuMode() )
 	{
 		s_ctf_forceteam_box.generic.type			= MTYPE_PICKER;
@@ -313,7 +310,7 @@ void Menu_DMOptions_Init (void)
 		s_ctf_forceteam_box.generic.y				= y += MENU_LINE_SIZE;
 		s_ctf_forceteam_box.generic.name			= "force team join";
 		s_ctf_forceteam_box.itemNames				= yes_no_names;
-		s_ctf_forceteam_box.bitFlag					=  DF_CTF_FORCEJOIN;
+		s_ctf_forceteam_box.bitFlag					= DF_CTF_FORCEJOIN;
 		s_ctf_forceteam_box.invertValue				= false;
 
 		s_ctf_armor_protect_box.generic.type		= MTYPE_PICKER;
