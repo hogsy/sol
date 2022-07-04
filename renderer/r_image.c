@@ -294,8 +294,9 @@ void R_ImageList_f (void)
 
 int				scrap_allocated[MAX_SCRAPS][SCRAP_BLOCK_WIDTH];
 byte			scrap_texels[MAX_SCRAPS][SCRAP_BLOCK_WIDTH*SCRAP_BLOCK_HEIGHT];
-unsigned int	scrap_index = 0;	// for uploading multiple scraps
-qboolean		scrap_dirty;
+//qboolean		scrap_dirty;
+qboolean		scrap_dirty[MAX_SCRAPS];
+qboolean		scrap_check_dirty;
 
 // returns a texture number and the position inside it
 int Scrap_AllocBlock (int w, int h, int *x, int *y)
@@ -332,8 +333,6 @@ int Scrap_AllocBlock (int w, int h, int *x, int *y)
 		for (i=0 ; i<w ; i++)
 			scrap_allocated[texnum][*x + i] = best + h;
 
-		scrap_index = min(texnum, MAX_SCRAPS-1);	// save current scrap index for upload
-
 		return texnum;
 	}
 
@@ -345,13 +344,24 @@ int	scrap_uploads;
 
 void Scrap_Upload (void)
 {
-	scrap_uploads++;
-//	GL_Bind (TEXNUM_SCRAPS);
-//	GL_Upload8 (scrap_texels[0], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
-	// Use scrap index
-	GL_Bind (TEXNUM_SCRAPS + scrap_index);
-	GL_Upload8 (scrap_texels[scrap_index], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
+/*	scrap_uploads++;
+	GL_Bind (TEXNUM_SCRAPS);
+	GL_Upload8 (scrap_texels[0], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
 	scrap_dirty = false;
+*/
+	int		i;
+
+	// Use array of scraps
+	for (i = 0; i < MAX_SCRAPS; i++)
+	{
+		if (scrap_dirty[i]) {
+			scrap_uploads++;
+			GL_Bind (TEXNUM_SCRAPS + i);
+			GL_Upload8 (scrap_texels[i], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
+			scrap_dirty[i] = false;
+		}
+	}
+	scrap_check_dirty = false;
 }
 
 /*
@@ -2211,7 +2221,9 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 		texnum = Scrap_AllocBlock (image->width, image->height, &x, &y);
 		if (texnum == -1)
 			goto nonscrap;
-		scrap_dirty = true;
+	//	scrap_dirty = true;
+		scrap_dirty[texnum] = true;
+		scrap_check_dirty = true;
 
 		// copy the texels into the scrap block
 		k = 0;
@@ -2670,7 +2682,6 @@ void R_InitImages (void)
 	gl_filter_max = GL_LINEAR;
 
 	registration_sequence = 1;
-	scrap_index = 0;			// reset scrap index
 
 	// init intensity conversions
 	// added Vic's RGB brightening

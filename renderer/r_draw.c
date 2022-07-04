@@ -28,7 +28,8 @@ image_t		*r_con_draw_chars;
 image_t		*r_scr_draw_chars;
 image_t		*r_ui_draw_chars;
 
-extern	qboolean	scrap_dirty;
+//extern	qboolean	scrap_dirty;
+extern	qboolean	scrap_check_dirty;	// use multi-scrap indicator
 void Scrap_Upload (void);
 
 #define DEFAULT_FONT_SIZE 8.0f
@@ -356,7 +357,8 @@ void R_DrawPic_Standard (int x, int y, int w, int h, vec2_t offset, vec4_t stCoo
 
 	if (!parms)	return;
 
-	if (scrap_dirty)
+//	if (scrap_dirty)
+	if (scrap_check_dirty)	// use multi-scrap indicator
 		Scrap_Upload ();
 
 	if (parms->blend)
@@ -430,7 +432,8 @@ void R_DrawPic_Masked (int x, int y, int w, int h, vec2_t offset, vec4_t stCoord
 
 	if (!parms)	return;
 
-	if (scrap_dirty)
+//	if (scrap_dirty)
+	if (scrap_check_dirty)	// use multi-scrap indicator
 		Scrap_Upload ();
 
 	if (parms->blend)
