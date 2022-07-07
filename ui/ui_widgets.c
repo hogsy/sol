@@ -3789,7 +3789,7 @@ UI_ClickMenuItem
 */
 char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 {
-	char *s;
+	char	*s = NULL;
 
 	if ( UI_MouseOverScrollKnob(item) && !mouse2 )
 	{

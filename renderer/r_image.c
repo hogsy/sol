@@ -1879,7 +1879,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 
 	// get best upscale size for old fonts
 	if ( (type == it_font) && (width == 128) && (height == 128) && r_font_upscale->integer ) {
-		idealImgRes = NearestPowerOf2(min(vid.width, vid.height)) / 2;
+		idealImgRes = NearestPowerOf2(min(vid.width, vid.height));	// was / 2
 		idealImgRes = min(idealImgRes, glConfig.max_texsize);
 		idealImgRes = max(idealImgRes, 256);
 	//	VID_Printf (PRINT_DEVELOPER, "GL_Upload32: ideal font res is %d.\n", idealImgRes);
