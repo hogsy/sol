@@ -536,7 +536,7 @@ void CL_ParseMuzzleFlash2 (void)
 {
 	int			ent;
 	vec3_t		origin;
-	int			flash_number, modifier = -1;
+	int			flash_number, rawModifier = -1, modifier = -1;
 	cdlight_t	*dl;
 	vec3_t		forward, right;
 	char		soundname[64];
@@ -554,14 +554,15 @@ void CL_ParseMuzzleFlash2 (void)
 	if ( !LegacyProtocol() && (flash_number == MZ2_SEND_SHORT) )
 	{
 		flash_number = (unsigned short)MSG_ReadShort (&net_message);
-		modifier = MSG_ReadByte (&net_message);
+		rawModifier = MSG_ReadByte (&net_message);
 		// High bit of modifier specifies custom color
-		if (modifier & 128) {
+		if (rawModifier & 128) {
 			msgColor[0] = MSG_ReadByte (&net_message);
 			msgColor[1] = MSG_ReadByte (&net_message);
 			msgColor[2] = MSG_ReadByte (&net_message);
 			useMsgColor = true;
 		}
+		modifier = rawModifier & ~128;
 	}
 
 	// locate the origin
