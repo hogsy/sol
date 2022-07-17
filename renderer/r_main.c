@@ -1117,7 +1117,7 @@ void R_Register (void)
 
 	// changed default texture mode to bilinear
 	r_texturemode = Cvar_Get( "r_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_texturemode", "Sets texture filtering mode.  Accepted values are GL_LINEAR_MIPMAP_NEAREST and GL_LINEAR_MIPMAP_LINEAR.");
+	Cvar_SetDescription ("r_texturemode", "Sets texture filtering mode.  Accepted values are GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_LINEAR_MIPMAP_LINEAR.");
 //	r_texturealphamode = Cvar_Get( "r_texturealphamode", "default", CVAR_ARCHIVE );
 //	r_texturesolidmode = Cvar_Get( "r_texturesolidmode", "default", CVAR_ARCHIVE );
 	r_lockpvs = Cvar_Get( "r_lockpvs", "0", 0 );
