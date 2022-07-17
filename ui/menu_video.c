@@ -231,12 +231,18 @@ void Menu_Video_Init (void)
 	};
 	static const char *texfilter_names[] =
 	{
+		"none",
+		"nearest",
+		"linear",
 		"bilinear",
 		"trilinear",
 		0
 	};
 	static const char *texfilter_values[] =
 	{
+		"GL_NEAREST",
+		"GL_NEAREST_MIPMAP_NEAREST",
+		"GL_LINEAR",
 		"GL_LINEAR_MIPMAP_NEAREST",
 		"GL_LINEAR_MIPMAP_LINEAR",
 		0
@@ -423,7 +429,7 @@ void Menu_Video_Init (void)
 	s_texfilter_box.generic.name		= "texture filter";
 	s_texfilter_box.itemNames			= texfilter_names;
 	s_texfilter_box.itemValues			= texfilter_values;
-	s_texfilter_box.items_y				= 2;
+	s_texfilter_box.items_y				= 5;
 	s_texfilter_box.itemWidth			= 10;
 	s_texfilter_box.itemSpacing			= 1;
 	s_texfilter_box.itemTextSize		= 8;
