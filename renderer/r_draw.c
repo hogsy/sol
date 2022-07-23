@@ -62,7 +62,10 @@ void R_RefreshFont (fontslot_t font)
 	if (!fontimage) // prevent crash caused by missing font
 		VID_Error (ERR_FATAL, "RefreshFont: couldn't load pics/conchars");
 
-	GL_Bind (fontimage->texnum);
+	// Don't diable texture filtering for chars, as it causes artifacts when scaling up
+//	GL_Bind (fontimage->texnum);
+//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	switch (font)
 	{
@@ -101,8 +104,26 @@ void R_RefreshAllFonts (void)
 	if (!r_con_draw_chars) // prevent crash caused by missing font
 		VID_Error (ERR_FATAL, "R_RefreshFont: couldn't load pics/conchars");
 
-	GL_Bind (r_con_draw_chars->texnum );
+	// Don't diable texture filtering for chars, as it causes artifacts when scaling up
+//	GL_Bind (r_con_draw_chars->texnum );
+//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 */
+}
+
+
+/*
+===============
+R_DrawInitLocal
+===============
+*/
+void R_DrawInitLocal (void)
+{
+	// load console characters (don't bilerp characters)
+	R_RefreshAllFonts ();
+
+	// init char indexes
+	R_InitChars ();
 }
 
 
@@ -123,25 +144,6 @@ image_t *R_ImageForFont (fontslot_t font)
 	default:
 		return r_con_draw_chars;
 	}
-}
-
-
-/*
-===============
-R_DrawInitLocal
-===============
-*/
-void R_DrawInitLocal (void)
-{
-	image_t	*R_DrawFindPic (char *name);
-
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	// load console characters (don't bilerp characters)
-	R_RefreshAllFonts ();
-
-	R_InitChars (); // init char indexes
 }
 
 
