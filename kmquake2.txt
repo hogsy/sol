@@ -1,5 +1,5 @@
 ------------------------------
-KMQuake2 v0.20 with update 8
+KMQuake2 v0.20 with update 8 Test Build
 
 Readme.txt
 ------------------------------

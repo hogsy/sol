@@ -1563,7 +1563,7 @@ void Cmd_PlayerList_f (edict_t *ent)
 		if (!e2->inuse)
 			continue;
 
-		Com_sprintf(st, sizeof(st), "%02d:%02d %4d %3d %s%s\n",
+		Com_sprintf (st, sizeof(st), "%02d:%02d %4d %3d %s%s\n",
 			(level.framenum - e2->client->resp.enterframe) / 600,
 			((level.framenum - e2->client->resp.enterframe) % 600)/10,
 			e2->client->ping,
@@ -1571,7 +1571,7 @@ void Cmd_PlayerList_f (edict_t *ent)
 			e2->client->pers.netname,
 			e2->client->resp.spectator ? " (spectator)" : "");
 		if (strlen(text) + strlen(st) > sizeof(text) - 50) {
-			Com_sprintf(text+strlen(text), sizeof(text)-1-strlen(text), "And more...\n");
+			Com_sprintf (text+strlen(text), sizeof(text)-1-strlen(text), "And more...\n");
 			safe_cprintf(ent, PRINT_HIGH, "%s", text);
 			return;
 		}

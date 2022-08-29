@@ -271,7 +271,7 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (stringlength + j > 1024)
 				break;
 		//	strncpy (string + stringlength, entry);
-			Q_strncpyz (string + stringlength, sizeof(string)-stringlength, entry);
+			Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
 			stringlength += j;
 		}
 

@@ -237,7 +237,7 @@ char	*SV_StatusString (void)
 			if (statusLength + playerLength >= sizeof(status) )
 				break;		// can't hold any more
 		//	strncpy (status + statusLength, player);
-			Q_strncpyz (status+statusLength, sizeof(status)-statusLength, player);
+			Q_strncpyz (status+statusLength, sizeof(status) - statusLength, player);
 			statusLength += playerLength;
 		}
 	}

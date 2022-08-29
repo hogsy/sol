@@ -452,6 +452,7 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 
 	// r1ch fix: buffer overflow
 //	strncpy (level, levelstring);
+	// skip the end-of-unit flag if necessary
 	if (levelstring[0] == '*')
 		Q_strncpyz (level, sizeof(level), levelstring+1);
 	else

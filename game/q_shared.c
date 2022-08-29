@@ -1063,7 +1063,7 @@ void COM_StripExtension (char *in, char *out, size_t outSize)
 		s--;
 	}
 
-	Q_strncpyz(out, outSize, in);
+	Q_strncpyz (out, outSize, in);
 	if (last-in < outSize)
 		out[last-in] = 0;
 }
