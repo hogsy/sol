@@ -2187,7 +2187,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 #if defined(_M_IX86) || defined(__i386__)
 		//	_controlfp( ~( _EM_ZERODIVIDE /*| _EM_INVALID*/ ), _MCW_EM );
-		_controlfp( _PC_24, _MCW_PC );
+		// Knightmare- removed this, as it inhibits the double-precision fix for lightmap extents
+	//	_controlfp( _PC_24, _MCW_PC );
 #endif
 
 		Qcommon_Frame (time);

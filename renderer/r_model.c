@@ -790,10 +790,19 @@ void CalcSurfaceExtents (msurface_t *s)
 		
 		for (j=0 ; j<2 ; j++)
 		{
-			val = v->position[0] * tex->vecs[j][0] + 
+			// Knightmare- precision fix for x64 builds
+			// This calculation is sensitive to floating point precision.
+			// For 32-bit builds, arithmetic is done in 80-bit x87 form and then
+			// rounded down to 32-bit form to store in val.
+			// Casting to long double should guarantee equivalent precision for x64.
+		/*	val = v->position[0] * tex->vecs[j][0] + 
 				v->position[1] * tex->vecs[j][1] +
 				v->position[2] * tex->vecs[j][2] +
-				tex->vecs[j][3];
+				tex->vecs[j][3]; */
+			val = (long double)v->position[0] * (long double)tex->vecs[j][0] + 
+				(long double)v->position[1] * (long double)tex->vecs[j][1] +
+				(long double)v->position[2] * (long double)tex->vecs[j][2] +
+				(long double)tex->vecs[j][3];
 			if (val < mins[j])
 				mins[j] = val;
 			if (val > maxs[j])

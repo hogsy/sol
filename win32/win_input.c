@@ -472,7 +472,7 @@ void IN_MouseMove (usercmd_t *cmd)
 	old_mouse_x = mx;
 	old_mouse_y = my;
 
-	//now to set the menu cursor
+	// now to set the menu cursor
 	if (cls.key_dest == key_menu)
 	{
 		ui_mousecursor.oldx = ui_mousecursor.x;

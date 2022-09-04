@@ -132,7 +132,7 @@ void IN_Move (usercmd_t *cmd)
 		ui_mousecursor.x += mx *  ui_sensitivity->value;
 		ui_mousecursor.y += my *  ui_sensitivity->value;
 
-		if (ui_mousecursor.x!=ui_mousecursor.oldx || ui_mousecursor.y!=ui_mousecursor.oldy)
+		if ( (ui_mousecursor.x != ui_mousecursor.oldx) || (ui_mousecursor.y != ui_mousecursor.oldy) )
 			ui_mousecursor.mouseaction = true;
 
 		if (ui_mousecursor.x < 0) ui_mousecursor.x = 0;
