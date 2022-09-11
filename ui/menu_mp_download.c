@@ -39,7 +39,6 @@ static menuPicker_s		s_allow_download_box;
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 static menuPicker_s		s_allow_http_download_box;
-static menuPicker_s		s_allow_http_fallback_box;
 #endif	// USE_CURL
 
 static menuPicker_s		s_allow_download_maps_box;
@@ -110,15 +109,6 @@ void Menu_DownloadOptions_Init (void)
 	s_allow_http_download_box.itemNames				= yes_no_names;
 	s_allow_http_download_box.generic.cvar			= "cl_http_downloads";
 	s_allow_http_download_box.generic.statusbar		= "use HTTP downloading on supported servers";
-
-	s_allow_http_fallback_box.generic.type			= MTYPE_PICKER;
-	s_allow_http_fallback_box.generic.textSize		= MENU_FONT_SIZE;
-	s_allow_http_fallback_box.generic.x				= x;
-	s_allow_http_fallback_box.generic.y				= y += MENU_LINE_SIZE;
-	s_allow_http_fallback_box.generic.name			= "HTTP fallback";
-	s_allow_http_fallback_box.itemNames				= yes_no_names;
-	s_allow_http_fallback_box.generic.cvar			= "cl_http_fallback";
-	s_allow_http_fallback_box.generic.statusbar		= "enable to allow HTTP downloads to fall back to Q2Pro path and UDP";
 #endif	// USE_CURL
 
 	s_allow_download_maps_box.generic.type			= MTYPE_PICKER;
@@ -139,7 +129,7 @@ void Menu_DownloadOptions_Init (void)
 	s_allow_download_textures_24bit_box.generic.statusbar	= "enable to allow downloading of JPG and TGA textures";
 	s_allow_download_textures_24bit_box.itemNames			= yes_no_names;
 	s_allow_download_textures_24bit_box.generic.cvar		= "allow_download_textures_24bit";
-	s_allow_download_textures_24bit_box.generic.statusbar	= "enable to allow downloading of JPG and TGA textures";
+	s_allow_download_textures_24bit_box.generic.statusbar	= "enable to allow downloading of TGA, PNG, and JPG textures";
 
 	s_allow_download_players_box.generic.type		= MTYPE_PICKER;
 	s_allow_download_players_box.generic.textSize	= MENU_FONT_SIZE;
@@ -182,7 +172,6 @@ void Menu_DownloadOptions_Init (void)
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_http_download_box);
-	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_http_fallback_box);
 #endif	// USE_CURL
 
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_maps_box);

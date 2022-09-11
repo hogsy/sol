@@ -105,7 +105,7 @@ void UI_Draw (void)
 
 	// added Psychospaz's mouse support
 	// menu cursor for mouse usage :)
-	UI_Draw_Cursor();
+	UI_Draw_Cursor ();
 }
 
 

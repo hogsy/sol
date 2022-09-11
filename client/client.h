@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #define CURL_ERROR(x)	curl_easy_strerror(x)
 //#endif
+#define MAX_HTTP_HANDLES	6	// was 4
 
 #endif	// USE_CURL
 // end HTTP downloading from R1Q2
@@ -130,18 +131,6 @@ extern int num_cl_weaponmodels;
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 
-void CL_CancelHTTPDownloads (qboolean permKill);
-void CL_InitHTTPDownloads (void);
-qboolean CL_QueueHTTPDownload (const char *quakePath, qboolean filelistUseGamedir);	// YQ2 Q2pro download addition
-void CL_RunHTTPDownloads (void);
-qboolean CL_PendingHTTPDownloads (void);
-void CL_SetHTTPServer (const char *URL);
-void CL_HTTP_Cleanup (qboolean fullShutdown);
-void CL_HTTP_ResetMapAbort (void);	// Knightmare added
-qboolean CL_CheckHTTPError (void);	// YQ2 UDP fallback addition
-void CL_HTTP_EnableGenericFilelist (void);	// YQ2 UDP fallback addition
-void CL_HTTP_SetDownloadGamedir (const char *gamedir);	// YQ2 Q2pro download addition
-
 typedef enum
 {
 	DLQ_STATE_NOT_STARTED,
@@ -153,7 +142,10 @@ typedef struct dlqueue_s
 {
 	struct dlqueue_s	*next;
 	char				quakePath[MAX_QPATH];
-	qboolean			isPak;	// Knightmare added
+	qboolean			isPak;			// Knightmare added
+	qboolean			useQ2ProPath;	// Knightmare added
+	qboolean			isDuplicated;	// Knightmare added
+	qboolean			isAltEntry;		// Knightmare added
 	dlq_state			state;
 } dlqueue_t;
 
@@ -373,7 +365,7 @@ typedef struct
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 	dlqueue_t		downloadQueue;			//queue of paths we need
 	
-	dlhandle_t		HTTPHandles[4];			//actual download handles
+	dlhandle_t		HTTPHandles[MAX_HTTP_HANDLES];			// actual download handles, was 4
 	//don't raise this!
 	//i use a hardcoded maximum of 4 simultaneous connections to avoid
 	//overloading the server. i'm all too familiar with assholes who set
@@ -540,7 +532,6 @@ extern	cvar_t	*cl_http_downloads;
 extern	cvar_t	*cl_http_filelists;
 extern	cvar_t	*cl_http_proxy;
 extern	cvar_t	*cl_http_max_connections;
-extern	cvar_t	*cl_http_fallback;
 #endif	// USE_CURL
 
 typedef struct
@@ -892,6 +883,12 @@ void CL_ParseClientinfo (int player);
 //
 // cl_download.c
 //
+typedef struct {
+	char			fileName[MAX_OSPATH];
+	unsigned int	failCount;
+	qboolean		isDuplicated;
+} failedDownload_t;
+
 void CL_ResetPrecacheCheck (void);
 void CL_RequestNextDownload (void);
 qboolean CL_CheckOrDownloadFile (const char *filename);
@@ -899,6 +896,25 @@ void CL_Download_f (void);
 void CL_ParseDownload (void);
 void CL_Download_Reset_KBps_counter (void);
 void CL_Download_Calculate_KBps (int byteDistance, int totalSize);
+
+//
+// cl_http.c
+//
+#ifdef USE_CURL	// HTTP downloading from R1Q2
+
+void CL_CancelHTTPDownloads (qboolean permKill);
+void CL_InitHTTPDownloads (void);
+qboolean CL_QueueHTTPDownload (const char *quakePath);
+void CL_RunHTTPDownloads (void);
+qboolean CL_PendingHTTPDownloads (void);
+void CL_SetHTTPServer (const char *URL);
+void CL_HTTP_Cleanup (qboolean fullShutdown);
+void CL_HTTP_ResetMapAbort (void);	// Knightmare added
+//qboolean CL_CheckHTTPError (void);	// YQ2 UDP fallback addition
+//void CL_HTTP_EnableGenericFilelist (void);	// YQ2 UDP fallback addition
+//void CL_HTTP_SetDownloadGamedir (const char *gamedir);	// YQ2 Q2pro download addition
+
+#endif	// USE_CURL
 
 //
 // cl_view.c

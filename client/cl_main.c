@@ -179,7 +179,6 @@ cvar_t	*cl_http_downloads;
 cvar_t	*cl_http_filelists;
 cvar_t	*cl_http_proxy;
 cvar_t	*cl_http_max_connections;
-cvar_t	*cl_http_fallback;
 #endif	// USE_CURL
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
@@ -2224,8 +2223,6 @@ void CL_InitLocal (void)
 	cl_http_max_connections = Cvar_Get ("cl_http_max_connections", "4", 0);
 	Cvar_SetDescription ("cl_http_max_connections", "Sets max connections for HTTP downloading.");
 //	cl_http_max_connections->changed = _cl_http_max_connections_changed;
-	cl_http_fallback = Cvar_Get ("cl_http_fallback", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_http_fallback", "Enables fallback to Q2Pro paths and UDP for HTTP downloading.");
 #endif	// USE_CURL
 
 	//
