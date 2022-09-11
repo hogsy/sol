@@ -836,7 +836,6 @@ void CL_DownloadFileName (char *dest, int destlen, const char *fn)
 
 // Knightmare- store the names of last downloads that failed
 #define NUM_FAIL_DLDS 512
-//char lastFailedDownload[NUM_FAIL_DLDS][MAX_OSPATH];
 failedDownload_t lastFailedDownload[NUM_FAIL_DLDS];
 static unsigned failedDlListIndex;
 
@@ -850,7 +849,6 @@ void CL_InitFailedDownloadList (void)
 	int		i;
 
 	for (i=0; i<NUM_FAIL_DLDS; i++) {
-	//	Com_sprintf (lastFailedDownload[i], sizeof(lastFailedDownload[i]), "\0");
 		Com_sprintf (lastFailedDownload[i].fileName, sizeof(lastFailedDownload[i].fileName), "\0");
 		lastFailedDownload[i].failCount = 0;
 		lastFailedDownload[i].isDuplicated = false;
@@ -873,7 +871,6 @@ qboolean CL_CheckDownloadFailed (const char *name)
 		return true;
 
 	for (i=0; i<NUM_FAIL_DLDS; i++)
-	//	if ( (strlen(lastFailedDownload[i]) > 0) && !strcmp(name, lastFailedDownload[i]) )
 		if ( (strlen(lastFailedDownload[i].fileName) > 0) && !strcmp(name, lastFailedDownload[i].fileName) )
 		{	// we already tried downloading this, server didn't have it
 			return true;
@@ -898,7 +895,6 @@ void CL_AddToFailedDownloadList (const char *name)
 
 	// check if this name is already in the table
 	for (i=0; i<NUM_FAIL_DLDS; i++)
-	//	if ( (strlen(lastFailedDownload[i]) > 0) && !strcmp(name, lastFailedDownload[i]) )
 		if ( (strlen(lastFailedDownload[i].fileName) > 0) && !strcmp(name, lastFailedDownload[i].fileName) )
 		{
 			found = true;
@@ -908,7 +904,6 @@ void CL_AddToFailedDownloadList (const char *name)
 	// if it isn't already in the table, then we need to add it
 	if (!found)
 	{
-	//	Com_sprintf (lastFailedDownload[failedDlListIndex], sizeof(lastFailedDownload[failedDlListIndex]), "%s", name);
 		Com_sprintf (lastFailedDownload[failedDlListIndex].fileName, sizeof(lastFailedDownload[failedDlListIndex].fileName), "%s", name);
 		lastFailedDownload[failedDlListIndex].failCount = 1;
 		failedDlListIndex++;

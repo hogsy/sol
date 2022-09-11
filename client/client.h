@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #define CURL_ERROR(x)	curl_easy_strerror(x)
 //#endif
-#define MAX_HTTP_HANDLES	6	// was 4
+#define MAX_HTTP_HANDLES	8	// was 4
 
 #endif	// USE_CURL
 // end HTTP downloading from R1Q2
@@ -366,13 +366,14 @@ typedef struct
 	dlqueue_t		downloadQueue;			//queue of paths we need
 	
 	dlhandle_t		HTTPHandles[MAX_HTTP_HANDLES];			// actual download handles, was 4
-	//don't raise this!
-	//i use a hardcoded maximum of 4 simultaneous connections to avoid
-	//overloading the server. i'm all too familiar with assholes who set
-	//their IE or Firefox max connections to 16 and rape my Apache processes
-	//every time they load a page... i'd rather not have my q2 client also
-	//have the ability to do so - especially since we're possibly downloading
-	//large files.
+	// Don't raise this!
+	// I use a hardcoded maximum of 4 simultaneous connections to avoid
+	// overloading the server. I'm all too familiar with assholes who set
+	// their IE or Firefox max connections to 16 and rape my Apache processes
+	// every time they load a page... I'd rather not have my Q2 client also
+	// have the ability to do so - especially since we're possibly downloading
+	// large files.
+	// Yeah whatever, this restriction was 11 years old.
 
 	char			downloadServer[512];	//base url prefix to download from
 	// FS: Added because Whale's Weapons HTTP server rejects you after a lot of 404s.  Then you lose HTTP until a hard reconnect.
@@ -911,8 +912,6 @@ void CL_SetHTTPServer (const char *URL);
 void CL_HTTP_Cleanup (qboolean fullShutdown);
 void CL_HTTP_ResetMapAbort (void);	// Knightmare added
 //qboolean CL_CheckHTTPError (void);	// YQ2 UDP fallback addition
-//void CL_HTTP_EnableGenericFilelist (void);	// YQ2 UDP fallback addition
-//void CL_HTTP_SetDownloadGamedir (const char *gamedir);	// YQ2 Q2pro download addition
 
 #endif	// USE_CURL
 

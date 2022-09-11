@@ -2220,7 +2220,7 @@ void CL_InitLocal (void)
 	Cvar_SetDescription ("cl_http_filelists", "Enables use of filelists for HTTP downloading.");
 	cl_http_proxy = Cvar_Get ("cl_http_proxy", "", 0);
 	Cvar_SetDescription ("cl_http_proxy", "Sets proxy server for HTTP downloading.");
-	cl_http_max_connections = Cvar_Get ("cl_http_max_connections", "4", 0);
+	cl_http_max_connections = Cvar_Get ("cl_http_max_connections", "8", 0);
 	Cvar_SetDescription ("cl_http_max_connections", "Sets max connections for HTTP downloading.");
 //	cl_http_max_connections->changed = _cl_http_max_connections_changed;
 #endif	// USE_CURL

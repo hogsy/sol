@@ -838,10 +838,8 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		char	filePath[MAX_OSPATH];
 
 		Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
-
 		COM_StripExtension (filePath, listPath, sizeof(listPath));
 		Q_strncatz (listPath, sizeof(listPath), ".filelist");
-		
 		CL_QueueHTTPDownload (listPath);
 	}
 
@@ -1233,7 +1231,7 @@ static void CL_FinishHTTPDownload (void)
 			}
 		}
 
-		if (i == 4)
+		if (i == MAX_HTTP_HANDLES)
 			Com_Error (ERR_DROP, "CL_FinishHTTPDownload: Handle not found");
 
 		// we mark everything as done even if it errored to prevent multiple
