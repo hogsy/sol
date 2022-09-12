@@ -163,6 +163,8 @@ void Menu_PConfigSaveChanges (void *unused)
 	int		mNum, sNum;
 	char	scratch[1024];
 
+	UI_SaveMenuItemValue (&s_playerconfig_name_field);
+
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
 	Com_sprintf (scratch, sizeof( scratch ), "%s/%s", 
@@ -231,17 +233,18 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_banner.vCentered			= false;
 	s_playerconfig_banner.generic.isHidden	= false;
 
-	s_playerconfig_name_field.generic.type		= MTYPE_FIELD;
-	s_playerconfig_name_field.generic.textSize	= MENU_FONT_SIZE;
-	s_playerconfig_name_field.generic.header	= "name";
-	s_playerconfig_name_field.generic.name		= 0;	// "name"
-	s_playerconfig_name_field.generic.x			= x;
-	s_playerconfig_name_field.generic.y			= y;
-	s_playerconfig_name_field.generic.flags		= 0;
-	s_playerconfig_name_field.generic.callback	= 0;
-	s_playerconfig_name_field.length			= 23;
-	s_playerconfig_name_field.visible_length	= 23;
-	s_playerconfig_name_field.generic.cvar		= "name";
+	s_playerconfig_name_field.generic.type			= MTYPE_FIELD;
+	s_playerconfig_name_field.generic.textSize		= MENU_FONT_SIZE;
+	s_playerconfig_name_field.generic.header		= "name";
+	s_playerconfig_name_field.generic.name			= 0;	// "name"
+	s_playerconfig_name_field.generic.x				= x;
+	s_playerconfig_name_field.generic.y				= y;
+	s_playerconfig_name_field.generic.flags			= 0;
+	s_playerconfig_name_field.generic.callback		= 0;
+	s_playerconfig_name_field.length				= 23;
+	s_playerconfig_name_field.visible_length		= 23;
+	s_playerconfig_name_field.generic.cvar			= "name";
+	s_playerconfig_name_field.generic.cvarNoSave	= true;
 /*
 	s_playerconfig_model_title.generic.type		= MTYPE_LABEL;
 	s_playerconfig_model_title.generic.textSize	= MENU_FONT_SIZE;
