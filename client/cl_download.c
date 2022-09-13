@@ -140,8 +140,8 @@ void CL_RequestNextDownload (void)
 		{
 			while ( (precache_check < CS_MODELS+max_models) && cl.configstrings[precache_check][0] )
 			{
-				if (cl.configstrings[precache_check][0] == '*' ||
-					cl.configstrings[precache_check][0] == '#') {
+				if ( (cl.configstrings[precache_check][0] == '*') ||
+					(cl.configstrings[precache_check][0] == '#') ) {
 					precache_check++;
 					continue;
 				}

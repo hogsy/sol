@@ -179,6 +179,7 @@ cvar_t	*cl_http_downloads;
 cvar_t	*cl_http_filelists;
 cvar_t	*cl_http_proxy;
 cvar_t	*cl_http_max_connections;
+cvar_t	*cl_http_pathtype;
 #endif	// USE_CURL
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
@@ -2223,6 +2224,8 @@ void CL_InitLocal (void)
 	cl_http_max_connections = Cvar_Get ("cl_http_max_connections", "8", 0);
 	Cvar_SetDescription ("cl_http_max_connections", "Sets max connections for HTTP downloading.");
 //	cl_http_max_connections->changed = _cl_http_max_connections_changed;
+	cl_http_pathtype = Cvar_Get ("cl_http_pathtype", "2", CVAR_ARCHIVE);
+	Cvar_SetDescription ("cl_http_pathtype", "Sets server path type for HTTP downloading. 0 = R1Q2, 1 = Q2Pro, 2 = both.");
 #endif	// USE_CURL
 
 	//

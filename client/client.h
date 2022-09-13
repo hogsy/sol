@@ -533,6 +533,7 @@ extern	cvar_t	*cl_http_downloads;
 extern	cvar_t	*cl_http_filelists;
 extern	cvar_t	*cl_http_proxy;
 extern	cvar_t	*cl_http_max_connections;
+extern	cvar_t	*cl_http_pathtype;
 #endif	// USE_CURL
 
 typedef struct
@@ -911,7 +912,6 @@ qboolean CL_PendingHTTPDownloads (void);
 void CL_SetHTTPServer (const char *URL);
 void CL_HTTP_Cleanup (qboolean fullShutdown);
 void CL_HTTP_ResetMapAbort (void);	// Knightmare added
-//qboolean CL_CheckHTTPError (void);	// YQ2 UDP fallback addition
 
 #endif	// USE_CURL
 

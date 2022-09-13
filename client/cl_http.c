@@ -39,7 +39,6 @@ static qboolean	downloading_pak = false;
 static qboolean	httpDown = false;
 static qboolean	thisMapAbort = false;		// Knightmare- whether to fall back to UDP for this map
 static int		prevSize;					// Knightmare- for KBps counter
-static qboolean	downloadError = false;		// YQ2 addition
 static qboolean	downloadFileList = true;	// YQ2 addition for downloading filelist once
 
 /*
@@ -457,12 +456,24 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 		CL_HTTP_Reset_KBps_counter ();	// Knightmare- for KB/s counter
 
 		Com_sprintf (dl->filePath, sizeof(dl->filePath), "%s/%s", FS_Downloaddir(), entry->quakePath);	// was FS_Gamedir()
-		Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);	// always use cl.gamedir (with leading slash) for remote server path
+	//	Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);	// always use cl.gamedir (with leading slash) for remote server path
+		// Knightmare- cvar-switchable download path
+		if ( !entry->useQ2ProPath )	{	// R1Q2 path
+			Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);
+		}
+		else {	// Q2Pro path
+			Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), entry->quakePath);	
+		}
+		// end Knightmare
 
 	//	CL_EscapeHTTPPath (dl->filePath, escapedFilePath, sizeof(escapedFilePath));
 		CL_EscapeHTTPPath (remoteFilePath, escapedFilePath, sizeof(escapedFilePath));
 
-		Q_strncatz (dl->filePath, sizeof(dl->filePath), ".tmp");
+		// Knightmare- if this is an alt queue entry, use alternate temp filename
+		if ( entry->isDuplicated && entry->isAltEntry )
+			Q_strncatz (dl->filePath, sizeof(dl->filePath), ".tmp2");
+		else
+			Q_strncatz (dl->filePath, sizeof(dl->filePath), ".tmp");
 
 		FS_CreatePath (dl->filePath);
 
@@ -605,7 +616,6 @@ void CL_SetHTTPServer (const char *URL)
 
 	// FS: Added because Whale's Weapons HTTP server rejects you after a lot of 404s.  Then you lose HTTP until a hard reconnect.
 	cls.downloadServerRetry[0] = 0;
-	downloadError = false;		// YQ2 addition- reset this for new server
 	downloadFileList = true;	// YQ2 addition- re-enable generic file list
 
 	CL_InitFailedHTTPDownloadList ();	// Knightmare- init failed HTTP downloads list
@@ -723,8 +733,7 @@ false will cause standard UDP downloading to be used instead.
 qboolean CL_QueueHTTPDownload (const char *quakePath)
 {
 	size_t		len;
-//	dlqueue_t	*q, *check, *last;
-	dlqueue_t	*q;
+	dlqueue_t	*q, *q2;
 	qboolean	needList = false, isPak = false, isFilelist = false;
 
 	// no http server (or we got booted)
@@ -754,70 +763,58 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		}
 	}
 
-#if 0
-	if (isFilelist)	// Knightmare- always insert filelist at head of queue
+//	q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+	// Knightmare- cvar-switchable download path
+	switch (cl_http_pathtype->integer)
 	{
-		q = Z_TagMalloc (sizeof(dlqueue_t), 0);
-		q->next = cls.downloadQueue.next;
-		cls.downloadQueue.next = q;
-	}
-	else if (isPak)	// Knightmare- insert paks near head of queue, before first non-pak
-	{
-		last = &cls.downloadQueue;
-		check = cls.downloadQueue.next;
-		while (check)
-		{
-			// avoid sending duplicate requests
-			if (!strcmp (quakePath, check->quakePath))
-				return true;
-
-			if (!check->isPak)	// insert before this entry
-				break;
-
-			last = check;
-			check = check->next;
+	default:
+	case 0:	// R1Q2 path
+		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+		break;
+	case 1:	// Q2Pro path
+		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, true, false);
+		break;
+	case 2: // attempt both filelist paths
+		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+		// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
+		if ( (q != NULL) && (cl.gamedir[0] == '\0') && !isFilelist ) {
+		//	Com_Printf ("[HTTP] Adding Q2Pro path mirror entry for %s...\n", quakePath);
+			q2 = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, true, true);
+			if (q2 != NULL) {
+				q->isDuplicated = q2->isDuplicated = true;
+				q2->isAltEntry = true;
+			}
 		}
-		q = Z_TagMalloc (sizeof(dlqueue_t), 0);
-		q->next = check;
-		last->next = q;
+		break;
 	}
-	else
-	{
-		q = &cls.downloadQueue;
-		while (q->next)
-		{
-			q = q->next;
-
-			// avoid sending duplicate requests
-			if (!strcmp (quakePath, q->quakePath))
-				return true;
-		}
-	//	q->next = Z_TagMalloc (sizeof(*q), TAGMALLOC_CLIENT_DOWNLOAD);
-		q->next = Z_TagMalloc (sizeof(dlqueue_t), 0);
-		q = q->next;
-		q->next = NULL;
-	}
-
-	q->state = DLQ_STATE_NOT_STARTED;
-	Q_strncpyz (q->quakePath, sizeof(q->quakePath), quakePath);
-	q->isPak = isPak;			// Knightmare added
-	q->useQ2ProPath = false;	// Knightmare added
-	q->isDuplicated = false;	// Knightmare added
-	q->isAltEntry = false;		// Knightmare added
-#else
-	// Knightmare- refactored queue allocation
-	q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
-
 	// handle duplicate entry case where CL_AllocDLQueueEntry() returns NULL
 	if (q == NULL)
 		return true;
 	// end Knightmare
-#endif
 
 	if (needList)
 	{
 		// grab the filelist
-		CL_QueueHTTPDownload (va("%s.filelist", cl.gamedir));
+	//	CL_QueueHTTPDownload (va("%s.filelist", cl.gamedir));
+		// Knightmare- cvar-switchable download path
+		switch (cl_http_pathtype->integer)
+		{
+		default:
+		case 0:	// R1Q2 path
+			CL_QueueHTTPDownload (va("/%s.filelist", cl.gamedir));
+			break;
+		case 1:	// Q2Pro path
+			CL_QueueHTTPDownload (va("/%s.filelist", CL_HTTP_GetQ2ProGameDir()));
+			break;
+		case 2: // attempt both filelist paths
+			CL_QueueHTTPDownload (va("/%s.filelist", cl.gamedir));
+			// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
+			if (cl.gamedir[0] == '\0') {
+				CL_QueueHTTPDownload (va("/%s.filelist", CL_HTTP_GetQ2ProGameDir()));
+			}
+			break;
+		}
+		// end Knightmare
 
 		// this is a nasty hack to let the server know what we're doing so admins don't
 		// get confused by a ton of people stuck in CNCT state. it's assumed the server
@@ -837,10 +834,42 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		char	listPath[MAX_OSPATH];
 		char	filePath[MAX_OSPATH];
 
-		Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+	/*	Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
 		COM_StripExtension (filePath, listPath, sizeof(listPath));
 		Q_strncatz (listPath, sizeof(listPath), ".filelist");
-		CL_QueueHTTPDownload (listPath);
+		CL_QueueHTTPDownload (listPath); */
+		// Knightmare- cvar-switchable download path
+		switch (cl_http_pathtype->integer)
+		{
+		default:
+		case 0:	// R1Q2 path
+			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+			COM_StripExtension (filePath, listPath, sizeof(listPath));
+			Q_strncatz (listPath, sizeof(listPath), ".filelist");
+			CL_QueueHTTPDownload (listPath);
+			break;
+		case 1:	// Q2Pro path
+			Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePath);
+			COM_StripExtension (filePath, listPath, sizeof(listPath));
+			Q_strncatz (listPath, sizeof(listPath), ".filelist");
+			CL_QueueHTTPDownload (listPath);
+			break;
+		case 2: // attempt both filelist paths
+			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+			COM_StripExtension (filePath, listPath, sizeof(listPath));
+			Q_strncatz (listPath, sizeof(listPath), ".filelist");
+			CL_QueueHTTPDownload (listPath);
+			
+			// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
+			if (cl.gamedir[0] == '\0') {
+				Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePath);
+				COM_StripExtension (filePath, listPath, sizeof(listPath));
+				Q_strncatz (listPath, sizeof(listPath), ".filelist");
+				CL_QueueHTTPDownload (listPath);
+			}
+			break;
+		}
+		// end Knightmare
 	}
 
 	// if a download entry has made it this far, CL_FinishHTTPDownload is guaranteed to be called.
@@ -1276,7 +1305,16 @@ static void CL_FinishHTTPDownload (void)
 					if (isFile) {
 						remove (dl->filePath);
 					}
-					Com_Printf ("[HTTP] (%s): 404 File Not Found [%d remaining files]\n", dl->queueEntry->quakePath, pendingCount);
+					// Knightmare- specify which server path failed if we're in dual-path mode
+					if (dl->queueEntry->isDuplicated) {
+						if (dl->queueEntry->isAltEntry)
+							Com_Printf ("[HTTP] (%s, Q2Pro path): 404 File Not Found [%d remaining files]\n", dl->queueEntry->quakePath, pendingCount);
+						else
+							Com_Printf ("[HTTP] (%s, R1Q2 path): 404 File Not Found [%d remaining files]\n", dl->queueEntry->quakePath, pendingCount);
+					}
+					else {
+						Com_Printf ("[HTTP] (%s): 404 File Not Found [%d remaining files]\n", dl->queueEntry->quakePath, pendingCount);
+					}
 				/*	curl_easy_getinfo (curl, CURLINFO_SIZE_DOWNLOAD, &fileSize);
 
 					// Knightmare- ignore this, doesn't need to be fatal
@@ -1308,10 +1346,6 @@ static void CL_FinishHTTPDownload (void)
 							dl->queueEntry = NULL;
 					//	}
 						// end Knightmare
-						// YQ2 addition
-						if (isFile) {
-							downloadError = true;
-						}
 						continue;
 					}
 				}
@@ -1471,29 +1505,6 @@ static void CL_StartNextHTTPDownload (void)
 	}
 }
 
-#if 0
-/*
-===============
-CL_CheckHTTPError
-
-YQ2 addition
-
-Checks if thre was an error.
-Returns true if yes, false if no.
-Resets flag if it was set.
-===============
-*/
-qboolean CL_CheckHTTPError (void)
-{
-	if (downloadError) {
-		downloadError = false;
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-#endif
 
 /*
 ===============

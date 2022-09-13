@@ -39,6 +39,7 @@ static menuPicker_s		s_allow_download_box;
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 static menuPicker_s		s_allow_http_download_box;
+static menuPicker_s		s_http_pathtype_box;
 #endif	// USE_CURL
 
 static menuPicker_s		s_allow_download_maps_box;
@@ -57,6 +58,12 @@ void Menu_DownloadOptions_Init (void)
 	{
 		"no",
 		"yes",
+		0
+	};
+	static const char *http_pathtype_items[] = {
+		"R1Q2",
+		"Q2Pro",
+		"both",
 		0
 	};
 	int		x, y;
@@ -102,13 +109,25 @@ void Menu_DownloadOptions_Init (void)
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 	s_allow_http_download_box.generic.type			= MTYPE_PICKER;
-	s_allow_http_download_box.generic.textSize			= MENU_FONT_SIZE;
+	s_allow_http_download_box.generic.textSize		= MENU_FONT_SIZE;
 	s_allow_http_download_box.generic.x				= x;
 	s_allow_http_download_box.generic.y				= y += MENU_LINE_SIZE;
 	s_allow_http_download_box.generic.name			= "HTTP downloading";
 	s_allow_http_download_box.itemNames				= yes_no_names;
 	s_allow_http_download_box.generic.cvar			= "cl_http_downloads";
 	s_allow_http_download_box.generic.statusbar		= "use HTTP downloading on supported servers";
+
+	s_http_pathtype_box.generic.type			= MTYPE_PICKER;
+	s_http_pathtype_box.generic.textSize		= MENU_FONT_SIZE;
+	s_http_pathtype_box.generic.x				= x;
+	s_http_pathtype_box.generic.y				= y += MENU_LINE_SIZE;
+	s_http_pathtype_box.generic.name			= "HTTP path type";
+	s_http_pathtype_box.itemNames				= http_pathtype_items;
+	s_http_pathtype_box.generic.cvar			= "cl_http_pathtype";
+	s_http_pathtype_box.generic.cvarClamp		= true;
+	s_http_pathtype_box.generic.cvarMin			= 0;
+	s_http_pathtype_box.generic.cvarMax			= 2;
+	s_http_pathtype_box.generic.statusbar		= "sets server path type for HTTP downloading";
 #endif	// USE_CURL
 
 	s_allow_download_maps_box.generic.type			= MTYPE_PICKER;
@@ -172,6 +191,7 @@ void Menu_DownloadOptions_Init (void)
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_http_download_box);
+	UI_AddMenuItem (&s_downloadoptions_menu, &s_http_pathtype_box);
 #endif	// USE_CURL
 
 	UI_AddMenuItem (&s_downloadoptions_menu, &s_allow_download_maps_box);
