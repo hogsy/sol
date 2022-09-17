@@ -1392,7 +1392,25 @@ static void CL_FinishHTTPDownload (void)
 			Com_sprintf (tempName, sizeof(tempName), "%s/%s", FS_Downloaddir(), dl->queueEntry->quakePath);	// was FS_Gamedir()
 
 			if (rename (dl->filePath, tempName))
-				Com_Printf ("[HTTP] Failed to rename %s for some odd reason...", dl->filePath);
+			{	// Knightmare- If this download was mirrored, that possibly means the other path
+				// also downloaded and finished first.  In that case, delete the temp file.
+				if (dl->queueEntry->isDuplicated)
+				{
+					FILE	*fp;
+
+					fp = fopen (tempName, "rb");
+					if (fp != NULL) {
+						Com_Printf ("[HTTP] File %s already completed on other path, deleting temp file.\n", tempName);
+						remove (dl->filePath);
+					}
+					else {
+						fclose (fp);
+						Com_Printf ("[HTTP] Failed to rename %s to %s for some odd reason...", dl->filePath, tempName);
+					}
+				}
+				else
+					Com_Printf ("[HTTP] Failed to rename %s to %s for some odd reason...", dl->filePath, tempName);
+			}
 
 			// a pak file is very special...
 			i = strlen (tempName);
