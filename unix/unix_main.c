@@ -331,17 +331,17 @@ void Sys_SendKeyEvents (void)
 /*****************************************************************************/
 
 // Knightmare- adapted from DK 1.3 Linux port
-const char* Sys_ExeDir(void)
+const char* Sys_ExeDir (void)
 {
 	return exe_dir;
 }
 
-const char* Sys_PrefDir(void)
+const char* Sys_PrefDir (void)
 {
 	return pref_dir;
 }
 
-const char* Sys_DownloadDir(void)
+const char* Sys_DownloadDir (void)
 {
 	return download_dir;
 }
@@ -379,9 +379,9 @@ static void Sys_InitPrefDir (void)
 		return;
 	}
 
-	printf("WARNING: SDL_GetPrefPath failed, defaulting to installation dir!\n");
-	Q_strncpyz(pref_dir, sizeof(pref_dir), exe_dir);
-	Q_strncpyz(download_dir, sizeof(download_dir), exe_dir);
+	printf("WARNING: SDL_GetPrefPath failed, defaulting to fs_basedir!\n");
+	Q_strncpyz (pref_dir, sizeof(pref_dir), fs_basedir->string);
+	Q_strncpyz (download_dir, sizeof(download_dir), fs_basedir->string);
 }
 // end Knightmare
 
@@ -393,7 +393,7 @@ int main (int argc, char **argv)
 
 	// go back to real user for config loads
 	saved_euid = geteuid();
-	seteuid(getuid());
+	seteuid (getuid());
 
 	printf ("\n");	
 	printf ("========= Initialization =================\n");
@@ -404,24 +404,23 @@ int main (int argc, char **argv)
 	printf ("Compiled: "__DATE__" -- "__TIME__"\n");
 	printf ("==========================================\n\n");
 
-	// Knightmare- init exe/pref dirs
-	Init_ExeDir(argv[0]);
-	Sys_InitPrefDir();
+	// Knightmare- init exe dir
+	Init_ExeDir (argv[0]);
 
-	Qcommon_Init(argc, argv);
+	Qcommon_Init (argc, argv);
 
 	fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 
 	nostdout = Cvar_Get("nostdout", "0", 0);
 	if (!nostdout->value) {
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
-//		printf ("Linux Quake II -- Version %0.3f\n", KMQUAKE2_VERSION);
+	//	printf ("Linux Quake II -- Version %0.3f\n", KMQUAKE2_VERSION);
 	}
 
     oldtime = Sys_Milliseconds ();
     while (1)
     {
-// find time spent rendering last frame
+		// find time spent rendering last frame
 		do {
 			newtime = Sys_Milliseconds ();
 			time = newtime - oldtime;

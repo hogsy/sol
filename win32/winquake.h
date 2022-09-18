@@ -69,7 +69,6 @@ extern RECT		window_rect;
 
 // win_main.c
 extern cvar_t		*win_use_profile_dir;
-void Sys_InitPrefDir (void);
 
 // win_wndproc.c
 void WIN_SetAltTab (void);

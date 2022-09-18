@@ -1050,6 +1050,10 @@ void	Sys_Quit (void);
 char	*Sys_GetClipboardData( void );
 void	Sys_CopyProtect (void);
 
+// Knightmare- inits pref and download dirs
+//		Must be called after cvar fs_basegame is initialized in FS_InitFilesystem()
+void Sys_InitPrefDir (void);
+
 // DG: returns the directory the executable (kmquake2.exe on Win32) resides in
 //     *without* a path seperator ("/" or "\") at the end
 const char *Sys_ExeDir (void);

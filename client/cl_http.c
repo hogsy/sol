@@ -750,7 +750,7 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	}
 
 	len = strlen (quakePath);
-	if ( (len > 4) && (!Q_stricmp((char *)quakePath + len - 4, ".pak") || !Q_stricmp((char *)quakePath + len - 4, ".pk3")) )
+	if ( (len > 4) && ( !Q_stricmp((char *)quakePath + len - 4, ".pak") || !Q_stricmp((char *)quakePath + len - 4, ".pk3") ) )
 		isPak = true;
 	if ( (len > 9) && !Q_stricmp((char *)quakePath + len - 9, ".filelist") )
 		isFilelist = true;
@@ -795,7 +795,7 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	if (needList)
 	{
 		// grab the filelist
-	//	CL_QueueHTTPDownload (va("%s.filelist", cl.gamedir));
+	//	CL_QueueHTTPDownload (va("/%s.filelist", cl.gamedir));
 		// Knightmare- cvar-switchable download path
 		switch (cl_http_pathtype->integer)
 		{
@@ -1299,7 +1299,7 @@ static void CL_FinishHTTPDownload (void)
 				if (responseCode == 404)
 				{
 					len = strlen (dl->queueEntry->quakePath);
-					if ( (len > 4) && ( !strcmp (dl->queueEntry->quakePath + len - 4, ".pak") || !strcmp (dl->queueEntry->quakePath + len - 4, ".pk3")) )
+					if ( (len > 4) && ( !strcmp (dl->queueEntry->quakePath + len - 4, ".pak") || !strcmp (dl->queueEntry->quakePath + len - 4, ".pk3") ) )
 						downloading_pak = false;
 
 					if (isFile) {
@@ -1330,7 +1330,7 @@ static void CL_FinishHTTPDownload (void)
 						curl_multi_remove_handle (multi, dl->curl);
 
 						// Fall back to UDP download for this map if failure on .bsp
-					/*	if ( !strncmp(dl->queueEntry->quakePath, "maps/", 5) && !strcmp(dl->queueEntry->quakePath + i - 4, ".bsp") )
+					/*	if ( !strncmp(dl->queueEntry->quakePath, "maps/", 5) && !strcmp(dl->queueEntry->quakePath + len - 4, ".bsp") )
 						{
 							Com_Printf ("[HTTP]: failed to download %s, falling back to UDP until next map.\n", dl->queueEntry->quakePath);
 							thisMapAbort = true;
@@ -1375,7 +1375,7 @@ static void CL_FinishHTTPDownload (void)
 				continue;
 			default:
 				len = strlen (dl->queueEntry->quakePath);
-				if ( (len > 4) && (!strcmp (dl->queueEntry->quakePath + len - 4, ".pak") || !strcmp (dl->queueEntry->quakePath + len - 4, ".pk3")) )
+				if ( (len > 4) && ( !strcmp (dl->queueEntry->quakePath + len - 4, ".pak") || !strcmp (dl->queueEntry->quakePath + len - 4, ".pk3") ) )
 					downloading_pak = false;
 				if (isFile) {
 					remove (dl->filePath);
@@ -1413,13 +1413,13 @@ static void CL_FinishHTTPDownload (void)
 			}
 
 			// a pak file is very special...
-			i = strlen (tempName);
-			if ( !strcmp (tempName + i - 4, ".pak") || !strcmp (tempName + i - 4, ".pk3") )
+			len = strlen (tempName);
+			if ( !strcmp (tempName + len - 4, ".pak") || !strcmp (tempName + len - 4, ".pk3") )
 			{
 			//	FS_FlushCache ();
 			//	FS_ReloadPAKs ();
 				// Knightmare- just add the pk3 / pak file
-				if (!strcmp (tempName + i - 4, ".pk3")) 
+				if (!strcmp (tempName + len - 4, ".pk3")) 
 					FS_AddPK3File (tempName, false);
 				else
 					FS_AddPAKFile (tempName, false);
@@ -1434,7 +1434,7 @@ static void CL_FinishHTTPDownload (void)
 		curl_easy_getinfo (curl, CURLINFO_SIZE_DOWNLOAD, &fileSize);
 
 		// FIXME:
-		// Technically i shouldn't need to do this as curl will auto reuse the
+		// Technically I shouldn't need to do this as curl will auto reuse the
 		// existing handle when you change the URL. however, the handleCount goes
 		// all weird when reusing a download slot in this way. if you can figure
 		// out why, please let me know.
@@ -1515,7 +1515,7 @@ static void CL_StartNextHTTPDownload (void)
 
 			// ugly hack for pak file single downloading
 			len = strlen (q->quakePath);
-			if ( (len > 4) && (!Q_stricmp (q->quakePath + len - 4, ".pak") || !Q_stricmp (q->quakePath + len - 4, ".pk3")) )
+			if ( (len > 4) && ( !Q_stricmp (q->quakePath + len - 4, ".pak") || !Q_stricmp (q->quakePath + len - 4, ".pk3") ) )
 				downloading_pak = true;
 
 			break;
@@ -1544,7 +1544,7 @@ void CL_RunHTTPDownloads (void)
 //	Com_Printf ("handle %d, pending %d\n", LOG_GENERAL, handleCount, pendingCount);
 
 	// not enough downloads running, queue some more!
-	if (pendingCount && (abortDownloads == HTTPDL_ABORT_NONE) &&
+	if ( pendingCount && (abortDownloads == HTTPDL_ABORT_NONE) &&
 		!downloading_pak && (handleCount < cl_http_max_connections->integer) )
 		CL_StartNextHTTPDownload ();
 
@@ -1568,8 +1568,8 @@ void CL_RunHTTPDownloads (void)
 	}
 
 	// not enough downloads running, queue some more!
-	if (pendingCount && (abortDownloads == HTTPDL_ABORT_NONE) &&
+	if ( pendingCount && (abortDownloads == HTTPDL_ABORT_NONE) &&
 		!downloading_pak && (handleCount < cl_http_max_connections->integer) )
 		CL_StartNextHTTPDownload ();
 }
-#endif
+#endif	// USE_CURL

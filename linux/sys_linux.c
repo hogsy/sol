@@ -395,15 +395,15 @@ static void Sys_InitPrefDir (void)
 
 	if (pp == NULL)
 	{
-		Q_snprintfz(pref_dir, sizeof(pref_dir), "%s/.local/share/Daikatana", getenv("HOME"));
+		Q_snprintfz(pref_dir, sizeof(pref_dir), "%s/.local/share/KMQuake2", getenv("HOME"));
 		return;
 	}
 
 	if (strlen(pp) >= sizeof(pref_dir) - 1)
 	{
-		printf("WARNING: $XDG_DATA_HOME contains a too long path, defaulting to installation dir!\n");
-		Q_strncpyz(pref_dir, sizeof(pref_dir), exe_dir);
-		Q_strncpyz (download_dir, sizeof(download_dir), exe_dir);
+		printf("WARNING: $XDG_DATA_HOME contains a too long path, defaulting to fs_basedir!\n");
+		Q_strncpyz (pref_dir, sizeof(pref_dir), fs_basedir->string);
+		Q_strncpyz (download_dir, sizeof(download_dir), fs_basedir->string);
 		return;
 	}
 
@@ -422,24 +422,23 @@ int main (int argc, char **argv)
 	saved_euid = geteuid();
 	seteuid(getuid());
 
-	// Knightmare- init exe/pref dirs
-	Init_ExeDir(argv[0]);
-	Sys_InitPrefDir();
+	// Knightmare- init exe dir
+	Init_ExeDir (argv[0]);
 
-	Qcommon_Init(argc, argv);
+	Qcommon_Init (argc, argv);
 
 	fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 
 	nostdout = Cvar_Get("nostdout", "0", 0);
 	if (!nostdout->value) {
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
-//		printf ("Linux Quake -- Version %0.3f\n", LINUX_VERSION);
+	//	printf ("Linux Quake II -- Version %0.3f\n", LINUX_VERSION);
 	}
 
     oldtime = Sys_Milliseconds ();
     while (1)
     {
-// find time spent rendering last frame
+		// find time spent rendering last frame
 		do {
 			newtime = Sys_Milliseconds ();
 			time = newtime - oldtime;

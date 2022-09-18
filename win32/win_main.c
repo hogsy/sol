@@ -1720,6 +1720,7 @@ const char *Sys_DownloadDir (void)
 Sys_InitPrefDir
 
 Adapted from DK 1.3 source
+Must be called AFTER cvars are initialized in FS_InitFilesystem()
 ==================
 */
 void Sys_InitPrefDir (void)
@@ -1901,8 +1902,8 @@ void Sys_InitPrefDir (void)
 		}
 	}
 
-	Com_sprintf (pref_dir, sizeof(pref_dir), exe_dir);
-	Com_sprintf (download_dir, sizeof(download_dir), exe_dir);
+	Q_strncpyz (pref_dir, sizeof(pref_dir), fs_basedir->string);
+	Q_strncpyz (download_dir, sizeof(download_dir), fs_basedir->string);
 }
 
 

@@ -2222,18 +2222,21 @@ Sets fs_savegamedir, not fs_gamedir, and does not load any pack files.
 void FS_AddSaveGameDirectory (const char *dir)
 {
 	fsSearchPath_t	*search;
+	char			createPath[MAX_OSPATH];
 
 	if (!dir)
 		return;
 	if (strlen(dir) < 1)	// catch 0-length string
 		return;
 
-	Com_sprintf (fs_savegamedir, sizeof(fs_savegamedir), "%s/%s", Sys_PrefDir(), dir);
+	Q_strncpyz (fs_savegamedir, sizeof(fs_savegamedir), dir);
 
 	if (!Q_stricmp(fs_savegamedir, fs_gamedir))	// only add if different from fs_gamedir
 		return;
 
-	FS_CreatePath (va("%s/", fs_savegamedir));	// create savegamedir if it doesn't yet exist
+	// create savegamedir if it doesn't yet exist
+	Com_sprintf (createPath, sizeof(createPath), "%s/", fs_downloaddir);
+	FS_CreatePath (createPath);
 
 	//
 	// Add the directory to the search path
@@ -2259,18 +2262,21 @@ in that path by calling FS_AddPaksInDirectory().
 void FS_AddDownloadDirectory (const char *dir)
 {
 	fsSearchPath_t	*search;
+	char			createPath[MAX_OSPATH];
 
 	if (!dir)
 		return;
 	if (strlen(dir) < 1)	// catch 0-length string
 		return;
 
-	Com_sprintf (fs_downloaddir, sizeof(fs_downloaddir), "%s/%s", Sys_DownloadDir(), dir);
+	Q_strncpyz (fs_downloaddir, sizeof(fs_downloaddir), dir);
 
 	if (!Q_stricmp(fs_downloaddir, fs_gamedir))	// only add if different from fs_gamedir
 		return;
 
-	FS_CreatePath (va("%s/", fs_downloaddir));	//  create downloaddir if it doesn't yet exist
+	// create downloaddir if it doesn't yet exist
+	Com_sprintf (createPath, sizeof(createPath), "%s/", fs_downloaddir);
+	FS_CreatePath (createPath);
 
 	//
 	// Add the directory to the search path
@@ -2601,16 +2607,14 @@ void FS_InitFilesystem (void)
 	else
 		win_use_profile_dir = Cvar_Get ("win_use_profile_dir", "1", CVAR_NOSET);
 	Cvar_SetDescription ("win_use_profile_dir", "Internal value that determines whether to use the <userprofile>/Saved Games/KMQuake2 folder on Windows Vista and later for config files, saved games, screenshots, etc.  On Win 2000/XP it uses Documents/My Games/KMQuake2.  To disable this, add -portable to the command line or add an empty portable.cfg file in the Quake2/baseq2 folder.");
+#endif
 
 	Sys_InitPrefDir ();	// set up pref dir now instead of calling a function every time it's needed
-#endif
 
 	// set our savegame/download dirs with Sys_PrefDir() and baseq2
 #ifdef USE_SAVEGAMEDIR
-	FS_AddDownloadDirectory (BASEDIRNAME);
-	FS_AddSaveGameDirectory (BASEDIRNAME);
-//	Com_sprintf (fs_savegamedir, sizeof(fs_savegamedir), "%s/%s", Sys_PrefDir(), BASEDIRNAME);
-//	Com_sprintf (fs_downloaddir, sizeof(fs_downloaddir), "%s/%s", Sys_DownloadDir(), BASEDIRNAME);
+	FS_AddDownloadDirectory (va("%s/%s", Sys_DownloadDir(), BASEDIRNAME));
+	FS_AddSaveGameDirectory (va("%s/%s", Sys_PrefDir(), BASEDIRNAME));
 #else
 	Q_strncpyz(fs_savegamedir, sizeof(fs_savegamedir), fs_gamedir);
 	Q_strncpyz(fs_downloaddir, sizeof(fs_downloaddir), fs_gamedir);
@@ -2784,10 +2788,8 @@ void FS_SetGamedir (const char *dir)
 		Cvar_FullSet ("game", "", CVAR_LATCH|CVAR_SERVERINFO|CVAR_SAVE_IGNORE);
 		// set our savegame/download dirs with Sys_PrefDir() and baseq2
 #ifdef USE_SAVEGAMEDIR
-		FS_AddDownloadDirectory (BASEDIRNAME);
-		FS_AddSaveGameDirectory (BASEDIRNAME);
-	//	Com_sprintf (fs_savegamedir, sizeof(fs_savegamedir), "%s/%s", Sys_PrefDir(), BASEDIRNAME);
-	//	Com_sprintf (fs_downloaddir, sizeof(fs_downloaddir), "%s/%s", Sys_DownloadDir(), BASEDIRNAME);
+		FS_AddDownloadDirectory (va("%s/%s", Sys_DownloadDir(), BASEDIRNAME));
+		FS_AddSaveGameDirectory (va("%s/%s", Sys_PrefDir(), BASEDIRNAME));
 #else
 		Q_strncpyz(fs_savegamedir, sizeof(fs_savegamedir), fs_gamedir);
 		Q_strncpyz(fs_downloaddir, sizeof(fs_downloaddir), fs_gamedir);
@@ -2831,10 +2833,8 @@ void FS_SetGamedir (const char *dir)
 
 		// set our savegame/download dirs with Sys_PrefDir() and baseq2
 #ifdef USE_SAVEGAMEDIR
-		FS_AddDownloadDirectory (dir);
-		FS_AddSaveGameDirectory (dir);
-	//	Com_sprintf (fs_savegamedir, sizeof(fs_savegamedir), "%s/%s", Sys_PrefDir(), dir);
-	//	Com_sprintf (fs_downloaddir, sizeof(fs_downloaddir), "%s/%s", Sys_DownloadDir(), dir);
+		FS_AddDownloadDirectory (va("%s/%s", Sys_DownloadDir(), dir));
+		FS_AddSaveGameDirectory (va("%s/%s", Sys_PrefDir(), dir));
 #else
 		Q_strncpyz(fs_savegamedir, sizeof(fs_savegamedir), fs_gamedir);
 		Q_strncpyz(fs_downloaddir, sizeof(fs_downloaddir), fs_gamedir);
