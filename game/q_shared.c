@@ -1316,20 +1316,25 @@ void Swap_Init (void)
 ============
 va
 
-does a varargs printf into a temp buffer, so I don't need to have
+Does a varargs printf into a temp buffer, so I don't need to have
 varargs versions of all text functions.
+Multi-buffer allows use by nested functions without overwrite of
+buffer(s) used by previous function call.
 ============
 */
 char *va (char *format, ...)
 {
 	va_list			argptr;
-	static char		string[1024];
+	static char		string[16][1024];
+	static unsigned	index;
 	
+	index &= 15;
+
 	va_start (argptr, format);
-	Q_vsnprintf (string, sizeof(string), format, argptr);
+	Q_vsnprintf (string[index], sizeof(string[index]), format, argptr);
 	va_end (argptr);
 
-	return string;	
+	return string[index++];	
 }
 
 /*

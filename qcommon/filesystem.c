@@ -2222,7 +2222,6 @@ Sets fs_savegamedir, not fs_gamedir, and does not load any pack files.
 void FS_AddSaveGameDirectory (const char *dir)
 {
 	fsSearchPath_t	*search;
-	char			createPath[MAX_OSPATH];
 
 	if (!dir)
 		return;
@@ -2235,8 +2234,7 @@ void FS_AddSaveGameDirectory (const char *dir)
 		return;
 
 	// create savegamedir if it doesn't yet exist
-	Com_sprintf (createPath, sizeof(createPath), "%s/", fs_downloaddir);
-	FS_CreatePath (createPath);
+	FS_CreatePath (va("%s/", fs_savegamedir));
 
 	//
 	// Add the directory to the search path
@@ -2262,7 +2260,6 @@ in that path by calling FS_AddPaksInDirectory().
 void FS_AddDownloadDirectory (const char *dir)
 {
 	fsSearchPath_t	*search;
-	char			createPath[MAX_OSPATH];
 
 	if (!dir)
 		return;
@@ -2275,8 +2272,7 @@ void FS_AddDownloadDirectory (const char *dir)
 		return;
 
 	// create downloaddir if it doesn't yet exist
-	Com_sprintf (createPath, sizeof(createPath), "%s/", fs_downloaddir);
-	FS_CreatePath (createPath);
+	FS_CreatePath (va("%s/", fs_downloaddir));
 
 	//
 	// Add the directory to the search path
@@ -2521,9 +2517,11 @@ void FS_CopyConfigsToSavegameDir (void)
 		// Don't copy default.cfg, autoexec.cfg, or configs written by other engines
 		// TODO: keep this up to date!
 		// config.cfg, aprconfig.cfg, bqconfig.cfg, eglcfg.cfg, maxconfig.cfg, q2config.cfg, q2b_config.cfg, q2econfig.cfg, xpconfig.cfg, yq2.cfg
-		if ( (strstr(cfgName, "config.cfg") && (Q_stricmp(cfgName, "kmq2config.cfg") != 0)) ||
+	/*	if ( (strstr(cfgName, "config.cfg") && (Q_stricmp(cfgName, "kmq2config.cfg") != 0)) ||
 			!Q_stricmp(cfgName, "default.cfg") || !Q_stricmp(cfgName, "autoexec.cfg") ||
-			!Q_stricmp(cfgName, "eglcfg.cfg") || !Q_stricmp(cfgName, "yq2.cfg") ) {
+			!Q_stricmp(cfgName, "eglcfg.cfg") || !Q_stricmp(cfgName, "yq2.cfg") ) { */
+		// Only copy kmq2config.cfg
+		if (Q_stricmp(cfgName, "kmq2config.cfg") != 0) {
 			continue;
 		}
 		Com_sprintf (dstCfgPath, sizeof(dstCfgPath), "%s/%s", FS_SaveGameDir(), cfgName);
