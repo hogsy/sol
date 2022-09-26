@@ -115,6 +115,8 @@ Changes as of v0.20 update 8:
 
 - Removed size limit of 512x256 for .wal textures.  This fixes the "GL_Upload8: too large" error with 512x512 or larger .wal textures.
 
+- Increased map texinfo limit from 8192 to 65536.
+
 - Added cvar r_fog_skyratio, for proportional sky fog distance.  Default is 10.
 
 - Added optional screenshot gamma correction.  Set cvar r_screenshot_gamma_correct to 1 to enable.

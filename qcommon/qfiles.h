@@ -353,7 +353,7 @@ typedef struct miptex_s
 #define	MAX_MAP_ENTSTRING	0x40000
 #endif
 
-#define	MAX_MAP_TEXINFO		16384	// was 8192
+#define	MAX_MAP_TEXINFO		65536	// was 8192, 16384
 #define	MAX_MAP_AREAS		256
 #define	MAX_MAP_AREAPORTALS	1024
 #define	MAX_MAP_PLANES		65536
