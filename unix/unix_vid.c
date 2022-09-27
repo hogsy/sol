@@ -47,6 +47,18 @@ cvar_t		*r_customheight;
 viddef_t	viddef;				// global video state; used by other modules
 qboolean	kmgl_active = 0;
 
+typedef struct vidmode_s
+{
+	const char *description;
+	int         width, height;
+	int         mode;
+} vidmode_t;
+
+vidmode_t vid_modes[] =
+{
+#include "../qcommon/vid_modes.h"
+};
+
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
 
 cvar_t 		*scanforcd; // Knightmare- just here to enable command line option
@@ -111,18 +123,6 @@ void VID_Restart_f (void)
 /*
 ** VID_GetModeInfo
 */
-typedef struct vidmode_s
-{
-	const char *description;
-	int         width, height;
-	int         mode;
-} vidmode_t;
-
-vidmode_t vid_modes[] =
-{
-#include "../qcommon/vid_modes.h"
-};
-
 qboolean VID_GetModeInfo( int *width, int *height, int mode )
 {
 	if (mode == -1) // custom mode

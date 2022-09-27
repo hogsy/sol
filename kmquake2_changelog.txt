@@ -37,6 +37,8 @@ Changes as of v0.20 update 8:
 
 - Added a bunch of triple-monitor surround modes to video mode list.
 
+- Added vid_modelist command to list video modes.
+
 - Now reads/writes savegames, config files, demos, etc. to <userprofile>/Saved Games/KMQuake2 on Windows Vista
 	and later, and to My Documents/My Games/KMQuake2 on Windows 2000/XP/2003.
 	Autodownloaded files are now written to <userprofile>/Downloads/KMQuake2 on Windows Vista and later,
