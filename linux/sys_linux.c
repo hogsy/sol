@@ -338,7 +338,7 @@ const char* Sys_DownloadDir(void)
 	return download_dir;
 }
 
-static void Init_ExeDir (const char* argv0)
+void Init_ExeDir (const char* argv0)
 {
 #if 1
 	memset(exe_dir, 0, sizeof(exe_dir));
@@ -387,7 +387,7 @@ static void Init_ExeDir (const char* argv0)
 #endif
 }
 
-static void Sys_InitPrefDir (void)
+void Sys_InitPrefDir (void)
 {
 	char *pp = getenv("XDG_DATA_HOME");
 

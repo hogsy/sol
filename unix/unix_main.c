@@ -346,7 +346,7 @@ const char* Sys_DownloadDir (void)
 	return download_dir;
 }
 
-static void Init_ExeDir (const char* argv0)
+void Init_ExeDir (const char* argv0)
 {
 	char *basedir = SDL_GetBasePath();
 	if (basedir == NULL)
@@ -363,7 +363,7 @@ static void Init_ExeDir (const char* argv0)
 	exe_dir[strlen(exe_dir) - 1] = '\0';
 }
 
-static void Sys_InitPrefDir (void)
+void Sys_InitPrefDir (void)
 {
 	char *pp = SDL_GetPrefPath(NULL, SAVENAME);
 

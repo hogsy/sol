@@ -671,7 +671,7 @@ $(BUILDDIR)/ref_gl/r_vlights.o :       	$(REF_GL_DIR)/r_vlights.c
 $(BUILDDIR)/ref_gl/r_warp.o :        	$(REF_GL_DIR)/r_warp.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/gl_sdl.o :      	$(UNIX_DIR)/gl_sdl.c
+$(BUILDDIR)/ref_gl/sdl_gl.o :      	$(UNIX_DIR)/sdl_gl.c
 	$(DO_GL_SHLIB_CC) $(SDLCFLAGS)
 
 $(BUILDDIR)/ref_gl/unix_qgl.o :      	$(UNIX_DIR)/unix_qgl.c
