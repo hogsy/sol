@@ -1540,6 +1540,7 @@ ROGUE - VERSIONS
     ((cs) >= CS_STATUSBAR && (cs) < CS_AIRACCEL ? \
       MAX_QPATH * (CS_AIRACCEL - (cs)) : MAX_QPATH)
 
+#ifdef _MSC_VER
 // inline version handles both CS_STATUSBAR and CS_GENERAL cleanly
 __inline size_t GetConfigstringSize (int cs) {
 	size_t ret;
@@ -1551,6 +1552,14 @@ __inline size_t GetConfigstringSize (int cs) {
 	{	ret = MAX_QPATH;	}
 	return ret;
 }
+#else
+// messy macro to make GCC happy in debug mode
+#define GetConfigstringSize(cs) \
+    ((cs) >= CS_STATUSBAR && (cs) < CS_AIRACCEL ? \
+	MAX_QPATH * (CS_AIRACCEL - (cs)) : \
+	(cs) >= CS_GENERAL && (cs) < CS_HUDVARIANT ? \
+	MAX_QPATH * (CS_HUDVARIANT - (cs)) : MAX_QPATH)
+#endif	// _MSC_VER
 
 //==============================================
 
