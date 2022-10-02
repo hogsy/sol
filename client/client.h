@@ -522,6 +522,9 @@ extern	cvar_t	*cl_vwep;
 extern	cvar_t *cl_engine;
 extern	cvar_t *cl_engine_version;
 
+// client-side only download options
+extern	cvar_t *cl_download_textures_lowercase;
+
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
 extern cvar_t *cl_drawlocs;
 extern cvar_t *loc_here;

@@ -174,6 +174,9 @@ cvar_t	*cl_vwep;
 cvar_t *cl_engine;
 cvar_t *cl_engine_version;
 
+// client-side only download options
+cvar_t	*cl_download_textures_lowercase;
+
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 cvar_t	*cl_http_downloads;
 cvar_t	*cl_http_filelists;
@@ -2204,6 +2207,10 @@ void CL_InitLocal (void)
 	Cvar_SetDescription ("cl_engine", "Identifies the client engine.");
 	cl_engine_version = Cvar_Get ("cl_engine_version", va("%4.2f",VERSION), /*CVAR_USERINFO |*/ CVAR_NOSET | CVAR_LATCH);
 	Cvar_SetDescription ("cl_engine_version", "Identifies the client engine version.");
+
+	// client-side only download options
+	cl_download_textures_lowercase = Cvar_Get ("cl_download_textures_lowercase", "1", CVAR_ARCHIVE);
+	Cvar_SetDescription ("cl_download_textures_lowercase", "Converts texture filenames to lowercase for downloading.");
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
 	cl_drawlocs =		Cvar_Get("cl_drawlocs", "0", 0);
