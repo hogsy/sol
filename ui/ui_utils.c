@@ -850,7 +850,9 @@ void UI_GetVideoModes (void)
 				aspect /= 3.0f;
 				surround = true;
 			}
-			if (aspect > 2.39f)
+			if (aspect > 3.49f)
+				tok = "32:9";
+			else if (aspect > 2.39f)
 				tok = "24:10";
 			else if (aspect > 2.3f)
 				tok = "21:9";

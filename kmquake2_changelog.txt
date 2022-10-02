@@ -1,7 +1,7 @@
 ------------------------------------
 Changes as of v0.20 update 8:
 ------------------------------------
-- Added 3840x1600 and 4096x2160 video modes.
+- Added 3840x1600, 4096x2160, 5120x1440, 5120x2160, and 7680x4320 video modes.
 
 - Added 160Hz, 165Hz, 180Hz, 200Hz, 240Hz, 360Hz, and 500Hz refresh rates to the video menu (uses cvar r_displayrefresh, up to 500 Hz).
 
