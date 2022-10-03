@@ -826,6 +826,12 @@ NoExtFunction:
 				case 1:
 					if (extModel == 0x21)	// Vermeer (Zen3)
 						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 5x00");
+					else if (extModel == 0x61)	// Raphael (Zen4)
+						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 7x00");
+					break;
+				case 4:
+					if (extModel == 0x44)	// Rembrandt (Zen3+)
+						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 6x00");
 					break;
 				default:
 					Q_strncatz(cpuString, maxSize, " Zen3");
@@ -1004,6 +1010,8 @@ NoExtFunction:
 						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 12xxx");
 					else if (extModel == 0xA7)	// Rocket Lake
 						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 11xxx");
+					else if (extModel == 0xB7)	// Raptor Lake
+						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 13xxx");
 					break;
 				case 10:	
 					if (extModel == 0x2A)		// Sandy Bridge
