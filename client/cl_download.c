@@ -698,17 +698,8 @@ void CL_RequestNextDownload (void)
 			while (precache_tex < numtexinfo)
 			{
 				char	fn[MAX_OSPATH];
-				char	texName[MAX_QPATH];
 
-				if (cl_download_textures_lowercase->integer) {
-					// Convert texture name to lowercase if enabled
-					Q_strncpyz (texName, sizeof(texName), map_surfaces[precache_tex++].rname);
-					Q_strlwr (texName);
-					Com_sprintf (fn, sizeof(fn), "textures/%s.wal", texName);
-				}
-				else {
-					Com_sprintf (fn, sizeof(fn), "textures/%s.wal", map_surfaces[precache_tex++].rname);
-				}
+				Com_sprintf (fn, sizeof(fn), "textures/%s.wal", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -735,17 +726,8 @@ void CL_RequestNextDownload (void)
 			while (precache_tex < numtexinfo)
 			{
 				char	fn[MAX_OSPATH];
-				char	texName[MAX_QPATH];
 
-				if (cl_download_textures_lowercase->integer) {
-					// Convert texture name to lowercase if enabled
-					Q_strncpyz (texName, sizeof(texName), map_surfaces[precache_tex++].rname);
-					Q_strlwr (texName);
-					Com_sprintf (fn, sizeof(fn), "textures/%s.tga", texName);
-				}
-				else {
-					Com_sprintf (fn, sizeof(fn), "textures/%s.tga", map_surfaces[precache_tex++].rname);
-				}
+				Com_sprintf (fn, sizeof(fn), "textures/%s.tga", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -772,17 +754,8 @@ void CL_RequestNextDownload (void)
 			while (precache_tex < numtexinfo)
 			{
 				char	fn[MAX_OSPATH];
-				char	texName[MAX_QPATH];
 
-				if (cl_download_textures_lowercase->integer) {
-					// Convert texture name to lowercase if enabled
-					Q_strncpyz (texName, sizeof(texName), map_surfaces[precache_tex++].rname);
-					Q_strlwr (texName);
-					Com_sprintf (fn, sizeof(fn), "textures/%s.png", texName);
-				}
-				else {
-					Com_sprintf (fn, sizeof(fn), "textures/%s.png", map_surfaces[precache_tex++].rname);
-				}
+				Com_sprintf (fn, sizeof(fn), "textures/%s.png", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}
@@ -812,17 +785,8 @@ void CL_RequestNextDownload (void)
 			while (precache_tex < numtexinfo)
 			{
 				char	fn[MAX_OSPATH];
-				char	texName[MAX_QPATH];
 
-				if (cl_download_textures_lowercase->integer) {
-					// Convert texture name to lowercase if enabled
-					Q_strncpyz (texName, sizeof(texName), map_surfaces[precache_tex++].rname);
-					Q_strlwr (texName);
-					Com_sprintf (fn, sizeof(fn), "textures/%s.jpg", texName);
-				}
-				else {
-					Com_sprintf (fn, sizeof(fn), "textures/%s.jpg", map_surfaces[precache_tex++].rname);
-				}
+				Com_sprintf (fn, sizeof(fn), "textures/%s.jpg", map_surfaces[precache_tex++].rname);
 				if ( !CL_CheckOrDownloadFile(fn) )
 					return; // started a download
 			}

@@ -698,7 +698,7 @@ void Mod_LoadTexinfo (lump_t *l)
 	mtexinfo_t *out, *step;
 	int 	i, j, count;
 	char	name[MAX_QPATH];
-	char	texName[MAX_QPATH];	// Knightmare added
+	char	textureName[40];	// Knightmare added, keep this the same size or larger than texinfo_t.texture!
 	int		next;
 
 	in = (void *)(mod_base + l->fileofs);
@@ -722,12 +722,12 @@ void Mod_LoadTexinfo (lump_t *l)
 		else
 		    out->next = NULL;
 
-		Q_strncpyz (texName, sizeof(texName), in->texture);
-#ifndef _WIN32	// Force texture name to lowercase for non-Win32 builds
-		Q_strlwr (texName);
-#endif	// _WIN32
-	//	Com_sprintf (name, sizeof(name), "textures/%s.wal", in->texture);
-		Com_sprintf (name, sizeof(name), "textures/%s.wal", texName);
+		Q_strncpyz (textureName, sizeof(textureName), in->texture);
+		// Force texture name to lowercase for Unix builds
+#if !defined (_WIN32) || (__APPLE__) || (MACOSX)
+		Q_strlwr (textureName);
+#endif	// !defined (_WIN32) || (__APPLE__) || (MACOSX)
+		Com_sprintf (name, sizeof(name), "textures/%s.wal", textureName);
 		out->image = Mod_FindTexture (name, it_wall); // was R_FindImage
 
 		if (!out->image)
@@ -737,8 +737,7 @@ void Mod_LoadTexinfo (lump_t *l)
 		}
 
 		// Added glow
-	//	Com_sprintf (name, sizeof(name), "textures/%s_glow.wal", in->texture);
-		Com_sprintf (name, sizeof(name), "textures/%s_glow.wal", texName);
+		Com_sprintf (name, sizeof(name), "textures/%s_glow.wal", textureName);
 		out->glow = Mod_FindTexture (name, it_skin); // was R_FindImage
 		if (!out->glow)
 			out->glow = glMedia.notexture;
@@ -747,8 +746,7 @@ void Mod_LoadTexinfo (lump_t *l)
 		// NOTE: Once Q3 map support is added, be be sure to disable this
 		// for Q3 format maps, because they will be natively textured with
 		// hi-res textures.
-	//	Mod_GetWalSize (in->texture, &out->texWidth, &out->texHeight);
-		Mod_GetWalSize (texName, &out->texWidth, &out->texHeight);
+		Mod_GetWalSize (textureName, &out->texWidth, &out->texHeight);
 
 		// If no .wal texture was found, use width & height of actual texture
 		if (out->texWidth == -1 || out->texHeight == -1)

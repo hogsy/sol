@@ -174,15 +174,13 @@ cvar_t	*cl_vwep;
 cvar_t *cl_engine;
 cvar_t *cl_engine_version;
 
-// client-side only download options
-cvar_t	*cl_download_textures_lowercase;
-
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 cvar_t	*cl_http_downloads;
 cvar_t	*cl_http_filelists;
 cvar_t	*cl_http_proxy;
 cvar_t	*cl_http_max_connections;
 cvar_t	*cl_http_pathtype;
+cvar_t	*cl_http_download_lowercase;
 #endif	// USE_CURL
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
@@ -2208,10 +2206,6 @@ void CL_InitLocal (void)
 	cl_engine_version = Cvar_Get ("cl_engine_version", va("%4.2f",VERSION), /*CVAR_USERINFO |*/ CVAR_NOSET | CVAR_LATCH);
 	Cvar_SetDescription ("cl_engine_version", "Identifies the client engine version.");
 
-	// client-side only download options
-	cl_download_textures_lowercase = Cvar_Get ("cl_download_textures_lowercase", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_download_textures_lowercase", "Converts texture filenames to lowercase for downloading.");
-
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
 	cl_drawlocs =		Cvar_Get("cl_drawlocs", "0", 0);
 	Cvar_SetDescription ("cl_drawlocs", "Enables drawing of null models for location points.");
@@ -2233,6 +2227,8 @@ void CL_InitLocal (void)
 //	cl_http_max_connections->changed = _cl_http_max_connections_changed;
 	cl_http_pathtype = Cvar_Get ("cl_http_pathtype", "2", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_http_pathtype", "Sets server path type for HTTP downloading. 0 = R1Q2, 1 = Q2Pro, 2 = both.");
+	cl_http_download_lowercase = Cvar_Get ("cl_http_download_lowercase", "1", CVAR_ARCHIVE);
+	Cvar_SetDescription ("cl_http_download_lowercase", "Converts filenames to lowercase for HTTP downloading.");
 #endif	// USE_CURL
 
 	//

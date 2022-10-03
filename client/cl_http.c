@@ -733,6 +733,7 @@ false will cause standard UDP downloading to be used instead.
 qboolean CL_QueueHTTPDownload (const char *quakePath)
 {
 	size_t		len;
+	char		quakePathFixed[MAX_OSPATH];
 	dlqueue_t	*q, *q2;
 	qboolean	needList = false, isPak = false, isFilelist = false;
 
@@ -749,37 +750,42 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		downloadFileList = false;
 	}
 
-	len = strlen (quakePath);
-	if ( (len > 4) && ( !Q_stricmp((char *)quakePath + len - 4, ".pak") || !Q_stricmp((char *)quakePath + len - 4, ".pk3") ) )
+	Q_strncpyz (quakePathFixed, sizeof(quakePathFixed), quakePath);
+	// Convert filename to lowercase if enabled
+	if ( cl_http_download_lowercase->integer )
+		Q_strlwr (quakePathFixed);
+
+	len = strlen (quakePathFixed);
+	if ( (len > 4) && ( !Q_stricmp((char *)quakePathFixed + len - 4, ".pak") || !Q_stricmp((char *)quakePathFixed + len - 4, ".pk3") ) )
 		isPak = true;
-	if ( (len > 9) && !Q_stricmp((char *)quakePath + len - 9, ".filelist") )
+	if ( (len > 9) && !Q_stricmp((char *)quakePathFixed + len - 9, ".filelist") )
 		isFilelist = true;
 
 	// Knightmare- don't try again to download via HTTP a file that failed
 	if ( !isFilelist /*&& !needList*/ ) {
-		if (CL_CheckHTTPDownloadFailed((char *)quakePath)) {
-		//	Com_Printf ("[HTTP] Refusing to download %s again, already in failed HTTP download list.\n", quakePath);
+		if (CL_CheckHTTPDownloadFailed((char *)quakePathFixed)) {
+		//	Com_Printf ("[HTTP] Refusing to download %s again, already in failed HTTP download list.\n", quakePathFixed);
 			return true;
 		}
 	}
 
-//	q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+//	q = CL_AllocDLQueueEntry (quakePathFixed, isPak, isFilelist, false, false);
 	// Knightmare- cvar-switchable download path
 	switch (cl_http_pathtype->integer)
 	{
 	default:
 	case 0:	// R1Q2 path
-		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+		q = CL_AllocDLQueueEntry (quakePathFixed, isPak, isFilelist, false, false);
 		break;
 	case 1:	// Q2Pro path
-		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, true, false);
+		q = CL_AllocDLQueueEntry (quakePathFixed, isPak, isFilelist, true, false);
 		break;
 	case 2: // attempt both filelist paths
-		q = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, false, false);
+		q = CL_AllocDLQueueEntry (quakePathFixed, isPak, isFilelist, false, false);
 		// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
 		if ( (q != NULL) && (cl.gamedir[0] == '\0') && !isFilelist ) {
-		//	Com_Printf ("[HTTP] Adding Q2Pro path mirror entry for %s...\n", quakePath);
-			q2 = CL_AllocDLQueueEntry (quakePath, isPak, isFilelist, true, true);
+		//	Com_Printf ("[HTTP] Adding Q2Pro path mirror entry for %s...\n", quakePathFixed);
+			q2 = CL_AllocDLQueueEntry (quakePathFixed, isPak, isFilelist, true, true);
 			if (q2 != NULL) {
 				q->isDuplicated = q2->isDuplicated = true;
 				q2->isAltEntry = true;
@@ -828,13 +834,13 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	}
 
 	// special case for map file lists, I really wanted a server-push mechanism for this, but oh well
-	len = strlen (quakePath);
-	if ( cl_http_filelists->integer && (len > 4) && !Q_stricmp ((char *)(quakePath + len - 4), ".bsp") )
+	len = strlen (quakePathFixed);
+	if ( cl_http_filelists->integer && (len > 4) && !Q_stricmp ((char *)(quakePathFixed + len - 4), ".bsp") )
 	{
 		char	listPath[MAX_OSPATH];
 		char	filePath[MAX_OSPATH];
 
-	/*	Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+	/*	Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 		COM_StripExtension (filePath, listPath, sizeof(listPath));
 		Q_strncatz (listPath, sizeof(listPath), ".filelist");
 		CL_QueueHTTPDownload (listPath); */
@@ -843,26 +849,26 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		{
 		default:
 		case 0:	// R1Q2 path
-			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			break;
 		case 1:	// Q2Pro path
-			Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePath);
+			Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			break;
 		case 2: // attempt both filelist paths
-			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePath);
+			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			
 			// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
 			if (cl.gamedir[0] == '\0') {
-				Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePath);
+				Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
 				COM_StripExtension (filePath, listPath, sizeof(listPath));
 				Q_strncatz (listPath, sizeof(listPath), ".filelist");
 				CL_QueueHTTPDownload (listPath);

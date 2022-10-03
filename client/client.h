@@ -522,9 +522,6 @@ extern	cvar_t	*cl_vwep;
 extern	cvar_t *cl_engine;
 extern	cvar_t *cl_engine_version;
 
-// client-side only download options
-extern	cvar_t *cl_download_textures_lowercase;
-
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
 extern cvar_t *cl_drawlocs;
 extern cvar_t *loc_here;
@@ -537,6 +534,7 @@ extern	cvar_t	*cl_http_filelists;
 extern	cvar_t	*cl_http_proxy;
 extern	cvar_t	*cl_http_max_connections;
 extern	cvar_t	*cl_http_pathtype;
+extern	cvar_t	*cl_http_download_lowercase;
 #endif	// USE_CURL
 
 typedef struct
