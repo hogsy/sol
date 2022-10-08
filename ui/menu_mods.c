@@ -64,6 +64,7 @@ void Menu_Mods_Init (void)
 	s_mods_menu.y					= 0;
 	s_mods_menu.nitems				= 0;
 	s_mods_menu.isPopup				= false;
+	s_mods_menu.background			= NULL;
 	s_mods_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_mods_menu.keyFunc				= UI_DefaultMenuKey;
 	s_mods_menu.canOpenFunc			= NULL;

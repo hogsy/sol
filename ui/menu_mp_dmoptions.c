@@ -98,6 +98,7 @@ void Menu_DMOptions_Init (void)
 	s_dmoptions_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 80;
 	s_dmoptions_menu.nitems				= 0;
 	s_dmoptions_menu.isPopup			= false;
+	s_dmoptions_menu.background			= NULL;
 	s_dmoptions_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_dmoptions_menu.keyFunc			= UI_DefaultMenuKey;
 	s_dmoptions_menu.canOpenFunc		= UI_CanOpenDMFlagsMenu;

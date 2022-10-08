@@ -198,6 +198,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_menu.y			= 0;
 	s_startserver_menu.nitems		= 0;
 	s_startserver_menu.isPopup		= false;
+	s_startserver_menu.background	= NULL;
 	s_startserver_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_startserver_menu.keyFunc		= UI_DefaultMenuKey;
 	s_startserver_menu.canOpenFunc	= NULL;

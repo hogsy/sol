@@ -120,6 +120,7 @@ void Menu_Main_Init (void)
 	s_main_menu.nitems						= 0;
 	s_main_menu.hide_statusbar				= true;
 	s_main_menu.isPopup						= false;
+	s_main_menu.background					= NULL;
 	s_main_menu.drawFunc					= UI_DefaultMenuDraw;
 	s_main_menu.keyFunc						= UI_DefaultMenuKey;
 	s_main_menu.canOpenFunc					= NULL;

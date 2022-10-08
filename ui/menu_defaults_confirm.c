@@ -56,6 +56,7 @@ void Menu_DefaultsConfirm_Init (void)
 	s_defaults_popup.y				= SCREEN_HEIGHT*0.5 - 60;
 	s_defaults_popup.nitems			= 0;
 	s_defaults_popup.isPopup		= true;
+	s_defaults_popup.background		= NULL;
 	s_defaults_popup.drawFunc		= UI_DefaultMenuDraw;
 	s_defaults_popup.keyFunc		= UI_DefaultMenuKey;
 	s_defaults_popup.canOpenFunc	= NULL;

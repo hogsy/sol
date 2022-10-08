@@ -129,6 +129,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_screen_menu.nitems			= 0;
 	s_options_screen_menu.isPopup			= false;
+	s_options_screen_menu.background		= NULL;
 #ifdef USE_LISTVIEW
 	s_options_screen_menu.drawFunc			= UI_DefaultMenuDraw;
 #else	// USE_LISTVIEW

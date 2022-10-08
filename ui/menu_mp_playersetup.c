@@ -215,6 +215,7 @@ void Menu_PlayerConfig_Init (void)
 	s_player_config_menu.y					= 0;
 	s_player_config_menu.nitems				= 0;
 	s_player_config_menu.isPopup			= false;
+	s_player_config_menu.background			= NULL;
 	s_player_config_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_player_config_menu.keyFunc			= UI_DefaultMenuKey;
 	s_player_config_menu.canOpenFunc		= UI_HaveValidPlayerModels;

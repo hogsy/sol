@@ -98,6 +98,9 @@ typedef struct _tag_menuFramework
 	int			nslots;
 	void		*items[MAX_MENUITEMS]; // 64
 	void		*cursorItem;
+	float		cursorOscillate_amplitude;	// oscillate dist x
+	float		cursorOscillate_timeScale;	// oscillate speed x
+	const char	*background;				// background image
 
 	const char	*statusbar;
 	const char	*cantOpenMessage;
@@ -248,6 +251,9 @@ typedef struct
 	float			animTimeScale;
 	int				start_time;
 
+	float			oscillate_amplitude[2];		// oscillate dist x/y
+	float			oscillate_timeScale[2];		// oscillate speed x/y
+
 	byte			alpha;
 	int				border;
 	byte			borderColor[4];
@@ -265,6 +271,11 @@ typedef struct
 	int				height;
 	char			*imageName;
 	char			*hoverImageName;
+
+	float			oscillate_amplitude[2];			// oscillate dist x/y
+	float			oscillate_timeScale[2];			// oscillate speed x/y
+	float			hoverOscillate_amplitude[2];	// hover oscillate dist x/y
+	float			hoverOscillate_timeScale[2];	// hover oscillate speed x/y
 
 	byte			alpha;
 	int				border;

@@ -54,6 +54,7 @@ void Menu_AddressBook_Init (void)
 	s_addressbook_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 76;
 	s_addressbook_menu.nitems		= 0;
 	s_addressbook_menu.isPopup		= false;
+	s_addressbook_menu.background	= NULL;
 	s_addressbook_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_addressbook_menu.keyFunc		= UI_DefaultMenuKey;
 	s_addressbook_menu.canOpenFunc	= NULL;

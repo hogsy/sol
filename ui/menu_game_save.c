@@ -74,6 +74,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_menu.y				= 0;
 	s_savegame_menu.nitems			= 0;
 	s_savegame_menu.isPopup			= false;
+	s_savegame_menu.background		= NULL;
 	s_savegame_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_savegame_menu.keyFunc			= UI_DefaultMenuKey;
 	s_savegame_menu.canOpenFunc		= UI_CanOpenSaveMenu;

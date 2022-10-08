@@ -63,16 +63,17 @@ void Menu_Quit_Init (void)
 	x = SCREEN_WIDTH*0.5 - 3*MENU_FONT_SIZE;
 	y = SCREEN_HEIGHT*0.5 - 38;
 
-	s_quit_menu.x			= 0;	// SCREEN_WIDTH*0.5 - 24
-	s_quit_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58
-	s_quit_menu.nitems		= 0;
-	s_quit_menu.nitems		= 0;
-	s_quit_menu.isPopup		= false;
-	s_quit_menu.canOpenFunc	= NULL;
-	s_quit_menu.drawFunc	= UI_DefaultMenuDraw;
+	s_quit_menu.x					= 0;	// SCREEN_WIDTH*0.5 - 24
+	s_quit_menu.y					= 0;	// SCREEN_HEIGHT*0.5 - 58
+	s_quit_menu.nitems				= 0;
+	s_quit_menu.nitems				= 0;
+	s_quit_menu.isPopup				= false;
+	s_quit_menu.background			= NULL;
+	s_quit_menu.canOpenFunc			= NULL;
+	s_quit_menu.drawFunc			= UI_DefaultMenuDraw;
 
 #ifdef QUITMENU_NOKEY
-	s_quit_menu.keyFunc		= UI_DefaultMenuKey;
+	s_quit_menu.keyFunc				= UI_DefaultMenuKey;
 
 	s_quit_header.generic.type		= MTYPE_LABEL;
 	s_quit_header.generic.textSize	= MENU_HEADER_FONT_SIZE;

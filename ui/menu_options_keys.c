@@ -115,13 +115,14 @@ static void Menu_Keys_Init (void)
 #endif	// USE_BINDLIST
 	y = SCREEN_HEIGHT*0.5 - 78;
 
-	s_keys_menu.x			= 0;
-	s_keys_menu.y			= 0;
-	s_keys_menu.nitems		= 0;
-	s_keys_menu.isPopup		= false;
-	s_keys_menu.drawFunc	= UI_DefaultMenuDraw;
-	s_keys_menu.keyFunc		= UI_DefaultMenuKey;
-	s_keys_menu.canOpenFunc	= NULL;
+	s_keys_menu.x					= 0;
+	s_keys_menu.y					= 0;
+	s_keys_menu.nitems				= 0;
+	s_keys_menu.isPopup				= false;
+	s_keys_menu.background			= NULL;
+	s_keys_menu.drawFunc			= UI_DefaultMenuDraw;
+	s_keys_menu.keyFunc				= UI_DefaultMenuKey;
+	s_keys_menu.canOpenFunc			= NULL;
 
 	s_keys_banner.generic.type		= MTYPE_IMAGE;
 	s_keys_banner.generic.x			= 0;

@@ -315,7 +315,6 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 						stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 		//	UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
 		//				0, 0.75, 0.25, 1, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-
 	}
 	else // SCROLL_Y
 	{
@@ -1861,33 +1860,40 @@ void UI_MenuCheckBox_Setup (menuCheckBox_s *c)
 
 void UI_MenuImage_Draw (menuImage_s *i)
 {
-	int				curAnimFrame;
-	char			*animPicName;
 //	menuFramework_s	*menu = i->generic.parent;
+	int				curAnimFrame;
+	int				oscillate[2] = {0};
+	char			*animPicName;
 	byte			*bc = i->borderColor;
+
+	// set oscillation if any
+	if ( (i->oscillate_amplitude[0] != 0.0f) && (i->oscillate_timeScale[0] != 0.0f) )
+		oscillate[0] = (int)(i->oscillate_amplitude[0] * sin(anglemod(cl.time * i->oscillate_timeScale[0])));
+	if ( (i->oscillate_amplitude[1] != 0.0f) && (i->oscillate_timeScale[1] != 0.0f) )
+		oscillate[1] = (int)(i->oscillate_amplitude[1] * sin(anglemod(cl.time * i->oscillate_timeScale[1])));
 
 	if (i->border > 0)
 	{
 		if (i->alpha == 255) // just fill whole area for border if not trans
-			UI_DrawFill (i->generic.topLeft[0]-i->border, i->generic.topLeft[1]-i->border,
+			UI_DrawFill (i->generic.topLeft[0] - i->border + oscillate[0], i->generic.topLeft[1] - i->border + oscillate[1],
 							i->width+(i->border*2), i->height+(i->border*2), i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 		else // have to do each side
-			UI_DrawBorder ((float)i->generic.topLeft[0], (float)i->generic.topLeft[1], (float)i->width, (float)i->height,
+			UI_DrawBorder ((float)(i->generic.topLeft[0] + oscillate[0]), (float)(i->generic.topLeft[1] + oscillate[1]), (float)i->width, (float)i->height,
 							(float)i->border, i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
 	if (i->isAnimated) {
 		curAnimFrame = (int)((cls.realtime - i->start_time) * i->animTimeScale) % i->numAnimFrames;
 		animPicName = va(i->animTemplate, curAnimFrame);
-		UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
+		UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
 	}
 	else if ( i->imageName && (strlen(i->imageName) > 0) ) {
 		if (i->overrideColor)
-			UI_DrawColoredPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
+			UI_DrawColoredPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
 		else
-			UI_DrawPic (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
+			UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
 	}
 	else
-		UI_DrawFill (i->generic.topLeft[0], i->generic.topLeft[1], i->width, i->height, i->generic.scrAlign, false, 0,0,0,255);
+		UI_DrawFill (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, 0,0,0,255);
 }
 
 void UI_MenuImage_UpdateCoords (menuImage_s *i)
@@ -1985,32 +1991,47 @@ char *UI_MenuButton_Click (menuButton_s *b, qboolean mouse2)
 void UI_MenuButton_Draw (menuButton_s *b)
 {
 	menuFramework_s	*menu = b->generic.parent;
-	byte	*bc = b->borderColor;
+	int				oscillate[2] = {0};
+	byte			*bc = b->borderColor;
+
+	// set oscillation if any
+	if ( (b == ui_mousecursor.menuitem) || (b == UI_ItemAtMenuCursor(menu)) ) {
+		if ( (b->hoverOscillate_amplitude[0] != 0.0f) && (b->hoverOscillate_timeScale[0] != 0.0f) )
+			oscillate[0] = (int)(b->hoverOscillate_amplitude[0] * sin(anglemod(cl.time * b->hoverOscillate_timeScale[0])));
+		if ( (b->hoverOscillate_amplitude[1] != 0.0f) && (b->hoverOscillate_timeScale[1] != 0.0f) )
+			oscillate[1] = (int)(b->hoverOscillate_amplitude[1] * sin(anglemod(cl.time * b->hoverOscillate_timeScale[1])));
+	}
+	else {
+		if ( (b->oscillate_amplitude[0] != 0.0f) && (b->oscillate_timeScale[0] != 0.0f) )
+			oscillate[0] = (int)(b->oscillate_amplitude[0] * sin(anglemod(cl.time * b->oscillate_timeScale[0])));
+		if ( (b->oscillate_amplitude[1] != 0.0f) && (b->oscillate_timeScale[1] != 0.0f) )
+			oscillate[1] = (int)(b->oscillate_amplitude[1] * sin(anglemod(cl.time * b->oscillate_timeScale[1])));
+	}
 
 	if (b->border > 0)
 	{
 		if (b->alpha == 255) // just fill whole area for border if not trans
-			UI_DrawFill (b->generic.topLeft[0]-b->border, b->generic.topLeft[1]-b->border,
+			UI_DrawFill (b->generic.topLeft[0] - b->border + oscillate[0], b->generic.topLeft[1] - b->border + oscillate[1],
 							b->width+(b->border*2), b->height+(b->border*2), b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 		else // have to do each side
-			UI_DrawBorder ((float)b->generic.topLeft[0], (float)b->generic.topLeft[1], (float)b->width, (float)b->height,
+			UI_DrawBorder ((float)(b->generic.topLeft[0] + oscillate[0]), (float)(b->generic.topLeft[1] + oscillate[1]), (float)b->width, (float)b->height,
 							(float)b->border, b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
-	if ( ( (b == ui_mousecursor.menuitem) || (b == UI_ItemAtMenuCursor(menu)) )
+	if ( ((b == ui_mousecursor.menuitem) || (b == UI_ItemAtMenuCursor(menu)) )
 		&& (b->hoverImageName && strlen(b->hoverImageName) > 0) ) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
+			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
 		else
-			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
+			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
 	}
 	else if ( b->imageName && (strlen(b->imageName) > 0) ) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
+			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
 		else
-			UI_DrawPic (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
+			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
 	}
 	else
-		UI_DrawFill (b->generic.topLeft[0], b->generic.topLeft[1], b->width, b->height, b->generic.scrAlign, false, 0,0,0,255);
+		UI_DrawFill (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, 0,0,0,255);
 }
 
 void UI_MenuButton_UpdateCoords (menuButton_s *b)
@@ -2061,8 +2082,8 @@ void UI_MenuButton_Setup (menuButton_s *b)
 void UI_MenuRectangle_Draw (menuRectangle_s *r)
 {
 //	menuFramework_s	*menu = r->generic.parent;
-	byte	*bc = r->borderColor;
-	byte	*c = r->color;
+	byte			*bc = r->borderColor;
+	byte			*c = r->color;
 
 	if (r->border > 0)
 	{

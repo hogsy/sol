@@ -55,6 +55,7 @@ void Menu_ApplyChanges_Init (void)
 	s_applychanges_popup.y				= SCREEN_HEIGHT*0.5 - 60;
 	s_applychanges_popup.nitems			= 0;
 	s_applychanges_popup.isPopup		= true;
+	s_applychanges_popup.background		= NULL;
 	s_applychanges_popup.drawFunc		= UI_DefaultMenuDraw;
 	s_applychanges_popup.keyFunc		= UI_DefaultMenuKey;
 	s_applychanges_popup.canOpenFunc	= NULL;

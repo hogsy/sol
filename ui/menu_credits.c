@@ -63,6 +63,7 @@ void Menu_Credits_Init (void)
 	s_credits_menu.nitems			= 0;
 	s_credits_menu.hide_statusbar	= true;
 	s_credits_menu.isPopup			= false;
+	s_credits_menu.background		= NULL;
 	s_credits_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_credits_menu.keyFunc			= UI_DefaultMenuKey;
 	s_credits_menu.canOpenFunc		= NULL;

@@ -81,6 +81,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_menu.y				= 0;
 	s_joinserver_menu.nitems		= 0;
 	s_joinserver_menu.isPopup		= false;
+	s_joinserver_menu.background	= NULL;
 	s_joinserver_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_joinserver_menu.keyFunc		= UI_DefaultMenuKey;
 	s_joinserver_menu.canOpenFunc	= NULL;

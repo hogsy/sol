@@ -99,6 +99,7 @@ void Menu_Game_Init (void)
 	s_game_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;
 	s_game_menu.nitems		= 0;
 	s_game_menu.isPopup		= false;
+	s_game_menu.background	= NULL;
 	s_game_menu.drawFunc	= UI_DefaultMenuDraw;
 	s_game_menu.keyFunc		= UI_DefaultMenuKey;
 	s_game_menu.canOpenFunc	= NULL;

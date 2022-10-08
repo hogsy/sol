@@ -699,11 +699,19 @@ void UI_DrawMenu (menuFramework_s *menu)
 		}
 		else if ( item && (item->type != MTYPE_FIELD) && !(item->flags & QMF_NOINTERACTION) )
 		{
-			char	*cursor;
-			int		cursorX;
+			char		*cursor;
+			int			cursorX, cursorOscillate = 0;
+			qboolean	oscillate = false;
 
-			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind)
+			if ( (menu->cursorOscillate_amplitude != 0.0f) && (menu->cursorOscillate_timeScale != 0.0f) ) {
+				oscillate = true;
+				cursorOscillate = (int)(menu->cursorOscillate_amplitude * sin(anglemod(cl.time * menu->cursorOscillate_timeScale)));
+			}
+
+			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind )
 				cursor = UI_ITEMCURSOR_KEYBIND_PIC;
+			else if ( oscillate )
+				cursor = UI_ITEMCURSOR_DEFAULT_PIC;	// oscillating cursor doesn't blink
 			else
 				cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
 
@@ -711,7 +719,7 @@ void UI_DrawMenu (menuFramework_s *menu)
 			if ( (item->flags & QMF_LEFT_JUSTIFY) && (item->type == MTYPE_ACTION) )
 				cursorX -= 4*MENU_FONT_SIZE;
 
-			UI_DrawPic (cursorX, menu->y+item->y, item->textSize, item->textSize, item->scrAlign, false, cursor, 255);
+			UI_DrawPic (cursorX + cursorOscillate, menu->y + item->y, item->textSize, item->textSize, item->scrAlign, false, cursor, 255);
 
 		/*	if (item->flags & QMF_LEFT_JUSTIFY)
 			{

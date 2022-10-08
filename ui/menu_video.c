@@ -276,6 +276,7 @@ void Menu_Video_Init (void)
 	s_video_menu.y						= 0;
 	s_video_menu.nitems					= 0;
 	s_video_menu.isPopup				= false;
+	s_video_menu.background				= NULL;
 	s_video_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_video_menu.keyFunc				= UI_DefaultMenuKey;
 	s_video_menu.canOpenFunc			= NULL;

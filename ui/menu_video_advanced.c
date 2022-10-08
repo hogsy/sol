@@ -190,6 +190,7 @@ void Menu_Video_Advanced_Init (void)
 	s_video_advanced_menu.y						= 0;	// SCREEN_HEIGHT*0.5 - 100;
 	s_video_advanced_menu.nitems				= 0;
 	s_video_advanced_menu.isPopup				= false;
+	s_video_advanced_menu.background			= NULL;
 	s_video_advanced_menu.drawFunc				= UI_DefaultMenuDraw;
 	s_video_advanced_menu.keyFunc				= UI_DefaultMenuKey;
 	s_video_advanced_menu.canOpenFunc			= NULL;

@@ -115,6 +115,7 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_effects_menu.nitems			= 0;
 	s_options_effects_menu.isPopup			= false;
+	s_options_effects_menu.background		= NULL;
 	s_options_effects_menu.drawFunc			= UI_DefaultMenuDraw;
 	s_options_effects_menu.keyFunc			= UI_DefaultMenuKey;
 	s_options_effects_menu.canOpenFunc		= NULL;

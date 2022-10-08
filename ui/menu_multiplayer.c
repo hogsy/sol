@@ -79,6 +79,7 @@ void Menu_Multiplayer_Init (void)
 	s_multiplayer_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 5*MENU_LINE_SIZE;	// 0
 	s_multiplayer_menu.nitems		= 0;
 	s_multiplayer_menu.isPopup		= false;
+	s_multiplayer_menu.background	= NULL;
 	s_multiplayer_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_multiplayer_menu.keyFunc		= UI_DefaultMenuKey;
 	s_multiplayer_menu.canOpenFunc	= NULL;

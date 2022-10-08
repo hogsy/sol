@@ -77,6 +77,7 @@ void Menu_DownloadOptions_Init (void)
 	s_downloadoptions_menu.y			= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_downloadoptions_menu.nitems		= 0;
 	s_downloadoptions_menu.isPopup		= false;
+	s_downloadoptions_menu.background	= NULL;
 	s_downloadoptions_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_downloadoptions_menu.keyFunc		= UI_DefaultMenuKey;
 	s_downloadoptions_menu.canOpenFunc	= NULL;

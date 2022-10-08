@@ -70,18 +70,28 @@ void UI_Draw (void)
 	// dim everything behind it down
 	if (cl.cinematictime > 0 || cls.state == ca_disconnected)
 	{
-		if (R_DrawFindPic(UI_BACKGROUND_NAME)) {
+		if ( (ui_menuState.menu->background != NULL) && (strlen(ui_menuState.menu->background) > 0)
+			&& R_DrawFindPic ((char *)ui_menuState.menu->background) ) {
+			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
+			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, (char *)ui_menuState.menu->background, 1.0f);
+		}
+		else if ( R_DrawFindPic(UI_BACKGROUND_NAME) ) {
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, 1.0f);
 		}
 		else
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
 	}
-	// ingame menu uses alpha
-	else if (R_DrawFindPic(UI_BACKGROUND_NAME))
-		SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, ui_background_alpha->value);
 	else
-		SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, true, 0, 0, 0, (int)(ui_background_alpha->value*255));
+	{	// ingame menu uses alpha
+		if ( (ui_menuState.menu->background != NULL) && (strlen(ui_menuState.menu->background) > 0)
+			&& R_DrawFindPic ((char *)ui_menuState.menu->background) ) 
+			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, (char *)ui_menuState.menu->background, ui_background_alpha->value);
+		else if ( R_DrawFindPic(UI_BACKGROUND_NAME) )
+			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, ui_background_alpha->value);
+		else
+			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, true, 0, 0, 0, (int)(ui_background_alpha->value*255));
+	}
 
 	// added Psychospaz's mouse support
 	UI_RefreshCursorMenu ();

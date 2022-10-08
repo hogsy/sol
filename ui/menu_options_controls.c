@@ -100,6 +100,7 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_menu.y				= 0;	// SCREEN_HEIGHT*0.5 - 58;
 	s_options_controls_menu.nitems			= 0;
 	s_options_controls_menu.isPopup			= false;
+	s_options_controls_menu.background		= NULL;
 	s_options_controls_menu.drawFunc		= UI_DefaultMenuDraw;
 	s_options_controls_menu.keyFunc			= UI_DefaultMenuKey;
 	s_options_controls_menu.canOpenFunc		= NULL;
