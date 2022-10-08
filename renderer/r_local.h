@@ -722,7 +722,7 @@ char	*va(char *format, ...);
 void	R_RefreshFont (fontslot_t font);
 void	R_RefreshAllFonts (void);
 void	R_DrawGetPicSize (int *w, int *h, char *name);
-void	R_DrawPic (drawStruct_t ds);
+void	R_DrawPic (drawStruct_t *ds);
 void	R_InitChars (void);
 void	R_FlushChars (fontslot_t font);
 void	R_DrawChar (float x, float y, int num, fontslot_t font, float scale, 

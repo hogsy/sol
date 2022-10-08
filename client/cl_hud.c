@@ -259,7 +259,7 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 	if (flash){
 		ds.pic = "field_3";
 		ds.x = flash_x;	ds.w = flashWidth;	
-		R_DrawPic (ds);
+		R_DrawPic (&ds);
 	}
 
 	ptr = num;
@@ -272,7 +272,7 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 
 		ds.pic = sb_nums[color][frame];
 		ds.x = x;	ds.w = digitWidth;	
-		R_DrawPic (ds);
+		R_DrawPic (&ds);
 		x += digitWidth;
 		ptr++;
 		l--;

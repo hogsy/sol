@@ -197,7 +197,7 @@ static void Menu_Keys_Init (void)
 #ifdef USE_BINDLIST
 	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_bindList);
 #else
-	for (i=0;i<BINDS_MAX;i++)
+	for (i=0; i<BINDS_MAX; i++)
 		UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_binds[i]);
 #endif	// USE_BINDLIST
 	UI_AddMenuItem (&s_keys_menu, (void *) &s_keys_back_action);

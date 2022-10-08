@@ -958,14 +958,14 @@ void Con_DrawConsole (float frac, qboolean trans)
 	//	ds.x = (int)conLeft;	ds.w = conWidth;
 		ds.x = (int)picLeft;	ds.w = picWidth;
 		ds.y = 0;	ds.h = lines-(int)barheight;
-		R_DrawPic (ds);
+		R_DrawPic (&ds);
 	}
 	else {
 		ds.pic = "conback";
 	//	ds.x = (int)conLeft;	ds.w = conWidth;
 		ds.x = (int)picLeft;	ds.w = picWidth;
 		ds.y = (lines-(int)picHeight-(int)barheight);	ds.h = (int)picHeight;
-		R_DrawPic (ds);
+		R_DrawPic (&ds);
 	}
 
 	// pillarbox sides if console is wider than scaled pic

@@ -778,7 +778,7 @@ void	R_DrawString (float x, float y, const char *string, fontslot_t font, float 
 
 void	R_DrawGetPicSize (int *w, int *h, char *name);	// will return 0 0 if not found
 
-void	R_DrawPic (drawStruct_t ds);
+void	R_DrawPic (drawStruct_t *ds);
 
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
 

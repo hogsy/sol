@@ -755,7 +755,7 @@ void UI_MenuKeyBindList_Draw (menuKeyBindList_s *k)
 	boxHeight	= k->generic.botRight[1] - k->generic.topLeft[1];
 
 	// name and header
-	UI_MenuCommon_DrawItemName (&k->generic, -(2*RCOLUMN_OFFSET+k->border), 0, 0, -(k->border + MENU_LINE_SIZE), hoverAlpha);
+	UI_MenuCommon_DrawItemName (&k->generic, -(2*RCOLUMN_OFFSET + k->border), 0, 0, -(k->border + MENU_LINE_SIZE), hoverAlpha);
 
 	// border and background
 	if (k->border > 0)

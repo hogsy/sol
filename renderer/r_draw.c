@@ -29,7 +29,7 @@ image_t		*r_scr_draw_chars;
 image_t		*r_ui_draw_chars;
 
 //extern	qboolean	scrap_dirty;
-extern	qboolean	scrap_check_dirty;	// use multi-scrap indicator
+extern	qboolean	scrap_check_dirty;	// multi-scrap indicator instead of scrap_dirty
 void Scrap_Upload (void);
 
 #define DEFAULT_FONT_SIZE 8.0f
@@ -344,7 +344,7 @@ void R_DrawGetPicSize (int *w, int *h, char *pic)
 	*h = (int)((float)gl->height * gl->replace_scale_h);
 }
 
-
+#if 0
 /*
 =============
 R_DrawPic_Standard
@@ -360,7 +360,7 @@ void R_DrawPic_Standard (int x, int y, int w, int h, vec2_t offset, vec4_t stCoo
 	if (!parms)	return;
 
 //	if (scrap_dirty)
-	if (scrap_check_dirty)	// use multi-scrap indicator
+	if (scrap_check_dirty)	// multi-scrap indicator instead of scrap_dirty
 		Scrap_Upload ();
 
 	if (parms->blend)
@@ -435,7 +435,7 @@ void R_DrawPic_Masked (int x, int y, int w, int h, vec2_t offset, vec4_t stCoord
 	if (!parms)	return;
 
 //	if (scrap_dirty)
-	if (scrap_check_dirty)	// use multi-scrap indicator
+	if (scrap_check_dirty)	// multi-scrap indicator instead of scrap_dirty
 		Scrap_Upload ();
 
 	if (parms->blend)
@@ -535,77 +535,208 @@ void R_DrawPic_Masked (int x, int y, int w, int h, vec2_t offset, vec4_t stCoord
 		GL_Enable (GL_ALPHA_TEST);
 	}
 }
-
+#endif
 
 /*
 =============
 R_DrawPic
 =============
 */
-void R_DrawPic (drawStruct_t ds)	
+void R_DrawPic (drawStruct_t *ds)
 {
-	int				w, h;
+	int				i, w, h;
 	float			scale_x, scale_y;
 	vec4_t			texCoords;
-	image_t			*image;
+	vec2_t			texCoord[4], scrollTexCoord[4], verts[4];
+	image_t			*image = NULL, *maskImage = NULL;
 	renderparms_t	drawParms;
+	qboolean		masked = false;
 
-	image = R_DrawFindPic (ds.pic);
+	if ( !ds || !ds->pic )	// catch null pointers
+		return;
+
+	image = R_DrawFindPic (ds->pic);
 	if (!image) {
-		VID_Printf (PRINT_DEVELOPER, "Can't find pic: %s\n", ds.pic);	// was PRINT_ALL
+		VID_Printf (PRINT_DEVELOPER, "Can't find pic: %s\n", ds->pic);	// was PRINT_ALL
 		return;
 	}
 
-	w = ds.w;	h = ds.h;
-	if (ds.flags & DSFLAG_USESTCOORDS)	// use passed coords
-		Vector4Copy (ds.stCoords, texCoords);
-	else if (ds.flags & DSFLAG_TILED)	// use tiled coords
-		Vector4Set (texCoords, (float)ds.x/(float)image->width, (float)ds.y/(float)image->height,
-					(float)(ds.x+ds.w)/(float)image->width, (float)(ds.y+ds.h)/(float)image->height);
-	else if (ds.flags & DSFLAG_SCALED)	// use scaled size
+	w = ds->w;	h = ds->h;
+	if (ds->flags & DSFLAG_USESTCOORDS) {	// use passed coords
+		Vector4Copy (ds->stCoords, texCoords);
+	}
+	else if (ds->flags & DSFLAG_TILED) {	// use tiled coords
+		Vector4Set (texCoords, (float)ds->x/(float)image->width, (float)ds->y/(float)image->height,
+					(float)(ds->x+ds->w)/(float)image->width, (float)(ds->y+ds->h)/(float)image->height);
+	}
+	else if (ds->flags & DSFLAG_SCALED)	// use scaled size
 	{
 		Vector4Set (texCoords, image->sl, image->tl, image->sh, image->th);
 
-		scale_x = ds.scale[0];
-		scale_y = ds.scale[1];
+		scale_x = ds->scale[0];
+		scale_y = ds->scale[1];
 		scale_x *= image->replace_scale_w;	// scale down if replacing a pcx image
 		scale_y *= image->replace_scale_h;	// scale down if replacing a pcx image
 		w = image->width*scale_x;
 		h = image->height*scale_y;
 	}
-	else	// use internal coords
+	else {	// use internal coords
 		Vector4Set (texCoords, image->sl, image->tl, image->sh, image->th);
+	}
 
 	Mod_SetRenderParmsDefaults (&drawParms);
-	drawParms.tcmod.scroll_x = ds.scroll[0];
-	drawParms.tcmod.scroll_y = ds.scroll[1];
+	drawParms.tcmod.scroll_x = ds->scroll[0];
+	drawParms.tcmod.scroll_y = ds->scroll[1];
 
 	// masked image option
-	if ( (ds.flags & DSFLAG_MASKED) && (ds.maskPic != NULL) && glConfig.mtexcombine )
+	if ( (ds->flags & DSFLAG_MASKED) && (ds->maskPic != NULL) && glConfig.mtexcombine )
 	{
-		image_t		*maskImage = R_DrawFindPic (ds.maskPic);
+		maskImage = R_DrawFindPic (ds->maskPic);
 
 		if (maskImage != NULL)
 		{
 		//	VID_Printf (PRINT_DEVELOPER, "Drawing pic with mask: %s\n", pic);
+			masked = true;
 			drawParms.blend = true;
 			drawParms.blendfunc_src = GL_SRC_ALPHA;
 			drawParms.blendfunc_dst = GL_ONE;
-			R_DrawPic_Masked (ds.x, ds.y, w, h, ds.offset, ds.stCoords, ds.color, image->texnum, maskImage->texnum, &drawParms, (ds.flags & DSFLAG_CLAMP));
-			return;
+		//	R_DrawPic_Masked (ds->x, ds->y, w, h, ds->offset, ds->stCoords, ds->color, image->texnum, maskImage->texnum, &drawParms, (ds->flags & DSFLAG_CLAMP));
+		//	return;
 		}
 	}
 
-	drawParms.blend = ( image->has_alpha || (ds.color[0] < 1.0f) || (ds.color[1] < 1.0f) || (ds.color[2] < 1.0f) || (ds.color[3] < 1.0f) );
-	if (ds.flags & DSFLAG_ADDITIVE) {
-		drawParms.blendfunc_src = GL_ONE;
-		drawParms.blendfunc_dst = GL_ONE;
+	if ( !masked )
+	{
+		drawParms.blend = ( image->has_alpha || (ds->color[0] < 1.0f) || (ds->color[1] < 1.0f) || (ds->color[2] < 1.0f) || (ds->color[3] < 1.0f) );
+		if (ds->flags & DSFLAG_ADDITIVE) {
+			drawParms.blendfunc_src = GL_ONE;
+			drawParms.blendfunc_dst = GL_ONE;
+		}
+		else {
+			drawParms.blendfunc_src = GL_SRC_ALPHA;
+			drawParms.blendfunc_dst = GL_ONE_MINUS_SRC_ALPHA;
+		}
+	//	R_DrawPic_Standard (ds->x, ds->y, w, h, ds->offset, texCoords, ds->color, image->texnum, &drawParms, (ds->flags & DSFLAG_CLAMP));
+	}
+
+	//
+	// Actual Drawing
+	//
+
+	if (scrap_check_dirty)	// use multi-scrap indicator instead of scrap_dirty
+		Scrap_Upload ();
+
+	if (drawParms.blend)
+	{
+		GL_Disable (GL_ALPHA_TEST);
+		if ( !masked )
+			GL_TexEnv (GL_MODULATE);
+		GL_Enable (GL_BLEND);
+		GL_BlendFunc (drawParms.blendfunc_src, drawParms.blendfunc_dst);
+		GL_DepthMask (false);
+	}
+
+	if ( masked )
+	{
+		GL_SelectTexture (0);
+		GL_Bind (maskImage->texnum);
+		GL_TexEnv (GL_COMBINE_ARB);
+
+		// Do nothing with this stage, it's just for alpha
+		qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_INTERPOLATE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_PREVIOUS_ARB);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_PREVIOUS_ARB);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_INTERPOLATE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_TEXTURE);
+
+		GL_EnableTexture (1);
+		GL_Bind (image->texnum);
+		GL_TexEnv (GL_COMBINE_ARB);
+
+		// This stage uses the previous one's alpha value
+		if (drawParms.blend) {
+			qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_MODULATE);
+			qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_MODULATE);
+		}
+		else {
+			qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_REPLACE);
+			qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE);
+		}
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE0);	// GL_PREVIOUS_ARB
 	}
 	else {
-		drawParms.blendfunc_src = GL_SRC_ALPHA;
-		drawParms.blendfunc_dst = GL_ONE_MINUS_SRC_ALPHA;
+		GL_Bind (image->texnum);
 	}
-	R_DrawPic_Standard (ds.x, ds.y, w, h, ds.offset, texCoords, ds.color, image->texnum, &drawParms, (ds.flags & DSFLAG_CLAMP));
+
+	if (ds->flags & DSFLAG_CLAMP) {
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	Vector2Set(texCoord[0], texCoords[0], texCoords[1]);
+	Vector2Set(texCoord[1], texCoords[2], texCoords[1]);
+	Vector2Set(texCoord[2], texCoords[2], texCoords[3]);
+	Vector2Set(texCoord[3], texCoords[0], texCoords[3]);
+
+	Vector2Set(verts[0], ds->x + ds->offset[0],		ds->y + ds->offset[1]);
+	Vector2Set(verts[1], ds->x + w + ds->offset[0],	ds->y - ds->offset[1]);
+	Vector2Set(verts[2], ds->x + w - ds->offset[0],	ds->y + h - ds->offset[1]);
+	Vector2Set(verts[3], ds->x - ds->offset[0],		ds->y + h + ds->offset[1]);
+
+	if ( masked ) {
+		for (i=0; i<4; i++)
+			Vector2Copy(texCoord[i], scrollTexCoord[i]);
+		RB_ModifyTextureCoords (&scrollTexCoord[0][0], &verts[0][0], 4, &drawParms.tcmod);
+	}
+	else {
+		RB_ModifyTextureCoords (&texCoord[0][0], &verts[0][0], 4, &drawParms.tcmod);
+	}
+
+	rb_vertex = rb_index = 0;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+3;
+	for (i=0; i<4; i++) {
+		VA_SetElem2v(texCoordArray[0][rb_vertex], texCoord[i]);
+		if ( masked )
+			VA_SetElem2v(texCoordArray[1][rb_vertex], scrollTexCoord[i]);
+		VA_SetElem3(vertexArray[rb_vertex], verts[i][0], verts[i][1], 0);
+		VA_SetElem4v(colorArray[rb_vertex], ds->color);
+		rb_vertex++;
+	}
+	RB_RenderMeshGeneric (false);
+
+	if (ds->flags & DSFLAG_CLAMP) {
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+	if ( masked )
+	{	// Reset parms
+		GL_DisableTexture (1);
+		GL_SelectTexture (0);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_REPLACE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_PREVIOUS_ARB);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE);
+		qglTexEnvi (GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_PREVIOUS_ARB);
+	}
+
+//	if ( masked || drawParms.blend )	// This is the default state, so why not set it in all cases?
+		GL_TexEnv (GL_REPLACE);
+
+	if (drawParms.blend) {
+		GL_DepthMask (true);
+		GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GL_Disable (GL_BLEND);
+		GL_Enable (GL_ALPHA_TEST);
+	}
 }
 
 

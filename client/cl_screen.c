@@ -553,7 +553,7 @@ void SCR_DrawPic (float x, float y, float width, float height, scralign_t align,
 	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
 	Vector2Copy (vec2_origin, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -586,7 +586,7 @@ void SCR_DrawScaledPic (float x, float y, float scale, qboolean centerCoords, qb
 	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
 	Vector2Copy (vec2_origin, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -610,7 +610,7 @@ void SCR_DrawLegacyPic (float x, float y, float scale, char *pic, float alpha)
 	ds.flags |= DSFLAG_SCALED;
 	Vector2Copy (vec2_origin, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -635,7 +635,7 @@ void SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t
 	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
 	Vector2Copy (vec2_origin, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -663,7 +663,7 @@ void SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offs
 	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -693,7 +693,7 @@ void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t of
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (texCorners, ds.stCoords);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -724,7 +724,7 @@ void SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offs
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (texCorners, ds.stCoords);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -756,7 +756,7 @@ void SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offs
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (texCorners, ds.stCoords);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -794,7 +794,7 @@ void SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset
 	Vector2Copy (scaledOffset, ds.offset);
 	Vector4Copy (texCorners, ds.stCoords);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -820,7 +820,7 @@ void SCR_DrawTiledPic (float x, float y, float width, float height, scralign_t a
 	ds.flags |= DSFLAG_TILED;
 	Vector2Copy (vec2_origin, ds.offset);
 	Vector4Copy (outColor, ds.color);
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 
@@ -2307,19 +2307,19 @@ void SCR_TileClear (void)
 
 	// clear above view screen
 	ds.x = 0;	ds.y = 0;		ds.w = w;		ds.h = top;
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 
 	// clear below view screen
 	ds.x = 0;	ds.y = bottom;	ds.w = w;		ds.h = h - bottom;
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 
 	// clear left of view screen
 	ds.x = 0;	ds.y = top;		ds.w = left;	ds.h = bottom - top + 1;
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 
 	// clear right of view screen
 	ds.x = right;	ds.y = top;	ds.w = w - right;	ds.h = bottom - top + 1;
-	R_DrawPic (ds);
+	R_DrawPic (&ds);
 }
 
 

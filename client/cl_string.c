@@ -306,12 +306,12 @@ void CL_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offse
 				{
 					ds.x = xx + ofsX;	ds.y = yy + ofsY;
 					Vector4Copy (shadowModulate, ds.color);
-					R_DrawPic (ds);
+					R_DrawPic (&ds);
 				}
 
 				ds.x = xx;	ds.y = yy;
 				Vector4Copy (modulate, ds.color);
-				R_DrawPic (ds);
+				R_DrawPic (&ds);
 			}
 			xx += w;
 		}
