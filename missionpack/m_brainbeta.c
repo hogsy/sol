@@ -130,7 +130,7 @@ mmove_t brainbeta_move_idle = {FRAME_stand31, FRAME_stand60, brainbeta_frames_id
 
 void brainbeta_idle (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH)) //Knightmare- play all 3 idle sounds
+	if (!(self->spawnflags & SF_MONSTER_AMBUSH)) // Knightmare- play all 3 idle sounds
 	{
 		float r = random();
 

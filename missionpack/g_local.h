@@ -1017,6 +1017,7 @@ extern	cvar_t	*sv_maplist;
 extern	cvar_t	*sv_stopspeed;		// PGM - this was a define in g_phys.c
 extern	cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
 
+extern	cvar_t	*sv_trigger_gravity_player;	// Knightmare- enables trigger_gravity affecting players in non-Rogue maps
 extern	 cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE

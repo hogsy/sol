@@ -414,7 +414,9 @@ void InitGame (void)
 	sv_stopspeed = gi.cvar ("sv_stopspeed", "100", 0);		// PGM - was #define in g_phys.c
 	sv_step_fraction = gi.cvar ("sv_step_fraction", "0.90", 0);	// Knightmare- this was a define in p_view.c
 
-	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "1", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
+	// Knightmare- enables trigger_gravity affecting players in non-Rogue maps
+	sv_trigger_gravity_player = gi.cvar("sv_trigger_gravity_player", "0", CVAR_ARCHIVE);
+	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE
 	g_showlogic = gi.cvar ("g_showlogic", "0", 0);

@@ -1404,13 +1404,13 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	{
 		// PMM
 		// don't toss gibs if we got vaped by the nuke
-		if (!(self->flags & FL_NUKED))
+		if ( !(self->flags & FL_NUKED) )
 		{
 		// pmm
 			// gib
 			gi.sound (self, CHAN_BODY, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
 			// more meaty gibs for your dollar!
-			if ((deathmatch->value) && (self->health < (self->gib_health * 2))) {
+			if ( (deathmatch->value) && (self->health < (self->gib_health * 2)) ) {
 				for (n = 0; n < 4; n++)
 					ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", 0, 0, damage, GIB_ORGANIC);
 			}
@@ -3900,11 +3900,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 
+		if (level.time > ent->gravity_debounce_time) {
 	//PGM	trigger_gravity support
-		if (level.time > ent->gravity_debounce_time)
-	//	client->ps.pmove.gravity = sv_gravity->value;
-			client->ps.pmove.gravity = sv_gravity->value * ent->gravity;
+			if ( (level.maptype == MAPTYPE_ROGUE) || sv_trigger_gravity_player->value ) // Knightmare- only do this for Rogue maps
+				client->ps.pmove.gravity = sv_gravity->value * ent->gravity;
+			else
+				client->ps.pmove.gravity = sv_gravity->value;
 	//PGM
+		}
 		else
 			client->ps.pmove.gravity = 0;
 
@@ -4182,7 +4185,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		gi.linkentity (ent);
 
 	//PGM trigger_gravity support
-		ent->gravity = 1.0;
+		if ( (level.maptype == MAPTYPE_ROGUE) || sv_trigger_gravity_player->value ) { // Knightmare- only do this for Rogue maps
+			ent->gravity = 1.0;
+		}
 	//PGM
 		if (ent->movetype != MOVETYPE_NOCLIP)
 			G_TouchTriggers (ent);

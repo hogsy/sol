@@ -281,7 +281,7 @@ void Move_Begin (edict_t *ent)
 					VectorAdd (ent->s.origin, ent->mins, v);
 					VectorSubtract(ent->target_ent->s.origin, v, v);
 				}
-				vectoangles2(v,angles);
+				vectoangles2 (v, angles);
 				ent->ideal_yaw = angles[YAW];
 				ent->ideal_pitch = angles[PITCH];
 				if (ent->ideal_pitch < 0) ent->ideal_pitch += 360;
@@ -641,9 +641,9 @@ void AngleMove_Begin (edict_t *ent)
 
 void AngleMove_Calc (edict_t *ent, void(*func)(edict_t*))
 {	
-	//clear velocity
+	// clear velocity
 	VectorClear (ent->avelocity);
-	//assign end function
+	// assign end function
 	ent->moveinfo.endfunc = func;
 
 //PGM
@@ -4333,7 +4333,7 @@ void train_next (edict_t *self)
 	vec3_t		dest;
 	qboolean	first;
 	vec3_t		daoldorigin;
-	vec3_t		v, angles; //Rroff
+	vec3_t		v, angles; // Rroff
 	// Knightmare added
 	vec3_t		adjusted_pathpoint;
 	vec3_t		corner_offset = {1, 1, 1};
@@ -4536,7 +4536,6 @@ again:
 				Move_Calc (e, dst, train_piece_wait);
 			}
 		}
-	
 	}
 //PGM
 }
@@ -4786,7 +4785,7 @@ void SP_func_train (edict_t *self)
 		self->s.modelindex2 = gi.modelindex (modelname);
 	}
 
-	if (self->spawnflags & TRAIN_ROTATE) //Lazarus move_origin code
+	if (self->spawnflags & TRAIN_ROTATE) // Lazarus move_origin code
 	{
 		self->flags |= FL_ROTTRAIN;
 		if ( (!VectorLength(self->bleft)) && (!VectorLength(self->tright)) )
@@ -6100,9 +6099,9 @@ void func_door_swinging_init (edict_t *self)
 		G_FreeEdict(self);
 		return;
 	}
-	VectorSubtract(follow->s.origin,self->s.origin,self->move_origin);
-	VectorNormalize(self->move_origin);
-	G_FreeEdict(follow);
+	VectorSubtract (follow->s.origin,self->s.origin,self->move_origin);
+	VectorNormalize (self->move_origin);
+	G_FreeEdict (follow);
 	if (self->pathtarget)
 	{
 		new_origin = G_Find (NULL, FOFS(targetname), self->pathtarget);
@@ -6139,8 +6138,8 @@ void SP_func_door_swinging (edict_t *self)
 	}
 	if (!self->followtarget)
 	{
-		gi.dprintf("func_door_swinging with no followtarget at %s\n",vtos(self->s.origin));
-		G_FreeEdict(self);
+		gi.dprintf("func_door_swinging with no followtarget at %s\n", vtos(self->s.origin));
+		G_FreeEdict (self);
 		return;
 	}
 	SP_func_door_rotating (self);

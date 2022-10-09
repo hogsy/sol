@@ -1086,7 +1086,7 @@ qboolean M_CheckAttack (edict_t *self)
 		VectorCopy (self->enemy->s.origin, spot2);
 		spot2[2] += self->enemy->viewheight;
 
-		// Knightmare- laser grunts can shoot through glass
+		// Knightmare- laser guards can shoot through glass
 		if (!strcmp(self->classname, "monster_soldier_lasergun") && (self->spawnflags & SOLDIER_LASERGUN_THROUGH_GLASS))
 			tr = gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA);
 		else
