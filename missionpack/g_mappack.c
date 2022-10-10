@@ -77,7 +77,7 @@ void SP_light_flame (edict_t *self) // New function by Beel. (small flame)
 	self->s.renderfx |=	RF_IR_VISIBLE | RF_FULLBRIGHT;		// PGM
 	self->s.effects |= EF_PLASMA;
 	// Knightmare- only one size for this model
-	//ed - spawnflag of 2 gives a big flame
+	// Mappack - spawnflag of 2 gives a big flame
 //	if (self->spawnflags & 2)
 //		self->think = bigflame_think;
 //	else

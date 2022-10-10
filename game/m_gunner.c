@@ -877,6 +877,14 @@ void SP_monster_gunner (edict_t *self)
 	}
 	
 	self->s.modelindex = gi.modelindex ("models/monsters/gunner/tris.md2");
+
+	// Coconut Monkey 2 sombrero
+	{
+		cvar_t	*gamedir = gi.cvar("gamedir", "", 0);
+		if ( (int)g_nm_maphacks->value && (strlen(gamedir->string) > 0) && !strcmp(gamedir->string, "coconut2") )
+			self->s.modelindex2 = gi.modelindex ("models/monsters/gunner/gear.md2");
+	}
+
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, 32);
 

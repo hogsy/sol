@@ -9,7 +9,7 @@ Spawning a user defined model
 =============================
 */
 
-//ed - added all these spawnflags and stuff
+// Mappack - added all these spawnflags and stuff
 
 /*QUAKED model_spawn (1 0 0) (-8 -8 -8) (8 8 8) x TOGGLE NOT_IR PLAYER NO_MODEL ANIM_ONCE
 Spawns a user defined model, you can specify whether its solid, if so how big the box is, and apply nearly

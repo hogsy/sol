@@ -1937,7 +1937,7 @@ void tracktrain_disengage (edict_t *train);
 //
 // g_turret.c
 //
-void turret_breach_fire(edict_t *ent);
+void turret_breach_fire (edict_t *ent);
 void turret_disengage (edict_t *ent);
 
 //
@@ -2593,7 +2593,7 @@ struct edict_s
 	int			dmg;
 	int			radius_dmg;
 	float		dmg_radius;
-	int			sounds;			//make this a spawntemp var?
+	int			sounds;			// make this a spawntemp var?
 	int			count;
 
 	edict_t		*chain;
@@ -2678,10 +2678,10 @@ struct edict_s
 								// of HOM
 
 	// Mappack - for ridahs controllable turret (but beels weapon thing)
-	edict_t		*turret;	//ugly ?
+	edict_t		*turret;		// ugly ?
 	edict_t		*child;			// "real" infantry guy, child of remote turret_driver
 
-	edict_t		*vehicle;		//pointer for vehicle player is driving
+	edict_t		*vehicle;		// pointer for vehicle player is driving
 	char		*idle_noise;
 	float		radius;
 

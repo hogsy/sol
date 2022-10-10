@@ -827,6 +827,8 @@ extern	cvar_t	*vid_ref;
 extern	cvar_t	*zoomrate;
 extern	cvar_t	*zoomsnap;
 
+extern	 cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
+
 extern	cvar_t	*g_showlogic; // Knightmare added
 
 extern	int		max_modelindex;
@@ -1185,7 +1187,7 @@ void tracktrain_disengage (edict_t *train);
 //
 // g_turret.c
 //
-void turret_breach_fire(edict_t *ent);
+void turret_breach_fire (edict_t *ent);
 void turret_disengage (edict_t *ent);
 
 //
@@ -1857,7 +1859,7 @@ struct edict_s
 	vec_t		base_radius;	// Lazarus: used to project "viewpoint" of TRACK turret
 								// out past base
 
-	//ed - for the sprite/model spawner
+	// Mappack - for the sprite/model spawner
 	char		*usermodel;
 	int			startframe;
 	int			framenumbers;
