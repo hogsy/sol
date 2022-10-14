@@ -441,6 +441,10 @@ SOURCE=.\m_q1fiend.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\m_q1freddie.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\m_q1grunt.c
 # End Source File
 # Begin Source File

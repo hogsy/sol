@@ -193,6 +193,10 @@ SOURCE=.\game.def
 # End Source File
 # Begin Source File
 
+SOURCE=.\km_cvar.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\m_move.c
 # End Source File
 # Begin Source File
