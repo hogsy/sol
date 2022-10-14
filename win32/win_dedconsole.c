@@ -32,11 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CONSOLE_WINDOW_STYLE		(WS_OVERLAPPED|WS_BORDER|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_CLIPCHILDREN|WS_GROUP)
 #define CONSOLE_WINDOW_CLASS_NAME	"KMQ2 Console"
 
-#ifdef ERASER_COMPAT_BUILD
-#define CONSOLE_WINDOW_NAME			"KMQuake2 Console (Eraser Compatible)"
-#else // ERASER_COMPAT_BUILD
 #define CONSOLE_WINDOW_NAME			"KMQuake2 Console"
-#endif // ERASER_COMPAT_BUILD
 
 #define MAX_OUTPUT					131072	// increased from 32768
 #define MAX_INPUT					256

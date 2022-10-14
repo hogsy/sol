@@ -134,14 +134,8 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 // Knightmare- whether to include new engine enhancements
 #define	KMQUAKE2_ENGINE_MOD
 
-// enable to build exe that is compatible with Eraser bot
-// Eraser Bot's precompiled p_trail.c not compatible with modified entity state structure
-//#define ERASER_COMPAT_BUILD
-
 #ifdef KMQUAKE2_ENGINE_MOD
-#ifndef ERASER_COMPAT_BUILD
 #define NEW_ENTITY_STATE_MEMBERS
-#endif
 #define NEW_PLAYER_STATE_MEMBERS
 // enable to build exe with 24-bit coordinate transmission
 // changes pmove origin size in game DLLs

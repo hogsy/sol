@@ -339,7 +339,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 			to->modelindex5 = MSG_ReadShort (&net_message);
 		if (bits & U_MODEL6)
 			to->modelindex6 = MSG_ReadShort (&net_message);
-	#else // we need to read and ignore this for eraser client compatibility
+	#else // we need to read and ignore this for client compatibility with precompiled game code
 		if (bits & U_MODEL5)
 			ignore = MSG_ReadShort (&net_message);
 		if (bits & U_MODEL6)
@@ -392,7 +392,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 		if (bits & U_ALPHA)
 	#ifdef NEW_ENTITY_STATE_MEMBERS
 			to->alpha = (float)(MSG_ReadByte (&net_message) / 255.0);
-	#else // we need to read and ignore this for eraser client compatibility
+	#else // we need to read and ignore this for client compatibility with precompiled game code
 			ignore = (float)(MSG_ReadByte (&net_message) / 255.0);
 	#endif
 
@@ -404,7 +404,7 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 		if (bits & U_ATTENUAT)
 	#ifdef NEW_ENTITY_STATE_MEMBERS
 			to->attenuation = MSG_ReadByte (&net_message) / 64.0;
-	#else // we need to read and ignore this for eraser client compatibility
+	#else // we need to read and ignore this for client compatibility with precompiled game code
 			ignore = MSG_ReadByte (&net_message) / 64.0;
 	#endif
 	#endif
