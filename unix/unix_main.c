@@ -409,13 +409,14 @@ int main (int argc, char **argv)
 	printf ("==========================================\n\n");
 
 	// Knightmare- set minimum stack size of 4MB
+	printf ("Checking stack size...");
 	result = getrlimit(RLIMIT_STACK, &rl);
 	if (result == 0)
 	{
 		if (rl.rlim_cur < minStackSize)
 		{
+			printf (" succeeded.\nIncreasing stack size to %i...", minStackSize);
 			rl.rlim_cur = minStackSize;
-			printf ("Increasing stack size to %i...\n", minStackSize);
 			result = setrlimit(RLIMIT_STACK, &rl);
 			if (result != 0) {
 				printf (" failed!  setrlimit returned result of %i.\n", result);
@@ -424,6 +425,12 @@ int main (int argc, char **argv)
 				printf (" succeeded.\n");
 			}
 		}
+		else {
+			printf (" succeeded.  Stack size sufficient.\n");
+		}
+	}
+	else {
+		printf (" failed!  getrlimit returned result of %i.\n", result);
 	}
 
 	// Knightmare- init exe dir
