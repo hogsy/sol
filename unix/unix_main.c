@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/wait.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <sys/resource.h>
 
 #include <SDL.h>
 
@@ -389,7 +390,10 @@ void Sys_InitPrefDir (void)
 
 int main (int argc, char **argv)
 {
-	int 	time, oldtime, newtime;
+	int 	time, oldtime, newtime, result;
+	// Knightmare added
+	const rlim_t	minStackSize = 4L * 1024L * 1024L;	// min stack size of 4MB
+	struct rlimit	rl;
 
 	// go back to real user for config loads
 	saved_euid = geteuid();
@@ -403,6 +407,24 @@ int main (int argc, char **argv)
 	printf ("http://qudos.quakedev.com/\n");
 	printf ("Compiled: "__DATE__" -- "__TIME__"\n");
 	printf ("==========================================\n\n");
+
+	// Knightmare- set minimum stack size of 4MB
+	result = getrlimit(RLIMIT_STACK, &rl);
+	if (result == 0)
+	{
+		if (rl.rlim_cur < minStackSize)
+		{
+			rl.rlim_cur = minStackSize;
+			printf ("Increasing stack size to %i...\n", minStackSize);
+			result = setrlimit(RLIMIT_STACK, &rl);
+			if (result != 0) {
+				printf (" failed!  setrlimit returned result of %i.\n", result);
+			}
+			else {
+				printf (" succeeded.\n");
+			}
+		}
+	}
 
 	// Knightmare- init exe dir
 	Init_ExeDir (argv[0]);

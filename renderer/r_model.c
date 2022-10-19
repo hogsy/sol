@@ -1074,23 +1074,23 @@ Mod_LoadMarksurfaces
 */
 void Mod_LoadMarksurfaces (lump_t *l)
 {	
-	int			i, j, count;
-	unsigned short		*in;	// Knightmare- changed to unsigned short
-	msurface_t **out;
+	int				i, j, count;
+	unsigned short	*in;	// Knightmare- changed to unsigned short
+	msurface_t		**out;
 	
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
 		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc (count * sizeof(*out));	
 
 	loadmodel->marksurfaces = out;
 	loadmodel->nummarksurfaces = count;
 
-	for ( i=0 ; i<count ; i++)
+	for (i=0; i<count; i++)
 	{
 		j = (unsigned short)LittleShort(in[i]);	// Knightmare- make this unsigned!
-		if (j < 0 ||  j >= loadmodel->numsurfaces)
+		if ( (j < 0) || ( j >= loadmodel->numsurfaces) )
 			VID_Error (ERR_DROP, "Mod_ParseMarksurfaces: bad surface number");
 		out[i] = loadmodel->surfaces + j;
 	}

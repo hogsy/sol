@@ -408,8 +408,6 @@ void R_DrawPic (drawStruct_t *ds)
 			drawParms.blend = true;
 			drawParms.blendfunc_src = GL_SRC_ALPHA;
 			drawParms.blendfunc_dst = GL_ONE;
-		//	R_DrawPic_Masked (ds->x, ds->y, w, h, ds->offset, ds->stCoords, ds->color, image->texnum, maskImage->texnum, &drawParms, (ds->flags & DSFLAG_CLAMP));
-		//	return;
 		}
 	}
 
@@ -424,7 +422,6 @@ void R_DrawPic (drawStruct_t *ds)
 			drawParms.blendfunc_src = GL_SRC_ALPHA;
 			drawParms.blendfunc_dst = GL_ONE_MINUS_SRC_ALPHA;
 		}
-	//	R_DrawPic_Standard (ds->x, ds->y, w, h, ds->offset, texCoords, ds->color, image->texnum, &drawParms, (ds->flags & DSFLAG_CLAMP));
 	}
 
 	//
