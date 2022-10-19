@@ -392,7 +392,7 @@ int main (int argc, char **argv)
 {
 	int 	time, oldtime, newtime, result;
 	// Knightmare added
-	const rlim_t	minStackSize = 4L * 1024L * 1024L;	// min stack size of 4MB
+	const rlim_t	minStackSize = 16L * 1024L * 1024L;	// min stack size of 16MB
 	struct rlimit	rl;
 
 	// go back to real user for config loads
@@ -409,7 +409,7 @@ int main (int argc, char **argv)
 	printf ("==========================================\n\n");
 
 	// Knightmare- set minimum stack size of 4MB
-	printf ("Checking stack size...");
+	printf ("\nChecking stack size...");
 	result = getrlimit(RLIMIT_STACK, &rl);
 	if (result == 0)
 	{
@@ -419,18 +419,18 @@ int main (int argc, char **argv)
 			rl.rlim_cur = minStackSize;
 			result = setrlimit(RLIMIT_STACK, &rl);
 			if (result != 0) {
-				printf (" failed!  setrlimit returned result of %i.\n", result);
+				printf (" failed!\nsetrlimit() returned result of %i.\n", result);
 			}
 			else {
 				printf (" succeeded.\n");
 			}
 		}
 		else {
-			printf (" succeeded.  Stack size sufficient.\n");
+			printf (" succeeded.  Stack size is sufficient.\n");
 		}
 	}
 	else {
-		printf (" failed!  getrlimit returned result of %i.\n", result);
+		printf (" failed!\ngetrlimit() returned result of %i.\n", result);
 	}
 
 	// Knightmare- init exe dir
