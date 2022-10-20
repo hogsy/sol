@@ -409,7 +409,7 @@ int main (int argc, char **argv)
 	printf ("==========================================\n\n");
 
 	// Knightmare- set minimum stack size of 4MB
-	printf ("\nChecking stack size...");
+	printf ("Checking stack size...");
 	result = getrlimit(RLIMIT_STACK, &rl);
 	if (result == 0)
 	{

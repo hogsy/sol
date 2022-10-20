@@ -298,23 +298,17 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-	//	UI_DrawPicST (box_x, box_y+boxHeight-button_size, button_size, button_size,
-	//				0, 0+t_ofs[0], 0.25, 0.25+t_ofs[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 		// right arrow
 		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
-	//				0.25, 0+t_ofs[1], 0.5, 0.25+t_ofs[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 		arrowColor[4] = 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
 			UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
 						stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		//	UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
-		//				0, 0.75, 0.25, 1, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 	}
 	else // SCROLL_Y
 	{
@@ -346,23 +340,17 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y, button_size, button_size,
 					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y, button_size, button_size,
-	//				0.5, 0+t_ofs[0], 0.75, 0.25+t_ofs[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 		// down arrow
 		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-	//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
-	//				0.75, 0+t_ofs[1], 1, 0.25+t_ofs[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 		arrowColor[4] = 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
 			UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
 						stCoord_scrollKnob_v, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		//	UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
-		//				0.25, 0.75, 0.5, 1, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 	}
 
 	if (ui_debug_itembounds->integer)
@@ -2633,7 +2621,6 @@ void UI_MenuComboBox_Draw (menuComboBox_s *c)
 	// drop down arrow
 	UI_DrawFill (x+itemWidth, y, button_size, button_size, c->generic.scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
 	UI_DrawPicST (x+itemWidth, y, button_size, button_size, arrowTemp, c->generic.scrAlign, false, arrowColor, UI_ARROWS_PIC);
-//	UI_DrawPicST (x+itemWidth, y, button_size, button_size, 0.75, 0+t_ofs, 1, 0.25+t_ofs, c->generic.scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 	// catch loss of focus
 	if ( ((ui_mousecursor.menuitem != NULL) && (ui_mousecursor.menuitem != c))
