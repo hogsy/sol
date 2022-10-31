@@ -1330,10 +1330,13 @@ void	vectoangles (vec3_t vec, vec3_t angles);
 qboolean infront(edict_t *self, edict_t *other);													//CW
 qboolean visible(edict_t *self, edict_t *other);													//CW
 // Knightmare added
-void	vectoangles2 (vec3_t vec, vec3_t angles);
+void vectoangles2 (vec3_t vec, vec3_t angles);
+char *GameDir (void);
+char *SavegameDir (void);
 void GameDirRelativePath (const char *filename, char *output, size_t outputSize);
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize);
 void CreatePath (const char *path);
+qboolean LocalFileExists (const char *path);
 // end Knightmare
 
 //CW++

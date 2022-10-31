@@ -740,6 +740,13 @@ char	*vtos (vec3_t v);
 float vectoyaw (vec3_t vec);
 void vectoangles (vec3_t vec, vec3_t angles);
 
+char *GameDir (void);
+char *SavegameDir (void);
+void GameDirRelativePath (const char *filename, char *output, size_t outputSize);
+void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize);
+void CreatePath (const char *path);
+qboolean LocalFileExists (const char *path);
+
 //
 // km_cvar.c
 //
