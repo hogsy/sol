@@ -119,7 +119,7 @@
       <AdditionalDependencies>wsock32.lib;winmm.lib;glu32.lib;libjpeg_2015_d.lib;zlib_d.lib;libogg_d.lib;libvorbisfile_d.lib;libpng_2015_d.lib;libcurl_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>kmquake2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\win32\lib\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\win32\lib\VS2008\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>MSVCRT;LIBCMT;LIBCD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\debug/kmquake2.pdb</ProgramDatabaseFile>
@@ -168,7 +168,7 @@
       <AdditionalDependencies>winmm.lib;wsock32.lib;glu32.lib;libcurl_x64_d.lib;libjpeg_2015_x64_d.lib;libogg_x64_d.lib;libvorbisfile_x64_d.lib;zlib_x64_d.lib;libpng_2015_x64_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>kmquake2_x64.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\win32\lib\x64\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\win32\lib\VS2008_x64\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\x64\debug/kmquake2.pdb</ProgramDatabaseFile>
@@ -219,7 +219,7 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winmm.lib;wsock32.lib;glu32.lib;libjpeg_2015_r.lib;zlib_r.lib;libogg_r.lib;libvorbisfile_r.lib;libpng_2015_r.lib;libcurl_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>kmquake2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\win32\lib\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\win32\lib\VS2008\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>MSVCRT;LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>.\release/kmquake2.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -270,7 +270,7 @@
       <AdditionalDependencies>winmm.lib;wsock32.lib;glu32.lib;libcurl_x64_r.lib;libjpeg_2015_x64_r.lib;libogg_x64_r.lib;libvorbisfile_x64_r.lib;zlib_x64_r.lib;libpng_2015_x64_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./kmquake2_x64.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\win32\lib\x64\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\win32\lib\VS2008_x64\;..\..\win32\lib\VS2015\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>.\x64\release/kmquake2.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
