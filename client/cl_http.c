@@ -31,7 +31,7 @@ enum
 	HTTPDL_ABORT_HARD
 };
 
-static CURLM	*multi = NULL;
+static CURLM	*multi_handle = NULL;
 static int		handleCount = 0;
 static int		pendingCount = 0;
 static int		abortDownloads = HTTPDL_ABORT_NONE;
@@ -525,7 +525,7 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 	curl_easy_setopt (dl->curl, CURLOPT_REFERER, cls.downloadReferer);
 	curl_easy_setopt (dl->curl, CURLOPT_URL, dl->URL);
 
-	if (curl_multi_add_handle (multi, dl->curl) != CURLM_OK)
+	if (curl_multi_add_handle (multi_handle, dl->curl) != CURLM_OK)
 	{
 		Com_Printf ("curl_multi_add_handle: error\n");
 		dl->queueEntry->state = DLQ_STATE_DONE;
@@ -585,10 +585,10 @@ void CL_SetHTTPServer (const char *URL)
 	if (last)
 		Z_Free (last);
 
-	if (multi)
+	if (multi_handle)
 		Com_Error (ERR_DROP, "CL_SetHTTPServer: Still have old handle");
 
-	multi = curl_multi_init ();
+	multi_handle = curl_multi_init ();
 	
 	memset (&cls.downloadQueue, 0, sizeof(cls.downloadQueue));
 
@@ -1177,8 +1177,8 @@ void CL_HTTP_Cleanup (qboolean fullShutdown)
 
 		if (dl->curl)
 		{
-			if (multi)
-				curl_multi_remove_handle (multi, dl->curl);
+			if (multi_handle)
+				curl_multi_remove_handle (multi_handle, dl->curl);
 			curl_easy_cleanup (dl->curl);
 			dl->curl = NULL;
 		}
@@ -1186,10 +1186,10 @@ void CL_HTTP_Cleanup (qboolean fullShutdown)
 		dl->queueEntry = NULL;
 	}
 
-	if (multi)
+	if (multi_handle)
 	{
-		curl_multi_cleanup (multi);
-		multi = NULL;
+		curl_multi_cleanup (multi_handle);
+		multi_handle = NULL;
 	}
 
 	if (fullShutdown)
@@ -1240,7 +1240,7 @@ static void CL_FinishHTTPDownload (void)
 
 	do
 	{
-		msg = curl_multi_info_read (multi, &msgs_in_queue);
+		msg = curl_multi_info_read (multi_handle, &msgs_in_queue);
 
 		if (!msg)
 		{
@@ -1333,7 +1333,7 @@ static void CL_FinishHTTPDownload (void)
 					}
 					else */
 					{
-						curl_multi_remove_handle (multi, dl->curl);
+						curl_multi_remove_handle (multi_handle, dl->curl);
 
 						// Fall back to UDP download for this map if failure on .bsp
 					/*	if ( !strncmp(dl->queueEntry->quakePath, "maps/", 5) && !strcmp(dl->queueEntry->quakePath + len - 4, ".bsp") )
@@ -1372,9 +1372,8 @@ static void CL_FinishHTTPDownload (void)
 				if (isFile) {
 					remove (dl->filePath);
 				}
-			//	Com_Printf ("[HTTP] Fatal error: %s\n", curl_easy_strerror (result));
 				Com_Printf ("[HTTP] Fatal error: %s\n", CURL_ERROR(result));
-				curl_multi_remove_handle (multi, dl->curl);
+				curl_multi_remove_handle (multi_handle, dl->curl);
 				if (abortDownloads)
 					continue;
 				CL_CancelHTTPDownloads (true);
@@ -1386,9 +1385,8 @@ static void CL_FinishHTTPDownload (void)
 				if (isFile) {
 					remove (dl->filePath);
 				}
-			//	Com_Printf ("[HTTP] download failed: %s\n", curl_easy_strerror (result));
 				Com_Printf ("[HTTP] download failed: %s\n", CURL_ERROR(result));
-				curl_multi_remove_handle (multi, dl->curl);
+				curl_multi_remove_handle (multi_handle, dl->curl);
 				continue;
 		}
 
@@ -1444,7 +1442,7 @@ static void CL_FinishHTTPDownload (void)
 		// existing handle when you change the URL. however, the handleCount goes
 		// all weird when reusing a download slot in this way. if you can figure
 		// out why, please let me know.
-		curl_multi_remove_handle (multi, dl->curl);
+		curl_multi_remove_handle (multi_handle, dl->curl);
 
 		Com_Printf ("[HTTP] (%s): %.f bytes, %.2fkB/sec [%d remaining files]\n", dl->queueEntry->quakePath, fileSize, (fileSize / 1024.0) / timeTaken, pendingCount);
 	}
@@ -1556,7 +1554,7 @@ void CL_RunHTTPDownloads (void)
 
 	do
 	{
-		ret = curl_multi_perform (multi, &newHandleCount);
+		ret = curl_multi_perform (multi_handle, &newHandleCount);
 		if (newHandleCount < handleCount)
 		{
 		//	Com_Printf ("runnd dl: hc = %d, nc = %d\n", LOG_GENERAL, handleCount, newHandleCount);

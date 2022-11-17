@@ -215,6 +215,96 @@ void Sys_ShowConsole (qboolean show)
 
 /*****************************************************************************/
 
+/*
+=================
+Sys_LoadLibrary
+
+From Yamagi Q2
+=================
+*/
+void *Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **libHandle)
+{
+	void	*hLibrary, *funcPtr;
+
+	*libHandle = NULL;
+
+#ifdef USE_SANITIZER
+	hLibrary = dlopen (libPath, RTLD_LAZY | RTLD_NODELETE);
+#else
+	hLibrary = dlopen (libPath, RTLD_LAZY);
+#endif
+
+	if ( !hLibrary ) {
+		Com_DPrintf("Sys_LoadLibrary: failure on %s, dlopen returned %s\n", libPath, dlerror());
+		return NULL;
+	}
+
+	if (initFuncName != NULL)
+	{
+		funcPtr = dlsym (hLibrary, initFuncName);
+
+		if ( !funcPtr ) {
+			Com_DPrintf("Sys_LoadLibrary: failure in %s on %s, dlclose returned %s\n", libPath, initFuncName, dlerror());
+			dlclose (hLibrary);
+			return NULL;
+		}
+	}
+	else {
+		funcPtr = NULL;
+	}
+
+	*libHandle = hLibrary;
+
+	Com_DPrintf("Sys_LoadLibrary: sucessfully loaded %s\n", libPath);
+
+	return funcPtr;
+}
+
+
+/*
+=================
+Sys_FreeLibrary
+
+From Yamagi Q2
+=================
+*/
+void Sys_FreeLibrary (void *libHandle)
+{
+	if ( libHandle && dlclose(libHandle) )
+	{
+		Com_Error(ERR_FATAL, "dlclose failed on %p: %s", libHandle, dlerror());
+	}
+}
+
+
+/*
+=================
+Sys_GetProcAddress
+
+From Yamagi Q2
+=================
+*/
+void *Sys_GetProcAddress (void *libHandle, const char *initFuncName)
+{
+    if (libHandle == NULL)
+    {
+#ifdef RTLD_DEFAULT
+        return dlsym(RTLD_DEFAULT, initFuncName);
+#else
+        /* POSIX suggests that this is a portable equivalent */
+        static void *global_namespace = NULL;
+
+        if (global_namespace == NULL)
+            global_namespace = dlopen(NULL, RTLD_GLOBAL|RTLD_LAZY);
+
+        return dlsym (global_namespace, initFuncName);
+#endif
+    }
+    return dlsym (libHandle, initFuncName);
+}
+
+/*****************************************************************************/
+
 static void *game_library;
 
 /*

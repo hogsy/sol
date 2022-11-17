@@ -1050,6 +1050,11 @@ void	Sys_Quit (void);
 char	*Sys_GetClipboardData( void );
 void	Sys_CopyProtect (void);
 
+// Knightmare- general-purpose dynamic library loading from Yamagi Q2
+void	*Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **libHandle);
+void	Sys_FreeLibrary (void *libHandle);
+void	*Sys_GetProcAddress (void *libHandle, const char *funcName);
+
 // Knightmare- inits pref and download dirs
 //		Must be called after cvar fs_basegame is initialized in FS_InitFilesystem()
 void Sys_InitPrefDir (void);

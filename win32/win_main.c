@@ -1472,6 +1472,90 @@ void Sys_AppActivate (void)
 /*
 ========================================================================
 
+GENERIC DLL LOADING
+
+From Yamagi Q2
+
+========================================================================
+*/
+
+/*
+=================
+Sys_LoadLibrary
+=================
+*/
+void *Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **libHandle)
+{
+//	HINSTANCE	hLibrary;
+	HMODULE		hLibrary;
+	WCHAR		wLibPath[MAX_OSPATH];
+	void		*funcPtr;
+
+	if ( !libPath || (libPath[0] == '\0') || !libHandle )	// catch bad pointers/path
+		return NULL;	
+
+	*libHandle = NULL;
+
+	MultiByteToWideChar (CP_UTF8, 0, libPath, -1, wLibPath, MAX_OSPATH);
+	hLibrary = LoadLibraryW (wLibPath);
+//	hLibrary = LoadLibrary (libPath);
+
+	if ( !hLibrary ) {
+		Com_DPrintf ("Sys_LoadLibrary: failure on %s, LoadLibrary returned %lu\n", libPath, GetLastError());
+		return NULL;
+	}
+
+	if (initFuncName != NULL)
+	{
+		funcPtr = GetProcAddress (hLibrary, initFuncName);
+
+		if ( !funcPtr ) {
+			Com_DPrintf ("Sys_LoadLibrary: failure in %s on %s, GetProcAddress returned %lu\n", libPath, initFuncName, GetLastError());
+			FreeLibrary (hLibrary);
+			return NULL;
+		}
+	}
+	else {
+		funcPtr = NULL;
+	}
+
+	*libHandle = hLibrary;
+
+	Com_DPrintf ("Sys_LoadLibrary: sucessfully loaded %s\n", libPath);
+
+	return funcPtr;
+}
+
+
+/*
+=================
+Sys_FreeLibrary
+=================
+*/
+void Sys_FreeLibrary (void *libHandle)
+{
+	if (!libHandle)
+		return;
+
+	if ( !FreeLibrary(libHandle) ) {
+		Com_Error (ERR_FATAL, "FreeLibrary failed for %p", libHandle);
+	}
+}
+
+
+/*
+=================
+Sys_GetProcAddress
+=================
+*/
+void *Sys_GetProcAddress (void *libHandle, const char *funcName)
+{
+	return GetProcAddress (libHandle, funcName);
+}
+
+/*
+========================================================================
+
 GAME DLL
 
 ========================================================================
