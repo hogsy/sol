@@ -1285,7 +1285,6 @@ int Q_strcasecmp (char *s1, char *s2)
 }
 
 
-
 void Com_sprintf (char *dest, size_t size, char *fmt, ...)
 {
 	char		bigbuffer[0x10000];
@@ -1311,13 +1310,7 @@ size_t Com_strcpy (char *dest, size_t destSize, const char *src)
 	const char	*s = src;
 	size_t		decSize = destSize;
 
-	if (!dest) {
-		return 0;
-	}
-	if (!src) {
-		return 0;
-	}
-	if (destSize < 1) {
+	if ( !dest || !src || (destSize < 1) ) {
 		return 0;
 	}
 
@@ -1330,9 +1323,9 @@ size_t Com_strcpy (char *dest, size_t destSize, const char *src)
 	dest[destSize-1] = 0;
 
 	if (decSize == 0)	// Insufficent room in dst, return count + length of remaining src
-		return (s - src - 1 + strlen(s));
+		return (s - src + strlen(s));	// was s - src - 1 + strlen(s)
 	else
-		return (s - src - 1);	// returned count excludes NULL terminator
+		return (s - src);	// returned count excludes NULL terminator
 }
 
 // Knightmare added
@@ -1343,13 +1336,7 @@ size_t Com_strcat (char *dest, size_t destSize, const char *src)
 	size_t		decSize = destSize;
 	size_t		dLen;
 
-	if (!dest) {
-		return 0;
-	}
-	if (!src) {
-		return 0;
-	}
-	if (destSize < 1) {
+	if ( !dest || !src || (destSize < 1) ) {
 		return 0;
 	}
 

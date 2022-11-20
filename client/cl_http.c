@@ -483,7 +483,7 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 		{
 			Com_Printf ("CL_StartHTTPDownload: Couldn't open %s for writing.\n", dl->filePath);
 			entry->state = DLQ_STATE_DONE;
-			pendingCount--;	// Knightmare- fix for curl_update limbo from [HCI]Maraa'kate
+			pendingCount--;	// FS: fix for curl_update limbo
 		//	CL_RemoveHTTPDownload (entry->quakePath);
 			return;
 		}
@@ -897,13 +897,14 @@ it left.
 */
 qboolean CL_PendingHTTPDownloads (void)
 {
-	dlqueue_t	*q;
+//	dlqueue_t	*q;
 
 	if (!cls.downloadServer[0])
 		return false;
 
 	return pendingCount + handleCount;
 
+#if 0	// FS: unreachable code
 	q = &cls.downloadQueue;
 
 	while (q->next)
@@ -914,6 +915,7 @@ qboolean CL_PendingHTTPDownloads (void)
 	}
 
 	return false;
+#endif
 }
 
 

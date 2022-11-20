@@ -2061,19 +2061,7 @@ size_t Q_strncpyz (char *dst, size_t dstSize, const char *src)
 	const char	*s = src;
 	size_t		decSize = dstSize;
 
-	if (!dst) {
-	//	Com_Error (ERR_FATAL, "Q_strncpyz: NULL dst");
-	//	Com_Printf ("Q_strncpyz: NULL dst\n");
-		return 0;
-	}
-	if (!src) {
-	//	Com_Error (ERR_FATAL, "Q_strncpyz: NULL src");
-	//	Com_Printf ("Q_strncpyz: NULL src\n");
-		return 0;
-	}
-	if (dstSize < 1) {
-	//	Com_Error (ERR_FATAL, "Q_strncpyz: dstSize < 1");
-	//	Com_Printf ("Q_strncpyz: dstSize < 1\n");
+	if ( !dst || !src || (dstSize < 1) ) {
 		return 0;
 	}
 
@@ -2086,9 +2074,9 @@ size_t Q_strncpyz (char *dst, size_t dstSize, const char *src)
 	dst[dstSize-1] = 0;
 
 	if (decSize == 0)	// Insufficent room in dst, return count + length of remaining src
-		return (s - src - 1 + strlen(s));
+		return (s - src + strlen(s));	// was s - src - 1 + strlen(s)
 	else
-		return (s - src - 1);	// returned count excludes NULL terminator
+		return (s - src);	// returned count excludes NULL terminator
 }
 
 
@@ -2106,19 +2094,7 @@ size_t Q_strncatz (char *dst, size_t dstSize, const char *src)
 	size_t		decSize = dstSize;
 	size_t		dLen;
 
-	if (!dst) {
-	//	Com_Error (ERR_FATAL, "Q_strncatz: NULL dst");
-	//	Com_Printf ("Q_strncatz: NULL dst\n");
-		return 0;
-	}
-	if (!src) {
-	//	Com_Error (ERR_FATAL, "Q_strncatz: NULL src");
-	//	Com_Printf ("Q_strncatz: NULL src\n");
-		return 0;
-	}
-	if (dstSize < 1) {
-	//	Com_Error (ERR_FATAL, "Q_strncatz: dstSize < 1");
-	//	Com_Printf ("Q_strncatz: dstSize < 1\n");
+	if ( !dst || !src || (dstSize < 1) ) {
 		return 0;
 	}
 
