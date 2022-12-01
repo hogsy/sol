@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\debug"
-			IntermediateDirectory=".\debug"
+			OutputDirectory=".\lazarus\Debug"
+			IntermediateDirectory=".\lazarus\Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -51,13 +51,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="c:\3dfx\sdk\glide2x\src\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\debug/lazarus.pch"
-				AssemblerListingLocation=".\debug/"
-				ObjectFile=".\debug/"
-				ProgramDataBaseFileName=".\debug/"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -85,14 +85,14 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\debug/kmq2gamex86.pdb"
+				ProgramDatabaseFile="$(IntDir)\kmq2gamex86.pdb"
 				GenerateMapFile="true"
-				MapFileName=".\debug/kmq2gamex86.map"
+				MapFileName="$(IntDir)\kmq2gamex86.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\debug/kmq2gamex86.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -107,7 +107,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\debug/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -121,8 +120,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\debug"
-			IntermediateDirectory=".\x64\debug"
+			OutputDirectory=".\x64\lazarus\Debug"
+			IntermediateDirectory=".\x64\lazarus\Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -153,13 +152,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\x64\debug/lazarus.pch"
+				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -188,14 +187,14 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\x64\debug/kmq2gamex64.pdb"
+				ProgramDatabaseFile="$(IntDir)\kmq2gamex64.pdb"
 				GenerateMapFile="true"
-				MapFileName=".\x64\debug/kmq2gamex64.map"
+				MapFileName="$(IntDir)\kmq2gamex64.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\x64\debug/kmq2gamex64.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -210,7 +209,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\debug/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -224,8 +222,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\.."
-			IntermediateDirectory=".\release"
+			OutputDirectory=".\lazarus\Release"
+			IntermediateDirectory=".\lazarus\Release"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -261,10 +259,10 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\release/lazarus.pch"
-				AssemblerListingLocation=".\release/"
-				ObjectFile=".\release/"
-				ProgramDataBaseFileName=".\release/"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="1"
@@ -288,12 +286,12 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
-				ProgramDatabaseFile=".\release/kmq2gamex86.pdb"
+				ProgramDatabaseFile=""
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\release/kmq2gamex86.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -308,7 +306,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\release/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -322,8 +319,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\release"
-			IntermediateDirectory=".\x64\release"
+			OutputDirectory=".\x64\lazarus\Release"
+			IntermediateDirectory=".\x64\lazarus\Release"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -359,10 +356,10 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\x64\release/lazarus.pch"
+				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="true"
@@ -387,12 +384,12 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
-				ProgramDatabaseFile=".\x64\release\kmq2gamex64.pdb"
+				ProgramDatabaseFile=""
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\x64\release\kmq2gamex64.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -407,7 +404,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\release/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
