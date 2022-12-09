@@ -2387,7 +2387,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	int				width, height;
 	unsigned int	hash;
 	char			nameBuf[MAX_OSPATH], s[MAX_OSPATH];
-	char			*name, *tmp;
+	char			*name = NULL;
 
 	if ( !rawName || (rawName[0] == '\0') )
 		return NULL;
@@ -2396,14 +2396,12 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 		return NULL;
 
 	// fix up bad image paths
- 	Q_strncpyz (nameBuf, sizeof(nameBuf), rawName);
-	tmp = &nameBuf[0];
-    while ( *tmp != 0 )
-    {
-        if ( *tmp == '\\' )
-            *tmp = '/';
-        tmp++;
-    }
+	Q_strncpyz (nameBuf, sizeof(nameBuf), rawName);
+	len = (int)strlen(nameBuf);
+	for (i = 0; i < len; i++) {
+		if ( nameBuf[i] == '\\' )
+			nameBuf[i] = '/';
+	}
 	name = &nameBuf[0];
 
 	// look for it
