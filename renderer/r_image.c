@@ -2379,30 +2379,32 @@ R_FindImage
 Finds or loads the given image
 ===============
 */
-image_t	*R_FindImage (char *name, imagetype_t type)
+image_t	*R_FindImage (const char *rawName, imagetype_t type)
 {
 	image_t			*image;
 	int				i, len;
 	byte			*pic, *palette;
 	int				width, height;
 	unsigned int	hash;
-	char			s[MAX_OSPATH];
-	char			*tmp;
+	char			nameBuf[MAX_OSPATH], s[MAX_OSPATH];
+	char			*name, *tmp;
 
-	if ( !name || (name[0] == '\0') )
+	if ( !rawName || (rawName[0] == '\0') )
 		return NULL;
-	len = (int)strlen(name);
+	len = (int)strlen(rawName);
 	if (len < 5)
 		return NULL;
 
 	// fix up bad image paths
-    tmp = name;
+ 	Q_strncpyz (nameBuf, sizeof(nameBuf), rawName);
+	tmp = &nameBuf[0];
     while ( *tmp != 0 )
     {
         if ( *tmp == '\\' )
             *tmp = '/';
         tmp++;
     }
+	name = &nameBuf[0];
 
 	// look for it
 	hash = Com_HashFileName(name, 0, false);

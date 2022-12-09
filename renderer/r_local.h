@@ -752,7 +752,7 @@ void LoadTGA (const char *name, byte **pic, int *width, int *height);
 void LoadJPG (const char *filename, byte **pic, int *width, int *height);
 
 image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
-image_t	*R_FindImage (char *name, imagetype_t type);
+image_t	*R_FindImage (const char *rawName, imagetype_t type);
 void GL_UpdateAnisoMode (void);
 void GL_TextureMode (char *string);
 void R_ImageList_f (void);
