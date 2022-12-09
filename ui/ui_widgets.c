@@ -295,15 +295,15 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 			boxWidth, LIST_SCROLLBAR_SIZE, item->scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
 
 		// left arrow
-		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
+		arrowColor[3] = arrow1_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 		// right arrow
-		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
+		arrowColor[3] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		arrowColor[4] = 255;
+		arrowColor[3] = 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
@@ -337,15 +337,15 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 					LIST_SCROLLBAR_SIZE, boxHeight, item->scrAlign, false, scrollBarColor[0], scrollBarColor[1], scrollBarColor[2], scrollBarColor[3]);
 
 		// up arrow
-		arrowColor[4] = arrow1_pulse ? hoverAlpha : 255;
+		arrowColor[3] = arrow1_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y, button_size, button_size,
 					arrowTemp[0], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 		// down arrow
-		arrowColor[4] = arrow2_pulse ? hoverAlpha : 255;
+		arrowColor[3] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		arrowColor[4] = 255;
+		arrowColor[3] = 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
