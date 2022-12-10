@@ -1720,11 +1720,16 @@ void Qcommon_Init (int argc, char **argv)
 	CL_Init ();
 
 #ifdef _WIN32  // Knightmare- remove startup logo, code from TomazQuake
-//	if (!dedicated->value)
 	if (!dedicated->integer)
 		Sys_ShowConsole (false);
 #endif
-
+/*
+#if defined(__APPLE__) || (MACOSX)
+	// Hide console
+	if (!dedicated->integer)
+		Sys_ShowConsole (false);
+#endif // defined(__APPLE__) || (MACOSX)
+*/
 	// add + commands from command line
 	if (!Cbuf_AddLateCommands ())
 	{	// if the user didn't give any commands, run default action

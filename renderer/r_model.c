@@ -716,6 +716,7 @@ void Mod_LoadTexinfo (lump_t *l)
 			out->vecs[0][j] = LittleFloat (in->vecs[0][j]);
 
 		out->flags = LittleLong (in->flags);
+		out->value = LittleLong (in->value);	// added texinfo value
 		next = LittleLong (in->nexttexinfo);
 		if (next > 0)
 			out->next = loadmodel->texinfo + next;

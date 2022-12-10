@@ -1044,6 +1044,7 @@ void	*Sys_GetGameAPI (void *parms);
 
 char	*Sys_ConsoleInput (void);
 void	Sys_ConsoleOutput (char *string);
+void	Sys_ShowConsole (qboolean show);
 void	Sys_SendKeyEvents (void);
 void	Sys_Error (const char *error, ...);
 void	Sys_Quit (void);

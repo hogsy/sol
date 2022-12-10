@@ -85,13 +85,15 @@ typedef struct
 typedef struct mtexinfo_s
 {
 	float		vecs[2][4];
-	int			texWidth;	// added Q2E hack
-	int			texHeight;	// added Q2E hack
+	int			texWidth;		// added Q2E hack
+	int			texHeight;		// added Q2E hack
 	int			flags;
+	int			value;			// added for light emission, fog distance, etc
 	int			numframes;
-	struct mtexinfo_s	*next;		// animation chain
+	struct mtexinfo_s	*next;	// animation chain
 	image_t		*image;
-	image_t		*glow;		// glow overlay
+	image_t		*glow;			// glow overlay
+	byte		color[4];		// added for surface colors
 } mtexinfo_t;
 
 typedef struct
@@ -139,7 +141,7 @@ typedef struct msurface_s
 
 	mtexinfo_t	*texinfo;
 	
-// lighting info
+	// lighting info
 	int			dlightframe;
 	int			dlightbits[(MAX_DLIGHTS+31)>>5];	// derived from MAX_DLIGHTS
 	qboolean	cached_dlight;
