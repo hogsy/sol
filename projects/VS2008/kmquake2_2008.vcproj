@@ -982,6 +982,22 @@
 			<File
 				RelativePath=".\kmq2_2008.rc"
 				>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_WIN64"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_WIN64"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\win32\q2mp1.ico"

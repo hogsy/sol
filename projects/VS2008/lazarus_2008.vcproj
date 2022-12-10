@@ -831,6 +831,22 @@
 			<File
 				RelativePath=".\lazarus_2008.rc"
 				>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_WIN64"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_WIN64"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
