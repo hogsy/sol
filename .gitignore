@@ -9,12 +9,15 @@ Release/
 .vs/
 *.log
 *.ncb
+*.sdf
+*.ipch
 *.opt
 *.plg
 *.suo
 *.user
 *.aps
 *.clw
+*.sbr
 *.pdb
 *.ilk
 

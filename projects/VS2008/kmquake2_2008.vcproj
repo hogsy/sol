@@ -3,9 +3,9 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="kmquake2"
-	ProjectGUID="{10E97B41-1A5F-4BFC-B922-3321F99FAEB5}"
-	RootNamespace="kmquake2"
-	TargetFrameworkVersion="131072"
+	ProjectGUID="{B4166FE2-C910-4030-876A-1D5BFA9B7212}"
+	RootNamespace="kmquake2_2008"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -23,9 +23,7 @@
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,25 +39,17 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\debug/quake2.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
 				CompileAs="1"
 				DisableSpecificWarnings="4996"
@@ -69,8 +59,6 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -80,13 +68,12 @@
 				AdditionalDependencies="wsock32.lib winmm.lib glu32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib libcurl_d.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
 				IgnoreDefaultLibraryNames="LIBCMT;LIBCD"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\kmquake2.pdb"
+				ProgramDatabaseFile="$(IntDir)/kmquake2.pdb"
 				GenerateMapFile="true"
-				MapFileName="$(IntDir)\kmquake2.map"
+				MapFileName="$(IntDir)/kmquake2.map"
 				SubSystem="2"
 				LargeAddressAware="2"
 				RandomizedBaseAddress="1"
@@ -105,7 +92,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -122,9 +108,7 @@
 			OutputDirectory=".\x64\Debug"
 			IntermediateDirectory=".\x64\Debug"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -140,26 +124,18 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\debug/quake2.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="1"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 				DisableSpecificWarnings="4996"
@@ -169,24 +145,21 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib wsock32.lib glu32.lib libcurl_x64_d.lib libjpeg_x64_d.lib libogg_x64_d.lib libvorbisfile_x64_d.lib zlib_x64_d.lib libpng_x64_d.lib"
+				AdditionalDependencies="wsock32.lib winmm.lib glu32.lib libcurl_x64_d.lib libjpeg_x64_d.lib libogg_x64_d.lib libvorbisfile_x64_d.lib zlib_x64_d.lib libpng_x64_d.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"
 				IgnoreDefaultLibraryNames="LIBCMT;LIBCD"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\kmquake2.pdb"
+				ProgramDatabaseFile="$(IntDir)/kmquake2.pdb"
 				GenerateMapFile="true"
-				MapFileName="$(IntDir)\kmquake2.map"
+				MapFileName="$(IntDir)/kmquake2.map"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -204,7 +177,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -221,9 +193,8 @@
 			OutputDirectory=".\Release"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -239,12 +210,6 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\release/quake2.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -252,12 +217,9 @@
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
-				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
 				CompileAs="1"
 				DisableSpecificWarnings="4996"
 			/>
@@ -266,21 +228,18 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib wsock32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib libcurl_r.lib"
+				AdditionalDependencies="winmm.lib wsock32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib libcurl_r.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
 				IgnoreDefaultLibraryNames="LIBC"
-				ProgramDatabaseFile=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				LargeAddressAware="2"
 				RandomizedBaseAddress="1"
@@ -299,7 +258,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -316,9 +274,8 @@
 			OutputDirectory=".\x64\Release"
 			IntermediateDirectory=".\x64\Release"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -334,30 +291,17 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\release/quake2.tlb"
-				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				EnableIntrinsicFunctions="false"
-				WholeProgramOptimization="false"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				StringPooling="false"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
-				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(IntDir)\"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="0"
 				CompileAs="1"
 				DisableSpecificWarnings="4996"
 			/>
@@ -366,8 +310,6 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -377,10 +319,9 @@
 				AdditionalDependencies="winmm.lib wsock32.lib glu32.lib libcurl_x64_r.lib libjpeg_x64_r.lib libogg_x64_r.lib libvorbisfile_x64_r.lib zlib_x64_r.lib libpng_x64_r.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"
 				IgnoreDefaultLibraryNames="LIBC"
-				ProgramDatabaseFile=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -398,7 +339,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -416,36 +356,9 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<Filter
-				Name="sound"
-				>
-				<File
-					RelativePath="..\..\client\snd_dma.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\client\snd_mem.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\client\snd_mix.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\client\snd_stream.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_cd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_snd.c"
-					>
-				</File>
-			</Filter>
 			<Filter
 				Name="client"
 				>
@@ -599,86 +512,10 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="server"
-				>
-				<File
-					RelativePath="..\..\server\sv_ccmds.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_ents.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_game.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_init.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_send.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_user.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\server\sv_world.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="system"
-				>
-				<File
-					RelativePath="..\..\win32\win_conproc.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_dedconsole.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_input.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_net.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_qsh.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_vid.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_wndproc.c"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="renderer"
 				>
 				<File
 					RelativePath="..\..\renderer\r_alias.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\renderer\r_alias_md2.c"
 					>
 				</File>
 				<File
@@ -775,6 +612,106 @@
 				</File>
 				<File
 					RelativePath="..\..\win32\win_qgl.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="server"
+				>
+				<File
+					RelativePath="..\..\server\sv_ccmds.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_ents.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_game.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_init.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_main.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_send.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_user.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\server\sv_world.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sound"
+				>
+				<File
+					RelativePath="..\..\client\snd_dma.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\client\snd_mem.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\client\snd_mix.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\client\snd_stream.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_cd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_snd.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="system"
+				>
+				<File
+					RelativePath="..\..\win32\win_conproc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_dedconsole.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_input.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_main.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_net.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_qsh.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_vid.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_wndproc.c"
 					>
 				</File>
 			</Filter>
@@ -909,7 +846,8 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;fi;fd"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
 				RelativePath="..\..\client\anorms.h"
@@ -1034,30 +972,15 @@
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\kmq2_2008.rc"
+				RelativePath="..\..\win32\kmq2.ico"
 				>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions="_DEBUG;_WIN64"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions="NDEBUG;_WIN64"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\win32\q2.ico"
+				RelativePath=".\kmq2_2008.rc"
 				>
 			</File>
 			<File
@@ -1074,10 +997,6 @@
 			</File>
 			<File
 				RelativePath="..\..\win32\startup2beta.bmp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\win32\startup2test.bmp"
 				>
 			</File>
 		</Filter>
