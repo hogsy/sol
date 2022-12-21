@@ -1473,13 +1473,13 @@ void ThrowWidowGibReal (edict_t *self, char *gibname, int damage, int type, vec3
 
 void BloodFountain (edict_t *self, int number, vec3_t startpos, int damage)
 {
-	int n;
+/*	int n;
 	vec3_t	vd;
-	vec3_t	origin, size, velocity;
+	vec3_t	origin, size, velocity; */
 
 	return;
 
-	for (n= 0; n < number; n++)
+/*	for (n= 0; n < number; n++)
 	{
 		if (startpos)
 			VectorCopy (startpos, origin);
@@ -1497,13 +1497,13 @@ void BloodFountain (edict_t *self, int number, vec3_t startpos, int damage)
 		velocity[0] *= 2;
 		velocity[1] *= 2;
 
-//		gi.WriteByte (svc_temp_entity);
-//		gi.WriteByte (TE_BLOOD_FOUNTAIN);
-//		gi.WritePosition (origin);
-//		gi.WritePosition (velocity);
-//		gi.WriteShort (50);
-//		gi.multicast (self->s.origin, MULTICAST_ALL);
-	}
+	//	gi.WriteByte (svc_temp_entity);
+	//	gi.WriteByte (TE_BLOOD_FOUNTAIN);
+	//	gi.WritePosition (origin);
+	//	gi.WritePosition (velocity);
+	//	gi.WriteShort (50);
+	//	gi.multicast (self->s.origin, MULTICAST_ALL);
+	} */
 }
 
 void ThrowSmallStuff (edict_t *self, vec3_t point)

@@ -34,8 +34,8 @@ vec4_t vec4_origin = {0,0,0,0};
 
 //============================================================================
 
-//#ifdef _WIN32
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)
+#ifdef _WIN32
+//#if defined (_MSC_VER) && (_MSC_VER <= 1200)
 #pragma optimize( "", off )
 #endif
 
@@ -94,8 +94,8 @@ void RotatePointAroundVector (vec3_t dst, const vec3_t dir, const vec3_t point, 
 	}
 }
 
-//#ifdef _WIN32
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)
+#ifdef _WIN32
+//#if defined (_MSC_VER) && (_MSC_VER <= 1200)
 #pragma optimize( "", on )
 #endif
 
