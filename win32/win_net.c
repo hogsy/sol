@@ -432,9 +432,9 @@ qboolean NET_GetPacket (netsrc_t sock, netadr_t *net_from, sizebuf_t *net_messag
 
 void NET_SendPacket (netsrc_t sock, int length, void *data, netadr_t to)
 {
-	int		ret;
+	int		ret = 0;
 	struct sockaddr	addr;
-	int		net_socket;
+	int		net_socket = 0;
 
 	if ( to.type == NA_LOOPBACK )
 	{

@@ -1753,23 +1753,23 @@ void PutClientInServer (edict_t *ent)
 	extern	int			nostatus;
 	vec3_t				mins = {-16, -16, -24};
 	vec3_t				maxs = {16, 16, 32};
-	int					index;
+	int					index = 0;
 	vec3_t				spawn_origin, spawn_angles, spawn_viewangles;
-	gclient_t			*client;
+	gclient_t			*client = NULL;
 	int		i;
 	// tpp
-	int					chasetoggle;
-	gitem_t				*newweapon;
+	int					chasetoggle = 0;
+	gitem_t				*newweapon = NULL;
     char				userinfo[MAX_INFO_STRING];
 	// end tpp
-	qboolean			spawn_landmark;
-	qboolean			spawn_levelchange;
-	int					spawn_gunframe;
-	int					spawn_modelframe;
-	int					spawn_anim_end;
-	int					spawn_pm_flags;
-	int					spawn_style;
-	int					spawn_health;
+	qboolean			spawn_landmark = false;
+	qboolean			spawn_levelchange= false;
+	int					spawn_gunframe = 0;
+	int					spawn_modelframe = 0;
+	int					spawn_anim_end = 0;
+	int					spawn_pm_flags = 0;
+	int					spawn_style = 0;
+	int					spawn_health = 0;
 	client_persistant_t	saved;
 	client_respawn_t	resp;
 

@@ -160,11 +160,11 @@ DumpReplaceFunctions
 */
 void DumpReplaceFunctions (char *typeName)
 {
-	replacefunc_t	*rf;
+	replacefunc_t	*rf = NULL;
 	char			path[_MAX_PATH];
 	FILE			*f;
 	int				len, newlen;
-	unsigned char	*buf, *newbuf;
+	unsigned char	*buf = NULL, *newbuf = NULL;
 	int				updated;
 	// Knightmare added
 	size_t			i, j, k, l;
@@ -773,9 +773,9 @@ GetFunctionNamesFromFile
 */
 void GetFunctionNamesFromFile (char *filename)
 {
-	source_t	*source;
-	token_t		token, lasttoken;
-	int			indent = 0, brace;
+	source_t	*source = NULL;
+	token_t		token, lasttoken = {0};
+	int			indent = 0, brace = 0;
 	int			isStatic = 0;
 	tokenList_t	*listHead;
 
@@ -885,7 +885,7 @@ void main (int argc, char *argv[])
 {
 	WIN32_FIND_DATA	filedata;
 	HWND			handle;
-	int				i, firstParm, done;
+	int				i, firstParm = 0, done = 0;
 	char			typeName[128];
 	qboolean		typeExtract = false;
 	qboolean		firstParmSet = false;

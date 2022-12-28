@@ -372,9 +372,9 @@ void ACESP_Respawn (edict_t *self)
 ///////////////////////////////////////////////////////////////////////
 edict_t *ACESP_FindFreeClient (void)
 {
-	edict_t *bot;
-	int	i;
-	int max_count=0;
+	edict_t	*bot = NULL;
+	int		i;
+	int		max_count = 0;
 	
 	// This is for the naming of the bots
 	for (i = maxclients->value; i > 0; i--)
@@ -511,11 +511,11 @@ static int NUM_BOT_SKINS = 0;
 ///////////////////////////////////////////////////////////////////////
 void ACESP_SetName(edict_t *bot, char *name, char *skin, char *team)
 {
-	float rnd;
+	float rnd = 0.0f;
 	char userinfo[MAX_INFO_STRING] = "";
 	char bot_skin[MAX_INFO_STRING] = "";
 	char bot_name[MAX_INFO_STRING] = "";
-	int i, r;
+	int i = 0, r = 0;
 
 	if (NUM_BOT_SKINS == 0)
 		NUM_BOT_SKINS = listSize(skinnames);

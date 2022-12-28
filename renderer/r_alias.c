@@ -392,7 +392,7 @@ void R_DrawAliasMeshes (maliasmodel_t *paliashdr, entity_t *e, qboolean mirrored
 	vec3_t			tempNormalsArray[MD3_MAX_VERTS];
 	vec2_t			tempSkinCoord;
 	vec3_t			meshlight, lightcolor;
-	float			alpha, meshalpha, thisalpha, shellscale, frontlerp, backlerp = e->backlerp, mirrormult;
+	float			alpha, meshalpha, thisalpha, shellscale, frontlerp, backlerp = e->backlerp, mirrormult = 1.0f;
 	image_t			*skin;
 	renderparms_t	skinParms;
 	qboolean		shellModel = e->flags & RF_MASK_SHELL;

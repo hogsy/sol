@@ -247,14 +247,14 @@ dflags		these flags are used to control how T_Damage works
 */
 static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
-	gclient_t	*client;
-	int			save;
-	int			power_armor_type;
-	int			index;
-	int			damagePerCell;
-	int			pa_te_type;
-	int			power=0;
-	int			power_used;
+	gclient_t	*client = NULL;
+	int			save = 0;
+	int			power_armor_type = 0;
+	int			index = 0;
+	int			damagePerCell = 0;
+	int			pa_te_type = 0;
+	int			power = 0;
+	int			power_used = 0;
 
 	if (!damage)
 		return 0;

@@ -2800,7 +2800,7 @@ qboolean UI_MenuListView_ValueChanged (menuListView_s *l)
 
 char *UI_MenuListView_Click (menuListView_s *l, qboolean mouse2)
 {
-	int			i, j, oldCurValue, x, y, lineSize, itemWidth, itemHeight, realItemHeight;
+	int			i, j, oldCurValue, x = 0, y = 0, lineSize, itemWidth, itemHeight, realItemHeight;
 	int			startItem, visibleItems[2], itemIncrement[2];
 	qboolean	scrollX, foundSelected = false;
 	char		*s = ui_menu_null_sound;
@@ -2885,7 +2885,7 @@ char *UI_MenuListView_Click (menuListView_s *l, qboolean mouse2)
 void UI_MenuListView_Draw (menuListView_s *l)
 {
 //	menuFramework_s	*menu = l->generic.parent;
-	int				i, j, x, y, lineSize, itemWidth, itemHeight, realItemHeight, boxWidth, boxHeight;
+	int				i, j, x = 0, y = 0, lineSize, itemWidth, itemHeight, realItemHeight, boxWidth, boxHeight;
 	int				startItem, visibleItems[2], itemIncrement[2];
 	int				hc[3];
 	int				hoverAlpha, copyLen;
@@ -3446,7 +3446,7 @@ qboolean UI_ItemCanBeCursorItem (void *item)
 	default:
 		return false;
 	}
-	return false;
+//	return false;
 }
 
 
@@ -3478,7 +3478,7 @@ qboolean UI_ItemIsValidCursorPosition (void *item)
 	default:
 		return true;
 	}
-	return true;
+//	return true;
 }
 
 
@@ -3506,7 +3506,7 @@ qboolean UI_ItemHasMouseBounds (void *item)
 	default:
 		return true;
 	}
-	return true;
+//	return true;
 }
 
 
@@ -3546,7 +3546,7 @@ char *UI_GetMenuItemValue (void *item)
 	default:
 		return "";
 	}
-	return "";
+//	return "";
 }
 
 
@@ -3786,7 +3786,7 @@ int UI_GetItemMouseoverType (void *item)
 		default:
 			return MENUITEM_NONE;
 	}
-	return MENUITEM_NONE;
+//	return MENUITEM_NONE;
 }
 
 

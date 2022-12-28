@@ -1229,13 +1229,13 @@ static void CL_FinishHTTPDownload (void)
 {
 	size_t		i;
 	int			msgs_in_queue;
-	CURLMsg		*msg;
+	CURLMsg		*msg = NULL;
 	CURLcode	result;
-	dlhandle_t	*dl;
-	CURL		*curl;
-	long		responseCode;
-	double		timeTaken;
-	double		fileSize;
+	dlhandle_t	*dl = NULL;
+	CURL		*curl = NULL;
+	long		responseCode = 0;
+	double		timeTaken = 0.0;
+	double		fileSize = 0.0;
 	char		tempName[MAX_OSPATH];
 	qboolean	isFile;
 	size_t		len;

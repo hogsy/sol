@@ -2945,7 +2945,7 @@ qboolean R_ModelIsValid (struct model_s *model)
 	default:
 		return false;
 	}
-	return false;
+//	return false;
 }
 
 //=============================================================================

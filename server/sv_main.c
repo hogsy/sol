@@ -121,7 +121,7 @@ Given an netadr_t, returns the matching client.
 */
 client_t *GetClientFromAdr (netadr_t address)
 {
-	client_t	*cl;
+	client_t	*cl = NULL;
 	int			i;
 	qboolean	found = false;
 

@@ -686,8 +686,8 @@ and PK3).
 */
 int FS_FOpenFile (const char *name, fileHandle_t *f, fsMode_t mode)
 {
-	fsHandle_t	*handle;
-	int			size;
+	fsHandle_t	*handle = NULL;
+	int			size = 0;
 
 	handle = FS_HandleForFile(name, f);
 
@@ -834,7 +834,7 @@ int FS_FOpenCompressedFile (const char *zipName, const char *fileName, fileHandl
 {
 	fsHandle_t	*handle = NULL;
 	char		name[MAX_OSPATH];
-	int			size;
+	int			size = 0;
 
 	Com_sprintf (name, sizeof(name), "%s/%s", zipName, fileName);
 	handle = FS_HandleForFile(name, f);
@@ -1016,11 +1016,11 @@ FS_Write
 Properly handles partial writes
 =================
 */
-int FS_Write (const void *buffer, int size, fileHandle_t f){
-
-	fsHandle_t	*handle;
-	int			remaining, w;
-	byte		*buf;
+int FS_Write (const void *buffer, int size, fileHandle_t f)
+{
+	fsHandle_t	*handle = NULL;
+	int			remaining = 0, w = 0;
+	byte		*buf = NULL;
 
 	handle = FS_GetFileByHandle(f);
 
@@ -1432,9 +1432,9 @@ FS_Seek
 */
 void FS_Seek (fileHandle_t f, int offset, fsOrigin_t origin)
 {
-	fsHandle_t		*handle;
+	fsHandle_t		*handle = NULL;
 	unz_file_info	info;
-	int				remaining, r, len;
+	int				remaining = 0, r, len;
 	byte			dummy[0x8000];
 
 	handle = FS_GetFileByHandle(f);

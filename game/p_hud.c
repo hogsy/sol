@@ -495,9 +495,9 @@ G_SetStats
 extern void WhatsIt(edict_t *ent);
 void G_SetStats (edict_t *ent)
 {
-	gitem_t		*item;
-	int			index, cells;
-	int			power_armor_type;
+	gitem_t		*item = NULL;
+	int			index = 0, cells = 0;
+	int			power_armor_type = 0;
 
 	//
 	// health

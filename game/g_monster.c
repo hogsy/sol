@@ -1080,20 +1080,20 @@ void InitiallyDead (edict_t *self)
 
 int PatchMonsterModel (char *modelname)
 {
-	cvar_t		*gamedir;
-	int			j;
-	int			numskins;			// number of skin entries
+	cvar_t		*gamedir = NULL;
+	int			j = 0;
+	int			numskins = 0;		// number of skin entries
 	char		skins[MAX_SKINS][MAX_SKINNAME];	// skin entries
 	char		infilename[MAX_OSPATH];
 	char		outfilename[MAX_OSPATH];
 	char		tempname[MAX_OSPATH];
-	char		*p;
-	FILE		*infile;
-	FILE		*outfile;
-	dmdl_t		model;				// model header
-	byte		*data;				// model data
-	int			datasize;			// model data size (bytes)
-	int			newoffset;			// model data offset (after skins)
+	char		*p = NULL;
+	FILE		*infile = NULL;
+	FILE		*outfile = NULL;
+	dmdl_t		model = {0};		// model header
+	byte		*data = NULL;		// model data
+	int			datasize = 0;		// model data size (bytes)
+	int			newoffset = 0;		// model data offset (after skins)
 	qboolean	is_tank=false;
 	qboolean	is_soldier=false;
 

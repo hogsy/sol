@@ -533,7 +533,7 @@ R_RenderParticle
 */
 void R_RenderParticle (particle_t *p)
 {
-	float		size, len, lighting = r_particle_lighting->value;
+	float		size = 0.0f, len = 0.0f, lighting = r_particle_lighting->value;
 	int			oldrender=0, rendertype=0, numVerts, numIndex;
 	
 	vec3_t		shadelight, move;

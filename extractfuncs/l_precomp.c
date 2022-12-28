@@ -319,6 +319,11 @@ void QDECL SourceError( source_t *source, char *str, ... )
 #ifdef MEQCC
 	printf( "error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text );
 #endif //MEQCC
+	// Knightmare added
+#ifdef SCREWUP
+	printf( "error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text );
+#endif	//SCREWUP
+	// end Knightmare
 #ifdef BSPC
 	Log_Print( "error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text );
 #endif //BSPC

@@ -949,7 +949,7 @@ CIN_ReadAudioFrame
 static void CIN_ReadAudioFrame (cinematic_t *cin)
 {
 	byte	data[0x40000];
-	int		samples;
+	int		samples = 0;
 
 	if (!cin->isRoQ)
 	{

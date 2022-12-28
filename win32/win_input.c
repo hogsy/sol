@@ -728,10 +728,10 @@ IN_StartupJoystick
 */  
 void IN_StartupJoystick (void) 
 { 
-	int			numdevs;
+	int			numdevs = 0;
 	JOYCAPS		jc;
-	MMRESULT	mmr;
-	cvar_t		*cv;
+	MMRESULT	mmr = 0;
+	cvar_t		*cv = NULL;
 
  	// assume no joystick
 	joy_avail = false; 

@@ -1906,9 +1906,9 @@ entlist_t DoNotMove[] = {
 void trans_ent_filename (char *filename, size_t filenameSize)
 {
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
-	SavegameDirRelativePath("save_x64/trans.ent", filename, filenameSize);
+	SavegameDirRelativePath ("save_x64/trans.ent", filename, filenameSize);
 #else
-	SavegameDirRelativePath("save/trans.ent", filename, filenameSize);
+	SavegameDirRelativePath ("save/trans.ent", filename, filenameSize);
 #endif
 }
 

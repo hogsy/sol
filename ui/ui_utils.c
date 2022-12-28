@@ -626,10 +626,10 @@ Used for fonts, huds, and crosshairs
 */
 char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *returnCount, int maxItems, qboolean stripExtension, qboolean frontInsert, qboolean (*checkName)(char *p))
 {
-	char	**list = 0, **itemFiles;
-	char	*path = NULL, *curItem, *p, *ext;
+	char	**list = 0, **itemFiles = 0;
+	char	*path = NULL, *curItem = NULL, *p = NULL, *ext = NULL;
 //	char	findName[1024];
-	int		nItems = 0, nItemNames, i, baseLen, extLen;
+	int		nItems = 0, nItemNames = 0, i, baseLen = 0, extLen = 0;
 
 	// check pointers
 	if (!dir || !nameMask || !firstItem || !returnCount || !checkName)
@@ -2209,8 +2209,8 @@ UI_AddToServerList
 void UI_AddToServerList (netadr_t adr, char *info)
 {
 	int		i;
-    int     iPing;
-    char    *pszProtocol;
+    int     iPing = 0;
+    char    *pszProtocol = NULL;
 
 	if (ui_num_servers == UI_MAX_LOCAL_SERVERS)
 		return;

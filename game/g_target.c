@@ -1771,11 +1771,11 @@ void SP_target_earthquake (edict_t *self)
 //
 void target_locator_init (edict_t *self)
 {
-	int num_points=0;
-	int i, N, nummoves;
-	qboolean looped;
-	edict_t *tgt0, *tgtlast, *target, *next;
-	edict_t *move;
+	int			num_points = 0;
+	int			i, N, nummoves;
+	qboolean	looped;
+	edict_t		*tgt0 = NULL, *tgtlast = NULL, *target = NULL, *next = NULL;
+	edict_t		*move = NULL;
 
 	move = NULL;
 	move = G_Find(move,FOFS(targetname),self->target);
@@ -1837,7 +1837,7 @@ void target_locator_init (edict_t *self)
 		{
 			target = next;
 			if (!(target->spawnflags & 1)) i++;
-			if (target==tgtlast)
+			if (target == tgtlast)
 			{
 				// We've looped thru all path_corners, but not
 				// reached the target number yet. This can only
@@ -1905,11 +1905,11 @@ void SP_target_locator (edict_t *self)
 
 void use_target_anger (edict_t *self, edict_t *other, edict_t *activator)
 {
-	edict_t		*kill_me, *movetarget;
-	edict_t		*t;
+	edict_t		*kill_me = NULL, *movetarget = NULL;
+	edict_t		*t = NULL;
 	vec3_t		vec;
-	float		dist, best_dist;
-	edict_t		*best_target;
+	float		dist = 0.0f, best_dist = 0.0f;
+	edict_t		*best_target = NULL;
 
 	if (self->pathtarget)
 		movetarget = G_PickTarget(self->pathtarget);

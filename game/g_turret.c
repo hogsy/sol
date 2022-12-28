@@ -744,10 +744,10 @@ void turret_breach_think (edict_t *self)
 	trace_t		tr;
 	vec3_t		dir, angles;
 	vec3_t		target;
-	qboolean	remote_monster;
-	qboolean	yaw_restrict;
-	float		yaw_r, yaw_0;
-	int			i;
+	qboolean	remote_monster = false;
+	qboolean	yaw_restrict = false;
+	float		yaw_r = 0.0f, yaw_0 = 0.0f;
+	int			i = 0;
 
 	turret_turn (self);
 	yaw_r = self->pos2[YAW] - self->pos1[YAW];

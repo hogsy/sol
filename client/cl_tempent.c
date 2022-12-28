@@ -836,15 +836,15 @@ static byte splash_color[] = {0x00, 0xe0, 0xb0, 0x50, 0xd0, 0xe0, 0xe8};
 
 void CL_ParseTEnt (void)
 {
-	int		type;
+	int		type = 0;
 	vec3_t	pos, pos2, dir;
 	explosion_t	*ex;
-	int		cnt;
-	int		color;
-	int		red, green, blue;
+	int		cnt = 0;
+	int		color = 0;
+	int		red = 0, green = 0, blue = 0;
 	int		r, i;
-	int		ent;
-	int		magnitude;
+	int		ent = 0;
+	int		magnitude = 0;
 
 	CL_FixParticleCvars (); // clamp critical effects vars to acceptable bounds
 
@@ -1692,18 +1692,18 @@ void CL_AddPlayerBeams (void)
 	int			i,j;
 	beam_t		*b;
 	vec3_t		dist, org;
-	float		d;
+	float		d = 0.0f;
 	entity_t	ent;
-	float		yaw, pitch;
-	float		forward;
-	float		len, steps;
-	int			framenum;
-	float		model_length;
-	float		hand_multiplier;
+	float		yaw = 0.0f, pitch = 0.0f;
+	float		forward = 0.0f;
+	float		len = 0.0f, steps = 0.0f;
+	int			framenum = 0;
+	float		model_length = 0.0f;
+	float		hand_multiplier = 0.0f;
 	frame_t		*oldframe;
 	player_state_t	*ps, *ops;
-	qboolean	firstperson, chasecam;
-	int			newhandmult;
+	qboolean	firstperson = false, chasecam = false;
+	int			newhandmult = 0;
 	vec3_t		thirdp_pbeam_offset;
 	vec3_t		pbeam_offset_dir;
 

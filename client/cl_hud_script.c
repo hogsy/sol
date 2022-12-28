@@ -1804,7 +1804,7 @@ Hud_CheckSkipIfStat
 qboolean Hud_CheckSkipIfStat (hudSkipIfStat_t *skipIfStat)
 {
 	int			i, increment;
-	qboolean	skipped;
+	qboolean	skipped = false;
 
 	increment = 0;
 	for (i = 0; i < skipIfStat->numCmps; i++)
@@ -1969,15 +1969,15 @@ Hud_DrawItem
 */
 void Hud_DrawItem (hudDrawItem_t *drawItem)
 {
-	hudSkipIfStat_t	*skipIfStat;
-	byte			*color;
-	char			*orgPic, *pic, *string;
-	char			num[16], *ptr;
+	hudSkipIfStat_t	*skipIfStat = NULL;
+	byte			*color = NULL;
+	char			*orgPic = NULL, *pic = NULL, *string = NULL;
+	char			num[16], *ptr = NULL;
 	char			shader[MAX_QPATH], shaderMinus[MAX_QPATH];
 	int				index, max_configstrings, max_images, cs_images;
-	int				i, number, value, width, l, frame;
-	int				minTemp, maxTemp;
-	float			refVal;
+	int				i, number = 0, value = 0, width = 0, l = 0, frame = 0;
+	int				minTemp = 0, maxTemp = 0;
+	float			refVal = 0.0f;
 	vec4_t			texCoord;
 	vec2_t			offset;
 
@@ -2232,9 +2232,9 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 	}
 	else if (drawItem->type == HUD_DRAWBAR)
 	{
-		float	x, y, w, h;	//, sl, tl, sh, th;
-		float	totalSize, rangeSize, percent, adjustedPercent;
-		int		minVal, maxVal;
+		float	x = 0, y = 0, w = 0, h = 0;	//, sl, tl, sh, th;
+		float	totalSize = 0.0f, rangeSize = 0.0f, percent = 0.0f, adjustedPercent = 0.0f;
+		int		minVal = 0, maxVal = 0;
 
 		if (drawItem->fromStat & HUD_STATVALUE)
 			value = cl.frame.playerstate.stats[drawItem->valueStat];

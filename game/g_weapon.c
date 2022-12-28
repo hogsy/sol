@@ -504,11 +504,11 @@ fire_grenade
 
 void Grenade_Evade (edict_t *monster)
 {
-	edict_t	*grenade;
+	edict_t	*grenade = NULL;
 	vec3_t	grenade_vec;
-	float	grenade_dist, best_r, best_yaw, r;
-	float	yaw;
-	int		i;
+	float	grenade_dist = 0.0f, best_r = 0.0f, best_yaw = 0.0f, r = 0.0f;
+	float	yaw = 0.0f;
+	int		i = 0;
 	vec3_t	forward;
 	vec3_t	pos, best_pos;
 	trace_t	tr;
@@ -966,12 +966,12 @@ fire_rocket
 
 void Rocket_Evade (edict_t *rocket, vec3_t	dir, float speed)
 {
-	float	rocket_dist, best_r, best_yaw, dist, r;
-	float	time;
-	float	dot;
-	float	yaw;
+	float	rocket_dist = 0.0f, best_r = 0.0f, best_yaw = 0.0f, dist = 0.0f, r = 0.0f;
+	float	time = 0.0f;
+	float	dot = 0.0f;
+	float	yaw = 0.0f;
 	int		i;
-	edict_t	*ent=NULL;
+	edict_t	*ent = NULL;
 	trace_t	tr;
 	vec3_t	hitpoint;
 	vec3_t	forward, pos, best_pos;

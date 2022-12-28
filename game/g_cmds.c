@@ -2364,7 +2364,7 @@ void ClientCommand (edict_t *ent)
 			e = LookingAt(ent, 0, NULL, NULL);
 			if (!e) return;
 	
-			SavegameDirRelativePath(parm, filename, sizeof(filename));
+			SavegameDirRelativePath (parm, filename, sizeof(filename));
 		//	strncat(filename, ".txt");
 			Q_strncatz (filename, sizeof(filename), ".txt");
 			gi.dprintf("Writing entity properties to %s... ", filename);

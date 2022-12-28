@@ -207,12 +207,12 @@ CL_DrawStringFromCharsPic
 void CL_DrawStringFromCharsPic (float x, float y, float w, float h, vec2_t offset, float width, char *string, color_t color, char *pic, int flags)
 {
 	vec4_t			modulate, shadowModulate, texCorners;
-	char			line[1024], *l;
-	int				len, ch;
-	float			xx, yy, ofsX, ofsY, col, row;
-	char			modifier;
-	int				red, green, blue, italic, shadow, bold, reset;
-	qboolean		modified;
+	char			line[1024], *l = NULL;
+	int				len = 0, ch = 0;
+	float			xx = 0.0f, yy = 0.0f, ofsX = 0.0f, ofsY = 0.0f, col = 0.0f, row = 0.0f;
+	char			modifier = 0;
+	int				red = 0, green = 0, blue = 0, italic = 0, shadow = 0, bold = 0, reset = 0;
+	qboolean		modified = false;
 	drawStruct_t	ds = { 0 };
 
 	Vector4Set (modulate, (float)color[0] * DIV255, (float)color[1] * DIV255, (float)color[2] * DIV255, (float)color[3] * DIV255);

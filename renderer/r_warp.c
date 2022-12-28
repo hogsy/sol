@@ -344,7 +344,6 @@ void RB_RenderWarpSurface (msurface_t *surf)
 				GL_MBind (1, glState.lightmap_textures + surf->lightmaptexturenum);
 
 			GL_EnableTexture(2);
-		//	GL_MBind(2, dst_texture_ARB);
 			GL_MBind(2, glMedia.distTextureARB->texnum);
 
 			GL_Enable (GL_FRAGMENT_PROGRAM_ARB);
@@ -354,7 +353,6 @@ void RB_RenderWarpSurface (msurface_t *surf)
 		else
 		{
 			GL_EnableTexture(1);
-		//	GL_MBind(1, dst_texture_ARB);
 			GL_MBind(1, glMedia.distTextureARB->texnum);
 
 			GL_Enable (GL_FRAGMENT_PROGRAM_ARB);
@@ -445,7 +443,7 @@ void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render)
 	{
 		c_brush_polys += (bp->numverts-2);
 		p = bp;
-		if (RB_CheckArrayOverflow (p->numverts, (p->numverts-2)*3))
+		if ( RB_CheckArrayOverflow(p->numverts, (p->numverts-2)*3) )
 			RB_RenderWarpSurface (surf);
 		for (i = 0; i < p->numverts-2; i++) {
 			indexArray[rb_index++] = rb_vertex;
@@ -464,8 +462,8 @@ void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render)
 			s += scroll;
 			s /= (float)texWidth;
 			t /= (float)texHeight;
+			VectorCopy (v->xyz, point);
 //=============== Water waves ========================
-			VectorCopy(v->xyz, point);
 			if ( r_waterwave->value > 0 && !(surf->texinfo->flags & SURF_FLOWING)
 				&& surf->plane->normal[2] > 0
 				&& surf->plane->normal[2] > surf->plane->normal[0]

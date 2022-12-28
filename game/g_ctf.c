@@ -886,13 +886,13 @@ order.
 */
 void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 {
-	int i;
-	edict_t *ent;
-	gitem_t *flag_item, *enemy_flag_item, *enemy_flag_item2; // Knightmare added
-	int otherteam, otherteam2; // Knightmare added
-	edict_t *flag, *carrier;
-	char *c;
-	vec3_t v1, v2;
+	int		i;
+	edict_t *ent = NULL;
+	gitem_t *flag_item = NULL, *enemy_flag_item = NULL, *enemy_flag_item2 = NULL; // Knightmare added
+	int		otherteam, otherteam2; // Knightmare added
+	edict_t	*flag = NULL, *carrier = NULL;
+	char	*c = NULL;
+	vec3_t	v1, v2;
 
 	if (targ->client && attacker->client) {
 		if (attacker->client->resp.ghost)
@@ -1049,7 +1049,7 @@ void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 
 void CTFCheckHurtCarrier (edict_t *targ, edict_t *attacker)
 {
-	gitem_t *flag_item1, *flag_item2;
+	gitem_t *flag_item1 = NULL, *flag_item2 = NULL;
 
 	if (!ctf->value)
 		return;

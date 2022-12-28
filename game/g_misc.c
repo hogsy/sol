@@ -4357,19 +4357,19 @@ MISC_DEADSOLDIER MODEL PATCH
 
 int PatchDeadSoldier (void)
 {
-	cvar_t		*gamedir;
+	cvar_t		*gamedir = NULL;
 	char		skins[NUM_SKINS][MAX_SKINNAME];	// skin entries
 	char		infilename[MAX_OSPATH];
 	char		outfilename[MAX_OSPATH];
 	char		tempname[MAX_OSPATH];
 	int			j;
-//	char		*p;
-	FILE		*infile;
-	FILE		*outfile;
-	dmdl_t		model;				// model header
-	byte		*data;				// model data
-	int			datasize;			// model data size (bytes)
-	int			newoffset;			// model data offset (after skins)
+//	char		*p = NULL;
+	FILE		*infile = NULL;
+	FILE		*outfile = NULL;
+	dmdl_t		model = {0};		// model header
+	byte		*data = NULL;		// model data
+	int			datasize = 0;		// model data size (bytes)
+	int			newoffset = 0;		// model data offset (after skins)
 
 	// get game (moddir) name
 	gamedir = gi.cvar("game", "", 0);

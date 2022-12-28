@@ -475,9 +475,9 @@ void actorGrenadeLauncher (edict_t *self)
 	if (aim[2] < 1.0)
 	{
 		float	cosa, t, x, vx, y;
-		float	drop;
-		float	last_error, last_up, v_error;
-		int		i;
+		float	drop = 0.0f;
+		float	last_error = 0.0f, last_up = 0.0f, v_error = 0.0f;
+		int		i = 0;
 
 		VectorCopy (forward, target);	// save target point
 		// horizontal distance to target
