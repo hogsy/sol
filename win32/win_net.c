@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // win_net.c
 
-#include "winsock.h"
+#include "winsock2.h"	// Knightmare- use newer winsock, was winsock.h
 #include "wsipx.h"
 #include "winnewerror.h"
 #include "../qcommon/qcommon.h"

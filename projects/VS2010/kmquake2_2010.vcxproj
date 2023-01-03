@@ -95,7 +95,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;glu32.lib;libjpeg_d.lib;zlib_d.lib;libogg_d.lib;libvorbisfile_d.lib;libpng_d.lib;libcurl_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;glu32.lib;libjpeg_d.lib;zlib_d.lib;libogg_d.lib;libvorbisfile_d.lib;libpng_d.lib;libcurl_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./kmquake2.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\win32\lib\VS2008\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -128,7 +128,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;wsock32.lib;glu32.lib;libjpeg_r.lib;zlib_r.lib;libogg_r.lib;libvorbisfile_r.lib;libpng_r.lib;libcurl_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;glu32.lib;libjpeg_r.lib;zlib_r.lib;libogg_r.lib;libvorbisfile_r.lib;libpng_r.lib;libcurl_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./kmquake2.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\win32\lib\VS2008\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -162,7 +162,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;glu32.lib;libcurl_x64_d.lib;libjpeg_x64_d.lib;libogg_x64_d.lib;libvorbisfile_x64_d.lib;zlib_x64_d.lib;libpng_x64_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;glu32.lib;libcurl_x64_d.lib;libjpeg_x64_d.lib;libogg_x64_d.lib;libvorbisfile_x64_d.lib;zlib_x64_d.lib;libpng_x64_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./kmquake2_x64.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\win32\lib\VS2008_x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -197,7 +197,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;wsock32.lib;glu32.lib;libcurl_x64_r.lib;libjpeg_x64_r.lib;libogg_x64_r.lib;libvorbisfile_x64_r.lib;zlib_x64_r.lib;libpng_x64_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;glu32.lib;libcurl_x64_r.lib;libjpeg_x64_r.lib;libogg_x64_r.lib;libvorbisfile_x64_r.lib;zlib_x64_r.lib;libpng_x64_r.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./kmquake2_x64.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\win32\lib\VS2008_x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBC;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
