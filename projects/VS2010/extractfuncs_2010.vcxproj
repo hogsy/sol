@@ -80,6 +80,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <OutputFile>..\..\tools_bin\extractfuncs.exe</OutputFile>
@@ -108,6 +109,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <OutputFile>..\..\tools_bin\extractfuncs_x64.exe</OutputFile>
@@ -135,6 +137,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <OutputFile>..\..\tools_bin\extractfuncs.exe</OutputFile>
@@ -162,6 +165,7 @@
       <DisableSpecificWarnings>4996;4201;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <OutputFile>..\..\tools_bin\extractfuncs_x64.exe</OutputFile>

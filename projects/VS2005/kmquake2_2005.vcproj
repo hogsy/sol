@@ -324,6 +324,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\client\cl_qcurl.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\client\cl_screen.c"
 					>
 				</File>
@@ -767,6 +771,10 @@
 			</File>
 			<File
 				RelativePath="..\..\qcommon\qcommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\client\qcurl.h"
 				>
 			</File>
 			<File

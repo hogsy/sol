@@ -61,36 +61,30 @@ CL_RegisterSounds
 */
 void CL_RegisterSounds (void)
 {
-	int		i;
+	int		i, cs_sounds, max_sounds;
+
+	// Knightmare- hack for connected to server using old protocol
+	// Changed config strings require different parsing
+	if ( LegacyProtocol() ) {
+		max_sounds = OLD_MAX_SOUNDS;
+		cs_sounds = OLD_CS_SOUNDS;
+	}
+	else {
+		max_sounds = MAX_SOUNDS;
+		cs_sounds = CS_SOUNDS;
+	}
 
 	S_BeginRegistration ();
 	CL_RegisterTEntSounds ();
 
-	// Knightmare- 1/2/2002- ULTRA-CHEESY HACK for old demos or
-	// connected to server using old protocol
-	// Changed config strings require different offsets
-	if ( LegacyProtocol() )
+	for (i=1; i < max_sounds; i++)
 	{
-		for (i=1; i < OLD_MAX_SOUNDS; i++)
-		{
-			if (!cl.configstrings[OLD_CS_SOUNDS+i][0])
-				break;
-			cl.sound_precache[i] = S_RegisterSound (cl.configstrings[OLD_CS_SOUNDS+i]);
-			Sys_SendKeyEvents ();	// pump message loop
-		}
+		if (!cl.configstrings[cs_sounds+i][0])
+			break;
+		cl.sound_precache[i] = S_RegisterSound (cl.configstrings[cs_sounds+i]);
+		Sys_SendKeyEvents ();	// pump message loop
+	}
 
-	}
-	else
-	{
-		for (i=1; i < MAX_SOUNDS; i++)
-		{
-			if (!cl.configstrings[CS_SOUNDS+i][0])
-				break;
-			cl.sound_precache[i] = S_RegisterSound (cl.configstrings[CS_SOUNDS+i]);
-			Sys_SendKeyEvents ();	// pump message loop
-		}
-	}
-	//end Knightmare
 	S_EndRegistration ();
 }
 
@@ -216,7 +210,6 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 		s = t+1;
 	}
 
-//	if (cl_noskins->value || *s == 0)
 	if (cl_noskins->integer || *s == 0)
 	{
 		Com_sprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
@@ -292,7 +285,6 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 				Com_sprintf (weapon_filename, sizeof(weapon_filename), "players/male/%s", cl_weaponmodels[i]);
 				ci->weaponmodel[i] = R_RegisterModel(weapon_filename);
 			}
-		//	if (!cl_vwep->value)
 			if (!cl_vwep->integer)
 				break; // only one when vwep is off
 		}
@@ -350,19 +342,17 @@ as track02-track11, and the Rogue CD as track12-track21.
 */
 int CL_MissionPackCDTrack (int tracknum)
 {
-//	if (FS_ModType("rogue") || cl_rogue_music->value)
-	if (FS_ModType("rogue") || cl_rogue_music->integer)
+	if ( FS_ModType("rogue") || cl_rogue_music->integer )
 	{
-		if (tracknum >= 2 && tracknum <= 11)
+		if ( (tracknum >= 2) && (tracknum <= 11) )
 			return tracknum + 10;
 		else
 			return tracknum;
 	}
 	// an out-of-order mix from Q2 and Rogue CDs
-//	else if (FS_ModType("xatrix") || cl_xatrix_music->value)
-	else if (FS_ModType("xatrix") || cl_xatrix_music->integer)
+	else if ( FS_ModType("xatrix") || cl_xatrix_music->integer )
 	{
-		switch(tracknum)
+		switch (tracknum)
 		{
 			case 2: return 9;	break;
 			case 3: return 13;	break;
@@ -422,7 +412,6 @@ void CL_PlayBackgroundTrack (void)
 
 	// If an OGG file exists play it, otherwise fall back to CD audio
 	Com_sprintf (name, sizeof(name), "music/track%02i.ogg", CL_MissionPackCDTrack(track));
-//	if ( (FS_LoadFile(name, NULL) != -1) && cl_ogg_music->value )
 	if ( (FS_LoadFile(name, NULL) != -1) && cl_ogg_music->integer )
 		S_StartBackgroundTrack(name, name);
 	else
@@ -501,17 +490,20 @@ void CL_ParseConfigString (void)
 		maxLength =  MAX_QPATH * (CS_AIRACCEL - i);
 		if (length >= maxLength)
 			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in CS_STATUSBAR of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	//	Com_Printf("CL_ParseConfigString: CS_STATUSBAR %i: '%s', maxlen=%i\n", i, s, (sizeof(cl.configstrings[i]) * (CS_AIRACCEL - i))-1);
 	}
 	// Allow writes to general strings to overflow
 	else if ( LegacyProtocol() && ( (i >= OLD_CS_GENERAL) && (i < OLD_MAX_CONFIGSTRINGS) ) ) {
 		maxLength =  MAX_QPATH * (OLD_MAX_CONFIGSTRINGS - i);
 		if (length >= maxLength)
 			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in OLD_CS_GENERAL of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	//	Com_Printf("CL_ParseConfigString: CS_GENERAL %i: '%s', maxlen=%i\n", i, s, (sizeof(cl.configstrings[i]) * (OLD_MAX_CONFIGSTRINGS - i))-1);
 	}
 	else if ( !LegacyProtocol() && ( (i >= CS_GENERAL) && (i < CS_HUDVARIANT) ) ) {
 		maxLength =  MAX_QPATH * (CS_HUDVARIANT - i);
 		if (length >= maxLength)
 			Com_Printf(S_COLOR_YELLOW"CL_ParseConfigString: string %d in CS_GENERAL of length %d exceeds %d.\n", i, (int)length, (int)maxLength);
+	//	Com_Printf("CL_ParseConfigString: CS_GENERAL %i: '%s', maxlen=%i\n", i, s, (sizeof(cl.configstrings[i]) * (CS_HUDVARIANT - i))-1);	
 	}
 	else {
 		maxLength = MAX_QPATH;
@@ -589,7 +581,7 @@ ACTION MESSAGES
 CL_ParseStartSoundPacket
 ==================
 */
-void CL_ParseStartSoundPacket(void)
+void CL_ParseStartSoundPacket (void)
 {
     vec3_t  pos_v;
 	float	*pos;
@@ -709,42 +701,11 @@ void CL_ParsePrint (void)
 }
 
 
-void SHOWNET(char *s)
+void SHOWNET (char *s)
 {
-//	if (cl_shownet->value >= 2)
 	if (cl_shownet->integer >= 2)
 		Com_Printf ("%3i:%s\n", net_message.readcount-1, s);
 }
-
-
-/*
-=====================
-CL_ParseStuffText
-Catches stuffed quit or error commands from the server.
-Shutting down suddenly in this way can hang some SMP systems.
-This simply disconnects, same effect as kicking player.
-=====================
-*/
-/*qboolean CL_ParseStuffText (char *stufftext)
-{
-	char	*parsetext = stufftext;
-
-	// skip leading spaces
-	while (*parsetext == ' ') parsetext++;
-	if (strncmp(parsetext, "quit", 4))
-	{
-		Com_Printf("server stuffed quit command, disconnecting...\n");
-		CL_Disconnect ();
-		return false;
-	}
-	if (strncmp(parsetext, "error", 5))    	
-	{
-		Com_Printf("server stuffed error command, disconnecting...\n");
-		CL_Disconnect ();
-		return false;
-	}
-	return true;
-}*/
 
 
 /*
@@ -778,10 +739,14 @@ qboolean CL_FilterStuffText (char *stufftext, size_t textSize)
 		0
 	};
 
+	// catch null pointer
+	if ( !stufftext )
+		return true;
+
 	stuffLen = (int)strlen(stufftext);
 
 	// nothing to filter?
-	if ( !stufftext || (stuffLen == 0) )
+	if (stuffLen == 0)
 		return true;
 
 	do
@@ -877,8 +842,8 @@ CL_ParseFog
 // gi.WriteByte (fog_enable); // 1 = on, 0 = off
 // gi.WriteByte (fog_model); // 0, 1, or 2
 // gi.WriteByte (fog_density); // 1-100
-// gi.WriteShort (fog_near); // >0, <fog_far
-// gi.WriteShort (fog_far); // >fog_near-64, <5000
+// gi.WriteShort (fog_near); // >0, < fog_far
+// gi.WriteShort (fog_far); // >fog_near-64, < 10000
 // gi.WriteByte (fog_red); // 0-255
 // gi.WriteByte (fog_green); // 0-255
 // gi.WriteByte (fog_blue); // 0-255
@@ -918,10 +883,8 @@ void CL_ParseServerMessage (void)
 //
 // if recording demos, copy the message out
 //
-//	if (cl_shownet->value == 1)
 	if (cl_shownet->integer == 1)
 		Com_Printf ("%i ",net_message.cursize);
-//	else if (cl_shownet->value >= 2)
 	else if (cl_shownet->integer >= 2)
 		Com_Printf ("------------------\n");
 
@@ -945,7 +908,6 @@ void CL_ParseServerMessage (void)
 			break;
 		}
 
-	//	if (cl_shownet->value >= 2)
 		if (cl_shownet->integer >= 2)
 		{
 			if (!svc_strings[cmd])
@@ -985,8 +947,8 @@ void CL_ParseServerMessage (void)
 			if (i == PRINT_CHAT)
 			{
 				S_StartLocalSound ("misc/talk.wav");
-			//	con.ormask = 128;	// Knightmare- made redundant by color code
-				Com_Printf (S_COLOR_ALT"%s", MSG_ReadString (&net_message)); // Knightmare- add green flag
+			//	con.ormask = 128;	// made redundant by color code
+				Com_Printf (S_COLOR_ALT"%s", MSG_ReadString (&net_message)); // add green flag
 			}
 			else
 				Com_Printf ("%s", MSG_ReadString (&net_message));

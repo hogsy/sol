@@ -57,7 +57,7 @@ cvar_t	*cl_noskins;
 cvar_t	*cl_footsteps;
 cvar_t	*cl_timeout;
 cvar_t	*cl_predict;
-//cvar_t	*cl_minfps;
+//cvar_t	*cl_minfps;	// unused
 cvar_t	*cl_maxfps;
 
 #ifdef CLIENT_SPLIT_NETFRAME
@@ -77,7 +77,7 @@ cvar_t	*cl_weapon_shells;
 // reduction factor for particle effects
 cvar_t	*cl_particle_scale;
 
-// whether to adjust fov for wide aspect rattio
+// whether to adjust fov for wide aspect ratio
 cvar_t	*cl_widescreen_fov;
 
 // hook to simplify Lazarus zoom feature
@@ -138,10 +138,6 @@ cvar_t	*cl_timedemo;
 cvar_t	*lookspring;
 cvar_t	*lookstrafe;
 cvar_t	*sensitivity;
-
-//cvar_t	*menu_sensitivity;
-//cvar_t	*menu_rotate;
-//cvar_t	*menu_alpha;
 
 cvar_t	*m_pitch;
 cvar_t	*m_yaw;
@@ -823,7 +819,7 @@ CL_Pause_f
 void CL_Pause_f (void)
 {
 	// never pause in multiplayer
-	if (Cvar_VariableValue ("maxclients") > 1 || !Com_ServerState ())
+	if ( (Cvar_VariableValue ("maxclients") > 1) || !Com_ServerState () )
 	{
 		Cvar_SetValue ("paused", 0);
 		return;
@@ -925,7 +921,7 @@ void CL_CheckForResend (void)
 
 	// if the local server is running and we aren't
 	// then connect
-	if (cls.state == ca_disconnected && Com_ServerState() )
+	if ( (cls.state == ca_disconnected) && Com_ServerState() )
 	{
 		cls.state = ca_connecting;
 		strncpy (cls.servername, "localhost", sizeof(cls.servername)-1);
@@ -972,7 +968,7 @@ void CL_Connect_f (void)
 
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf ("usage: connect <server>\n");
+		Com_Printf ("Usage: connect <server>\n");
 		return;	
 	}
 	
@@ -1111,7 +1107,6 @@ Sends a disconnect message to the server
 This is also called on Com_Error, so it shouldn't cause any errors
 =====================
 */
-extern	char	*ui_currentweaponmodel;
 void CL_Disconnect (void)
 {
 	byte	final[32];
@@ -1119,7 +1114,6 @@ void CL_Disconnect (void)
 	if (cls.state == ca_disconnected)
 		return;
 
-//	if (cl_timedemo && cl_timedemo->value)
 	if (cl_timedemo && cl_timedemo->integer)
 	{
 		int	time;
@@ -1131,9 +1125,9 @@ void CL_Disconnect (void)
 	}
 
 	VectorClear (cl.refdef.blend);
-	//R_SetPalette(NULL);
+//	R_SetPalette(NULL);
 
-	UI_ForceMenuOff ();
+//	UI_ForceMenuOff ();
 
 	cls.connect_time = 0;
 
@@ -1166,6 +1160,9 @@ void CL_Disconnect (void)
 #endif	// USE_CURL
 
 	cls.state = ca_disconnected;
+
+	// show disconnect message in console
+	cls.consoleActive = true; 
 
 	// reset current weapon model
 	ui_currentweaponmodel = NULL;
@@ -1370,7 +1367,7 @@ void CL_PingServers_f (void)
 		if (!adr.port)
 			adr.port = BigShort(PORT_SERVER);
         
-        memcpy(&global_adr_server_netadr[i], &adr, sizeof(global_adr_server_netadr));
+        memcpy(&global_adr_server_netadr[i], &adr, sizeof(global_adr_server_netadr[0]));
 
 		// Send both protocol versions, we'll get a reply from one or the other
 		Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", OLD_PROTOCOL_VERSION));
@@ -1468,39 +1465,25 @@ Load or download any custom player skins and models
 */
 void CL_Skins_f (void)
 {
-	int		i;
+	int		i, cs_playerskins;
 
-	for (i=0 ; i<MAX_CLIENTS ; i++)
+	// Knightmare- hack for connected to server using old protocol
+	// Changed config strings require different parsing
+	if ( LegacyProtocol() )
+		cs_playerskins = OLD_CS_PLAYERSKINS;
+	else
+		cs_playerskins = CS_PLAYERSKINS;
+
+	for (i=0; i<MAX_CLIENTS; i++)
 	{
-		// BIG UGLY HACK for old connected to server using old protocol
-		// Changed config strings require different parsing
-		if ( LegacyProtocol() )
-		{
-			if (!cl.configstrings[OLD_CS_PLAYERSKINS+i][0])
-				continue;
-			Com_Printf ("client %i: %s\n", i, cl.configstrings[OLD_CS_PLAYERSKINS+i]); 
+		if (!cl.configstrings[cs_playerskins+i][0])
+			continue;
+		Com_Printf ("client %i: %s\n", i, cl.configstrings[cs_playerskins+i]); 
 
-		} else {
-			if (!cl.configstrings[CS_PLAYERSKINS+i][0])
-				continue;
-			Com_Printf ("client %i: %s\n", i, cl.configstrings[CS_PLAYERSKINS+i]); 
-		}
 		SCR_UpdateScreen ();
 		Sys_SendKeyEvents ();	// pump message loop
 		CL_ParseClientinfo (i);
 	}
-}
-
-
-/*
-=================
-CL_AACSkey_f
-=================
-*/
-void CL_AACSkey_f (void)
-{
-	Com_Printf ("AACS processing keys: 09 F9 11 02 9D 74 E3 5B D8 41 56 C5 63 56 88 C0\n");
-	Com_Printf ("                      45 5F E1 04 22 CA 29 C4 93 3F 95 05 2B 79 2A B2\n");
 }
 
 
@@ -1548,11 +1531,17 @@ void CL_ConnectionlessPacket (void)
 			if ( !strncmp (p, "dlserver=", 9) )
 			{
 #ifdef USE_CURL
-				p += 9;
-				Com_sprintf (cls.downloadReferer, sizeof(cls.downloadReferer), "quake2://%s", buff);
-				CL_SetHTTPServer (p);
-				if ( cls.downloadServer[0] )
-					Com_Printf ("HTTP downloading enabled, URL: %s\n", cls.downloadServer);
+				if ( qcurl_initialized )
+				{
+					p += 9;
+					Com_sprintf (cls.downloadReferer, sizeof(cls.downloadReferer), "quake2://%s", buff);
+					CL_SetHTTPServer (p);
+					if ( cls.downloadServer[0] )
+						Com_Printf ("HTTP downloading enabled, URL: %s\n", cls.downloadServer);
+				}
+				else {
+					Com_Printf ("HTTP downloading supported by server, but %s couldn't be loaded.\n", CURL_LIBNAME);
+				}
 #else
 				Com_Printf ("HTTP downloading supported by server but this client was built without USE_CURL, too bad.\n");
 #endif	// USE_CURL
@@ -1766,8 +1755,8 @@ void CL_ReadPackets (void)
 	//
 	// check timeout
 	//
-	if (cls.state >= ca_connected
-	 && cls.realtime - cls.netchan.last_received > cl_timeout->value*1000)
+	if ( (cls.state >= ca_connected)
+	 && ( (cls.realtime - cls.netchan.last_received) > cl_timeout->value*1000) )
 	{
 		if (++cl.timeoutcount > 5)	// timeoutcount saves debugger
 		{
@@ -1794,7 +1783,6 @@ void CL_FixUpGender(void)
 	char *p;
 	char sk[80];
 
-//	if (gender_auto->value)
 	if (gender_auto->integer)
 	{
 		if (gender->modified)
@@ -2010,7 +1998,7 @@ void CL_InitLocal (void)
 	cl_particle_scale = Cvar_Get ("cl_particle_scale", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_particle_scale", "Scales down particle effects for better performance.  Higher value = fewer particles.");
 
-	// whether to adjust fov for wide aspect rattio
+	// whether to adjust fov for wide aspect ratio
 	cl_widescreen_fov = Cvar_Get ("cl_widescreen_fov", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_widescreen_fov", "Enables automatic scaling of FOV for widescreen video modes.");
 
@@ -2031,12 +2019,12 @@ void CL_InitLocal (void)
 	cl_async = Cvar_Get ("cl_async", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("cl_async", "Enables asynchronous frame rendering.  Network frames and renderer frames are separated.  Uses r_maxfps and net_maxfps cvars.");
 	net_maxfps = Cvar_Get ("net_maxfps", "60", 0);
-	Cvar_SetDescription ("net_maxfps", "Framerate cap for network frames when cl_async (asynchronous frames) is set to 1.");
+	Cvar_SetDescription ("net_maxfps", "Framerate cap for network frames when cl_async (asynchronous frames) is set to 1.  Set to 100 to allow those box jumps in Q2DM8.");
 	r_maxfps = Cvar_Get ("r_maxfps", "125", 0);
 	Cvar_SetDescription ("r_maxfps", "Framerate cap for video frames when cl_async (asynchronous frames) is set to 1.");
 	r_maxfps_autoset = Cvar_Get ("r_maxfps_autoset", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("r_maxfps_autoset", "Enables automatic setting of framerate cap (r_maxfps) based on refresh rate.  Does nothing when refresh rate is left at default.");
-#endif
+#endif	// CLIENT_SPLIT_NETFRAME
 
 	cl_sleep = Cvar_Get ("cl_sleep", "1", 0); 
 	Cvar_SetDescription ("cl_sleep", "Enables application sleep between render and network frames.  Reduces CPU usage when enabled.");
@@ -2264,8 +2252,6 @@ void CL_InitLocal (void)
 
 	Cmd_AddCommand ("writeconfig", CL_WriteConfig_f);
 
-	Cmd_AddCommand ("aacskey", CL_AACSkey_f);
-
 	// Chat Ignore from R1Q2/Q2Pro
 	Cmd_AddCommand ("ignorenick", CL_IgnoreChatNick_f);
 	Cmd_AddCommand ("unignorenick", CL_UnIgnoreChatNick_f);
@@ -2358,8 +2344,6 @@ void CL_ShutdownLocal (void)
 
 	Cmd_RemoveCommand ("writeconfig");
 
-	Cmd_RemoveCommand ("aacskey");
-
 	// Chat Ignore from R1Q2/Q2Pro
 	Cmd_RemoveCommand ("ignorenick");
 	Cmd_RemoveCommand ("unignorenick");
@@ -2407,7 +2391,7 @@ void CL_ShutdownLocal (void)
 ===============
 CL_WriteConfiguration
 
-Writes key bindings and archived cvars to config.cfg
+Writes key bindings and archived cvars to config file
 ===============
 */
 qboolean CL_WriteConfiguration (char *cfgName)
@@ -2426,9 +2410,8 @@ qboolean CL_WriteConfiguration (char *cfgName)
 	Com_sprintf (path, sizeof(path),"%s/%s.cfg", FS_Savegamedir(), cfgName);	// was FS_Gamedir()
 	f = fopen (path, "w");
 	if (!f)
-	{	// Knightmare changed- use separate config for better cohabitation
-		//Com_Printf ("Couldn't write config.cfg.\n");
-	//	Com_Printf ("Couldn't write kmq2config.cfg.\n");
+	{
+	//	Com_Printf ("Couldn't write config.cfg.\n");
 		Com_Printf ("Couldn't write %s.cfg.\n", cfgName);
 		return false;
 	}
@@ -2459,7 +2442,7 @@ void CL_WriteConfig_f (void)
 		if (Cmd_Argc() == 1)
 			Com_sprintf (cfgName, sizeof(cfgName), "kmq2config");
 		else // if (Cmd_Argc() == 2)
-			strncpy (cfgName, Cmd_Argv(1), sizeof(cfgName));
+			Q_strncpyz (cfgName, sizeof(cfgName), Cmd_Argv(1));
 
 		if (CL_WriteConfiguration (cfgName))
 			Com_Printf ("Wrote config file %s/%s.cfg.\n", FS_Savegamedir(), cfgName);	// was FS_Gamedir()
@@ -2640,7 +2623,6 @@ void CL_Frame_Async (int msec)
 	if (msec > 5000)
 		cls.netchan.last_received = Sys_Milliseconds ();
 
-//	if (!cl_timedemo->value)
 	if (!cl_timedemo->integer)
 	{	// Don't flood packets out while connecting
 		if (cls.state == ca_connected && packetDelta < 100)
@@ -2660,7 +2642,6 @@ void CL_Frame_Async (int msec)
 		
 		if (!packetFrame && !renderFrame && !cls.forcePacket && !userinfo_modified)
 		{	// Pooy's CPU usage fix
-		//	if (cl_sleep->value)
 			if (cl_sleep->integer)
 			{
 				int temptime = min( (1000.0 / net_maxfps->value - packetDelta), (1000.0 / r_maxfps->value - renderDelta) );
@@ -2729,11 +2710,9 @@ void CL_Frame_Async (int msec)
 	//	CL_PredictMovement ();
 
 		// update the screen
-	//	if (host_speeds->value)
 		if (host_speeds->integer)
 			time_before_ref = Sys_Milliseconds ();
 		SCR_UpdateScreen ();
-	//	if (host_speeds->value)
 		if (host_speeds->integer)
 			time_after_ref = Sys_Milliseconds ();
 
@@ -2758,7 +2737,6 @@ void CL_Frame_Async (int msec)
 
 		cls.framecount++;
 
-	//	if (log_stats->value)
 		if (log_stats->integer)
 		{
 			if (cls.state == ca_active)
@@ -2790,7 +2768,7 @@ CL_SendCommand
 
 ==================
 */
-void CL_SendCommand (void)
+static void CL_SendCommand (void)
 {
 	// get new key events
 	Sys_SendKeyEvents ();
@@ -2823,13 +2801,12 @@ void CL_Frame (int msec)
 	static int	extratime;
 	static int  lasttimecalled;
 
-//	if (dedicated->value)
 	if (dedicated->integer)
 		return;
 
 #ifdef CLIENT_SPLIT_NETFRAME
-//	if (cl_async->value && !cl_timedemo->value)
-	if (cl_async->integer && !cl_timedemo->value)
+//	if (cl_async->integer)
+	if (cl_async->integer && !cl_timedemo->integer)
 	{
 		CL_Frame_Async (msec);
 		return;
@@ -2845,7 +2822,6 @@ void CL_Frame (int msec)
 	if (cl_maxfps->integer > 500)
 		Cvar_SetInteger ("cl_maxfps", 500);
 
-//	if (!cl_timedemo->value)
 	if (!cl_timedemo->integer)
 	{
 		if (cls.state == ca_connected && extratime < 100)
@@ -2853,7 +2829,6 @@ void CL_Frame (int msec)
 		if (extratime < 1000.0 / cl_maxfps->value)
 		{	
 			// Pooy's CPU usage fix
-		//	if (cl_sleep->value)
 			if (cl_sleep->integer)
 			{
 				int temptime = 1000 / cl_maxfps->value - extratime;
@@ -2921,11 +2896,9 @@ void CL_Frame (int msec)
 		CL_PrepRefresh ();
 
 	// update the screen
-//	if (host_speeds->value)
 	if (host_speeds->integer)
 		time_before_ref = Sys_Milliseconds ();
 	SCR_UpdateScreen ();
-//	if (host_speeds->value)
 	if (host_speeds->integer)
 		time_after_ref = Sys_Milliseconds ();
 
@@ -2947,7 +2920,6 @@ void CL_Frame (int msec)
 
 	cls.framecount++;
 
-//	if ( log_stats->value )
 	if ( log_stats->integer )
 	{
 		if ( cls.state == ca_active )
@@ -2980,7 +2952,6 @@ CL_Init
 */
 void CL_Init (void)
 {
-//	if (dedicated->value)
 	if (dedicated->integer)
 		return;		// nothing running on the client
 
@@ -2999,8 +2970,6 @@ void CL_Init (void)
 	
 	net_message.data = net_message_buffer;
 	net_message.maxsize = sizeof(net_message_buffer);
-
-	UI_Init ();	
 	
 	SCR_Init ();
 	cls.disable_screen = true;	// don't draw yet
@@ -3008,8 +2977,10 @@ void CL_Init (void)
 	CDAudio_Init ();
 	CL_InitLocal ();
 	IN_Init ();
+	UI_Init ();	
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
+	QCURL_Init ();
 	CL_InitHTTPDownloads ();
 #endif	// USE_CURL
 
@@ -3042,6 +3013,7 @@ void CL_Shutdown (void)
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
 	CL_HTTP_Cleanup (true);
+	QCURL_Shutdown ();
 #endif	// USE_CURL
 
 	CL_WriteConfiguration ("kmq2config"); 

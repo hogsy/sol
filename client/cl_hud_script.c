@@ -46,9 +46,9 @@ SCRIPTED HUD PARSING
 Hud_NameForDrawItem
 ================
 */
+static char	hud_itemname_buf[MAX_QPATH+18];
 char *Hud_NameForDrawItem (hudDrawItem_t *drawItem)
 {
-	char	buf[MAX_QPATH+18];
 	char	*temp, *typeName;
 
 	if (!drawItem) {
@@ -68,11 +68,11 @@ char *Hud_NameForDrawItem (hudDrawItem_t *drawItem)
 		temp = "unknown drawItem";
 
 	if ( strlen(drawItem->name) )
-		Com_sprintf(buf, sizeof(buf), "%s '%s'", temp, drawItem->name);
+		Com_sprintf(hud_itemname_buf, sizeof(hud_itemname_buf), "%s '%s'", temp, drawItem->name);
 	else
-		Com_sprintf(buf, sizeof(buf), "%s", temp);
+		Com_sprintf(hud_itemname_buf, sizeof(hud_itemname_buf), "%s", temp);
 
-	typeName = buf;
+	typeName = hud_itemname_buf;
 	return typeName;
 }
 

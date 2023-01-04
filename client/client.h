@@ -44,34 +44,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // HTTP downloading from R1Q2
 #ifdef USE_CURL
-#ifdef _WIN32
+/*#ifdef _WIN32
 #define CURL_STATICLIB
 #define CURL_HIDDEN_SYMBOLS
 #define CURL_EXTERN_SYMBOL
 #define CURL_CALLING_CONVENTION __cdecl
 #endif
 
-//#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// use older version of libcurl for MSVC6
-//#include "../include/curl_old/curl.h"
-//#define CURL_ERROR(x)	va("%i",(x))
-//#else
 #define CURL_STATICLIB
 #if defined (_MSC_VER) && (_MSC_VER <= 1200)	// use older version of libcurl for MSVC6
 #include "../include/curl_vc6/curl.h"
 #else
 #include "../include/curl/curl.h"
-#endif
-#define CURL_ERROR(x)	curl_easy_strerror(x)
-//#endif
-#define MAX_HTTP_HANDLES	8	// was 4
+#endif */
+//#define CURL_ERROR(x)	curl_easy_strerror(x)
 
+#include "qcurl.h"
+
+#define MAX_HTTP_HANDLES	8	// was 4
 #endif	// USE_CURL
 // end HTTP downloading from R1Q2
 
-//Knightmare added
+// Knightmare added
 #include "../game/game.h"
 trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict_t *passedict, int contentmask);
-//end Knightmare
+// end Knightmare
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
 #define crandom()	(2.0 * (random() - 0.5))

@@ -378,6 +378,9 @@
     <ClCompile Include="..\..\ui\ui_widgets.c">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\client\cl_qcurl.c">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\anorms.h">
@@ -468,6 +471,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ui\ui_local.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\qcurl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

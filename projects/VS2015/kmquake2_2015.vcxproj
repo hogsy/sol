@@ -303,6 +303,7 @@
     <ClCompile Include="..\..\client\cl_parse.c" />
     <ClCompile Include="..\..\client\cl_particle.c" />
     <ClCompile Include="..\..\client\cl_predict.c" />
+    <ClCompile Include="..\..\client\cl_qcurl.c" />
     <ClCompile Include="..\..\client\cl_screen.c" />
     <ClCompile Include="..\..\client\cl_string.c" />
     <ClCompile Include="..\..\client\cl_tempent.c" />
@@ -419,6 +420,7 @@
     <ClInclude Include="..\..\game\q_shared.h" />
     <ClInclude Include="..\..\qcommon\filesystem.h" />
     <ClInclude Include="..\..\qcommon\qcommon.h" />
+    <ClInclude Include="..\..\client\qcurl.h" />
     <ClInclude Include="..\..\qcommon\qfiles.h" />
     <ClInclude Include="..\..\qcommon\vid_modes.h" />
     <ClInclude Include="..\..\renderer\glext.h" />

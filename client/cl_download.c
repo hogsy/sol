@@ -987,6 +987,7 @@ qboolean CL_CheckOrDownloadFile (const char *filename)
 		// We return true so that the precache check keeps feeding us more files.
 		// Since we have multiple HTTP connections we want to minimize latency
 		// and be constantly sending requests, not one at a time.
+		cls.forcePacket = true;	// Maraakate says this will improve ramp-up of DL speed
 		return true;
 	}
 	else

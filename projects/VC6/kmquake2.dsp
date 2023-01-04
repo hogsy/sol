@@ -197,6 +197,10 @@ SOURCE=..\..\client\cl_predict.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\client\cl_qcurl.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\client\cl_screen.c
 # End Source File
 # Begin Source File
@@ -639,6 +643,10 @@ SOURCE=..\..\game\q_shared.h
 # Begin Source File
 
 SOURCE=..\..\qcommon\qcommon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\client\qcurl.h
 # End Source File
 # Begin Source File
 
