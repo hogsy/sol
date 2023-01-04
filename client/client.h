@@ -44,21 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // HTTP downloading from R1Q2
 #ifdef USE_CURL
-/*#ifdef _WIN32
-#define CURL_STATICLIB
-#define CURL_HIDDEN_SYMBOLS
-#define CURL_EXTERN_SYMBOL
-#define CURL_CALLING_CONVENTION __cdecl
-#endif
-
-#define CURL_STATICLIB
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// use older version of libcurl for MSVC6
-#include "../include/curl_vc6/curl.h"
-#else
-#include "../include/curl/curl.h"
-#endif */
-//#define CURL_ERROR(x)	curl_easy_strerror(x)
-
 #include "qcurl.h"
 
 #define MAX_HTTP_HANDLES	8	// was 4
