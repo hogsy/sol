@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib libcurl_d.lib glu32.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib libcurl_d.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -174,7 +174,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib libcurl_r.lib glu32.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib libcurl_r.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -448,7 +448,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\win32\win_dedconsole.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\win32\win_input.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_main.c"
 					>
 				</File>
 				<File
@@ -457,14 +465,6 @@
 				</File>
 				<File
 					RelativePath="..\..\win32\win_qsh.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_dedconsole.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_main.c"
 					>
 				</File>
 				<File
@@ -479,14 +479,6 @@
 			<Filter
 				Name="renderer"
 				>
-				<File
-					RelativePath="..\..\win32\win_glimp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\win32\win_qgl.c"
-					>
-				</File>
 				<File
 					RelativePath="..\..\renderer\r_alias.c"
 					>
@@ -581,6 +573,14 @@
 				</File>
 				<File
 					RelativePath="..\..\renderer\r_warp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_glimp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\win32\win_qgl.c"
 					>
 				</File>
 			</Filter>

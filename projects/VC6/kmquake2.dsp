@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 winmm.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib zlib.lib libjpeg.lib ogg_static.lib vorbisfile_static.lib libpng.lib libcurl.lib glu32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"LIBC" /out:"./kmquake2.exe" /libpath:"..\..\win32\lib\VC6"
+# ADD LINK32 winmm.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib zlib.lib libjpeg.lib ogg_static.lib vorbisfile_static.lib libpng.lib libcurl.lib glu32.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"LIBC" /out:".\kmquake2.exe" /libpath:"..\..\win32\lib\VC6"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "quake2 - Win32 Debug"
