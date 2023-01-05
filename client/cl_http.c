@@ -521,8 +521,8 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 	qcurl_easy_setopt (dl->curl, CURLOPT_ENCODING, "");
 //	qcurl_easy_setopt (dl->curl, CURLOPT_DEBUGFUNCTION, CL_CURL_Debug);
 //	qcurl_easy_setopt (dl->curl, CURLOPT_VERBOSE, 1);
-	qcurl_easy_setopt (dl->curl, CURLOPT_WRITEDATA, dl);	// Yamagi Quake2 moved here
 	qcurl_easy_setopt (dl->curl, CURLOPT_NOPROGRESS, 0);
+	qcurl_easy_setopt (dl->curl, CURLOPT_WRITEDATA, dl);	// Yamagi Quake2 moved here
 	if (dl->file)
 	{
 		qcurl_easy_setopt (dl->curl, CURLOPT_WRITEFUNCTION, CL_HTTP_CurlWrite);	// from Yamagi Quake2

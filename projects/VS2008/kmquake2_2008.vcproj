@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib libcurl_d.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libcurl_x64_d.lib libjpeg_x64_d.lib libogg_x64_d.lib libvorbisfile_x64_d.lib zlib_x64_d.lib libpng_x64_d.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_x64_d.lib libogg_x64_d.lib libvorbisfile_x64_d.lib zlib_x64_d.lib libpng_x64_d.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"
@@ -234,7 +234,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib libcurl_r.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
@@ -316,7 +316,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libcurl_x64_r.lib libjpeg_x64_r.lib libogg_x64_r.lib libvorbisfile_x64_r.lib zlib_x64_r.lib libpng_x64_r.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_x64_r.lib libogg_x64_r.lib libvorbisfile_x64_r.lib zlib_x64_r.lib libpng_x64_r.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"

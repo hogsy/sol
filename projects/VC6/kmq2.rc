@@ -98,7 +98,7 @@ END
 // Bitmap
 //
 
-IDB_BITMAP2             BITMAP  DISCARDABLE     "../../win32/startup2.bmp"
+IDB_BITMAP2             BITMAP  DISCARDABLE     "../../win32/startup2test.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
