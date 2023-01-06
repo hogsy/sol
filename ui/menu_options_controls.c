@@ -44,6 +44,8 @@ static menuSlider_s		s_options_controls_thirdperson_offset_slider;
 static menuSlider_s		s_options_controls_thirdperson_angle_slider;
 static menuPicker_s		s_options_controls_invertmouse_box;
 static menuPicker_s		s_options_controls_autosensitivity_box;
+static menuPicker_s		s_options_controls_nomouseaccel_box;
+static menuPicker_s		s_options_controls_mousefilter_box;
 static menuPicker_s		s_options_controls_lookspring_box;
 static menuPicker_s		s_options_controls_lookstrafe_box;
 static menuPicker_s		s_options_controls_freelook_box;
@@ -63,9 +65,11 @@ static void CustomizeControlsFunc(void *unused)
 
 static void M_ControlsResetDefaults (void)
 {
-//	Cvar_SetToDefault ("sensitivity");
+	Cvar_SetToDefault ("sensitivity");
 //	Cvar_SetToDefault ("m_pitch");
 	Cvar_SetToDefault ("in_autosensitivity");
+	Cvar_SetToDefault ("m_noaccel");
+	Cvar_SetToDefault ("m_filter");
 	Cvar_SetToDefault ("cg_thirdperson");
 	Cvar_SetToDefault ("cg_thirdperson_dist");
 	Cvar_SetToDefault ("cg_thirdperson_offset");
@@ -158,6 +162,24 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_autosensitivity_box.itemNames			= yesno_names;
 	s_options_controls_autosensitivity_box.generic.cvar			= "in_autosensitivity";
 	s_options_controls_autosensitivity_box.generic.statusbar	= "adjusts mouse sensitivity to zoomed FOV";
+	
+	s_options_controls_nomouseaccel_box.generic.type		= MTYPE_PICKER;
+	s_options_controls_nomouseaccel_box.generic.textSize	= MENU_FONT_SIZE;
+	s_options_controls_nomouseaccel_box.generic.x			= x;
+	s_options_controls_nomouseaccel_box.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_controls_nomouseaccel_box.generic.name		= "disable mouse accel";
+	s_options_controls_nomouseaccel_box.itemNames			= yesno_names;
+	s_options_controls_nomouseaccel_box.generic.cvar		= "m_noaccel";
+	s_options_controls_nomouseaccel_box.generic.statusbar	= "disables acceleration of mouse input";
+
+	s_options_controls_mousefilter_box.generic.type			= MTYPE_PICKER;
+	s_options_controls_mousefilter_box.generic.textSize		= MENU_FONT_SIZE;
+	s_options_controls_mousefilter_box.generic.x			= x;
+	s_options_controls_mousefilter_box.generic.y			= y+=MENU_LINE_SIZE;
+	s_options_controls_mousefilter_box.generic.name			= "mouse filtering";
+	s_options_controls_mousefilter_box.itemNames			= yesno_names;
+	s_options_controls_mousefilter_box.generic.cvar			= "m_filter";
+	s_options_controls_mousefilter_box.generic.statusbar	= "enables filtering of mouse input";
 
 	s_options_controls_thirdperson_box.generic.type			= MTYPE_PICKER;
 	s_options_controls_thirdperson_box.generic.textSize		= MENU_FONT_SIZE;
@@ -283,6 +305,8 @@ void Menu_Options_Controls_Init (void)
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_sensitivity_slider);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_invertmouse_box);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_autosensitivity_box);
+	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_nomouseaccel_box);
+	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_mousefilter_box);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_thirdperson_box);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_thirdperson_distance_slider);
 	UI_AddMenuItem (&s_options_controls_menu, (void *) &s_options_controls_thirdperson_offset_slider);

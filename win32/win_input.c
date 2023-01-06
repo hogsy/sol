@@ -55,7 +55,7 @@ DWORD	dwAxisMap[JOY_MAX_AXES];
 DWORD	dwControlMap[JOY_MAX_AXES];
 PDWORD	pdwRawValue[JOY_MAX_AXES];
 
-cvar_t	*m_noaccel; //sul
+cvar_t	*m_noaccel;	// sul
 cvar_t	*in_mouse;
 cvar_t	*in_joystick;
 
@@ -266,9 +266,9 @@ void IN_ActivateMouse (void)
 
 //	if (m_noaccel->value) 
 	if (m_noaccel->integer) 
-		newmouseparms[2]=0; //sul XP fix?
+		newmouseparms[2] = 0;	// sul XP fix?
 	else 
-		newmouseparms[2]=1;
+		newmouseparms[2] = 1;
 
 	if (mouseparmsvalid)
 		restore_spi = SystemParametersInfo (SPI_SETMOUSE, 0, newmouseparms, 0);
