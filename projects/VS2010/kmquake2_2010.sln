@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lazarus", "lazarus_2010.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "extractfuncs", "extractfuncs_2010.vcxproj", "{0BF8CEBA-A986-49C3-A2E7-F013423DA338}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "steam_wrapper", "steam_wrapper_2010.vcxproj", "{F012CF84-B741-418B-9633-77C406FE8F13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +41,14 @@ Global
 		{0BF8CEBA-A986-49C3-A2E7-F013423DA338}.Release|Win32.Build.0 = Release|Win32
 		{0BF8CEBA-A986-49C3-A2E7-F013423DA338}.Release|x64.ActiveCfg = Release|x64
 		{0BF8CEBA-A986-49C3-A2E7-F013423DA338}.Release|x64.Build.0 = Release|x64
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Debug|Win32.Build.0 = Debug|Win32
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Debug|x64.ActiveCfg = Debug|x64
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Debug|x64.Build.0 = Debug|x64
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Release|Win32.ActiveCfg = Release|Win32
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Release|Win32.Build.0 = Release|Win32
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Release|x64.ActiveCfg = Release|x64
+		{F012CF84-B741-418B-9633-77C406FE8F13}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

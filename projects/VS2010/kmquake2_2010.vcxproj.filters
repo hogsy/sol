@@ -478,9 +478,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\win32\kmq2.ico">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\win32\q2mp1.ico">
       <Filter>Resource Files</Filter>
     </None>
@@ -491,6 +488,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\win32\startup2beta.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\win32\q2.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

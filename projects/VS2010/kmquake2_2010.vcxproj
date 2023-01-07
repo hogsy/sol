@@ -367,7 +367,7 @@
     <ClInclude Include="..\..\win32\winquake.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\win32\kmq2.ico" />
+    <None Include="..\..\win32\q2.ico" />
     <None Include="..\..\win32\q2mp1.ico" />
     <None Include="..\..\win32\q2mp2.ico" />
     <None Include="..\..\win32\startup2.bmp" />

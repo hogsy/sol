@@ -984,10 +984,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath="..\..\win32\kmq2.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\kmq2_2008.rc"
 				>
 				<FileConfiguration
@@ -1006,6 +1002,10 @@
 						PreprocessorDefinitions="_WIN64"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\win32\q2.ico"
+				>
 			</File>
 			<File
 				RelativePath="..\..\win32\q2mp1.ico"
