@@ -313,12 +313,16 @@ qboolean R_SurfIsLit (msurface_t *s)
 	if (r_fullbright->integer != 0)
 		return false;
 
-	if (s->flags & SURF_DRAWTURB)		
-		return (s->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
-				&& !(s->texinfo->flags & SURF_NOLIGHTENV) && r_warp_lighting->integer;
+	if (s->flags & SURF_DRAWTURB)
+	{
+		if (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)	// map has warp lightmaps
+			return ( s->isLightmapped && !(s->texinfo->flags & SURF_NOLIGHTENV) );
+		else
+			return ( (r_warp_lighting->integer > 0) && !(s->texinfo->flags & SURF_NOLIGHTENV) );				
+	}
 	else
-		return (s->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
-				&& !(s->texinfo->flags & SURF_NOLIGHTENV) && r_trans_lighting->integer;
+		return ( (s->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
+				&& !(s->texinfo->flags & SURF_NOLIGHTENV) && r_trans_lighting->integer );
 }
 
 /*
@@ -376,11 +380,13 @@ qboolean R_SurfsAreBatchable (msurface_t *s1, msurface_t *s2)
 	else if ( (s1->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))
 		&& (s2->texinfo->flags & (SURF_TRANS33|SURF_TRANS66)) )
 	{
-		if (r_trans_lighting->integer == 2
-			&& ((R_SurfIsLit(s1) && s1->lightmaptexturenum) || (R_SurfIsLit(s2) && s2->lightmaptexturenum)))
-			return false;
 		if (R_SurfIsLit(s1) != R_SurfIsLit(s2))
 			return false;
+		if (r_trans_lighting->integer == 2) {
+			if ( (R_SurfIsLit(s1) && s1->lightmaptexturenum) || (R_SurfIsLit(s2) && s2->lightmaptexturenum) )
+		//	if ( (R_SurfIsLit(s1) && R_SurfIsLit(s2)) && (s1->lightmaptexturenum != s2->lightmaptexturenum) ) // lightmap image must be same
+			return false;
+		}
 		// must be single pass to be batchable
 		if ( r_glows->integer
 			&& ((R_TextureAnimationGlow(s1) != glMedia.notexture)
@@ -560,23 +566,22 @@ void R_DrawAlphaSurface (msurface_t *s, entity_t *e)
 	GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// disable depth testing for all bmodel surfs except solid alphas
-	if ( s->entity && !((s->flags & SURF_TRANS33) && (s->flags & SURF_TRANS66)) )
+	if ( e && !((s->flags & SURF_TRANS33) && (s->flags & SURF_TRANS66)) )
 		GL_DepthMask (false);
 	else
 		GL_DepthMask (true);
 
 	// moving trans brushes - spaz
-	if (s->entity)
-		R_RotateForEntity (s->entity, true);
+	if (e)
+		R_RotateForEntity (e, true);
 
 	light = R_SurfIsLit(s);
-//	solidAlpha = ( (s->texinfo->flags & SURF_TRANS33|SURF_TRANS66) == SURF_TRANS33|SURF_TRANS66 );
-//	envMap = ( (s->flags & SURF_ENVMAP) && r_glass_envmaps->integer && !solidAlpha);
 
 	if (s->flags & SURF_DRAWTURB)
 	{	
 #ifdef WARP_LIGHTMAPS
-		if (s->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)) {
+		if ( s->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
+			&& !(s->texinfo->flags & SURF_NOLIGHTENV) ) {
 			GL_EnableMultitexture (true);
 			R_SetLightingMode (RF_TRANSLUCENT);
 			R_DrawWarpSurface (s, R_SurfAlphaCalc(s->texinfo->flags), !R_SurfsAreBatchable (s, s->texturechain));
@@ -1334,7 +1339,8 @@ void R_DrawInlineBModel (entity_t *e, int causticflag)
 				else	// warp surface
 				{ 
 #ifdef WARP_LIGHTMAPS
-					if (psurf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS))
+					if ( psurf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
+						&& !(psurf->texinfo->flags & SURF_NOLIGHTENV) )
 					{
 						psurf->texturechain = image->warp_lm_texturechain;
 						image->warp_lm_texturechain = psurf;
@@ -1526,7 +1532,8 @@ void R_AddWorldSurface (msurface_t *surf)
 		else	// warp surface
 		{
 #ifdef WARP_LIGHTMAPS
-			if (surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS))
+			if ( surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
+				&& !(surf->texinfo->flags & SURF_NOLIGHTENV) )
 			{
 				surf->texturechain = image->warp_lm_texturechain;
 				image->warp_lm_texturechain = surf;

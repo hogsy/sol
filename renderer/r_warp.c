@@ -307,7 +307,7 @@ void RB_RenderWarpSurface (msurface_t *surf)
 	float		args[7] = {0,0.05,0,0,0.04,0,0};
 	float		alpha = colorArray[0][3];
 	image_t		*image = R_TextureAnimation (surf);
-	qboolean	lightmapped = surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS);
+	qboolean	lightmapped = surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS) && !(surf->texinfo->flags & SURF_NOLIGHTENV);
 	qboolean	vertexLight = r_warp_lighting->integer && !lightmapped && !(surf->texinfo->flags & SURF_NOLIGHTENV);
 	qboolean	texShaderWarpARB = glConfig.arb_fragment_program && r_pixel_shader_warp->integer;
 	qboolean	texShaderWarp = texShaderWarpARB;
@@ -333,11 +333,15 @@ void RB_RenderWarpSurface (msurface_t *surf)
 	if (texShaderWarpARB)
 	{
 		GL_SelectTexture(0);
-		GL_MBind(0, image->texnum);
+	//	GL_MBind(0, image->texnum);
 
 		if (lightmapped)
 		{
-		//	GL_EnableTexture(1);
+			if (r_lightmap->integer != 0)
+				GL_MBind (0, glMedia.whitetexture->texnum);
+			else
+				GL_MBind (0, image->texnum);
+
 			if (r_fullbright->integer != 0)
 				GL_MBind (1, glMedia.whitetexture->texnum);
 			else
@@ -352,6 +356,8 @@ void RB_RenderWarpSurface (msurface_t *surf)
 		}
 		else
 		{
+			GL_MBind (0, image->texnum);
+
 			GL_EnableTexture(1);
 			GL_MBind(1, glMedia.distTextureARB->texnum);
 
@@ -421,7 +427,7 @@ void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render)
 	mpolyvertex_t	*v;
 	vec3_t		point;
 	int			i, texWidth, texHeight;
-	qboolean	lightmapped = surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS);
+	qboolean	lightmapped = surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS) && !(surf->texinfo->flags & SURF_NOLIGHTENV);
 	qboolean	vertexLight = r_warp_lighting->integer && !lightmapped && !r_fullbright->integer && !(surf->texinfo->flags & SURF_NOLIGHTENV);
 
 	c_brush_surfs++;

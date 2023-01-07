@@ -66,10 +66,10 @@ static void CustomizeControlsFunc(void *unused)
 static void M_ControlsResetDefaults (void)
 {
 	Cvar_SetToDefault ("sensitivity");
-//	Cvar_SetToDefault ("m_pitch");
-	Cvar_SetToDefault ("in_autosensitivity");
 	Cvar_SetToDefault ("m_noaccel");
 	Cvar_SetToDefault ("m_filter");
+//	Cvar_SetToDefault ("m_pitch");
+	Cvar_SetToDefault ("in_autosensitivity");
 	Cvar_SetToDefault ("cg_thirdperson");
 	Cvar_SetToDefault ("cg_thirdperson_dist");
 	Cvar_SetToDefault ("cg_thirdperson_offset");
@@ -150,16 +150,16 @@ void Menu_Options_Controls_Init (void)
 	s_options_controls_sensitivity_slider.generic.cvarMax	= 11.0f;
 	s_options_controls_sensitivity_slider.generic.statusbar	= "changes sensitivity of mouse for head movement";
 
-	s_options_controls_mouseaccel_box.generic.type		= MTYPE_PICKER;
-	s_options_controls_mouseaccel_box.generic.textSize	= MENU_FONT_SIZE;
-	s_options_controls_mouseaccel_box.generic.x			= x;
-	s_options_controls_mouseaccel_box.generic.y			= y+=MENU_LINE_SIZE;
-	s_options_controls_mouseaccel_box.generic.name		= "mouse acceleration";
-	s_options_controls_mouseaccel_box.itemNames			= yesno_names;
+	s_options_controls_mouseaccel_box.generic.type			= MTYPE_PICKER;
+	s_options_controls_mouseaccel_box.generic.textSize		= MENU_FONT_SIZE;
+	s_options_controls_mouseaccel_box.generic.x				= x;
+	s_options_controls_mouseaccel_box.generic.y				= y+=MENU_LINE_SIZE;
+	s_options_controls_mouseaccel_box.generic.name			= "mouse acceleration";
+	s_options_controls_mouseaccel_box.itemNames				= yesno_names;
 	s_options_controls_mouseaccel_box.itemValues			= mouseaccel_values;
-	s_options_controls_mouseaccel_box.generic.cvar		= "m_noaccel";
-	s_options_controls_mouseaccel_box.generic.cvarClamp	= false;
-	s_options_controls_mouseaccel_box.generic.statusbar	= "disables acceleration of mouse input";
+	s_options_controls_mouseaccel_box.generic.cvar			= "m_noaccel";
+	s_options_controls_mouseaccel_box.generic.cvarClamp		= false;
+	s_options_controls_mouseaccel_box.generic.statusbar		= "enables mouse acceleration";
 
 	s_options_controls_mousefilter_box.generic.type			= MTYPE_PICKER;
 	s_options_controls_mousefilter_box.generic.textSize		= MENU_FONT_SIZE;
