@@ -227,14 +227,14 @@ qboolean	qcurl_initialized = true;	// this is always true for static linked buil
 
 qboolean QCURL_Init (void)
 {
-	qcurl_global_init (CURL_GLOBAL_NOTHING);
+//	qcurl_global_init (CURL_GLOBAL_NOTHING);
 
 	return true;
 }
 
 void QCURL_Shutdown (void)
 {
-	qcurl_global_cleanup ();
+//	qcurl_global_cleanup ();
 }
 
 #endif	// USE_CURL_DLL

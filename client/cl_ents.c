@@ -1472,9 +1472,9 @@ void CL_AddPacketEntities (frame_t *frame)
 
 // Knightmare- read server-assigned alpha, overriding effects flags
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		if (s1->alpha > 0.0F && s1->alpha < 1.0F)
+		if ( (s1->alpha > 0.0f) && (s1->alpha < 1.0f) )
 		{
-			//ent.alpha = s1->alpha;
+		//	ent.alpha = s1->alpha;
 			// lerp alpha :p
 			ent.alpha = cent->prev.alpha + cl.lerpfrac * (cent->current.alpha - cent->prev.alpha);
 			ent.flags |= RF_TRANSLUCENT;
