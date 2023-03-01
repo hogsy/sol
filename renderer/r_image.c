@@ -28,11 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../include/jpeg/jpeglib.h"
 #ifdef PNG_SUPPORT
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// use older version of libpng for MSVC6
-#include "../include/zlibpng_vc6/png.h"
-#else
 #include "../include/zlibpng/png.h"
-#endif
 #endif	// PNG_SUPPORT
 
 #else // _WIN32

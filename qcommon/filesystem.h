@@ -21,13 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #ifdef _WIN32
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// use older version of zlib for MSVC6
-#include "../include/zlibpng_vc6/unzip.h"
-#include "../include/zlibpng_vc6/zip.h"
-#else
 #include "../include/zlibpng/unzip.h"
 #include "../include/zlibpng/zip.h"
-#endif
 #elif defined (__linux__)
 #include "../unix/zip/unzip.h"
 #include "../unix/zip/zip.h"
