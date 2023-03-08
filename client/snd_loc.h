@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // snd_loc.h -- private sound functions
 
 #ifdef OGG_SUPPORT	// Knightmare added- ogg vorbis support
-#include "../include/ogg/vorbisfile.h"
+#include "../libraries/oggvorbis/vorbis_inc/vorbisfile.h"
 #include "../include/al/altypes.h"
 #include "./snd_ogg.h"
 #endif

@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef _WIN32
 
-#include "../include/jpeg/jpeglib.h"
+#include "../libraries/jpeg/jpeglib.h"
 #ifdef PNG_SUPPORT
-#include "../include/zlibpng/png.h"
+#include "../libraries/png/png.h"
 #endif	// PNG_SUPPORT
 
 #else // _WIN32

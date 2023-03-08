@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\Debug\"
+			IntermediateDirectory=".\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_d.lib zlib_d.lib libogg_d.lib libvorbisfile_d.lib libpng_d.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
@@ -105,8 +105,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\Debug"
-			IntermediateDirectory=".\x64\Debug"
+			OutputDirectory=".\x64\Debug\"
+			IntermediateDirectory=".\x64\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_x64_d.lib libogg_x64_d.lib libvorbisfile_x64_d.lib zlib_x64_d.lib libpng_x64_d.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"
@@ -190,8 +190,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\Release\"
+			IntermediateDirectory=".\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
@@ -234,7 +234,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_r.lib zlib_r.lib libogg_r.lib libvorbisfile_r.lib libpng_r.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib"
 				OutputFile="./kmquake2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008\"
@@ -271,8 +271,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\Release"
-			IntermediateDirectory=".\x64\Release"
+			OutputDirectory=".\x64\Release\"
+			IntermediateDirectory=".\x64\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
@@ -316,7 +316,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib libjpeg_x64_r.lib libogg_x64_r.lib libvorbisfile_x64_r.lib zlib_x64_r.lib libpng_x64_r.lib"
+				AdditionalDependencies="winmm.lib ws2_32.lib glu32.lib"
 				OutputFile="./kmquake2_x64.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\win32\lib\VS2008_x64\"

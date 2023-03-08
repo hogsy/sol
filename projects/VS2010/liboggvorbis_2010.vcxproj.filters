@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\ogg">
+      <UniqueIdentifier>{cb81a15c-7284-48dc-8afd-15b1b802c0d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vorbis">
+      <UniqueIdentifier>{e2f10e97-4499-490c-b025-c71a8083b26d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ogg">
+      <UniqueIdentifier>{83cd9476-db0b-43a2-a9ef-2887dd8edb7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\vorbis">
+      <UniqueIdentifier>{7bcab737-3424-4387-90ef-40b7aa7dd223}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libraries\oggvorbis\ogg_inc\ogg.h">
+      <Filter>Header Files\ogg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\oggvorbis\ogg_inc\os_types.h">
+      <Filter>Header Files\ogg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\oggvorbis\vorbis_inc\codec.h">
+      <Filter>Header Files\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\oggvorbis\vorbis_inc\vorbisenc.h">
+      <Filter>Header Files\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libraries\oggvorbis\vorbis_inc\vorbisfile.h">
+      <Filter>Header Files\vorbis</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libraries\oggvorbis\ogg_src\bitwise.c">
+      <Filter>Source Files\ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\ogg_src\framing.c">
+      <Filter>Source Files\ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\analysis.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\bitrate.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\block.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\codebook.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\envelope.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\floor0.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\floor1.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\info.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\lookup.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\lpc.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\lsp.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\mapping0.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\mdct.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\psy.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\registry.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\res0.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\sharedbook.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\smallft.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\synthesis.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\tone.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\vorbisenc.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\vorbisfile.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libraries\oggvorbis\vorbis_src\window.c">
+      <Filter>Source Files\vorbis</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

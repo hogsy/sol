@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\extractfuncs\Debug"
-			IntermediateDirectory=".\extractfuncs\Debug"
+			OutputDirectory=".\extractfuncs\Debug\"
+			IntermediateDirectory=".\extractfuncs\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -97,8 +97,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\extractfuncs\Debug"
-			IntermediateDirectory=".\x64\extractfuncs\Debug"
+			OutputDirectory=".\x64\extractfuncs\Debug\"
+			IntermediateDirectory=".\x64\extractfuncs\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -175,8 +175,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\extractfuncs\Release"
-			IntermediateDirectory=".\extractfuncs\Release"
+			OutputDirectory=".\extractfuncs\Release\"
+			IntermediateDirectory=".\extractfuncs\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
@@ -250,8 +250,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\extractfuncs\Release"
-			IntermediateDirectory=".\x64\extractfuncs\Release"
+			OutputDirectory=".\x64\extractfuncs\Release\"
+			IntermediateDirectory=".\x64\extractfuncs\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

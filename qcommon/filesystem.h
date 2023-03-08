@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #ifdef _WIN32
-#include "../include/zlibpng/unzip.h"
-#include "../include/zlibpng/zip.h"
+#include "../libraries/zlib/unzip.h"
+#include "../libraries/zlib/zip.h"
 #elif defined (__linux__)
 #include "../unix/zip/unzip.h"
 #include "../unix/zip/zip.h"

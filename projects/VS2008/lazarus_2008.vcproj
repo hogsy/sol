@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\lazarus\Debug"
-			IntermediateDirectory=".\lazarus\Debug"
+			OutputDirectory=".\lazarus\Debug\"
+			IntermediateDirectory=".\lazarus\Debug\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			>
@@ -106,8 +106,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\lazarus\Debug"
-			IntermediateDirectory=".\x64\lazarus\Debug"
+			OutputDirectory=".\x64\lazarus\Debug\"
+			IntermediateDirectory=".\x64\lazarus\Debug\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			>
@@ -193,8 +193,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\lazarus\Release"
-			IntermediateDirectory=".\lazarus\Release"
+			OutputDirectory=".\lazarus\Release\"
+			IntermediateDirectory=".\lazarus\Release\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
@@ -277,8 +277,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\lazarus\Release"
-			IntermediateDirectory=".\x64\lazarus\Release"
+			OutputDirectory=".\x64\lazarus\Release\"
+			IntermediateDirectory=".\x64\lazarus\Release\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
