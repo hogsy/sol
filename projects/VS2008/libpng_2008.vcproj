@@ -84,8 +84,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\libpng\Debug\"
-			IntermediateDirectory=".\x64\libpng\Debug\"
+			OutputDirectory=".\libpng\x64\Debug\"
+			IntermediateDirectory=".\libpng\x64\Debug\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			>
@@ -213,8 +213,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\libpng\Release\"
-			IntermediateDirectory=".\x64\libpng\Release\"
+			OutputDirectory=".\libpng\x64\Release\"
+			IntermediateDirectory=".\libpng\x64\Release\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

@@ -84,8 +84,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\zlib\Debug\"
-			IntermediateDirectory=".\x64\zlib\Debug\"
+			OutputDirectory=".\zlib\x64\Debug\"
+			IntermediateDirectory=".\zlib\x64\Debug\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			>
@@ -213,8 +213,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\zlib\Release\"
-			IntermediateDirectory=".\x64\zlib\Release\"
+			OutputDirectory=".\zlib\x64\Release\"
+			IntermediateDirectory=".\zlib\x64\Release\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

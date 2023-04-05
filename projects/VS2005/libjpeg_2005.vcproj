@@ -147,8 +147,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\libjpeg\Debug"
-			IntermediateDirectory=".\x64\libjpeg\Debug"
+			OutputDirectory=".\libjpeg\x64\Debug"
+			IntermediateDirectory=".\libjpeg\x64\Debug"
 			ConfigurationType="4"
 			CharacterSet="0"
 			>
@@ -212,8 +212,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\libjpeg\Release"
-			IntermediateDirectory=".\x64\libjpeg\Release"
+			OutputDirectory=".\libjpeg\x64\Release"
+			IntermediateDirectory=".\libjpeg\x64\Release"
 			ConfigurationType="4"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

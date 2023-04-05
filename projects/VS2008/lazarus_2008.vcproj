@@ -106,8 +106,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\lazarus\Debug\"
-			IntermediateDirectory=".\x64\lazarus\Debug\"
+			OutputDirectory=".\lazarus\x64\Debug\"
+			IntermediateDirectory=".\lazarus\x64\Debug\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			>
@@ -277,8 +277,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\lazarus\Release\"
-			IntermediateDirectory=".\x64\lazarus\Release\"
+			OutputDirectory=".\lazarus\x64\Release\"
+			IntermediateDirectory=".\lazarus\x64\Release\"
 			ConfigurationType="2"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

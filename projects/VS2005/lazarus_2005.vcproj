@@ -44,7 +44,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\debug/lazarus.tlb"
+				TypeLibraryName=".\lazarus\debug/lazarus.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -82,12 +82,12 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\debug/kmq2gamex86.pdb"
+				ProgramDatabaseFile=".\lazarus\debug/kmq2gamex86.pdb"
 				GenerateMapFile="true"
-				MapFileName=".\debug/kmq2gamex86.map"
+				MapFileName=".\lazarus\debug/kmq2gamex86.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
-				ImportLibrary=".\debug/kmq2gamex86.lib"
+				ImportLibrary=".\lazarus\debug/kmq2gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -102,7 +102,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\debug/lazarus.bsc"
+				OutputFile=".\lazarus\debug/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -119,8 +119,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\lazarus\Debug\"
-			IntermediateDirectory=".\x64\lazarus\Debug\"
+			OutputDirectory=".\lazarus\x64\Debug\"
+			IntermediateDirectory=".\lazarus\x64\Debug\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -144,7 +144,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\debug/lazarus.tlb"
+				TypeLibraryName=".\lazarus\x64\debug/lazarus.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -186,12 +186,12 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\x64\debug/kmq2gamex64.pdb"
+				ProgramDatabaseFile=".\lazuarus\x64\debug/kmq2gamex64.pdb"
 				GenerateMapFile="true"
-				MapFileName=".\x64\debug/kmq2gamex64.map"
+				MapFileName=".\lazuarus\x64\debug/kmq2gamex64.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
-				ImportLibrary=".\x64\debug/kmq2gamex64.lib"
+				ImportLibrary=".\lazuarus\x64\debug/kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -206,7 +206,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\x64\debug/lazarus.bsc"
+				OutputFile=".\lazuarus\x64\debug/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -248,7 +248,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\release/lazarus.tlb"
+				TypeLibraryName=".\lazarus\release/lazarus.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -284,10 +284,10 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
-				ProgramDatabaseFile=".\release/kmq2gamex86.pdb"
+				ProgramDatabaseFile=".\lazarus\release/kmq2gamex86.pdb"
 				SubSystem="2"
 				BaseAddress="0x20000000"
-				ImportLibrary=".\release/kmq2gamex86.lib"
+				ImportLibrary=".\lazarus\release/kmq2gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -302,7 +302,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\..\release/lazarus.bsc"
+				OutputFile=".\lazarus\release/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -319,8 +319,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\lazarus\Release\"
-			IntermediateDirectory=".\x64\lazarus\Release\"
+			OutputDirectory=".\lazarus\x64\Release\"
+			IntermediateDirectory=".\lazarus\x64\Release\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -344,7 +344,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\release/lazarus.tlb"
+				TypeLibraryName=".\lazarus\x64\release/lazarus.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -384,10 +384,10 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile="..\..\game\lazarus.def"
-				ProgramDatabaseFile=".\x64\release/kmq2gamex64.pdb"
+				ProgramDatabaseFile=".\lazarus\x64\release/kmq2gamex64.pdb"
 				SubSystem="2"
 				BaseAddress="0x20000000"
-				ImportLibrary=".\x64\release/kmq2gamex64.lib"
+				ImportLibrary=".\lazarus\x64\release/kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -402,7 +402,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\x64\release/lazarus.bsc"
+				OutputFile=".\lazarus\x64\release/lazarus.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

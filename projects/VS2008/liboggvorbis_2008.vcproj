@@ -84,8 +84,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\liboggvorbis\Debug\"
-			IntermediateDirectory=".\x64\liboggvorbis\Debug\"
+			OutputDirectory=".\liboggvorbis\x64\Debug\"
+			IntermediateDirectory=".\liboggvorbis\x64\Debug\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			>
@@ -213,8 +213,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\liboggvorbis\Release\"
-			IntermediateDirectory=".\x64\liboggvorbis\Release\"
+			OutputDirectory=".\liboggvorbis\x64\Release\"
+			IntermediateDirectory=".\liboggvorbis\x64\Release\"
 			ConfigurationType="4"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

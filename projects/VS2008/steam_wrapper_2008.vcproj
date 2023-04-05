@@ -43,7 +43,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -95,8 +94,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\steam_wrapper\Debug\"
-			IntermediateDirectory=".\x64\steam_wrapper\Debug\"
+			OutputDirectory=".\steam_wrapper\x64\Debug\"
+			IntermediateDirectory=".\steam_wrapper\x64\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -119,7 +118,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -246,8 +244,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\steam_wrapper\Release\"
-			IntermediateDirectory=".\x64\steam_wrapper\Release\"
+			OutputDirectory=".\steam_wrapper\x64\Release\"
+			IntermediateDirectory=".\steam_wrapper\x64\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"

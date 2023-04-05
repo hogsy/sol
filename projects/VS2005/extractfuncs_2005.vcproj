@@ -108,8 +108,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\extractfuncs\Debug\"
-			IntermediateDirectory=".\x64\extractfuncs\Debug\"
+			OutputDirectory=".\extractfuncs\x64\Debug\"
+			IntermediateDirectory=".\extractfuncs\x64\Debug\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -170,7 +170,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\x64\debug/extractfuncs.pdb"
+				ProgramDatabaseFile=".\extractfuncs\x64\debug\extractfuncs.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -186,7 +186,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\x64\debug/extractfuncs_2005.bsc"
+				OutputFile=".\extractfuncs\x64\debug/extractfuncs_2005.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -292,8 +292,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\extractfuncs\Release\"
-			IntermediateDirectory=".\x64\extractfuncs\Release\"
+			OutputDirectory=".\extractfuncs\x64\Release\"
+			IntermediateDirectory=".\extractfuncs\x64\Release\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -353,7 +353,7 @@
 				OutputFile="../../tools_bin/extractfuncs_x64.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\x64\release/extractfuncs.pdb"
+				ProgramDatabaseFile=".\extractfuncs\x64\release/extractfuncs.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -369,7 +369,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\x64\release/extractfuncs_2005.bsc"
+				OutputFile=".\extractfuncs\x64\release/extractfuncs_2005.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

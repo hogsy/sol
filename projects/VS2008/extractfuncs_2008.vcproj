@@ -97,8 +97,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\x64\extractfuncs\Debug\"
-			IntermediateDirectory=".\x64\extractfuncs\Debug\"
+			OutputDirectory=".\extractfuncs\x64\Debug\"
+			IntermediateDirectory=".\extractfuncs\x64\Debug\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -250,8 +250,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\x64\extractfuncs\Release\"
-			IntermediateDirectory=".\x64\extractfuncs\Release\"
+			OutputDirectory=".\extractfuncs\x64\Release\"
+			IntermediateDirectory=".\extractfuncs\x64\Release\"
 			ConfigurationType="1"
 			CharacterSet="0"
 			WholeProgramOptimization="0"
