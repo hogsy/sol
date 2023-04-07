@@ -55,10 +55,7 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/3zb2_2008.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=""
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DisableSpecificWarnings="4996"
@@ -81,12 +78,12 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\game.def"
-				ProgramDatabaseFile=".\Release/gamex86.pdb"
+				ProgramDatabaseFile=""
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\Release/gamex86.lib"
+				ImportLibrary="$(IntDir)\gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -100,8 +97,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Release/3zb2_2008.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -151,10 +146,7 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\x64\Release/3zb2_2008.pch"
-				AssemblerListingLocation=".\x64\Release/"
-				ObjectFile=".\x64\Release/"
-				ProgramDataBaseFileName=".\x64\Release/"
+				PrecompiledHeaderFile=""
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DisableSpecificWarnings="4996"
@@ -177,12 +169,12 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\game.def"
-				ProgramDatabaseFile=".\x64\Release/kmq2gamex64.pdb"
+				ProgramDatabaseFile=""
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\x64\Release/kmq2gamex64.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -196,8 +188,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Release/3zb2_2008.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -244,10 +234,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\Debug/3zb2_2008.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=""
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="1"
@@ -272,12 +259,14 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\game.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/gamex86.pdb"
+				ProgramDatabaseFile="$(IntDir)\gamex86.pdb"
+				GenerateMapFile="true"
+				MapFileName="$(IntDir)\gamex86.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\Debug/gamex86.lib"
+				ImportLibrary="$(IntDir)\gamex86.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -291,8 +280,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Debug/3zb2_2008.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -339,10 +326,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL"
 				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\x64\Debug/3zb2_2008.pch"
-				AssemblerListingLocation=".\x64\Debug/"
-				ObjectFile=".\x64\Debug/"
-				ProgramDataBaseFileName=".\x64\Debug/"
+				PrecompiledHeaderFile=""
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="1"
@@ -367,12 +351,14 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\game.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\x64\Debug/kmq2gamex64.pdb"
+				ProgramDatabaseFile="$(IntDir)\kmq2gamex64.pdb"
+				GenerateMapFile="true"
+				MapFileName="$(IntDir)\kmq2gamex64.map"
 				SubSystem="2"
 				BaseAddress="0x20000000"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary=".\x64\Debug/kmq2gamex64.lib"
+				ImportLibrary="$(IntDir)\kmq2gamex64.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -386,8 +372,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Debug/3zb2_2008.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

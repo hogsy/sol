@@ -37,6 +37,9 @@ typedef enum {
 } fsOrigin_t;
 #endif // GAME_INCLUDE
 
+// From Q2Pro- game features flags
+#define GMF_ENHANCED_SAVEGAMES      0x00000400
+
 //===============================================================
 
 // link_t is only used for entity area links now

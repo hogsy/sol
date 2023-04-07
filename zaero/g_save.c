@@ -369,6 +369,11 @@ void InitGame (void)
 	printSoundRejects = gi.cvar("printsoundrejects", "0", CVAR_SERVERINFO);
 #endif
 
+#ifndef KMQUAKE2_ENGINE_MOD
+    // From Q2Pro- export our own features
+    gi.cvar_forceset ("g_features", va("%d", GMF_ENHANCED_SAVEGAMES));
+#endif
+
 	// items
 	InitItems ();
 

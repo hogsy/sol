@@ -483,7 +483,7 @@ void InitGame (void)
 
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);		// Knightmare- enables hacks for Neil Manke's Q2 maps
 
-	g_showlogic = gi.cvar("g_showlogic", "0", 0); // Knightmare added
+	g_showlogic = gi.cvar ("g_showlogic", "0", 0); // Knightmare added
 
 	// If this is an SP game and "readout" is not set, force allow_download off
 	// so we don't get the annoying "Refusing to download path with .." messages
@@ -495,6 +495,11 @@ void InitGame (void)
 
 	bounce_bounce = gi.cvar("bounce_bounce", "0.5", 0);
 	bounce_minv   = gi.cvar("bounce_minv",   "60",  0);
+
+#ifndef KMQUAKE2_ENGINE_MOD
+    // From Q2Pro- export our own features
+    gi.cvar_forceset ("g_features", va("%d", GMF_ENHANCED_SAVEGAMES));
+#endif
 
 	// items
 	InitItems ();
