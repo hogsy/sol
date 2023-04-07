@@ -1127,11 +1127,11 @@ qboolean actor_checkattack (edict_t *self)
 {
 	vec3_t		v;
 	vec3_t		forward, right, start, end;
-	float		chance;
-	float		range;
-	float		goodchance, poorchance, lorange, hirange;
+	float		chance = 0.0f;
+	float		range = 0.0f;
+	float		goodchance = 0.0f, poorchance = 0.0f, lorange = 0.0f, hirange = 0.0f;
 	trace_t		tr;
-	int			weapon;
+	int			weapon = 0;
 
 	// Paranoia check
 	if (!self->enemy)

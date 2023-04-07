@@ -5240,9 +5240,9 @@ void Use_Stasis ( edict_t *ent, gitem_t *item )
 //ROGUE
 void SP_xatrix_item (edict_t *self)
 {
-	gitem_t	*item;
+	gitem_t	*item = NULL;
 	int		i;
-	char	*spawnClass;
+	char	*spawnClass = NULL;
 
 	if (!self->classname)
 		return;

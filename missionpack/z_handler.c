@@ -16,8 +16,8 @@ void handler_standWhatNext (edict_t *self);
 void handler_standSitWhatNext (edict_t *self);
 void handler_stand (edict_t *self);
 void handler_attack (edict_t *self);
-void hound_createHound(edict_t *self, float healthPercent);
-void handler_ConvertToInfantry(edict_t *self);
+void hound_createHound (edict_t *self, float healthPercent);
+void handler_ConvertToInfantry (edict_t *self);
 
 void hound_sight (edict_t *self, edict_t *other);
 void infantry_sight (edict_t *self, edict_t *other);

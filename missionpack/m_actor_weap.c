@@ -456,7 +456,7 @@ void actorGrenadeLauncher (edict_t *self)
 	{
 		float	cosa, t, x, vx, y;
 		float	drop;
-		float	last_error, last_up, v_error;
+		float	last_error, last_up = 0.0f, v_error;
 		int		i;
 
 		VectorCopy (forward, target);	// save target point

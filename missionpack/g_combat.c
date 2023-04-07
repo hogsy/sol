@@ -241,13 +241,13 @@ dflags		these flags are used to control how T_Damage works
 */
 static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
-	gclient_t	*client;
+	gclient_t	*client = NULL;
 	int			save;
 	int			power_armor_type;
-	int			index;
+	int			index = 0;
 	int			damagePerCell;
 	int			pa_te_type;
-	int			power;
+	int			power = 0;
 	int			power_used;
 
 	if (!damage)
@@ -1149,7 +1149,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 	// ROGUE
 
 	// Knightmare- falling doesn't damage armor
-	if (mod == MOD_FALLING && !falling_armor_damage->value)
+	if ( (mod == MOD_FALLING) && !falling_armor_damage->value )
 	{
 		psave = 0;
 		asave = 0;
@@ -1368,7 +1368,7 @@ T_RadiusDamage
 */
 void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod)
 {
-	float	points;
+	float	points = 0.0f;
 	edict_t	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;

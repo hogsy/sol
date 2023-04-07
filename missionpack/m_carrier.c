@@ -568,8 +568,8 @@ void carrier_prep_spawn (edict_t *self)
 void carrier_spawn_check (edict_t *self)
 {
 //	gi.dprintf ("times - %2.2f %2.2f\n", level.time, self->timestamp);
-	CarrierCoopCheck(self);
-	CarrierMachineGun(self);
+	CarrierCoopCheck (self);
+	CarrierMachineGun (self);
 	CarrierSpawn (self);
 
 	if (level.time > (self->timestamp + 1.1))  // 0.5 seconds per flyer.  this gets three
@@ -1194,10 +1194,10 @@ void carrier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 
 qboolean Carrier_CheckAttack (edict_t *self)
 {
-	vec3_t	spot1, spot2;
-	vec3_t	temp;
-	float	chance;
-	trace_t	tr;
+	vec3_t		spot1, spot2;
+	vec3_t		temp;
+	float		chance = 0.0f;
+	trace_t		tr;
 	qboolean	enemy_infront, enemy_inback, enemy_below;
 	int			enemy_range;
 	float		enemy_yaw;

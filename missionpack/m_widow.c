@@ -677,7 +677,7 @@ void WidowRail (edict_t *self)
 	vec3_t	start;
 	vec3_t	dir;
 	vec3_t	forward, right;
-	int		flash;
+	int		flash = 0;
 
 //	gi.dprintf ("railing!\n");
 	AngleVectors (self->s.angles, forward, right, NULL);
@@ -1450,10 +1450,10 @@ void WidowPowerups (edict_t *self)
 
 qboolean Widow_CheckAttack (edict_t *self)
 {
-	vec3_t	spot1, spot2;
-	vec3_t	temp;
-	float	chance;
-	trace_t	tr;
+	vec3_t		spot1, spot2;
+	vec3_t		temp;
+	float		chance = 0.0f;
+	trace_t		tr;
 	qboolean	enemy_infront;
 	int			enemy_range;
 	float		enemy_yaw;

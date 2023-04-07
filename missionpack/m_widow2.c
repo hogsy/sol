@@ -1052,12 +1052,12 @@ qboolean Widow2_CheckAttack (edict_t *self)
 {
 	vec3_t		spot1, spot2;
 	vec3_t		temp;
-	float		chance;
+	float		chance = 0.0f;
 	trace_t		tr;
 	qboolean	enemy_infront;
-	int			enemy_range;
-	float		enemy_yaw;
-	float		real_enemy_range;
+	int			enemy_range = 0;
+	float		enemy_yaw = 0.0f;
+	float		real_enemy_range = 0.0f;
 	vec3_t		f, r, u;
 
 	if (!self->enemy)

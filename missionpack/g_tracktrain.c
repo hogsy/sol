@@ -35,7 +35,7 @@ void tracktrain_reach_dest (edict_t *self);
 
 static float track_AngleMod (float in)
 {
-	float out;
+	float out = 0.0f;
 
 	if (in < 0)
 		out = in + 360 * ((int)(in / 360)+1);
@@ -542,11 +542,11 @@ void tracktrain_hide (edict_t *self)
 
 void tracktrain_think (edict_t *self)
 {
-	float	distance, speed, time;
-	float	yaw, pitch;
+	float	distance = 0.0f, speed = 0.0f, time = 0.0f;
+	float	yaw = 0.0f, pitch = 0.0f;
 	vec3_t	forward, left, up, f1, l1, u1, v;
-	int		i;
-	edict_t	*ent;
+	int		i = 0;
+	edict_t	*ent = NULL;
 
 	if (self->spawnflags & SF_TRACKTRAIN_OTHERMAP)
 	{
@@ -1252,7 +1252,7 @@ edict_t *NextPathTrack(edict_t *train, edict_t *path)
 
 			if (!next)
 			{
-				float	dot;
+				float	dot = 0.0f;
 
 				// Finally, check this path_track's target and target2
 				if (path->target)
@@ -1269,8 +1269,8 @@ edict_t *NextPathTrack(edict_t *train, edict_t *path)
 				}
 				if (path->target2 && !(path->spawnflags & SF_PATH_ALTPATH))
 				{
-					edict_t	*next2;
-					float	dot2;
+					edict_t	*next2 = NULL;
+					float	dot2 = 0.0f;
 					
 					next2 = G_PickTarget (path->target2);
 					if ( next2 == path )
@@ -1298,7 +1298,7 @@ edict_t *NextPathTrack(edict_t *train, edict_t *path)
 	}
 	else	// Moving forward
 	{
-		float	dot;
+		float	dot = 0.0f;
 
 		if (path->target)
 		{
@@ -1314,8 +1314,8 @@ edict_t *NextPathTrack(edict_t *train, edict_t *path)
 		}
 		if (path->target2 && !(path->spawnflags & SF_PATH_ALTPATH))
 		{
-			edict_t	*next2;
-			float	dot2;
+			edict_t	*next2 = NULL;
+			float	dot2 = 0.0f;
 
 			next2 = G_PickTarget (path->target2);
 			if ( next2 == path )

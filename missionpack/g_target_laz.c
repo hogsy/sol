@@ -3063,11 +3063,11 @@ void SP_target_failure (edict_t *self)
 //
 void target_locator_init (edict_t *self)
 {
-	int num_points=0;
-	int i, N, nummoves;
-	qboolean looped;
-	edict_t *tgt0, *tgtlast, *target, *next;
-	edict_t *move;
+	int			num_points = 0;
+	int			i, N, nummoves;
+	qboolean	looped;
+	edict_t		*tgt0 = NULL, *tgtlast = NULL, *target = NULL, *next = NULL;
+	edict_t		*move = NULL;
 
 	move = NULL;
 	move = G_Find(move,FOFS(targetname),self->target);
@@ -3129,7 +3129,7 @@ void target_locator_init (edict_t *self)
 		{
 			target = next;
 			if (!(target->spawnflags & 1)) i++;
-			if (target==tgtlast)
+			if (target == tgtlast)
 			{
 				// We've looped thru all path_corners, but not
 				// reached the target number yet. This can only

@@ -410,6 +410,10 @@ void InitGame (void)
 
 #ifdef SAVEGAME_USE_FUNCTION_TABLE
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4054)	// type cast for function pointers
+#endif	// _MSC_VER
+
 #include "z_list.h"
 
 typedef struct {

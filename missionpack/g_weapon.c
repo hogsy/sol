@@ -523,7 +523,7 @@ void Grenade_Evade (edict_t *monster)
 {
 	edict_t	*grenade;
 	vec3_t	grenade_vec;
-	float	grenade_dist, best_r, best_yaw, r;
+	float	grenade_dist = 0.0f, best_r, best_yaw = 0.0f, r;
 	float	yaw;
 	int		i;
 	vec3_t	forward;
@@ -1393,12 +1393,12 @@ void homing_think (edict_t *self)
 
 void Rocket_Evade (edict_t *rocket, vec3_t	dir, float speed)
 {
-	float	rocket_dist, best_r, best_yaw, dist, r;
-	float	time;
-	float	dot;
-	float	yaw;
+	float	rocket_dist = 0.0f, best_r = 0.0f, best_yaw = 0.0f, dist, r = 0.0f;
+	float	time = 0.0f;
+	float	dot = 0.0f;
+	float	yaw = 0.0f;
 	int		i;
-	edict_t	*ent=NULL;
+	edict_t	*ent = NULL;
 	trace_t	tr;
 	vec3_t	hitpoint;
 	vec3_t	forward, pos, best_pos;

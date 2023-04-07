@@ -2200,6 +2200,7 @@ qboolean ai_chicken (edict_t *self, edict_t *badguy)
 	}
 	return false;
 
+#if 0	// Knightmare- unreachable code
 	if (best_dist < 32)
 		return false;
 
@@ -2219,4 +2220,5 @@ qboolean ai_chicken (edict_t *self, edict_t *badguy)
 	self->monsterinfo.run(self);
 	self->monsterinfo.chicken_framenum = level.framenum;
 	return true;
+#endif
 }

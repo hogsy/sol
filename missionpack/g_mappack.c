@@ -118,12 +118,14 @@ void Cmd_Trigger_f (edict_t *ent)
 		case 1:
 			if (!t)
 				return;
-			if (t->classname == "target_mappack_laser")
+		//	if (t->classname == "target_mappack_laser")
+			if ( !strcmp(t->classname, "target_mappack_laser") )
 			{
 				if (t->spawnflags & 1)
 					target_laser_off (t);			
 			}
-			if (t->classname == "mappack_light")
+		//	if (t->classname == "mappack_light")
+			if ( !strcmp(t->classname, "mappack_light") )
 			{
 				if (!t->spawnflags & 1)
 				{
@@ -140,7 +142,8 @@ void Cmd_Trigger_f (edict_t *ent)
 		case 2: 
 			if (!t)
 				return;
-			if (t->classname == "target_satan_laser")
+		//	if (t->classname == "target_satan_laser")
+			if ( !strcmp(t->classname, "target_satan_laser") )
 			{
 				if (t->spawnflags & 1)
 				{
@@ -148,7 +151,8 @@ void Cmd_Trigger_f (edict_t *ent)
 				else
 					target_laser_on (t);
 			}
-			if (t->classname == "satan_light")
+		//	if (t->classname == "satan_light")
+			if ( !strcmp(t->classname, "satan_light") )
 			{
 				if (t->spawnflags & 1)
 				{

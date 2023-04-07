@@ -1562,39 +1562,6 @@ void q1_fire_gib (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int sp
 void q1_gib_precache (void);
 
 //
-// m_actor.c
-//
-void actor_attack (edict_t *actor);
-void actor_files ();
-void actor_fire (edict_t *actor);
-void actor_jump (edict_t *actor);
-void actor_moveit (edict_t *player, edict_t *actor);
-void actor_run (edict_t *actor);
-void actor_run_back (edict_t *actor);
-void actor_salute (edict_t *actor);
-void actor_stand (edict_t *actor);
-void actor_walk (edict_t *actor);
-void actor_walk_back (edict_t *actor);
-mmove_t actor_move_crouch;
-mmove_t actor_move_crouchwalk;
-mmove_t actor_move_crouchwalk_back;
-mmove_t	actor_move_run;
-mmove_t	actor_move_run_back;
-mmove_t	actor_move_run_bad;
-mmove_t actor_move_stand;
-mmove_t actor_move_walk;
-mmove_t	actor_move_walk_back;
-
-//
-// m_medic.c
-//
-#define	MEDIC_MIN_DISTANCE	32
-#define MEDIC_MAX_HEAL_DISTANCE	400
-#define	MEDIC_TRY_TIME		10.0
-
-void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mark);
-
-//
 // g_ptrail.c
 //
 void PlayerTrail_Init (void);
@@ -1688,6 +1655,7 @@ void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mar
 void medic_NextPatrolPoint(edict_t *ent,edict_t *hintpath);
 edict_t *medic_FindDeadMonster (edict_t *ent);
 void medic_StopPatrolling(edict_t *ent);
+
 //
 // m_move.c
 //

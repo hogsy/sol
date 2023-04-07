@@ -190,8 +190,8 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	float		stepsize;
 	vec3_t		test;
 	int			contents;
-	edict_t		*current_bad;		// PGM
-	float		minheight;			// pmm
+	edict_t		*current_bad = NULL;	// PGM
+	float		minheight;				// pmm
 
 	qboolean	canjump;
 	float		d1, d2;
@@ -201,8 +201,8 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	vec3_t		dir;
 	vec_t		dist;
 	vec_t		g1, g2;
-	edict_t		*grenade;
-	edict_t		*target;
+	edict_t		*grenade = NULL;
+	edict_t		*target = NULL;
 
 //======
 //PGM

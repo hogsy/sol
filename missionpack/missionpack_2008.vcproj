@@ -55,11 +55,11 @@
 				MinimalRebuild="true"
 				RuntimeLibrary="1"
 				PrecompiledHeaderFile=""
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4201;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -152,11 +152,11 @@
 				RuntimeLibrary="1"
 				PrecompiledHeaderFile=""
 				BrowseInformation="1"
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4201;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -249,10 +249,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=""
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 				CompileAs="1"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4201;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -343,10 +343,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=""
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 				CompileAs="1"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4201;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

@@ -322,7 +322,7 @@ void q1_fire_flame (edict_t *self, vec3_t start, vec3_t dir, float leftrightoff)
 	bolt->s.modelindex = gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
 	bolt->owner = self;
 	bolt->touch = q1_flame_touch;
-	bolt->nextthink = level.time + 2;
+	bolt->nextthink = level.time + 6;	// Knightmare- was 2
 	bolt->think = G_FreeEdict;
 	bolt->dmg = damage;
 	bolt->classname = "bolt";
