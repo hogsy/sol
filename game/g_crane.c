@@ -505,7 +505,7 @@ void Crane_Move_Begin (edict_t *ent)
 	gi.linkentity(ent);
 }
 
-void G_FindCraneParts()
+void G_FindCraneParts (void)
 {
 	vec3_t  dist;
 	edict_t *cable = NULL;

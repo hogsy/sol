@@ -1688,7 +1688,7 @@ extern void SP_crane_control ( edict_t * self ) ;
 extern void Use_Crane_Control ( edict_t * ent , edict_t * other , edict_t * activator ) ;
 extern void crane_control_action ( edict_t * control , edict_t * activator , vec3_t point ) ;
 extern void Crane_AdjustSpeed ( edict_t * ent ) ;
-extern void G_FindCraneParts ( ) ;
+extern void G_FindCraneParts ( void ) ;
 extern void Crane_Move_Begin ( edict_t * ent ) ;
 extern void Crane_Move_Final ( edict_t * ent ) ;
 extern void Crane_blocked ( edict_t * self , edict_t * other ) ;

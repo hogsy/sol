@@ -567,7 +567,7 @@ void tracktrain_think (edict_t *self)
 	float	yaw = 0.0f, pitch = 0.0f;
 	vec3_t	forward, left, up, f1, l1, u1, v;
 	int		i = 0;
-	edict_t	*ent;
+	edict_t	*ent = NULL;
 
 	if (self->spawnflags & SF_TRACKTRAIN_OTHERMAP)
 	{

@@ -2155,7 +2155,11 @@ void misc_blackhole_think (edict_t *self)
 void misc_blackhole_transparent (edict_t *ent)
 {
 	// Lazarus: This avoids the problem mentioned below.
+#ifdef KMQUAKE2_ENGINE_MOD	// Knightmare- for some reason RF_NOSHADOW makes the model invisible in vanilla Q2
 	ent->s.renderfx = RF_TRANSLUCENT|RF_NOSHADOW;
+#else
+	ent->s.renderfx = RF_TRANSLUCENT;
+#endif	// KMQUAKE2_ENGINE_MOD
 	ent->prethink = NULL;
 	gi.linkentity(ent);
 }
