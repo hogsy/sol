@@ -2657,7 +2657,7 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 	vec3_t		forward, right, up;
 	vec3_t		offset;
 	vec3_t		v;
-	int			kick = 12;
+//	int			kick = 12;
 	int			damage;
 	float		damage_radius;
 	int			radius_damage;

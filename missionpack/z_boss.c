@@ -727,7 +727,7 @@ void HookDragThink (edict_t *self)
 	float	length, speed;
 	vec3_t	hookoffset	= {-5, -24, 34};
 	vec3_t	forward, right;
-	vec3_t  offset = {0, 0, 0};
+//	vec3_t  offset = {0, 0, 0};
 
 	if (self->enemy && self->enemy->health > 0)
 	{
@@ -811,7 +811,7 @@ void HookThink (edict_t *self)
 	vec3_t	vec;
 	vec3_t	hookoffset	= {-3, -24, 34};
 	vec3_t	forward, right;
-	vec3_t  offset = {0, 0, 0};
+//	vec3_t  offset = {0, 0, 0};
 
 	if (self->powerarmor_time < level.time)
 	{
@@ -853,7 +853,7 @@ void FireHook (edict_t *self)
 	vec3_t	vec;
 	vec3_t	hookoffset	= {-1, -24, 34};
 	edict_t	*hook;
-	float speed;
+	float	speed;
 
 	AngleVectors (self->s.angles, forward, right, NULL);
 

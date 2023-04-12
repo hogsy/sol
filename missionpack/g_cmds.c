@@ -2234,8 +2234,8 @@ void ClientCommand (edict_t *ent)
 #ifndef DISABLE_FMOD
 	else if (!Q_stricmp(cmd, "playsound"))
 	{
-		vec3_t	pos = {0, 0, 0};
-		vec3_t	vel = {0, 0, 0};
+	//	vec3_t	pos = {0, 0, 0};
+	//	vec3_t	vel = {0, 0, 0};
 		if (s_primary->value)
 		{
 			gi.dprintf("target_playback requires s_primary be set to 0.\n"

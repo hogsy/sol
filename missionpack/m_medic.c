@@ -1504,14 +1504,14 @@ void medic_determine_spawn (edict_t *self)
 
 void medic_spawngrows (edict_t *self)
 {
-	vec3_t	f, r, offset, startpoint, spawnpoint;
-	int		summonStr;
-	int		count;
-	int		inc;
-	int		num_summoned; // should be 1, 3, or 5
-	int		num_success = 0;
-	float	current_yaw;
-	qboolean	behind = false;
+	vec3_t		f, r, offset, startpoint, spawnpoint;
+	int			summonStr;
+	int			count;
+	int			inc;
+	int			num_summoned; // should be 1, 3, or 5
+	int			num_success = 0;
+	float		current_yaw;
+//	qboolean	behind = false;
 
 	// if we've been directed to turn around
 	if (self->monsterinfo.aiflags & AI_MANUAL_STEERING)

@@ -2155,14 +2155,14 @@ void soldierh_laserbeam (edict_t *self, int flash_index)
 
 void soldierh_fire (edict_t *self, int flash_number)
 {
-	vec3_t	start;
-	vec3_t	forward, right, up;
-	vec3_t	aim;
-	vec3_t	dir;
-	vec3_t	end;
-	float	r, u;
-	int		flash_index;
-	qboolean tone = true;
+	vec3_t		start;
+	vec3_t		forward, right, up;
+	vec3_t		aim;
+	vec3_t		dir;
+	vec3_t		end;
+	float		r, u;
+	int			flash_index;
+//	qboolean	tone = true;
 
 //	if ((self->s.skinnum % 6) < 2)
 	if (self->skinnum < 2)
@@ -3197,6 +3197,12 @@ void SP_monster_soldier_x (edict_t *self)
 		self->monsterinfo.jumpup = 48;
 		self->monsterinfo.jumpdn = 160;
 	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
+	}
 
 	// Lazarus
 	if (self->powerarmor)
@@ -3453,6 +3459,12 @@ void SP_monster_soldier_h (edict_t *self)
 		self->monsterinfo.jump = soldierh_jump;
 		self->monsterinfo.jumpup = 48;
 		self->monsterinfo.jumpdn = 160;
+	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
 	}
 
 	// Lazarus

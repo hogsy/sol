@@ -730,6 +730,12 @@ void SP_monster_parasite (edict_t *self)
 		self->monsterinfo.jumpup = 32;
 		self->monsterinfo.jumpdn = 160;
 	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
+	}
 
 	self->common_name = "Parasite";
 	self->class_id = ENTITY_MONSTER_PARASITE;

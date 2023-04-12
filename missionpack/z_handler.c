@@ -251,15 +251,15 @@ void handler_standSitWhatNext (edict_t *self)
 
 void handler_stand (edict_t *self)
 {
-	float r = random();
+//	float r = random();
 
 	if (self->monsterinfo.currentmove != &handler_stand1 &&
-				self->monsterinfo.currentmove != &handler_stand2 &&
-        self->monsterinfo.currentmove != &handler_stand3 &&
-        self->monsterinfo.currentmove != &handler_stand4 &&
-				self->monsterinfo.currentmove != &handler_stand5)
+		self->monsterinfo.currentmove != &handler_stand2 &&
+		self->monsterinfo.currentmove != &handler_stand3 &&
+		self->monsterinfo.currentmove != &handler_stand4 &&
+		self->monsterinfo.currentmove != &handler_stand5)
 	{
-	  self->monsterinfo.currentmove = &handler_stand3;
+		self->monsterinfo.currentmove = &handler_stand3;
 	}
 }
 

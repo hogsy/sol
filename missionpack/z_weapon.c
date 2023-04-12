@@ -257,7 +257,7 @@ void tripbomb_laser_think (edict_t *self)
 	else if (VectorLength(delta) > 1.0)
 	{
 		// play a sound
-		//gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/ired/las_trig.wav"), 1, ATTN_NORM, 0);
+	//	gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/ired/las_trig.wav"), 1, ATTN_NORM, 0);
 		
 		// blow up
 		self->chain->think = TripBomb_Explode;
@@ -265,7 +265,7 @@ void tripbomb_laser_think (edict_t *self)
 		G_FreeEdict(self);
 		return;
 	}
-	VectorCopy(self->move_origin, self->s.old_origin);
+	VectorCopy (self->move_origin, self->s.old_origin);
 }
 
 void tripbomb_laser_on (edict_t *self)
@@ -274,7 +274,7 @@ void tripbomb_laser_on (edict_t *self)
 	self->think = tripbomb_laser_think;
 
 	// play a sound
-	gi.sound(self, CHAN_VOICE, gi.soundindex("weapons/ired/las_arm.wav"), 1, ATTN_NORM, 0);
+	gi.sound (self, CHAN_VOICE, gi.soundindex("weapons/ired/las_arm.wav"), 1, ATTN_NORM, 0);
 	tripbomb_laser_think(self);
 	//gi.positioned_sound(self->s.old_origin, self, CHAN_AUTO, gi.soundindex("weapons/ired/las_tink.wav"), 1, ATTN_NORM, 0);
 }
@@ -285,9 +285,9 @@ void create_tripbomb_laser (edict_t *bomb)
 	edict_t *laser = G_Spawn();
 	bomb->chain = laser;
 	laser->classname = "laser trip bomb laser";
-	VectorCopy(bomb->s.origin, laser->s.origin);
-	VectorCopy(bomb->s.origin, laser->move_origin);
-	VectorCopy(bomb->s.angles, laser->s.angles);
+	VectorCopy (bomb->s.origin, laser->s.origin);
+	VectorCopy (bomb->s.origin, laser->move_origin);
+	VectorCopy (bomb->s.angles, laser->s.angles);
 	G_SetMovedir (laser->s.angles, laser->movedir);
 	laser->owner = bomb;
 	laser->s.skinnum = 0xb0b1b2b3; // <- faint purple  0xf3f3f1f1 <-blue  red-> 0xf2f2f0f0;
@@ -405,8 +405,8 @@ void setupBomb (edict_t *bomb, char *classname, float damage, float damage_radiu
 void removeOldest (void)
 {
 	edict_t *oldestEnt = NULL;
-	edict_t *e = NULL;
-	int count = 0;
+	edict_t	*e = NULL;
+	int		count = 0;
 
 	while (1)
 	{
@@ -429,18 +429,18 @@ void removeOldest (void)
 		// get this tbomb to explode
 		oldestEnt->think = TripBomb_Explode;
 		oldestEnt->nextthink = level.time + FRAMETIME;
-		G_FreeEdict(oldestEnt->chain);
+		G_FreeEdict (oldestEnt->chain);
 	}
 }
 
 qboolean fire_lasertripbomb (edict_t *self, vec3_t start, vec3_t dir, float timer, float damage, float damage_radius, qboolean quad)
 {
 	// trace a line
-	trace_t tr;
-	vec3_t endPos;
-	vec3_t _dir;
-	edict_t *bomb = NULL;
-	edict_t *laser = NULL;
+	trace_t	tr;
+	vec3_t	endPos;
+	vec3_t	_dir;
+	edict_t	*bomb = NULL;
+//	edict_t	*laser = NULL;
 
 	VectorScale(dir, 64, _dir);
 	VectorAdd(start, _dir, endPos);
@@ -546,8 +546,8 @@ void Weapon_LaserTripBomb (edict_t *ent)
 	const int idleFirst = 16;
 	const int idleLast = 43;
 	const int fireFirst = 7;
-	const int fireLast = 15;
-	const int activateFirst = 0;
+//	const int fireLast = 15;
+//	const int activateFirst = 0;
 	const int activateLast = 6;
 	
 	if (ent->client->weaponstate == WEAPON_DROPPING)
@@ -1058,9 +1058,9 @@ void flare_flash(edict_t *ent)
 
 void flare_think(edict_t *self)
 {
-	edict_t *target = NULL;
-	edict_t *closestEnt = NULL;
-	float closestDist = 0.0;
+//	edict_t *target = NULL;
+//	edict_t *closestEnt = NULL;
+//	float	closestDist = 0.0;
 
 	// on our last leg?
 	if (level.time > self->timeout)

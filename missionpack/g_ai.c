@@ -2126,12 +2126,12 @@ static int chase_angle[] = {270,450,225,495,540};
 qboolean ai_chicken (edict_t *self, edict_t *badguy)
 {
 	int		i;
-	edict_t	*thing;
+//	edict_t	*thing = NULL;
 	vec3_t	atk, dir, best_dir, end, forward;
 	vec_t	travel, yaw;
 	vec3_t	mins, maxs;
 	vec3_t	testpos;
-	vec_t	best_dist=0;
+	vec_t	best_dist = 0;
 	trace_t	trace1, trace2;
 
 	// No point in hiding from attacker if he's gone

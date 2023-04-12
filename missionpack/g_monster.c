@@ -1869,7 +1869,9 @@ int PatchMonsterModel (char *modelname)
 	qboolean	is_tank = false;
 	qboolean	is_soldier = false;
 	// Knightmare added
+#ifdef CITADELMOD_FEATURES
 	qboolean	is_brain = false;
+#endif
 	qboolean	is_gekk = false;
 	qboolean	is_fixbot = false;
 	qboolean	is_chick = false;

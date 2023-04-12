@@ -2610,7 +2610,7 @@ qboolean CheckGroundSpawnPoint (vec3_t origin, vec3_t entMins, vec3_t entMaxs, f
 {
 	trace_t		tr;
 	vec3_t		start, stop;
-	int			failure = 0;
+//	int			failure = 0;
 	vec3_t		mins, maxs;
 	int			x, y;	
 	float		mid, bottom;

@@ -1764,6 +1764,7 @@ extern int	num_hint_paths;
 qboolean blocked_checkshot (edict_t *self, float shotChance);
 qboolean blocked_checkplat (edict_t *self, float dist);
 qboolean blocked_checkjump (edict_t *self, float dist, float maxDown, float maxUp);
+qboolean blocked_checkjump_laz (edict_t *self, float dist, float maxDown, float maxUp);
 qboolean blocked_checknewenemy (edict_t *self);
 qboolean monsterlost_checkhint (edict_t *self);
 qboolean inback (edict_t *self, edict_t *other);

@@ -2255,6 +2255,7 @@ extern void hintpath_go ( edict_t * self , edict_t * point ) ;
 extern edict_t * hintpath_other_end ( edict_t * ent ) ;
 extern edict_t * hintpath_findstart ( edict_t * ent ) ;
 extern qboolean blocked_checknewenemy ( edict_t * self ) ;
+extern qboolean blocked_checkjump_laz ( edict_t * self , float dist , float maxDown , float maxUp ) ;
 extern qboolean blocked_checkjump ( edict_t * self , float dist , float maxDown , float maxUp ) ;
 extern qboolean blocked_checkplat ( edict_t * self , float dist ) ;
 extern qboolean blocked_checkshot ( edict_t * self , float shotChance ) ;

@@ -201,15 +201,13 @@ qboolean blocked_checkjump (edict_t *self, float dist, float maxDown, float maxU
 	vec3_t		pt1, pt2;
 	vec3_t		forward, up;
 	vec_t		d0, d1;
-	edict_t		*target;
+	edict_t		*target = NULL;
 
 	// Lazarus: Rogue only did this for enemies. We do it for enemies or
 	//          movetargets
 
-	if (!self->monsterinfo.jump)
-		return false;
-	if (!self->enemy)
-		return false;
+//	if (!self->enemy)
+//		return false;
 	if (self->enemy)
 		target = self->enemy;
 	else if (self->movetarget)
@@ -217,11 +215,11 @@ qboolean blocked_checkjump (edict_t *self, float dist, float maxDown, float maxU
 	else
 		return false;
 	
-	VectorSubtract(target->s.origin,self->s.origin,pt1);
+	VectorSubtract (target->s.origin, self->s.origin, pt1);
 	d0 = VectorLength(pt1);
 
 	AngleVectors (self->s.angles, forward, NULL, up);
-	VectorMA(self->s.origin, 48, forward, pt1);
+	VectorMA (self->s.origin, 48, forward, pt1);
 
 	if (target->absmin[2] > (self->absmin[2] + 16))
 		playerPosition = 1;
@@ -230,7 +228,135 @@ qboolean blocked_checkjump (edict_t *self, float dist, float maxDown, float maxU
 	else
 		playerPosition = 0;
 
-	if (playerPosition == -1 && maxDown)
+	if ( (playerPosition == -1) && maxDown)
+	{
+		// check to make sure we can even get to the spot we're going to "fall" from
+		trace = gi.trace(self->s.origin, self->mins, self->maxs, pt1, self, MASK_MONSTERSOLID);
+		if (trace.fraction < 1)
+			return false;
+
+		VectorCopy (pt1, pt2);
+		pt2[2] = self->mins[2] - maxDown - 1;
+
+		trace = gi.trace(pt1, vec3_origin, vec3_origin, pt2, self, MASK_MONSTERSOLID | MASK_WATER);
+		if (trace.fraction < 1 && !trace.allsolid && !trace.startsolid)
+		{
+			if ((self->absmin[2] - trace.endpos[2]) >= 24 && trace.contents & MASK_SOLID)
+			{
+				if ( (target->absmin[2] - trace.endpos[2]) > 32) {
+				//	if (g_showlogic && g_showlogic->value)
+				//		gi.dprintf("That'll take me too far down...%0.1f\n", (self->enemy->absmin[2] - trace.endpos[2]));
+					return false;
+				}
+				if (trace.plane.normal[2] < 0.9) {
+				//	if (g_showlogic && g_showlogic->value)
+				//		gi.dprintf("Floor angle too much! %s\n", vtos(trace.plane.normal));
+					return false;
+				}
+
+				VectorSubtract (target->s.origin, trace.endpos, pt1);
+				d1 = VectorLength(pt1);
+				if (d0 < d1) {
+				//	if (g_showlogic && g_showlogic->value)
+				//		gi.dprintf("Trace spot farther away than goal! %s\n", vtos(trace.plane.normal));
+					return false;
+				}
+
+			//	if (g_showlogic && g_showlogic->value)
+			//		gi.dprintf("Geronimo! %0.1f\n", (self->absmin[2] - trace.endpos[2]));
+				return true;
+			}
+		/*	else if (g_showlogic && g_showlogic->value)
+			{
+				if (!(trace.contents & MASK_SOLID))
+					gi.dprintf("Ooooh... Bad stuff down there...\n");
+				else
+					gi.dprintf("Too far to fall\n");
+			} */
+		}
+	//	else if (g_showlogic && g_showlogic->value)
+	//		gi.dprintf("Ooooh... Too far to fall...\n");
+	}
+	else if ( (playerPosition == 1) && maxUp)
+	{
+		VectorCopy (pt1, pt2);
+		pt1[2] = self->absmax[2] + maxUp;
+
+		trace = gi.trace(pt1, vec3_origin, vec3_origin, pt2, self, MASK_MONSTERSOLID | MASK_WATER);
+		if ( (trace.fraction < 1) && !trace.allsolid && !trace.startsolid )
+		{
+			if ( ((trace.endpos[2] - self->absmin[2]) <= maxUp) && (trace.contents & MASK_SOLID) )
+			{
+			//	if (g_showlogic && g_showlogic->value)
+			//		gi.dprintf("Jumping Up! %0.1f\n", (trace.endpos[2] - self->absmin[2]));
+
+				VectorSubtract (target->s.origin, trace.endpos, pt1);
+				d1 = VectorLength(pt1);
+				if (d0 < d1) {
+				//	if (g_showlogic && g_showlogic->value)
+				//		gi.dprintf("Trace spot farther away than goal! %s\n", vtos(trace.plane.normal));
+					return false;
+				}
+
+				face_wall (self);
+				return true;
+			}
+		//	else if (g_showlogic && g_showlogic->value)
+		//		gi.dprintf("Too high to jump %0.1f\n", (trace.endpos[2] - self->absmin[2]));
+		}
+	//	else if (g_showlogic && g_showlogic->value)
+	//			gi.dprintf("Not something I could jump onto\n");
+	}
+//	else if (g_showlogic && g_showlogic->value)
+//		gi.dprintf("Player at similar level. No need to jump up?\n");
+
+	return false;
+}
+
+/*
+=====================
+blocked_checkjump_laz
+
+Lazarus revised version of blocked_checkjump, directly calls monsterinfo.jump
+dist: distance monster is attempting to advance
+maxDown/maxUpt: max altitude to approve jump for; 0 is for no change
+=====================
+*/
+qboolean blocked_checkjump_laz (edict_t *self, float dist, float maxDown, float maxUp)
+{
+	int			playerPosition;
+	trace_t		trace;
+	vec3_t		pt1, pt2;
+	vec3_t		forward, up;
+	vec_t		d0, d1;
+	edict_t		*target = NULL;
+
+	// Lazarus: Rogue only did this for enemies. We do it for enemies or
+	//          movetargets
+
+	if (!self->monsterinfo.jump)
+		return false;
+	if (self->enemy)
+		target = self->enemy;
+	else if (self->movetarget)
+		target = self->movetarget;
+	else
+		return false;
+	
+	VectorSubtract (target->s.origin, self->s.origin, pt1);
+	d0 = VectorLength(pt1);
+
+	AngleVectors (self->s.angles, forward, NULL, up);
+	VectorMA (self->s.origin, 48, forward, pt1);
+
+	if (target->absmin[2] > (self->absmin[2] + 16))
+		playerPosition = 1;
+	else if (target->absmin[2] < (self->absmin[2] - 16))
+		playerPosition = -1;
+	else
+		playerPosition = 0;
+
+	if ( (playerPosition == -1) && maxDown)
 	{
 		// check to make sure we can even get to the spot we're going to "fall" from
 		trace = gi.trace(self->s.origin, self->mins, self->maxs, pt1, self, MASK_MONSTERSOLID);
@@ -249,48 +375,44 @@ qboolean blocked_checkjump (edict_t *self, float dist, float maxDown, float maxU
 					return false;
 				if (trace.plane.normal[2] < 0.9)
 					return false;
-				VectorSubtract(target->s.origin,trace.endpos,pt1);
+
+				VectorSubtract (target->s.origin, trace.endpos, pt1);
 				d1 = VectorLength(pt1);
 				if (d0 < d1)
 					return false;
-				self->velocity[0] = forward[0]*dist*10;
-				self->velocity[1] = forward[1]*dist*10;
-				self->velocity[2] = max(self->velocity[2],100);
-				gi.linkentity(self);
+
+				self->velocity[0] = forward[0] * dist * 10;
+				self->velocity[1] = forward[1] * dist * 10;
+				self->velocity[2] = max(self->velocity[2], 100);
+				gi.linkentity (self);
 				return true;
 			}
 		}
 	}
-	else if (playerPosition == 1 && maxUp)
+	else if ( (playerPosition == 1) && maxUp)
 	{
-		VectorCopy(pt1, pt2);
+		VectorCopy (pt1, pt2);
 		pt1[2] = self->absmax[2] + maxUp;
 
 		trace = gi.trace(pt1, vec3_origin, vec3_origin, pt2, self, MASK_MONSTERSOLID | MASK_WATER);
-		if (trace.fraction < 1 && !trace.allsolid && !trace.startsolid)
+		if ( (trace.fraction < 1) && !trace.allsolid && !trace.startsolid )
 		{
-			if ((trace.endpos[2] - self->absmin[2]) <= maxUp && trace.contents & MASK_SOLID)
+			if ( ((trace.endpos[2] - self->absmin[2]) <= maxUp) && (trace.contents & MASK_SOLID) )
 			{
-				VectorSubtract(target->s.origin,trace.endpos,pt1);
+				VectorSubtract (target->s.origin, trace.endpos, pt1);
 				d1 = VectorLength(pt1);
 				if (d0 < d1)
 					return false;
-				face_wall(self);
-				self->monsterinfo.jump(self);
-				self->velocity[0] = forward[0]*dist*10;
-				self->velocity[1] = forward[1]*dist*10;
-				self->velocity[2] = max(self->velocity[2],200);
-				gi.linkentity(self);
+				face_wall (self);
+				self->monsterinfo.jump (self);
+				self->velocity[0] = forward[0] * dist * 10;
+				self->velocity[1] = forward[1] * dist * 10;
+				self->velocity[2] = max(self->velocity[2], 200);
+				gi.linkentity (self);
 				return true;
 			}
-		//	else if (g_showlogic && g_showlogic->value)
-		//		gi.dprintf("Too high to jump %0.1f\n", (trace.endpos[2] - self->absmin[2]));
 		}
-	//	else if (g_showlogic && g_showlogic->value)
-	//			gi.dprintf("Not something I could jump onto\n");
 	}
-//	else if (g_showlogic && g_showlogic->value)
-//		gi.dprintf("Player at similar level. No need to jump up?\n");
 
 	return false;
 }

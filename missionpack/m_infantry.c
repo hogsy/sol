@@ -640,7 +640,7 @@ qboolean infantry_blocked (edict_t *self, float dist)
 
 	if (blocked_checkjump (self, dist, 192, 40))
 	{
-		infantry_jump(self);
+		infantry_jump (self);
 		return true;
 	}
 
@@ -879,6 +879,12 @@ void SP_monster_infantry (edict_t *self)
 		self->monsterinfo.jump = infantry_jump;
 		self->monsterinfo.jumpup = 48;
 		self->monsterinfo.jumpdn = 160;
+	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
 	}
 
 	// Lazarus

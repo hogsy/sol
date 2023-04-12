@@ -1401,13 +1401,13 @@ edict_t *NextPathTrack(edict_t *train, edict_t *path)
 	return next;
 }
 
-void LookAhead( edict_t *train, vec3_t point, float dist )
+void LookAhead (edict_t *train, vec3_t point, float dist)
 {
-	float originalDist = dist;
-	float length;
+//	float	originalDist = dist;
+	float	length;
 	vec3_t	v;
-	edict_t	*path;
-	int		n=0;
+	edict_t	*path = NULL;
+	int		n = 0;
 	
 	path = train->target_ent;
 	if (!path || dist < 0)

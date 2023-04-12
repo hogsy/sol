@@ -1306,9 +1306,9 @@ qboolean FMOD_IsPlaying (edict_t *ent)
 
 void Use_Target_Playback (edict_t *ent, edict_t *other, edict_t *activator)
 {
-	vec3_t		pos = {0, 0, 0};
-	vec3_t		vel = {0, 0, 0};
-	int			volume = 255;
+//	vec3_t		pos = {0, 0, 0};
+//	vec3_t		vel = {0, 0, 0};
+//	int			volume = 255;
 
 	if (fmod_nomusic->value && (ent->spawnflags & SF_PLAYBACK_MUSIC))
 		return;

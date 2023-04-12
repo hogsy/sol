@@ -416,7 +416,7 @@ qboolean mutant_check_jump (edict_t *self)
 			self->monsterinfo.jumpup )
 			return false;
 		if (self->absmax[2] < (self->enemy->absmin[2] + 0.25 * self->enemy->size[2]))
-			speed = max(self->velocity[2],200);
+			speed = max(self->velocity[2], 200);
 	}
 	else
 	{
@@ -783,6 +783,12 @@ void SP_monster_mutant (edict_t *self)
 		self->monsterinfo.jump = mutant_fake_jump;
 		self->monsterinfo.jumpup = 96;
 		self->monsterinfo.jumpdn = 160;
+	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
 	}
 
 	// Lazarus

@@ -579,6 +579,12 @@ void SP_monster_berserk (edict_t *self)
 		self->monsterinfo.jumpup = 48;
 		self->monsterinfo.jumpdn = 160;
 	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
+	}
 
 	self->monsterinfo.currentmove = &berserk_move_stand;
 	if (self->health < 0)

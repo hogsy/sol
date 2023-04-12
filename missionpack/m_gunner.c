@@ -1598,6 +1598,12 @@ void SP_monster_gunner (edict_t *self)
 		self->monsterinfo.jumpup = 48;
 		self->monsterinfo.jumpdn = 64;
 	}
+	else
+	{
+		self->monsterinfo.jump = NULL;
+		self->monsterinfo.jumpup = 0;
+		self->monsterinfo.jumpdn = 0;
+	}
 
 	gi.linkentity (self);
 
