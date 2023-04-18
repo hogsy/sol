@@ -344,7 +344,7 @@ void q1_fire_flame (edict_t *self, vec3_t start, vec3_t dir, float leftrightoff)
 void q1_flame_precache (void)
 {
 	gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
-	gi.soundindex("q1hknight/hit.wav");
+	gi.soundindex ("q1hknight/hit.wav");
 }
 
 

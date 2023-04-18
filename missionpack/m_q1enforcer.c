@@ -359,7 +359,7 @@ void SP_monster_q1_enforcer (edict_t *self)
 	// precache gibs
 	gi.modelindex ("models/monsters/q1enforcer/head/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib1/tris.md2");
-	gi.modelindex ("models/objects/q1gibs/q1gib3/tris.md2");
+	gi.modelindex ("models/objects/q1gibs/q1gib2/tris.md2");
 	// precache laser
 	q1_laser_precache ();
 
