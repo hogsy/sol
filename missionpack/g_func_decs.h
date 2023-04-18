@@ -2040,6 +2040,7 @@ extern void LoadTransitionEnts ( void ) ;
 extern void G_FindTeams ( void ) ;
 extern void G_FixTeams ( void ) ;
 extern char * ED_ParseEdict ( char * data , edict_t * ent ) ;
+extern void G_PrecachePlayerInventories ( void ) ;
 extern qboolean ED_ParseEntityAlias ( char * data , edict_t * ent ) ;
 extern void LoadAliasData ( void ) ;
 extern qboolean LoadAliasFile ( char * name ) ;

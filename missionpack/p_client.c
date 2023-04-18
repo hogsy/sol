@@ -2529,7 +2529,7 @@ void PutClientInServer (edict_t *ent)
 	memcpy (userinfo, ent->client->pers.userinfo, sizeof(userinfo));
 	ClientUserinfoChanged (ent, userinfo);
 
-	//Knightmare- backup chasetoggle
+	// Knightmare- backup chasetoggle
 	if (client->chasetoggle)
 		tempchase = 1;
 	else
@@ -2808,9 +2808,9 @@ void ClientBegin (edict_t *ent)
 
 	Fog_Off (ent);
 
-	stuffcmd(ent,"alias +zoomin zoomin;alias -zoomin zoominstop\n");
-	stuffcmd(ent,"alias +zoomout zoomout;alias -zoomout zoomoutstop\n");
-	stuffcmd(ent,"alias +zoom zoomon;alias -zoom zoomoff\n");
+	stuffcmd (ent,"alias +zoomin zoomin;alias -zoomin zoominstop\n");
+	stuffcmd (ent,"alias +zoomout zoomout;alias -zoomout zoomoutstop\n");
+	stuffcmd (ent,"alias +zoom zoomon;alias -zoom zoomoff\n");
 
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch

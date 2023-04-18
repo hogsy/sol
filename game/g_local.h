@@ -1158,6 +1158,7 @@ void ReflectTrail (int type, vec3_t start, vec3_t end, int red, int green, int b
 //
 void ED_CallSpawn (edict_t *ent);
 void ReInitialize_Entity (edict_t *ent);
+void G_PrecachePlayerInventories (void);	// Knightmare added
 void G_FindTeams();
 void Cmd_ToggleHud ();
 void Hud_On();

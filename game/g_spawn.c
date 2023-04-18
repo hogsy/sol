@@ -1010,6 +1010,44 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 
 /*
+===========
+G_PrecachePlayerInventories
+
+Precaches inventory for all players transitioning
+across maps in SP and coop.
+============
+*/
+void G_PrecachePlayerInventories (void)
+{
+	int			i, j;
+	gclient_t	*client = NULL;
+	gitem_t		*item = NULL;
+
+	if (deathmatch->value)	// not needed in DM/CTF
+		return;
+
+	for (i = 0; i < game.maxclients; i++)
+	{
+		if (&game.clients[i] != NULL)
+		{
+		//	gi.dprintf ("PrecachePlayerInventories(): precaching for client %i\n", i);
+			client = &game.clients[i];
+			for (j = 0; j < game.num_items; j++)
+			{
+				if (client->pers.inventory[j] > 0) {
+					item = &itemlist[j];
+					if (item != NULL) {
+					//	gi.dprintf ("PrecachePlayerInventories(): precaching item %i: %s\n", j, item->classname);
+						PrecacheItem (item);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/*
 ================
 G_FindTeams
 
@@ -1099,7 +1137,7 @@ void LoadTransitionEnts (void)
 			}
 		}
 		trans_ent_filename (t_file, sizeof(t_file));
-		f = fopen(t_file,"rb");
+		f = fopen(t_file, "rb");
 		if (!f)
 			gi.error("LoadTransitionEnts: Cannot open %s\n", t_file);
 		else
@@ -1120,7 +1158,7 @@ void LoadTransitionEnts (void)
 					}
 					else if (ent->deadflag == DEAD_DEAD)
 					{
-						ent->health = min(ent->health,-1);
+						ent->health = min(ent->health, -1);
 					}
 				}
 				VectorAdd (ent->s.origin, v_spawn, ent->s.origin);
@@ -1233,7 +1271,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	// end Knightmare
 
 	// Knightamre- load the entity alias script file
-	LoadAliasData();
+	LoadAliasData ();
 	//gi.dprintf ("Size of alias data: %i\n", alias_data_size);
 
 // parse ents
@@ -1363,14 +1401,14 @@ removeflags:
 	PlayerTrail_Init ();
 
 //ZOID
-	CTFSpawn();
+	CTFSpawn ();
 	// Knightmare added
 	if (deathmatch->value && !ctf->value)
 		CTFSetupTechSpawn ();	
 //ZOID
 
 	if (!deathmatch->value)
-		SetupHintPaths();
+		SetupHintPaths ();
 
 	for (i=1, ent=g_edicts+i; i < globals.num_edicts; i++, ent++)
 	{
@@ -1428,6 +1466,11 @@ removeflags:
 
 	actor_files ();
 
+	// Knightmare- precache transitioning player inventories here
+	// Fixes lag when changing weapons after level transition
+#ifdef KMQUAKE2_ENGINE_MOD
+	G_PrecachePlayerInventories ();
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 

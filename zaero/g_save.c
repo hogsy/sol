@@ -1191,5 +1191,10 @@ void ReadLevel (char *filename)
 			if (strcmp(ent->classname, "target_crosslevel_target") == 0)
 				ent->nextthink = level.time + ent->delay;
 	}
-}
 
+	// Knightmare- precache transitioning player inventories here
+	// Fixes lag when changing weapons after level transition
+#ifdef KMQUAKE2_ENGINE_MOD
+	G_PrecachePlayerInventories ();
+#endif	// KMQUAKE2_ENGINE_MOD
+}

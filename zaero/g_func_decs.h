@@ -978,6 +978,7 @@ extern void Svcmd_Test_f ( void ) ;
 extern void SP_worldspawn ( edict_t * ent ) ;
 extern void SpawnEntities ( char * mapname , char * entities , char * spawnpoint ) ;
 extern void G_FindTeams ( void ) ;
+extern void G_PrecachePlayerInventories ( void ) ;
 extern char * ED_ParseEdict ( char * data , edict_t * ent ) ;
 extern void ED_ParseField ( char * key , char * value , edict_t * ent ) ;
 extern char * ED_NewString ( char * string ) ;

@@ -874,6 +874,16 @@ void player_pain (edict_t *self, edict_t *other, float kick, int damage);
 void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
 
 //
+// g_spawn.c
+//
+void ED_CallSpawn (edict_t *ent);
+void G_PrecachePlayerInventories (void);	// Knightmare added
+void G_FindTeams();
+void Cmd_ToggleHud ();
+void Hud_On();
+void Hud_Off();
+
+//
 // g_svcmds.c
 //
 void	ServerCommand (void);

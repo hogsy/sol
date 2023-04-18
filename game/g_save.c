@@ -1025,8 +1025,10 @@ void ReadGame (char *filename)
 
 	fread (&game, sizeof(game), 1, f);
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
+
 	for (i=0; i<game.maxclients; i++)
 		ReadClient (f, &game.clients[i]);
+
 	fclose (f);
 }
 
@@ -1333,7 +1335,13 @@ void ReadLevel (char *filename)
 	// DWH: Load transition entities
 	if (game.transition_ents)
 	{
-		LoadTransitionEnts();
-		actor_files();
+		LoadTransitionEnts ();
+		actor_files ();
 	}
+
+	// Knightmare- precache transitioning player inventories here
+	// Fixes lag when changing weapons after level transition
+#ifdef KMQUAKE2_ENGINE_MOD
+	G_PrecachePlayerInventories ();
+#endif	// KMQUAKE2_ENGINE_MOD
 }

@@ -1434,6 +1434,44 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 
 /*
+===========
+G_PrecachePlayerInventories
+
+Precaches inventory for all players transitioning
+across maps in SP and coop.
+============
+*/
+void G_PrecachePlayerInventories (void)
+{
+	int			i, j;
+	gclient_t	*client = NULL;
+	gitem_t		*item = NULL;
+
+	if (deathmatch->value)	// not needed in DM/CTF
+		return;
+
+	for (i = 0; i < game.maxclients; i++)
+	{
+		if (&game.clients[i] != NULL)
+		{
+		//	gi.dprintf ("PrecachePlayerInventories(): precaching for client %i\n", i);
+			client = &game.clients[i];
+			for (j = 0; j < game.num_items; j++)
+			{
+				if (client->pers.inventory[j] > 0) {
+					item = &itemlist[j];
+					if (item != NULL) {
+					//	gi.dprintf ("PrecachePlayerInventories(): precaching item %i: %s\n", j, item->classname);
+						PrecacheItem (item);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/*
 ================
 G_FindTeams
 
@@ -1935,6 +1973,12 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	}
 
 	actor_files ();
+
+	// Knightmare- precache transitioning player inventories here
+	// Fixes lag when changing weapons after level transition
+#ifdef KMQUAKE2_ENGINE_MOD
+	G_PrecachePlayerInventories ();
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 

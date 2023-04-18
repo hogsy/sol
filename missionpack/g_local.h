@@ -428,7 +428,7 @@ typedef struct gitem_s
 	void		(*weaponthink)(struct edict_s *ent);
 	char		*pickup_sound;
 	char		*world_model;
-	int			world_model_skinnum; //Knightmare- added skinnum here since some items share models
+	int			world_model_skinnum; // Knightmare- added skinnum here since some items share models
 	int			world_model_flags;
 	char		*view_model;
 
@@ -1809,20 +1809,6 @@ void Tag_PlayerDeath(edict_t *targ, edict_t *inflictor, edict_t *attacker);
 void fire_doppleganger (edict_t *ent, vec3_t start, vec3_t aimdir);
 
 //
-// g_spawn.c
-//
-void ReInitialize_Entity (edict_t *ent);
-edict_t *CreateMonster(vec3_t origin, vec3_t angles, char *classname);
-edict_t *CreateFlyMonster (vec3_t origin, vec3_t angles, vec3_t mins, vec3_t maxs, char *classname);
-edict_t *CreateGroundMonster (vec3_t origin, vec3_t angles, vec3_t mins, vec3_t maxs, char *classname, int height);
-qboolean FindSpawnPoint (vec3_t startpoint, vec3_t mins, vec3_t maxs, vec3_t spawnpoint, float maxMoveUp);
-qboolean CheckSpawnPoint (vec3_t origin, vec3_t mins, vec3_t maxs);
-qboolean CheckGroundSpawnPoint (vec3_t origin, vec3_t entMins, vec3_t entMaxs, float height, float gravity);
-void DetermineBBox (char *classname, vec3_t mins, vec3_t maxs);
-void SpawnGrow_Spawn (vec3_t startpos, int size);
-void Widowlegs_Spawn (vec3_t startpos, vec3_t angles);
-
-//
 // p_client.c
 //
 void RemoveAttackingPainDaemons (edict_t *self);
@@ -1882,10 +1868,22 @@ void target_playback_delayed_start (edict_t *ent);
 // g_spawn.c
 //
 void ED_CallSpawn (edict_t *ent);
+void ReInitialize_Entity (edict_t *ent);
+void G_PrecachePlayerInventories (void);	// Knightmare added
 void G_FindTeams();
 void Cmd_ToggleHud ();
 void Hud_On();
 void Hud_Off();
+// ROGUE
+edict_t *CreateMonster (vec3_t origin, vec3_t angles, char *classname);
+edict_t *CreateFlyMonster (vec3_t origin, vec3_t angles, vec3_t mins, vec3_t maxs, char *classname);
+edict_t *CreateGroundMonster (vec3_t origin, vec3_t angles, vec3_t mins, vec3_t maxs, char *classname, int height);
+qboolean FindSpawnPoint (vec3_t startpoint, vec3_t mins, vec3_t maxs, vec3_t spawnpoint, float maxMoveUp);
+qboolean CheckSpawnPoint (vec3_t origin, vec3_t mins, vec3_t maxs);
+qboolean CheckGroundSpawnPoint (vec3_t origin, vec3_t entMins, vec3_t entMaxs, float height, float gravity);
+void DetermineBBox (char *classname, vec3_t mins, vec3_t maxs);
+void SpawnGrow_Spawn (vec3_t startpos, int size);
+void Widowlegs_Spawn (vec3_t startpos, vec3_t angles);
 
 //
 // g_svcmds.c

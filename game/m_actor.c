@@ -1219,6 +1219,7 @@ void actor_jump (edict_t *self)
 	gi.sound (self, CHAN_VOICE, self->actor_sound_index[ACTOR_SOUND_JUMP], 1, ATTN_NORM, 0);
 	self->monsterinfo.currentmove = &actor_move_jump;
 }
+
 qboolean actor_blocked (edict_t *self, float dist)
 {
 	if (check_shot_blocked (self, 0.25 + (0.05 * skill->value) ))

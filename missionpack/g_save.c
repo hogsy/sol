@@ -1457,4 +1457,10 @@ void ReadLevel (char *filename)
 		LoadTransitionEnts();
 		actor_files();
 	}
+
+	// Knightmare- precache transitioning player inventories here
+	// Fixes lag when changing weapons after level transition
+#ifdef KMQUAKE2_ENGINE_MOD
+	G_PrecachePlayerInventories ();
+#endif	// KMQUAKE2_ENGINE_MOD
 }

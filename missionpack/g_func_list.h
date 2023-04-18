@@ -2039,6 +2039,7 @@
 {"LoadTransitionEnts", (byte *)LoadTransitionEnts},
 {"G_FindTeams", (byte *)G_FindTeams},
 {"G_FixTeams", (byte *)G_FixTeams},
+{"G_PrecachePlayerInventories", (byte *)G_PrecachePlayerInventories},
 {"ED_ParseEdict", (byte *)ED_ParseEdict},
 {"ED_ParseEntityAlias", (byte *)ED_ParseEntityAlias},
 {"LoadAliasData", (byte *)LoadAliasData},

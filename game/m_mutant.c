@@ -440,7 +440,7 @@ qboolean mutant_check_jump (edict_t *self)
 			self->monsterinfo.jumpup )
 			return false;
 		if (self->absmax[2] < (self->enemy->absmin[2] + 0.25 * self->enemy->size[2]))
-			speed = max(self->velocity[2],200);
+			speed = max(self->velocity[2], 200);
 	}
 	else
 	{

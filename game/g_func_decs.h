@@ -1024,6 +1024,7 @@ extern void SP_worldspawn ( edict_t * ent ) ;
 extern void SpawnEntities ( char * mapname , char * entities , char * spawnpoint ) ;
 extern void LoadTransitionEnts ( void ) ;
 extern void G_FindTeams ( void ) ;
+extern void G_PrecachePlayerInventories ( void ) ;
 extern char * ED_ParseEdict ( char * data , edict_t * ent ) ;
 extern qboolean ED_ParseEntityAlias ( char * data , edict_t * ent ) ;
 extern void LoadAliasData ( void ) ;

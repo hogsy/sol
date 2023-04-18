@@ -523,7 +523,7 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 			activator->client->pers.hand = 2;
 		}
 
-		if (activator && activator->client) //Knightmare- paranoia
+		if (activator && activator->client) // Knightmare- paranoia
 		{
 			activator->client->pers.spawn_levelchange = true;
 			activator->client->pers.spawn_gunframe    = activator->client->ps.gunframe;
