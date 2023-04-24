@@ -1388,10 +1388,11 @@ Grabs GL extensions
 */
 qboolean R_CheckGLExtensions (char *reason)
 {
-	qboolean multitexture_found = false;
+	qboolean	ogl_multitexture_found = false;
+	qboolean	arb_multitexture_found = false;
 
-	// OpenGL multitexture on GL 1.2.1 or later or GL_ARB_multitexture
-	// This is checked first, is required
+	// OpenGL multitexture on GL 1.2.1 or later
+	// This is checked first, either this or GL_ARB_multitexture are required
 	glConfig.max_texunits = 2; // must have at least 2
 	if ( (glConfig.version_major >= 2) || (glConfig.version_major == 1 && glConfig.version_minor > 2)
 		|| (glConfig.version_major == 1 && glConfig.version_minor == 2 && glConfig.version_release >= 1) )
@@ -1406,32 +1407,40 @@ qboolean R_CheckGLExtensions (char *reason)
 			VID_Printf (PRINT_ALL, "...using OpenGL multitexture\n" );
 			qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glConfig.max_texunits);
 			VID_Printf (PRINT_ALL, "...GL_MAX_TEXTURE_UNITS: %i\n", glConfig.max_texunits);
-			multitexture_found = true;
+			ogl_multitexture_found = true;
 		}
 	}
-	if ( (!multitexture_found) && Q_StrScanToken( glConfig.extensions_string, "GL_ARB_multitexture", false ) )
+
+	// GL_ARB_multitexture
+	if ( Q_StrScanToken( glConfig.extensions_string, "GL_ARB_multitexture", false ) )
 	{
-		qglMultiTexCoord2fARB = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
-		qglActiveTextureARB = (void *) qwglGetProcAddress( "glActiveTextureARB" );
-		qglClientActiveTextureARB = (void *) qwglGetProcAddress( "glClientActiveTextureARB" );
-		if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
-			QGL_Shutdown();
-			VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
-			memcpy (reason, "GL_ARB_multitexture not properly implemented in driver!\0", 55);
-			return false;
+		if (ogl_multitexture_found) {
+			VID_Printf( PRINT_ALL, "...GL_ARB_multitexture deprecated in favor of OpenGL multitexture\n" );
 		}
-		else {
-			VID_Printf (PRINT_ALL, "...using GL_ARB_multitexture\n" );
-			qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glConfig.max_texunits);
-			VID_Printf (PRINT_ALL, "...GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits);
-			multitexture_found = true;
+		else
+		{
+			qglMultiTexCoord2fARB = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
+			qglActiveTextureARB = (void *) qwglGetProcAddress( "glActiveTextureARB" );
+			qglClientActiveTextureARB = (void *) qwglGetProcAddress( "glClientActiveTextureARB" );
+			if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
+				QGL_Shutdown();
+				VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
+				memcpy (reason, "GL_ARB_multitexture not properly implemented in driver!\0", 55);
+				return false;
+			}
+			else {
+				VID_Printf (PRINT_ALL, "...using GL_ARB_multitexture\n" );
+				qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glConfig.max_texunits);
+				VID_Printf (PRINT_ALL, "...GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits);
+				arb_multitexture_found = true;
+			}
 		}
 	}
-	if (!multitexture_found)
+	if ( !ogl_multitexture_found && !arb_multitexture_found )
 	{
 		QGL_Shutdown();
-        VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture not found\n" );
-		memcpy (reason, "GL_ARB_multitexture not supported by driver!\0", 44);
+        VID_Printf (PRINT_ALL, "R_Init() - OpenGL multitexture and GL_ARB_multitexture not found\n" );
+		memcpy (reason, "OpenGL multitexture and GL_ARB_multitexture not supported by driver!\0", 44);
 		return false;
 	}
 
