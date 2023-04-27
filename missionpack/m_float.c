@@ -642,6 +642,7 @@ void floater_dead (edict_t *self)
 
 void floater_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
+#ifdef KMQUAKE2_ENGINE_MOD
 	int	n;  // Knightmare added
 
 	for (n = 0; n < 4; n++)
@@ -650,7 +651,7 @@ void floater_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", 0, 0, damage, GIB_METALLIC);
 	for (n = 0; n < 2; n++)
 		ThrowGib (self, "models/objects/gibs/gear/tris.md2", 0, 0, damage, GIB_METALLIC);
-
+#endif	// KMQUAKE2_ENGINE_MOD
 	gi.sound (self, CHAN_VOICE, sound_death1, 1, ATTN_NORM, 0);
 	BecomeExplosion1 (self);
 }

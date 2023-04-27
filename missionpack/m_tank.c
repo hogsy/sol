@@ -961,9 +961,11 @@ mframe_t tank_frames_death1 [] =
 mmove_t	tank_move_death = {FRAME_death101, FRAME_death132, tank_frames_death1, tank_dead};
 
 #ifdef KMQUAKE2_ENGINE_MOD
-#define NUM_SM_GIBS		16
+#define NUM_SM_MEAT_GIBS		8
+#define NUM_SM_METAL_GIBS		16
 #else
-#define NUM_SM_GIBS		4
+#define NUM_SM_MEAT_GIBS		4
+#define NUM_SM_METAL_GIBS		4
 #endif	// KMQUAKE2_ENGINE_MOD
 
 void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
@@ -978,9 +980,9 @@ void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	if (self->health <= self->gib_health && !(self->spawnflags & SF_MONSTER_NOGIB))
 	{
 		gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
-		for (n = 0; n < NUM_SM_GIBS; n++)
+		for (n = 0; n < NUM_SM_MEAT_GIBS; n++)
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", 0, 0, damage, GIB_ORGANIC);
-		for (n = 0; n < NUM_SM_GIBS; n++)
+		for (n = 0; n < NUM_SM_METAL_GIBS; n++)
 			ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", 0, 0, damage, GIB_METALLIC);
 #ifdef KMQUAKE2_ENGINE_MOD
 		for (n = 0; n < 8; n++)

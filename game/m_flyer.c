@@ -575,6 +575,7 @@ void flyer_pain (edict_t *self, edict_t *other, float kick, int damage)
 
 void flyer_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
+#ifdef KMQUAKE2_ENGINE_MOD
 	int n;
 
 	// Knightmare- gibs!
@@ -582,6 +583,7 @@ void flyer_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 		ThrowGib (self, "models/objects/gibs/sm_metal/tris.md2", 0, 0, damage, GIB_METALLIC);
 	for (n = 0; n < 2; n++)
 		ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", 0, 0, damage, GIB_ORGANIC);
+#endif	// KMQUAKE2_ENGINE_MOD
 	gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
 	BecomeExplosion1 (self);
 }
