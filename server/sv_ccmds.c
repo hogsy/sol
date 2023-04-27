@@ -870,8 +870,7 @@ void SV_Savegame_f (void)
 	{
 		if (fs_gamedirvar->string[0])
 			Com_sprintf (fs_gamedir, sizeof(fs_gamedir), "%s/%s", fs_basedir->string, fs_gamedirvar->string);
-	}
-*/
+	} */
 
 	if (Cmd_Argc() != 2)
 	{
@@ -891,15 +890,22 @@ void SV_Savegame_f (void)
 		return;
 	}
 
-//	quicksave = ( !dedicated->value && (!strcmp(Cmd_Argv(1), "quick") || !strcmp(Cmd_Argv(1), "quik")) );
 	quicksave = ( !dedicated->integer && (!strcmp(Cmd_Argv(1), "quick") || !strcmp(Cmd_Argv(1), "quik")) );
 
 	// Knightmare- grab screen for quicksave
 	if (quicksave)
-		R_GrabScreen();
+		R_GrabScreen ();
 
-//	if (maxclients->value == 1 && svs.clients[0].edict->client->ps.stats[STAT_HEALTH] <= 0)
-	if (maxclients->integer == 1 && svs.clients[0].edict->client->ps.stats[STAT_HEALTH] <= 0)
+	// Knightmare- saving while also loading will cause a crash when checking client stats below.
+	// svs.clients[0].edict will be non-NULL but invalid, so check client_t state here.
+	if ( (maxclients->integer == 1) && ((svs.clients[0].state == cs_free) || (svs.clients[0].state == cs_zombie)) )
+	{
+		Com_Printf ("\nCan't savegame while client is disconnected!\n");
+		return;
+	}
+
+
+	if ( (maxclients->integer == 1) && (svs.clients[0].edict->client->ps.stats[STAT_HEALTH] <= 0) )
 	{
 		Com_Printf ("\nCan't savegame while dead!\n");
 		return;
