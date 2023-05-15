@@ -448,7 +448,7 @@ void think_targetbolt (edict_t *self)
 		door_go_down (t);
 		t = G_Find (NULL, FOFS(classname), "q1_monster_chton");
 		if (!t)
-			t = G_Find (NULL, FOFS(classname), "monster_q1_chton");
+			t = G_Find (NULL, FOFS(classname), "monster_q1_chthon");
 		if (t)
 		{
 			if (!t->deadflag && t->enemy)
@@ -473,10 +473,10 @@ void think_targetbolt (edict_t *self)
 			}
 		}
 	//	else
-	//		gi.dprintf("CHTON does not have an enemy\n");
+	//		gi.dprintf("CHTHON does not have an enemy\n");
 	}
 //	else
-//		gi.dprintf("Could not find Chton\n");
+//		gi.dprintf("Could not find Chthon\n");
 
 	}
 }

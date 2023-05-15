@@ -402,7 +402,7 @@ void chthon_bolt(edict_t *self, int no)
 		self->deadflag = DEAD_DEAD;
 		self->takedamage = DAMAGE_NO;
 		self->monsterinfo.currentmove = &chthon_move_death;
-		monster_death_use(self);
+		monster_death_use (self);
 		break;
 	}
 }

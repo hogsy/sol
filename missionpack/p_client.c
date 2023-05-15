@@ -1117,7 +1117,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			else if ( !Q_stricmp(attacker->classname, "q1_monster_tarbaby") || !Q_stricmp(attacker->classname, "monster_q1_tarbaby") )
 				message = "was slimed by a";
 			// Chthon
-			else if ( !Q_stricmp(attacker->classname,"q1_monster_chton") || !Q_stricmp(attacker->classname,"monster_q1_chton") )
+			else if ( !Q_stricmp(attacker->classname, "q1_monster_chton") || !Q_stricmp(attacker->classname, "monster_q1_chthon") )
 				message = "couldn't face";
 			// Freddie
 			else if ( !Q_stricmp(attacker->classname, "q1_monster_freddie") || !Q_stricmp(attacker->classname, "monster_q1_freddie") )

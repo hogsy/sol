@@ -183,7 +183,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 	{
 		targ->touch = NULL;
 		// Q1: Fire Chthon's targets after he sinks back in
-		if ( (strcmp(targ->classname, "q1_monster_chton") != 0) && (strcmp(targ->classname, "monster_q1_chton") != 0) ) {
+		if ( !IsQ1Chthon(targ) ) {
 			monster_death_use (targ);
 		}
 	}

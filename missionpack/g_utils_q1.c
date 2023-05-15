@@ -18,7 +18,7 @@ qboolean IsQ1Chthon (edict_t *self)
 	if ( !self || !self->classname || (self->classname[0] == 0) )
 		return false;
 
-	if ( (strcmp(self->classname, "q1_monster_chton") == 0) || (strcmp(self->classname, "monster_q1_chton") == 0) )
+	if ( (strcmp(self->classname, "q1_monster_chton") == 0) || (strcmp(self->classname, "monster_q1_chthon") == 0) )
 		return true;
 
 	return false;

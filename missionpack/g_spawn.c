@@ -26,7 +26,7 @@ void SP_func_door (edict_t *ent);
 void SP_func_door_secret (edict_t *ent);
 void SP_func_door_rotating (edict_t *ent);
 void SP_func_water (edict_t *ent);
-void SP_func_bobbingwater(edict_t *self); // Knightmare added
+void SP_func_bobbingwater (edict_t *self); // Knightmare added
 void SP_func_train (edict_t *ent);
 void SP_func_conveyor (edict_t *self);
 void SP_func_wall (edict_t *self);
@@ -873,8 +873,8 @@ soundcache_t	soundcaches[] = {
 
 	// Xatrix
 	{"monster_soldier_hypergun", monster_soldier_h_soundcache},
-	{"monster_soldier_lasergun",  monster_soldier_h_soundcache},
-	{"monster_soldier_ripper",	monster_soldier_h_soundcache},
+	{"monster_soldier_lasergun", monster_soldier_h_soundcache},
+	{"monster_soldier_ripper", monster_soldier_h_soundcache},
 	{"monster_fixbot", monster_fixbot_soundcache},
 	{"monster_gekk", monster_gekk_soundcache},
 	{"monster_brain_beta", monster_brain_beta_soundcache},
