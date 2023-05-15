@@ -1307,8 +1307,20 @@ void fixbot_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 #endif
 
 	gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
-	BecomeExplosion1(self);
+	BecomeExplosion1 (self);
 }
+
+
+// Knightmare- added soundcache function
+void monster_fixbot_soundcache (edict_t *self)
+{
+	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
+	sound_die = gi.soundindex ("flyer/flydeth1.wav");
+	sound_weld1 = gi.soundindex ("misc/welder1.wav");
+	sound_weld2 = gi.soundindex ("misc/welder2.wav");
+	sound_weld3 = gi.soundindex ("misc/welder3.wav");
+}
+
 
 /*QUAKED monster_fixbot (1 .5 0) (-32 -32 -24) (32 32 24) Ambush Trigger_Spawn Fixit Takeoff Landing
 */
@@ -1336,14 +1348,15 @@ void SP_monster_fixbot (edict_t *self)
 	gi.modelindex ("models/objects/debris2/tris.md2");
 #endif
 
-	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
-	sound_die = gi.soundindex ("flyer/flydeth1.wav");
+	// Knightmare- use soundcache function
+	monster_fixbot_soundcache (self);
 
+/*	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
+	sound_die = gi.soundindex ("flyer/flydeth1.wav");
 	sound_weld1 = gi.soundindex ("misc/welder1.wav");
 	sound_weld2 = gi.soundindex ("misc/welder2.wav");
 	sound_weld3 = gi.soundindex ("misc/welder3.wav");
-
-
+*/
 	self->s.modelindex = gi.modelindex ("models/monsters/fixbot/tris.md2");
 	
 	// Knightmare- shrunk bbox, was (-32, -32, -24), (32, 32, 34)

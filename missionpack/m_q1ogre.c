@@ -552,6 +552,20 @@ void ogre_attack (edict_t *self)
 }
 
 
+// Knightmare- added soundcache function
+void monster_q1_ogre_soundcache (edict_t *self)
+{
+	sound_pain =	gi.soundindex ("q1ogre/ogpain1.wav");
+	sound_death =	gi.soundindex ("q1ogre/ogdth.wav");
+	sound_gib =		gi.soundindex ("q1player/udeath.wav");
+	sound_idle =	gi.soundindex ("q1ogre/ogidle.wav");
+	sound_idle2 =	gi.soundindex ("q1ogre/ogidle2.wav");
+	sound_wake =	gi.soundindex ("q1ogre/ogwake.wav");
+	sound_shoot =	gi.soundindex ("q1weapons/grenade.wav");
+	sound_saw  =	gi.soundindex ("q1ogre/ogsawatk.wav");
+	sound_drag =	gi.soundindex ("q1ogre/ogdrag.wav");
+}
+
 //
 // SPAWN
 //
@@ -567,7 +581,10 @@ void SP_monster_q1_ogre (edict_t *self)
 		return;
 	}
 
-	sound_pain =	gi.soundindex ("q1ogre/ogpain1.wav");
+	// Knightmare- use soundcache function
+	monster_q1_ogre_soundcache (self);
+
+/*	sound_pain =	gi.soundindex ("q1ogre/ogpain1.wav");
 	sound_death =	gi.soundindex ("q1ogre/ogdth.wav");
 	sound_gib =		gi.soundindex ("q1player/udeath.wav");
 	sound_idle =	gi.soundindex ("q1ogre/ogidle.wav");
@@ -576,7 +593,7 @@ void SP_monster_q1_ogre (edict_t *self)
 	sound_shoot =	gi.soundindex ("q1weapons/grenade.wav");
 	sound_saw  =	gi.soundindex ("q1ogre/ogsawatk.wav");
 	sound_drag =	gi.soundindex ("q1ogre/ogdrag.wav");
-
+*/
 	// precache backpack
 	gi.modelindex ("models/items/q1backpack/tris.md2");
 //	gi.soundindex ("q1weapons/lock4.wav");

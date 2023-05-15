@@ -1151,9 +1151,9 @@ void SP_monster_turret (edict_t *self)
 		self->spawnflags &= ~SPAWN_ROCKET;
 		self->s.skinnum = 0;
 	}
-	else if (self->spawnflags & SPAWN_RAILGUN) //was SPAWN_MACHINEGUN
+	else if (self->spawnflags & SPAWN_RAILGUN)	// was SPAWN_MACHINEGUN
 	{	
-		//gi.soundindex ("infantry/infatck1.wav");
+	//	gi.soundindex ("infantry/infatck1.wav");
 		gi.soundindex ("gladiator/railgun.wav");
 		self->spawnflags &= ~SPAWN_ROCKET;
 		self->s.skinnum = 1;

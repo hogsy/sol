@@ -1303,11 +1303,11 @@ Cmd_Say_f
 */
 void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 {
-	int		i, j;
-	edict_t	*other;
-	char	*p;
-	char	text[2048];
-	gclient_t *cl;
+	int			i, j;
+	edict_t		*other;
+	char		*p;
+	char		text[2048];
+	gclient_t	*cl;
 
 	if (gi.argc () < 2 && !arg0)
 		return;
@@ -1344,7 +1344,8 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 
 	Com_strcat (text, sizeof(text), "\n");
 
-	if (flood_msgs->value) {
+	if (flood_msgs->value)
+	{
 		cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
@@ -1395,7 +1396,7 @@ void Cmd_Ent_Count_f (edict_t *ent)
 
 	x=0;
 
-	for (e=g_edicts;e < &g_edicts[globals.num_edicts] ; e++)
+	for (e=g_edicts; e < &g_edicts[globals.num_edicts]; e++)
 	{
 		if (e->inuse)
 			x++;
@@ -1406,7 +1407,7 @@ void Cmd_Ent_Count_f (edict_t *ent)
 //ROGUE
 //======
 
-void Cmd_PlayerList_f(edict_t *ent)
+void Cmd_PlayerList_f (edict_t *ent)
 {
 	int i;
 	char st[80];
@@ -1415,7 +1416,8 @@ void Cmd_PlayerList_f(edict_t *ent)
 
 	// connect time, ping, score, name
 	*text = 0;
-	for (i = 0, e2 = g_edicts + 1; i < maxclients->value; i++, e2++) {
+	for (i = 0, e2 = g_edicts + 1; i < maxclients->value; i++, e2++)
+	{
 		if (!e2->inuse)
 			continue;
 
@@ -1436,7 +1438,277 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
-void DrawBBox(edict_t *ent)
+// From Yamagi Q2
+static int get_ammo_usage(gitem_t *weap)
+{
+	if (!weap)
+	{
+		return 0;
+	}
+
+	/* handles grenades and tesla which only use 1 ammo per shot */
+	/* have to check this because they don't store their ammo usage in weap->quantity */
+	if (weap->flags & IT_AMMO)
+	{
+		return 1;
+	}
+
+	/* weapons store their ammo usage in the quantity field */
+	return weap->quantity;
+}
+
+static gitem_t *cycle_weapon (edict_t *ent)
+{
+	gclient_t	*cl = NULL;
+	gitem_t		*noammo_fallback = NULL;
+	gitem_t		*noweap_fallback = NULL;
+	gitem_t		*weap = NULL;
+	gitem_t		*ammo = NULL;
+	int			i;
+	int			start;
+	int			num_weaps;
+	const char	*weapname = NULL;
+
+	if (!ent)
+	{
+		return NULL;
+	}
+
+	cl = ent->client;
+
+	if (!cl)
+	{
+		return NULL;
+	}
+
+	num_weaps = gi.argc();
+
+	/* find where we want to start the search for the next eligible weapon */
+	if (cl->newweapon)
+	{
+		weapname = cl->newweapon->classname;
+	}
+	else if (cl->pers.weapon)
+	{
+		weapname = cl->pers.weapon->classname;
+	}
+
+	if (weapname)
+	{
+		for (i = 1; i < num_weaps; i++)
+		{
+			if (Q_stricmp(weapname, gi.argv(i)) == 0)
+			{
+				break;
+			}
+		}
+
+		i++;
+
+		if (i >= num_weaps)
+		{
+			i = 1;
+		}
+	}
+	else
+	{
+		i = 1;
+	}
+
+	start = i;
+	noammo_fallback = NULL;
+	noweap_fallback = NULL;
+
+	/* find the first eligible weapon in the list we can switch to */
+	do
+	{
+		weap = FindItemByClassname(gi.argv(i));
+
+		if (weap && weap != cl->pers.weapon && (weap->flags & IT_WEAPON) && weap->use)
+		{
+			if (cl->pers.inventory[ITEM_INDEX(weap)] > 0)
+			{
+				if (weap->ammo)
+				{
+					ammo = FindItem(weap->ammo);
+					if (ammo)
+					{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap))
+						{
+							return weap;
+						}
+
+						if (!noammo_fallback)
+						{
+							noammo_fallback = weap;
+						}
+					}
+				}
+				else
+				{
+					return weap;
+				}
+			}
+			else if (!noweap_fallback)
+			{
+				noweap_fallback = weap;
+			}
+		}
+
+		i++;
+
+		if (i >= num_weaps)
+		{
+			i = 1;
+		}
+	} while (i != start);
+
+	/* if no weapon was found, the fallbacks will be used for
+	   printing the appropriate error message to the console
+	*/
+
+	if (noammo_fallback)
+	{
+		return noammo_fallback;
+	}
+
+	return noweap_fallback;
+}
+
+void Cmd_CycleWeap_f (edict_t *ent)
+{
+	gitem_t		*weap = NULL;
+
+	if (!ent)
+	{
+		return;
+	}
+
+	if (gi.argc() <= 1)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Usage: cycleweap classname1 classname2 .. classnameN\n");
+		return;
+	}
+
+	weap = cycle_weapon(ent);
+	if (weap)
+	{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
+		}
+		else
+		{
+			weap->use(ent, weap);
+		}
+	}
+}
+
+static gitem_t *preferred_weapon (edict_t *ent)
+{
+	gclient_t	*cl = NULL;
+	gitem_t		*noammo_fallback = NULL;
+	gitem_t		*noweap_fallback = NULL;
+	gitem_t		*weap = NULL;
+	gitem_t		*ammo = NULL;
+	int			i;
+	int			num_weaps;
+
+	if (!ent)
+	{
+		return NULL;
+	}
+
+	cl = ent->client;
+
+	if (!cl)
+	{
+		return NULL;
+	}
+
+	num_weaps = gi.argc();
+
+	/* find the first eligible weapon in the list we can switch to */
+	for (i = 1; i < num_weaps; i++)
+	{
+		weap = FindItemByClassname(gi.argv(i));
+
+		if (weap && (weap->flags & IT_WEAPON) && weap->use)
+		{
+			if (cl->pers.inventory[ITEM_INDEX(weap)] > 0)
+			{
+				if (weap->ammo)
+				{
+					ammo = FindItem(weap->ammo);
+					if (ammo)
+					{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap))
+						{
+							return weap;
+						}
+
+						if (!noammo_fallback)
+						{
+							noammo_fallback = weap;
+						}
+					}
+				}
+				else
+				{
+					return weap;
+				}
+			}
+			else if (!noweap_fallback)
+			{
+				noweap_fallback = weap;
+			}
+		}
+	}
+
+	/* if no weapon was found, the fallbacks will be used for
+	   printing the appropriate error message to the console
+	*/
+
+	if (noammo_fallback)
+	{
+		return noammo_fallback;
+	}
+
+	return noweap_fallback;
+}
+
+
+void Cmd_PrefWeap_f (edict_t *ent)
+{
+	gitem_t *weap;
+
+	if (!ent)
+	{
+		return;
+	}
+
+	if (gi.argc() <= 1)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Usage: prefweap classname1 classname2 .. classnameN\n");
+		return;
+	}
+
+	weap = preferred_weapon(ent);
+	if (weap)
+	{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
+		}
+		else
+		{
+			weap->use(ent, weap);
+		}
+	}
+}
+// end from Yamagi Q2
+
+void DrawBBox (edict_t *ent)
 {
 	vec3_t	p1, p2;
 	vec3_t	origin;
@@ -1711,7 +1983,7 @@ void forcewall_think (edict_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void SpawnForcewall (edict_t	*player)
+void SpawnForcewall (edict_t *player)
 {
 	edict_t  *wall;
 	vec3_t	forward, point, start;
@@ -2325,6 +2597,16 @@ void ClientCommand (edict_t *ent)
 		else
 			gi.dprintf("syntax: whereis <classname>\n");
 	}
+	// from Yamagi Q2
+	else if (!Q_stricmp(cmd, "cycleweap"))
+	{
+		Cmd_CycleWeap_f (ent);
+	}
+	else if (!Q_stricmp(cmd, "prefweap"))
+	{
+		Cmd_PrefWeap_f (ent);
+	}
+	// end from Yamagi Q2
 	else if (developer->value)
 	{
 		if (!Q_stricmp(cmd, "lightswitch"))

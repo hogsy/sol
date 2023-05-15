@@ -1304,7 +1304,21 @@ qboolean Carrier_CheckAttack (edict_t *self)
 	return false;
 }
 
-void CarrierPrecache ()
+
+// Knightmare- added soundcache function
+void monster_carrier_soundcache (edict_t *self)
+{
+	sound_pain1 = gi.soundindex ("carrier/pain_md.wav");
+	sound_pain2 = gi.soundindex ("carrier/pain_lg.wav");
+	sound_pain3 = gi.soundindex ("carrier/pain_sm.wav");
+	sound_death = gi.soundindex ("carrier/death.wav");
+//	sound_search1 = gi.soundindex ("bosshovr/bhvunqv1.wav");
+	sound_rail = gi.soundindex ("gladiator/railgun.wav");
+	sound_sight = gi.soundindex ("carrier/sight.wav");
+	sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
+}
+
+void CarrierPrecache (void)
 {
 	gi.soundindex ("flyer/flysght1.wav");
 	gi.soundindex ("flyer/flysrch1.wav");
@@ -1342,7 +1356,10 @@ void SP_monster_carrier (edict_t *self)
 		return;
 	}
 
-	sound_pain1 = gi.soundindex ("carrier/pain_md.wav");
+	// Knightmare- use soundcache function
+	monster_carrier_soundcache (self);
+
+/*	sound_pain1 = gi.soundindex ("carrier/pain_md.wav");
 	sound_pain2 = gi.soundindex ("carrier/pain_lg.wav");
 	sound_pain3 = gi.soundindex ("carrier/pain_sm.wav");
 	sound_death = gi.soundindex ("carrier/death.wav");
@@ -1350,7 +1367,7 @@ void SP_monster_carrier (edict_t *self)
 	sound_rail = gi.soundindex ("gladiator/railgun.wav");
 	sound_sight = gi.soundindex ("carrier/sight.wav");
 	sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
-
+*/
 	self->s.sound = gi.soundindex ("bosshovr/bhvengn1.wav");
 
 	self->movetype = MOVETYPE_STEP;
@@ -1426,7 +1443,7 @@ void SP_monster_carrier (edict_t *self)
 	}
 	self->monsterinfo.scale = MODEL_SCALE;
 
-	CarrierPrecache();
+	CarrierPrecache ();
 
 	flymonster_start (self);
 

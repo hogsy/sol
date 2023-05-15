@@ -429,6 +429,10 @@ SOURCE=.\m_parasite.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\m_q1chthon.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\m_q1dog.c
 # End Source File
 # Begin Source File
@@ -710,6 +714,10 @@ SOURCE=.\m_parasite.h
 # Begin Source File
 
 SOURCE=.\m_player.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\m_q1chthon.h
 # End Source File
 # Begin Source File
 

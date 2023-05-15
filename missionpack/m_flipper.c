@@ -365,6 +365,21 @@ void flipper_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	self->monsterinfo.currentmove = &flipper_move_death;
 }
 
+
+// Knightmare- added soundcache function
+void monster_flipper_soundcache (edict_t *self)
+{
+	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
+	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");	
+	sound_death		= gi.soundindex ("flipper/flpdeth1.wav");	
+	sound_chomp		= gi.soundindex ("flipper/flpatck1.wav");
+	sound_attack	= gi.soundindex ("flipper/flpatck2.wav");
+	sound_idle		= gi.soundindex ("flipper/flpidle1.wav");
+	sound_search	= gi.soundindex ("flipper/flpsrch1.wav");
+	sound_sight		= gi.soundindex ("flipper/flpsght1.wav");
+}
+
+
 /*QUAKED monster_flipper (1 .5 0) (-16 -16 -8) (16 16 24) Ambush Trigger_Spawn Sight GoodGuy NoGib
 */
 void SP_monster_flipper (edict_t *self)
@@ -375,7 +390,10 @@ void SP_monster_flipper (edict_t *self)
 		return;
 	}
 
-	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
+	// Knightmare- use soundcache function
+	monster_flipper_soundcache (self);
+
+/*	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
 	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");	
 	sound_death		= gi.soundindex ("flipper/flpdeth1.wav");	
 	sound_chomp		= gi.soundindex ("flipper/flpatck1.wav");
@@ -383,7 +401,7 @@ void SP_monster_flipper (edict_t *self)
 	sound_idle		= gi.soundindex ("flipper/flpidle1.wav");
 	sound_search	= gi.soundindex ("flipper/flpsrch1.wav");
 	sound_sight		= gi.soundindex ("flipper/flpsght1.wav");
-
+*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

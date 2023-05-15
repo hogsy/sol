@@ -18,9 +18,7 @@ static int	sound_search;
 static int	sound_sight;
 
 // Knightmare- Tactician Gunner sounds
-#ifndef KMQUAKE2_ENGINE_MOD
 static int	tactician_sound_fire_flechette;
-#endif	// KMQUAKE2_ENGINE_MOD
 /*
 static int	tactician_sound_pain;
 static int	tactician_sound_pain2;
@@ -1435,6 +1433,36 @@ void gunner_sidestep (edict_t *self)
 }
 
 
+// Knightmare- added soundcache function
+void monster_gunner_soundcache (edict_t *self)
+{
+	// TODO: move these to standard gunner section once Tactician Gunner sounds are in place
+	sound_death = gi.soundindex ("gunner/death1.wav");	
+	sound_pain = gi.soundindex ("gunner/gunpain2.wav");	
+	sound_pain2 = gi.soundindex ("gunner/gunpain1.wav");	
+	sound_idle = gi.soundindex ("gunner/gunidle1.wav");	
+	sound_open = gi.soundindex ("gunner/gunatck1.wav");	
+	sound_search = gi.soundindex ("gunner/gunsrch1.wav");	
+	sound_sight = gi.soundindex ("gunner/sight1.wav");	
+
+	if (strcmp(self->classname, "monster_gunner_tactician") == 0)
+	{
+	/*	tactician_sound_death = gi.soundindex ("tactician_gunner/death1.wav");	
+		tactician_sound_pain = gi.soundindex ("tactician_gunner/gunpain2.wav");	
+		tactician_sound_pain2 = gi.soundindex ("tactician_gunner/gunpain1.wav");	
+		tactician_sound_idle = gi.soundindex ("tactician_gunner/gunidle1.wav");	
+		tactician_sound_open = gi.soundindex ("tactician_gunner/gunatck1.wav");	
+		tactician_sound_search = gi.soundindex ("tactician_gunner/gunsrch1.wav");	
+		tactician_sound_sight = gi.soundindex ("tactician_gunner/sight1.wav"); */
+		tactician_sound_fire_flechette = gi.soundindex ("weapons/nail1.wav");	
+	//	tactician_sound_fire_flechette = gi.soundindex ("tactician_gunner/gunatck2.wav");	
+	}
+	else
+	{
+
+	}
+}
+
 /*QUAKED monster_gunner (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib ContactGrenades
 */
 /*QUAKED monster_gunner_tactician (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib
@@ -1447,30 +1475,24 @@ void SP_monster_gunner (edict_t *self)
 		return;
 	}
 
-	sound_death = gi.soundindex ("gunner/death1.wav");	
+/*	sound_death = gi.soundindex ("gunner/death1.wav");	
 	sound_pain = gi.soundindex ("gunner/gunpain2.wav");	
 	sound_pain2 = gi.soundindex ("gunner/gunpain1.wav");	
 	sound_idle = gi.soundindex ("gunner/gunidle1.wav");	
 	sound_open = gi.soundindex ("gunner/gunatck1.wav");	
 	sound_search = gi.soundindex ("gunner/gunsrch1.wav");	
-	sound_sight = gi.soundindex ("gunner/sight1.wav");	
-
-	// precache
-//	gi.soundindex ("gunner/gunatck2.wav");	// not used by Tactician Gunner
-	gi.soundindex ("gunner/gunatck3.wav");
-
+	sound_sight = gi.soundindex ("gunner/sight1.wav");
+*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
 	// Lazarus: special purpose skins
-	if (strcmp(self->classname, "monster_gunner_tactician") == 0)
-	{
+	if (strcmp(self->classname, "monster_gunner_tactician") == 0) {
 		self->s.skinnum = 2;
-		self->moreflags |= FL2_COMMANDER;
 	}
 	if ( self->style )
 	{
-		PatchMonsterModel("models/monsters/gunner/tris.md2");
+		PatchMonsterModel ("models/monsters/gunner/tris.md2");
 		self->s.skinnum += self->style * 4;
 	}
 
@@ -1486,6 +1508,9 @@ void SP_monster_gunner (edict_t *self)
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, 32);
 
+	// Knightmare- use soundcache function
+	monster_gunner_soundcache (self);
+
 	if (strcmp(self->classname, "monster_gunner_tactician") == 0)
 	{
 	/*	tactician_sound_death = gi.soundindex ("tactician_gunner/death1.wav");	
@@ -1495,19 +1520,15 @@ void SP_monster_gunner (edict_t *self)
 		tactician_sound_open = gi.soundindex ("tactician_gunner/gunatck1.wav");	
 		tactician_sound_search = gi.soundindex ("tactician_gunner/gunsrch1.wav");	
 		tactician_sound_sight = gi.soundindex ("tactician_gunner/sight1.wav");	
+		tactician_sound_fire_flechette = gi.soundindex ("weapons/nail1.wav");	
+	//	tactician_sound_fire_flechette = gi.soundindex ("tactician_gunner/gunatck2.wav");	
 	*/
 		// precache
 		gi.modelindex ("models/weapons/g_prox/tris.md2");
 		gi.modelindex ("models/proj/flechette/tris.md2");
 		gi.soundindex ("weapons/proxopen.wav");
 		gi.soundindex ("weapons/proxwarn.wav");
-#ifdef KMQUAKE2_ENGINE_MOD
-		gi.soundindex ("weapons/nail1.wav");
-	//	gi.soundindex ("tactician_gunner/gunatck2.wav");	
-#else
-		tactician_sound_fire_flechette = gi.soundindex ("weapons/nail1.wav");	
-	//	tactician_sound_fire_flechette = gi.soundindex ("tactician_gunner/gunatck2.wav");	
-#endif	// KMQUAKE2_ENGINE_MOD
+		gi.soundindex ("gunner/gunatck3.wav");
 
 		if (!self->health)
 			self->health = 400;
@@ -1534,6 +1555,7 @@ void SP_monster_gunner (edict_t *self)
 		self->common_name = "Tactician Gunner";
 		self->class_id = ENTITY_MONSTER_GUNNER_TACTICIAN;
 
+		self->moreflags |= FL2_COMMANDER;
 		self->monsterinfo.monsterflags |= MFL_KNOWS_PROX_MINES;	// Tactician Gunner avoids prox mines
 	}
 	else
@@ -1543,6 +1565,7 @@ void SP_monster_gunner (edict_t *self)
 		// precache
 		gi.modelindex ("models/objects/grenade/tris.md2");
 		gi.soundindex ("gunner/gunatck2.wav");
+		gi.soundindex ("gunner/gunatck3.wav");
 
 		if (!self->health)
 			self->health = 175;

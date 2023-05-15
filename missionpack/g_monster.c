@@ -5,6 +5,8 @@
 
 void InitiallyDead (edict_t *self);
 
+
+
 // Lazarus: If worldspawn CORPSE_SINK effects flag is set,
 //          monsters/actors fade out and sink into the floor
 //          30 seconds after death
@@ -293,7 +295,7 @@ void monster_fire_railgun (edict_t *self, vec3_t start, vec3_t aimdir, int damag
 	gi.multicast (start, MULTICAST_PVS);
 }
 
-void monster_fire_bfg (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int kick, float damage_radius, int flashtype)
+void monster_fire_bfg (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, int kick, float damage_radius, int flashtype, qboolean homing)
 {
 	// Zaero add
 	if (EMPNukeCheck(self, start))
@@ -303,7 +305,7 @@ void monster_fire_bfg (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 	}
 	// end Zaero
 
-	fire_bfg (self, start, aimdir, damage, speed, damage_radius);
+	fire_bfg (self, start, aimdir, damage, speed, damage_radius, homing);
 
 	gi.WriteByte (svc_muzzleflash2);
 	gi.WriteShort (self - g_edicts);
@@ -1265,7 +1267,8 @@ void monster_triggered_spawn (edict_t *self)
 	self->air_finished = level.time + 12;
 
 	// Knightmare- teleport effect for Q1 monsters
-	if (self->flags & FL_Q1_MONSTER) {
+	if ( (self->flags & FL_Q1_MONSTER) && !IsQ1Chthon(self) )
+	{
 #ifdef KMQUAKE2_ENGINE_MOD
 		self->s.event = EV_PLAYER_TELEPORT2;
 #else
@@ -1283,6 +1286,21 @@ void monster_triggered_spawn (edict_t *self)
 	// end Zaero
 
 	gi.linkentity (self);
+
+	// Knightmare- special handling for Q1 Chthon
+	if ( IsQ1Chthon(self) )
+	{
+	//	gi.dprintf("SPAWNING CHTHON\n");
+		self->think = monster_think;
+		self->nextthink = level.time + FRAMETIME;
+		self->monsterinfo.pausetime = 20;
+	//	self->monsterinfo.stand (self);
+		self->enemy = NULL;
+		gi.linkentity (self);
+		chthon_rise (self);
+		return;
+	}
+
 	monster_start_go (self);
 
 	if (self->enemy && !(self->spawnflags & 1) && !(self->enemy->flags & FL_NOTARGET))
@@ -1373,6 +1391,8 @@ void monster_death_use (edict_t *self)
 
 //============================================================================
 
+void SP_gibhead (edict_t *gib);
+
 qboolean monster_start (edict_t *self)
 {
 	if (deathmatch->value)
@@ -1384,9 +1404,7 @@ qboolean monster_start (edict_t *self)
 	// Lazarus: Already gibbed monsters passed across levels via trigger_transition:
 	if ( (self->max_health > 0) && (self->health <= self->gib_health) && !(self->spawnflags & SF_MONSTER_NOGIB) )
 	{
-		void	SP_gibhead(edict_t *);
-
-		SP_gibhead(self);
+		SP_gibhead (self);
 		return true;
 	}
 
@@ -1531,8 +1549,10 @@ qboolean monster_start (edict_t *self)
 	}
 
 	// randomize what frame they start on
-	if (self->monsterinfo.currentmove)
+	// Knightmare- don't do this for Q1 Chthon
+	if ( self->monsterinfo.currentmove && !IsQ1Chthon(self) ) {
 		self->s.frame = self->monsterinfo.currentmove->firstframe + (rand() % (self->monsterinfo.currentmove->lastframe - self->monsterinfo.currentmove->firstframe + 1));
+	}
 
 	// PMM - get this so I don't have to do it in all of the monsters
 	self->monsterinfo.base_height = self->maxs[2];
@@ -1614,7 +1634,9 @@ void monster_start_go (edict_t *self)
 			gi.dprintf ("%s can't find target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
 			self->target = NULL;
 			self->monsterinfo.pausetime = 100000000;
-			self->monsterinfo.stand (self);
+			if ( !IsQ1Chthon(self) ) {	// Knightmare- Don't put Chthon in stand frames
+				self->monsterinfo.stand (self);
+			}
 		}
 		else if (strcmp (self->movetarget->classname, "path_corner") == 0)
 		{
@@ -1632,7 +1654,9 @@ void monster_start_go (edict_t *self)
 		{
 			self->goalentity = self->movetarget = NULL;
 			self->monsterinfo.pausetime = 100000000;
-			self->monsterinfo.stand (self);
+			if ( !IsQ1Chthon(self) ) {	// Knightmare- Don't put Chthon in stand frames
+				self->monsterinfo.stand (self);
+			}
 		}
 	}
 	else
@@ -1877,6 +1901,7 @@ int PatchMonsterModel (char *modelname)
 	qboolean	is_chick = false;
 	qboolean	is_gunner = false;
 	qboolean	is_soldierh = false;
+	qboolean	is_soldierq25 = false;
 	qboolean	is_carrier = false;
 	qboolean	is_hover = false;
 	qboolean	is_medic = false;
@@ -1949,6 +1974,11 @@ int PatchMonsterModel (char *modelname)
 	else if (!strcmp(modelname, "models/monsters/soldierh/tris.md2"))
 	{
 		is_soldierh = true;
+		numskins = 24;
+	}
+	else if (!strcmp(modelname, "models/monsters/soldrq25/tris.md2"))
+	{
+		is_soldierq25 = true;
 		numskins = 24;
 	}
 	else if (!strcmp(modelname, "models/monsters/carrier/tris.md2"))
@@ -2281,7 +2311,7 @@ int PatchMonsterModel (char *modelname)
 				Com_strcat (skins[j], sizeof(skins[j]), "custombeta_p3.pcx"); break;
 			}
 		}
-		else if (is_soldierh)
+		else if ( is_soldierh || is_soldierq25 )
 		{
 			switch (j)
 			{
@@ -2580,17 +2610,17 @@ int PatchMonsterModel (char *modelname)
 			{
 				Com_sprintf (pakname, sizeof(pakname), "pak%i.pak", i);
 				GameDirRelativePath (pakname, pakfile, sizeof(pakfile));
-				fpak = fopen(pakfile,"rb");
+				fpak = fopen(pakfile, "rb");
 				if (!fpak) // this pak not found, go on to next
 					continue;
-				fread(&pakheader,1,sizeof(pak_header_t),fpak);
-				numitems = pakheader.dsize/sizeof(pak_item_t);
-				fseek(fpak,pakheader.dstart,SEEK_SET);
+				fread(&pakheader, 1, sizeof(pak_header_t), fpak);
+				numitems = pakheader.dsize / sizeof(pak_item_t);
+				fseek(fpak, pakheader.dstart, SEEK_SET);
 				data = NULL;
 				for (k=0; k<numitems && !data; k++)
 				{
 					fread(&pakitem,1,sizeof(pak_item_t),fpak);
-					if (!Q_stricmp(pakitem.name,modelname))
+					if ( !Q_stricmp(pakitem.name, modelname) )
 					{
 						fseek(fpak,pakitem.start,SEEK_SET);
 						fread(&model, sizeof(dmdl_t), 1, fpak);
@@ -2683,7 +2713,7 @@ int PatchMonsterModel (char *modelname)
 
 void HintTestNext (edict_t *self, edict_t *hint)
 {
-	edict_t		*next=NULL;
+	edict_t		*next = NULL;
 	edict_t		*e;
 	vec3_t		dir;
 
@@ -2750,11 +2780,11 @@ void HintTestNext (edict_t *self, edict_t *hint)
 int HintTestStart (edict_t *self)
 {
 	edict_t	*e;
-	edict_t	*hint=NULL;
+	edict_t	*hint = NULL;
 	float	dist;
 	vec3_t	dir;
 	int		i;
-	float	bestdistance=99999;
+	float	bestdistance = 99999;
 
 //	if (!hint_chains_exist)
 	if (!hint_paths_present)

@@ -1217,7 +1217,6 @@ void create_sentien_laser (edict_t *self)
 
 void SP_monster_sentien_precache (void)
 {
-
 	sound_idle1 = gi.soundindex("monsters/sentien/sen_idle1.wav");
 	sound_idle2 = gi.soundindex("monsters/sentien/sen_idle2.wav");
 //	sound_idle3 = gi.soundindex("monsters/sentien/sen_idle3.wav");
@@ -1233,6 +1232,11 @@ void SP_monster_sentien_precache (void)
 //	sound_att3 = gi.soundindex("monsters/sentien/sen_att3.wav");
 }
 
+// Knightmare- added soundcache function
+void monster_sentien_soundcache (edict_t *self)
+{
+	SP_monster_sentien_precache ();
+}
 
 /*QUAKED monster_sentien (1 .5 0) (-32 -32 -16) (32 32 72) Ambush Trigger_Spawn Sight GoodGuy NoGib
 model="models/monsters/sentien/"
@@ -1245,7 +1249,7 @@ void SP_monster_sentien (edict_t *self)
 		return;
 	}
 
-	SP_monster_sentien_precache();
+	SP_monster_sentien_precache ();
 
 	if (!self->health)
 		self->health = 900;

@@ -655,16 +655,9 @@ void brain_duck (edict_t *self, float eta)
 }
 
 
-/*QUAKED monster_brain (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib
-*/
-void SP_monster_brain (edict_t *self)
+// Knightmare- added soundcache function
+void monster_brain_soundcache (edict_t *self)
 {
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
-
 	sound_chest_open = gi.soundindex ("brain/brnatck1.wav");
 	sound_tentacles_extend = gi.soundindex ("brain/brnatck2.wav");
 	sound_tentacles_retract = gi.soundindex ("brain/brnatck3.wav");
@@ -679,7 +672,37 @@ void SP_monster_brain (edict_t *self)
 	sound_melee1 = gi.soundindex ("brain/melee1.wav");
 	sound_melee2 = gi.soundindex ("brain/melee2.wav");
 	sound_melee3 = gi.soundindex ("brain/melee3.wav");
+}
 
+
+/*QUAKED monster_brain (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib
+*/
+void SP_monster_brain (edict_t *self)
+{
+	if (deathmatch->value)
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	// Knightmare- use soundcache function
+	monster_brain_soundcache (self);
+
+/*	sound_chest_open = gi.soundindex ("brain/brnatck1.wav");
+	sound_tentacles_extend = gi.soundindex ("brain/brnatck2.wav");
+	sound_tentacles_retract = gi.soundindex ("brain/brnatck3.wav");
+	sound_death = gi.soundindex ("brain/brndeth1.wav");
+	sound_idle1 = gi.soundindex ("brain/brnidle1.wav");
+	sound_idle2 = gi.soundindex ("brain/brnidle2.wav");
+	sound_idle3 = gi.soundindex ("brain/brnlens1.wav");
+	sound_pain1 = gi.soundindex ("brain/brnpain1.wav");
+	sound_pain2 = gi.soundindex ("brain/brnpain2.wav");
+	sound_sight = gi.soundindex ("brain/brnsght1.wav");
+	sound_search = gi.soundindex ("brain/brnsrch1.wav");
+	sound_melee1 = gi.soundindex ("brain/melee1.wav");
+	sound_melee2 = gi.soundindex ("brain/melee2.wav");
+	sound_melee3 = gi.soundindex ("brain/melee3.wav");
+*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

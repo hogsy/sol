@@ -26,7 +26,7 @@ void SP_func_door (edict_t *ent);
 void SP_func_door_secret (edict_t *ent);
 void SP_func_door_rotating (edict_t *ent);
 void SP_func_water (edict_t *ent);
-void SP_func_bobbingwater(edict_t *self); //Knightmare added
+void SP_func_bobbingwater(edict_t *self); // Knightmare added
 void SP_func_train (edict_t *ent);
 void SP_func_conveyor (edict_t *self);
 void SP_func_wall (edict_t *self);
@@ -74,7 +74,7 @@ void SP_target_lightramp (edict_t *self);
 void SP_target_earthquake (edict_t *ent);
 void SP_target_character (edict_t *ent);
 void SP_target_string (edict_t *ent);
-//Knightmare
+// Knightmare
 void SP_target_monitor (edict_t *ent);
 void SP_target_monsterbattle (edict_t *self);
 void SP_target_movewith (edict_t *self);
@@ -120,17 +120,17 @@ void SP_misc_blackhole (edict_t *self);
 void SP_misc_eastertank (edict_t *self);
 void SP_misc_easterchick (edict_t *self);
 void SP_misc_easterchick2 (edict_t *self);
-//Knightmare- patient for the infirmary
+// Knightmare- patient for the infirmary
 void SP_misc_sick_guard (edict_t *self);
-//Knightmare- experiment gekk
+// Knightmare- experiment gekk
 void SP_misc_gekk_writhe (edict_t *self);
 
-//Knightmare- Coconut Monkey 3 Flame entities
+// Knightmare- Coconut Monkey 3 Flame entities
 void SP_light_flame1 (edict_t *self);
 void SP_light_flame1s (edict_t *self);
 void SP_light_flame2 (edict_t *self);
 void SP_light_flame2s (edict_t *self);
-//Knightmare- Coconut Monkey
+// Knightmare- Coconut Monkey
 void SP_monster_coco_monkey (edict_t *self);
 
 void SP_monster_berserk (edict_t *self);
@@ -148,14 +148,13 @@ void SP_monster_parasite (edict_t *self);
 void SP_monster_flyer (edict_t *self);
 void SP_monster_gekk (edict_t *self);
 void SP_monster_brain (edict_t *self);
-void SP_monster_brain_beta (edict_t *self);
 void SP_monster_floater (edict_t *self);
 void SP_monster_hover (edict_t *self);
 void SP_monster_mutant (edict_t *self);
 void SP_monster_supertank (edict_t *self);
 void SP_monster_boss2 (edict_t *self);
 void SP_monster_jorg (edict_t *self);
-//Knightmare- added spawn function for monster_makron
+// Knightmare- added spawn function for monster_makron
 void SP_monster_makron (edict_t *self);
 void SP_monster_boss3_stand (edict_t *self);
 
@@ -171,13 +170,10 @@ void SP_monster_soldier_lasergun (edict_t *self);
 void SP_monster_soldier_ripper (edict_t *self);
 void SP_monster_fixbot (edict_t *self);
 void SP_monster_gekk (edict_t *self);
+void SP_monster_brain_beta (edict_t *self);
 void SP_monster_chick_heat (edict_t *self);
 void SP_monster_gladb (edict_t *self);
 void SP_monster_boss5 (edict_t *self);
-
-// Knightmare- LM Escape soldiers
-void SP_monster_soldier_plasma_re (edict_t *self);
-void SP_monster_soldier_plasma_sp (edict_t *self);
 
 // Zaero
 void SP_monster_autocannon (edict_t *self);
@@ -196,6 +192,13 @@ void SP_misc_crate_medium (edict_t *self);
 void SP_misc_crate_small (edict_t *self);
 void SP_misc_seat (edict_t *self);
 // end Zaero
+
+// Knightmare- LM Escape soldiers
+void SP_monster_soldier_plasma_re (edict_t *self);
+void SP_monster_soldier_plasma_sp (edict_t *self);
+
+// Q25
+void SP_monster_soldier_dist (edict_t *self);
 
 // Knightmare- the dog from Coconut Monkey 3
 void SP_monster_dog (edict_t *self);
@@ -218,7 +221,7 @@ void SP_func_plat2 (edict_t *ent);
 void SP_func_door_secret2(edict_t *ent);
 void SP_func_force_wall(edict_t *ent);
 
-//Knightmare
+// Knightmare
 void SP_func_breakaway (edict_t *self);
 void SP_func_monitor (edict_t *self);
 void SP_func_pendulum (edict_t *self);
@@ -320,7 +323,7 @@ void SP_misc_crashviper_origin (edict_t *ent);
 void SP_misc_strogg_ship_origin (edict_t *ent);
 void SP_misc_transport_origin (edict_t *ent);
 
-// Knightmare- Q1 monsters/entities
+// Knightmare- Quake1 monsters/entities
 void SP_monster_q1_chthon (edict_t *self);
 void SP_monster_q1_dog (edict_t *self);
 void SP_monster_q1_enforcer (edict_t *self);
@@ -333,6 +336,7 @@ void SP_monster_q1_rotfish (edict_t *self);
 void SP_monster_q1_scrag (edict_t *self); 
 void SP_monster_q1_shalrath (edict_t *self);
 void SP_monster_q1_shambler (edict_t *self);
+//void SP_monster_q1_shub (edict_t *self);
 void SP_monster_q1_tarbaby (edict_t *self);
 void SP_monster_q1_zombie (edict_t *self);
 void SP_monster_q1_freddie (edict_t *self);
@@ -343,6 +347,7 @@ void SP_misc_q1_large_flame(edict_t *self);
 void SP_misc_q1_small_flame (edict_t *self);
 void SP_misc_q1_torch(edict_t *self);
 void SP_target_q1_trap(edict_t *self);
+void SP_target_q1_bolt (edict_t *self);
 void SP_misc_q1_explobox(edict_t *self);  
 void SP_misc_q1_fireball(edict_t *self);
 void SP_misc_q1_globe(edict_t *self);
@@ -370,6 +375,7 @@ void SP_missile (edict_t *self);
 void SP_plasmaball (edict_t *self);	// SKWiD MOD
 //
 // end Lazarus
+
 
 
 spawn_t	spawns[] = {
@@ -442,7 +448,7 @@ spawn_t	spawns[] = {
 	{"target_earthquake", SP_target_earthquake},
 	{"target_character", SP_target_character},
 	{"target_string", SP_target_string},
-	//Knightmare
+	// Knightmare
 	{"target_monitor", SP_target_monitor},
 	{"target_monsterbattle", SP_target_monsterbattle},
 	{"target_movewith", SP_target_movewith},
@@ -503,7 +509,7 @@ spawn_t	spawns[] = {
 	{"light_flame1s", SP_light_flame1s}, 
 	{"light_flame2", SP_light_flame2}, 
 	{"light_flame2s", SP_light_flame2s},
-	//Knightmare- Coconut Monkey
+	// Knightmare- Coconut Monkey
 	{"monster_coco_monkey", SP_monster_coco_monkey}, 
 
 	// RAFAEL
@@ -531,7 +537,6 @@ spawn_t	spawns[] = {
 	{"monster_parasite", SP_monster_parasite},
 	{"monster_flyer", SP_monster_flyer},
 	{"monster_brain", SP_monster_brain},
-	{"monster_brain_beta", SP_monster_brain_beta},
 	{"monster_floater", SP_monster_floater},
 	{"monster_hover", SP_monster_hover},
 	{"monster_mutant", SP_monster_mutant},
@@ -539,7 +544,7 @@ spawn_t	spawns[] = {
 	{"monster_boss2", SP_monster_boss2},
 	{"monster_boss3_stand", SP_monster_boss3_stand},
 	{"monster_jorg", SP_monster_jorg},
-	//Knightmare- added spawn function for monster_makron
+	// Knightmare- added spawn function for monster_makron
 	{"monster_makron", SP_monster_makron},
 
 	{"monster_commander_body", SP_monster_commander_body},
@@ -550,6 +555,7 @@ spawn_t	spawns[] = {
 	{"monster_soldier_ripper",	SP_monster_soldier_ripper},
 	{"monster_fixbot", SP_monster_fixbot},
 	{"monster_gekk", SP_monster_gekk},
+	{"monster_brain_beta", SP_monster_brain_beta},
 	{"monster_chick_heat", SP_monster_chick_heat},
 	{"monster_gladb", SP_monster_gladb},
 	{"monster_boss5", SP_monster_boss5},
@@ -565,10 +571,6 @@ spawn_t	spawns[] = {
 	{"monster_kamikaze", SP_monster_kamikaze},
 	{"monster_widow", SP_monster_widow},
 	{"monster_widow2", SP_monster_widow2},
-
-	// Knightmare- LM Escape soldiers
-	{"monster_soldier_plasma_re", SP_monster_soldier_plasma_re},
-	{"monster_soldier_plasma_sp", SP_monster_soldier_plasma_sp},
 
 	// Zaero
 	{"monster_autocannon", SP_monster_autocannon},
@@ -588,8 +590,16 @@ spawn_t	spawns[] = {
 	{"misc_seat", SP_misc_seat},
 	// end Zaero
 
+	// Knightmare- LM Escape soldiers
+	{"monster_soldier_plasma_re", SP_monster_soldier_plasma_re},
+	{"monster_soldier_plasma_sp", SP_monster_soldier_plasma_sp},
+
 	// Knightmare- added Tactician Gunner
 	{"monster_gunner_tactician", SP_monster_gunner},
+
+	// Q25
+	{"monster_soldier_dist", SP_monster_soldier_dist},
+	{"monster_bfgladiator", SP_monster_gladiator},
 
 	// Knightmare- the dog from Coconut Monkey 3
 	{"monster_dog", SP_monster_dog},
@@ -620,14 +630,14 @@ spawn_t	spawns[] = {
 	{"info_train_start", SP_info_train_start},
 	{"func_trainbutton", SP_func_trainbutton},
 	{"func_vehicle", SP_func_vehicle},
-	//Knightmare
+	// Knightmare
 	{"func_breakaway", SP_func_breakaway},
 	// Lazarus
 	{"crane_beam",   SP_crane_beam},
 	{"crane_hoist",  SP_crane_hoist},
 	{"crane_hook",   SP_crane_hook},
-	{"crane_control",SP_crane_control},
-	{"crane_reset",SP_crane_reset},
+	{"crane_control", SP_crane_control},
+	{"crane_reset", SP_crane_reset},
 	{"trigger_teleport", SP_trigger_teleport},
 	{"trigger_teleporter", SP_trigger_teleporter},
 	{"trigger_teleporter_bbox", SP_trigger_teleporter_bbox},
@@ -700,9 +710,9 @@ spawn_t	spawns[] = {
 	{"misc_strogg_ship_origin", SP_misc_strogg_ship_origin},
 	{"misc_transport_origin", SP_misc_transport_origin},
 
-// Knightmare- Q1 monsters/entities
+	// Knightmare- Quake1 monsters/entities
 	// Generations spawn names
-//	{"q1_monster_chton", SP_monster_q1_chthon},	
+	{"q1_monster_chton", SP_monster_q1_chthon},	
 	{"q1_monster_dog", SP_monster_q1_dog},
 	{"q1_monster_enforcer", SP_monster_q1_enforcer},
 	{"q1_monster_fiend", SP_monster_q1_fiend},
@@ -712,14 +722,15 @@ spawn_t	spawns[] = {
 	{"q1_monster_ogre", SP_monster_q1_ogre},
 	{"q1_monster_fish", SP_monster_q1_rotfish},
 	{"q1_monster_scrag", SP_monster_q1_scrag},
-	{"q1_monster_shambler", SP_monster_q1_shambler},
 	{"q1_monster_shalrath", SP_monster_q1_shalrath},
+	{"q1_monster_shambler", SP_monster_q1_shambler},
+//	{"q1_monster_shub", SP_monster_q1_shub},
 	{"q1_monster_tarbaby", SP_monster_q1_tarbaby},
 	{"q1_monster_zombie", SP_monster_q1_zombie},
 	{"q1_monster_freddie", SP_monster_q1_freddie},
 
 	// Q2Infighter spawn names
-//	{"monster_q1_chthon", SP_monster_q1_chthon},	
+	{"monster_q1_chthon", SP_monster_q1_chthon},	
 	{"monster_q1_dog", SP_monster_q1_dog},
 	{"monster_q1_enforcer", SP_monster_q1_enforcer},
 	{"monster_q1_demon", SP_monster_q1_fiend},
@@ -729,19 +740,21 @@ spawn_t	spawns[] = {
 	{"monster_q1_ogre", SP_monster_q1_ogre},
 	{"monster_q1_fish", SP_monster_q1_rotfish},
 	{"monster_q1_wizard", SP_monster_q1_scrag},
-	{"monster_q1_shambler", SP_monster_q1_shambler},
 	{"monster_q1_shalrath", SP_monster_q1_shalrath},
+	{"monster_q1_shambler", SP_monster_q1_shambler},
+//	{"monster_q1_shub", SP_monster_q1_shub},
 	{"monster_q1_tarbaby", SP_monster_q1_tarbaby},
 	{"monster_q1_zombie", SP_monster_q1_zombie},
 	{"monster_q1_freddie", SP_monster_q1_freddie},
 
-	// misc Q1 entities
+	// misc Quake1 entities
 	{"misc_q1_zombie_crucified", SP_misc_q1_zombie_crucified},
 	{"misc_q1_air_bubbles", SP_misc_q1_air_bubbles},
 	{"misc_q1_large_flame", SP_misc_q1_large_flame},
 	{"misc_q1_small_flame", SP_misc_q1_small_flame},
 	{"misc_q1_torch", SP_misc_q1_torch},
 	{"target_q1_trap", SP_target_q1_trap},
+	{"target_q1_bolt", SP_target_q1_bolt},
 	{"misc_q1_light_globe", SP_misc_q1_globe},
 	{"misc_q1_explobox", SP_misc_q1_explobox},
 	{"misc_q1_fireball",SP_misc_q1_fireball},
@@ -773,6 +786,171 @@ spawn_t	spawns[] = {
 
 	{NULL, NULL}
 };
+
+
+// Knightmare- sound precache functions
+void monster_berserk_soundcache (edict_t *self);
+void monster_boss2_soundcache (edict_t *self);
+void monster_jorg_soundcache (edict_t *self);
+void monster_makron_soundcache (edict_t *self);
+void monster_boss5_soundcache (edict_t *self);
+void monster_brain_soundcache (edict_t *self);
+void monster_brain_beta_soundcache (edict_t *self);
+void monster_carrier_soundcache (edict_t *self);
+void monster_chick_soundcache (edict_t *self);
+void monster_dog_soundcache (edict_t *self);
+void monster_fixbot_soundcache (edict_t *self);
+void monster_flipper_soundcache (edict_t *self);
+void monster_floater_soundcache (edict_t *self);
+void monster_flyer_soundcache (edict_t *self);
+void monster_gekk_soundcache (edict_t *self);
+void monster_gladb_soundcache (edict_t *self);
+void monster_gladiator_soundcache (edict_t *self);
+void monster_gunner_soundcache (edict_t *self);
+void monster_hover_soundcache (edict_t *self);
+void monster_infantry_soundcache (edict_t *self);
+void misc_insane_soundcache (edict_t *self);
+void monster_medic_soundcache (edict_t *self);
+void monster_mutant_soundcache (edict_t *self);
+void monster_parasite_soundcache (edict_t *self);
+void monster_soldier_x_soundcache (edict_t *self);
+void monster_soldier_h_soundcache (edict_t *self);
+void monster_soldier_q25_soundcache (edict_t *self);
+void monster_stalker_soundcache (edict_t *self);
+void monster_supertank_soundcache (edict_t *self);
+void monster_tank_soundcache (edict_t *self);
+void monster_vulture_soundcache (edict_t *self);
+void monster_widow_soundcache (edict_t *self);
+void monster_widow2_soundcache (edict_t *self);
+
+// Zaero
+void monster_handler_soundcache (edict_t *self);
+void monster_hound_soundcache (edict_t *self);
+void monster_sentien_soundcache (edict_t *self);
+void monster_zboss_soundcache (edict_t *self);
+
+// Q1
+void monster_q1_chthon_soundcache (edict_t *self);
+void monster_q1_dog_soundcache (edict_t *self);
+void monster_q1_enforcer_soundcache (edict_t *self);
+void monster_q1_fiend_soundcache (edict_t *self);
+void monster_q1_grunt_soundcache (edict_t *self);
+void monster_q1_hknight_soundcache (edict_t *self);
+void monster_q1_knight_soundcache (edict_t *self);
+void monster_q1_ogre_soundcache (edict_t *self);
+void monster_q1_rotfish_soundcache (edict_t *self);
+void monster_q1_scrag_soundcache (edict_t *self);
+void monster_q1_shalrath_soundcache (edict_t *self);
+void monster_q1_shambler_soundcache (edict_t *self);
+void monster_q1_tarbaby_soundcache (edict_t *self);
+void monster_q1_zombie_soundcache (edict_t *self);
+void monster_q1_freddie_soundcache (edict_t *self);
+
+// Knightmare- sound precache table
+soundcache_t	soundcaches[] = {
+	{"monster_berserk", monster_berserk_soundcache},
+	{"monster_gladiator", monster_gladiator_soundcache},
+	{"monster_gunner", monster_gunner_soundcache},
+	{"monster_infantry", monster_infantry_soundcache},
+	{"monster_soldier_light", monster_soldier_x_soundcache},
+	{"monster_soldier", monster_soldier_x_soundcache},
+	{"monster_soldier_ss", monster_soldier_x_soundcache},
+	{"monster_tank", monster_tank_soundcache},
+	{"monster_tank_commander", monster_tank_soundcache},
+	{"monster_medic", monster_medic_soundcache},
+	{"monster_flipper", monster_flipper_soundcache},
+	{"monster_chick", monster_chick_soundcache},
+	{"monster_parasite", monster_parasite_soundcache},
+	{"monster_flyer", monster_flyer_soundcache},
+	{"monster_brain", monster_brain_soundcache},
+	{"monster_floater", monster_floater_soundcache},
+	{"monster_hover", monster_hover_soundcache},
+	{"monster_mutant", monster_mutant_soundcache},
+	{"monster_supertank",  monster_supertank_soundcache},
+	{"monster_boss2", monster_boss2_soundcache},
+	{"monster_jorg", monster_jorg_soundcache},
+	{"monster_makron", monster_makron_soundcache},
+
+	// Xatrix
+	{"monster_soldier_hypergun", monster_soldier_h_soundcache},
+	{"monster_soldier_lasergun",  monster_soldier_h_soundcache},
+	{"monster_soldier_ripper",	monster_soldier_h_soundcache},
+	{"monster_fixbot", monster_fixbot_soundcache},
+	{"monster_gekk", monster_gekk_soundcache},
+	{"monster_brain_beta", monster_brain_beta_soundcache},
+	{"monster_chick_heat", monster_chick_soundcache},
+	{"monster_gladb", monster_gladb_soundcache},
+	{"monster_boss5", monster_boss5_soundcache},
+	
+	// Rogue
+	{"monster_daedalus", monster_hover_soundcache},
+	{"monster_medic_commander",  monster_medic_soundcache},
+	{"monster_stalker", monster_stalker_soundcache},
+	{"monster_carrier", monster_carrier_soundcache},
+	{"monster_kamikaze", monster_flyer_soundcache},
+	{"monster_widow", monster_widow_soundcache},
+	{"monster_widow2", monster_widow2_soundcache},
+
+	// Zaero
+	{"monster_hound", monster_hound_soundcache},
+	{"monster_handler", monster_handler_soundcache},
+	{"monster_sentien", monster_sentien_soundcache},
+	{"monster_zboss", monster_zboss_soundcache},
+
+	// LM Escape soldiers
+	{"monster_soldier_plasma_re", monster_soldier_x_soundcache},
+	{"monster_soldier_plasma_sp", monster_soldier_x_soundcache},
+
+	// Tactician Gunner
+	{"monster_gunner_tactician", monster_gunner_soundcache},
+
+	// Q25
+	{"monster_soldier_dist", monster_soldier_q25_soundcache},
+	{"monster_bfgladiator", monster_gladiator_soundcache},
+
+	// Coconut Monkey 1/2/3
+	{"monster_dog", monster_dog_soundcache},
+	{"monster_vulture", monster_vulture_soundcache},
+
+	// Quake1
+	// Generations spawn names
+	{"q1_monster_chton", monster_q1_chthon_soundcache},	
+	{"q1_monster_dog", monster_q1_dog_soundcache},
+	{"q1_monster_enforcer", monster_q1_enforcer_soundcache},
+	{"q1_monster_fiend", monster_q1_fiend_soundcache},
+	{"q1_monster_soldier", monster_q1_grunt_soundcache},
+	{"q1_monster_hknight", monster_q1_hknight_soundcache},
+	{"q1_monster_knight", monster_q1_knight_soundcache},
+	{"q1_monster_ogre", monster_q1_ogre_soundcache},
+	{"q1_monster_fish", monster_q1_rotfish_soundcache},
+	{"q1_monster_scrag", monster_q1_scrag_soundcache},
+	{"q1_monster_shalrath", monster_q1_shalrath_soundcache},
+	{"q1_monster_shambler", monster_q1_shambler_soundcache},
+	{"q1_monster_tarbaby", monster_q1_tarbaby_soundcache},
+	{"q1_monster_zombie", monster_q1_zombie_soundcache},
+	{"q1_monster_freddie", monster_q1_freddie_soundcache},
+
+	// Q2Infighter spawn names
+	{"monster_q1_chthon", monster_q1_chthon_soundcache},	
+	{"monster_q1_dog", monster_q1_dog_soundcache},
+	{"monster_q1_enforcer", monster_q1_enforcer_soundcache},
+	{"monster_q1_demon", monster_q1_fiend_soundcache},
+	{"monster_q1_army", monster_q1_grunt_soundcache},
+	{"monster_q1_hknight", monster_q1_hknight_soundcache},
+	{"monster_q1_knight", monster_q1_knight_soundcache},
+	{"monster_q1_ogre", monster_q1_ogre_soundcache},
+	{"monster_q1_fish", monster_q1_rotfish_soundcache},
+	{"monster_q1_wizard", monster_q1_scrag_soundcache},
+	{"monster_q1_shalrath", monster_q1_shalrath_soundcache},
+	{"monster_q1_shambler", monster_q1_shambler_soundcache},
+	{"monster_q1_tarbaby", monster_q1_tarbaby_soundcache},
+	{"monster_q1_zombie", monster_q1_zombie_soundcache},
+	{"monster_q1_freddie", monster_q1_freddie_soundcache},
+
+	{NULL, NULL}
+};
+// end Knightmare
+
 
 // Knightmare- global pointer for the entity alias script
 // The file should be loaded into memory, because we can't
@@ -1654,13 +1832,14 @@ void LoadTransitionEnts (void)
 					}
 					ent->owner_id = 0;
 				}
-			//Knightmare- is this necessary?  Entity state flags should be saved.
+			// Knightmare- is this necessary?  Entity state flags should be saved.
 			//	ent->s.renderfx |= RF_IR_VISIBLE;
 			}
 			fclose(f);
 		}
 	}
 }
+
 /*
 ==============
 SpawnEntities
@@ -1976,11 +2155,45 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 	// Knightmare- precache transitioning player inventories here
 	// Fixes lag when changing weapons after level transition
-#ifdef KMQUAKE2_ENGINE_MOD
 	G_PrecachePlayerInventories ();
-#endif	// KMQUAKE2_ENGINE_MOD
 }
 
+//===================================================================
+
+// Knightmare added
+/*
+==============
+G_SoundcacheEntities
+
+Reloads static cached sounds for entities using spawns table
+==============
+*/
+void G_SoundcacheEntities (void)
+{
+	int		i;
+	edict_t	*ent = NULL;
+	soundcache_t	*s = NULL;
+
+	ent = &g_edicts[0];
+	for (i = 0; i < globals.num_edicts; i++, ent++)
+	{
+		if (!ent->inuse)
+			continue;
+
+		// check normal spawn functions
+		for (s=soundcaches; s->name; s++)
+		{
+			if ( !strcmp(s->name, ent->classname) )
+			{	// found it
+				if (s->soundcache != NULL) {
+					s->soundcache (ent);
+				}
+				break;
+			}
+		}
+	}
+}
+// end Knightmare
 
 //===================================================================
 
@@ -2393,7 +2606,7 @@ void SP_worldspawn (edict_t *ent)
 	if (footstep_sounds->value)
 		world->effects |= FX_WORLDSPAWN_STEPSOUNDS;
 
-//Knightmare- this is now handled client-side
+// Knightmare- this is now handled client-side
 #ifdef FMOD_FOOTSTEPS
 
 	if (deathmatch->value || coop->value)
@@ -3060,7 +3273,7 @@ void Cmd_ToggleHud (void)
 	if (deathmatch->value)
 		return;
   if (nohud)
-		Hud_On();
+		Hud_On ();
 	else
-		Hud_Off();
+		Hud_Off ();
 }

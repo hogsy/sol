@@ -1828,20 +1828,20 @@ void clone (edict_t *self)
 		ent->team = G_CopyString(self->team);
 	if (self->newteam)
 		ent->team = G_CopyString(self->newteam);
-#ifdef KMQUAKE2_ENGINE_MOD //Knightmare added
+#ifdef KMQUAKE2_ENGINE_MOD // Knightmare added
 	if ((self->alpha >= 0.0) && (self->alpha <= 1.0))
 		ent->s.alpha = self->alpha;
 #endif
-	ent->svflags |= SVF_CLONED; //mark this entity as cloned
-	ReInitialize_Entity(ent); //call its spawn function
+	ent->svflags |= SVF_CLONED; // mark this entity as cloned
+	ReInitialize_Entity (ent); // call its spawn function
 
 	//set up orgin offset
 	VectorAdd(ent->absmin, ent->absmax, ent->origin_offset);
 	VectorScale(ent->origin_offset, 0.5, ent->origin_offset);
 	VectorSubtract(ent->origin_offset, ent->s.origin, ent->origin_offset);
-	//Kill anything in the way
+	// Kill anything in the way
 	gi.unlinkentity(ent);
-	//Knightmare- only killbox if spawned entity is solid
+	// Knightmare- only killbox if spawned entity is solid
 	if (ent->solid == SOLID_BSP || ent->solid == SOLID_BBOX)
 		KillBox(ent);
 	gi.linkentity(ent);

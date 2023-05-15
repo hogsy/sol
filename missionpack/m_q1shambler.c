@@ -503,6 +503,21 @@ void shambler_melee(edict_t *self)
 }
 
 
+// Knightmare- added soundcache function
+void monster_q1_shambler_soundcache (edict_t *self)
+{
+	sound_melee1 =	gi.soundindex ("q1shambler/melee1.wav");	
+	sound_melee2 =	gi.soundindex ("q1shambler/melee1.wav");	
+	sound_melee3 =	gi.soundindex ("q1shambler/smack.wav");	
+	sound_attack =	gi.soundindex ("q1shambler/sattck1.wav");			
+	sound_boom =	gi.soundindex ("q1shambler/sboom.wav");
+	sound_pain =	gi.soundindex ("q1shambler/shurt2.wav");	
+	sound_death =	gi.soundindex ("q1shambler/sdeath.wav");			
+	sound_gib =		gi.soundindex ("q1player/udeath.wav");
+	sound_idle =	gi.soundindex ("q1shambler/sidle.wav");			
+	sound_sight =	gi.soundindex ("q1shambler/ssight.wav");
+}
+
 //
 // SPAWN
 //
@@ -518,7 +533,10 @@ void SP_monster_q1_shambler (edict_t *self)
 		return;
 	}
 
-	sound_melee1 =	gi.soundindex ("q1shambler/melee1.wav");	
+	// Knightmare- use soundcache function
+	monster_q1_shambler_soundcache (self);
+
+/*	sound_melee1 =	gi.soundindex ("q1shambler/melee1.wav");	
 	sound_melee2 =	gi.soundindex ("q1shambler/melee1.wav");	
 	sound_melee3 =	gi.soundindex ("q1shambler/smack.wav");	
 	sound_attack =	gi.soundindex ("q1shambler/sattck1.wav");			
@@ -528,7 +546,7 @@ void SP_monster_q1_shambler (edict_t *self)
 	sound_gib =		gi.soundindex ("q1player/udeath.wav");
 	sound_idle =	gi.soundindex ("q1shambler/sidle.wav");			
 	sound_sight =	gi.soundindex ("q1shambler/ssight.wav");
-
+*/
 	// precache gibs
 	gi.modelindex ("models/monsters/q1shambler/head/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib1/tris.md2");

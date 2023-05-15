@@ -416,6 +416,7 @@ void InitGame (void)
 
 	// Knightmare- enables trigger_gravity affecting players in non-Rogue maps
 	sv_trigger_gravity_player = gi.cvar("sv_trigger_gravity_player", "0", CVAR_ARCHIVE);
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE
@@ -607,7 +608,7 @@ void InitGame (void)
 //======
 
 #ifdef FMOD_FOOTSTEPS
-	if(footstep_sounds->value)
+	if (footstep_sounds->value)
 		ReadTextureSurfaceAssignments();
 #endif
 }
@@ -1349,7 +1350,7 @@ void ReadLevel (char *filename)
 	void	*base;
 	edict_t	*ent;
 
-	if(developer->value)
+	if (developer->value)
 		gi.dprintf ("==== ReadLevel ====\n");
 
 	f = fopen (filename, "rb");
@@ -1458,9 +1459,10 @@ void ReadLevel (char *filename)
 		actor_files();
 	}
 
+	// Knightmare- reload static cached sounds for entities
+	G_SoundcacheEntities ();
+
 	// Knightmare- precache transitioning player inventories here
 	// Fixes lag when changing weapons after level transition
-#ifdef KMQUAKE2_ENGINE_MOD
 	G_PrecachePlayerInventories ();
-#endif	// KMQUAKE2_ENGINE_MOD
 }

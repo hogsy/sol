@@ -1832,7 +1832,7 @@ void func_tracktrain_find (edict_t *self)
 				//This is now the child's original position
 				if ( (e->solid == SOLID_BSP) && strcmp(e->classname,"func_rotating")
 					&& strcmp(e->classname,"func_door_rotating"))
-					ReInitialize_Entity(e);
+					ReInitialize_Entity (e);
 				gi.linkentity (e);
 			}
 		}

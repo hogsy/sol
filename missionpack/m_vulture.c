@@ -601,17 +601,9 @@ void vulture_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		self->monsterinfo.currentmove = &vulture_move_death;
 }
 
-
-/*QUAKED monster_vulture (1 .5 0) (-8 -8 -8) (8 8 8) Ambush Trigger_Spawn Sight InAir GoodGuy NoGib
-*/
-void SP_monster_vulture (edict_t *self)
+// Knightmare- added soundcache function
+void monster_vulture_soundcache (edict_t *self)
 {
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
-
 //	sound_sight =		gi.soundindex ("vulture/sight1.wav");
 	sound_perch_idle1 =	gi.soundindex ("vulture/perch_idle1.wav");
 	sound_perch_idle2 =	gi.soundindex ("vulture/perch_idle2.wav");
@@ -628,7 +620,38 @@ void SP_monster_vulture (edict_t *self)
 	sound_pain1 =	gi.soundindex ("vulture/pain1.wav");
 	sound_pain2 =	gi.soundindex ("vulture/pain2.wav");
 	sound_death =	gi.soundindex ("vulture/death1.wav");
+}
 
+/*QUAKED monster_vulture (1 .5 0) (-8 -8 -8) (8 8 8) Ambush Trigger_Spawn Sight InAir GoodGuy NoGib
+*/
+void SP_monster_vulture (edict_t *self)
+{
+	if (deathmatch->value)
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	// Knightmare- use soundcache function
+	monster_vulture_soundcache (self);
+/*
+//	sound_sight =		gi.soundindex ("vulture/sight1.wav");
+	sound_perch_idle1 =	gi.soundindex ("vulture/perch_idle1.wav");
+	sound_perch_idle2 =	gi.soundindex ("vulture/perch_idle2.wav");
+	sound_perch_idle3 =	gi.soundindex ("vulture/perch_idle3.wav");
+	sound_soar_idle1 =	gi.soundindex ("vulture/soar_idle1.wav");
+	sound_soar_idle2 =	gi.soundindex ("vulture/soar_idle2.wav");
+	sound_soar_idle3 =	gi.soundindex ("vulture/soar_idle3.wav");
+	sound_flap1 =	gi.soundindex ("vulture/flap1.wav");
+	sound_flap2 =	gi.soundindex ("vulture/flap2.wav");
+	sound_flap3 =	gi.soundindex ("vulture/flap3.wav");
+	sound_peck1 =	gi.soundindex ("vulture/peck1.wav");
+	sound_peck2 =	gi.soundindex ("vulture/peck2.wav");
+	sound_peck3 =	gi.soundindex ("vulture/peck3.wav");
+	sound_pain1 =	gi.soundindex ("vulture/pain1.wav");
+	sound_pain2 =	gi.soundindex ("vulture/pain2.wav");
+	sound_death =	gi.soundindex ("vulture/death1.wav");
+*/
 	// precache feather gibs
 	gi.modelindex ("models/monsters/vulture/feather1.md2");
 	gi.modelindex ("models/monsters/vulture/feather2.md2");

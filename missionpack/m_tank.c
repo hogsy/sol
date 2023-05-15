@@ -1022,6 +1022,19 @@ qboolean tank_blocked (edict_t *self, float dist)
 //PGM
 //===========
 
+// Knightmare- added soundcache function
+void monster_tank_soundcache (edict_t *self)
+{
+	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
+	sound_thud = gi.soundindex ("tank/tnkdeth2.wav");
+	sound_idle = gi.soundindex ("tank/tnkidle1.wav");
+	sound_die = gi.soundindex ("tank/death.wav");
+	sound_step = gi.soundindex ("tank/step.wav");
+	sound_windup = gi.soundindex ("tank/tnkatck4.wav");
+	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
+	sound_sight = gi.soundindex ("tank/sight1.wav");
+}
+
 //
 // monster_tank
 //
@@ -1039,10 +1052,8 @@ void SP_monster_tank (edict_t *self)
 	}
 
 	// Lazarus: special purpose skins
-	if (strcmp(self->classname, "monster_tank_commander") == 0)
-	{
+	if (strcmp(self->classname, "monster_tank_commander") == 0) {
 		self->s.skinnum = 2;
-		self->moreflags |= FL2_COMMANDER;
 	}
 	if ( self->style )
 	{
@@ -1056,7 +1067,10 @@ void SP_monster_tank (edict_t *self)
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
-	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
+	// Knightmare- use soundcache function
+	monster_tank_soundcache (self);
+
+/*	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
 	sound_thud = gi.soundindex ("tank/tnkdeth2.wav");
 	sound_idle = gi.soundindex ("tank/tnkidle1.wav");
 	sound_die = gi.soundindex ("tank/death.wav");
@@ -1064,7 +1078,7 @@ void SP_monster_tank (edict_t *self)
 	sound_windup = gi.soundindex ("tank/tnkatck4.wav");
 	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
 	sound_sight = gi.soundindex ("tank/sight1.wav");
-
+*/
 	gi.soundindex ("tank/tnkatck1.wav");
 	gi.soundindex ("tank/tnkatk2a.wav");
 	gi.soundindex ("tank/tnkatk2b.wav");
@@ -1079,7 +1093,10 @@ void SP_monster_tank (edict_t *self)
 			self->health = 1000;
 		if (!self->gib_health)
 			self->gib_health = -400;
+
 		self->common_name = "Tank Commander";
+
+		self->moreflags |= FL2_COMMANDER;
 	}
 	else
 	{
@@ -1087,6 +1104,7 @@ void SP_monster_tank (edict_t *self)
 			self->health = 750;
 		if (!self->gib_health)
 			self->gib_health = -400;
+
 		self->common_name = "Tank";
 	}
 	self->class_id = ENTITY_MONSTER_TANK;

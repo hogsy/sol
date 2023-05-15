@@ -115,6 +115,7 @@ cvar_t	*sv_stopspeed;		//PGM	 (this was a define in g_phys.c)
 cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
 
 cvar_t	*sv_trigger_gravity_player;	// Knightmare- enables trigger_gravity affecting players in non-Rogue maps
+cvar_t	*g_aimfix;			// Knightmare- from Yamagi Q2
 cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE cvars
@@ -147,7 +148,7 @@ void G_RunFrame (void);
 void ShutdownGame (void)
 {
 	gi.dprintf ("==== ShutdownGame ====\n");
-	if(!deathmatch->value && !coop->value)
+	if (!deathmatch->value && !coop->value)
 	{
 #ifndef KMQUAKE2_ENGINE_MOD // engine has zoom autosensitivity
 		gi.cvar_forceset("m_pitch", va("%f",lazarus_pitch->value));
@@ -177,7 +178,7 @@ int Debug_Modelindex (char *name)
 {
 	int	modelnum;
 	modelnum = RealFunc.modelindex(name);
-	if(modelnum > max_modelindex)
+	if (modelnum > max_modelindex)
 	{
 		gi.dprintf("Model %03d %s\n",modelnum,name);
 		max_modelindex = modelnum;
@@ -189,7 +190,7 @@ int Debug_Soundindex (char *name)
 {
 	int soundnum;
 	soundnum = RealFunc.soundindex(name);
-	if(soundnum > max_soundindex)
+	if (soundnum > max_soundindex)
 	{
 		gi.dprintf("Sound %03d %s\n",soundnum,name);
 		max_soundindex = soundnum;
@@ -239,7 +240,7 @@ game_export_t *GetGameAPI (game_import_t *import)
 
 	developer = gi.cvar("developer", "0", CVAR_SERVERINFO);
 	readout   = gi.cvar("readout", "0", CVAR_SERVERINFO);
-	if(readout->value)
+	if (readout->value)
 	{
 		max_modelindex = 0;
 		max_soundindex = 0;
@@ -433,7 +434,7 @@ void CheckDMRules (void)
 //ROGUE
 	if (gamerules && gamerules->value && DMGame.CheckDMRules)
 	{
-		if(DMGame.CheckDMRules())
+		if (DMGame.CheckDMRules())
 			return;
 	}
 //ROGUE
@@ -514,10 +515,10 @@ void G_RunFrame (void)
 	edict_t	*ent;
 
 	// added stasis generator support
-	if(level.freeze)
+	if (level.freeze)
 	{
 		level.freezeframes++;
-		if(level.freezeframes >= sk_stasis_time->value*10) // was 300
+		if (level.freezeframes >= sk_stasis_time->value*10) // was 300
 			level.freeze = false;
 	}
 	else

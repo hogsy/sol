@@ -2,6 +2,9 @@
 
 #include "g_local.h"
 
+void door_go_down (edict_t *self);
+void chthon_bolt (edict_t *self, int no);
+
 //======================================================================
 // CRUCIFIED ZOMBIE
 //======================================================================
@@ -196,7 +199,7 @@ void SP_misc_q1_air_bubbles (edict_t *self)
 /*QUAKED misc_q1_globe (0 1 0) (-4 -4 -4) (4 4 4)
 This is a sprite, is not solid
 */
-void SP_misc_q1_globe(edict_t *self)
+void SP_misc_q1_globe (edict_t *self)
 {
 	self->movetype = MOVETYPE_NONE;
 	self->solid = SOLID_NOT;
@@ -381,6 +384,159 @@ void SP_target_q1_trap (edict_t *self)
 	self->svflags = SVF_NOCLIENT;
 }
 
+//======================================================================
+// LIGHTNING BOLT
+//======================================================================
+
+/*static*/ void target_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
+{
+	vec3_t end;
+	trace_t  tr;
+
+	VectorNormalize (dir);
+	VectorMA (start, 600, dir, end);
+	tr = gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
+	
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
+//	gi.WriteByte (TE_LIGHTNING);
+	gi.WriteShort (self - g_edicts);
+	gi.WritePosition (start);
+	gi.WritePosition (tr.endpos); 
+	gi.multicast (start, MULTICAST_PVS);
+		
+	if ((tr.ent != self) && (tr.ent->takedamage))
+		T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, damage, 0, DAMAGE_ENERGY, MOD_Q1_LG);
+}
+
+void think_targetbolt (edict_t *self)
+{
+	int		bstate1 = 0, bstate2 = 0;
+	edict_t	*t = NULL;
+	edict_t	*u = NULL;
+
+	if (Q_stricmp(level.mapname, "qe1m7") == 0)
+	{
+		t = G_Find (NULL, FOFS(targetname), "t12");
+		if (!t)
+			return;
+		bstate1 = t->moveinfo.state;
+		
+		u = G_Find (NULL, FOFS(targetname), "t13");
+		if (!u)
+			return;
+		bstate2 = u->moveinfo.state;
+		if (bstate1 != bstate2)
+			return;
+	}
+
+	if (level.time >= self->delay)
+	{
+		self->nextthink = 0;
+		self->think = 0;
+		self->delay = 0.0;
+		return;
+	}
+
+	target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
+	gi.sound (self, CHAN_AUTO, gi.soundindex ("q1weapons/lhit.wav"), 1.0, ATTN_NORM, 0);
+
+	if (Q_stricmp(level.mapname, "qe1m7") == 0)
+	if ( (bstate2 == 0) && (bstate1 == 0) )
+	{
+		door_go_down (u);
+		door_go_down (t);
+		t = G_Find (NULL, FOFS(classname), "q1_monster_chton");
+		if (!t)
+			t = G_Find (NULL, FOFS(classname), "monster_q1_chton");
+		if (t)
+		{
+			if (!t->deadflag && t->enemy)
+			{
+				self->style++;
+			//	gi.dprintf("HIT NUMBER:%d",self->style);
+
+			switch (self->style)
+			{
+			case 1:
+				chthon_bolt (t, 1);
+				break;
+			case 2:
+				chthon_bolt (t, 2);
+				break;
+			case 3:
+				chthon_bolt (t, 3);
+				break;
+			default:
+				self->style = 0;
+				break;
+			}
+		}
+	//	else
+	//		gi.dprintf("CHTON does not have an enemy\n");
+	}
+//	else
+//		gi.dprintf("Could not find Chton\n");
+
+	}
+}
+
+void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
+{
+	edict_t *t = NULL;
+	int	bstate1, bstate2;
+
+	if (Q_stricmp(level.mapname, "qe1m7") == 0)
+	{
+		t = G_Find (NULL, FOFS(targetname), "t12");
+		if (!t)
+			return;
+
+		bstate1 = t->moveinfo.state;
+		t = G_Find (NULL, FOFS(targetname), "t13");
+		if (!t)
+			return;
+		bstate2 = t->moveinfo.state;
+		
+		if (bstate1 != bstate2)
+			return;
+
+		if (bstate1)	
+		{
+			t = G_Find (NULL, FOFS(targetname), self->target);
+			target_fire_lightning (t, t->s.origin, t->movedir, t->dmg);
+			gi.sound (t, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
+			t->nextthink = level.time + 0.4;
+			t->think = think_targetbolt;
+			t->delay = level.time + 5.0;
+			gi.sound (t, CHAN_AUTO, t->noise_index, 1, ATTN_NORM, 0);
+			return;
+		}
+	}
+	target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
+	gi.sound (self, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
+	self->nextthink = level.time + 0.4;
+	self->think = think_targetbolt;
+	self->delay = level.time + 5.0;
+	gi.sound (self, CHAN_AUTO, self->noise_index, 1, ATTN_NORM, 0);
+}
+
+/*QUAKED q1_target_bolt (1 0 0) (-8 -8 -8) (8 8 8)
+Fires lightning bolt in the set direction when triggered.
+*/
+
+void SP_target_q1_bolt (edict_t *self)
+{
+	self->use = use_target_bolt;
+	self->style = 0;
+	G_SetMovedir (self->s.angles, self->movedir);
+	self->noise_index = gi.soundindex ("q1weapons/lhit.wav"); 
+	gi.soundindex("q1weapons/lstart.wav");
+	
+	if (!self->dmg)
+		self->dmg = 50;
+	self->svflags = SVF_NOCLIENT;
+}
 
 //======================================================================
 // Q1 EXPLOBOX

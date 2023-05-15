@@ -766,6 +766,32 @@ qboolean hover_blocked (edict_t *self, float dist)
 //PGM
 //===========
 
+// Knightmare- added soundcache function
+void monster_hover_soundcache (edict_t *self)
+{
+	if (strcmp(self->classname, "monster_daedalus") == 0)
+	{
+		// PMM - daedalus sounds
+		daed_sound_pain1 = gi.soundindex ("daedalus/daedpain1.wav");	
+		daed_sound_pain2 = gi.soundindex ("daedalus/daedpain2.wav");	
+		daed_sound_death1 = gi.soundindex ("daedalus/daeddeth1.wav");	
+		daed_sound_death2 = gi.soundindex ("daedalus/daeddeth2.wav");	
+		daed_sound_sight = gi.soundindex ("daedalus/daedsght1.wav");	
+		daed_sound_search1 = gi.soundindex ("daedalus/daedsrch1.wav");	
+		daed_sound_search2 = gi.soundindex ("daedalus/daedsrch2.wav");
+	}
+	else
+	{
+		sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
+		sound_pain2 = gi.soundindex ("hover/hovpain2.wav");	
+		sound_death1 = gi.soundindex ("hover/hovdeth1.wav");	
+		sound_death2 = gi.soundindex ("hover/hovdeth2.wav");	
+		sound_sight = gi.soundindex ("hover/hovsght1.wav");	
+		sound_search1 = gi.soundindex ("hover/hovsrch1.wav");	
+		sound_search2 = gi.soundindex ("hover/hovsrch2.wav");	
+	}
+}
+
 /*QUAKED monster_hover (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy
 */
 /*QUAKED monster_daedalus (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy
@@ -783,10 +809,8 @@ void SP_monster_hover (edict_t *self)
 	self->solid = SOLID_BBOX;
 
 	// Lazarus: special purpose skins
-	if (strcmp(self->classname, "monster_daedalus") == 0)
-	{
+	if (strcmp(self->classname, "monster_daedalus") == 0) {
 		self->s.skinnum = 2;
-		self->moreflags |= FL2_COMMANDER;
 	}
 	if ( self->style )
 	{
@@ -827,7 +851,10 @@ void SP_monster_hover (edict_t *self)
 	self->monsterinfo.blocked = hover_blocked;		// PGM
 
 	if (!self->blood_type)
-		self->blood_type = 3; //sparks and blood
+		self->blood_type = 3; // sparks and blood
+
+	// Knightmare- use soundcache function
+	monster_hover_soundcache (self);
 
 //PGM
 	if (strcmp(self->classname, "monster_daedalus") == 0)
@@ -845,20 +872,25 @@ void SP_monster_hover (edict_t *self)
 		self->monsterinfo.power_armor_power = 100;
 
 		// PMM - daedalus sounds
-		self->s.sound = gi.soundindex ("daedalus/daedidle1.wav");
-		daed_sound_pain1 = gi.soundindex ("daedalus/daedpain1.wav");	
+	/*	daed_sound_pain1 = gi.soundindex ("daedalus/daedpain1.wav");	
 		daed_sound_pain2 = gi.soundindex ("daedalus/daedpain2.wav");	
 		daed_sound_death1 = gi.soundindex ("daedalus/daeddeth1.wav");	
 		daed_sound_death2 = gi.soundindex ("daedalus/daeddeth2.wav");	
 		daed_sound_sight = gi.soundindex ("daedalus/daedsght1.wav");	
 		daed_sound_search1 = gi.soundindex ("daedalus/daedsrch1.wav");	
-		daed_sound_search2 = gi.soundindex ("daedalus/daedsrch2.wav");	
+		daed_sound_search2 = gi.soundindex ("daedalus/daedsrch2.wav");
+	*/
+		// precache
 		gi.soundindex ("tank/tnkatck3.wav");
+		self->s.sound = gi.soundindex ("daedalus/daedidle1.wav");
 		// Knightmare- precache blaster bolt
 		gi.modelindex ("models/proj/laser2/tris.md2");
 		// pmm
+
 		self->common_name = "Daedalus"; // Knightmare added
 		self->class_id = ENTITY_MONSTER_DAEDALUS;
+
+		self->moreflags |= FL2_COMMANDER;
 	}
 	else
 	{
@@ -868,16 +900,19 @@ void SP_monster_hover (edict_t *self)
 			self->mass = 150;
 		if (!self->dmg)
 			self->dmg = 1;
-		sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
+
+	/*	sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
 		sound_pain2 = gi.soundindex ("hover/hovpain2.wav");	
 		sound_death1 = gi.soundindex ("hover/hovdeth1.wav");	
 		sound_death2 = gi.soundindex ("hover/hovdeth2.wav");	
 		sound_sight = gi.soundindex ("hover/hovsght1.wav");	
 		sound_search1 = gi.soundindex ("hover/hovsrch1.wav");	
-		sound_search2 = gi.soundindex ("hover/hovsrch2.wav");	
+		sound_search2 = gi.soundindex ("hover/hovsrch2.wav");
+	*/	
+		// precache
 		gi.soundindex ("hover/hovatck1.wav");	
-
 		self->s.sound = gi.soundindex ("hover/hovidle1.wav");
+
 		self->common_name = "Icarus"; // Knightmare added
 		self->class_id = ENTITY_MONSTER_HOVER;
 	}

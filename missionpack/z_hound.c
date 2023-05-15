@@ -555,8 +555,7 @@ void hound_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 End Death Stuff
 ===
 */
-
-void SP_monster_hound_precache(void)
+void SP_monster_hound_precache (void)
 {
 	sound_pain1 = gi.soundindex ("monsters/hound/hpain1.wav");	
 	sound_pain2 = gi.soundindex ("monsters/hound/hpain2.wav");	
@@ -567,6 +566,11 @@ void SP_monster_hound_precache(void)
 	sound_jump = gi.soundindex("monsters/hound/hjump.wav");
 	sound_bite = gi.soundindex("monsters/hound/hbite1.wav");
 	sound_bitemiss = gi.soundindex("monsters/hound/hbite2.wav");
+}
+
+void monster_hound_soundcache (edict_t *self)
+{
+	SP_monster_hound_precache ();
 }
 
 
@@ -581,7 +585,7 @@ void SP_monster_hound (edict_t *self)
 		return;
 	}
 
-	SP_monster_hound_precache();
+	SP_monster_hound_precache (self);
 
 	// Lazarus: special purpose skins
 	if ( self->style )

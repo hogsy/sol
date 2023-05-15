@@ -949,17 +949,10 @@ void chick_sidestep (edict_t *self)
 		self->monsterinfo.currentmove = &chick_move_run;
 }
 
-/*QUAKED monster_chick (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight Blind NoGib HomingRockets
-Blind - monster will just stand there until triggered
-*/
-void SP_monster_chick (edict_t *self)
-{
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
 
+// Knightmare- added soundcache function
+void monster_chick_soundcache (edict_t *self)
+{
 	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");	
 	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");	
 	sound_melee_swing		= gi.soundindex ("chick/chkatck3.wav");	
@@ -975,6 +968,39 @@ void SP_monster_chick (edict_t *self)
 	sound_pain3				= gi.soundindex ("chick/chkpain3.wav");	
 	sound_sight				= gi.soundindex ("chick/chksght1.wav");	
 	sound_search			= gi.soundindex ("chick/chksrch1.wav");	
+}
+
+
+/*QUAKED monster_chick (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight Blind NoGib HomingRockets
+Blind - monster will just stand there until triggered
+*/
+void SP_monster_chick (edict_t *self)
+{
+	if (deathmatch->value)
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	// Knightmare- use soundcache function
+	monster_chick_soundcache (self);
+
+/*	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");	
+	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");	
+	sound_melee_swing		= gi.soundindex ("chick/chkatck3.wav");	
+	sound_melee_hit			= gi.soundindex ("chick/chkatck4.wav");	
+	sound_missile_reload	= gi.soundindex ("chick/chkatck5.wav");	
+	sound_death1			= gi.soundindex ("chick/chkdeth1.wav");	
+	sound_death2			= gi.soundindex ("chick/chkdeth2.wav");	
+	sound_fall_down			= gi.soundindex ("chick/chkfall1.wav");	
+	sound_idle1				= gi.soundindex ("chick/chkidle1.wav");	
+	sound_idle2				= gi.soundindex ("chick/chkidle2.wav");	
+	sound_pain1				= gi.soundindex ("chick/chkpain1.wav");	
+	sound_pain2				= gi.soundindex ("chick/chkpain2.wav");	
+	sound_pain3				= gi.soundindex ("chick/chkpain3.wav");	
+	sound_sight				= gi.soundindex ("chick/chksght1.wav");	
+	sound_search			= gi.soundindex ("chick/chksrch1.wav");	
+*/
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
@@ -1044,15 +1070,6 @@ void SP_monster_chick (edict_t *self)
 	else if (!self->monsterinfo.flies)
 		self->monsterinfo.flies = 0.40;
 
-	self->common_name = "Iron Maiden";
-	self->class_id = ENTITY_MONSTER_CHICK;
-
-	// PMM
-	// Knightmare- no blindfire with homing rockets in easy or medium skill
-	if (!(self->spawnflags & SF_MONSTER_SPECIAL) || skill->value >= 2)
-		self->monsterinfo.blindfire = true;
-	walkmonster_start (self);
-
 	if (self->spawnflags & SF_MONSTER_SPECIAL) // Knightmare- homing rockets
 	{
 		self->classname = "monster_chick_heat";
@@ -1060,9 +1077,21 @@ void SP_monster_chick (edict_t *self)
 			self->blood_type = 3; // sparks and blood
 		else
 			self->fogclip |= 2; // custom bloodtype flag
+
 		self->common_name = "Beta-Class Iron Maiden";
 		self->class_id = ENTITY_MONSTER_CHICK_HEAT;
 	}
+	else {
+		self->common_name = "Iron Maiden";
+		self->class_id = ENTITY_MONSTER_CHICK;
+	}
+
+	// PMM
+	// Knightmare- no blindfire with homing rockets in easy or medium skill
+	if (!(self->spawnflags & SF_MONSTER_SPECIAL) || skill->value >= 2)
+		self->monsterinfo.blindfire = true;
+
+	walkmonster_start (self);
 }
 
 /*QUAKED monster_chick_heat (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib

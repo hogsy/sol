@@ -1730,6 +1730,12 @@ void SP_monster_zboss_precache (void)
 	sound_taunt3 = gi.soundindex("monsters/bossz/btaunt3.wav");
 }
 
+// Knightmare- added soundcache function
+void monster_zboss_soundcache (edict_t *self)
+{
+	SP_monster_zboss_precache ();
+}
+
 
 /*QUAKED monster_zboss (1 .5 0) (-32 -32 -16) (32 32 72) Ambush Trigger_Spawn Sight GoodGuy NoGib
 model="models/monsters/bossz/mech/"
@@ -1744,7 +1750,7 @@ void SP_monster_zboss (edict_t *self)
 		return;
 	}
 
-	SP_monster_zboss_precache();
+	SP_monster_zboss_precache ();
 
 	// Lazarus: special purpose skins
 	if ( self->style )

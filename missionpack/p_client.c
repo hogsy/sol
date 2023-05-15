@@ -686,6 +686,11 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			{
 				message = "got an infusion of plasma from a";
 			}
+			// Disruptor guard
+			else if (!strcmp(attacker->classname, "monster_soldier_dist"))
+			{
+				message = "got sucked into the singularity by a";
+			}
 			// Enforcer
 			else if (!strcmp(attacker->classname, "monster_infantry"))
 			{
@@ -723,15 +728,25 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			// Berserker
 			else if (!strcmp(attacker->classname, "monster_berserk"))
 				message = "was smashed by a";
-			// Gladiator/Beta Class Gladiator
+			// Gladiator / Beta Class Gladiator / BFGladiator
 			else if (!strcmp(attacker->classname, "monster_gladiator")
-				|| !strcmp(attacker->classname, "monster_gladb"))
+				|| !strcmp(attacker->classname, "monster_gladb")
+				|| !strcmp(attacker->classname, "monster_bfgladiator") )
 			{
 				if (mod == MOD_RAILGUN)
 					message = "was railed by a";
 				else if ((mod == MOD_PHALANX) || (mod == MOD_PHALANX_SPLASH)) {
 					message = "was evaporated by a";
 					message2 = "'s particle cannon";
+				}
+				else if (mod == MOD_BFG_LASER) {
+					message = "saw the pretty lights from a";
+				}
+				else if (mod == MOD_BFG_BLAST) {
+					message = "was disintegrated by a";
+				}
+				else if (mod == MOD_BFG_EFFECT) {
+					message = "couldn't hide from a";
 				}
 				else if (mod == MOD_HIT) {
 					message = "was mangled by a";
@@ -1101,6 +1116,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			// Spawn
 			else if ( !Q_stricmp(attacker->classname, "q1_monster_tarbaby") || !Q_stricmp(attacker->classname, "monster_q1_tarbaby") )
 				message = "was slimed by a";
+			// Chthon
+			else if ( !Q_stricmp(attacker->classname,"q1_monster_chton") || !Q_stricmp(attacker->classname,"monster_q1_chton") )
+				message = "couldn't face";
 			// Freddie
 			else if ( !Q_stricmp(attacker->classname, "q1_monster_freddie") || !Q_stricmp(attacker->classname, "monster_q1_freddie") )
 				message = "was exterminated by";

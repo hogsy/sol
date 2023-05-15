@@ -2047,6 +2047,38 @@ qboolean medic_blocked (edict_t *self, float dist)
 //PGM
 //===========
 
+// Knightmare- added soundcache function
+void monster_medic_soundcache (edict_t *self)
+{
+	if (strcmp(self->classname, "monster_medic_commander") == 0)
+	{
+		commander_sound_idle1 = gi.soundindex ("medic_commander/medidle.wav");
+		commander_sound_pain1 = gi.soundindex ("medic_commander/medpain1.wav");
+		commander_sound_pain2 = gi.soundindex ("medic_commander/medpain2.wav");
+		commander_sound_die = gi.soundindex ("medic_commander/meddeth.wav");
+		commander_sound_sight = gi.soundindex ("medic_commander/medsght.wav");
+		commander_sound_search = gi.soundindex ("medic_commander/medsrch.wav");
+		commander_sound_hook_launch = gi.soundindex ("medic_commander/medatck2c.wav");
+		commander_sound_hook_hit = gi.soundindex ("medic_commander/medatck3a.wav");
+		commander_sound_hook_heal = gi.soundindex ("medic_commander/medatck4a.wav");
+		commander_sound_hook_retract = gi.soundindex ("medic_commander/medatck5a.wav");
+		commander_sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
+	}
+	else
+	{
+		sound_idle1 = gi.soundindex ("medic/idle.wav");
+		sound_pain1 = gi.soundindex ("medic/medpain1.wav");
+		sound_pain2 = gi.soundindex ("medic/medpain2.wav");
+		sound_die = gi.soundindex ("medic/meddeth1.wav");
+		sound_sight = gi.soundindex ("medic/medsght1.wav");
+		sound_search = gi.soundindex ("medic/medsrch1.wav");
+		sound_hook_launch = gi.soundindex ("medic/medatck2.wav");
+		sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
+		sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
+		sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
+	}
+}
+
 /*QUAKED monster_medic_commander (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib
 */
 /*QUAKED monster_medic (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight GoodGuy NoGib
@@ -2061,10 +2093,8 @@ void SP_monster_medic (edict_t *self)
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
-	if (strcmp(self->classname, "monster_medic_commander") == 0)
-	{
+	if (strcmp(self->classname, "monster_medic_commander") == 0) {
 		self->s.skinnum = 2;
-		self->moreflags |= FL2_COMMANDER;
 	}
 	else {
 		self->s.skinnum = 0;
@@ -2081,6 +2111,9 @@ void SP_monster_medic (edict_t *self)
 	VectorSet (self->mins, -24, -24, -24);
 	VectorSet (self->maxs, 24, 24, 32);
 
+	// Knightmare- use soundcache function
+	monster_medic_soundcache (self);
+
 	//PMM
 	if (strcmp(self->classname, "monster_medic_commander") == 0)
 	{
@@ -2094,7 +2127,7 @@ void SP_monster_medic (edict_t *self)
 			self->monsterinfo.monster_slots = 8;
 
 		// commander sounds
-		commander_sound_idle1 = gi.soundindex ("medic_commander/medidle.wav");
+	/*	commander_sound_idle1 = gi.soundindex ("medic_commander/medidle.wav");
 		commander_sound_pain1 = gi.soundindex ("medic_commander/medpain1.wav");
 		commander_sound_pain2 = gi.soundindex ("medic_commander/medpain2.wav");
 		commander_sound_die = gi.soundindex ("medic_commander/meddeth.wav");
@@ -2105,6 +2138,8 @@ void SP_monster_medic (edict_t *self)
 		commander_sound_hook_heal = gi.soundindex ("medic_commander/medatck4a.wav");
 		commander_sound_hook_retract = gi.soundindex ("medic_commander/medatck5a.wav");
 		commander_sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
+	*/
+		// precache
 		gi.soundindex ("tank/tnkatck3.wav");
 		MedicCommanderCache ();
 		// Knightmare- precache blaster bolt
@@ -2118,10 +2153,15 @@ void SP_monster_medic (edict_t *self)
 			self->mass = 600;
 
 		self->yaw_speed = 40; // default is 20
+
+		self->common_name = "Medic Commander";
+		self->class_id = ENTITY_MONSTER_MEDIC_COMMANDER;
+
+		self->moreflags |= FL2_COMMANDER;
 	}
 	else
 	{
-		sound_idle1 = gi.soundindex ("medic/idle.wav");
+	/*	sound_idle1 = gi.soundindex ("medic/idle.wav");
 		sound_pain1 = gi.soundindex ("medic/medpain1.wav");
 		sound_pain2 = gi.soundindex ("medic/medpain2.wav");
 		sound_die = gi.soundindex ("medic/meddeth1.wav");
@@ -2131,6 +2171,8 @@ void SP_monster_medic (edict_t *self)
 		sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
 		sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
 		sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
+	*/
+		// precache
 		gi.soundindex ("medic/medatck1.wav");
 
 		if (!self->health)
@@ -2139,6 +2181,9 @@ void SP_monster_medic (edict_t *self)
 			self->gib_health = -150;
 		if (!self->mass)
 			self->mass = 400;
+
+		self->common_name = "Medic";
+		self->class_id = ENTITY_MONSTER_MEDIC;
 	}
 
 	self->pain = medic_pain;
@@ -2191,15 +2236,6 @@ void SP_monster_medic (edict_t *self)
 		M_SetDeath (self, (mmove_t **)&deathmoves);
 	}
 	self->monsterinfo.scale = MODEL_SCALE;
-
-	if (strcmp(self->classname, "monster_medic_commander") == 0) {
-		self->common_name = "Medic Commander";
-		self->class_id = ENTITY_MONSTER_MEDIC_COMMANDER;
-	}
-	else {
-		self->common_name = "Medic";
-		self->class_id = ENTITY_MONSTER_MEDIC;
-	}
 
 	walkmonster_start (self);
 

@@ -182,7 +182,10 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 	if ((targ->svflags & SVF_MONSTER) && (targ->deadflag != DEAD_DEAD))
 	{
 		targ->touch = NULL;
-		monster_death_use (targ);
+		// Q1: Fire Chthon's targets after he sinks back in
+		if ( (strcmp(targ->classname, "q1_monster_chton") != 0) && (strcmp(targ->classname, "monster_q1_chton") != 0) ) {
+			monster_death_use (targ);
+		}
 	}
 
 	// Lazarus: disengage from tracktrain
@@ -397,7 +400,7 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 		return;
 
 	// Knightmare- skip this for insanes
-	if (!strcmp(targ->classname, "misc_insane"))
+	if ( !strcmp(targ->classname, "misc_insane") )
 		return;
 
 	// Lazarus dmgteam stuff

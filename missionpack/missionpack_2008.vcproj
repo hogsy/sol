@@ -734,6 +734,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\m_q1chthon.c"
+				>
+			</File>
+			<File
 				RelativePath=".\m_q1dog.c"
 				>
 			</File>
@@ -1016,6 +1020,10 @@
 			</File>
 			<File
 				RelativePath="m_player.h"
+				>
+			</File>
+			<File
+				RelativePath=".\m_q1chthon.h"
 				>
 			</File>
 			<File
