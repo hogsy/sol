@@ -42,7 +42,7 @@ void sentien_laser_think (edict_t *self)
 	ignore = self;
 	VectorCopy (self->s.origin, start);
 	VectorMA (start, 2048, self->movedir, end);
-	while(1)
+	while (1)
 	{
 		tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
@@ -1215,7 +1215,8 @@ void create_sentien_laser (edict_t *self)
 }
 
 
-void SP_monster_sentien_precache (void)
+// Knightmare- added soundcache function
+void monster_sentien_soundcache (edict_t *self)
 {
 	sound_idle1 = gi.soundindex("monsters/sentien/sen_idle1.wav");
 	sound_idle2 = gi.soundindex("monsters/sentien/sen_idle2.wav");
@@ -1232,11 +1233,12 @@ void SP_monster_sentien_precache (void)
 //	sound_att3 = gi.soundindex("monsters/sentien/sen_att3.wav");
 }
 
-// Knightmare- added soundcache function
-void monster_sentien_soundcache (edict_t *self)
+void SP_monster_sentien_precache (edict_t *self)
 {
-	SP_monster_sentien_precache ();
+	// Knightmare- use soundcache function
+	monster_sentien_soundcache (self);
 }
+
 
 /*QUAKED monster_sentien (1 .5 0) (-32 -32 -16) (32 32 72) Ambush Trigger_Spawn Sight GoodGuy NoGib
 model="models/monsters/sentien/"
@@ -1249,7 +1251,7 @@ void SP_monster_sentien (edict_t *self)
 		return;
 	}
 
-	SP_monster_sentien_precache ();
+	SP_monster_sentien_precache (self);
 
 	if (!self->health)
 		self->health = 900;

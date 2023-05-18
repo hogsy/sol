@@ -66,6 +66,8 @@ float	ctfjob_update;
 
 cvar_t	*turn_rider;	// Knightmare added
 
+cvar_t	*g_aimfix;		// Knightmare- from Yamagi Q2
+
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
 qboolean ClientConnect (edict_t *ent, char *userinfo, qboolean loadgame);

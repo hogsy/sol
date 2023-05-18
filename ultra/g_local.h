@@ -748,6 +748,8 @@ extern	cvar_t	*randomrespawn;
 
 extern	cvar_t	*turn_rider;	// Knightmare added
 
+extern	cvar_t	*g_aimfix;		// Knightmare- from Yamagi Q2
+
 #define world	(&g_edicts[0])
 
 // item spawnflags
@@ -1161,7 +1163,8 @@ void DeathmatchScoreboardMessage (edict_t *client, edict_t *killer);
 // p_weapon.c
 //
 void PlayerNoise(edict_t *who, vec3_t where, int type);
-void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);	// Knightmare- changed parms for aimfix
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent, qboolean altfire));
 
 //

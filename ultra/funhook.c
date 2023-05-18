@@ -65,18 +65,41 @@
 // this is the same as function P_ProjectSource in p_weapons.c except it 
 // projects the offset distance in reverse since hook is launched with 
 // player's free hand
-void P_ProjectSource_Reverse (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
+//void P_ProjectSource_Reverse (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
+void P_ProjectSource_Reverse (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
-	vec3_t	_distance;
+	gclient_t	*client = NULL;
+	vec3_t		_distance;
+	trace_t		tr;
+
+	if ( !client_ent || !client_ent->client )
+		return;
+
+	client = client_ent->client;
 
 	VectorCopy (distance, _distance);
-
 	if (client->pers.hand == RIGHT_HANDED)
 		_distance[1] *= -1;
 	else if (client->pers.hand == CENTER_HANDED)
 		_distance[1] = 0;
 
 	G_ProjectSource (point, _distance, forward, right, result);
+
+	// Yamagi Q2/Berserker: fix - now the projectile hits exactly where the scope is pointing.
+	if (g_aimfix->value)
+	{
+		vec3_t	start, end;
+	//	VectorSet (start, point[0], point[1], point[2] + client_ent->viewheight);
+		VectorSet (start, client_ent->s.origin[0], client_ent->s.origin[1], client_ent->s.origin[2] + client_ent->viewheight);
+		VectorMA (start, WORLD_SIZE, forward, end);
+
+		tr = gi.trace(start, NULL, NULL, end, client_ent, MASK_SHOT);
+		if (tr.fraction < 1)
+		{
+			VectorSubtract (tr.endpos, result, forward);
+			VectorNormalize (forward);
+		}
+	}
 }
 
 
@@ -111,7 +134,8 @@ void MaintainLinks (edict_t *ent)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet (offset, 8, 8, ent->owner->viewheight-8);
-	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
+//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
+	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// get info about chain
 	_VectorSubtract (pred_hookpos,start,chainvec);
@@ -219,7 +243,8 @@ void HookBehavior (edict_t *ent)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->owner->viewheight-8);
-	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
+//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
+	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// get info about chain
 	_VectorSubtract (ent->s.origin, start, chainvec);
@@ -328,8 +353,8 @@ void HookTouch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->owner->viewheight-8);
-	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, 
-			   forward, right, start);
+//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
+	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
   
 	// member angle is used to store the length of the chain
 	_VectorSubtract(ent->s.origin,start,chainvec);
@@ -501,7 +526,8 @@ void FireHook (edict_t *ent)
 	// derive point of hook origin
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->viewheight-8);
-	P_ProjectSource_Reverse (ent->client, ent->s.origin, offset, forward, right, start);
+//	P_ProjectSource_Reverse (ent->client, ent->s.origin, offset, forward, right, start);
+	P_ProjectSource_Reverse (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// spawn hook
 	newhook = G_Spawn();

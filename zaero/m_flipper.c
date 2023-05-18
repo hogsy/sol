@@ -355,7 +355,8 @@ void flipper_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 }
 
 
-void SP_monster_flipper_precache (void)
+// Knightmare- added soundcache function
+void monster_flipper_soundcache (edict_t *self)
 {
 	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
 	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");	
@@ -365,6 +366,12 @@ void SP_monster_flipper_precache (void)
 	sound_idle		= gi.soundindex ("flipper/flpidle1.wav");
 	sound_search	= gi.soundindex ("flipper/flpsrch1.wav");
 	sound_sight		= gi.soundindex ("flipper/flpsght1.wav");
+}
+
+void SP_monster_flipper_precache (edict_t *self)
+{
+	// Knightmare- use soundcache function
+	monster_flipper_soundcache (self);
 }
 
 /*QUAKED monster_flipper (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
@@ -377,7 +384,7 @@ void SP_monster_flipper (edict_t *self)
 		return;
 	}
 
-	SP_monster_flipper_precache();
+	SP_monster_flipper_precache (self);
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;

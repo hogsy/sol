@@ -247,6 +247,8 @@ void InitGame (void)
 
 	turn_rider = gi.cvar("turn_rider", "1", CVAR_SERVERINFO);	// Knightmare added
 
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
+
 	// items
 	InitItems ();
 

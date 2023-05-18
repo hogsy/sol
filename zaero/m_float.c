@@ -602,7 +602,8 @@ void floater_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 }
 
 
-void SP_monster_floater_precache(void)
+// Knightmare- added soundcache function
+void monster_floater_soundcache (edict_t *self)
 {
 	sound_attack2 = gi.soundindex ("floater/fltatck2.wav");
 	sound_attack3 = gi.soundindex ("floater/fltatck3.wav");
@@ -611,6 +612,12 @@ void SP_monster_floater_precache(void)
 	sound_pain1 = gi.soundindex ("floater/fltpain1.wav");
 	sound_pain2 = gi.soundindex ("floater/fltpain2.wav");
 	sound_sight = gi.soundindex ("floater/fltsght1.wav");
+}
+
+void SP_monster_floater_precache (edict_t *self)
+{
+	// Knightmare- use soundcache function
+	monster_floater_soundcache (self);
 }
 
 
@@ -624,7 +631,7 @@ void SP_monster_floater (edict_t *self)
 		return;
 	}
 
-  SP_monster_floater_precache();
+  SP_monster_floater_precache (self);
 
 	gi.soundindex ("floater/fltatck1.wav");
 

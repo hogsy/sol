@@ -636,6 +636,8 @@ extern	cvar_t	*readout;	// Knightmare added
 extern	cvar_t	*sv_stopspeed;		// PGM - this was a define in g_phys.c
 extern	cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
 
+extern	cvar_t	*g_aimfix;			// Knightmare- from Yamagi Q2
+
 #define world	(&g_edicts[0])
 
 // item spawnflags
@@ -677,9 +679,22 @@ typedef struct
 	int		flags;
 } field_t;
 
+typedef struct
+{
+	char	*name;
+	void	(*spawn)(edict_t *ent);
+} spawn_t;
+
+// Knightmare- added soundcache struct
+typedef struct
+{
+	char	*name;
+	void	(*soundcache)(edict_t *ent);	
+} soundcache_t;
 
 extern	field_t fields[];
 extern	gitem_t	itemlist[];
+extern	spawn_t	spawns[];
 
 
 //
@@ -878,6 +893,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 //
 void ED_CallSpawn (edict_t *ent);
 void G_PrecachePlayerInventories (void);	// Knightmare added
+void G_SoundcacheEntities (void);			// Knightmare added
 void G_FindTeams();
 void Cmd_ToggleHud ();
 void Hud_On();
@@ -902,9 +918,11 @@ void ValidateSelectedItem (edict_t *ent);
 void DeathmatchScoreboardMessage (edict_t *client, edict_t *killer);
 
 //
-// g_pweapon.c
+// p_weapon.c
 //
 void PlayerNoise(edict_t *who, vec3_t where, int type);
+//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);	// Knightmare- changed parms for aimfix
 
 //
 // m_move.c

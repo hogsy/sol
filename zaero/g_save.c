@@ -334,6 +334,8 @@ void InitGame (void)
 	sv_stopspeed = gi.cvar ("sv_stopspeed", "100", 0);		// PGM - was #define in g_phys.c
 	sv_step_fraction = gi.cvar ("sv_step_fraction", "0.90", 0);	// Knightmare- this was a define in p_view.c
 
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
+
 	// noset vars
 	dedicated = gi.cvar ("dedicated", "0", CVAR_NOSET);
 
@@ -346,7 +348,7 @@ void InitGame (void)
 	deathmatch = gi.cvar ("deathmatch", "0", CVAR_LATCH);
 	coop = gi.cvar ("coop", "0", CVAR_LATCH);
 	skill = gi.cvar ("skill", "1", CVAR_LATCH);
-	//maxentities = gi.cvar ("maxentities", "1024", CVAR_LATCH);
+//	maxentities = gi.cvar ("maxentities", "1024", CVAR_LATCH);
 	maxentities = gi.cvar ("maxentities", va("%i",MAX_EDICTS), CVAR_LATCH);
 
 	// change anytime vars
@@ -1192,9 +1194,10 @@ void ReadLevel (char *filename)
 				ent->nextthink = level.time + ent->delay;
 	}
 
+	// Knightmare- reload static cached sounds for entities
+	G_SoundcacheEntities ();
+
 	// Knightmare- precache transitioning player inventories here
 	// Fixes lag when changing weapons after level transition
-#ifdef KMQUAKE2_ENGINE_MOD
 	G_PrecachePlayerInventories ();
-#endif	// KMQUAKE2_ENGINE_MOD
 }

@@ -601,7 +601,8 @@ void chick_sight(edict_t *self, edict_t *other)
 }
 
 
-void SP_monster_chick_precache(void)
+// Knightmare- added soundcache function
+void monster_chick_soundcache (edict_t *self)
 {
 	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");	
 	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");	
@@ -619,6 +620,13 @@ void SP_monster_chick_precache(void)
 	sound_search			= gi.soundindex ("chick/chksrch1.wav");	
 }
 
+void SP_monster_chick_precache (edict_t *self)
+{
+	// Knightmare- use soundcache function
+	monster_chick_soundcache (self);
+}
+
+
 /*QUAKED monster_chick (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
 void SP_monster_chick (edict_t *self)
@@ -629,7 +637,7 @@ void SP_monster_chick (edict_t *self)
 		return;
 	}
 
-  SP_monster_chick_precache();
+  SP_monster_chick_precache (self);
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;

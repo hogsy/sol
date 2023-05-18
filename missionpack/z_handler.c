@@ -10,7 +10,10 @@ handler handler
 #include "z_handler.h"
 
 
-
+//void SP_monster_infantry_precache (edict_t *self);
+//void SP_monster_hound_precache (edict_t *self);
+void monster_infantry_soundcache (edict_t *self);
+void monster_hound_soundcache (edict_t *self);
 
 void handler_standWhatNext (edict_t *self);
 void handler_standSitWhatNext (edict_t *self);
@@ -284,7 +287,7 @@ void handler_pain (edict_t *self, edict_t *other, float kick, int damage)
 void handler_createHound (edict_t *self)
 {
 	self->s.modelindex2 = 0;
-	hound_createHound(self, (self->health / 175.0));
+	hound_createHound (self, (self->health / 175.0));
 }
 
 
@@ -360,9 +363,6 @@ void handler_attack (edict_t *self)
 }
 
 
-
-
-
 /*
 ===
 Death Stuff Starts
@@ -406,13 +406,13 @@ End Death Stuff
 ===
 */
 
-void SP_monster_infantry_precache (void);
-void SP_monster_hound_precache (void);
 
-void SP_monster_handler_precache (void)
+// Knightmare- added soundcache function
+void monster_handler_soundcache (edict_t *self)
 {
-	SP_monster_infantry_precache ();
-	SP_monster_hound_precache ();
+	// Knightmare- use soundcache functions
+	monster_infantry_soundcache (self);
+	monster_hound_soundcache (self);
 
 	sound_attack = gi.soundindex("monsters/guard/hhattack.wav");
 /*
@@ -422,10 +422,13 @@ void SP_monster_handler_precache (void)
 */
 }
 
-// Knightmare- added soundcache function
-void monster_handler_soundcache (edict_t *self)
+void SP_monster_handler_precache (edict_t *self)
 {
-	SP_monster_handler_precache ();
+	// Knightmare- use soundcache function
+	monster_handler_soundcache (self);
+
+//	SP_monster_infantry_precache (self);
+//	SP_monster_hound_precache (self);
 }
 
 
@@ -442,7 +445,7 @@ void SP_monster_handler (edict_t *self)
 		return;
 	}
 
-	SP_monster_handler_precache ();
+	SP_monster_handler_precache (self);
 
 	// Lazarus: special purpose skins
 	if ( self->style )

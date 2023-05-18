@@ -25,9 +25,6 @@ rocket jump with no damage.
 #define POGO_SPEED		500		// What velocity the player gets on a pogo
 #define POGO_REFIRE		8		// Refire delay for pogo, in frames
 
-// Copied from p_weapon.c, because it's a static function
-//extern void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
-
 // Ended_Grappling: Returns true if the client just stopped grappling.
 qboolean Ended_Grappling (gclient_t *client)
 {
@@ -218,7 +215,8 @@ void Make_Hook (edict_t *ent)
 	ent->client->kick_angles[0] = -1;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorCopy(start, hook->s.origin);
 	VectorCopy(forward, hook->movedir);

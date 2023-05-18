@@ -3,7 +3,6 @@
 
 #include "e_hook.h"
 
-//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 //void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent, qboolean altfire));
 
 
@@ -26,7 +25,8 @@ void hook_laser_think (edict_t *self)
 	// put start position into start
 	AngleVectors (self->owner->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, self->owner->owner->viewheight-8);
-	P_ProjectSource (self->owner->owner->client, self->owner->owner->s.origin, offset, forward, right, start);
+//	P_ProjectSource (self->owner->owner->client, self->owner->owner->s.origin, offset, forward, right, start);
+	P_ProjectSource (self->owner->owner, self->owner->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// move the two ends
 //	gi.unlinkentity(self);
@@ -475,7 +475,8 @@ void abandon_hook_fire (edict_t *ent, qboolean altfire)
 	// calculate start position and forward direction
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// kick back??
 	VectorScale (forward, -2, ent->client->kick_origin);

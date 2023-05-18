@@ -1704,7 +1704,9 @@ End Death Stuff
 ===
 */
 
-void SP_monster_zboss_precache (void)
+
+// Knightmare- added soundcache function
+void monster_zboss_soundcache (edict_t *self)
 {
 	sound_pain1 = gi.soundindex ("monsters/bossz/bpain1.wav");	
 	sound_pain2 = gi.soundindex ("monsters/bossz/bpain2.wav");	
@@ -1730,10 +1732,10 @@ void SP_monster_zboss_precache (void)
 	sound_taunt3 = gi.soundindex("monsters/bossz/btaunt3.wav");
 }
 
-// Knightmare- added soundcache function
-void monster_zboss_soundcache (edict_t *self)
+void SP_monster_zboss_precache (edict_t *self)
 {
-	SP_monster_zboss_precache ();
+	// Knightmare- use soundcache function
+	monster_zboss_soundcache (self);
 }
 
 
@@ -1750,7 +1752,7 @@ void SP_monster_zboss (edict_t *self)
 		return;
 	}
 
-	SP_monster_zboss_precache ();
+	SP_monster_zboss_precache (self);
 
 	// Lazarus: special purpose skins
 	if ( self->style )
