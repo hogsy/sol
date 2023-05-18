@@ -642,7 +642,7 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	self->solid = SOLID_BBOX;
 	self->s.modelindex = gi.modelindex ("models/monsters/q1chthon/tris.md2");
 //	self->s.frame = FRAME_rise1;
-	if (!Q_stricmp(level.mapname,"qe1m7")) {
+	if (!Q_stricmp(level.mapname, "qe1m7")) {
 		self->use = monster_use;
 		self->s.origin[2] -= 32;
 	}
@@ -699,7 +699,7 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	walkmonster_start (self);
 }
 
-#define CTHON_TRIGGER_SPAWN 2
+#define CHTHON_TRIGGER_SPAWN 2
 
 
 // Knightmare- added soundcache function
@@ -738,8 +738,8 @@ void SP_monster_q1_chthon (edict_t *self)
 	sound_throw = gi.soundindex ("q1chthon/throw.wav");	
 	sound_rise = gi.soundindex ("q1chthon/out1.wav");	
 */
-	if (self->spawnflags & CTHON_TRIGGER_SPAWN)
-		self->spawnflags &= ~CTHON_TRIGGER_SPAWN;
+	if (self->spawnflags & CHTHON_TRIGGER_SPAWN)
+		self->spawnflags &= ~CHTHON_TRIGGER_SPAWN;
 
 	self->solid = SOLID_NOT;
 	self->movetype = MOVETYPE_NONE;

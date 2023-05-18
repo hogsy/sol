@@ -495,7 +495,7 @@ void monster_q1_hknight_soundcache (edict_t *self)
 // SPAWN
 //
 
-/*QUAKED SP_monster_q1_hknight (1 .5 0) (-16 -16 -24) (16 16 40) Ambush Trigger_Spawn Sight
+/*QUAKED monster_q1_hknight (1 .5 0) (-16 -16 -24) (16 16 40) Ambush Trigger_Spawn Sight
 model="models/monsters/q1hknight/tris.md2"
 */
 void SP_monster_q1_hknight (edict_t *self)

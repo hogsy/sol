@@ -346,7 +346,7 @@ void monster_q1_enforcer_soundcache (edict_t *self)
 // SPAWN
 //
 
-/*QUAKED SP_monster_q1_enforcer (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
+/*QUAKED monster_q1_enforcer (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 model="models/monsters/q1enforcer/tris.md2"
 */
 void SP_monster_q1_enforcer (edict_t *self)

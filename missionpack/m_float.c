@@ -742,7 +742,7 @@ void SP_monster_floater (edict_t *self)
 	self->monsterinfo.idle = floater_idle;
 	self->monsterinfo.blocked = floater_blocked;		// PGM
 
-	//Knightmare - sparks, not blood, on damage
+	// Knightmare - sparks, not blood, on damage
 	if (!self->blood_type)
 		self->blood_type = 2; //sparks
 	else

@@ -646,7 +646,6 @@ void monster_q1_zombie_soundcache (edict_t *self)
 model="models/monsters/q1zombie/tris.md2"
 "sounds"  1 makes the zombie crucified
 */
-
 void SP_misc_q1_zombie_crucified (edict_t *self);
 void SP_monster_q1_zombie (edict_t *self)
 {

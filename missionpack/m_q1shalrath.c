@@ -278,7 +278,7 @@ void monster_q1_shalrath_soundcache (edict_t *self)
 	sound_gib		= gi.soundindex ("q1player/udeath.wav");
 	sound_death		= gi.soundindex ("q1shalrath/death.wav");
 	sound_attack	= gi.soundindex ("q1shalrath/attack.wav");
-	sound_attack2	= gi.soundindex ("shalrath/attack2.wav");
+	sound_attack2	= gi.soundindex ("q1shalrath/attack2.wav");
 	sound_idle		= gi.soundindex ("q1shalrath/idle.wav");
 }
 
@@ -305,7 +305,7 @@ void SP_monster_q1_shalrath (edict_t *self)
 	sound_gib		= gi.soundindex ("q1player/udeath.wav");
 	sound_death		= gi.soundindex ("q1shalrath/death.wav");
 	sound_attack	= gi.soundindex ("q1shalrath/attack.wav");
-	sound_attack2	= gi.soundindex ("shalrath/attack2.wav");
+	sound_attack2	= gi.soundindex ("q1shalrath/attack2.wav");
 	sound_idle		= gi.soundindex ("q1shalrath/idle.wav");
 */
 	// precache gibs
