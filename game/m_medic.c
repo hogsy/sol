@@ -1169,8 +1169,8 @@ qboolean medic_checkattack (edict_t *self)
 		// if we ran out of time, give up
 		if (self->timestamp < level.time)
 		{
-			//if (developer->value)
-			//	gi.dprintf("medic at %s timed out, abort heal\n",vtos(self->s.origin));
+		//	if (developer->value)
+		//		gi.dprintf("medic at %s timed out, abort heal\n",vtos(self->s.origin));
 			abortHeal (self, true);
 			self->timestamp = 0;
 			return false;
@@ -1192,7 +1192,8 @@ qboolean medic_checkattack (edict_t *self)
 			self->monsterinfo.attack_state = AS_STRAIGHT;
 			//abortHeal(self,false);
 			return false;
-		} else if (r < MEDIC_MIN_DISTANCE) {
+		}
+		else if (r < MEDIC_MIN_DISTANCE) {
 			abortHeal(self,false);
 			return false;
 		}
@@ -1229,6 +1230,22 @@ qboolean medic_checkattack (edict_t *self)
 }
 
 
+// Knightmare- added soundcache function
+void monster_medic_soundcache (edict_t *self)
+{
+	sound_idle1 = gi.soundindex ("medic/idle.wav");
+	sound_pain1 = gi.soundindex ("medic/medpain1.wav");
+	sound_pain2 = gi.soundindex ("medic/medpain2.wav");
+	sound_die = gi.soundindex ("medic/meddeth1.wav");
+	sound_sight = gi.soundindex ("medic/medsght1.wav");
+	sound_search = gi.soundindex ("medic/medsrch1.wav");
+	sound_hook_launch = gi.soundindex ("medic/medatck2.wav");
+	sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
+	sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
+	sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
+}
+
+
 /*QUAKED monster_medic (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
 void SP_monster_medic (edict_t *self)
@@ -1244,7 +1261,11 @@ void SP_monster_medic (edict_t *self)
 		G_FreeEdict (self);
 		return;
 	}
-	sound_idle1 = gi.soundindex ("medic/idle.wav");
+
+	// Knightmare- use soundcache function
+	monster_medic_soundcache (self);
+
+/*	sound_idle1 = gi.soundindex ("medic/idle.wav");
 	sound_pain1 = gi.soundindex ("medic/medpain1.wav");
 	sound_pain2 = gi.soundindex ("medic/medpain2.wav");
 	sound_die = gi.soundindex ("medic/meddeth1.wav");
@@ -1254,7 +1275,7 @@ void SP_monster_medic (edict_t *self)
 	sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
 	sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
 	sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
-
+*/
 	gi.soundindex ("medic/medatck1.wav");
 
 	self->movetype = MOVETYPE_STEP;

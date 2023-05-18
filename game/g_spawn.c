@@ -479,6 +479,58 @@ spawn_t	spawns[] = {
 	{NULL, NULL}
 };
 
+// Knightmare- sound precache functions
+void monster_berserk_soundcache (edict_t *self);
+void monster_boss2_soundcache (edict_t *self);
+void monster_jorg_soundcache (edict_t *self);
+void monster_makron_soundcache (edict_t *self);
+void monster_brain_soundcache (edict_t *self);
+void monster_chick_soundcache (edict_t *self);
+void monster_flipper_soundcache (edict_t *self);
+void monster_floater_soundcache (edict_t *self);
+void monster_flyer_soundcache (edict_t *self);
+void monster_gladiator_soundcache (edict_t *self);
+void monster_gunner_soundcache (edict_t *self);
+void monster_hover_soundcache (edict_t *self);
+void monster_infantry_soundcache (edict_t *self);
+void misc_insane_soundcache (edict_t *self);
+void monster_medic_soundcache (edict_t *self);
+void monster_mutant_soundcache (edict_t *self);
+void monster_parasite_soundcache (edict_t *self);
+void monster_soldier_x_soundcache (edict_t *self);
+void monster_supertank_soundcache (edict_t *self);
+void monster_tank_soundcache (edict_t *self);
+
+// Knightmare- sound precache table
+soundcache_t	soundcaches[] = {
+	{"monster_berserk", monster_berserk_soundcache},
+	{"monster_boss2", monster_boss2_soundcache},
+	{"monster_jorg", monster_jorg_soundcache},
+	{"monster_makron", monster_makron_soundcache},
+	{"monster_brain", monster_brain_soundcache},
+	{"monster_chick", monster_chick_soundcache},
+	{"monster_flipper", monster_flipper_soundcache},
+	{"monster_floater", monster_floater_soundcache},
+	{"monster_flyer", monster_flyer_soundcache},
+	{"monster_gladiator", monster_gladiator_soundcache},
+	{"monster_gunner", monster_gunner_soundcache},
+	{"monster_hover", monster_hover_soundcache},
+	{"monster_infantry", monster_infantry_soundcache},
+	{"misc_insane", misc_insane_soundcache},
+	{"monster_medic", monster_medic_soundcache},
+	{"monster_mutant", monster_mutant_soundcache},
+	{"monster_parasite", monster_parasite_soundcache},
+	{"monster_soldier_light", monster_soldier_x_soundcache},
+	{"monster_soldier", monster_soldier_x_soundcache},
+	{"monster_soldier_ss", monster_soldier_x_soundcache},
+	{"monster_supertank",  monster_supertank_soundcache},
+	{"monster_tank", monster_tank_soundcache},
+	{"monster_tank_commander", monster_tank_soundcache},
+
+	{NULL, NULL}
+};
+// end Knightmare
+
 // Knightmare- global pointer for the entity alias script
 // The file should be loaded into memory, because we can't
 // re-open and read it for every entity we parse
@@ -1468,11 +1520,46 @@ removeflags:
 
 	// Knightmare- precache transitioning player inventories here
 	// Fixes lag when changing weapons after level transition
-#ifdef KMQUAKE2_ENGINE_MOD
 	G_PrecachePlayerInventories ();
-#endif	// KMQUAKE2_ENGINE_MOD
 }
 
+
+//===================================================================
+
+// Knightmare added
+/*
+==============
+G_SoundcacheEntities
+
+Reloads static cached sounds for entities using spawns table
+==============
+*/
+void G_SoundcacheEntities (void)
+{
+	int		i;
+	edict_t	*ent = NULL;
+	soundcache_t	*s = NULL;
+
+	ent = &g_edicts[0];
+	for (i = 0; i < globals.num_edicts; i++, ent++)
+	{
+		if (!ent->inuse)
+			continue;
+
+		// check normal spawn functions
+		for (s=soundcaches; s->name; s++)
+		{
+			if ( !strcmp(s->name, ent->classname) )
+			{	// found it
+				if (s->soundcache != NULL) {
+					s->soundcache (ent);
+				}
+				break;
+			}
+		}
+	}
+}
+// end Knightmare
 
 //===================================================================
 
@@ -1931,7 +2018,7 @@ void Cmd_ToggleHud (void)
 	if (deathmatch->value)
 		return;
 	if (nohud)
-		Hud_On();
+		Hud_On ();
 	else
-		Hud_Off();
+		Hud_Off ();
 }

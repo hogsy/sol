@@ -136,7 +136,11 @@ Changes as of v0.20 update 8:
 	Values are normalized (0-1).
 	
 - Added doubled entity lighting to mimic Q2's original entity lighting.  Set the cvar r_entity_doublelight to 1 to enable this.
-	
+
+- Added cycleweap and prefweap commands from Yamagi Q2.
+
+- Added g_aimfix cvar to fix weapon/crosshair alignment from Yamagi Q2.
+
 - Added ifeq, ifneq, ifgt, ifge, iflt, ifle, ifbit, and ifnbit layout script commands.
 	
 - Added a check to prevent game code from sending unicasts to non-present clients (i.e. bots).  This would

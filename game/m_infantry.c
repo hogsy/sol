@@ -599,6 +599,26 @@ void infantry_jump (edict_t *self)
 	self->monsterinfo.currentmove = &infantry_move_jump;
 }
 
+
+// Knightmare- added soundcache function
+void monster_infantry_soundcache (edict_t *self)
+{
+	sound_pain1 = gi.soundindex ("infantry/infpain1.wav");
+	sound_pain2 = gi.soundindex ("infantry/infpain2.wav");
+	sound_die1 = gi.soundindex ("infantry/infdeth1.wav");
+	sound_die2 = gi.soundindex ("infantry/infdeth2.wav");
+
+	sound_gunshot = gi.soundindex ("infantry/infatck1.wav");
+	sound_weapon_cock = gi.soundindex ("infantry/infatck3.wav");
+	sound_punch_swing = gi.soundindex ("infantry/infatck2.wav");
+	sound_punch_hit = gi.soundindex ("infantry/melee2.wav");
+
+	sound_sight = gi.soundindex ("infantry/infsght1.wav");
+	sound_search = gi.soundindex ("infantry/infsrch1.wav");
+	sound_idle = gi.soundindex ("infantry/infidle1.wav");
+}
+
+
 /*QUAKED monster_infantry (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
 void SP_monster_infantry (edict_t *self)
@@ -609,7 +629,10 @@ void SP_monster_infantry (edict_t *self)
 		return;
 	}
 
-	sound_pain1 = gi.soundindex ("infantry/infpain1.wav");
+	// Knightmare- use soundcache function
+	monster_infantry_soundcache (self);
+
+/*	sound_pain1 = gi.soundindex ("infantry/infpain1.wav");
 	sound_pain2 = gi.soundindex ("infantry/infpain2.wav");
 	sound_die1 = gi.soundindex ("infantry/infdeth1.wav");
 	sound_die2 = gi.soundindex ("infantry/infdeth2.wav");
@@ -622,7 +645,7 @@ void SP_monster_infantry (edict_t *self)
 	sound_sight = gi.soundindex ("infantry/infsght1.wav");
 	sound_search = gi.soundindex ("infantry/infsrch1.wav");
 	sound_idle = gi.soundindex ("infantry/infidle1.wav");
-
+*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

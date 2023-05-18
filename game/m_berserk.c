@@ -445,6 +445,18 @@ void berserk_jump (edict_t *self)
 }
 
 
+// Knightmare- added soundcache function
+void monster_berserk_soundcache (edict_t *self)
+{
+	sound_pain  = gi.soundindex ("berserk/berpain2.wav");
+	sound_die   = gi.soundindex ("berserk/berdeth2.wav");
+	sound_idle  = gi.soundindex ("berserk/beridle1.wav");
+	sound_punch = gi.soundindex ("berserk/attack.wav");
+	sound_search = gi.soundindex ("berserk/bersrch1.wav");
+	sound_sight = gi.soundindex ("berserk/sight.wav");
+}
+
+
 /*QUAKED monster_berserk (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
 void SP_monster_berserk (edict_t *self)
@@ -456,13 +468,16 @@ void SP_monster_berserk (edict_t *self)
 	}
 
 	// pre-caches
-	sound_pain  = gi.soundindex ("berserk/berpain2.wav");
+	// Knightmare- use soundcache function
+	monster_berserk_soundcache (self);
+
+/*	sound_pain  = gi.soundindex ("berserk/berpain2.wav");
 	sound_die   = gi.soundindex ("berserk/berdeth2.wav");
 	sound_idle  = gi.soundindex ("berserk/beridle1.wav");
 	sound_punch = gi.soundindex ("berserk/attack.wav");
 	sound_search = gi.soundindex ("berserk/bersrch1.wav");
 	sound_sight = gi.soundindex ("berserk/sight.wav");
-
+*/
 	// Lazarus: special purpose skins
 	if ( self->style )
 	{

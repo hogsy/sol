@@ -32,6 +32,7 @@ jorg
 #include "g_local.h"
 #include "m_boss31.h"
 
+void MakronPrecache (edict_t *self);
 extern void SP_monster_makron (edict_t *self);
 qboolean visible (edict_t *self, edict_t *other);
 
@@ -742,18 +743,9 @@ qboolean Jorg_CheckAttack (edict_t *self)
 }
 
 
-void MakronPrecache (void);
-
-/*QUAKED monster_jorg (1 .5 0) (-80 -80 0) (90 90 140) Ambush Trigger_Spawn Sight
-*/
-void SP_monster_jorg (edict_t *self)
+// Knightmare- added soundcache function
+void monster_jorg_soundcache (edict_t *self)
 {
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
-
 	sound_pain1 = gi.soundindex ("boss3/bs3pain1.wav");
 	sound_pain2 = gi.soundindex ("boss3/bs3pain2.wav");
 	sound_pain3 = gi.soundindex ("boss3/bs3pain3.wav");
@@ -768,8 +760,38 @@ void SP_monster_jorg (edict_t *self)
 	sound_step_right = gi.soundindex ("boss3/step2.wav");
 	sound_firegun = gi.soundindex ("boss3/xfire.wav");
 	sound_death_hit = gi.soundindex ("boss3/d_hit.wav");
+}
 
-	MakronPrecache ();
+
+/*QUAKED monster_jorg (1 .5 0) (-80 -80 0) (90 90 140) Ambush Trigger_Spawn Sight
+*/
+void SP_monster_jorg (edict_t *self)
+{
+	if (deathmatch->value)
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	// Knightmare- use soundcache function
+	monster_jorg_soundcache (self);
+
+/*	sound_pain1 = gi.soundindex ("boss3/bs3pain1.wav");
+	sound_pain2 = gi.soundindex ("boss3/bs3pain2.wav");
+	sound_pain3 = gi.soundindex ("boss3/bs3pain3.wav");
+	sound_death = gi.soundindex ("boss3/bs3deth1.wav");
+	sound_attack1 = gi.soundindex ("boss3/bs3atck1.wav");
+	sound_attack2 = gi.soundindex ("boss3/bs3atck2.wav");
+	sound_search1 = gi.soundindex ("boss3/bs3srch1.wav");
+	sound_search2 = gi.soundindex ("boss3/bs3srch2.wav");
+	sound_search3 = gi.soundindex ("boss3/bs3srch3.wav");
+	sound_idle = gi.soundindex ("boss3/bs3idle1.wav");
+	sound_step_left = gi.soundindex ("boss3/step1.wav");
+	sound_step_right = gi.soundindex ("boss3/step2.wav");
+	sound_firegun = gi.soundindex ("boss3/xfire.wav");
+	sound_death_hit = gi.soundindex ("boss3/d_hit.wav");
+*/
+	MakronPrecache (self);
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;

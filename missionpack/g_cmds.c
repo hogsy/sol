@@ -1409,10 +1409,10 @@ void Cmd_Ent_Count_f (edict_t *ent)
 
 void Cmd_PlayerList_f (edict_t *ent)
 {
-	int i;
-	char st[80];
-	char text[1400];
-	edict_t *e2;
+	int		i;
+	char	st[80];
+	char	text[1400];
+	edict_t	*e2;
 
 	// connect time, ping, score, name
 	*text = 0;
@@ -1441,15 +1441,13 @@ void Cmd_PlayerList_f (edict_t *ent)
 // From Yamagi Q2
 static int get_ammo_usage(gitem_t *weap)
 {
-	if (!weap)
-	{
+	if (!weap) {
 		return 0;
 	}
 
 	// handles grenades and tesla which only use 1 ammo per shot
 	// have to check this because they don't store their ammo usage in weap->quantity
-	if (weap->flags & IT_AMMO)
-	{
+	if (weap->flags & IT_AMMO) {
 		return 1;
 	}
 
@@ -1469,49 +1467,40 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	int			num_weaps;
 	const char	*weapname = NULL;
 
-	if (!ent)
-	{
+	if (!ent) {
 		return NULL;
 	}
 
 	cl = ent->client;
 
-	if (!cl)
-	{
+	if (!cl) {
 		return NULL;
 	}
 
 	num_weaps = gi.argc();
 
 	// find where we want to start the search for the next eligible weapon
-	if (cl->newweapon)
-	{
+	if (cl->newweapon) {
 		weapname = cl->newweapon->classname;
 	}
-	else if (cl->pers.weapon)
-	{
+	else if (cl->pers.weapon) {
 		weapname = cl->pers.weapon->classname;
 	}
 
 	if (weapname)
 	{
-		for (i = 1; i < num_weaps; i++)
-		{
-			if (Q_stricmp(weapname, gi.argv(i)) == 0)
-			{
+		for (i = 1; i < num_weaps; i++) {
+			if (Q_stricmp(weapname, gi.argv(i)) == 0) {
 				break;
 			}
 		}
-
 		i++;
 
-		if (i >= num_weaps)
-		{
+		if (i >= num_weaps) {
 			i = 1;
 		}
 	}
-	else
-	{
+	else {
 		i = 1;
 	}
 
@@ -1533,41 +1522,34 @@ static gitem_t *cycle_weapon (edict_t *ent)
 					ammo = FindItem(weap->ammo);
 					if (ammo)
 					{
-						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap))
-						{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap)) {
 							return weap;
 						}
-
-						if (!noammo_fallback)
-						{
+						if (!noammo_fallback) {
 							noammo_fallback = weap;
 						}
 					}
 				}
-				else
-				{
+				else {
 					return weap;
 				}
 			}
-			else if (!noweap_fallback)
-			{
+			else if (!noweap_fallback) {
 				noweap_fallback = weap;
 			}
 		}
 
 		i++;
 
-		if (i >= num_weaps)
-		{
+		if (i >= num_weaps) {
 			i = 1;
 		}
-	} while (i != start);
+	}
+	while (i != start);
 
 	// if no weapon was found, the fallbacks will be used for
 	// printing the appropriate error message to the console
-
-	if (noammo_fallback)
-	{
+	if (noammo_fallback) {
 		return noammo_fallback;
 	}
 
@@ -1578,13 +1560,11 @@ void Cmd_CycleWeap_f (edict_t *ent)
 {
 	gitem_t		*weap = NULL;
 
-	if (!ent)
-	{
+	if (!ent) {
 		return;
 	}
 
-	if (gi.argc() <= 1)
-	{
+	if (gi.argc() <= 1) {
 		gi.cprintf(ent, PRINT_HIGH, "Usage: cycleweap classname1 classname2 .. classnameN\n");
 		return;
 	}
@@ -1592,12 +1572,10 @@ void Cmd_CycleWeap_f (edict_t *ent)
 	weap = cycle_weapon(ent);
 	if (weap)
 	{
-		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0)
-		{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0) {
 			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
 		}
-		else
-		{
+		else {
 			weap->use(ent, weap);
 		}
 	}
@@ -1613,15 +1591,13 @@ static gitem_t *preferred_weapon (edict_t *ent)
 	int			i;
 	int			num_weaps;
 
-	if (!ent)
-	{
+	if (!ent) {
 		return NULL;
 	}
 
 	cl = ent->client;
 
-	if (!cl)
-	{
+	if (!cl) {
 		return NULL;
 	}
 
@@ -1641,24 +1617,20 @@ static gitem_t *preferred_weapon (edict_t *ent)
 					ammo = FindItem(weap->ammo);
 					if (ammo)
 					{
-						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap))
-						{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap)) {
 							return weap;
 						}
 
-						if (!noammo_fallback)
-						{
+						if (!noammo_fallback) {
 							noammo_fallback = weap;
 						}
 					}
 				}
-				else
-				{
+				else {
 					return weap;
 				}
 			}
-			else if (!noweap_fallback)
-			{
+			else if (!noweap_fallback) {
 				noweap_fallback = weap;
 			}
 		}
@@ -1666,10 +1638,7 @@ static gitem_t *preferred_weapon (edict_t *ent)
 
 	// If no weapon was found, the fallbacks will be used for
 	// printing the appropriate error message to the console
-	
-
-	if (noammo_fallback)
-	{
+	if (noammo_fallback) {
 		return noammo_fallback;
 	}
 
@@ -1681,13 +1650,11 @@ void Cmd_PrefWeap_f (edict_t *ent)
 {
 	gitem_t *weap;
 
-	if (!ent)
-	{
+	if (!ent) {
 		return;
 	}
 
-	if (gi.argc() <= 1)
-	{
+	if (gi.argc() <= 1) {
 		gi.cprintf(ent, PRINT_HIGH, "Usage: prefweap classname1 classname2 .. classnameN\n");
 		return;
 	}
@@ -1695,12 +1662,10 @@ void Cmd_PrefWeap_f (edict_t *ent)
 	weap = preferred_weapon (ent);
 	if (weap)
 	{
-		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0)
-		{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0) {
 			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
 		}
-		else
-		{
+		else {
 			weap->use(ent, weap);
 		}
 	}
@@ -1712,81 +1677,81 @@ void DrawBBox (edict_t *ent)
 	vec3_t	p1, p2;
 	vec3_t	origin;
 
-	VectorCopy(ent->s.origin,origin);
-	VectorSet(p1,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorCopy (ent->s.origin, origin);
+	VectorSet (p1, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-
-	VectorSet(p1,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
 
-	VectorSet(p1,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
+	VectorSet (p1, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
 
-	VectorSet(p1,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p1, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+
+	VectorSet (p1, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
@@ -1989,12 +1954,12 @@ void SpawnForcewall (edict_t *player)
 	trace_t  tr;
 	
 	wall = G_Spawn();
-	VectorCopy(player->s.origin,start);
+	VectorCopy (player->s.origin,start);
 	start[2] += player->viewheight;
 	AngleVectors(player->client->v_angle,forward,NULL,NULL);
 	VectorMA(start, WORLD_SIZE, forward, point);	// was 8192
 	tr = gi.trace(start,NULL,NULL,point,player,MASK_SOLID);
-	VectorCopy(tr.endpos,wall->s.origin);
+	VectorCopy (tr.endpos,wall->s.origin);
 	
 	if (fabs(forward[0]) > fabs(forward[1]))
 	{
@@ -2002,7 +1967,7 @@ void SpawnForcewall (edict_t *player)
 		wall->mins[0] =  -1;
 		wall->maxs[0] =   1;
 		
-		VectorCopy(wall->s.origin,point);
+		VectorCopy (wall->s.origin,point);
 		point[1] -= WORLD_SIZE;	// was 8192
 		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
 		wall->pos1[1] = tr.endpos[1];
@@ -2015,7 +1980,7 @@ void SpawnForcewall (edict_t *player)
 	}
 	else
 	{
-		VectorCopy(wall->s.origin,point);
+		VectorCopy (wall->s.origin,point);
 		point[0] -= WORLD_SIZE;	// was 8192
 		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
 		wall->pos1[0] = tr.endpos[0];
@@ -2032,7 +1997,7 @@ void SpawnForcewall (edict_t *player)
 	}
 	wall->mins[2] = 0;
 	
-	VectorCopy(wall->s.origin,point);
+	VectorCopy (wall->s.origin,point);
 	point[2] = wall->s.origin[2] + WORLD_SIZE;	// was 8192
 	tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
 	wall->maxs[2] = tr.endpos[2] - wall->s.origin[2];
@@ -2056,7 +2021,7 @@ void ForcewallOff (edict_t *player)
 	vec3_t	forward, point, start;
 	trace_t  tr;
 	
-	VectorCopy(player->s.origin,start);
+	VectorCopy (player->s.origin,start);
 	start[2] += player->viewheight;
 	AngleVectors(player->client->v_angle,forward,NULL,NULL);
 	VectorMA(start, WORLD_SIZE, forward, point);	// was 8192
@@ -2768,7 +2733,7 @@ void ClientCommand (edict_t *ent)
 		{
 			vec3_t	forward, point, start;
 			trace_t	tr;
-			VectorCopy(ent->s.origin,start);
+			VectorCopy (ent->s.origin,start);
 
 			start[2] += ent->viewheight;
 			AngleVectors(ent->client->v_angle,forward,NULL,NULL);

@@ -416,6 +416,7 @@ void InitGame (void)
 
 	// Knightmare- enables trigger_gravity affecting players in non-Rogue maps
 	sv_trigger_gravity_player = gi.cvar("sv_trigger_gravity_player", "0", CVAR_ARCHIVE);
+
 	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
 

@@ -643,14 +643,14 @@ void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 	trace_t  tr;
 
 	
-	VectorNormalize(dir);
-	VectorMA(start,600,dir,end);
+	VectorNormalize (dir);
+	VectorMA (start, 600, dir, end);
 
 	// Initial Trace - damage if close enough
 	tr = gi.trace (self->s.origin, NULL, NULL, start, self, MASK_SHOT);
 	if (tr.fraction < 1.0)
 	{
-		if (tr.ent && (tr.ent !=self) && (tr.ent->takedamage))
+		if (tr.ent && (tr.ent != self) && (tr.ent->takedamage))
 		T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, damage, 0, DAMAGE_ENERGY, MOD_Q1_LG);
 	    return;
 	}
@@ -662,8 +662,11 @@ void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 		if (self->client->chasetoggle)
 		{
 			gi.WriteByte (svc_temp_entity);
+#ifdef KMQUAKE2_ENGINE_MOD
+			gi.WriteByte (TE_LIGHTNING_ATTACK);
+#else
 			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-		//	gi.WriteByte (TE_HEATBEAM);
+#endif	// KMQUAKE2_ENGINE_MOD
 			gi.WriteShort (self->client->oldplayer - g_edicts);
 			gi.WritePosition (start);
 			gi.WritePosition (tr.endpos); 
@@ -673,8 +676,11 @@ void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 		else
 		{
 			gi.WriteByte (svc_temp_entity);
+#ifdef KMQUAKE2_ENGINE_MOD
+			gi.WriteByte (TE_LIGHTNING_ATTACK);
+#else
 			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-		//	gi.WriteByte (TE_HEATBEAM);
+#endif	// KMQUAKE2_ENGINE_MOD
 			gi.WriteShort (self - g_edicts);
 			gi.WritePosition (start);
 			gi.WritePosition (tr.endpos); 

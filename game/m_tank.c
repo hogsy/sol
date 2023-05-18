@@ -896,6 +896,20 @@ void tank_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 }
 
 
+// Knightmare- added soundcache function
+void monster_tank_soundcache (edict_t *self)
+{
+	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
+	sound_thud = gi.soundindex ("tank/tnkdeth2.wav");
+	sound_idle = gi.soundindex ("tank/tnkidle1.wav");
+	sound_die = gi.soundindex ("tank/death.wav");
+	sound_step = gi.soundindex ("tank/step.wav");
+	sound_windup = gi.soundindex ("tank/tnkatck4.wav");
+	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
+	sound_sight = gi.soundindex ("tank/sight1.wav");
+}
+
+
 //
 // monster_tank
 //
@@ -927,7 +941,10 @@ void SP_monster_tank (edict_t *self)
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
-	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
+	// Knightmare- use soundcache function
+	monster_tank_soundcache (self);
+
+/*	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
 	sound_thud = gi.soundindex ("tank/tnkdeth2.wav");
 	sound_idle = gi.soundindex ("tank/tnkidle1.wav");
 	sound_die = gi.soundindex ("tank/death.wav");
@@ -935,7 +952,8 @@ void SP_monster_tank (edict_t *self)
 	sound_windup = gi.soundindex ("tank/tnkatck4.wav");
 	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
 	sound_sight = gi.soundindex ("tank/sight1.wav");
-
+*/
+	// precache
 	gi.soundindex ("tank/tnkatck1.wav");
 	gi.soundindex ("tank/tnkatk2a.wav");
 	gi.soundindex ("tank/tnkatk2b.wav");

@@ -481,7 +481,8 @@ void InitGame (void)
 //	crossh = gi.cvar ("crossh", "1", 0);
 	allow_download = gi.cvar("allow_download", "0", 0);
 
-	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);		// Knightmare- enables hacks for Neil Manke's Q2 maps
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
+	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 	g_showlogic = gi.cvar ("g_showlogic", "0", 0); // Knightmare added
 
@@ -1339,9 +1340,10 @@ void ReadLevel (char *filename)
 		actor_files ();
 	}
 
+	// Knightmare- reload static cached sounds for entities
+	G_SoundcacheEntities ();
+
 	// Knightmare- precache transitioning player inventories here
 	// Fixes lag when changing weapons after level transition
-#ifdef KMQUAKE2_ENGINE_MOD
 	G_PrecachePlayerInventories ();
-#endif	// KMQUAKE2_ENGINE_MOD
 }

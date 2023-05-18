@@ -1801,8 +1801,8 @@ qboolean medic_checkattack (edict_t *self)
 		// if our target went away
 		if ((!self->enemy) || (!self->enemy->inuse))
 		{
-//			if (g_showlogic && g_showlogic->value)
-//				gi.dprintf ("aborting heal target due to gib\n");
+		//	if (g_showlogic && g_showlogic->value)
+		//		gi.dprintf ("aborting heal target due to gib\n");
 			abortHeal (self, true, false, false);
 			return false;
 		}
@@ -1810,8 +1810,8 @@ qboolean medic_checkattack (edict_t *self)
 		// if we ran out of time, give up
 		if (self->timestamp < level.time)
 		{
-//			if (g_showlogic && g_showlogic->value)
-//				gi.dprintf ("aborting heal target (%s) due to time\n", self->enemy->classname);
+		//	if (g_showlogic && g_showlogic->value)
+		//		gi.dprintf ("aborting heal target (%s) due to time\n", self->enemy->classname);
 			abortHeal (self, true, false, true);
 			self->timestamp = 0;
 			return false;

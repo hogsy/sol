@@ -378,7 +378,7 @@ void chthon_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 }
 
 //void door_use (edict_t *self, edict_t *other, edict_t *activator);;
-void chthon_bolt(edict_t *self, int no)
+void chthon_bolt (edict_t *self, int no)
 {
 	switch (no)
 	{

@@ -156,7 +156,7 @@ void laser_sight_think (edict_t *laser)
 	player = laser->activator;
 
 	AngleVectors (player->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 16, 8, player->viewheight-8);
+	VectorSet (offset, 16, 8, player->viewheight-8);
 
 	if (player->client->pers.hand == LEFT_HANDED)
 		offset[1] *= -1;
@@ -637,7 +637,7 @@ void Cmd_Give_f (edict_t *ent)
 	{
 		if (!developer->value)
 		{
-			safe_cprintf(ent, PRINT_HIGH, "Jetpack not available via give cheat\n");
+			safe_cprintf (ent, PRINT_HIGH, "Jetpack not available via give cheat\n");
 			return;
 		}
 		else
@@ -655,7 +655,7 @@ void Cmd_Give_f (edict_t *ent)
 			!Q_stricmp(name,"stasis generator")   )
 		{
 
-			safe_cprintf(ent, PRINT_HIGH, "%s not available via give cheat\n",name);
+			safe_cprintf (ent, PRINT_HIGH, "%s not available via give cheat\n",name);
 			return;
 		}
 	}
@@ -939,12 +939,12 @@ void Cmd_Use_f (edict_t *ent)
 				return;
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf(ent, PRINT_HIGH, "Out of item: %s\n", s);
+				safe_cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
 				return;
 			}
 			else if (ent->client->pers.inventory[fuel_index] <= 0)
 			{
-				safe_cprintf(ent, PRINT_HIGH, "No fuel for: %s\n", s);
+				safe_cprintf (ent, PRINT_HIGH, "No fuel for: %s\n", s);
 				return;
 			}
 		}
@@ -1120,7 +1120,7 @@ void Cmd_InvUse_f (edict_t *ent)
 				return;
 			if (ent->client->pers.inventory[fuel_index] <= 0)
 			{
-				safe_cprintf(ent, PRINT_HIGH, "No fuel for jetpack\n" );
+				safe_cprintf (ent, PRINT_HIGH, "No fuel for jetpack\n" );
 				return;
 			}
 		}
@@ -1417,7 +1417,7 @@ qboolean CheckFlood(edict_t *ent)
 		cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
-			safe_cprintf(ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
+			safe_cprintf (ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
 				(int)(cl->flood_locktill - level.time));
             return true;
         }
@@ -1427,7 +1427,7 @@ qboolean CheckFlood(edict_t *ent)
 		if (cl->flood_when[i] && 
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
-			safe_cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
+			safe_cprintf (ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
 				(int)flood_waitdelay->value);
             return true;
         }
@@ -1496,7 +1496,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
-			safe_cprintf(ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
+			safe_cprintf (ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
 				(int)(cl->flood_locktill - level.time));
             return;
         }
@@ -1506,7 +1506,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		if (cl->flood_when[i] && 
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
-			safe_cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
+			safe_cprintf (ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
 				(int)flood_waitdelay->value);
             return;
         }
@@ -1516,7 +1516,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 	}
 
 	if (dedicated->value)
-		safe_cprintf(NULL, PRINT_CHAT, "%s", text);
+		safe_cprintf (NULL, PRINT_CHAT, "%s", text);
 
 	for (j = 1; j <= game.maxclients; j++)
 	{
@@ -1530,7 +1530,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 			if (!OnSameTeam(ent, other))
 				continue;
 		}
-		safe_cprintf(other, PRINT_CHAT, "%s", text);
+		safe_cprintf (other, PRINT_CHAT, "%s", text);
 	}
 }
 
@@ -1552,14 +1552,15 @@ void Cmd_EntCount_f (edict_t *ent)
 
 void Cmd_PlayerList_f (edict_t *ent)
 {
-	int i;
-	char st[80];
-	char text[1400];
-	edict_t *e2;
+	int		i;
+	char	st[80];
+	char	text[1400];
+	edict_t	*e2;
 
 	// connect time, ping, score, name
 	*text = 0;
-	for (i = 0, e2 = g_edicts + 1; i < maxclients->value; i++, e2++) {
+	for (i = 0, e2 = g_edicts + 1; i < maxclients->value; i++, e2++)
+	{
 		if (!e2->inuse)
 			continue;
 
@@ -1572,95 +1573,329 @@ void Cmd_PlayerList_f (edict_t *ent)
 			e2->client->resp.spectator ? " (spectator)" : "");
 		if (strlen(text) + strlen(st) > sizeof(text) - 50) {
 			Com_sprintf (text+strlen(text), sizeof(text)-1-strlen(text), "And more...\n");
-			safe_cprintf(ent, PRINT_HIGH, "%s", text);
+			safe_cprintf (ent, PRINT_HIGH, "%s", text);
 			return;
 		}
 	//	strncat(text, st);
-		Q_strncatz(text, sizeof(text), st);
+		Q_strncatz (text, sizeof(text), st);
 	}
-	safe_cprintf(ent, PRINT_HIGH, "%s", text);
+	safe_cprintf (ent, PRINT_HIGH, "%s", text);
 }
 
-void DrawBBox(edict_t *ent)
+static int get_ammo_usage (gitem_t *weap)
+{
+	if (!weap) {
+		return 0;
+	}
+
+	// handles grenades and tesla which only use 1 ammo per shot
+	// have to check this because they don't store their ammo usage in weap->quantity
+	if (weap->flags & IT_AMMO) {
+		return 1;
+	}
+
+	// weapons store their ammo usage in the quantity field
+	return weap->quantity;
+}
+
+static gitem_t *cycle_weapon (edict_t *ent)
+{
+	gclient_t	*cl = NULL;
+	gitem_t		*noammo_fallback = NULL;
+	gitem_t		*noweap_fallback = NULL;
+	gitem_t		*weap = NULL;
+	gitem_t		*ammo = NULL;
+	int			i;
+	int			start;
+	int			num_weaps;
+	const char	*weapname = NULL;
+
+	if (!ent) {
+		return NULL;
+	}
+
+	cl = ent->client;
+
+	if (!cl) {
+		return NULL;
+	}
+
+	num_weaps = gi.argc();
+
+	// find where we want to start the search for the next eligible weapon
+	if (cl->newweapon) {
+		weapname = cl->newweapon->classname;
+	}
+	else if (cl->pers.weapon) {
+		weapname = cl->pers.weapon->classname;
+	}
+
+	if (weapname)
+	{
+		for (i = 1; i < num_weaps; i++) {
+			if (Q_stricmp(weapname, gi.argv(i)) == 0) {
+				break;
+			}
+		}
+		i++;
+
+		if (i >= num_weaps) {
+			i = 1;
+		}
+	}
+	else {
+		i = 1;
+	}
+
+	start = i;
+	noammo_fallback = NULL;
+	noweap_fallback = NULL;
+
+	// find the first eligible weapon in the list we can switch to
+	do
+	{
+		weap = FindItemByClassname(gi.argv(i));
+
+		if (weap && weap != cl->pers.weapon && (weap->flags & IT_WEAPON) && weap->use)
+		{
+			if (cl->pers.inventory[ITEM_INDEX(weap)] > 0)
+			{
+				if (weap->ammo)
+				{
+					ammo = FindItem(weap->ammo);
+					if (ammo)
+					{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap)) {
+							return weap;
+						}
+						if (!noammo_fallback) {
+							noammo_fallback = weap;
+						}
+					}
+				}
+				else {
+					return weap;
+				}
+			}
+			else if (!noweap_fallback) {
+				noweap_fallback = weap;
+			}
+		}
+
+		i++;
+
+		if (i >= num_weaps) {
+			i = 1;
+		}
+	}
+	while (i != start);
+
+	// if no weapon was found, the fallbacks will be used for
+	// printing the appropriate error message to the console
+	if (noammo_fallback) {
+		return noammo_fallback;
+	}
+
+	return noweap_fallback;
+}
+
+static void Cmd_CycleWeap_f (edict_t *ent)
+{
+	gitem_t		*weap = NULL;
+
+	if (!ent) {
+		return;
+	}
+
+	if (gi.argc() <= 1) {
+		gi.cprintf(ent, PRINT_HIGH, "Usage: cycleweap classname1 classname2 .. classnameN\n");
+		return;
+	}
+
+	weap = cycle_weapon(ent);
+	if (weap)
+	{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0) {
+			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
+		}
+		else {
+			weap->use(ent, weap);
+		}
+	}
+}
+
+static gitem_t *preferred_weapon (edict_t *ent)
+{
+	gclient_t	*cl;
+	gitem_t		*noammo_fallback;
+	gitem_t		*noweap_fallback;
+	gitem_t		*weap;
+	gitem_t		*ammo;
+	int			i;
+	int			num_weaps;
+
+	if (!ent) {
+		return NULL;
+	}
+
+	cl = ent->client;
+
+	if (!cl) {
+		return NULL;
+	}
+
+	num_weaps = gi.argc();
+	noammo_fallback = NULL;
+	noweap_fallback = NULL;
+
+	// find the first eligible weapon in the list we can switch to
+	for (i = 1; i < num_weaps; i++)
+	{
+		weap = FindItemByClassname(gi.argv(i));
+
+		if (weap && (weap->flags & IT_WEAPON) && weap->use)
+		{
+			if (cl->pers.inventory[ITEM_INDEX(weap)] > 0)
+			{
+				if (weap->ammo)
+				{
+					ammo = FindItem(weap->ammo);
+					if (ammo)
+					{
+						if (cl->pers.inventory[ITEM_INDEX(ammo)] >= get_ammo_usage(weap)) {
+							return weap;
+						}
+
+						if (!noammo_fallback) {
+							noammo_fallback = weap;
+						}
+					}
+				}
+				else {
+					return weap;
+				}
+			}
+			else if (!noweap_fallback) {
+				noweap_fallback = weap;
+			}
+		}
+	}
+
+	// If no weapon was found, the fallbacks will be used for
+	// printing the appropriate error message to the console
+	if (noammo_fallback) {
+		return noammo_fallback;
+	}
+
+	return noweap_fallback;
+}
+
+void Cmd_PrefWeap_f (edict_t *ent)
+{
+	gitem_t *weap;
+
+	if (!ent) {
+		return;
+	}
+
+	if (gi.argc() <= 1) {
+		gi.cprintf(ent, PRINT_HIGH, "Usage: prefweap classname1 classname2 .. classnameN\n");
+		return;
+	}
+
+	weap = preferred_weapon(ent);
+	if (weap)
+	{
+		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0) {
+			gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", weap->pickup_name);
+		}
+		else {
+			weap->use(ent, weap);
+		}
+	}
+}
+// end from Yamagi Q2
+
+void DrawBBox (edict_t *ent)
 {
 	vec3_t	p1, p2;
 	vec3_t	origin;
 
-	VectorCopy(ent->s.origin,origin);
-	VectorSet(p1,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorCopy (ent->s.origin, origin);
+	VectorSet (p1, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-
-	VectorSet(p1,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_DEBUGTRAIL);
-	gi.WritePosition (p1);
-	gi.WritePosition (p2);
-	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p2 ,origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
 
-	VectorSet(p1,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->mins[1],origin[2]+ent->mins[2]);
+	VectorSet (p1, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
 
-	VectorSet(p1,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->maxs[1],origin[2]+ent->mins[2]);
+	VectorSet (p1, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->mins[1], origin[2]+ent->mins[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->mins[0],origin[1]+ent->mins[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
 	gi.WritePosition (p2);
 	gi.multicast (p1, MULTICAST_ALL);
-	VectorSet(p2,origin[0]+ent->maxs[0],origin[1]+ent->maxs[1],origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+
+	VectorSet (p1, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->maxs[1], origin[2]+ent->mins[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+	VectorSet (p2, origin[0]+ent->mins[0], origin[1]+ent->mins[1], origin[2]+ent->maxs[2]);
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_DEBUGTRAIL);
+	gi.WritePosition (p1);
+	gi.WritePosition (p2);
+	gi.multicast (p1, MULTICAST_ALL);
+	VectorSet (p2, origin[0]+ent->maxs[0], origin[1]+ent->maxs[1], origin[2]+ent->maxs[2]);
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_DEBUGTRAIL);
 	gi.WritePosition (p1);
@@ -1936,12 +2171,12 @@ void ForcewallOff(edict_t *player)
 	tr = gi.trace(start,NULL,NULL,point,player,MASK_SHOT);
 	if (Q_stricmp(tr.ent->classname,"forcewall"))
 	{
-		safe_cprintf(player,PRINT_HIGH,"Not a forcewall!\n");
+		safe_cprintf (player,PRINT_HIGH,"Not a forcewall!\n");
 		return;
 	}
 	if (tr.ent->activator != player)
 	{
-		safe_cprintf(player,PRINT_HIGH,"You don't own this forcewall, bub!\n");
+		safe_cprintf (player,PRINT_HIGH,"You don't own this forcewall, bub!\n");
 		return;
 	}
 	G_FreeEdict(tr.ent);
@@ -2473,6 +2708,16 @@ void ClientCommand (edict_t *ent)
 		else
 			gi.dprintf("syntax: whereis <classname>\n");
 	}
+	// from Yamagi Q2
+	else if (Q_stricmp(cmd, "cycleweap") == 0)
+	{
+		Cmd_CycleWeap_f(ent);
+	}
+	else if (Q_stricmp(cmd, "prefweap") == 0)
+	{
+		Cmd_PrefWeap_f(ent);
+	}
+	// end from Yamagi Q2
 	// debugging/developer stuff
 	else if (developer->value)
 	{

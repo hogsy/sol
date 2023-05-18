@@ -827,9 +827,10 @@ extern	cvar_t	*vid_ref;
 extern	cvar_t	*zoomrate;
 extern	cvar_t	*zoomsnap;
 
-extern	 cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
+extern	cvar_t	*g_aimfix;			// Knightmare- from Yamagi Q2
+extern	cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
 
-extern	cvar_t	*g_showlogic; // Knightmare added
+extern	cvar_t	*g_showlogic;		// Knightmare added
 
 extern	int		max_modelindex;
 extern	int		max_soundindex;
@@ -881,6 +882,13 @@ typedef struct
 	char	*name;
 	void	(*spawn)(edict_t *ent);
 } spawn_t;
+
+// Knightmare- added soundcache struct
+typedef struct
+{
+	char	*name;
+	void	(*soundcache)(edict_t *ent);	
+} soundcache_t;
 
 // Lazarus: worldspawn effects
 #define FX_WORLDSPAWN_NOHELP       1
@@ -1159,10 +1167,11 @@ void ReflectTrail (int type, vec3_t start, vec3_t end, int red, int green, int b
 void ED_CallSpawn (edict_t *ent);
 void ReInitialize_Entity (edict_t *ent);
 void G_PrecachePlayerInventories (void);	// Knightmare added
-void G_FindTeams();
-void Cmd_ToggleHud ();
-void Hud_On();
-void Hud_Off();
+void G_SoundcacheEntities (void);			// Knightmare added
+void G_FindTeams (void);
+void Cmd_ToggleHud (void);
+void Hud_On (void);
+void Hud_Off (void);
 
 //
 // g_svcmds.c
@@ -1374,7 +1383,8 @@ void ClientEndServerFrame (edict_t *ent);
 // p_weapon.c
 //
 void PlayerNoise(edict_t *who, vec3_t where, int type);
-void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
+void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);	// Knightmare- changed parms for aimfix
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent, qboolean altfire));
 void kick_attack (edict_t *ent);
 

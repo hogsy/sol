@@ -542,16 +542,10 @@ qboolean parasite_blocked (edict_t *self, float range)
 	return false;
 }
 
-/*QUAKED monster_parasite (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
-*/
-void SP_monster_parasite (edict_t *self)
-{
-	if (deathmatch->value)
-	{
-		G_FreeEdict (self);
-		return;
-	}
 
+// Knightmare- added soundcache function
+void monster_parasite_soundcache (edict_t *self)
+{
 	sound_pain1 = gi.soundindex ("parasite/parpain1.wav");	
 	sound_pain2 = gi.soundindex ("parasite/parpain2.wav");	
 	sound_die = gi.soundindex ("parasite/pardeth1.wav");	
@@ -563,7 +557,34 @@ void SP_monster_parasite (edict_t *self)
 	sound_tap = gi.soundindex("parasite/paridle1.wav");
 	sound_scratch = gi.soundindex("parasite/paridle2.wav");
 	sound_search = gi.soundindex("parasite/parsrch1.wav");
+}
 
+
+/*QUAKED monster_parasite (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
+*/
+void SP_monster_parasite (edict_t *self)
+{
+	if (deathmatch->value)
+	{
+		G_FreeEdict (self);
+		return;
+	}
+
+	// Knightmare- use soundcache function
+	monster_parasite_soundcache (self);
+
+/*	sound_pain1 = gi.soundindex ("parasite/parpain1.wav");	
+	sound_pain2 = gi.soundindex ("parasite/parpain2.wav");	
+	sound_die = gi.soundindex ("parasite/pardeth1.wav");	
+	sound_launch = gi.soundindex("parasite/paratck1.wav");
+	sound_impact = gi.soundindex("parasite/paratck2.wav");
+	sound_suck = gi.soundindex("parasite/paratck3.wav");
+	sound_reelin = gi.soundindex("parasite/paratck4.wav");
+	sound_sight = gi.soundindex("parasite/parsght1.wav");
+	sound_tap = gi.soundindex("parasite/paridle1.wav");
+	sound_scratch = gi.soundindex("parasite/paridle2.wav");
+	sound_search = gi.soundindex("parasite/parsrch1.wav");
+*/
 	// Lazarus: special purpose skins
 	if ( self->style )
 	{

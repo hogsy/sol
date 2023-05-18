@@ -10,7 +10,7 @@ jorg
 #include "m_boss31.h"
 
 void MakronPrecache (edict_t *self);
-void SP_monster_makron_put (edict_t *self);
+void SP_monster_makron (edict_t *self);
 qboolean visible (edict_t *self, edict_t *other);
 
 static int	sound_pain1;

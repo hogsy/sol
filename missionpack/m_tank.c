@@ -1022,6 +1022,7 @@ qboolean tank_blocked (edict_t *self, float dist)
 //PGM
 //===========
 
+
 // Knightmare- added soundcache function
 void monster_tank_soundcache (edict_t *self)
 {
@@ -1034,6 +1035,7 @@ void monster_tank_soundcache (edict_t *self)
 	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
 	sound_sight = gi.soundindex ("tank/sight1.wav");
 }
+
 
 //
 // monster_tank
@@ -1079,6 +1081,7 @@ void SP_monster_tank (edict_t *self)
 	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
 	sound_sight = gi.soundindex ("tank/sight1.wav");
 */
+	// precache
 	gi.soundindex ("tank/tnkatck1.wav");
 	gi.soundindex ("tank/tnkatk2a.wav");
 	gi.soundindex ("tank/tnkatk2b.wav");

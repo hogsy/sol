@@ -2336,7 +2336,6 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 		VectorSet (offset, 0, 8, ent->viewheight - 8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);
 	}
-
 	fire_shotgun (ent, start, forward, damage, kick, (int)sk_sshotgun_hspread->value, (int)sk_sshotgun_vspread->value, (int)sk_sshotgun_count->value/2, MOD_SSHOTGUN);
 
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
@@ -2352,8 +2351,7 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 
 		VectorSet (offset, 0, 8, ent->viewheight - 8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);
-	}	
-
+	}
 	fire_shotgun (ent, start, forward, damage, kick, (int)sk_sshotgun_hspread->value, (int)sk_sshotgun_vspread->value, (int)sk_sshotgun_count->value/2, MOD_SSHOTGUN);
 
 	// send muzzle flash

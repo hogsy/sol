@@ -398,8 +398,11 @@ void SP_target_q1_trap (edict_t *self)
 	tr = gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
 	
 	gi.WriteByte (svc_temp_entity);
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (TE_LIGHTNING_ATTACK);
+#else
 	gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-//	gi.WriteByte (TE_LIGHTNING);
+#endif	// KMQUAKE2_ENGINE_MOD
 	gi.WriteShort (self - g_edicts);
 	gi.WritePosition (start);
 	gi.WritePosition (tr.endpos); 

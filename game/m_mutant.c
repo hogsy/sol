@@ -656,6 +656,25 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 }
 
 
+// Knightmare- added soundcache function
+void monster_mutant_soundcache (edict_t *self)
+{
+	sound_swing = gi.soundindex ("mutant/mutatck1.wav");
+	sound_hit = gi.soundindex ("mutant/mutatck2.wav");
+	sound_hit2 = gi.soundindex ("mutant/mutatck3.wav");
+	sound_death = gi.soundindex ("mutant/mutdeth1.wav");
+	sound_idle = gi.soundindex ("mutant/mutidle1.wav");
+	sound_pain1 = gi.soundindex ("mutant/mutpain1.wav");
+	sound_pain2 = gi.soundindex ("mutant/mutpain2.wav");
+	sound_sight = gi.soundindex ("mutant/mutsght1.wav");
+	sound_search = gi.soundindex ("mutant/mutsrch1.wav");
+	sound_step1 = gi.soundindex ("mutant/step1.wav");
+	sound_step2 = gi.soundindex ("mutant/step2.wav");
+	sound_step3 = gi.soundindex ("mutant/step3.wav");
+	sound_thud = gi.soundindex ("mutant/thud1.wav");
+}
+
+
 //
 // SPAWN
 //
@@ -670,7 +689,10 @@ void SP_monster_mutant (edict_t *self)
 		return;
 	}
 
-	sound_swing = gi.soundindex ("mutant/mutatck1.wav");
+	// Knightmare- use soundcache function
+	monster_mutant_soundcache (self);
+
+/*	sound_swing = gi.soundindex ("mutant/mutatck1.wav");
 	sound_hit = gi.soundindex ("mutant/mutatck2.wav");
 	sound_hit2 = gi.soundindex ("mutant/mutatck3.wav");
 	sound_death = gi.soundindex ("mutant/mutdeth1.wav");
@@ -683,7 +705,7 @@ void SP_monster_mutant (edict_t *self)
 	sound_step2 = gi.soundindex ("mutant/step2.wav");
 	sound_step3 = gi.soundindex ("mutant/step3.wav");
 	sound_thud = gi.soundindex ("mutant/thud1.wav");
-
+*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

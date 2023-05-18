@@ -736,6 +736,7 @@ qboolean supertank_blocked (edict_t *self, float dist)
 //PGM
 //===========
 
+
 // Knightmare- added soundcache function
 void monster_supertank_soundcache (edict_t *self)
 {
@@ -749,6 +750,7 @@ void monster_supertank_soundcache (edict_t *self)
 //	self->s.sound = gi.soundindex ("bosstank/btkengn1.wav");
 	tread_sound = gi.soundindex ("bosstank/btkengn1.wav");
 }
+
 
 //
 // monster_supertank
