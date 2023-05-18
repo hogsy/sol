@@ -1446,14 +1446,14 @@ static int get_ammo_usage(gitem_t *weap)
 		return 0;
 	}
 
-	/* handles grenades and tesla which only use 1 ammo per shot */
-	/* have to check this because they don't store their ammo usage in weap->quantity */
+	// handles grenades and tesla which only use 1 ammo per shot
+	// have to check this because they don't store their ammo usage in weap->quantity
 	if (weap->flags & IT_AMMO)
 	{
 		return 1;
 	}
 
-	/* weapons store their ammo usage in the quantity field */
+	// weapons store their ammo usage in the quantity field
 	return weap->quantity;
 }
 
@@ -1483,7 +1483,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 
 	num_weaps = gi.argc();
 
-	/* find where we want to start the search for the next eligible weapon */
+	// find where we want to start the search for the next eligible weapon
 	if (cl->newweapon)
 	{
 		weapname = cl->newweapon->classname;
@@ -1519,7 +1519,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	noammo_fallback = NULL;
 	noweap_fallback = NULL;
 
-	/* find the first eligible weapon in the list we can switch to */
+	// find the first eligible weapon in the list we can switch to
 	do
 	{
 		weap = FindItemByClassname(gi.argv(i));
@@ -1563,9 +1563,8 @@ static gitem_t *cycle_weapon (edict_t *ent)
 		}
 	} while (i != start);
 
-	/* if no weapon was found, the fallbacks will be used for
-	   printing the appropriate error message to the console
-	*/
+	// if no weapon was found, the fallbacks will be used for
+	// printing the appropriate error message to the console
 
 	if (noammo_fallback)
 	{
@@ -1628,7 +1627,7 @@ static gitem_t *preferred_weapon (edict_t *ent)
 
 	num_weaps = gi.argc();
 
-	/* find the first eligible weapon in the list we can switch to */
+	// find the first eligible weapon in the list we can switch to
 	for (i = 1; i < num_weaps; i++)
 	{
 		weap = FindItemByClassname(gi.argv(i));
@@ -1665,9 +1664,9 @@ static gitem_t *preferred_weapon (edict_t *ent)
 		}
 	}
 
-	/* if no weapon was found, the fallbacks will be used for
-	   printing the appropriate error message to the console
-	*/
+	// If no weapon was found, the fallbacks will be used for
+	// printing the appropriate error message to the console
+	
 
 	if (noammo_fallback)
 	{
@@ -1693,7 +1692,7 @@ void Cmd_PrefWeap_f (edict_t *ent)
 		return;
 	}
 
-	weap = preferred_weapon(ent);
+	weap = preferred_weapon (ent);
 	if (weap)
 	{
 		if (ent->client->pers.inventory[ITEM_INDEX(weap)] <= 0)

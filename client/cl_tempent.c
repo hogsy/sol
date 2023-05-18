@@ -412,6 +412,13 @@ int CL_ParseBeam (struct model_s *model)
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
 
+	// Psychspaz's enhanced particles
+	if ( (model == clMedia.mod_lightning) && !cl_old_explosions->integer )
+	{
+		CL_LightningBeam (start, end, ent, 0, 5);
+		return ent;
+	}
+
 // override any beam with the same entity
 	for (i=0, b=cl_beams ; i< MAX_BEAMS ; i++, b++)
 		if (b->entity == ent)
@@ -1360,6 +1367,10 @@ void CL_ParseTEnt (void)
 		// Psychospaz's enhanced particle code
 		ent = CL_ParseLightning ();
 		S_StartSound (NULL, ent, CHAN_WEAPON, clMedia.sfx_lightning, 1, ATTN_NORM, 0);
+		break;
+
+	case TE_LIGHTNING_ATTACK:	
+		ent = CL_ParseBeam (clMedia.mod_lightning);
 		break;
 
 	case TE_DEBUGTRAIL:

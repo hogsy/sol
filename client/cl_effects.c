@@ -115,7 +115,7 @@ void CL_LightningBeam (vec3_t start, vec3_t end, int srcEnt, int dstEnt, float s
 	for (list=active_particles; list; list=list->next)
 		if ( (list->src_ent == srcEnt) && (list->dst_ent == dstEnt) && (list->image == particle_lightning) )
 		{
-			p=list;
+			p = list;
 			/*p->start =*/ p->time = cl.time;
 			VectorCopy(start, p->angle);
 			VectorCopy(end, p->org);
