@@ -422,8 +422,13 @@ void R_SetShadeLight (void)
 	}
 	else if ( currententity->flags & RF_FULLBRIGHT )
 	{
-		for (i=0 ; i<3 ; i++)
+		for (i=0; i<3; i++)
 			shadelight[i] = 1.0;
+	}
+	else if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
+	{	// light shading for model views
+		for (i=0; i<3; i++)
+			shadelight[i] = glState.inverse_intensity;
 	}
 	else
 	{
@@ -432,15 +437,15 @@ void R_SetShadeLight (void)
 		{
 			int max = r_model_dlights->integer;
 
-			if (max<0) max=0;
-			if (max>MAX_MODEL_DLIGHTS) max=MAX_MODEL_DLIGHTS;
+			if (max < 0)					max = 0;
+			if (max > MAX_MODEL_DLIGHTS)	max = MAX_MODEL_DLIGHTS;
 
 			R_LightPointDynamics (currententity->origin, shadelight, model_dlights, 
 				&model_dlights_num, max);
 		}
 		else
 		{
-			R_LightPoint (currententity->origin, shadelight, false);//true);
+			R_LightPoint (currententity->origin, shadelight, false);	// true
 			model_dlights_num = 0;
 		}
 

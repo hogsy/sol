@@ -228,7 +228,7 @@ void Menu_Main_Init (void)
 	VectorSet (s_main_cursor.modelRotation[0], 0, 0.15, 0);
 	s_main_cursor.modelFrame[0]				= 0;
 	s_main_cursor.modelFrameNumbers[0]		= 0;
-	s_main_cursor.entFlags[0]				= RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
+	s_main_cursor.entFlags[0]				= /*RF_FULLBRIGHT|*/RF_NOSHADOW|RF_DEPTHHACK;
 	s_main_cursor.generic.isHidden			= false;
 #else	// USE_MODELVIEW_CURSOR
 	s_main_cursor.generic.type				= MTYPE_IMAGE;

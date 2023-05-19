@@ -101,6 +101,8 @@ void R_DrawNullModel (void)
 	{
 		if (currententity->flags & RF_FULLBRIGHT)
 			VectorSet (shadelight, 1.0f, 1.0f, 1.0f);
+		else if (r_newrefdef.rdflags & RDF_NOWORLDMODEL)	// light shading for model views
+			VectorSet (shadelight,  glState.inverse_intensity,  glState.inverse_intensity,  glState.inverse_intensity);
 		else
 			R_LightPoint (currententity->origin, shadelight, false);
 		qglColor3fv (shadelight);

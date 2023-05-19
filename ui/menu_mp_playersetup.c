@@ -571,7 +571,7 @@ void Menu_PlayerConfig_Init (void)
 		s_playerconfig_model_display.modelFrame[i]			= 0;
 		s_playerconfig_model_display.modelFrameNumbers[i]	= 0;
 	//	s_playerconfig_model_display.modelFrameTime[i]		= 0.01;
-		s_playerconfig_model_display.entFlags[i]			= RF_FULLBRIGHT|RF_NOSHADOW|RF_DEPTHHACK;
+		s_playerconfig_model_display.entFlags[i]			= /*RF_FULLBRIGHT|*/RF_NOSHADOW|RF_DEPTHHACK;
 	}
 	s_playerconfig_model_display.generic.isHidden	= false;
 
