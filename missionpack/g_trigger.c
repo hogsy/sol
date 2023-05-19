@@ -1907,8 +1907,18 @@ void trans_ent_filename (char *filename, size_t filenameSize)
 {
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
 	SavegameDirRelativePath ("save_x64/trans.ent", filename, filenameSize);
-#else
+#elif defined (_M_IX86) || defined (__i386__)
 	SavegameDirRelativePath ("save/trans.ent", filename, filenameSize);
+#elif defined (_M_IA64) || defined (__ia64__)
+	SavegameDirRelativePath ("save_ia64/trans.ent", filename, filenameSize);
+#elif defined (_M_ALPHA) || defined (__alpha__)
+	SavegameDirRelativePath ("save_axp/trans.ent", filename, filenameSize);
+#elif defined (__ppc__)
+	SavegameDirRelativePath ("save_ppc/trans.ent", filename, filenameSize);
+#elif defined (__sparc__)
+	SavegameDirRelativePath ("save_sparc/trans.ent", filename, filenameSize);
+#else
+	SavegameDirRelativePath ("save_unk/trans.ent", filename, filenameSize);
 #endif
 }
 

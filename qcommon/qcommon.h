@@ -33,8 +33,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
 #define SAVEDIRNAME "save_x64"
-#else
+#elif defined (_M_IX86) || defined (__i386__)
 #define SAVEDIRNAME "save"
+#elif defined (_M_IA64) || defined (__ia64__)
+#define SAVEDIRNAME "save_ia64"
+#elif defined (_M_ALPHA) || defined (__alpha__)
+#define SAVEDIRNAME "save_axp"
+#elif defined (__ppc__)
+#define SAVEDIRNAME "save_ppc"
+#elif defined (__sparc__)
+#define SAVEDIRNAME "save_sparc"
+#else
+#define SAVEDIRNAME "save_unk"
 #endif
 
 #define DEFAULTPAK			"pak"
@@ -49,12 +59,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamex86.dll"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamex64.dll"
 //#ifdef _M_IX86
-#elif defined(_M_IX86) || defined (__i386__) // [Slipyx] mingw case
+#elif defined (_M_IX86) || defined (__i386__) // [Slipyx] mingw case
 #define	CPUSTRING	"x86"
 #define OS_STRING	"Win32"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamex86.dll"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamex86.dll"
-#elif defined _M_ALPHA
+#elif defined (_M_IA64)
+#define	CPUSTRING	"ia64"
+#define OS_STRING	"Win64"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamex86.dll"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameia64.dll"
+#elif defined (_M_ALPHA)
 #define	CPUSTRING	"AXP"
 #define OS_STRING	"Win32"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.dll"
@@ -73,12 +88,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CPUSTRING "i386"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamei386.so"
+#elif defined __ia64__
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameia64.so"
 #elif defined __alpha__
 #define CPUSTRING "axp"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gameaxp.so"
 #else
 #define CPUSTRING "Unknown"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameunk.so"
 #endif
 
 #elif defined __sun__
@@ -126,16 +146,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamei386.dylib"
 #endif	// USE_Q2PLUG
 
+#elif defined __ppc__
+
+#define CPUSTRING "PPC"
+
+#ifdef USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "GameMac.q2plug"
+#define KMQ2_GAME_LIBRARY_NAME "GameMac.kmq2plug"
+#else	// USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.dylib"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameppc.dylib"
+#endif	// USE_Q2PLUG
+
 #else
 
 #define CPUSTRING "Unknown"
+
+#ifdef USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "GameMac.q2plug"
+#define KMQ2_GAME_LIBRARY_NAME "GameMac.kmq2plug"
+#else	// USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.dylib"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameunk.dylib"
+#endif	// USE_Q2PLUG
 
 #endif
 
 #else	// !WIN32
 
 #define OS_STRING "NON-WIN32"
-#define	CPUSTRING	"NON-WIN32"
+#define	CPUSTRING "NON-WIN32"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameunk.so"
 
 #endif
 
