@@ -92,6 +92,7 @@ R_DrawNullModel
 void R_DrawNullModel (void)
 {
 	vec3_t	shadelight;
+	vec_t	modelview_lightscale;
 
 	qglPushMatrix ();
 	R_RotateForEntity (currententity, true);
@@ -101,8 +102,12 @@ void R_DrawNullModel (void)
 	{
 		if (currententity->flags & RF_FULLBRIGHT)
 			VectorSet (shadelight, 1.0f, 1.0f, 1.0f);
-		else if (r_newrefdef.rdflags & RDF_NOWORLDMODEL)	// light shading for model views
+		else if (r_newrefdef.rdflags & RDF_NOWORLDMODEL) {
+			// shading for model views based on inverse intensity
 			VectorSet (shadelight,  glState.inverse_intensity,  glState.inverse_intensity,  glState.inverse_intensity);
+			modelview_lightscale = min(max(r_modelview_lightscale->value, 0.0f), 1.0f);
+			VectorScale (shadelight, modelview_lightscale, shadelight);
+		}
 		else
 			R_LightPoint (currententity->origin, shadelight, false);
 		qglColor3fv (shadelight);

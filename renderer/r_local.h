@@ -298,6 +298,7 @@ extern	cvar_t	*r_warp_lighting_sample_offset; // allow adjustment of lighting sa
 extern	cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface flag combining
 extern	cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 extern	cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
+extern	cvar_t	*r_modelview_lightscale;	// lighting scale for menu modelviews
 
 extern	cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //extern	cvar_t	*r_trans_surf_sorting; // trans bmodel sorting

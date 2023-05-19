@@ -141,6 +141,7 @@ cvar_t	*r_warp_lighting_sample_offset; // allow adjustment of lighting sampling 
 cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface flag combining
 cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
+cvar_t	*r_modelview_lightscale;		// lighting scale for menu modelviews
 
 cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //cvar_t	*r_trans_surf_sorting; // trans bmodel sorting
@@ -1185,6 +1186,10 @@ void R_Register (void)
 	// allow selection of nullmodel
 	r_old_nullmodel = Cvar_Get( "r_old_nullmodel", "0", CVAR_ARCHIVE );	
 	Cvar_SetDescription ("r_old_nullmodel", "Enables reversing of backwards entity roll.");
+
+	// lighting scale for menu modelviews
+	r_modelview_lightscale = Cvar_Get( "r_modelview_lightscale", "0.8", CVAR_ARCHIVE );	
+	Cvar_SetDescription ("r_modelview_lightscale", "Sets lighting scale for models displayed in menus.  1.0 = fully bright, 0.0 = fully dark.");
 
 	// added Psychospaz's envmapping
 	r_glass_envmaps = Cvar_Get( "r_glass_envmaps", "1", CVAR_ARCHIVE );

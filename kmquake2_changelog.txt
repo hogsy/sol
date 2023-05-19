@@ -134,7 +134,9 @@ Changes as of v0.20 update 8:
 	
 - Added changeable r_clear color controlled by cvars r_clearcolor_r, r_clearcolor_g, and r_clearcolor_b.
 	Values are normalized (0-1).
-	
+
+- Added r_modelview_lightscale cvar to set lighting scale for models displayed in menus.  Default = 0.8, min = 0, max = 1.
+
 - Added doubled entity lighting to mimic Q2's original entity lighting.  Set the cvar r_entity_doublelight to 1 to enable this.
 
 - Added cycleweap and prefweap commands from Yamagi Q2.

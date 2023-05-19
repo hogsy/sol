@@ -398,6 +398,7 @@ R_SetShadeLight
 void R_SetShadeLight (void)
 {
 	int		i;
+	vec_t	modelview_lightscale;
 
 	if (currententity->flags & RF_MASK_SHELL)
 	{
@@ -426,9 +427,11 @@ void R_SetShadeLight (void)
 			shadelight[i] = 1.0;
 	}
 	else if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
-	{	// light shading for model views
+	{	// shading for model views based on inverse intensity
 		for (i=0; i<3; i++)
 			shadelight[i] = glState.inverse_intensity;
+		modelview_lightscale = min(max(r_modelview_lightscale->value, 0.0f), 1.0f);
+		VectorScale (shadelight, modelview_lightscale, shadelight);
 	}
 	else
 	{
