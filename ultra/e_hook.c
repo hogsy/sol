@@ -25,7 +25,6 @@ void hook_laser_think (edict_t *self)
 	// put start position into start
 	AngleVectors (self->owner->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, self->owner->owner->viewheight-8);
-//	P_ProjectSource (self->owner->owner->client, self->owner->owner->s.origin, offset, forward, right, start);
 	P_ProjectSource (self->owner->owner, self->owner->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// move the two ends
@@ -475,7 +474,6 @@ void abandon_hook_fire (edict_t *ent, qboolean altfire)
 	// calculate start position and forward direction
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// kick back??

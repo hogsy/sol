@@ -871,15 +871,6 @@ void SP_monster_hover (edict_t *self)
 		self->monsterinfo.power_armor_type = POWER_ARMOR_SCREEN;
 		self->monsterinfo.power_armor_power = 100;
 
-		// PMM - daedalus sounds
-	/*	daed_sound_pain1 = gi.soundindex ("daedalus/daedpain1.wav");	
-		daed_sound_pain2 = gi.soundindex ("daedalus/daedpain2.wav");	
-		daed_sound_death1 = gi.soundindex ("daedalus/daeddeth1.wav");	
-		daed_sound_death2 = gi.soundindex ("daedalus/daeddeth2.wav");	
-		daed_sound_sight = gi.soundindex ("daedalus/daedsght1.wav");	
-		daed_sound_search1 = gi.soundindex ("daedalus/daedsrch1.wav");	
-		daed_sound_search2 = gi.soundindex ("daedalus/daedsrch2.wav");
-	*/
 		// precache
 		gi.soundindex ("tank/tnkatck3.wav");
 		self->s.sound = gi.soundindex ("daedalus/daedidle1.wav");
@@ -901,14 +892,6 @@ void SP_monster_hover (edict_t *self)
 		if (!self->dmg)
 			self->dmg = 1;
 
-	/*	sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
-		sound_pain2 = gi.soundindex ("hover/hovpain2.wav");	
-		sound_death1 = gi.soundindex ("hover/hovdeth1.wav");	
-		sound_death2 = gi.soundindex ("hover/hovdeth2.wav");	
-		sound_sight = gi.soundindex ("hover/hovsght1.wav");	
-		sound_search1 = gi.soundindex ("hover/hovsrch1.wav");	
-		sound_search2 = gi.soundindex ("hover/hovsrch2.wav");
-	*/	
 		// precache
 		gi.soundindex ("hover/hovatck1.wav");	
 		self->s.sound = gi.soundindex ("hover/hovidle1.wav");

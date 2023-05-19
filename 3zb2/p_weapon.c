@@ -14,7 +14,6 @@ void weapon_grenade_fire (edict_t *ent, qboolean held);
 // RAFAEL
 void weapon_trap_fire (edict_t *ent, qboolean held);
 
-//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	gclient_t	*client = NULL;
@@ -872,9 +871,8 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 //		damage *= 4;
 		damage *= damage_multiplier;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	timer = ent->client->grenade_time - level.time;
@@ -1051,9 +1049,8 @@ void weapon_grenadelauncher_fire (edict_t *ent, qboolean altfire)
 	//	damage *= 4;
 		damage += damage_multiplier;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1122,8 +1119,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 	if (ent->client->zc.aiming != 4) {
 		fire_rocket (ent, start, forward, damage, (int)sk_rocket_speed->value, damage_radius, radius_damage);	// was 650
@@ -1280,12 +1276,11 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 		damage *= damage_multiplier;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorSet (offset, 24, 8, ent->viewheight-8);
 
 	if (!(ent->svflags & SVF_MONSTER))
 	{
 		VectorAdd (offset, g_offset, offset);
-	//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 		VectorScale (forward, -2, ent->client->kick_origin);
@@ -1293,7 +1288,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	}
 	else
 	{
-		VectorSet(offset, 0, 0, ent->viewheight-8);
+		VectorSet (offset, 0, 0, ent->viewheight-8);
 		VectorAdd (offset, ent->s.origin, start);
 	}
 
@@ -1589,8 +1584,7 @@ void Machinegun_Fire (edict_t *ent, qboolean altfire)
 	// get start / end positions
 	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
 	AngleVectors (angles, forward, right, NULL);
-	VectorSet(offset, 0, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 //	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 	fire_bullet (ent, start, forward, damage, kick, (int)sk_machinegun_hspread->value, (int)sk_machinegun_vspread->value, MOD_MACHINEGUN);
@@ -1722,8 +1716,7 @@ void Chaingun_Fire (edict_t *ent, qboolean altfire)
 		AngleVectors (ent->client->v_angle, forward, right, up);
 		r = 7 + crandom()*4;
 		u = crandom()*4;
-		VectorSet(offset, 0, r, u + ent->viewheight-8);
-	//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		VectorSet (offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	//	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
@@ -1852,8 +1845,7 @@ void Gatringgun_Fire (edict_t *ent, qboolean altfire)
 		AngleVectors (ent->client->v_angle, forward, right, up);
 		r = 7 + crandom()*4;
 		u = crandom()*4;
-		VectorSet(offset, 0, r, u + ent->viewheight-8);
-	//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		VectorSet (offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
@@ -1940,8 +1932,7 @@ void weapon_shotgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (is_quad)
@@ -1998,8 +1989,7 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (is_quad)
@@ -2196,9 +2186,8 @@ void weapon_railgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -3, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -3;
 
-	VectorSet(offset, 0, 7,  ent->viewheight-8);
+	VectorSet (offset, 0, 7,  ent->viewheight-8);
 
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (ent->client->zc.aiming == 0) {
@@ -2345,8 +2334,7 @@ void weapon_bfg_fire (edict_t *ent, qboolean altfire)
 	ent->client->v_dmg_roll = crandom()*8;
 	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 	fire_bfg (ent, start, forward, damage, (int)sk_bfg_speed->value, damage_radius);	// was 400
 
@@ -2416,7 +2404,6 @@ void weapon_ionripper_fire (edict_t *ent, qboolean altfire)
 	// VectorSet (offset, 0, 7, ent->viewheight - 8);
 	VectorSet (offset, 16, 7, ent->viewheight - 8);
 
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	fire_ionripper (ent, start, forward, damage, (int)sk_ionripper_speed->value, EF_IONRIPPER);	// was 500
@@ -2483,8 +2470,7 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (ent->client->ps.gunframe == 8)
@@ -2582,9 +2568,8 @@ void weapon_trap_fire (edict_t *ent, qboolean held)
 	//	damage *= 4;
 		damage *= damage_multiplier;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	timer = ent->client->grenade_time - level.time;

@@ -215,7 +215,6 @@ void Make_Hook (edict_t *ent)
 	ent->client->kick_angles[0] = -1;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorCopy(start, hook->s.origin);

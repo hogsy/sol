@@ -1475,14 +1475,6 @@ void SP_monster_gunner (edict_t *self)
 		return;
 	}
 
-/*	sound_death = gi.soundindex ("gunner/death1.wav");
-	sound_pain = gi.soundindex ("gunner/gunpain2.wav");
-	sound_pain2 = gi.soundindex ("gunner/gunpain1.wav");
-	sound_idle = gi.soundindex ("gunner/gunidle1.wav");
-	sound_open = gi.soundindex ("gunner/gunatck1.wav");
-	sound_search = gi.soundindex ("gunner/gunsrch1.wav");
-	sound_sight = gi.soundindex ("gunner/sight1.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
@@ -1513,16 +1505,6 @@ void SP_monster_gunner (edict_t *self)
 
 	if (strcmp(self->classname, "monster_gunner_tactician") == 0)
 	{
-	/*	tactician_sound_death = gi.soundindex ("tactician_gunner/death1.wav");
-		tactician_sound_pain = gi.soundindex ("tactician_gunner/gunpain2.wav");
-		tactician_sound_pain2 = gi.soundindex ("tactician_gunner/gunpain1.wav");
-		tactician_sound_idle = gi.soundindex ("tactician_gunner/gunidle1.wav");
-		tactician_sound_open = gi.soundindex ("tactician_gunner/gunatck1.wav");
-		tactician_sound_search = gi.soundindex ("tactician_gunner/gunsrch1.wav");
-		tactician_sound_sight = gi.soundindex ("tactician_gunner/sight1.wav");
-		tactician_sound_fire_flechette = gi.soundindex ("weapons/nail1.wav");
-	//	tactician_sound_fire_flechette = gi.soundindex ("tactician_gunner/gunatck2.wav");
-	*/
 		// precache
 		gi.modelindex ("models/weapons/g_prox/tris.md2");
 		gi.modelindex ("models/proj/flechette/tris.md2");
@@ -1559,9 +1541,7 @@ void SP_monster_gunner (edict_t *self)
 		self->monsterinfo.monsterflags |= MFL_KNOWS_PROX_MINES;	// Tactician Gunner avoids prox mines
 	}
 	else
-	{
-		// TODO: move sounds here once Tactician Gunner sounds are in place
-		
+	{		
 		// precache
 		gi.modelindex ("models/objects/grenade/tris.md2");
 		gi.soundindex ("gunner/gunatck2.wav");

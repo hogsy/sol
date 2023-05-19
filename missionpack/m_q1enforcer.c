@@ -360,17 +360,6 @@ void SP_monster_q1_enforcer (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_enforcer_soundcache (self);
 
-/*	sound_pain1		= gi.soundindex ("q1enforcer/pain1.wav");
-	sound_pain2		= gi.soundindex ("q1enforcer/pain2.wav");
-	sound_death		= gi.soundindex ("q1enforcer/death1.wav");
-	sound_gib		= gi.soundindex ("q1player/udeath.wav");
-	sound_idle		= gi.soundindex ("q1enforcer/idle1.wav");
-	sound_sight1	= gi.soundindex ("q1enforcer/sight1.wav");
-	sound_sight2	= gi.soundindex ("q1enforcer/sight2.wav");
-	sound_sight3	= gi.soundindex ("q1enforcer/sight3.wav");
-	sound_sight4	= gi.soundindex ("q1enforcer/sight4.wav");
-	sound_fire		= gi.soundindex ("q1enforcer/enfire.wav");
-*/
 	// precache backpack
 	gi.modelindex ("models/items/q1backpack/tris.md2");
 //	gi.soundindex ("q1weapons/lock4.wav");

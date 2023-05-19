@@ -944,15 +944,6 @@ void SP_monster_tank (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_tank_soundcache (self);
 
-/*	sound_pain = gi.soundindex ("tank/tnkpain2.wav");
-	sound_thud = gi.soundindex ("tank/tnkdeth2.wav");
-	sound_idle = gi.soundindex ("tank/tnkidle1.wav");
-	sound_die = gi.soundindex ("tank/death.wav");
-	sound_step = gi.soundindex ("tank/step.wav");
-	sound_windup = gi.soundindex ("tank/tnkatck4.wav");
-	sound_strike = gi.soundindex ("tank/tnkatck5.wav");
-	sound_sight = gi.soundindex ("tank/sight1.wav");
-*/
 	// precache
 	gi.soundindex ("tank/tnkatck1.wav");
 	gi.soundindex ("tank/tnkatk2a.wav");

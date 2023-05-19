@@ -2124,7 +2124,6 @@ void CTFGrappleDrawCable (edict_t *self)
 
 	AngleVectors (self->owner->client->v_angle, f, r, NULL);
 	VectorSet(offset, 16, 16, self->owner->viewheight-8);
-//	P_ProjectSource (self->owner->client, self->owner->s.origin, offset, f, r, start);
 	P_ProjectSource (self->owner, self->owner->s.origin, offset, f, r, start);	// Knightmare- changed parms for aimfix
 
 	VectorSubtract(start, self->owner->s.origin, offset);
@@ -2317,7 +2316,6 @@ void CTFGrappleFire (edict_t *ent, vec3_t g_offset, int damage, int effect)
 //	VectorSet(offset, 24, 16, ent->viewheight-8+2);
 	VectorSet(offset, 24, 8, ent->viewheight-8+2);
 	VectorAdd (offset, g_offset, offset);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorScale (forward, -2, ent->client->kick_origin);

@@ -660,7 +660,7 @@ void SP_monster_hover (edict_t *self)
 		return;
 	}
 
-  SP_monster_hover_precache (self);
+	SP_monster_hover_precache (self);
 
 	gi.soundindex ("hover/hovatck1.wav");	
 

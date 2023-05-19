@@ -819,14 +819,6 @@ void SP_monster_flyer (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_flyer_soundcache (self);
 
-/*	sound_sight = gi.soundindex ("flyer/flysght1.wav");
-	sound_idle = gi.soundindex ("flyer/flysrch1.wav");
-	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
-	sound_pain2 = gi.soundindex ("flyer/flypain2.wav");
-	sound_slash = gi.soundindex ("flyer/flyatck2.wav");
-	sound_sproing = gi.soundindex ("flyer/flyatck1.wav");
-	sound_die = gi.soundindex ("flyer/flydeth1.wav");
-*/
 	gi.soundindex ("flyer/flyatck3.wav");
 
 	// Lazarus: special purpose skins
@@ -897,14 +889,6 @@ void SP_monster_kamikaze (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_flyer_soundcache (self);
 
-/*	sound_sight = gi.soundindex ("flyer/flysght1.wav");
-	sound_idle = gi.soundindex ("flyer/flysrch1.wav");
-	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
-	sound_pain2 = gi.soundindex ("flyer/flypain2.wav");
-	sound_slash = gi.soundindex ("flyer/flyatck2.wav");
-	sound_sproing = gi.soundindex ("flyer/flyatck1.wav");
-	sound_die = gi.soundindex ("flyer/flydeth1.wav");
-*/
 	gi.soundindex ("flyer/flyatck3.wav");
 
 	// Lazarus: special purpose skins

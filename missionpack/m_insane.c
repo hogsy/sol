@@ -641,18 +641,6 @@ void SP_misc_insane (edict_t *self)
 	// Knightmare- use soundcache function
 	misc_insane_soundcache (self);
 
-/*	sound_fist = gi.soundindex ("insane/insane11.wav");
-	sound_shake = gi.soundindex ("insane/insane5.wav");
-	sound_moan = gi.soundindex ("insane/insane7.wav");
-	sound_scream[0] = gi.soundindex ("insane/insane1.wav");
-	sound_scream[1] = gi.soundindex ("insane/insane2.wav");
-	sound_scream[2] = gi.soundindex ("insane/insane3.wav");
-	sound_scream[3] = gi.soundindex ("insane/insane4.wav");
-	sound_scream[4] = gi.soundindex ("insane/insane6.wav");
-	sound_scream[5] = gi.soundindex ("insane/insane8.wav");
-	sound_scream[6] = gi.soundindex ("insane/insane9.wav");
-	sound_scream[7] = gi.soundindex ("insane/insane10.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 	self->s.modelindex = gi.modelindex("models/monsters/insane/tris.md2");

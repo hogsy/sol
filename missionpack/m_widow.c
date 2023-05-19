@@ -1705,13 +1705,6 @@ void SP_monster_widow (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_widow_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("widow/bw1pain1.wav");
-	sound_pain2 = gi.soundindex ("widow/bw1pain2.wav");
-	sound_pain3 = gi.soundindex ("widow/bw1pain3.wav");
-	sound_search1 = gi.soundindex ("bosshovr/bhvunqv1.wav");
-//	sound_sight	= gi.soundindex ("widow/sight.wav");
-	sound_rail = gi.soundindex ("gladiator/railgun.wav");
-*/
 //	self->s.sound = gi.soundindex ("bosshovr/bhvengn1.wav");
 
 	self->movetype = MOVETYPE_STEP;

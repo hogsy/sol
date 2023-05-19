@@ -732,12 +732,6 @@ void SP_monster_q1_chthon (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_chthon_soundcache (self);
 
-/*	sound_pain = gi.soundindex ("q1chthon/pain.wav");	
-	sound_death = gi.soundindex ("q1chthon/death.wav");
-	sound_sight = gi.soundindex ("q1chthon/sight1.wav");	
-	sound_throw = gi.soundindex ("q1chthon/throw.wav");	
-	sound_rise = gi.soundindex ("q1chthon/out1.wav");	
-*/
 	if (self->spawnflags & CHTHON_TRIGGER_SPAWN)
 		self->spawnflags &= ~CHTHON_TRIGGER_SPAWN;
 

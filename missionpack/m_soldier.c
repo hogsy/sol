@@ -3205,11 +3205,6 @@ void SP_monster_soldier_x (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_soldier_x_soundcache (self);
 
-/*	sound_idle =	gi.soundindex ("soldier/solidle1.wav");
-	sound_sight1 =	gi.soundindex ("soldier/solsght1.wav");
-	sound_sight2 =	gi.soundindex ("soldier/solsrch1.wav");
-	sound_cock =	gi.soundindex ("infantry/infatck3.wav");
-*/
 	if (!self->mass)
 		self->mass = 100;
 
@@ -3287,9 +3282,6 @@ void SP_monster_soldier_light (edict_t *self)
 		return;
 	}
 
-//	sound_pain_light = gi.soundindex ("soldier/solpain2.wav");
-//	sound_death_light =	gi.soundindex ("soldier/soldeth2.wav");
-
 	// precache
 	gi.modelindex ("models/objects/laser/tris.md2");
 	gi.soundindex ("misc/lasfly.wav");
@@ -3324,9 +3316,6 @@ void SP_monster_soldier (edict_t *self)
 		return;
 	}
 
-//	sound_pain = gi.soundindex ("soldier/solpain1.wav");
-//	sound_death = gi.soundindex ("soldier/soldeth1.wav");
-
 	// precache
 	gi.soundindex ("soldier/solatck1.wav");
 
@@ -3356,9 +3345,6 @@ void SP_monster_soldier_ss (edict_t *self)
 		return;
 	}
 
-//	sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
-//	sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");
-
 	// precache
 	gi.soundindex ("soldier/solatck3.wav");
 
@@ -3387,9 +3373,6 @@ void SP_monster_soldier_plasma_re (edict_t *self)
 		G_FreeEdict (self);
 		return;
 	}
-
-//	sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
-//	sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");
 
 	// precache
 	gi.modelindex (PLASMA_SPRITE_FLY);
@@ -3428,9 +3411,6 @@ void SP_monster_soldier_plasma_sp (edict_t *self)
 		G_FreeEdict (self);
 		return;
 	}
-
-//	sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
-//	sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");
 
 	// precache
 	gi.modelindex (PLASMA_SPRITE_FLY);
@@ -3509,11 +3489,6 @@ void SP_monster_soldier_h (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_soldier_h_soundcache (self);
 
-/*	h_sound_idle =	gi.soundindex ("soldier/solidle1.wav");
-	h_sound_sight1 =	gi.soundindex ("soldier/solsght1.wav");
-	h_sound_sight2 =	gi.soundindex ("soldier/solsrch1.wav");
-	h_sound_cock =	gi.soundindex ("infantry/infatck3.wav");
-*/
 	if (!self->mass)
 		self->mass = 100;
 
@@ -3592,9 +3567,6 @@ void SP_monster_soldier_ripper (edict_t *self)
 		return;
 	}
 
-/*	h_sound_pain_ripper = gi.soundindex ("soldier/solpain2.wav");
-	h_sound_death_ripper =	gi.soundindex ("soldier/soldeth2.wav");
-*/
 	// precache
 	gi.modelindex ("models/objects/boomrang/tris.md2");
 	gi.soundindex ("misc/lasfly.wav");
@@ -3633,11 +3605,6 @@ void SP_monster_soldier_hypergun (edict_t *self)
 		return;
 	}
 
-/*	h_sound_pain_hypergun = gi.soundindex ("soldier/solpain1.wav");
-	h_sound_death_hypergun = gi.soundindex ("soldier/soldeth1.wav");
-	h_sound_hypergun_loop = gi.soundindex ("weapons/hyprbl1a.wav");	// Knightmare- missing precache
-	h_sound_hypergun_spindown = gi.soundindex ("weapons/hyprbd1a.wav");	// Knightmare- missing precache
-*/
 	// precache
 //	gi.modelindex ("models/objects/blaser/tris.md2");
 	gi.modelindex ("models/objects/laser/tris.md2");	// Knightmare- precache shared laser model instead
@@ -3677,10 +3644,6 @@ void SP_monster_soldier_lasergun (edict_t *self)
 		return;
 	}
 
-/*	h_sound_pain_lasergun = gi.soundindex ("soldier/solpain3.wav");
-	h_sound_death_lasergun = gi.soundindex ("soldier/soldeth3.wav");
-	h_sound_lasergun_fire = gi.soundindex ("misc/lasfly.wav");	// Knightmare- missing precache
-*/
 	// precache
 	gi.soundindex ("soldier/solatck3.wav");				// Knightmare- not used
 
@@ -4330,13 +4293,6 @@ void SP_monster_soldier_q25 (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_soldier_q25_soundcache (self);
 
-/*	q25_sound_pain = gi.soundindex ("soldrq25/pain.wav");
-	q25_sound_death = gi.soundindex ("soldrq25/deth3.wav");
-	q25_sound_idle =	gi.soundindex ("soldrq25/idle.wav");
-	q25_sound_sight1 =	gi.soundindex ("soldrq25/sight1.wav");
-	q25_sound_sight2 =	gi.soundindex ("soldrq25/sight2.wav");
-	q25_sound_cock =	gi.soundindex ("infantry/infatck3.wav");
-*/
 	if (!self->mass)
 		self->mass = 100;
 

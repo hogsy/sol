@@ -459,12 +459,6 @@ void SP_monster_dog (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_dog_soundcache (self);
 
-/*	sound_pain = gi.soundindex ("dog/dpain1.wav");
-	sound_death = gi.soundindex ("dog/ddeath.wav");
-	sound_attack = gi.soundindex ("dog/dattack1.wav");
-	sound_sight = gi.soundindex ("dog/dsight.wav");
-	sound_idle = gi.soundindex ("dog/idle.wav");
-*/
 	// precache gibs
 	gi.modelindex ("mmodels/monsters/dog/h_dog.md2");
 	

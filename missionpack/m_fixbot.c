@@ -1351,12 +1351,6 @@ void SP_monster_fixbot (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_fixbot_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("flyer/flypain1.wav");
-	sound_die = gi.soundindex ("flyer/flydeth1.wav");
-	sound_weld1 = gi.soundindex ("misc/welder1.wav");
-	sound_weld2 = gi.soundindex ("misc/welder2.wav");
-	sound_weld3 = gi.soundindex ("misc/welder3.wav");
-*/
 	self->s.modelindex = gi.modelindex ("models/monsters/fixbot/tris.md2");
 	
 	// Knightmare- shrunk bbox, was (-32, -32, -24), (32, 32, 34)

@@ -639,14 +639,6 @@ void SP_monster_hover (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_hover_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("hover/hovpain1.wav");	
-	sound_pain2 = gi.soundindex ("hover/hovpain2.wav");	
-	sound_death1 = gi.soundindex ("hover/hovdeth1.wav");	
-	sound_death2 = gi.soundindex ("hover/hovdeth2.wav");	
-	sound_sight = gi.soundindex ("hover/hovsght1.wav");	
-	sound_search1 = gi.soundindex ("hover/hovsrch1.wav");	
-	sound_search2 = gi.soundindex ("hover/hovsrch2.wav");	
-*/
 	// precache
 	gi.soundindex ("hover/hovatck1.wav");	
 

@@ -1296,11 +1296,6 @@ void SP_monster_soldier_x (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_soldier_x_soundcache (self);
 
-/*	sound_idle =	gi.soundindex ("soldier/solidle1.wav");
-	sound_sight1 =	gi.soundindex ("soldier/solsght1.wav");
-	sound_sight2 =	gi.soundindex ("soldier/solsrch1.wav");
-	sound_cock =	gi.soundindex ("infantry/infatck3.wav");
-*/
 	if (!self->mass)
 		self->mass = 100;
 
@@ -1363,9 +1358,6 @@ void SP_monster_soldier_light (edict_t *self)
 		return;
 	}
 
-//	sound_pain_light = gi.soundindex ("soldier/solpain2.wav");
-//	sound_death_light =	gi.soundindex ("soldier/soldeth2.wav");
-
 	// precache
 	gi.modelindex ("models/objects/laser/tris.md2");
 	gi.soundindex ("misc/lasfly.wav");
@@ -1396,9 +1388,6 @@ void SP_monster_soldier (edict_t *self)
 		return;
 	}
 
-//	sound_pain = gi.soundindex ("soldier/solpain1.wav");
-//	sound_death = gi.soundindex ("soldier/soldeth1.wav");
-
 	// precache
 	gi.soundindex ("soldier/solatck1.wav");
 
@@ -1426,9 +1415,6 @@ void SP_monster_soldier_ss (edict_t *self)
 		G_FreeEdict (self);
 		return;
 	}
-
-//	sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
-//	sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");
 
 	// precache
 	gi.soundindex ("soldier/solatck3.wav");

@@ -1265,17 +1265,6 @@ void SP_monster_medic (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_medic_soundcache (self);
 
-/*	sound_idle1 = gi.soundindex ("medic/idle.wav");
-	sound_pain1 = gi.soundindex ("medic/medpain1.wav");
-	sound_pain2 = gi.soundindex ("medic/medpain2.wav");
-	sound_die = gi.soundindex ("medic/meddeth1.wav");
-	sound_sight = gi.soundindex ("medic/medsght1.wav");
-	sound_search = gi.soundindex ("medic/medsrch1.wav");
-	sound_hook_launch = gi.soundindex ("medic/medatck2.wav");
-	sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
-	sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
-	sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
-*/
 	gi.soundindex ("medic/medatck1.wav");
 
 	self->movetype = MOVETYPE_STEP;

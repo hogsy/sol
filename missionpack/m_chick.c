@@ -985,23 +985,6 @@ void SP_monster_chick (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_chick_soundcache (self);
 
-/*	sound_missile_prelaunch	= gi.soundindex ("chick/chkatck1.wav");	
-	sound_missile_launch	= gi.soundindex ("chick/chkatck2.wav");	
-	sound_melee_swing		= gi.soundindex ("chick/chkatck3.wav");	
-	sound_melee_hit			= gi.soundindex ("chick/chkatck4.wav");	
-	sound_missile_reload	= gi.soundindex ("chick/chkatck5.wav");	
-	sound_death1			= gi.soundindex ("chick/chkdeth1.wav");	
-	sound_death2			= gi.soundindex ("chick/chkdeth2.wav");	
-	sound_fall_down			= gi.soundindex ("chick/chkfall1.wav");	
-	sound_idle1				= gi.soundindex ("chick/chkidle1.wav");	
-	sound_idle2				= gi.soundindex ("chick/chkidle2.wav");	
-	sound_pain1				= gi.soundindex ("chick/chkpain1.wav");	
-	sound_pain2				= gi.soundindex ("chick/chkpain2.wav");	
-	sound_pain3				= gi.soundindex ("chick/chkpain3.wav");	
-	sound_sight				= gi.soundindex ("chick/chksght1.wav");	
-	sound_search			= gi.soundindex ("chick/chksrch1.wav");	
-*/
-
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

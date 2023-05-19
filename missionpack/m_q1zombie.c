@@ -665,15 +665,6 @@ void SP_monster_q1_zombie (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_zombie_soundcache (self);
 
-/*	sound_idleC	= gi.soundindex ("q1zombie/idle_w2.wav");
-	sound_idle	= gi.soundindex ("q1zombie/z_idle.wav");
-	sound_idle2	= gi.soundindex ("q1zombie/z_idle1.wav");
-	sound_pain	= gi.soundindex ("q1zombie/z_pain.wav");
-	sound_pain2	= gi.soundindex ("q1zombie/z_pain1.wav");
-	sound_fall	= gi.soundindex ("q1zombie/z_fall.wav");
-	sound_gib	= gi.soundindex ("q1zombie/z_gib.wav");
-	sound_shot	= gi.soundindex ("q1zombie/z_shot1.wav");
-*/
 	// precache gibs
 	gi.modelindex ("models/monsters/q1zombie/head/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib1/tris.md2");

@@ -329,11 +329,6 @@ void SP_monster_q1_tarbaby (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_tarbaby_soundcache (self);
 
-/*	sound_death	= gi.soundindex ("q1blob/death1.wav");
-	sound_hit	= gi.soundindex ("q1blob/hit1.wav");
-	sound_land	= gi.soundindex ("q1blob/land1.wav");
-	sound_sight	= gi.soundindex ("q1blob/sight1.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

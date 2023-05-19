@@ -65,7 +65,6 @@
 // this is the same as function P_ProjectSource in p_weapons.c except it 
 // projects the offset distance in reverse since hook is launched with 
 // player's free hand
-//void P_ProjectSource_Reverse (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 void P_ProjectSource_Reverse (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	gclient_t	*client = NULL;
@@ -134,7 +133,6 @@ void MaintainLinks (edict_t *ent)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet (offset, 8, 8, ent->owner->viewheight-8);
-//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
 	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// get info about chain
@@ -243,7 +241,6 @@ void HookBehavior (edict_t *ent)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->owner->viewheight-8);
-//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
 	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// get info about chain
@@ -353,7 +350,6 @@ void HookTouch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 	// derive start point of chain
 	AngleVectors (ent->owner->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->owner->viewheight-8);
-//	P_ProjectSource_Reverse (ent->owner->client, ent->owner->s.origin, offset, forward, right, start);
 	P_ProjectSource_Reverse (ent->owner, ent->owner->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
   
 	// member angle is used to store the length of the chain
@@ -526,7 +522,6 @@ void FireHook (edict_t *ent)
 	// derive point of hook origin
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource_Reverse (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource_Reverse (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// spawn hook

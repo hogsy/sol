@@ -53,7 +53,6 @@ byte P_DamageModifier(edict_t *ent)
 //ROGUE
 //========
 
-//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
 	gclient_t	*client = NULL;
@@ -89,7 +88,6 @@ void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t
 	}
 }
 
-//static void P_ProjectSource2 (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result)
 static void P_ProjectSource2 (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result)
 {
 	gclient_t	*client = NULL;
@@ -1152,15 +1150,14 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	AngleVectors (ent->client->v_angle, forward, right, up);
 	if (ent->client->pers.weapon->tag == AMMO_TESLA)
 	{
-//		VectorSet(offset, 0, -12, ent->viewheight-26);
-		VectorSet(offset, 0, -4, ent->viewheight-22);
+	//	VectorSet (offset, 0, -12, ent->viewheight-26);
+		VectorSet (offset, 0, -4, ent->viewheight-22);
 	}
 	else
 	{
-//		VectorSet(offset, 8, 8, ent->viewheight-8);
-		VectorSet(offset, 2, 6, ent->viewheight-14);
+	//	VectorSet (offset, 8, 8, ent->viewheight-8);
+		VectorSet (offset, 2, 6, ent->viewheight-14);
 	}
-//	P_ProjectSource2 (ent->client, ent->s.origin, offset, forward, right, up, start);
 	P_ProjectSource2 (ent, ent->s.origin, offset, forward, right, up, start);	// Knightmare- changed parms for aimfix
 
 	timer = ent->client->grenade_time - level.time;
@@ -1531,9 +1528,8 @@ void weapon_grenadelauncher_fire (edict_t *ent, qboolean altfire)
 		multiplier *= 2;
 	}
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1633,8 +1629,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// AJ changed constant 650 for cvar rocket_speed->value
@@ -1688,9 +1683,8 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 		damage *= 2;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorSet (offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1972,8 +1966,7 @@ void Machinegun_Fire (edict_t *ent, qboolean altfire)
 	// get start / end positions
 	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
 	AngleVectors (angles, forward, right, NULL);
-	VectorSet(offset, 0, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 // AJ changed h/vspread constants to cvar's
 	fire_bullet (ent, start, forward, damage, kick, sk_machinegun_hspread->value, sk_machinegun_vspread->value, MOD_MACHINEGUN);
@@ -2096,8 +2089,7 @@ void Chaingun_Fire (edict_t *ent, qboolean altfire)
 		AngleVectors (ent->client->v_angle, forward, right, up);
 		r = 7 + crandom()*4;
 		u = crandom()*4;
-		VectorSet(offset, 0, r, u + ent->viewheight-8);
-	//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		VectorSet (offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 // AJ changed h/vspread constants to cvar's
@@ -2158,8 +2150,7 @@ void weapon_shotgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (is_quad)
@@ -2220,8 +2211,7 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (is_quad)
@@ -2367,8 +2357,7 @@ void weapon_railgun_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -3, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -3;
 
-	VectorSet(offset, 0, 7,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 7,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 	fire_rail (ent, start, forward, damage, kick, useColor, red, green, blue);
 
@@ -2458,8 +2447,7 @@ void weapon_bfg_fire (edict_t *ent, qboolean altfire)
 	ent->client->v_dmg_roll = crandom()*8;
 	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 //	fire_bfg (ent, start, forward, damage, 400, damage_radius);
 	fire_bfg (ent, start, forward, damage, (int)sk_bfg_speed->value, damage_radius);
@@ -2535,7 +2523,6 @@ void weapon_ionripper_fire (edict_t *ent, qboolean altfire)
 	// VectorSet (offset, 0, 7, ent->viewheight - 8);
 	VectorSet (offset, 16, 7, ent->viewheight - 8);
 
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	fire_ionripper (ent, start, forward, damage, sk_ionripper_speed->value, EF_IONRIPPER);
@@ -2604,8 +2591,7 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -2;
 
-	VectorSet(offset, 0, 8,  ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8,  ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (ent->client->ps.gunframe == 8)
@@ -2704,9 +2690,8 @@ void weapon_trap_fire (edict_t *ent, qboolean held)
 	if (is_double)	//ScarFace
 		damage *= 2;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet (offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	timer = ent->client->grenade_time - level.time;
@@ -2869,8 +2854,7 @@ void weapon_chainfist_fire (edict_t *ent, qboolean altfire)
 	ent->client->kick_angles[0] = -1;
 
 	// set start point
-	VectorSet(offset, 0, 8, ent->viewheight-4);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 8, ent->viewheight-4);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	fire_player_melee (ent, start, forward, CHAINFIST_REACH, damage, 100, 1, MOD_CHAINFIST);
@@ -2888,8 +2872,7 @@ void chainfist_smoke (edict_t *ent)
 	vec3_t	offset;
 
 	AngleVectors(ent->client->v_angle, forward, right, up);
-	VectorSet(offset, 8, 8, ent->viewheight -4);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, tempVec);
+	VectorSet (offset, 8, 8, ent->viewheight -4);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, tempVec);	// Knightmare- changed parms for aimfix
 
 	gi.WriteByte (svc_temp_entity);
@@ -3020,11 +3003,10 @@ void weapon_tracker_fire (edict_t *self, qboolean altfire)
 	if (is_double)	//ScarFace
 		damage *= 2;
 
-	VectorSet(mins, -16, -16, -16);
-	VectorSet(maxs, 16, 16, 16);
+	VectorSet (mins, -16, -16, -16);
+	VectorSet (maxs, 16, 16, 16);
 	AngleVectors (self->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, self->viewheight-8);
-//	P_ProjectSource (self->client, self->s.origin, offset, forward, right, start);
+	VectorSet (offset, 24, 8, self->viewheight-8);
 	P_ProjectSource (self, self->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// FIXME - can we shorten this? do we need to?
@@ -3155,17 +3137,16 @@ void weapon_etf_rifle_fire (edict_t *ent, qboolean altfire)
 	if (ent->client->ps.gunframe == 6)					// right barrel
 	{
 //		gi.dprintf("right\n");
-		VectorSet(offset, 15, 8, -8);
+		VectorSet (offset, 15, 8, -8);
 	}
 	else										// left barrel
 	{
 //		gi.dprintf("left\n");
-		VectorSet(offset, 15, 6, -8);
+		VectorSet (offset, 15, 6, -8);
 	}
 	
 	VectorCopy (ent->s.origin, tempPt);
 	tempPt[2] += ent->viewheight;
-//	P_ProjectSource2 (ent->client, tempPt, offset, forward, right, up, start);
 	P_ProjectSource2 (ent, tempPt, offset, forward, right, up, start);	// Knightmare- changed parms for aimfix
 //	gi.dprintf("start: %s\n", vtos(start));
 	fire_flechette (ent, start, forward, damage, sk_etf_rifle_speed->value, damage_radius, radius_damage);
@@ -3281,12 +3262,11 @@ void Heatbeam_Fire (edict_t *ent, qboolean altfire)
 
 // This offset is the "view" offset for the beam start (used by trace)
 	
-	VectorSet(offset, 7, 2, ent->viewheight-3);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 7, 2, ent->viewheight-3);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	// This offset is the entity offset
-	VectorSet(offset, 2, 7, -3);
+	VectorSet (offset, 2, 7, -3);
 
 	fire_heat_rogue (ent, start, forward, offset, damage, kick, false);
 
@@ -3446,8 +3426,7 @@ void Shockwave_Fire (edict_t *ent, qboolean altfire)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
-	VectorSet(offset, 0, 7, ent->viewheight-8);
-//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet (offset, 0, 7, ent->viewheight-8);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 	fire_shock_sphere (ent, start, forward, damage, sk_shockwave_speed->value, damage_radius, radius_damage);
 
@@ -3531,8 +3510,7 @@ void weapon_plasma_rifle_fire (edict_t *ent, qboolean altfire)
 		VectorScale (forward, -2, ent->client->kick_origin);
 		
 		// fire weapon
-		VectorSet(offset, 8, 8, ent->viewheight-8);
-	//	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		VectorSet (offset, 8, 8, ent->viewheight-8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 		// Zaero add

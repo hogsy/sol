@@ -2052,6 +2052,7 @@ void monster_medic_soundcache (edict_t *self)
 {
 	if (strcmp(self->classname, "monster_medic_commander") == 0)
 	{
+		// commander sounds
 		commander_sound_idle1 = gi.soundindex ("medic_commander/medidle.wav");
 		commander_sound_pain1 = gi.soundindex ("medic_commander/medpain1.wav");
 		commander_sound_pain2 = gi.soundindex ("medic_commander/medpain2.wav");
@@ -2126,19 +2127,6 @@ void SP_monster_medic (edict_t *self)
 		else if (skill->value == 3)
 			self->monsterinfo.monster_slots = 8;
 
-		// commander sounds
-	/*	commander_sound_idle1 = gi.soundindex ("medic_commander/medidle.wav");
-		commander_sound_pain1 = gi.soundindex ("medic_commander/medpain1.wav");
-		commander_sound_pain2 = gi.soundindex ("medic_commander/medpain2.wav");
-		commander_sound_die = gi.soundindex ("medic_commander/meddeth.wav");
-		commander_sound_sight = gi.soundindex ("medic_commander/medsght.wav");
-		commander_sound_search = gi.soundindex ("medic_commander/medsrch.wav");
-		commander_sound_hook_launch = gi.soundindex ("medic_commander/medatck2c.wav");
-		commander_sound_hook_hit = gi.soundindex ("medic_commander/medatck3a.wav");
-		commander_sound_hook_heal = gi.soundindex ("medic_commander/medatck4a.wav");
-		commander_sound_hook_retract = gi.soundindex ("medic_commander/medatck5a.wav");
-		commander_sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
-	*/
 		// precache
 		gi.soundindex ("tank/tnkatck3.wav");
 		MedicCommanderCache ();
@@ -2161,17 +2149,6 @@ void SP_monster_medic (edict_t *self)
 	}
 	else
 	{
-	/*	sound_idle1 = gi.soundindex ("medic/idle.wav");
-		sound_pain1 = gi.soundindex ("medic/medpain1.wav");
-		sound_pain2 = gi.soundindex ("medic/medpain2.wav");
-		sound_die = gi.soundindex ("medic/meddeth1.wav");
-		sound_sight = gi.soundindex ("medic/medsght1.wav");
-		sound_search = gi.soundindex ("medic/medsrch1.wav");
-		sound_hook_launch = gi.soundindex ("medic/medatck2.wav");
-		sound_hook_hit = gi.soundindex ("medic/medatck3.wav");
-		sound_hook_heal = gi.soundindex ("medic/medatck4.wav");
-		sound_hook_retract = gi.soundindex ("medic/medatck5.wav");
-	*/
 		// precache
 		gi.soundindex ("medic/medatck1.wav");
 

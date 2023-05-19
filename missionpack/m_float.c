@@ -695,14 +695,6 @@ void SP_monster_floater (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_floater_soundcache (self);
 
-/*	sound_attack2 = gi.soundindex ("floater/fltatck2.wav");
-	sound_attack3 = gi.soundindex ("floater/fltatck3.wav");
-	sound_death1 = gi.soundindex ("floater/fltdeth1.wav");
-	sound_idle = gi.soundindex ("floater/fltidle1.wav");
-	sound_pain1 = gi.soundindex ("floater/fltpain1.wav");
-	sound_pain2 = gi.soundindex ("floater/fltpain2.wav");
-	sound_sight = gi.soundindex ("floater/fltsght1.wav");
-*/
 	gi.soundindex ("floater/fltatck1.wav");
 
 	self->s.sound = gi.soundindex ("floater/fltsrch1.wav");

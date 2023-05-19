@@ -456,24 +456,6 @@ void SP_monster_gladiator (edict_t *self)
 	//
 	if (strcmp(self->classname, "monster_bfgladiator") == 0)
 	{
-	/*	bfglad_sound_pain1 = gi.soundindex("bfgladiator/pain.wav");
-		bfglad_sound_pain2 = gi.soundindex("bfgladiator/pain2.wav");
-		bfglad_sound_die = gi.soundindex("bfgladiator/glddeth2.wav");
-		bfglad_sound_gun = gi.soundindex("bfgladiator/glattack.wav");
-		bfglad_sound_idle = gi.soundindex("bfgladiator/gldidle1.wav");
-		bfglad_sound_sight = gi.soundindex("bfgladiator/sight.wav");
-
-	//	sound_pain1 = gi.soundindex("gladiator/pain.wav");	// Knightmare- not used
-	//	sound_pain2 = gi.soundindex("gladiator/gldpain2.wav");	// Knightmare- not used
-	//	sound_die = gi.soundindex("gladiator/glddeth2.wav");	// Knightmare- not used
-	//	sound_gun = gi.soundindex("gladiator/railgun.wav");	// Knightmare- not used
-		sound_cleaver_swing = gi.soundindex("gladiator/melee1.wav");
-		sound_cleaver_hit = gi.soundindex("gladiator/melee2.wav");
-		sound_cleaver_miss = gi.soundindex("gladiator/melee3.wav");
-	//	sound_idle = gi.soundindex("gladiator/gldidle1.wav");	// Knightmare- not used
-		sound_search = gi.soundindex("gladiator/gldsrch1.wav");
-	//	sound_sight = gi.soundindex("gladiator/sight.wav");	// Knightmare- not used
-	*/
 		// Lazarus: special purpose skins
 		if ( self->style )
 		{
@@ -499,17 +481,6 @@ void SP_monster_gladiator (edict_t *self)
 	}
 	else
 	{
-	/*	sound_pain1 = gi.soundindex ("gladiator/pain.wav");	
-		sound_pain2 = gi.soundindex ("gladiator/gldpain2.wav");	
-		sound_die = gi.soundindex ("gladiator/glddeth2.wav");	
-		sound_gun = gi.soundindex ("gladiator/railgun.wav");
-		sound_cleaver_swing = gi.soundindex ("gladiator/melee1.wav");
-		sound_cleaver_hit = gi.soundindex ("gladiator/melee2.wav");
-		sound_cleaver_miss = gi.soundindex ("gladiator/melee3.wav");
-		sound_idle = gi.soundindex ("gladiator/gldidle1.wav");
-		sound_search = gi.soundindex ("gladiator/gldsrch1.wav");
-		sound_sight = gi.soundindex ("gladiator/sight.wav");
-	*/
 		// Lazarus: special purpose skins
 		if ( self->style )
 		{

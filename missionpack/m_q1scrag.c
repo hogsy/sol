@@ -353,15 +353,6 @@ void SP_monster_q1_scrag (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_scrag_soundcache (self);
 
-/*	sound_sight =	gi.soundindex ("q1scrag/wsight.wav");
-	sound_idle1 =	gi.soundindex ("q1scrag/widle1.wav");
-	sound_idle2 =	gi.soundindex ("q1scrag/widle2.wav");
-	sound_attack =	gi.soundindex ("q1scrag/wattack.wav");
-	sound_die =		gi.soundindex ("q1scrag/wdeath.wav");
-	sound_gib =		gi.soundindex ("q1player/udeath.wav");
-	sound_pain =	gi.soundindex ("q1scrag/wpain.wav");
-	sound_hit =		gi.soundindex ("q1scrag/hit.wav");
-*/
 	// precache gibs
 	gi.modelindex ("models/monsters/q1scrag/head/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib2/tris.md2");

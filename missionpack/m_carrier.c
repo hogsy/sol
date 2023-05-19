@@ -1359,15 +1359,6 @@ void SP_monster_carrier (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_carrier_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("carrier/pain_md.wav");
-	sound_pain2 = gi.soundindex ("carrier/pain_lg.wav");
-	sound_pain3 = gi.soundindex ("carrier/pain_sm.wav");
-	sound_death = gi.soundindex ("carrier/death.wav");
-//	sound_search1 = gi.soundindex ("bosshovr/bhvunqv1.wav");
-	sound_rail = gi.soundindex ("gladiator/railgun.wav");
-	sound_sight = gi.soundindex ("carrier/sight.wav");
-	sound_spawn = gi.soundindex ("medic_commander/monsterspawn1.wav");
-*/
 	self->s.sound = gi.soundindex ("bosshovr/bhvengn1.wav");
 
 	self->movetype = MOVETYPE_STEP;

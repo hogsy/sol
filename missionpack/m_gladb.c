@@ -398,24 +398,6 @@ void SP_monster_gladb (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_gladb_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("gladiator/pain.wav");	
-	sound_pain2 = gi.soundindex ("gladiator/gldpain2.wav");	
-#ifdef CITADELMOD_FEATURES // Knightmare- special death sound for Citadel
-	sound_die = gi.soundindex ("gladiator/glddeth3.wav");	
-#else
-	sound_die = gi.soundindex ("gladiator/glddeth2.wav");	
-#endif
-	// note to self
-	// need to change to PHALANX sound
-	sound_gun = gi.soundindex ("weapons/plasshot.wav");
-
-	sound_cleaver_swing = gi.soundindex ("gladiator/melee1.wav");
-	sound_cleaver_hit = gi.soundindex ("gladiator/melee2.wav");
-	sound_cleaver_miss = gi.soundindex ("gladiator/melee3.wav");
-	sound_idle = gi.soundindex ("gladiator/gldidle1.wav");
-	sound_search = gi.soundindex ("gladiator/gldsrch1.wav");
-	sound_sight = gi.soundindex ("gladiator/sight.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

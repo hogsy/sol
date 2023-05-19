@@ -393,15 +393,6 @@ void SP_monster_flipper (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_flipper_soundcache (self);
 
-/*	sound_pain1		= gi.soundindex ("flipper/flppain1.wav");	
-	sound_pain2		= gi.soundindex ("flipper/flppain2.wav");	
-	sound_death		= gi.soundindex ("flipper/flpdeth1.wav");	
-	sound_chomp		= gi.soundindex ("flipper/flpatck1.wav");
-	sound_attack	= gi.soundindex ("flipper/flpatck2.wav");
-	sound_idle		= gi.soundindex ("flipper/flpidle1.wav");
-	sound_search	= gi.soundindex ("flipper/flpsrch1.wav");
-	sound_sight		= gi.soundindex ("flipper/flpsght1.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 

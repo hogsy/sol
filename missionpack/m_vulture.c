@@ -634,24 +634,7 @@ void SP_monster_vulture (edict_t *self)
 
 	// Knightmare- use soundcache function
 	monster_vulture_soundcache (self);
-/*
-//	sound_sight =		gi.soundindex ("vulture/sight1.wav");
-	sound_perch_idle1 =	gi.soundindex ("vulture/perch_idle1.wav");
-	sound_perch_idle2 =	gi.soundindex ("vulture/perch_idle2.wav");
-	sound_perch_idle3 =	gi.soundindex ("vulture/perch_idle3.wav");
-	sound_soar_idle1 =	gi.soundindex ("vulture/soar_idle1.wav");
-	sound_soar_idle2 =	gi.soundindex ("vulture/soar_idle2.wav");
-	sound_soar_idle3 =	gi.soundindex ("vulture/soar_idle3.wav");
-	sound_flap1 =	gi.soundindex ("vulture/flap1.wav");
-	sound_flap2 =	gi.soundindex ("vulture/flap2.wav");
-	sound_flap3 =	gi.soundindex ("vulture/flap3.wav");
-	sound_peck1 =	gi.soundindex ("vulture/peck1.wav");
-	sound_peck2 =	gi.soundindex ("vulture/peck2.wav");
-	sound_peck3 =	gi.soundindex ("vulture/peck3.wav");
-	sound_pain1 =	gi.soundindex ("vulture/pain1.wav");
-	sound_pain2 =	gi.soundindex ("vulture/pain2.wav");
-	sound_death =	gi.soundindex ("vulture/death1.wav");
-*/
+
 	// precache feather gibs
 	gi.modelindex ("models/monsters/vulture/feather1.md2");
 	gi.modelindex ("models/monsters/vulture/feather2.md2");

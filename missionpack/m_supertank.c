@@ -777,16 +777,6 @@ void SP_monster_supertank (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_supertank_soundcache (self);
 
-/*	sound_pain1 = gi.soundindex ("bosstank/btkpain1.wav");
-	sound_pain2 = gi.soundindex ("bosstank/btkpain2.wav");
-	sound_pain3 = gi.soundindex ("bosstank/btkpain3.wav");
-	sound_death = gi.soundindex ("bosstank/btkdeth1.wav");
-	sound_search1 = gi.soundindex ("bosstank/btkunqv1.wav");
-	sound_search2 = gi.soundindex ("bosstank/btkunqv2.wav");
-
-//	self->s.sound = gi.soundindex ("bosstank/btkengn1.wav");
-	tread_sound = gi.soundindex ("bosstank/btkengn1.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 	self->s.modelindex = gi.modelindex ("models/monsters/boss1/tris.md2");

@@ -300,14 +300,6 @@ void SP_monster_q1_shalrath (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_shalrath_soundcache (self);
 
-/*	sound_sight		= gi.soundindex ("q1shalrath/sight.wav");
-	sound_pain1		= gi.soundindex ("q1shalrath/pain.wav");
-	sound_gib		= gi.soundindex ("q1player/udeath.wav");
-	sound_death		= gi.soundindex ("q1shalrath/death.wav");
-	sound_attack	= gi.soundindex ("q1shalrath/attack.wav");
-	sound_attack2	= gi.soundindex ("q1shalrath/attack2.wav");
-	sound_idle		= gi.soundindex ("q1shalrath/idle.wav");
-*/
 	// precache gibs
 	gi.modelindex ("models/monsters/q1shalrath/head/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib1/tris.md2");

@@ -1218,13 +1218,6 @@ void SP_monster_stalker (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_stalker_soundcache (self);
 
-/*	sound_pain = gi.soundindex ("stalker/pain.wav");	
-	sound_die = gi.soundindex ("stalker/death.wav");	
-	sound_sight = gi.soundindex("stalker/sight.wav");
-	sound_punch_hit1 = gi.soundindex ("stalker/melee1.wav");
-	sound_punch_hit2 = gi.soundindex ("stalker/melee2.wav");
-	sound_idle = gi.soundindex ("stalker/idle.wav");
-*/
 	// PMM - precache bolt2
 	gi.modelindex ("models/proj/laser2/tris.md2");
 

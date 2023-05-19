@@ -10,7 +10,6 @@ void Weapon_Generic (edict_t *ent,
 					 int *pause_frames, 
 					 int *fire_frames, 
 					 void (*fire)(edict_t *ent));
-void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 
 
 static char testItem_className[256];
@@ -52,7 +51,7 @@ void Weapon_LineDraw_Fire (edict_t *ent)
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 	VectorSet(offset, 0, 7,  ent->viewheight - 8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
 	if (!ent->client->lineDraw)
 	{

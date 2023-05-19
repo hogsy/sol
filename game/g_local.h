@@ -1383,7 +1383,6 @@ void ClientEndServerFrame (edict_t *ent);
 // p_weapon.c
 //
 void PlayerNoise(edict_t *who, vec3_t where, int type);
-//void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);	// Knightmare- changed parms for aimfix
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent, qboolean altfire));
 void kick_attack (edict_t *ent);

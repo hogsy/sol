@@ -258,10 +258,6 @@ void SP_monster_q1_rotfish (edict_t *self)
 	// Knightmare- use soundcache function
 	monster_q1_rotfish_soundcache (self);
 
-/*	sound_death		= gi.soundindex ("q1rotfish/death.wav");	
-	sound_chomp		= gi.soundindex ("q1rotfish/bite.wav");
-	sound_idle		= gi.soundindex ("q1rotfish/idle.wav");
-*/
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;
 
