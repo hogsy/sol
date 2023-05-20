@@ -1951,6 +1951,10 @@ void trans_ent_filename (char *filename, size_t filenameSize)
 	SavegameDirRelativePath ("save_ia64/trans.ent", filename, filenameSize);
 #elif defined (_M_ALPHA) || defined (__alpha__)
 	SavegameDirRelativePath ("save_axp/trans.ent", filename, filenameSize);
+#elif defined (_M_ARM) || defined (__arm__)
+	SavegameDirRelativePath ("save_arm32/trans.ent", filename, filenameSize);
+#elif defined (_M_ARM64) || defined (__aarch64__)
+	SavegameDirRelativePath ("save_arm64/trans.ent", filename, filenameSize);
 #elif defined (__ppc__)
 	SavegameDirRelativePath ("save_ppc/trans.ent", filename, filenameSize);
 #elif defined (__sparc__)

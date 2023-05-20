@@ -31,20 +31,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	BASEDIRNAME	"baseq2"
 
+// Savegame subdir varies by CPU architecture
+// This prevents comingling different binary save formats
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
-#define SAVEDIRNAME "save_x64"
+#define ARCH_SAVEDIR "save_x64"
 #elif defined (_M_IX86) || defined (__i386__)
-#define SAVEDIRNAME "save"
+#define ARCH_SAVEDIR "save"
 #elif defined (_M_IA64) || defined (__ia64__)
-#define SAVEDIRNAME "save_ia64"
+#define ARCH_SAVEDIR "save_ia64"
 #elif defined (_M_ALPHA) || defined (__alpha__)
-#define SAVEDIRNAME "save_axp"
+#define ARCH_SAVEDIR "save_axp"
+#elif defined (_M_ARM) || defined (__arm__)
+#define ARCH_SAVEDIR "save_arm32"
+#elif defined (_M_ARM64) || defined (__aarch64__)
+#define ARCH_SAVEDIR "save_arm64"
 #elif defined (__ppc__)
-#define SAVEDIRNAME "save_ppc"
+#define ARCH_SAVEDIR "save_ppc"
 #elif defined (__sparc__)
-#define SAVEDIRNAME "save_sparc"
+#define ARCH_SAVEDIR "save_sparc"
 #else
-#define SAVEDIRNAME "save_unk"
+#define ARCH_SAVEDIR "save_unk"
 #endif
 
 #define DEFAULTPAK			"pak"
@@ -64,12 +70,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define OS_STRING	"Win32"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamex86.dll"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamex86.dll"
-#elif defined (_M_IA64)
+#elif defined (_M_IA64) || defined (__ia64__)
 #define	CPUSTRING	"ia64"
 #define OS_STRING	"Win64"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamex86.dll"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gameia64.dll"
-#elif defined (_M_ALPHA)
+#elif defined (_M_ALPHA) || defined (__alpha__)
 #define	CPUSTRING	"AXP"
 #define OS_STRING	"Win32"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.dll"
@@ -84,18 +90,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	CPUSTRING	"AMD64"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamex64.so"
-#elif defined __i386__
+#elif defined (__i386__)
 #define CPUSTRING "i386"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamei386.so"
-#elif defined __ia64__
+#elif defined (__ia64__)
 #define CPUSTRING "ia64"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gameia64.so"
-#elif defined __alpha__
+#elif defined (__arm__)
+#define CPUSTRING "arm32"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gamearm32.so"
+#elif defined (__aarch64__)
+#define CPUSTRING "arm64"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gamearm64.so"
+#elif defined (__alpha__)
 #define CPUSTRING "axp"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gameaxp.so"
+#elif defined (__powerpc__)
+#define CPUSTRING "ppc"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameppc.so"
+#elif defined (__sparc__)
+#define CPUSTRING "sparc"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gamesparc.so"
 #else
 #define CPUSTRING "Unknown"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
@@ -136,7 +158,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamex64.dylib"
 #endif	// USE_Q2PLUG
 
-#elif defined __i386__
+#elif defined (__i386__)
 
 #define CPUSTRING "i386"
 
@@ -148,9 +170,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamei386.dylib"
 #endif	// USE_Q2PLUG
 
-#elif defined __ppc__
+#elif defined (__aarch64__)
 
-#define CPUSTRING "PPC"
+#define CPUSTRING "arm64"
+
+#ifdef USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "GameMac.q2plug"
+#define KMQ2_GAME_LIBRARY_NAME "GameMac.kmq2plug"
+#else	// USE_Q2PLUG
+#define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.dylib"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gamearm64.dylib"
+#endif	// USE_Q2PLUG
+
+#elif defined (__ppc__)
+
+#define CPUSTRING "ppc"
 
 #ifdef USE_Q2PLUG
 #define STOCK_Q2_GAME_LIBRARY_NAME "GameMac.q2plug"

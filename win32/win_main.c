@@ -1598,7 +1598,7 @@ void *Sys_GetGameAPI (void *parms)
 	const char *debugdir = "debug";
 #endif
 
-#elif defined (_M_IX86)
+#elif defined (_M_IX86) || defined (__i386__)
 	// Knightmare- changed DLL name for better cohabitation
 	const char *gamename = "kmq2gamex86.dll"; 
 
@@ -1608,7 +1608,16 @@ void *Sys_GetGameAPI (void *parms)
 	const char *debugdir = "debug";
 #endif
 
-#elif defined _M_ALPHA
+#elif defined (_M_IA64) || defined (__ia64__)
+	const char *gamename = "kmq2gameia64.dll";
+
+#ifdef NDEBUG
+	const char *debugdir = "releaseia64";
+#else
+	const char *debugdir = "debugia64";
+#endif
+
+#elif defined (_M_ALPHA) || defined (__alpha__)
 	const char *gamename = "kmq2gameaxp.dll";
 
 #ifdef NDEBUG

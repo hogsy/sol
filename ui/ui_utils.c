@@ -1942,7 +1942,7 @@ void UI_Load_Savestrings (qboolean update)
 	for (i=0; i<UI_MAX_SAVEGAMES; i++)
 	{
 	//	Com_sprintf (name, sizeof(name), "%s/save/kmq2save%03i/server.ssv", FS_Savegamedir(), i);
-		Com_sprintf (name, sizeof(name), "%s/"SAVEDIRNAME"/kmq2save%03i/server.ssv", FS_Savegamedir(), i);	// was FS_Gamedir()
+		Com_sprintf (name, sizeof(name), "%s/%s/kmq2save%03i/server.ssv", FS_Savegamedir(), ARCH_SAVEDIR, i);	// was FS_Gamedir()
 
 		old_timestamp = ui_savetimestamps[i];
 		stat(name, &st);
@@ -1965,7 +1965,7 @@ void UI_Load_Savestrings (qboolean update)
 		{
 			fclose (fp);
 		//	Com_sprintf (name, sizeof(name), "save/kmq2save%03i/server.ssv", i);
-			Com_sprintf (name, sizeof(name), SAVEDIRNAME"/kmq2save%03i/server.ssv", i);
+			Com_sprintf (name, sizeof(name), "%s/kmq2save%03i/server.ssv", ARCH_SAVEDIR, i);
 			FS_FOpenFile (name, &f, FS_READ);
 			if (!f) {
 				Q_strncpyz (ui_savestrings[i], sizeof(ui_savestrings[i]), EMPTY_GAME_STRING);
@@ -2053,10 +2053,10 @@ void UI_ValidateSaveshots (void)
 			else
 			{	// free previously loaded shots
 			//	Com_sprintf(shotname, sizeof(shotname), "save/kmq2save%03i/shot.jpg", i);
-				Com_sprintf(shotname, sizeof(shotname), SAVEDIRNAME"/kmq2save%03i/shot.jpg", i);
+				Com_sprintf(shotname, sizeof(shotname), "%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 				R_FreePic (shotname);
 			//	Com_sprintf(shotname, sizeof(shotname), "/save/kmq2save%03i/shot.jpg", i);
-				Com_sprintf(shotname, sizeof(shotname), "/"SAVEDIRNAME"/kmq2save%03i/shot.jpg", i);
+				Com_sprintf(shotname, sizeof(shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 			}
 			if (R_DrawFindPic(shotname))
 				ui_saveshotvalid[i] = true;
@@ -2085,7 +2085,7 @@ char *UI_UpdateSaveshot (int index)
 			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
 		else
 		//	Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
-			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/"SAVEDIRNAME"/kmq2save%03i/shot.jpg", index);
+			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, index);
 	}
 	else if ( ui_saveshotvalid[UI_MAX_SAVEGAMES] )
 		Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
