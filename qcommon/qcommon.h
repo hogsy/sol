@@ -98,6 +98,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CPUSTRING "ia64"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gameia64.so"
+#elif defined (__alpha__)
+#define CPUSTRING "axp"
+#define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.so"
+#define KMQ2_GAME_LIBRARY_NAME "kmq2gameaxp.so"
 #elif defined (__arm__)
 #define CPUSTRING "arm32"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
@@ -106,10 +110,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CPUSTRING "arm64"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"
 #define KMQ2_GAME_LIBRARY_NAME "kmq2gamearm64.so"
-#elif defined (__alpha__)
-#define CPUSTRING "axp"
-#define STOCK_Q2_GAME_LIBRARY_NAME "gameaxp.so"
-#define KMQ2_GAME_LIBRARY_NAME "kmq2gameaxp.so"
 #elif defined (__powerpc__)
 #define CPUSTRING "ppc"
 #define STOCK_Q2_GAME_LIBRARY_NAME "gamei386.so"

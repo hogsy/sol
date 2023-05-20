@@ -335,15 +335,21 @@ void *Sys_GetGameAPI (void *parms)
 	char	*path;
 
 	// Knightmare- changed game library name for better cohabitation
-#ifdef __i386__
-	const char *gamename = "kmq2gamei386.so";
-#elif defined __alpha__
-	const char *gamename = "kmq2gameaxp.so";
-#elif defined __x86_64__
+#if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
 	const char *gamename = "kmq2gamex64.so";
-#elif defined __powerpc__
+#elif defined (__i386__)
+	const char *gamename = "kmq2gamei386.so";
+#elif defined (__ia64__)
+	const char *gamename = "kmq2gameia64.so";
+#elif defined (__alpha__)
+	const char *gamename = "kmq2gameaxp.so";
+#elif defined (__arm__)
+	const char *gamename = "kmq2gamearm32.so";
+#elif defined (__aarch64__)
+	const char *gamename = "kmq2gamearm64.so";
+#elif defined (__powerpc__)
 	const char *gamename = "kmq2gameppc.so";
-#elif defined __sparc__
+#elif defined (__sparc__)
 	const char *gamename = "kmq2gamesparc.so";
 #else
 #error Unknown arch

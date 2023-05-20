@@ -351,12 +351,12 @@ void *Sys_GetGameAPI (void *parms)
 	const char *gamename = "kmq2gamei386." LIB_SUFFIX;
 #elif defined (__ia64__)
 	const char *gamename = "kmq2gameia64." LIB_SUFFIX;
+#elif defined (__alpha__)
+	const char *gamename = "kmq2gameaxp." LIB_SUFFIX;
 #elif defined (__arm__)
 	const char *gamename = "kmq2gamearm32." LIB_SUFFIX;
 #elif defined (__aarch64__)
 	const char *gamename = "kmq2gamearm64." LIB_SUFFIX;
-#elif defined (__alpha__)
-	const char *gamename = "kmq2gameaxp." LIB_SUFFIX;
 #elif defined (__powerpc__)
 	const char *gamename = "kmq2gameppc." LIB_SUFFIX;
 #elif defined (__sparc__)
