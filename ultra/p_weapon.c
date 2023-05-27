@@ -57,7 +57,6 @@ void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t
 {
 	gclient_t	*client = NULL;
 	vec3_t	_distance;
-	trace_t		tr;
 
 	if ( !client_ent || !client_ent->client )
 		return;
@@ -71,19 +70,36 @@ void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t
 		_distance[1] = 0;
 	G_ProjectSource (point, _distance, forward, right, result);
 
-	// Yamagi Q2/Berserker: fix - now the projectile hits exactly where the scope is pointing.
+	// Yamagi Q2/Berserker: fix - now the projectile hits exactly where the crosshair is pointing.
 	if (g_aimfix->value)
 	{
-		vec3_t	start, end;
-	//	VectorSet (start, point[0], point[1], point[2] + client_ent->viewheight);
+		vec3_t		start, end, rangeVec, forward2;
+		vec_t		range, featherFrac;
+		trace_t		tr;
+
 		VectorSet (start, client_ent->s.origin[0], client_ent->s.origin[1], client_ent->s.origin[2] + client_ent->viewheight);
 		VectorMA (start, WORLD_SIZE, forward, end);
 
 		tr = gi.trace(start, NULL, NULL, end, client_ent, MASK_SHOT);
-		if (tr.fraction < 1)
+		// Knightmare- check against minimum range for aimfix so we can still shoot around corners
+		VectorSubtract (start, tr.endpos, rangeVec);
+		range = VectorLength(rangeVec);
+		if ( (tr.fraction < 1) && (range >= g_aimfix_min_dist->value) )
 		{
-			VectorSubtract (tr.endpos, result, forward);
-			VectorNormalize (forward);
+			if (range < (g_aimfix_min_dist->value + g_aimfix_fadein_dist->value) )
+			{	// within feathering range
+				featherFrac = (range - g_aimfix_min_dist->value) / g_aimfix_fadein_dist->value;
+				VectorSubtract (tr.endpos, result, forward2);
+				VectorNormalize (forward2);
+				VectorScale (forward2, featherFrac, forward2);
+				VectorScale (forward, 1.0f - featherFrac, forward);
+				VectorAdd (forward, forward2, forward);
+				VectorNormalize (forward);
+			}
+			else {	// regular aimfix
+				VectorSubtract (tr.endpos, result, forward);
+				VectorNormalize (forward);
+			}
 		}
 	}
 }
@@ -109,15 +125,33 @@ static void P_ProjectSource2 (edict_t *client_ent, vec3_t point, vec3_t distance
 	// Yamagi Q2/Berserker: fix - now the projectile hits exactly where the scope is pointing.
 	if (g_aimfix->value)
 	{
-		vec3_t		start, end;
+		vec3_t		start, end, rangeVec, forward2;
+		vec_t		range, featherFrac;
+		trace_t		tr;
+
 		VectorSet (start, client_ent->s.origin[0], client_ent->s.origin[1], client_ent->s.origin[2] + client_ent->viewheight);
 		VectorMA (start, WORLD_SIZE, forward, end);
 
 		tr = gi.trace(start, NULL, NULL, end, client_ent, MASK_SHOT);
-		if (tr.fraction < 1)
+		// Knightmare- check against minimum range for aimfix so we can still shoot around corners
+		VectorSubtract (start, tr.endpos, rangeVec);
+		range = VectorLength(rangeVec);
+		if ( (tr.fraction < 1) && (range >= g_aimfix_min_dist->value) )
 		{
-			VectorSubtract (tr.endpos, result, forward);
-			VectorNormalize (forward);
+			if (range < (g_aimfix_min_dist->value + g_aimfix_fadein_dist->value) )
+			{	// within feathering range
+				featherFrac = (range - g_aimfix_min_dist->value) / g_aimfix_fadein_dist->value;
+				VectorSubtract (tr.endpos, result, forward2);
+				VectorNormalize (forward2);
+				VectorScale (forward2, featherFrac, forward2);
+				VectorScale (forward, 1.0f - featherFrac, forward);
+				VectorAdd (forward, forward2, forward);
+				VectorNormalize (forward);
+			}
+			else {	// regular aimfix
+				VectorSubtract (tr.endpos, result, forward);
+				VectorNormalize (forward);
+			}
 		}
 	}
 }

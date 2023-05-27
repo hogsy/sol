@@ -112,7 +112,9 @@ cvar_t	*view_weapons;
 
 cvar_t	*turn_rider;	// Knightmare added
 
-cvar_t	*g_aimfix;		// Knightmare- from Yamagi Q2
+cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
+cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
+cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);

@@ -748,7 +748,9 @@ extern	cvar_t	*randomrespawn;
 
 extern	cvar_t	*turn_rider;	// Knightmare added
 
-extern	cvar_t	*g_aimfix;		// Knightmare- from Yamagi Q2
+extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
+extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
+extern	cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
 
 #define world	(&g_edicts[0])
 

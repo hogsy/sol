@@ -290,7 +290,9 @@ void InitGame (void)
 
 	turn_rider = gi.cvar("turn_rider", "1", CVAR_SERVERINFO);	// Knightmare added
 
-	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);								// Knightmare- from Yamagi Q2
+	g_aimfix_min_dist = gi.cvar ("g_aimfix_min_dist", "128", CVAR_ARCHIVE);			// Knightmare- minimum range for aimfix
+	g_aimfix_fadein_dist = gi.cvar ("g_aimfix_fadein_dist", "128", CVAR_ARCHIVE);	// Knightmare- transition range for aimfix
 
 	// items
 	InitItems ();
