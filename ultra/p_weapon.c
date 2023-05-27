@@ -108,7 +108,6 @@ static void P_ProjectSource2 (edict_t *client_ent, vec3_t point, vec3_t distance
 {
 	gclient_t	*client = NULL;
 	vec3_t	_distance;
-	trace_t		tr;
 
 	if ( !client_ent || !client_ent->client )
 		return;
