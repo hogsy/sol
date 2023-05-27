@@ -827,10 +827,12 @@ extern	cvar_t	*vid_ref;
 extern	cvar_t	*zoomrate;
 extern	cvar_t	*zoomsnap;
 
-extern	cvar_t	*g_aimfix;			// Knightmare- from Yamagi Q2
-extern	cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
+extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
+extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
+extern	cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+extern	cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
-extern	cvar_t	*g_showlogic;		// Knightmare added
+extern	cvar_t	*g_showlogic;			// Knightmare added
 
 extern	int		max_modelindex;
 extern	int		max_soundindex;

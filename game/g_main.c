@@ -136,10 +136,12 @@ cvar_t	*zoomsnap;
 cvar_t	*sv_stopspeed;	//PGM	 (this was a define in g_phys.c)
 cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
 
-cvar_t	*g_aimfix;			// Knightmare- from Yamagi Q2
-cvar_t	*g_nm_maphacks;		// Knightmare- enables hacks for Neil Manke's Q2 maps
+cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
+cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
+cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
-cvar_t	*g_showlogic; // Knightmare added
+cvar_t	*g_showlogic;			// Knightmare added
 
 // Knightmare- simulated pause for deathmatch
 qboolean	paused;	

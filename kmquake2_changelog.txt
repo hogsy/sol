@@ -141,7 +141,9 @@ Changes as of v0.20 update 8:
 
 - Added cycleweap and prefweap commands from Yamagi Q2.
 
-- Added g_aimfix cvar to fix weapon/crosshair alignment from Yamagi Q2.
+- Added g_aimfix cvar to enable precise weapon/crosshair alignment similar to Yamagi Q2.  However, this version keeps the default
+	aiming at close range, still allowing the player to shoot around corners.  Cvars g_aimfix_min_dist and g_aimfix_fadein_dist
+	control the transition from default aiming to crosshair-correct aiming.
 
 - Added ifeq, ifneq, ifgt, ifge, iflt, ifle, ifbit, and ifnbit layout script commands.
 	

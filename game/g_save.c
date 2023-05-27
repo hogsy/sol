@@ -481,10 +481,13 @@ void InitGame (void)
 //	crossh = gi.cvar ("crossh", "1", 0);
 	allow_download = gi.cvar("allow_download", "0", 0);
 
-	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
-	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);			// Knightmare- enables hacks for Neil Manke's Q2 maps
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);								// Knightmare- from Yamagi Q2
+	g_aimfix_min_dist = gi.cvar ("g_aimfix_min_dist", "128", CVAR_ARCHIVE);			// Knightmare- minimum range for aimfix
+	g_aimfix_fadein_dist = gi.cvar ("g_aimfix_fadein_dist", "128", CVAR_ARCHIVE);	// Knightmare- transition range for aimfix
 
-	g_showlogic = gi.cvar ("g_showlogic", "0", 0); // Knightmare added
+	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);								// Knightmare- enables hacks for Neil Manke's Q2 maps
+
+	g_showlogic = gi.cvar ("g_showlogic", "0", 0);									// Knightmare added
 
 	// If this is an SP game and "readout" is not set, force allow_download off
 	// so we don't get the annoying "Refusing to download path with .." messages

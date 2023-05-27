@@ -334,7 +334,9 @@ void InitGame (void)
 	sv_stopspeed = gi.cvar ("sv_stopspeed", "100", 0);		// PGM - was #define in g_phys.c
 	sv_step_fraction = gi.cvar ("sv_step_fraction", "0.90", 0);	// Knightmare- this was a define in p_view.c
 
-	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);			// Knightmare- from Yamagi Q2
+	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);								// Knightmare- from Yamagi Q2
+	g_aimfix_min_dist = gi.cvar ("g_aimfix_min_dist", "128", CVAR_ARCHIVE);			// Knightmare- minimum range for aimfix
+	g_aimfix_fadein_dist = gi.cvar ("g_aimfix_fadein_dist", "128", CVAR_ARCHIVE);	// Knightmare- transition range for aimfix
 
 	// noset vars
 	dedicated = gi.cvar ("dedicated", "0", CVAR_NOSET);
