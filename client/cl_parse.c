@@ -395,8 +395,8 @@ void CL_PlayBackgroundTrack (void)
 		Com_sprintf (name, sizeof(name), "music/%s.ogg", cl.configstrings[CS_CDTRACK]);
 		if (FS_LoadFile(name, NULL) != -1)
 		{
-			CDAudio_Stop();
-			S_StartBackgroundTrack(name, name);
+			CDAudio_Stop ();
+			S_StartBackgroundTrack (name, name);
 			return;
 		}
 	}
@@ -405,17 +405,17 @@ void CL_PlayBackgroundTrack (void)
 
 	if (track == 0)
 	{	// Stop any playing track
-		CDAudio_Stop();
-		S_StopBackgroundTrack();
+		CDAudio_Stop ();
+		S_StopBackgroundTrack ();
 		return;
 	}
 
 	// If an OGG file exists play it, otherwise fall back to CD audio
 	Com_sprintf (name, sizeof(name), "music/track%02i.ogg", CL_MissionPackCDTrack(track));
 	if ( (FS_LoadFile(name, NULL) != -1) && cl_ogg_music->integer )
-		S_StartBackgroundTrack(name, name);
+		S_StartBackgroundTrack (name, name);
 	else
-		CDAudio_Play(track, true);
+		CDAudio_Play (track, true);
 }
 
 #else

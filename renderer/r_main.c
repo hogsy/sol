@@ -1899,6 +1899,10 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 		r_turbsin[j] *= 0.5;
 	}
 
+	// clear saveshot buffer
+	r_saveShot.buffer = NULL;
+	r_saveShot.width = r_saveShot.height = 0;
+
 	Draw_GetPalette ();
 	R_Register();
 
@@ -2180,10 +2184,11 @@ void R_Shutdown (void)
 	Cmd_RemoveCommand ("gl_strings");
 //	Cmd_RemoveCommand ("resetvertexlights");
 
-	// Knightmare- Free saveshot buffer
-	if (saveshotdata)
-		Z_Free (saveshotdata);
-	saveshotdata = NULL;	// make sure this is null after a vid restart!
+	// free saveshot buffer
+	if (r_saveShot.buffer)
+		Z_Free (r_saveShot.buffer);
+	r_saveShot.buffer = NULL;		// make sure this is null after a vid restart!
+	r_saveShot.width = r_saveShot.height = 0;
 
 	Mod_FreeAll ();
 

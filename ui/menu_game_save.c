@@ -67,8 +67,8 @@ void Menu_SaveGame_Init (void)
 	UI_UpdateSavegameData ();	// update savestrings and levelshots
 
 	// menu.x = 80, menu.y = 162
-	x = SCREEN_WIDTH*0.5 - 240;
-	y = SCREEN_HEIGHT*0.5 - 78;	// was - 68
+	x = SCREEN_WIDTH*0.5 - 270;		// was - 240
+	y = SCREEN_HEIGHT*0.5 - 78;		// was - 68
 
 	s_savegame_menu.x				= 0;
 	s_savegame_menu.y				= 0;
@@ -99,7 +99,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_gamelist.generic.x			= x - 4*MENU_FONT_SIZE;
 	s_savegame_gamelist.generic.y			= y;
 	s_savegame_gamelist.itemNames			= ui_savegame_names;
-	s_savegame_gamelist.itemWidth			= 34;
+	s_savegame_gamelist.itemWidth			= 33;	// was 34
 	s_savegame_gamelist.itemHeight			= 2;	// was 1
 	s_savegame_gamelist.items_y				= 11;	// was 20
 	s_savegame_gamelist.itemSpacing			= 0;
@@ -124,7 +124,7 @@ void Menu_SaveGame_Init (void)
 
 //	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
 	s_savegame_saveshot.generic.type		= MTYPE_IMAGE;
-	s_savegame_saveshot.generic.x			= x + 286;
+	s_savegame_saveshot.generic.x			= x + 278; // was x + 286
 	s_savegame_saveshot.generic.y			= y;
 //	s_savegame_saveshot.generic.scrAlign	= ALIGN_STRETCH;
 	s_savegame_saveshot.width				= 240;
@@ -138,6 +138,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_saveshot.borderColor[3]		= 255;
 	s_savegame_saveshot.hCentered			= false;
 	s_savegame_saveshot.vCentered			= false;
+	s_savegame_saveshot.useScreenAspect		= true;
 	s_savegame_saveshot.generic.isHidden	= false;
 
 	s_savegame_save_action.generic.type				= MTYPE_ACTION;

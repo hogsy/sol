@@ -217,7 +217,12 @@ extern	cplane_t	frustum[4];
 extern	int			c_brush_calls, c_brush_surfs, c_brush_polys, c_alias_polys, c_part_polys;
 
 // Knightmare- saveshot buffer
-extern	byte	*saveshotdata;
+typedef struct {
+	int		width;
+	int		height;
+	byte	*buffer;
+} saveShot_t;
+extern	saveShot_t	r_saveShot;
 
 
 extern	int			gl_filter_min, gl_filter_max;

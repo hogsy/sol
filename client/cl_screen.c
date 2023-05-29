@@ -1867,8 +1867,15 @@ void SCR_DrawLoading (void)
 		mapfile[strlen(mapfile)-4] = 0;		// cut off ".bsp"
 
 		// show saveshot here
-		if (scr_load_saveshot && (strlen(scr_load_saveshot) > 8) && R_DrawFindPic(scr_load_saveshot)) {
-			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, scr_load_saveshot, 1.0);
+		if (scr_load_saveshot && (strlen(scr_load_saveshot) > 8) && R_DrawFindPic(scr_load_saveshot))
+		{
+			float	screenAspect = (float)viddef.width / (float)viddef.height;
+
+			// saveshot only grabs center screen in surround modes, so draw saveshot on center screen
+			if ( scr_surroundlayout->integer && (screenAspect >= scr_surroundthreshold->value) )
+				SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, false, scr_load_saveshot, 1.0);
+			else
+				SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, scr_load_saveshot, 1.0);
 			haveMapPic = true;
 		}
 		// else try levelshot

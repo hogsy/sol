@@ -241,6 +241,7 @@ typedef struct
 	menuCommon_s	generic;
 
 	int				width;
+	int				drawWidth;
 	int				height;
 	char			*imageName;
 //	qboolean		imageValid;
@@ -261,6 +262,7 @@ typedef struct
 	qboolean		overrideColor;
 	qboolean		hCentered;
 	qboolean		vCentered;
+	qboolean		useScreenAspect;
 } menuImage_s;
 
 typedef struct
@@ -268,6 +270,7 @@ typedef struct
 	menuCommon_s	generic;
 
 	int				width;
+	int				drawWidth;
 	int				height;
 	char			*imageName;
 	char			*hoverImageName;
@@ -284,6 +287,7 @@ typedef struct
 	qboolean		overrideColor;
 	qboolean		hCentered;
 	qboolean		vCentered;
+	qboolean		useScreenAspect;
 	qboolean		usesMouse2;
 } menuButton_s;
 

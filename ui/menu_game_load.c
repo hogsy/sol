@@ -82,8 +82,8 @@ void Menu_LoadGame_Init (void)
 	UI_UpdateSavegameData ();	// update savestrings and levelshots
 
 	// menu.x = 80, menu.y = 162
-	x = SCREEN_WIDTH*0.5 - 240;
-	y = SCREEN_HEIGHT*0.5 - 78;	// was - 68
+	x = SCREEN_WIDTH*0.5 - 270;		// was - 240
+	y = SCREEN_HEIGHT*0.5 - 78;		// was - 68
 
 	s_loadgame_menu.x			= 0;
 	s_loadgame_menu.y			= 0;
@@ -113,7 +113,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_gamelist.generic.x			= x - 4*MENU_FONT_SIZE;
 	s_loadgame_gamelist.generic.y			= y;
 	s_loadgame_gamelist.itemNames			= ui_loadgame_names;
-	s_loadgame_gamelist.itemWidth			= 34;
+	s_loadgame_gamelist.itemWidth			= 33;	// was 34
 	s_loadgame_gamelist.itemHeight			= 2;	// was 1
 	s_loadgame_gamelist.items_y				= 11;	// was 21
 	s_loadgame_gamelist.itemSpacing			= 0;
@@ -138,7 +138,7 @@ void Menu_LoadGame_Init (void)
 
 //	x = SCREEN_WIDTH/2+46, y = SCREEN_HEIGHT/2-68, w = 240, h = 180
 	s_loadgame_saveshot.generic.type		= MTYPE_IMAGE;
-	s_loadgame_saveshot.generic.x			= x + 286;
+	s_loadgame_saveshot.generic.x			= x + 278; // was x + 286
 	s_loadgame_saveshot.generic.y			= y;
 //	s_loadgame_saveshot.generic.scrAlign	= ALIGN_STRETCH;
 	s_loadgame_saveshot.width				= 240;
@@ -152,6 +152,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_saveshot.borderColor[3]		= 255;
 	s_loadgame_saveshot.hCentered			= false;
 	s_loadgame_saveshot.vCentered			= false;
+	s_loadgame_saveshot.useScreenAspect		= true;
 	s_loadgame_saveshot.generic.isHidden	= false;
 
 	s_loadgame_load_action.generic.type				= MTYPE_ACTION;

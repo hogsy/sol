@@ -1864,24 +1864,24 @@ void UI_MenuImage_Draw (menuImage_s *i)
 	{
 		if (i->alpha == 255) // just fill whole area for border if not trans
 			UI_DrawFill (i->generic.topLeft[0] - i->border + oscillate[0], i->generic.topLeft[1] - i->border + oscillate[1],
-							i->width+(i->border*2), i->height+(i->border*2), i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+							i->drawWidth+(i->border*2), i->height+(i->border*2), i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 		else // have to do each side
-			UI_DrawBorder ((float)(i->generic.topLeft[0] + oscillate[0]), (float)(i->generic.topLeft[1] + oscillate[1]), (float)i->width, (float)i->height,
+			UI_DrawBorder ((float)(i->generic.topLeft[0] + oscillate[0]), (float)(i->generic.topLeft[1] + oscillate[1]), (float)i->drawWidth, (float)i->height,
 							(float)i->border, i->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
 	if (i->isAnimated) {
 		curAnimFrame = (int)((cls.realtime - i->start_time) * i->animTimeScale) % i->numAnimFrames;
 		animPicName = va(i->animTemplate, curAnimFrame);
-		UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
+		UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->drawWidth, i->height, i->generic.scrAlign, false, animPicName, i->alpha);
 	}
 	else if ( i->imageName && (strlen(i->imageName) > 0) ) {
 		if (i->overrideColor)
-			UI_DrawColoredPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
+			UI_DrawColoredPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->drawWidth, i->height, i->generic.scrAlign, false, i->imageColor, i->imageName);
 		else
-			UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
+			UI_DrawPic (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->drawWidth, i->height, i->generic.scrAlign, false, i->imageName, i->alpha);
 	}
 	else
-		UI_DrawFill (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->width, i->height, i->generic.scrAlign, false, 0,0,0,255);
+		UI_DrawFill (i->generic.topLeft[0] + oscillate[0], i->generic.topLeft[1] + oscillate[1], i->drawWidth, i->height, i->generic.scrAlign, false, 0,0,0,255);
 }
 
 void UI_MenuImage_UpdateCoords (menuImage_s *i)
@@ -1890,13 +1890,14 @@ void UI_MenuImage_UpdateCoords (menuImage_s *i)
 
 	i->generic.topLeft[0] = menu->x + i->generic.x;
 	i->generic.topLeft[1] = menu->y + i->generic.y;
-	i->generic.botRight[0] = i->generic.topLeft[0] + i->width;
+	i->generic.botRight[0] = i->generic.topLeft[0] + i->drawWidth;
 	i->generic.botRight[1] = i->generic.topLeft[1] + i->height;
 }
 
 void UI_MenuImage_Setup (menuImage_s *i)
 {
 	int				idx;
+	float			screenAspect;
 	menuFramework_s	*menu = i->generic.parent;
 
 	// automatic sizing
@@ -1917,9 +1918,23 @@ void UI_MenuImage_Setup (menuImage_s *i)
 	i->height = max(i->height, 1);
 	i->border = max(i->border, 0);
 
+	// screen aspect ratio-based sizing
+	if ( i->useScreenAspect && (viddef.width > 0) && (viddef.height > 0) )
+	{
+		screenAspect = (float)viddef.width / (float)viddef.height;
+		// properly handle surround modes
+		if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
+			screenAspect *= (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
+		}
+		screenAspect = min(max(screenAspect, 1.2f), (32.0f/9.0f));	// clamp between 5:4 and 32:9
+		i->drawWidth = i->height * screenAspect;
+	}
+	else
+		i->drawWidth = i->width;
+
 	// automatic centering
 	if (i->hCentered)
-		i->generic.x = (SCREEN_WIDTH/2 - i->width/2) - menu->x;
+		i->generic.x = (SCREEN_WIDTH/2 - i->drawWidth/2) - menu->x;
 	if (i->vCentered)
 		i->generic.y = (SCREEN_HEIGHT/2 - i->height/2) - menu->y;
 
@@ -2000,26 +2015,26 @@ void UI_MenuButton_Draw (menuButton_s *b)
 	{
 		if (b->alpha == 255) // just fill whole area for border if not trans
 			UI_DrawFill (b->generic.topLeft[0] - b->border + oscillate[0], b->generic.topLeft[1] - b->border + oscillate[1],
-							b->width+(b->border*2), b->height+(b->border*2), b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
+							b->drawWidth+(b->border*2), b->height+(b->border*2), b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 		else // have to do each side
-			UI_DrawBorder ((float)(b->generic.topLeft[0] + oscillate[0]), (float)(b->generic.topLeft[1] + oscillate[1]), (float)b->width, (float)b->height,
+			UI_DrawBorder ((float)(b->generic.topLeft[0] + oscillate[0]), (float)(b->generic.topLeft[1] + oscillate[1]), (float)b->drawWidth, (float)b->height,
 							(float)b->border, b->generic.scrAlign, false, bc[0],bc[1],bc[2],bc[3]);
 	}
 	if ( ((b == ui_mousecursor.menuitem) || (b == UI_ItemAtMenuCursor(menu)) )
 		&& (b->hoverImageName && strlen(b->hoverImageName) > 0) ) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
+			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->drawWidth, b->height, b->generic.scrAlign, false, b->imageColor, b->hoverImageName);
 		else
-			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
+			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->drawWidth, b->height, b->generic.scrAlign, false, b->hoverImageName, b->alpha);
 	}
 	else if ( b->imageName && (strlen(b->imageName) > 0) ) {
 		if (b->overrideColor)
-			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
+			UI_DrawColoredPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->drawWidth, b->height, b->generic.scrAlign, false, b->imageColor, b->imageName);
 		else
-			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
+			UI_DrawPic (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->drawWidth, b->height, b->generic.scrAlign, false, b->imageName, b->alpha);
 	}
 	else
-		UI_DrawFill (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->width, b->height, b->generic.scrAlign, false, 0,0,0,255);
+		UI_DrawFill (b->generic.topLeft[0] + oscillate[0], b->generic.topLeft[1] + oscillate[1], b->drawWidth, b->height, b->generic.scrAlign, false, 0,0,0,255);
 }
 
 void UI_MenuButton_UpdateCoords (menuButton_s *b)
@@ -2028,13 +2043,14 @@ void UI_MenuButton_UpdateCoords (menuButton_s *b)
 
 	b->generic.topLeft[0] = menu->x + b->generic.x;
 	b->generic.topLeft[1] = menu->y + b->generic.y;
-	b->generic.botRight[0] = b->generic.topLeft[0] + b->width;
+	b->generic.botRight[0] = b->generic.topLeft[0] + b->drawWidth;
 	b->generic.botRight[1] = b->generic.topLeft[1] + b->height;
 }
 
 void UI_MenuButton_Setup (menuButton_s *b)
 {
 	menuFramework_s	*menu = b->generic.parent;
+	float			screenAspect;
 
 	// automatic sizing
 	if (b->width == -1 || b->height == -1)
@@ -2051,9 +2067,23 @@ void UI_MenuButton_Setup (menuButton_s *b)
 	b->height = max(b->height, 1);
 	b->border = max(b->border, 0);
 
+	// screen aspect ratio-based sizing
+	if ( b->useScreenAspect && (viddef.width > 0) && (viddef.height > 0) )
+	{
+		screenAspect = (float)viddef.width / (float)viddef.height;
+		// properly handle surround modes
+		if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
+			screenAspect *= (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
+		}
+		screenAspect = min(max(screenAspect, 1.2f), (32.0f/9.0f));	// clamp between 5:4 and 32:9
+		b->drawWidth = b->height * screenAspect;
+	}
+	else
+		b->drawWidth = b->width;
+
 	// automatic centering
 	if (b->hCentered)
-		b->generic.x = (SCREEN_WIDTH/2 - b->width/2) - menu->x;
+		b->generic.x = (SCREEN_WIDTH/2 - b->drawWidth/2) - menu->x;
 	if (b->vCentered)
 		b->generic.y = (SCREEN_HEIGHT/2 - b->height/2) - menu->y;
 

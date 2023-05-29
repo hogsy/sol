@@ -531,8 +531,7 @@ R_ScaledScreenshot
 by Knightmare
 ================== 
 */
-
-byte	*saveshotdata;
+saveShot_t	r_saveShot;
 
 void R_ScaledScreenshot (char *name)
 {
@@ -541,41 +540,36 @@ void R_ScaledScreenshot (char *name)
 	JSAMPROW						s[1];
 	FILE							*file;
 	char							shotname[MAX_OSPATH];
-	int								saveshotWidth, saveshotHeight, offset, grab_width;
+	int								saveshotWidth, saveshotHeight, offset;
 	byte							*jpgdata;
 
-	if (!saveshotdata)	return;
-
-	// Round down width to nearest multiple of 4
-	grab_width = vid.width & ~3;
+	if (!r_saveShot.buffer)	return;
 
 	// Optional hi-res saveshots
 	saveshotWidth = saveshotHeight = 256;
 	if (r_saveshotsize->integer)
 	{
-		if (grab_width >= 1024)
+		if (r_saveShot.width >= 2048)
+			saveshotWidth = 2048;
+		else if (r_saveShot.width >= 1024)
 			saveshotWidth = 1024;
-		else if (grab_width >= 512)
+		else if (r_saveShot.width >= 512)
 			saveshotWidth = 512;
 
-		if (vid.height >= 1024)
+		if (r_saveShot.height >= 2048)
+			saveshotHeight = 2048;
+		else if (r_saveShot.height >= 1024)
 			saveshotHeight = 1024;
-		else if (vid.height >= 512)
+		else if (r_saveShot.height >= 512)
 			saveshotHeight = 512;
 	}
-/*	if (r_saveshotsize->integer && (grab_width >= 1024) && (vid.height >= 1024))
-		saveshotsize = 1024;
-	else if (r_saveshotsize->integer && (grab_width >= 512) && (vid.height >= 512))
-		saveshotsize = 512;
-	else
-		saveshotsize = 256;*/
 
 	// Allocate room for reduced screenshot
 	jpgdata = malloc(saveshotWidth * saveshotHeight * 3);
 	if (!jpgdata)	return;
 
 	// Resize grabbed screen
-	R_ResampleShot (saveshotdata, grab_width, vid.height, jpgdata, saveshotWidth, saveshotHeight);
+	R_ResampleShot (r_saveShot.buffer, r_saveShot.width, r_saveShot.height, jpgdata, saveshotWidth, saveshotHeight);
 
 	// Open the file for Binary Output
 	Com_sprintf (shotname, sizeof(shotname), "%s", name);
@@ -633,21 +627,34 @@ by Knightmare
 void R_GrabScreen (void)
 {	
 	int		grab_width, grab_x;
+	float	screenAspect;
 
 	// Free saveshot buffer first
-	if (saveshotdata)
-		Z_Free (saveshotdata);
+	if (r_saveShot.buffer) {
+		Z_Free (r_saveShot.buffer);
+		r_saveShot.buffer = NULL;
+	}
 
 	// Round down width to nearest multiple of 4
-	grab_width = vid.width & ~3;
+	// Properly handle surround modes
+	screenAspect = (float)vid.width / (float)vid.height;
+	if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
+		grab_width = (float)vid.width * (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
+		grab_width &= ~3;
+	}
+	else {
+		grab_width = vid.width & ~3;
+	}
 	grab_x = (vid.width - grab_width) / 2;
 
 	// Allocate room for a copy of the framebuffer
-	saveshotdata = Z_Malloc(grab_width * vid.height * 3);
-	if (!saveshotdata)	return;
+	r_saveShot.buffer = Z_Malloc(grab_width * vid.height * 3);
+	if (!r_saveShot.buffer)	return;
 
-	// Read the framebuffer into our storage
-	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, saveshotdata);
+	// Read the framebuffer into our storage and store dimensions
+	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, r_saveShot.buffer);
+	r_saveShot.width = grab_width;
+	r_saveShot.height = vid.height;
 }
 
 
