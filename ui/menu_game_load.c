@@ -45,20 +45,12 @@ char ui_loadshotname[MAX_QPATH];
 
 //=========================================================
 
-float M_LoadGameSaveshotAspect (void)
-{
-	if ( (s_loadgame_gamelist.curValue > 0) && UI_SaveshotIsValid(s_loadgame_gamelist.curValue) )
-		return UI_GetScreenAspect();
-	else
-		return (4.0f/3.0f);	// levelshots and null saveshot are 4:3
-}
-
 void M_LoadGameListCallback (void *self)
 {
 	s_loadgame_saveshot.imageName = UI_UpdateSaveshot (s_loadgame_gamelist.curValue);
 
 	// upadate saveshot aspect in case video mode was changed while menu is open
-	s_loadgame_saveshot.aspectRatio = M_LoadGameSaveshotAspect();
+	s_loadgame_saveshot.aspectRatio = UI_UpdateSaveshotAspect (s_loadgame_gamelist.curValue);
 	UI_UpdateMenuItemCoords (&s_loadgame_saveshot);
 }
 
@@ -156,7 +148,7 @@ void Menu_LoadGame_Init (void)
 //	s_loadgame_saveshot.generic.scrAlign	= ALIGN_STRETCH;
 	s_loadgame_saveshot.width				= 240;
 	s_loadgame_saveshot.height				= 180;
-	s_loadgame_saveshot.aspectRatio			= M_LoadGameSaveshotAspect();
+	s_loadgame_saveshot.aspectRatio			= UI_UpdateSaveshotAspect (s_loadgame_gamelist.curValue);
 	s_loadgame_saveshot.imageName			= UI_UpdateSaveshot (s_loadgame_gamelist.curValue);
 	s_loadgame_saveshot.alpha				= 255;
 	s_loadgame_saveshot.border				= 2;

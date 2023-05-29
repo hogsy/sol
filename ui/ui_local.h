@@ -622,6 +622,7 @@ extern int ui_num_mods;
 
 #define	UI_MAX_SAVEGAMES	257 // increased from 15, 21, 129
 #define	EMPTY_GAME_STRING	"<EMPTY>"
+#define DEFAULT_SAVESHOT_ASPECT	(4.0f/3.0f)
 
 extern char *ui_savegame_names[UI_MAX_SAVEGAMES];
 extern char	*ui_loadgame_names[UI_MAX_SAVEGAMES+1];
@@ -738,6 +739,7 @@ void UI_FreeKeyBindList (void);
 void UI_GetModList (void);
 void UI_FreeModList (void);
 
+float UI_UpdateSaveshotAspect (int index);
 char *UI_UpdateSaveshot (int index);
 void UI_UpdateSavegameData (void);
 void UI_InitSavegameData (void);

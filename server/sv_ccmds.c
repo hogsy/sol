@@ -152,9 +152,10 @@ SAVEGAME FILES
 
 ===============================================================================
 */
-void	R_GrabScreen (void); // Knightmare- screenshots for savegames
-void	R_ScaledScreenshot (char *name); // Knightmare- screenshots for savegames
-void	R_FreePic (char *name); // Knightmare- unregisters an image
+void	R_GrabScreen (void);				// Knightmare- screenshots for savegames
+void	R_ScaledScreenshot (char *name);	// Knightmare- screenshots for savegames
+void	R_FreePic (char *name);				// Knightmare- unregisters an image
+float	UI_GetScreenAspect (void);			// Knightmare- saveshot aspect ratio for savegames
 
 /*
 =====================
@@ -454,7 +455,7 @@ void SV_WriteServerFile (qboolean autosave, qboolean quicksave)
 	FILE	*f;
 	cvar_t	*var;
 	char	fileName[MAX_OSPATH], varName[128], string[128];
-	char	comment[32], infoHeader[10], mapname[32], dummy[18];
+	char	comment[32], infoHeader[10], mapname[32], aspect[18];
 	time_t	aclock;
 	struct tm	*newtime;
 	int		i;
@@ -496,7 +497,7 @@ void SV_WriteServerFile (qboolean autosave, qboolean quicksave)
 	memset (infoHeader, 0, sizeof(infoHeader));
 	memset (mapname, 0, sizeof(mapname));
 	memset (comment, 0, sizeof(comment));
-	memset (dummy, 0, sizeof(dummy));
+	memset (aspect, 0, sizeof(aspect));
 	memset (string, 0, sizeof(string));
 
 	Com_sprintf (infoHeader, sizeof(infoHeader), "KMQ2SSV01");
@@ -513,11 +514,16 @@ void SV_WriteServerFile (qboolean autosave, qboolean quicksave)
 	else if (quicksave)
 		Com_sprintf (comment, sizeof(comment), "QUICK SAVE");
 
+	// store screen aspect ratio if not in dedicated mode
+	if ( !dedicated->integer ) {
+		Com_sprintf (aspect, sizeof(aspect), "%10.7f", UI_GetScreenAspect());
+	}
+
 	fwrite (infoHeader, 1, sizeof(infoHeader), f);
 	fwrite (newtime, 1, sizeof(struct tm), f);
 	fwrite (mapname, 1, sizeof(mapname), f);
 	fwrite (comment, 1, sizeof(comment), f);
-	fwrite (dummy, 1, sizeof(dummy), f);
+	fwrite (aspect, 1, sizeof(aspect), f);
 	fwrite (string, 1, sizeof(string), f);
 
 	// write all CVAR_LATCH cvars

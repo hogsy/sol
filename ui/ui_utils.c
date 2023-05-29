@@ -1938,7 +1938,8 @@ char		ui_savestrings[UI_MAX_SAVEGAMES][64];
 qboolean	ui_savevalid[UI_MAX_SAVEGAMES];
 time_t		ui_savetimestamps[UI_MAX_SAVEGAMES];
 qboolean	ui_savechanged[UI_MAX_SAVEGAMES];
-qboolean	ui_saveshotvalid[UI_MAX_SAVEGAMES+1];
+qboolean	ui_saveshot_valid[UI_MAX_SAVEGAMES+1];
+float		ui_saveshot_aspect[UI_MAX_SAVEGAMES+1];
 
 char		ui_mapname[MAX_QPATH];
 char		ui_saveload_shotname[MAX_QPATH];
@@ -2017,13 +2018,15 @@ void UI_Load_Savestrings (qboolean update)
 				FS_Read (infoHeader, sizeof(infoHeader), f);
 				if ( !strncmp(infoHeader, "KMQ2SSV", 7) )
 				{
-					char	comment2[32], datestring[20];
+					char	comment2[32], aspectstring[18], datestring[20];
 					struct	tm		savedate;
 					int		hour;
+					float	aspect;
 
 					FS_Read (&savedate, sizeof(struct tm), f);
 					FS_Read (comment, sizeof(comment), f);
 					FS_Read (comment2, sizeof(comment2), f);
+					FS_Read (aspectstring, sizeof(aspectstring), f);
 
 					hour = savedate.tm_hour;
 					if (hour > 12) hour -= 12;
@@ -2035,6 +2038,12 @@ void UI_Load_Savestrings (qboolean update)
 						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s %s", comment, comment2, datestring);
 					else
 						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s", comment, datestring);
+
+					aspect = atof(aspectstring);
+					if (aspect > 0.0f)
+						ui_saveshot_aspect[i] = aspect;
+					else
+						ui_saveshot_aspect[i] = 0.0f;	// 0.0f defaults to current screen aspect
 				}
 				FS_FCloseFile(f);
 				ui_savevalid[i] = true;
@@ -2081,12 +2090,40 @@ void UI_ValidateSaveshots (void)
 				Com_sprintf(shotname, sizeof(shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 			}
 			if (R_DrawFindPic(shotname))
-				ui_saveshotvalid[i] = true;
+				ui_saveshot_valid[i] = true;
 			else
-				ui_saveshotvalid[i] = false;
+				ui_saveshot_valid[i] = false;
 		}
 		else
-			ui_saveshotvalid[i] = false;
+			ui_saveshot_valid[i] = false;
+	}
+}
+
+
+/*
+==========================
+UI_UpdateSaveshotAspect
+==========================
+*/
+float UI_UpdateSaveshotAspect (int index)
+{
+	float	saveAspect, curAspect;
+
+	// check index
+	if (index < 0 || index >= UI_MAX_SAVEGAMES)
+		return DEFAULT_SAVESHOT_ASPECT;
+
+	if ( (index > 0) && UI_SaveshotIsValid(index) )
+	{
+		saveAspect = ui_saveshot_aspect[index];
+		curAspect = UI_GetScreenAspect();
+		if (saveAspect == 0.0f)		// 0.0f defaults to current screen aspect
+			return curAspect;
+		else
+			return min(max(saveAspect, 1.2f), (curAspect * 1.2f));	// clamp between 5:4 and 1.2 * current screen aspect
+	}
+	else {
+		return DEFAULT_SAVESHOT_ASPECT;	// levelshots and null saveshot are 4:3
 	}
 }
 
@@ -2102,14 +2139,14 @@ char *UI_UpdateSaveshot (int index)
 	if (index < 0 || index >= UI_MAX_SAVEGAMES)
 		return NULL;
 
-	if ( ui_savevalid[index] && ui_saveshotvalid[index] ) {
+	if ( ui_savevalid[index] && ui_saveshot_valid[index] ) {
 		if ( index == 0 )
 			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
 		else
 		//	Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
 			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, index);
 	}
-	else if ( ui_saveshotvalid[UI_MAX_SAVEGAMES] )
+	else if ( ui_saveshot_valid[UI_MAX_SAVEGAMES] )
 		Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
 	else	// no saveshot or nullshot
 		return NULL;
@@ -2141,16 +2178,18 @@ void UI_InitSavegameData (void)
 	for (i=0; i<UI_MAX_SAVEGAMES; i++) {
 		ui_savetimestamps[i] = 0;
 		ui_savechanged[i] = true;
+		ui_saveshot_aspect[i] = DEFAULT_SAVESHOT_ASPECT;
 	}
+	ui_saveshot_aspect[UI_MAX_SAVEGAMES] = DEFAULT_SAVESHOT_ASPECT;
 
 	UI_Load_Savestrings (false);
 	UI_ValidateSaveshots ();	// register saveshots
 
 	// register null saveshot, this is only done once
 	if ( R_DrawFindPic(UI_NOSCREEN_NAME) )
-		ui_saveshotvalid[UI_MAX_SAVEGAMES] = true;
+		ui_saveshot_valid[UI_MAX_SAVEGAMES] = true;
 	else
-		ui_saveshotvalid[UI_MAX_SAVEGAMES] = false;
+		ui_saveshot_valid[UI_MAX_SAVEGAMES] = false;
 }
 
 
@@ -2180,7 +2219,7 @@ qboolean UI_SaveshotIsValid (int index)
 	if (index < 0 || index >= UI_MAX_SAVEGAMES)
 		return false;
 
-	return ui_saveshotvalid[index];
+	return ui_saveshot_valid[index];
 }
 
 
