@@ -92,6 +92,7 @@ void Menu_DownloadOptions_Init (void)
 	s_downloadoptions_banner.border				= 0;
 	s_downloadoptions_banner.hCentered			= true;
 	s_downloadoptions_banner.vCentered			= false;
+	s_downloadoptions_banner.useAspectRatio		= false;
 	s_downloadoptions_banner.generic.isHidden	= false;
 
 	s_downloadoptions_title.generic.type		= MTYPE_LABEL;

@@ -115,6 +115,8 @@ void Menu_DMOptions_Init (void)
 	s_dmoptions_banner.border			= 0;
 	s_dmoptions_banner.hCentered		= true;
 	s_dmoptions_banner.vCentered		= false;
+	s_dmoptions_banner.useAspectRatio	= false;
+	s_dmoptions_banner.useAspectRatio	= false;
 	s_dmoptions_banner.generic.isHidden	= false;
 
 	s_falls_box.generic.type		= MTYPE_PICKER;

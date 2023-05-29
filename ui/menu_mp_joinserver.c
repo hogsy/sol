@@ -97,6 +97,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_banner.border				= 0;
 	s_joinserver_banner.hCentered			= true;
 	s_joinserver_banner.vCentered			= false;
+	s_joinserver_banner.useAspectRatio		= false;
 	s_joinserver_banner.generic.isHidden	= false;
 
 	s_joinserver_compatibility_box.generic.type				= MTYPE_COMBOBOX;

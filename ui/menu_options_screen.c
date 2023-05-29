@@ -150,6 +150,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_banner.border				= 0;
 	s_options_screen_banner.hCentered			= true;
 	s_options_screen_banner.vCentered			= false;
+	s_options_screen_banner.useAspectRatio		= false;
 	s_options_screen_banner.generic.isHidden	= false;
 
 	s_options_screen_header.generic.type		= MTYPE_LABEL;
@@ -238,6 +239,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_display.border					= 0;
 	s_options_screen_crosshair_display.hCentered				= false;
 	s_options_screen_crosshair_display.vCentered				= false;
+	s_options_screen_crosshair_display.useAspectRatio			= false;
 	s_options_screen_crosshair_display.usesMouse2				= true;
 	s_options_screen_crosshair_display.generic.isHidden			= false;
 	s_options_screen_crosshair_display.generic.callback			= CrosshairButtonFunc;

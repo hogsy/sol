@@ -243,6 +243,7 @@ typedef struct
 	int				width;
 	int				drawWidth;
 	int				height;
+	float			aspectRatio;
 	char			*imageName;
 //	qboolean		imageValid;
 
@@ -262,7 +263,7 @@ typedef struct
 	qboolean		overrideColor;
 	qboolean		hCentered;
 	qboolean		vCentered;
-	qboolean		useScreenAspect;
+	qboolean		useAspectRatio;
 } menuImage_s;
 
 typedef struct
@@ -272,6 +273,7 @@ typedef struct
 	int				width;
 	int				drawWidth;
 	int				height;
+	float			aspectRatio;
 	char			*imageName;
 	char			*hoverImageName;
 
@@ -287,7 +289,7 @@ typedef struct
 	qboolean		overrideColor;
 	qboolean		hCentered;
 	qboolean		vCentered;
-	qboolean		useScreenAspect;
+	qboolean		useAspectRatio;
 	qboolean		usesMouse2;
 } menuButton_s;
 
@@ -699,6 +701,7 @@ extern int ui_numplayercolors;
 void UI_TextColor (int colornum, qboolean scrollbar, int *red, int *green, int *blue);
 void UI_TextColorHighlight (int colornum, int *red, int *green, int *blue);
 qboolean UI_IsValidImageFilename (char *name);
+float UI_GetScreenAspect (void);
 void UI_ClampCvarForControl (menuCommon_s *item);
 int UI_GetCurValueForControl (menuCommon_s *item);
 int	UI_GetIndexForStringValue (const char **item_values, char *value);

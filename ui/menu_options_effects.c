@@ -132,6 +132,7 @@ void Options_Effects_MenuInit (void)
 	s_options_effects_banner.border				= 0;
 	s_options_effects_banner.hCentered			= true;
 	s_options_effects_banner.vCentered			= false;
+	s_options_effects_banner.useAspectRatio		= false;
 	s_options_effects_banner.generic.isHidden	= false;
 
 	s_options_effects_header.generic.type			= MTYPE_LABEL;

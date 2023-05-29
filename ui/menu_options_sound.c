@@ -153,6 +153,7 @@ void Menu_Options_Sound_Init (void)
 	s_options_sound_banner.border				= 0;
 	s_options_sound_banner.hCentered			= true;
 	s_options_sound_banner.vCentered			= false;
+	s_options_sound_banner.useAspectRatio		= false;
 	s_options_sound_banner.generic.isHidden		= false;
 
 	s_options_sound_header.generic.type		= MTYPE_LABEL;

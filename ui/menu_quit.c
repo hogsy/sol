@@ -115,6 +115,7 @@ void Menu_Quit_Init (void)
 	s_quit_pic.border			= 0;
 	s_quit_pic.hCentered		= true;
 	s_quit_pic.vCentered		= true;
+	s_quit_pic.useAspectRatio	= false;
 	s_quit_pic.generic.isHidden	= false;
 
 	UI_AddMenuItem (&s_quit_menu, (void *) &s_quit_pic);

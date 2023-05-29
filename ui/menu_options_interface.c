@@ -136,6 +136,7 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_banner.border			= 0;
 	s_options_interface_banner.hCentered		= true;
 	s_options_interface_banner.vCentered		= false;
+	s_options_interface_banner.useAspectRatio	= false;
 	s_options_interface_banner.generic.isHidden	= false;
 
 	s_options_interface_header.generic.type		= MTYPE_LABEL;

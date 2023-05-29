@@ -45,9 +45,21 @@ char ui_loadshotname[MAX_QPATH];
 
 //=========================================================
 
+float M_LoadGameSaveshotAspect (void)
+{
+	if ( (s_loadgame_gamelist.curValue > 0) && UI_SaveshotIsValid(s_loadgame_gamelist.curValue) )
+		return UI_GetScreenAspect();
+	else
+		return (4.0f/3.0f);	// levelshots and null saveshot are 4:3
+}
+
 void M_LoadGameListCallback (void *self)
 {
 	s_loadgame_saveshot.imageName = UI_UpdateSaveshot (s_loadgame_gamelist.curValue);
+
+	// upadate saveshot aspect in case video mode was changed while menu is open
+	s_loadgame_saveshot.aspectRatio = M_LoadGameSaveshotAspect();
+	UI_UpdateMenuItemCoords (&s_loadgame_saveshot);
 }
 
 void M_LoadGameCallback (void *self)
@@ -104,6 +116,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_banner.border			= 0;
 	s_loadgame_banner.hCentered			= true;
 	s_loadgame_banner.vCentered			= false;
+	s_loadgame_banner.useAspectRatio	= false;
 	s_loadgame_banner.generic.isHidden	= false;
 
 	s_loadgame_gamelist.generic.type		= MTYPE_LISTBOX;
@@ -143,6 +156,7 @@ void Menu_LoadGame_Init (void)
 //	s_loadgame_saveshot.generic.scrAlign	= ALIGN_STRETCH;
 	s_loadgame_saveshot.width				= 240;
 	s_loadgame_saveshot.height				= 180;
+	s_loadgame_saveshot.aspectRatio			= M_LoadGameSaveshotAspect();
 	s_loadgame_saveshot.imageName			= UI_UpdateSaveshot (s_loadgame_gamelist.curValue);
 	s_loadgame_saveshot.alpha				= 255;
 	s_loadgame_saveshot.border				= 2;
@@ -152,7 +166,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_saveshot.borderColor[3]		= 255;
 	s_loadgame_saveshot.hCentered			= false;
 	s_loadgame_saveshot.vCentered			= false;
-	s_loadgame_saveshot.useScreenAspect		= true;
+	s_loadgame_saveshot.useAspectRatio		= true;
 	s_loadgame_saveshot.generic.isHidden	= false;
 
 	s_loadgame_load_action.generic.type				= MTYPE_ACTION;

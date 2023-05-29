@@ -214,6 +214,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_banner.border				= 0;
 	s_startserver_banner.hCentered			= true;
 	s_startserver_banner.vCentered			= false;
+	s_startserver_banner.useAspectRatio		= false;
 	s_startserver_banner.generic.isHidden	= false;
 
 #ifdef USE_LISTBOX
@@ -272,6 +273,7 @@ void Menu_StartServer_Init (void)
 	s_startserver_mapshot.borderColor[3]	= 255;
 	s_startserver_mapshot.hCentered			= false;
 	s_startserver_mapshot.vCentered			= false;
+	s_startserver_mapshot.useAspectRatio	= false;
 	s_startserver_mapshot.generic.isHidden	= false;
 
 #ifdef USE_LISTBOX

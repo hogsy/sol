@@ -79,6 +79,7 @@ void Menu_Mods_Init (void)
 	s_mods_banner.border			= 0;
 	s_mods_banner.hCentered			= true;
 	s_mods_banner.vCentered			= false;
+	s_mods_banner.useAspectRatio	= false;
 	s_mods_banner.generic.isHidden	= false;
 
 	s_mods_list.generic.type			= MTYPE_LISTBOX;

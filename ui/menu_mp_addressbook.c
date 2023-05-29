@@ -69,6 +69,7 @@ void Menu_AddressBook_Init (void)
 	s_addressbook_banner.border				= 0;
 	s_addressbook_banner.hCentered			= true;
 	s_addressbook_banner.vCentered			= false;
+	s_addressbook_banner.useAspectRatio		= false;
 	s_addressbook_banner.generic.isHidden	= false;
 
 	for (i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++)

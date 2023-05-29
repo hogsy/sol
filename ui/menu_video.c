@@ -297,6 +297,7 @@ void Menu_Video_Init (void)
 	s_video_banner.border			= 0;
 	s_video_banner.hCentered		= true;
 	s_video_banner.vCentered		= false;
+	s_video_banner.useAspectRatio	= false;
 	s_video_banner.generic.isHidden	= false;
 
 	s_mode_list.generic.type		= MTYPE_COMBOBOX;

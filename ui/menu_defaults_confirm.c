@@ -87,6 +87,7 @@ void Menu_DefaultsConfirm_Init (void)
 	s_defaults_banner.border			= 0;
 	s_defaults_banner.hCentered			= true;
 	s_defaults_banner.vCentered			= false;
+	s_defaults_banner.useAspectRatio	= false;
 	s_defaults_banner.generic.isHidden	= false;
 
 	s_defaults_header.generic.type		= MTYPE_LABEL;

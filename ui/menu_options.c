@@ -98,6 +98,7 @@ void Menu_Options_Init (void)
 	s_options_banner.border				= 0;
 	s_options_banner.hCentered			= true;
 	s_options_banner.vCentered			= false;
+	s_options_banner.useAspectRatio		= false;
 	s_options_banner.generic.isHidden	= false;
 
 	s_options_sound_section.generic.type		= MTYPE_ACTION;

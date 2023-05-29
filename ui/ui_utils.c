@@ -167,6 +167,28 @@ qboolean UI_IsValidImageFilename (char *name)
 
 /*
 ==========================
+UI_GetScreenAspect
+==========================
+*/
+float UI_GetScreenAspect (void)
+{
+	float	screenAspect = (4.0f/3.0f);
+
+	if ( (viddef.width > 0) && (viddef.height > 0) )
+	{
+		screenAspect = (float)viddef.width / (float)viddef.height;
+		// properly handle surround modes
+		if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
+			screenAspect *= (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
+		}
+		screenAspect = min(max(screenAspect, 1.2f), (32.0f/9.0f));	// clamp between 5:4 and 32:9
+	}
+	return screenAspect;
+}
+
+
+/*
+==========================
 UI_ClampCvarForControl
 ==========================
 */

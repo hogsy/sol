@@ -94,6 +94,7 @@ void Menu_Multiplayer_Init (void)
 	s_multiplayer_banner.border				= 0;
 	s_multiplayer_banner.hCentered			= true;
 	s_multiplayer_banner.vCentered			= false;
+	s_multiplayer_banner.useAspectRatio		= false;
 	s_multiplayer_banner.generic.isHidden	= false;
 
 	s_join_network_server_action.generic.type		= MTYPE_ACTION;

@@ -42,9 +42,21 @@ static menuAction_s		s_savegame_back_action;
 
 //=========================================================
 
+float M_SaveGameSaveshotAspect (void)
+{
+	if ( UI_SaveshotIsValid(s_savegame_gamelist.curValue + 1) )
+		return UI_GetScreenAspect();
+	else
+		return (4.0f/3.0f);	// null saveshot is 4:3
+}
+
 void M_SaveGameListCallback (void *self)
 {
 	s_savegame_saveshot.imageName = UI_UpdateSaveshot (s_savegame_gamelist.curValue + 1);
+
+	// upadate saveshot aspect in case video mode was changed while menu is open
+	s_savegame_saveshot.aspectRatio = M_SaveGameSaveshotAspect();
+	UI_UpdateMenuItemCoords (&s_savegame_saveshot);
 }
 
 void M_SaveGameCallback (void *self)
@@ -90,6 +102,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_banner.border			= 0;
 	s_savegame_banner.hCentered			= true;
 	s_savegame_banner.vCentered			= false;
+	s_savegame_banner.useAspectRatio	= false;
 	s_savegame_banner.generic.isHidden	= false;
 
 	s_savegame_gamelist.generic.type		= MTYPE_LISTBOX;
@@ -129,6 +142,7 @@ void Menu_SaveGame_Init (void)
 //	s_savegame_saveshot.generic.scrAlign	= ALIGN_STRETCH;
 	s_savegame_saveshot.width				= 240;
 	s_savegame_saveshot.height				= 180;
+	s_savegame_saveshot.aspectRatio			= M_SaveGameSaveshotAspect();
 	s_savegame_saveshot.imageName			= UI_UpdateSaveshot (s_savegame_gamelist.curValue+1);
 	s_savegame_saveshot.alpha				= 255;
 	s_savegame_saveshot.border				= 2;
@@ -138,7 +152,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_saveshot.borderColor[3]		= 255;
 	s_savegame_saveshot.hCentered			= false;
 	s_savegame_saveshot.vCentered			= false;
-	s_savegame_saveshot.useScreenAspect		= true;
+	s_savegame_saveshot.useAspectRatio		= true;
 	s_savegame_saveshot.generic.isHidden	= false;
 
 	s_savegame_save_action.generic.type				= MTYPE_ACTION;

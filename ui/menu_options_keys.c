@@ -134,6 +134,7 @@ static void Menu_Keys_Init (void)
 	s_keys_banner.border			= 0;
 	s_keys_banner.hCentered			= true;
 	s_keys_banner.vCentered			= false;
+	s_keys_banner.useAspectRatio	= false;
 	s_keys_banner.generic.isHidden	= false;
 
 #ifdef USE_BINDLIST

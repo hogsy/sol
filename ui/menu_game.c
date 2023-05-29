@@ -114,6 +114,7 @@ void Menu_Game_Init (void)
 	s_game_banner.border			= 0;
 	s_game_banner.hCentered			= true;
 	s_game_banner.vCentered			= false;
+	s_game_banner.useAspectRatio	= false;
 	s_game_banner.generic.isHidden	= false;
 
 	s_easy_game_action.generic.type			= MTYPE_ACTION;

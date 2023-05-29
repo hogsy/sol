@@ -1888,6 +1888,12 @@ void UI_MenuImage_UpdateCoords (menuImage_s *i)
 {
 	menuFramework_s	*menu = i->generic.parent;
 
+	// aspect ratio-based width
+	if ( i->useAspectRatio && (i->aspectRatio > 0) )
+		i->drawWidth = i->height * i->aspectRatio;
+	else
+		i->drawWidth = i->width;
+
 	i->generic.topLeft[0] = menu->x + i->generic.x;
 	i->generic.topLeft[1] = menu->y + i->generic.y;
 	i->generic.botRight[0] = i->generic.topLeft[0] + i->drawWidth;
@@ -1897,7 +1903,6 @@ void UI_MenuImage_UpdateCoords (menuImage_s *i)
 void UI_MenuImage_Setup (menuImage_s *i)
 {
 	int				idx;
-	float			screenAspect;
 	menuFramework_s	*menu = i->generic.parent;
 
 	// automatic sizing
@@ -1918,17 +1923,9 @@ void UI_MenuImage_Setup (menuImage_s *i)
 	i->height = max(i->height, 1);
 	i->border = max(i->border, 0);
 
-	// screen aspect ratio-based sizing
-	if ( i->useScreenAspect && (viddef.width > 0) && (viddef.height > 0) )
-	{
-		screenAspect = (float)viddef.width / (float)viddef.height;
-		// properly handle surround modes
-		if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
-			screenAspect *= (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
-		}
-		screenAspect = min(max(screenAspect, 1.2f), (32.0f/9.0f));	// clamp between 5:4 and 32:9
-		i->drawWidth = i->height * screenAspect;
-	}
+	// aspect ratio-based width
+	if ( i->useAspectRatio && (i->aspectRatio > 0) )
+		i->drawWidth = i->height * i->aspectRatio;
 	else
 		i->drawWidth = i->width;
 
@@ -2041,6 +2038,12 @@ void UI_MenuButton_UpdateCoords (menuButton_s *b)
 {
 	menuFramework_s	*menu = b->generic.parent;
 
+	// aspect ratio-based width
+	if ( b->useAspectRatio && (b->aspectRatio > 0) )
+		b->drawWidth = b->height * b->aspectRatio;
+	else
+		b->drawWidth = b->width;
+
 	b->generic.topLeft[0] = menu->x + b->generic.x;
 	b->generic.topLeft[1] = menu->y + b->generic.y;
 	b->generic.botRight[0] = b->generic.topLeft[0] + b->drawWidth;
@@ -2050,7 +2053,6 @@ void UI_MenuButton_UpdateCoords (menuButton_s *b)
 void UI_MenuButton_Setup (menuButton_s *b)
 {
 	menuFramework_s	*menu = b->generic.parent;
-	float			screenAspect;
 
 	// automatic sizing
 	if (b->width == -1 || b->height == -1)
@@ -2067,17 +2069,9 @@ void UI_MenuButton_Setup (menuButton_s *b)
 	b->height = max(b->height, 1);
 	b->border = max(b->border, 0);
 
-	// screen aspect ratio-based sizing
-	if ( b->useScreenAspect && (viddef.width > 0) && (viddef.height > 0) )
-	{
-		screenAspect = (float)viddef.width / (float)viddef.height;
-		// properly handle surround modes
-		if ( (Cvar_VariableInteger("scr_surroundlayout") != 0) && (screenAspect >= Cvar_VariableValue("scr_surroundthreshold")) ) {
-			screenAspect *= (Cvar_VariableValue("scr_surroundright") - Cvar_VariableValue("scr_surroundleft"));
-		}
-		screenAspect = min(max(screenAspect, 1.2f), (32.0f/9.0f));	// clamp between 5:4 and 32:9
-		b->drawWidth = b->height * screenAspect;
-	}
+	// aspect ratio-based width
+	if ( b->useAspectRatio && (b->aspectRatio > 0) )
+		b->drawWidth = b->height * b->aspectRatio;
 	else
 		b->drawWidth = b->width;
 

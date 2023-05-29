@@ -209,6 +209,7 @@ void Menu_Video_Advanced_Init (void)
 	s_video_advanced_banner.border				= 0;
 	s_video_advanced_banner.hCentered			= true;
 	s_video_advanced_banner.vCentered			= false;
+	s_video_advanced_banner.useAspectRatio		= false;
 	s_video_advanced_banner.generic.isHidden	= false;
 
 	s_options_advanced_header.generic.type		= MTYPE_LABEL;

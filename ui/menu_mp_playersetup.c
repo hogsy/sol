@@ -232,6 +232,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_banner.border			= 0;
 	s_playerconfig_banner.hCentered			= true;
 	s_playerconfig_banner.vCentered			= false;
+	s_playerconfig_banner.useAspectRatio	= false;
 	s_playerconfig_banner.generic.isHidden	= false;
 
 	s_playerconfig_name_field.generic.type			= MTYPE_FIELD;
@@ -447,6 +448,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_display[0].border				= 0;
 	s_playerconfig_railcolor_display[0].hCentered			= false;
 	s_playerconfig_railcolor_display[0].vCentered			= false;
+	s_playerconfig_railcolor_display[0].useAspectRatio		= false;
 	s_playerconfig_railcolor_display[0].generic.isHidden	= false;
 
 	s_playerconfig_railcolor_display[1].generic.type		= MTYPE_IMAGE;
@@ -464,6 +466,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_railcolor_display[1].border				= 0;
 	s_playerconfig_railcolor_display[1].hCentered			= false;
 	s_playerconfig_railcolor_display[1].vCentered			= false;
+	s_playerconfig_railcolor_display[1].useAspectRatio		= false;
 	s_playerconfig_railcolor_display[1].generic.isHidden	= false;
 
 	s_playerconfig_railcolor_slider[0].generic.type			= MTYPE_SLIDER;

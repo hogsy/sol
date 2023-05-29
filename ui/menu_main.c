@@ -136,6 +136,9 @@ void Menu_Main_Init (void)
 	s_main_game_button.hoverImageName		= "/pics/m_main_game_sel.pcx";
 	s_main_game_button.alpha				= 255;
 	s_main_game_button.border				= 0;
+	s_main_game_button.hCentered			= false;
+	s_main_game_button.vCentered			= false;
+	s_main_game_button.useAspectRatio		= false;
 	s_main_game_button.generic.isHidden		= false;
 	s_main_game_button.usesMouse2			= false;
 	s_main_game_button.generic.callback		= M_MainGameFunc;
@@ -150,6 +153,9 @@ void Menu_Main_Init (void)
 	s_main_multiplayer_button.hoverImageName	= "/pics/m_main_multiplayer_sel.pcx";
 	s_main_multiplayer_button.alpha				= 255;
 	s_main_multiplayer_button.border			= 0;
+	s_main_multiplayer_button.hCentered			= false;
+	s_main_multiplayer_button.vCentered			= false;
+	s_main_multiplayer_button.useAspectRatio	= false;
 	s_main_multiplayer_button.generic.isHidden	= false;
 	s_main_multiplayer_button.usesMouse2		= false;
 	s_main_multiplayer_button.generic.callback	= M_MainMultiplayerFunc;
@@ -164,6 +170,9 @@ void Menu_Main_Init (void)
 	s_main_options_button.hoverImageName	= "/pics/m_main_options_sel.pcx";
 	s_main_options_button.alpha				= 255;
 	s_main_options_button.border			= 0;
+	s_main_options_button.hCentered			= false;
+	s_main_options_button.vCentered			= false;
+	s_main_options_button.useAspectRatio	= false;
 	s_main_options_button.generic.isHidden	= false;
 	s_main_options_button.usesMouse2		= false;
 	s_main_options_button.generic.callback	= M_MainOptionsFunc;
@@ -178,6 +187,9 @@ void Menu_Main_Init (void)
 	s_main_video_button.hoverImageName		= "/pics/m_main_video_sel.pcx";
 	s_main_video_button.alpha				= 255;
 	s_main_video_button.border				= 0;
+	s_main_video_button.hCentered			= false;
+	s_main_video_button.vCentered			= false;
+	s_main_video_button.useAspectRatio		= false;
 	s_main_video_button.generic.isHidden	= false;
 	s_main_video_button.usesMouse2			= false;
 	s_main_video_button.generic.callback	= M_MainVideoFunc;
@@ -192,6 +204,9 @@ void Menu_Main_Init (void)
 	s_main_mods_button.hoverImageName		= "/pics/m_main_mods_sel.pcx";
 	s_main_mods_button.alpha				= 255;
 	s_main_mods_button.border				= 0;
+	s_main_mods_button.hCentered			= false;
+	s_main_mods_button.vCentered			= false;
+	s_main_mods_button.useAspectRatio		= false;
 	s_main_mods_button.generic.isHidden		= false;
 	s_main_mods_button.usesMouse2			= false;
 	s_main_mods_button.generic.callback		= M_MainModsFunc;
@@ -206,6 +221,9 @@ void Menu_Main_Init (void)
 	s_main_quit_button.hoverImageName		= "/pics/m_main_quit_sel.pcx";
 	s_main_quit_button.alpha				= 255;
 	s_main_quit_button.border				= 0;
+	s_main_quit_button.hCentered			= false;
+	s_main_quit_button.vCentered			= false;
+	s_main_quit_button.useAspectRatio		= false;
 	s_main_quit_button.generic.isHidden		= false;
 	s_main_quit_button.usesMouse2			= false;
 	s_main_quit_button.generic.callback		= M_MainQuitFunc;
@@ -246,6 +264,7 @@ void Menu_Main_Init (void)
 	s_main_cursor.border					= 0;
 	s_main_cursor.hCentered					= false;
 	s_main_cursor.vCentered					= false;
+	s_main_cursor.useAspectRatio			= false;
 	s_main_cursor.generic.isHidden			= false;
 #endif	// USE_MODELVIEW_CURSOR
 
@@ -259,6 +278,7 @@ void Menu_Main_Init (void)
 	s_main_plaque.border					= 0;
 	s_main_plaque.hCentered					= false;
 	s_main_plaque.vCentered					= false;
+	s_main_plaque.useAspectRatio			= false;
 	s_main_plaque.generic.isHidden			= false;
 
 	s_main_logo.generic.type				= MTYPE_IMAGE;
@@ -271,6 +291,7 @@ void Menu_Main_Init (void)
 	s_main_logo.border						= 0;
 	s_main_logo.hCentered					= false;
 	s_main_logo.vCentered					= false;
+	s_main_logo.useAspectRatio				= false;
 	s_main_logo.generic.isHidden			= false;
 
 	UI_AddMenuItem (&s_main_menu, ( void * ) &s_main_game_button);
