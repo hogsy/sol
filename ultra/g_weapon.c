@@ -855,8 +855,7 @@ fire_rail
 */
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, qboolean useColor, int red, int green, int blue)
 {
-	vec3_t		from;
-	vec3_t		end;
+	vec3_t		from, end, endpos = {0};
 	trace_t		tr;
 	edict_t		*ignore;
 	int			mask, tempevent, i=0;
@@ -880,7 +879,7 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	water = false;
 	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
 //	while (ignore || (dist < 2048))
-	while ( (ignore || (dist < 4096)) && i<256 )
+	while ( (ignore || (dist < 4096)) && (i<256) )
 	{
 		tr = gi.trace (from, NULL, NULL, end, ignore, mask);
 
@@ -905,13 +904,15 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 		}
 
 		VectorCopy (tr.endpos, from);
+		VectorCopy (tr.endpos, endpos);
 
 		VectorMA (from, inc, aimdir, end);
 		dist += inc;
 		i++;
 	}
 
-	VectorSubtract(tr.endpos, start, end);
+//	VectorSubtract (tr.endpos, start, end);
+	VectorSubtract (endpos, start, end);
 #ifndef KMQUAKE2_ENGINE_MOD
 	if (VectorLength(end) > 2048)
 	{
@@ -919,7 +920,7 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 		VectorScale (end, 2048, end);
 	}
 #endif
-	VectorAdd(start, end, end);
+	VectorAdd (start, end, end);
 
 	// send gun puff / flash
 	gi.WriteByte (svc_temp_entity);

@@ -594,7 +594,7 @@ void CalcRoutes (int node_index)
 		if (i != node_index)
 		{
 			edict_t		*ent1 = NULL;
-			unsigned short best_dist;
+			unsigned short best_dist = 99999;
 			routes_t	*ni_routes = NULL;
 			routes_t	*i_routes = NULL;
 
@@ -1211,7 +1211,7 @@ FILE *ReadTrailNode (FILE *trFile, edict_t *node)
 {
 	int		i, goal, readSize;
 	short	buf;
-	char	path_id;
+	char	path_id = 0;
 	vec3_t	end;
 	trace_t	tr;
 

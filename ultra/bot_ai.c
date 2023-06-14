@@ -104,7 +104,7 @@ bot_roam
 void bot_roam (edict_t *self, int no_paths)
 {
 	edict_t		*search, *closest, /*enemy,*/ *closest_nonvisible=NULL, *save_goal=NULL, *save_movetarget=NULL;
-	float		closest_dist, this_dist, nonvis_dist=999999;
+	float		closest_dist, this_dist = 0.0f, nonvis_dist = 999999;
 	int			player_index = 0;
 	float		save_suicide_time;
 	int			i, j;
@@ -114,7 +114,7 @@ void bot_roam (edict_t *self, int no_paths)
 //	vec3_t		vec;
 	edict_t		*mapent = NULL; //ScarFace
 	int			dopple_dist; //ScarFace
-	gitem_t		*flag_item; //ScarFace- this bot's team flag
+	gitem_t		*flag_item = NULL; //ScarFace- this bot's team flag
 
 	if (ctf->value) //ScarFace- find the team flag for this bot
 	{
@@ -179,7 +179,7 @@ void bot_roam (edict_t *self, int no_paths)
 					botDebugPrint("Attacking %s", search->client->pers.netname);
 					self->enemy = search;
 					closest_dist = this_dist;
-					//ScarFace- modified this check for 3Team CTF so bots are less likely go after carrier with other team's flag
+					// ScarFace- modified this check for 3Team CTF so bots are less likely go after carrier with other team's flag
 					if (	((carrying_flag && flag_item && search->client->pers.inventory[ITEM_INDEX(flag_item)]) || (gamerules->value == 2 && tag_owner && search == tag_owner))
 						||	(self->movetarget && ((entdist(self, self->movetarget) > 256) && ((search->health < 15) || (search->client->pers.weapon == item_blaster)) && ((self->bot_fire != botBlaster) && (self->bot_fire != botShotgun)))
 						||	((self->bot_stats->aggr/5)*0.2 > random())))
@@ -1298,8 +1298,8 @@ botDebugPrint("MoveToGoal: random jump\n");
 	if (ctf->value && CarryingFlag(self))// && 
 //		(!self->movetarget || !self->movetarget->item || (self->movetarget->item->pickup != CTFPickup_Flag)))
 	{
-		edict_t *flag, *plyr;
-		int	i=0, count=0, ideal;
+		edict_t			*flag = NULL, *plyr = NULL;
+		int				i=0, count=0, ideal;
 		static float	last_checkhelp=0;
 
 		if (self->client->resp.ctf_team == CTF_TEAM1)

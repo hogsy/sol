@@ -1077,13 +1077,13 @@ order.
 */
 void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 {
-	int i;
+	int		i;
 	edict_t *ent;
-	gitem_t *flag_item, *enemy_flag_item, *enemy_flag_item2;
-	int otherteam, otherteam2;
-	edict_t *flag, *carrier;
-	char *c;
-	vec3_t v1, v2;
+	gitem_t	*flag_item, *enemy_flag_item, *enemy_flag_item2;
+	int		otherteam, otherteam2;
+	edict_t	*flag = NULL, *carrier = NULL;
+	char	*c;
+	vec3_t	v1, v2;
 
 	if (!ctf->value)
 		return;
@@ -1303,8 +1303,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 {
 	int		ctf_team;
 	int		i;
-	edict_t	*player;
-	gitem_t	*flag_item, *enemy_flag_item1, *enemy_flag_item2, *captured_flag_item = NULL;
+	edict_t	*player = NULL;
+	gitem_t	*flag_item = NULL, *enemy_flag_item1 = NULL, *enemy_flag_item2 = NULL, *captured_flag_item = NULL;
 	int		count;
 	int		captures = 0; // ScarFace- number of flags captured
 
@@ -1847,9 +1847,9 @@ void CTFDeadDropFlag (edict_t *self)
 void CTFDrop_Flag (edict_t *ent, gitem_t *item)
 {
 // AJ allowed (sometimes) the player to drop the flag
-	edict_t *dropped = NULL;
-	gitem_t	*flag;
-	int flag_index;
+	edict_t	*dropped = NULL;
+	gitem_t	*flag = NULL;
+	int		flag_index = 0;
 	
 	if (allow_flagdrop->value)
 	{
@@ -1940,7 +1940,7 @@ void CTFFlagThink (edict_t *ent)
 //ERASER: make sure the flag is defended
 	if (ent->last_seek_enemy < (level.time - 1))
 	{
-		int i, ctf_team, count=0, ideal_guarding, ctf_enemy_team, ctf_enemy_team2;
+		int i, ctf_team = 0, count=0, ideal_guarding, ctf_enemy_team = 0, ctf_enemy_team2 = 0;
 		edict_t *plyr, *closest_guarding=NULL;
 
 		ent->last_seek_enemy = level.time + random();	// so we try and spread out thinks
@@ -2568,7 +2568,7 @@ void SetCTFStats (edict_t *ent)
 {
 	gitem_t *tech;
 	int		i;
-	int		p1, p2, p3; // AJ - added p3
+	int		p1, p2, p3 = 0; // AJ - added p3
 	edict_t	*e;
 
 	// logo headers for the frag display

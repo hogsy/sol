@@ -829,7 +829,7 @@ extern	cvar_t	*zoomsnap;
 
 extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
 extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
-extern	cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+extern	cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 extern	cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 extern	cvar_t	*g_showlogic;			// Knightmare added
@@ -1248,12 +1248,15 @@ void GameDirRelativePath (const char *filename, char *output, size_t outputSize)
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize);
 void CreatePath (const char *path);
 qboolean LocalFileExists (const char *path);
+qboolean AnyPlayerSpawned (void);	// Knightmare added
+qboolean AllPlayersSpawned (void);	// Knightmare added
+qboolean AllPlayersLinkcountCmp (int cmp_linkcount);	// Knightmare added
 
 void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target);
-qboolean IsIdMap (void); // Knightmare added
-qboolean IsXatrixMap (void); // Knightmare added
-qboolean IsRogueMap (void); // Knightmare added
-qboolean IsZaeroMap (void); // Knightmare added
+qboolean IsIdMap (void);		// Knightmare added
+qboolean IsXatrixMap (void);	// Knightmare added
+qboolean IsRogueMap (void);		// Knightmare added
+qboolean IsZaeroMap (void);		// Knightmare added
 void my_bprintf (int printlevel, char *fmt, ...);
 qboolean UseRegularGoodGuyFlag (edict_t *monster); // Knightmare added
 

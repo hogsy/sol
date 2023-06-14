@@ -1376,15 +1376,15 @@ void Use_Target_Playback (edict_t *ent, edict_t *other, edict_t *activator)
 
 void target_playback_delayed_start (edict_t *ent)
 {
-	if (!g_edicts[1].linkcount || (ent->groundentity_linkcount == g_edicts[1].linkcount))
+	if ( !g_edicts[1].linkcount || (ent->groundentity_linkcount == g_edicts[1].linkcount) )
 		ent->nextthink = level.time + FRAMETIME;
 	else
-		ent->use(ent,world,world);
+		ent->use (ent, world, world);
 }
 
 void target_playback_delayed_restart (edict_t *ent)
 {
-	if (!g_edicts[1].linkcount || (ent->groundentity_linkcount == g_edicts[1].linkcount))
+	if ( !g_edicts[1].linkcount || (ent->groundentity_linkcount == g_edicts[1].linkcount) )
 		ent->nextthink = level.time + FRAMETIME;
 	else
 	{

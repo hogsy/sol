@@ -113,6 +113,10 @@ SOURCE=.\g_ai.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_ai_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_camera.c
 # End Source File
 # Begin Source File
@@ -133,11 +137,19 @@ SOURCE=.\g_crane.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_dm_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_fog.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\g_func.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_func_rogue.c
 # End Source File
 # Begin Source File
 
@@ -189,34 +201,6 @@ SOURCE=.\g_monster.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\g_newai.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newdm.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newfnc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newtarg.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newtrig.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newutils.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newweap.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\g_patchplayermodels.c
 # End Source File
 # Begin Source File
@@ -261,6 +245,10 @@ SOURCE=.\g_target_laz.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_target_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_thing.c
 # End Source File
 # Begin Source File
@@ -273,6 +261,10 @@ SOURCE=.\g_trigger.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_trigger_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_turret.c
 # End Source File
 # Begin Source File
@@ -282,6 +274,10 @@ SOURCE=.\g_utils.c
 # Begin Source File
 
 SOURCE=.\g_utils_q1.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_utils_rogue.c
 # End Source File
 # Begin Source File
 
@@ -302,6 +298,10 @@ SOURCE=.\g_weapon_lm.c
 # Begin Source File
 
 SOURCE=.\g_weapon_q1.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_weapon_rogue.c
 # End Source File
 # Begin Source File
 

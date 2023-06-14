@@ -484,7 +484,7 @@ void chthon_attack_left (edict_t *self)
 	gi.WriteByte (MZ2_BOSS2_ROCKET_1);
 	gi.multicast (start, MULTICAST_PVS);
 
-	q1_fire_lavaball (self,start, dir, 100, 750, 120, 100);
+	q1_fire_lavaball (self, start, dir, 100, 750, 120, 100);
 }	
 
 void chthon_attack_right (edict_t *self)

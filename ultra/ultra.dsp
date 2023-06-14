@@ -241,7 +241,15 @@ SOURCE=.\g_ctf.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_dm_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_func.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_func_rogue.c
 # End Source File
 # Begin Source File
 
@@ -269,26 +277,6 @@ SOURCE=.\g_mtrain.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\g_newdm.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newfnc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newtarg.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newtrig.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_newweap.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\g_phys.c
 # End Source File
 # Begin Source File
@@ -313,7 +301,15 @@ SOURCE=.\g_target.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_target_rogue.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_trigger.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_trigger_rogue.c
 # End Source File
 # Begin Source File
 
@@ -326,6 +322,10 @@ SOURCE=.\g_weapon.c
 # Begin Source File
 
 SOURCE=.\g_weapon_lmctf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\g_weapon_rogue.c
 # End Source File
 # Begin Source File
 

@@ -786,7 +786,7 @@ void fire_loogie (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	loogie->nextthink = level.time + 2;
 	loogie->think = G_FreeEdict;
 	loogie->dmg = damage;
-	loogie->classname = "loogie";
+	loogie->classname = "gekk_loogie";
 	loogie->class_id = ENTITY_LOOGIE;
 	gi.linkentity (loogie);
 
@@ -808,7 +808,7 @@ void gekk_loogie_delayed_start (edict_t *loogie)
 		VectorScale(loogie->movedir,loogie->moveinfo.speed,loogie->velocity);
 		loogie->nextthink = level.time + 2;
 		loogie->think = G_FreeEdict;
-		gi.linkentity(loogie);
+		gi.linkentity (loogie);
 	}
 	else
 		loogie->nextthink = level.time + FRAMETIME;
@@ -818,13 +818,13 @@ void SP_gekk_loogie (edict_t *loogie)
 {
 	loogie->s.modelindex = gi.modelindex ("models/objects/loogy/tris.md2");
 	loogie->touch = loogie_touch;
-	VectorCopy(loogie->velocity,loogie->movedir);
-	VectorNormalize(loogie->movedir);
+	VectorCopy (loogie->velocity, loogie->movedir);
+	VectorNormalize (loogie->movedir);
 	loogie->moveinfo.speed = VectorLength(loogie->velocity);
-	VectorClear(loogie->velocity);
+	VectorClear (loogie->velocity);
 	loogie->think = gekk_loogie_delayed_start;
 	loogie->nextthink = level.time + FRAMETIME;
-	gi.linkentity(loogie);
+	gi.linkentity (loogie);
 }
 
 void loogie (edict_t *self)

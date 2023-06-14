@@ -85,8 +85,8 @@ qboolean ClientConnect (edict_t *ent, char *userinfo, qboolean loadgame);
 // BEGIN: SABIN code
 edict_t *bot_GetLastFreeClient (void)
 {
-	edict_t *bot;
-	int	i;
+	edict_t	*bot = NULL;
+	int		i;
 
 	for (i = maxclients->value; i > 0; i--)
 	{

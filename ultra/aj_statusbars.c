@@ -971,7 +971,7 @@ void lithium_updatestats (edict_t *ent)
 	int		score, num_players;
 	int		ammotable2 [6][2];
 	edict_t	*cl_ent;
-	int		client_no, position;
+	int		client_no = 0, position = 0;
 
 	if ( ent->bot_client || (int)ctf->value || (int)ttctf->value )
 		return;
@@ -1009,8 +1009,8 @@ void lithium_updatestats (edict_t *ent)
 		}
 
 		for (i=0; i<num_players; i++)
-			if (sorted[i]==client_no)
-				position=i+1;
+			if (sorted[i] == client_no)
+				position = i+1;
 
 		ent->client->ps.stats[STAT_LITHIUM_PLACE] = position;
 		ent->client->ps.stats[STAT_LITHIUM_PLAYERS] = num_players;

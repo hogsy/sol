@@ -266,7 +266,7 @@ void botDebugPrint (char *msg, ...)
 void	ReadBotChat (void)
 {
 	FILE	*f;
-	int		section_index, line_count, i;
+	int		section_index, line_count = 0, i;
 	char	filename[256];
 	char	buffer;
 	cvar_t	*game_dir;

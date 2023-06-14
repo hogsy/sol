@@ -2341,7 +2341,7 @@ void SP_func_clock (edict_t *self)
 
 void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	edict_t		*dest, *last_trail;
+	edict_t		*dest = NULL, *last_trail = NULL;
 	int			i;
 
 	if (!other->client)

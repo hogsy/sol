@@ -257,7 +257,8 @@ void target_precipitation_think (edict_t *self)
 	// Don't start raining until player is in the game. The following 
 	// takes care of both initial map load conditions and restored saved games.
 	// This is a gross abuse of groundentity_linkcount. Sue me.
-	if (g_edicts[1].linkcount == self->groundentity_linkcount)
+//	if (g_edicts[1].linkcount == self->groundentity_linkcount)
+	if ( AllPlayersLinkcountCmp(self->groundentity_linkcount) )	// Knightmare- function handles multiple players
 		return;
 	else
 		self->groundentity_linkcount = g_edicts[1].linkcount;
@@ -341,7 +342,8 @@ void target_precipitation_delayed_use (edict_t *self)
 	// Since target_precipitation tends to be a processor hog,
 	// for START_ON we wait until the player has spawned into the
 	// game to ease the startup burden somewhat
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AllPlayersSpawned() )	// Knightmare- function handles multiple players
 	{
 		self->think = target_precipitation_think;
 		self->think(self);
@@ -472,7 +474,8 @@ void target_fountain_think (edict_t *self)
 	// Don't start raining until player is in the game. The following 
 	// takes care of both initial map load conditions and restored saved games.
 	// This is a gross abuse of groundentity_linkcount. Sue me.
-	if (g_edicts[1].linkcount == self->groundentity_linkcount)
+//	if (g_edicts[1].linkcount == self->groundentity_linkcount)
+	if ( AllPlayersLinkcountCmp(self->groundentity_linkcount) )	// Knightmare- function handles multiple players
 		return;
 	else
 		self->groundentity_linkcount = g_edicts[1].linkcount;
@@ -558,7 +561,8 @@ void target_fountain_delayed_use (edict_t *self)
 	// Since target_fountain tends to be a processor hog,
 	// for START_ON we wait until the player has spawned into the
 	// game to ease the startup burden somewhat
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AllPlayersSpawned() )	// Knightmare- function handles multiple players
 	{
 		self->think = target_fountain_think;
 		self->think(self);

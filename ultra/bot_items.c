@@ -101,10 +101,10 @@ RoamFindBestItem
 int	RoamFindBestItem(edict_t	*self, edict_t	*list_head, int	check_paths)
 {
 	float	closest_dist=999999, this_dist;
-	edict_t	*best=NULL, *node, *trav;
+	edict_t	*best = NULL, *node = NULL, *trav = NULL;
 	int		si;		// node closest to self
-	int		dist_divide=1;		// divide distance by this, simulates wieghts for better targets
-	int		best_divide;
+	int		dist_divide = 1;		// divide distance by this, simulates wieghts for better targets
+	int		best_divide = 0;
 
 	if (!list_head)	// nothing to look for
 		return -1;
@@ -353,7 +353,7 @@ int	RoamFindBestItem(edict_t	*self, edict_t	*list_head, int	check_paths)
 
 		self->movetarget = best;
 
-		botSetWant(self, best_divide);
+		botSetWant (self, best_divide);
 
 		return closest_dist;
 	}

@@ -418,6 +418,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_ai_rogue.c"
+				>
+			</File>
+			<File
 				RelativePath="g_camera.c"
 				>
 			</File>
@@ -438,11 +442,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_dm_rogue.c"
+				>
+			</File>
+			<File
 				RelativePath="g_fog.c"
 				>
 			</File>
 			<File
 				RelativePath="g_func.c"
+				>
+			</File>
+			<File
+				RelativePath=".\g_func_rogue.c"
 				>
 			</File>
 			<File
@@ -494,34 +506,6 @@
 				>
 			</File>
 			<File
-				RelativePath="g_newai.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newdm.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newfnc.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newtarg.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newtrig.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newutils.c"
-				>
-			</File>
-			<File
-				RelativePath="g_newweap.c"
-				>
-			</File>
-			<File
 				RelativePath="g_patchplayermodels.c"
 				>
 			</File>
@@ -566,6 +550,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_target_rogue.c"
+				>
+			</File>
+			<File
 				RelativePath="g_thing.c"
 				>
 			</File>
@@ -578,6 +566,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_trigger_rogue.c"
+				>
+			</File>
+			<File
 				RelativePath="g_turret.c"
 				>
 			</File>
@@ -587,6 +579,10 @@
 			</File>
 			<File
 				RelativePath=".\g_utils_q1.c"
+				>
+			</File>
+			<File
+				RelativePath=".\g_utils_rogue.c"
 				>
 			</File>
 			<File
@@ -607,6 +603,10 @@
 			</File>
 			<File
 				RelativePath=".\g_weapon_q1.c"
+				>
+			</File>
+			<File
+				RelativePath=".\g_weapon_rogue.c"
 				>
 			</File>
 			<File

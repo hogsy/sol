@@ -118,7 +118,7 @@ cvar_t	*sv_trigger_gravity_player;	// Knightmare- enables trigger_gravity affect
 
 cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
 cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
-cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE cvars

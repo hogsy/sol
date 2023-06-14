@@ -131,12 +131,13 @@ void fire_ionripper (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 //       entities.
 void ion_delayed_start (edict_t *ion)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(ion->movedir,ion->moveinfo.speed,ion->velocity);
+		VectorScale (ion->movedir, ion->moveinfo.speed, ion->velocity);
 		ion->nextthink = level.time + 3;
 		ion->think = ionripper_sparks;
-		gi.linkentity(ion);
+		gi.linkentity (ion);
 	}
 	else
 		ion->nextthink = level.time + FRAMETIME;
@@ -148,13 +149,13 @@ void SP_ion (edict_t *ion)
 	ion->s.modelindex = gi.modelindex ("models/objects/boomrang/tris.md2");
 	ion->s.sound = gi.soundindex ("misc/lasfly.wav");
 	ion->touch = ionripper_touch;
-	VectorCopy(ion->velocity,ion->movedir);
-	VectorNormalize(ion->movedir);
+	VectorCopy (ion->velocity, ion->movedir);
+	VectorNormalize (ion->movedir);
 	ion->moveinfo.speed = VectorLength(ion->velocity);
-	VectorClear(ion->velocity);
+	VectorClear (ion->velocity);
 	ion->think = ion_delayed_start;
 	ion->nextthink = level.time + FRAMETIME;
-	gi.linkentity(ion);
+	gi.linkentity (ion);
 }
 
 
@@ -367,12 +368,13 @@ void fire_phalanx_plasma (edict_t *self, vec3_t start, vec3_t dir, int damage, i
 
 void phalanx_plasma_delayed_start (edict_t *ph_plasma)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(ph_plasma->movedir, ph_plasma->moveinfo.speed, ph_plasma->velocity);
+		VectorScale (ph_plasma->movedir, ph_plasma->moveinfo.speed, ph_plasma->velocity);
 		ph_plasma->nextthink = level.time + 8000.0f / ph_plasma->moveinfo.speed;
 		ph_plasma->think = G_FreeEdict;
-		gi.linkentity(ph_plasma);
+		gi.linkentity (ph_plasma);
 	}
 	else
 		ph_plasma->nextthink = level.time + FRAMETIME;
@@ -386,7 +388,7 @@ void SP_phalanx_plasma (edict_t *ph_plasma)
 	ph_plasma->s.effects |= EF_PLASMA | EF_ANIM_ALLFAST;
 	ph_plasma->s.sound      = gi.soundindex ("weapons/rockfly.wav");
 	ph_plasma->touch = phalanx_plasma_touch;
-	AngleVectors(ph_plasma->s.angles, dir, NULL, NULL);
+	AngleVectors (ph_plasma->s.angles, dir, NULL, NULL);
 	VectorCopy (dir, ph_plasma->movedir);
 	ph_plasma->moveinfo.speed = VectorLength(ph_plasma->velocity);
 	if (ph_plasma->moveinfo.speed <= 0)
@@ -395,7 +397,7 @@ void SP_phalanx_plasma (edict_t *ph_plasma)
 	// For SP, freeze plasma until player spawns in
 	if (game.maxclients == 1)
 	{
-		VectorClear(ph_plasma->velocity);
+		VectorClear (ph_plasma->velocity);
 		ph_plasma->think = phalanx_plasma_delayed_start;
 		ph_plasma->nextthink = level.time + FRAMETIME;
 	}
@@ -751,13 +753,14 @@ void fire_trap (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int spee
 
 void trap_delayed_start (edict_t *trap)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(trap->movedir,trap->moveinfo.speed,trap->velocity);
+		VectorScale (trap->movedir, trap->moveinfo.speed, trap->velocity);
 		trap->movetype  = MOVETYPE_BOUNCE;
 		trap->nextthink = level.time + 1.0;
 		trap->think = Trap_Think;
-		gi.linkentity(trap);
+		gi.linkentity (trap);
 	}
 	else
 		trap->nextthink = level.time + FRAMETIME;
@@ -772,10 +775,10 @@ void SP_trap (edict_t *trap)
 	if (game.maxclients == 1)
 	{
 		trap->movetype  = MOVETYPE_NONE;
-		VectorCopy(trap->velocity,trap->movedir);
-		VectorNormalize(trap->movedir);
+		VectorCopy (trap->velocity, trap->movedir);
+		VectorNormalize (trap->movedir);
 		trap->moveinfo.speed = VectorLength(trap->velocity);
-		VectorClear(trap->velocity);
+		VectorClear (trap->velocity);
 		trap->think     = trap_delayed_start;
 		trap->nextthink = level.time + FRAMETIME;
 	}

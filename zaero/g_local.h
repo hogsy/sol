@@ -638,7 +638,7 @@ extern	cvar_t	*sv_step_fraction;	// Knightmare- this was a define in p_view.c
 
 extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
 extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
-extern	cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+extern	cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 
 #define world	(&g_edicts[0])
 

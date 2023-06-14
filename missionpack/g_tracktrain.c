@@ -2019,7 +2019,8 @@ void find_tracktrain (edict_t *self)
 
 	// This gives game a chance to put player in place before
 	// restarting train
-	if (!g_edicts[1].linkcount)
+//	if (!g_edicts[1].linkcount)
+	if ( !AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
 		self->nextthink = level.time + FRAMETIME;
 		return;

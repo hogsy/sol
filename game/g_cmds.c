@@ -1582,6 +1582,7 @@ void Cmd_PlayerList_f (edict_t *ent)
 	safe_cprintf (ent, PRINT_HIGH, "%s", text);
 }
 
+// from Yamagi Q2
 static int get_ammo_usage (gitem_t *weap)
 {
 	if (!weap) {
@@ -2711,11 +2712,11 @@ void ClientCommand (edict_t *ent)
 	// from Yamagi Q2
 	else if (Q_stricmp(cmd, "cycleweap") == 0)
 	{
-		Cmd_CycleWeap_f(ent);
+		Cmd_CycleWeap_f (ent);
 	}
 	else if (Q_stricmp(cmd, "prefweap") == 0)
 	{
-		Cmd_PrefWeap_f(ent);
+		Cmd_PrefWeap_f (ent);
 	}
 	// end from Yamagi Q2
 	// debugging/developer stuff

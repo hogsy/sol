@@ -95,7 +95,7 @@ void q1_fire_nail (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	nail->nextthink = level.time + 8000/speed; 
 	nail->think = G_FreeEdict;
 	nail->dmg = damage;
-	nail->classname = "nail";
+	nail->classname = "q1_nail";
 	if (sng)
 		nail->spawnflags = 1;
 
@@ -123,6 +123,36 @@ void q1_nail_precache (void)
 	gi.soundindex ("q1weapons/ric1.wav");
 	gi.soundindex ("q1weapons/ric2.wav");
 	gi.soundindex ("q1weapons/ric3.wav");
+}
+
+// NOTE: SP_q1_nail should ONLY be used to spawn nails that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_nail_delayed_start (edict_t *nail)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (nail->movedir, nail->moveinfo.speed, nail->velocity);
+		nail->nextthink = level.time + 2;
+		nail->think = G_FreeEdict;
+		gi.linkentity (nail);
+	}
+	else
+		nail->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_nail (edict_t *nail)
+{
+	nail->s.skinnum = 0;
+	nail->s.modelindex = gi.modelindex ("models/objects/q1nail/tris.md2");
+	nail->touch = q1_nail_touch;
+	VectorCopy (nail->velocity, nail->movedir);
+	VectorNormalize (nail->movedir);
+	nail->moveinfo.speed = VectorLength(nail->velocity);
+	VectorClear (nail->velocity);
+	nail->think = q1_nail_delayed_start;
+	nail->nextthink = level.time + FRAMETIME;
+	gi.linkentity (nail);
 }
 
 
@@ -205,7 +235,7 @@ void q1_fire_laser (edict_t *self, vec3_t start, vec3_t dir, int damage, int spe
 	laser->nextthink = level.time + 8000/speed; 
 	laser->think = G_FreeEdict;
 	laser->dmg = damage;
-	laser->classname = "laser";
+	laser->classname = "q1_laser";
 
 	laser->common_name = "Laser";
 	laser->class_id = ENTITY_Q1_LASER;
@@ -227,6 +257,37 @@ void q1_laser_precache (void)
 {
 	gi.modelindex ("models/monsters/q1enforcer/laser/tris.md2");
 	gi.soundindex ("q1enforcer/enfstop.wav");
+}
+
+
+// NOTE: SP_q1_laser should ONLY be used to spawn lasers that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_laser_delayed_start (edict_t *laser)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (laser->movedir, laser->moveinfo.speed, laser->velocity);
+		laser->nextthink = level.time + 2;
+		laser->think = G_FreeEdict;
+		gi.linkentity (laser);
+	}
+	else
+		laser->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_laser (edict_t *laser)
+{
+	laser->s.skinnum = 0;
+	laser->s.modelindex = gi.modelindex ("models/monsters/q1enforcer/laser/tris.md2");
+	laser->touch = q1_laser_touch;
+	VectorCopy (laser->velocity, laser->movedir);
+	VectorNormalize (laser->movedir);
+	laser->moveinfo.speed = VectorLength(laser->velocity);
+	VectorClear (laser->velocity);
+	laser->think = q1_laser_delayed_start;
+	laser->nextthink = level.time + FRAMETIME;
+	gi.linkentity (laser);
 }
 
 
@@ -325,7 +386,7 @@ void q1_fire_flame (edict_t *self, vec3_t start, vec3_t dir, float leftrightoff)
 	bolt->nextthink = level.time + 6;	// Knightmare- was 2
 	bolt->think = G_FreeEdict;
 	bolt->dmg = damage;
-	bolt->classname = "bolt";
+	bolt->classname = "q1_flame";
 
 	bolt->common_name = "Hell Knight Flame";
 	bolt->class_id = ENTITY_Q1_HKNIGHT_FLAME;
@@ -345,6 +406,37 @@ void q1_flame_precache (void)
 {
 	gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
 	gi.soundindex ("q1hknight/hit.wav");
+}
+
+
+// NOTE: SP_q1_flame should ONLY be used to spawn flames that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_flame_delayed_start (edict_t *bolt)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (bolt->movedir, bolt->moveinfo.speed, bolt->velocity);
+		bolt->nextthink = level.time + 2;
+		bolt->think = G_FreeEdict;
+		gi.linkentity (bolt);
+	}
+	else
+		bolt->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_flame (edict_t *bolt)
+{
+	bolt->s.skinnum = 0;
+	bolt->s.modelindex = gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
+	bolt->touch = q1_flame_touch;
+	VectorCopy (bolt->velocity, bolt->movedir);
+	VectorNormalize (bolt->movedir);
+	bolt->moveinfo.speed = VectorLength(bolt->velocity);
+	VectorClear (bolt->velocity);
+	bolt->think = q1_flame_delayed_start;
+	bolt->nextthink = level.time + FRAMETIME;
+	gi.linkentity (bolt);
 }
 
 
@@ -473,7 +565,7 @@ void q1_fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, in
 	grenade->think = q1_grenade_explode;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;
-	grenade->classname = "grenade";
+	grenade->classname = "q1_grenade";
 
 	grenade->common_name = "Quake Grenade";
 	grenade->class_id = ENTITY_Q1_GRENADE;
@@ -489,6 +581,49 @@ void q1_grenade_precache (void)
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/bounce.wav");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+}
+
+
+// NOTE: SP_q1_grenade should ONLY be used to spawn grenades that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_grenade_delayed_start (edict_t *grenade)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (grenade->movedir, grenade->moveinfo.speed, grenade->velocity);
+		grenade->nextthink = level.time + 2;
+		grenade->think = G_FreeEdict;
+		gi.linkentity (grenade);
+	}
+	else
+		grenade->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_grenade (edict_t *grenade)
+{
+	grenade->s.skinnum = 0;
+	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
+	grenade->touch = q1_grenade_touch;
+
+	// For SP, freeze grenade until player spawns in
+	if (game.maxclients == 1)
+	{
+		grenade->movetype  = MOVETYPE_NONE;
+		VectorCopy (grenade->velocity, grenade->movedir);
+		VectorNormalize (grenade->movedir);
+		grenade->moveinfo.speed = VectorLength(grenade->velocity);
+		VectorClear (grenade->velocity);
+		grenade->think = q1_grenade_delayed_start;
+		grenade->nextthink = level.time + FRAMETIME;
+	}
+	else
+	{
+		grenade->movetype  = MOVETYPE_BOUNCE;
+		grenade->nextthink = level.time + 2.5;
+		grenade->think     = q1_grenade_explode;
+	}
+	gi.linkentity (grenade);
 }
 
 
@@ -610,7 +745,7 @@ void q1_fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	rocket->radius_dmg = radius_damage;
 	rocket->dmg_radius = damage_radius;
 	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
-	rocket->classname = "rocket";
+	rocket->classname = "q1_rocket";
 	
 	q1rocket_trail (rocket, start, dir);
 	
@@ -627,6 +762,52 @@ void q1_rocket_precahce (void)
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("weapons/rockfly.wav");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+}
+
+
+// NOTE: SP_rocket should ONLY be used to spawn rockets that change maps
+//       via a trigger_transition. It should NOT be used for map entities.
+
+void q1_rocket_delayed_start (edict_t *rocket)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (rocket->movedir, rocket->moveinfo.speed, rocket->velocity);
+		rocket->nextthink = level.time + 8000/rocket->moveinfo.speed;
+		rocket->think = G_FreeEdict;
+		gi.linkentity (rocket);
+	}
+	else
+		rocket->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_rocket (edict_t *rocket)
+{
+	vec3_t	dir;
+
+	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	rocket->s.sound      = gi.soundindex ("weapons/rockfly.wav");
+	rocket->touch = q1_rocket_touch;
+	AngleVectors (rocket->s.angles, dir, NULL, NULL);
+	VectorCopy (dir, rocket->movedir);
+	rocket->moveinfo.speed = VectorLength(rocket->velocity);
+	if (rocket->moveinfo.speed <= 0)
+		rocket->moveinfo.speed = 650;
+
+	// For SP, freeze rocket until player spawns in
+	if (game.maxclients == 1)
+	{
+		VectorClear (rocket->velocity);
+		rocket->think = q1_rocket_delayed_start;
+		rocket->nextthink = level.time + FRAMETIME;
+	}
+	else
+	{
+		rocket->think = G_FreeEdict;
+		rocket->nextthink = level.time + 8000/rocket->moveinfo.speed;
+	}
+	gi.linkentity (rocket);
 }
 
 
@@ -809,7 +990,7 @@ void q1_fire_firepod (edict_t *self, vec3_t dir)
 	pod->touch = q1_firepod_touch;
 	pod->nextthink = level.time +.1;
 	pod->think = q1_firepod_home;
-	pod->classname = "firepod";
+	pod->classname = "q1_firepod";
 	pod->enemy = self->enemy;
 	pod->owner = self;
 
@@ -835,6 +1016,51 @@ void q1_firepod_precache (void)
 	gi.modelindex ("models/monsters/q1shalrath/v_spike/tris.md2");
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+}
+
+
+// NOTE: SP_q1_firepod should ONLY be used to spawn firepods that change maps
+//       via a trigger_transition. It should NOT be used for map entities.
+
+void q1_firepod_delayed_start (edict_t *pod)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (pod->movedir, pod->moveinfo.speed, pod->velocity);
+		pod->nextthink = level.time + 8000/pod->moveinfo.speed;
+		pod->think = G_FreeEdict;
+		gi.linkentity (pod);
+	}
+	else
+		pod->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_firepod (edict_t *pod)
+{
+	vec3_t	dir;
+
+	pod->s.modelindex = gi.modelindex ("models/monsters/q1shalrath/v_spike/tris.md2");
+	pod->touch = q1_firepod_touch;
+	AngleVectors (pod->s.angles, dir, NULL, NULL);
+	VectorCopy (dir, pod->movedir);
+	pod->moveinfo.speed = VectorLength(pod->velocity);
+	if (pod->moveinfo.speed <= 0)
+		pod->moveinfo.speed = 400;
+
+	// For SP, freeze firepod until player spawns in
+	if (game.maxclients == 1)
+	{
+		VectorClear (pod->velocity);
+		pod->think = q1_firepod_delayed_start;
+		pod->nextthink = level.time + FRAMETIME;
+	}
+	else
+	{
+		pod->think = G_FreeEdict;
+		pod->nextthink = level.time + 8000/pod->moveinfo.speed;
+	}
+	gi.linkentity (pod);
 }
 
 
@@ -905,7 +1131,7 @@ void q1_fire_lavaball (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 	lavaball->movetype = MOVETYPE_FLYMISSILE;
 	lavaball->clipmask = MASK_SHOT;
 	lavaball->solid = SOLID_BBOX;
-	lavaball->s.effects |= EF_ROCKET; //EF_FLAG1
+	lavaball->s.effects |= EF_ROCKET;	// EF_FLAG1
 	lavaball->s.renderfx |= RF_GLOW;
 
 	VectorClear (lavaball->mins);
@@ -933,6 +1159,52 @@ void q1_fire_lavaball_precache (void)
 	gi.modelindex ("models/monsters/q1chthon/lavaball/tris.md2");
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+}
+
+
+// NOTE: SP_q1_lavaball should ONLY be used to spawn lavaballs that change maps
+//       via a trigger_transition. It should NOT be used for map entities.
+
+void q1_lavaball_delayed_start (edict_t *lavaball)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (lavaball->movedir, lavaball->moveinfo.speed, lavaball->velocity);
+		lavaball->nextthink = level.time + 8000/lavaball->moveinfo.speed;
+		lavaball->think = G_FreeEdict;
+		gi.linkentity (lavaball);
+	}
+	else
+		lavaball->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_lavaball (edict_t *lavaball)
+{
+	vec3_t	dir;
+
+	lavaball->s.modelindex = gi.modelindex ("models/monsters/q1chthon/lavaball/tris.md2");
+	lavaball->s.sound = gi.soundindex ("weapons/rockfly.wav");
+	lavaball->touch = q1_lavaball_touch;
+	AngleVectors (lavaball->s.angles, dir, NULL, NULL);
+	VectorCopy (dir, lavaball->movedir);
+	lavaball->moveinfo.speed = VectorLength(lavaball->velocity);
+	if (lavaball->moveinfo.speed <= 0)
+		lavaball->moveinfo.speed = 650;
+
+	// For SP, freeze lavaball until player spawns in
+	if (game.maxclients == 1)
+	{
+		VectorClear (lavaball->velocity);
+		lavaball->think = q1_lavaball_delayed_start;
+		lavaball->nextthink = level.time + FRAMETIME;
+	}
+	else
+	{
+		lavaball->think = G_FreeEdict;
+		lavaball->nextthink = level.time + 8000/lavaball->moveinfo.speed;
+	}
+	gi.linkentity (lavaball);
 }
 
 
@@ -1010,7 +1282,7 @@ void q1_fire_acidspit (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 	acidbolt->think = G_FreeEdict;
 	acidbolt->dmg = damage;
 //	acidbolt->s.sound = gi.soundindex ("weapons/rockfly.wav");
-	acidbolt->classname = "acidbolt";
+	acidbolt->classname = "q1_acidbolt";
 
 	acidbolt->common_name = "Acid Bolt";
 	acidbolt->class_id = ENTITY_Q1_ACIDBOLT;
@@ -1023,6 +1295,37 @@ void q1_acidspit_precache (void)
 {
 	gi.modelindex ("models/monsters/q1scrag/w_spike/tris.md2");
 	gi.soundindex ("q1scrag/hit.wav");
+}
+
+
+// NOTE: SP_q1_acidspit should ONLY be used to spawn acid bolts that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_acidspit_delayed_start (edict_t *acidbolt)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (acidbolt->movedir, acidbolt->moveinfo.speed, acidbolt->velocity);
+		acidbolt->nextthink = level.time + 2;
+		acidbolt->think = G_FreeEdict;
+		gi.linkentity (acidbolt);
+	}
+	else
+		acidbolt->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_acidspit (edict_t *acidbolt)
+{
+	acidbolt->s.skinnum = 0;
+	acidbolt->s.modelindex = gi.modelindex ("models/monsters/q1scrag/w_spike/tris.md2");
+	acidbolt->touch = q1_acidbolt_touch;
+	VectorCopy (acidbolt->velocity, acidbolt->movedir);
+	VectorNormalize (acidbolt->movedir);
+	acidbolt->moveinfo.speed = VectorLength(acidbolt->velocity);
+	VectorClear (acidbolt->velocity);
+	acidbolt->think = q1_acidspit_delayed_start;
+	acidbolt->nextthink = level.time + FRAMETIME;
+	gi.linkentity (acidbolt);
 }
 
 
@@ -1098,7 +1401,7 @@ void q1_fire_gib (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int sp
 //	gib->think = G_FreeEdict;
 	gib->think = gib_fade;	// use gib_fade() instead of directly removing
 	gib->dmg = damage;
-	gib->classname = "gib";
+	gib->classname = "q1_zombiegib";
 
 	gib->common_name = "Gib Projectile";
 	gib->class_id = ENTITY_Q1_ZOMBIE_GIB;
@@ -1107,9 +1410,40 @@ void q1_fire_gib (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int sp
 }
 
 
-void q1_gib_precache (void)
+void q1_zombiegib_precache (void)
 {
 	gi.modelindex ("models/monsters/q1zombie/gib/tris.md2");
 	gi.soundindex ("q1zombie/z_hit.wav");
 	gi.soundindex ("q1zombie/z_miss.wav");
+}
+
+
+// NOTE: SP_q1_zombiegib should ONLY be used to spawn zombie gibs that change
+//       maps via trigger_transition. It should NOT be used for map entities.
+void q1_zombiegib_delayed_start (edict_t *gib)
+{
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
+	{
+		VectorScale (gib->movedir, gib->moveinfo.speed, gib->velocity);
+		gib->nextthink = level.time + 2;
+		gib->think = G_FreeEdict;
+		gi.linkentity (gib);
+	}
+	else
+		gib->nextthink = level.time + FRAMETIME;
+}
+
+void SP_q1_zombiegib (edict_t *gib)
+{
+	gib->s.skinnum = 0;
+	gib->s.modelindex = gi.modelindex ("models/monsters/q1scrag/w_spike/tris.md2");
+	gib->touch = q1_zombiegib_touch;
+	VectorCopy (gib->velocity, gib->movedir);
+	VectorNormalize (gib->movedir);
+	gib->moveinfo.speed = VectorLength(gib->velocity);
+	VectorClear (gib->velocity);
+	gib->think = q1_zombiegib_delayed_start;
+	gib->nextthink = level.time + FRAMETIME;
+	gi.linkentity (gib);
 }

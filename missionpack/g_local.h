@@ -1022,7 +1022,7 @@ extern	cvar_t	*sv_trigger_gravity_player;	// Knightmare- enables trigger_gravity
 
 extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
 extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
-extern	cvar_t	*g_aimfix_fadein_dist;	// Knightmare- transition range for aimfix
+extern	cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 extern	cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 
 //ROGUE
@@ -1253,12 +1253,15 @@ void GameDirRelativePath (const char *filename, char *output, size_t outputSize)
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize);
 void CreatePath (const char *path);
 qboolean LocalFileExists (const char *path);
+qboolean AnyPlayerSpawned (void);	// Knightmare added
+qboolean AllPlayersSpawned (void);	// Knightmare added
+qboolean AllPlayersLinkcountCmp (int cmp_linkcount);	// Knightmare added
 
 void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target);
-qboolean IsIdMap (void); // Knightmare added
-qboolean IsXatrixMap (void); // Knightmare added
-qboolean IsRogueMap (void); // Knightmare added
-qboolean IsZaeroMap (void); // Knightmare added
+qboolean IsIdMap (void);		// Knightmare added
+qboolean IsXatrixMap (void);	// Knightmare added
+qboolean IsRogueMap (void);		// Knightmare added
+qboolean IsZaeroMap (void);		// Knightmare added
 qboolean IsZaeroRailgunHackMap (void); // Knightmare added
 qboolean CheckCoop_MapHacks (edict_t *ent); // FS: Coop: Check if we have to modify some stuff for coop so we don't have to rely on distributing ent files
 qboolean UseSpecialGoodGuyFlag (edict_t *monster); // Knightmare added
@@ -1746,7 +1749,7 @@ void kick_attack (edict_t *ent);
 //====================
 // ROGUE PROTOTYPES
 //
-// g_newweap.c
+// g_weapon_rogue.c
 //
 #define PROX_TEST_SIZE 7.0f
 //extern float nuke_framenum;
@@ -1768,7 +1771,7 @@ void fire_tracker (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 
 // ROGUE
 //
-// g_newai.c
+// g_ai_rogue.c
 //
 #define	MAX_HINT_CHAINS		100
 extern int	hint_paths_present;
@@ -1812,7 +1815,7 @@ void Vengeance_Launch (edict_t *self);
 void Hunter_Launch (edict_t *self);
 
 //
-// g_newdm.c
+// g_dm_rogue.c
 //
 void InitGameRules(void);
 edict_t *DoRandomRespawn (edict_t *ent);

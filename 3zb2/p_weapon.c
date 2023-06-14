@@ -47,9 +47,9 @@ void P_ProjectSource (edict_t *client_ent, vec3_t point, vec3_t distance, vec3_t
 		range = VectorLength(rangeVec);
 		if ( (tr.fraction < 1) && (range >= g_aimfix_min_dist->value) )
 		{
-			if (range < (g_aimfix_min_dist->value + g_aimfix_fadein_dist->value) )
+			if (range < (g_aimfix_min_dist->value + g_aimfix_taper_dist->value) )
 			{	// within feathering range
-				featherFrac = (range - g_aimfix_min_dist->value) / g_aimfix_fadein_dist->value;
+				featherFrac = (range - g_aimfix_min_dist->value) / g_aimfix_taper_dist->value;
 				VectorSubtract (tr.endpos, result, forward2);
 				VectorNormalize (forward2);
 				VectorScale (forward2, featherFrac, forward2);

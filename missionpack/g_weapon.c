@@ -478,12 +478,13 @@ void fire_blueblaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 //       entities.
 void bolt_delayed_start (edict_t *bolt)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(bolt->movedir,bolt->moveinfo.speed,bolt->velocity);
+		VectorScale (bolt->movedir, bolt->moveinfo.speed, bolt->velocity);
 		bolt->nextthink = level.time + 2;
 		bolt->think = G_FreeEdict;
-		gi.linkentity(bolt);
+		gi.linkentity (bolt);
 	}
 	else
 		bolt->nextthink = level.time + FRAMETIME;
@@ -502,13 +503,13 @@ void SP_bolt (edict_t *bolt)
 	bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
 	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
 	bolt->touch = blaster_touch;
-	VectorCopy(bolt->velocity,bolt->movedir);
-	VectorNormalize(bolt->movedir);
+	VectorCopy (bolt->velocity, bolt->movedir);
+	VectorNormalize (bolt->movedir);
 	bolt->moveinfo.speed = VectorLength(bolt->velocity);
-	VectorClear(bolt->velocity);
+	VectorClear (bolt->velocity);
 	bolt->think = bolt_delayed_start;
 	bolt->nextthink = level.time + FRAMETIME;
-	gi.linkentity(bolt);
+	gi.linkentity (bolt);
 }
 
 /*
@@ -841,13 +842,14 @@ void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int 
 
 void grenade_delayed_start (edict_t *grenade)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(grenade->movedir,grenade->moveinfo.speed,grenade->velocity);
+		VectorScale (grenade->movedir, grenade->moveinfo.speed, grenade->velocity);
 		grenade->movetype  = MOVETYPE_BOUNCE;
 		grenade->nextthink = level.time + 2.5;
 		grenade->think     = Grenade_Explode;
-		gi.linkentity(grenade);
+		gi.linkentity (grenade);
 	}
 	else
 		grenade->nextthink = level.time + FRAMETIME;
@@ -862,10 +864,10 @@ void SP_grenade (edict_t *grenade)
 	if (game.maxclients == 1)
 	{
 		grenade->movetype  = MOVETYPE_NONE;
-		VectorCopy(grenade->velocity,grenade->movedir);
-		VectorNormalize(grenade->movedir);
+		VectorCopy (grenade->velocity, grenade->movedir);
+		VectorNormalize (grenade->movedir);
 		grenade->moveinfo.speed = VectorLength(grenade->velocity);
-		VectorClear(grenade->velocity);
+		VectorClear (grenade->velocity);
 		grenade->think     = grenade_delayed_start;
 		grenade->nextthink = level.time + FRAMETIME;
 	}
@@ -880,15 +882,16 @@ void SP_grenade (edict_t *grenade)
 
 void handgrenade_delayed_start (edict_t *grenade)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(grenade->movedir,grenade->moveinfo.speed,grenade->velocity);
+		VectorScale (grenade->movedir, grenade->moveinfo.speed, grenade->velocity);
 		grenade->movetype  = MOVETYPE_BOUNCE;
 		grenade->nextthink = level.time + 2.5;
 		grenade->think     = Grenade_Explode;
 		if (grenade->owner)
 			gi.sound (grenade->owner, CHAN_WEAPON, gi.soundindex ("weapons/hgrent1a.wav"), 1, ATTN_NORM, 0);
-		gi.linkentity(grenade);
+		gi.linkentity (grenade);
 	}
 	else
 		grenade->nextthink = level.time + FRAMETIME;
@@ -903,10 +906,10 @@ void SP_handgrenade (edict_t *grenade)
 	if (game.maxclients == 1)
 	{
 		grenade->movetype  = MOVETYPE_NONE;
-		VectorCopy(grenade->velocity,grenade->movedir);
-		VectorNormalize(grenade->movedir);
+		VectorCopy (grenade->velocity, grenade->movedir);
+		VectorNormalize (grenade->movedir);
 		grenade->moveinfo.speed = VectorLength(grenade->velocity);
-		VectorClear(grenade->velocity);
+		VectorClear (grenade->velocity);
 		grenade->think     = handgrenade_delayed_start;
 		grenade->nextthink = level.time + FRAMETIME;
 	}
@@ -1292,12 +1295,13 @@ void fire_missile (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 
 void missile_delayed_start (edict_t *missile)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(missile->movedir,missile->moveinfo.speed,missile->velocity);
+		VectorScale (missile->movedir, missile->moveinfo.speed, missile->velocity);
 		missile->nextthink = level.time + 8000/missile->moveinfo.speed;
 		missile->think = G_FreeEdict;
-		gi.linkentity(missile);
+		gi.linkentity (missile);
 	}
 	else
 		missile->nextthink = level.time + FRAMETIME;
@@ -1310,7 +1314,7 @@ void SP_missile (edict_t *missile)
 	missile->s.modelindex = gi.modelindex ("models/objects/bomb/tris.md2");
 	missile->s.sound      = gi.soundindex ("weapons/rockfly.wav");
 	missile->touch = missile_touch;
-	AngleVectors(missile->s.angles,dir,NULL,NULL);
+	AngleVectors (missile->s.angles, dir, NULL, NULL);
 	VectorCopy (dir, missile->movedir);
 	missile->moveinfo.speed = VectorLength(missile->velocity);
 	if (missile->moveinfo.speed <= 0)
@@ -1319,7 +1323,7 @@ void SP_missile (edict_t *missile)
 	// For SP, freeze missile until player spawns in
 	if (game.maxclients == 1)
 	{
-		VectorClear(missile->velocity);
+		VectorClear (missile->velocity);
 		missile->think = missile_delayed_start;
 		missile->nextthink = level.time + FRAMETIME;
 	}
@@ -1672,12 +1676,13 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 
 void rocket_delayed_start (edict_t *rocket)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
-		VectorScale(rocket->movedir,rocket->moveinfo.speed,rocket->velocity);
+		VectorScale (rocket->movedir, rocket->moveinfo.speed, rocket->velocity);
 		rocket->nextthink = level.time + 8000/rocket->moveinfo.speed;
 		rocket->think = G_FreeEdict;
-		gi.linkentity(rocket);
+		gi.linkentity (rocket);
 	}
 	else
 		rocket->nextthink = level.time + FRAMETIME;
@@ -1688,11 +1693,11 @@ void SP_rocket (edict_t *rocket)
 	vec3_t	dir;
 
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
-	if (!strcmp(rocket->classname, "homing rocket"))
+	if ( !strcmp(rocket->classname, "homing rocket") )
 		rocket->s.skinnum = 1;
 	rocket->s.sound      = gi.soundindex ("weapons/rockfly.wav");
 	rocket->touch = rocket_touch;
-	AngleVectors(rocket->s.angles,dir,NULL,NULL);
+	AngleVectors (rocket->s.angles, dir, NULL, NULL);
 	VectorCopy (dir, rocket->movedir);
 	rocket->moveinfo.speed = VectorLength(rocket->velocity);
 	if (rocket->moveinfo.speed <= 0)
@@ -1701,7 +1706,7 @@ void SP_rocket (edict_t *rocket)
 	// For SP, freeze rocket until player spawns in
 	if (game.maxclients == 1)
 	{
-		VectorClear(rocket->velocity);
+		VectorClear (rocket->velocity);
 		rocket->think = rocket_delayed_start;
 		rocket->nextthink = level.time + FRAMETIME;
 	}

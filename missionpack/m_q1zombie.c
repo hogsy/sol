@@ -671,7 +671,7 @@ void SP_monster_q1_zombie (edict_t *self)
 	gi.modelindex ("models/objects/q1gibs/q1gib2/tris.md2");
 	gi.modelindex ("models/objects/q1gibs/q1gib3/tris.md2");
 	// precache projectile gib
-	q1_gib_precache ();
+	q1_zombiegib_precache ();
 
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;

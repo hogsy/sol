@@ -162,11 +162,11 @@ static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damag
 	gclient_t	*client;
 	int			save;
 	int			power_armor_type;
-	int			index;
+	int			index = 0;
 // AJ changed damagepercell from type "int" to "float" to allow fractional damage
 	float		damagePerCell;
 	int			pa_te_type;
-	int			power;
+	int			power = 0;
 	int			power_used;
 
 	if (!damage)
@@ -637,7 +637,7 @@ T_RadiusDamage
 */
 void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod)
 {
-	float	points;
+	float	points = 0;
 	edict_t	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;
@@ -653,7 +653,7 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 		VectorMA (ent->s.origin, 0.5, v, v);
 		VectorSubtract (inflictor->s.origin, v, v);
 
-		if (mod == MOD_SHOCK_SPLASH && (VectorLength(v) < radius) && (points < damage * 0.25))
+		if ( (mod == MOD_SHOCK_SPLASH) && (VectorLength(v) < radius) && (points < damage * 0.25) )
 			points = (1 - (VectorLength(v) / radius)) * damage;
 		else
 			points = damage - 0.5 * VectorLength (v);

@@ -483,7 +483,7 @@ void InitGame (void)
 
 	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);								// Knightmare- from Yamagi Q2
 	g_aimfix_min_dist = gi.cvar ("g_aimfix_min_dist", "128", CVAR_ARCHIVE);			// Knightmare- minimum range for aimfix
-	g_aimfix_fadein_dist = gi.cvar ("g_aimfix_fadein_dist", "128", CVAR_ARCHIVE);	// Knightmare- transition range for aimfix
+	g_aimfix_taper_dist = gi.cvar ("g_aimfix_taper_dist", "128", CVAR_ARCHIVE);		// Knightmare- transition range for aimfix
 
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);								// Knightmare- enables hacks for Neil Manke's Q2 maps
 

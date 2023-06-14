@@ -1212,6 +1212,74 @@ qboolean LocalFileExists (const char *path)
 	return false;
 }
 
+
+// Knightmare added
+/*
+====================
+AnyPlayerSpawned
+
+Checks if any player has spawned.
+Original code by Phatman.
+====================
+*/
+qboolean AnyPlayerSpawned (void)
+{
+	int		i;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && g_edicts[i + 1].linkcount )
+			return true;
+	}
+
+	return false;
+}
+
+
+/*
+====================
+AllPlayersSpawned
+
+Checks if all players have spawned.
+Original code by Phatman.
+====================
+*/
+qboolean AllPlayersSpawned (void)
+{
+	int		i;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && !g_edicts[i + 1].linkcount )
+			return false;
+	}
+
+	return true;
+}
+
+
+/*
+====================
+AllPlayersLinkcountCmp
+
+Checks if all players linkcount matches value.
+Returns true if any value matches.
+cmp_linkcount is the value to compare against.
+====================
+*/
+qboolean AllPlayersLinkcountCmp (int cmp_linkcount)
+{
+	int			i;
+	qboolean	matched = false;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && (g_edicts[i + 1].linkcount == cmp_linkcount) )
+			matched = true;
+	}
+
+	return matched;
+}
+// end Knightmare
+
+
 /* Lazarus: G_UseTarget is similar to G_UseTargets, but only triggers
             a single target rather than all entities matching target
 			criteria. It *does*, however, kill all killtargets */

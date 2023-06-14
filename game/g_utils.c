@@ -793,27 +793,27 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 
 	if (!ent->client)
 	{
-		if (endpos) VectorClear(endpos);
+		if (endpos) VectorClear (endpos);
 		if (range) *range = 0;
 		return NULL;
 	}
 	VectorClear(end);
 	if (ent->client->chasetoggle)
 	{
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->client->chasecam->s.origin,start);
+		AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy (ent->client->chasecam->s.origin, start);
 		ignore = ent->client->chasecam;
 	}
 	else if (ent->client->spycam)
 	{
 		AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
-		VectorCopy(ent->s.origin,start);
+		VectorCopy (ent->s.origin, start);
 		ignore = ent->client->spycam;
 	}
 	else
 	{
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->s.origin, start);
+		AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy (ent->s.origin, start);
 		start[2] += ent->viewheight;
 		ignore = ent;
 	}
@@ -821,8 +821,8 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 	VectorMA(start, WORLD_SIZE, forward, end);	// was 8192
 	
 	/* First check for looking directly at a pickup item */
-	VectorSet(mins, MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);	// was -4096, -4096, -4096
-	VectorSet(maxs, MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);	// was 4096, 4096, 4096
+	VectorSet (mins, MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);	// was -4096, -4096, -4096
+	VectorSet (maxs, MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);	// was 4096, 4096, 4096
 	num = gi.BoxEdicts (mins, maxs, trigger, MAX_EDICTS, AREA_TRIGGERS);
 	for (i=0 ; i<num ; i++)
 	{
@@ -837,7 +837,7 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 			continue;
 		VectorSubtract(who->s.origin,start,dir);
 		r = VectorLength(dir);
-		VectorMA(start, r, forward, entp);
+		VectorMA (start, r, forward, entp);
 		if (entp[0] < who->s.origin[0] - 17) continue;
 		if (entp[1] < who->s.origin[1] - 17) continue;
 		if (entp[2] < who->s.origin[2] - 17) continue;
@@ -845,7 +845,7 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 		if (entp[1] > who->s.origin[1] + 17) continue;
 		if (entp[2] > who->s.origin[2] + 17) continue;
 		if (endpos)
-			VectorCopy(who->s.origin,endpos);
+			VectorCopy (who->s.origin, endpos);
 		if (range)
 			*range = r;
 		return who;
@@ -889,7 +889,7 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 		endpos[2] = tr.endpos[2];
 	}
 	if (range) {
-		VectorSubtract(tr.endpos,start,start);
+		VectorSubtract (tr.endpos, start, start);
 		*range = VectorLength(start);
 	}
 	return tr.ent;
@@ -1019,6 +1019,74 @@ qboolean LocalFileExists (const char *path)
 	}
 	return false;
 }
+
+
+// Knightmare added
+/*
+====================
+AnyPlayerSpawned
+
+Checks if any player has spawned.
+Original code by Phatman.
+====================
+*/
+qboolean AnyPlayerSpawned (void)
+{
+	int		i;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && g_edicts[i + 1].linkcount )
+			return true;
+	}
+
+	return false;
+}
+
+
+/*
+====================
+AllPlayersSpawned
+
+Checks if all players have spawned.
+Original code by Phatman.
+====================
+*/
+qboolean AllPlayersSpawned (void)
+{
+	int		i;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && !g_edicts[i + 1].linkcount )
+			return false;
+	}
+
+	return true;
+}
+
+
+/*
+====================
+AllPlayersLinkcountCmp
+
+Checks if all players linkcount matches value.
+Returns true if any value matches.
+cmp_linkcount is the value to compare against.
+====================
+*/
+qboolean AllPlayersLinkcountCmp (int cmp_linkcount)
+{
+	int			i;
+	qboolean	matched = false;
+
+	for (i = 0; i < game.maxclients; i++) {
+		if ( g_edicts[i + 1].inuse && (g_edicts[i + 1].linkcount == cmp_linkcount) )
+			matched = true;
+	}
+
+	return matched;
+}
+// end Knightmare
+
 
 /* Lazarus: G_UseTarget is similar to G_UseTargets, but only triggers
             a single target rather than all entities matching target

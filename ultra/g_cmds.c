@@ -1743,7 +1743,7 @@ void ClientCommand (edict_t *ent)
 	{
 		edict_t	*plyr;
 		int	i;
-		edict_t *flag, *enemy_flag, *enemy_flag2, *target_flag;
+		edict_t *flag = NULL, *enemy_flag = NULL, *enemy_flag2 = NULL, *target_flag = NULL;
 
 		if (!ctf->value)
 		{
@@ -1810,7 +1810,7 @@ void ClientCommand (edict_t *ent)
 	{
 		edict_t	*plyr;
 		int	i;
-		edict_t *flag, *enemy_flag;
+		edict_t *flag = NULL, *enemy_flag = NULL;
 
 		if (!ctf->value)
 		{
@@ -1860,7 +1860,7 @@ void ClientCommand (edict_t *ent)
 	{
 		edict_t	*plyr;
 		int	i;
-		edict_t *flag, *enemy_flag;
+		edict_t *flag = NULL, *enemy_flag = NULL;
 
 		if (!ctf->value)
 		{
@@ -1910,7 +1910,7 @@ void ClientCommand (edict_t *ent)
 	{
 		edict_t	*plyr;
 		int	i;
-		edict_t *flag, *enemy_flag;
+		edict_t *flag = NULL, *enemy_flag = NULL;
 
 		if (!ttctf->value)
 		{
@@ -1960,7 +1960,7 @@ void ClientCommand (edict_t *ent)
 	{
 		edict_t	*plyr;
 		int	i;
-		edict_t *flag, *enemy_flag, *enemy_flag2;
+		edict_t *flag = NULL, *enemy_flag = NULL, *enemy_flag2 = NULL;
 
 		if (!ctf->value)
 		{

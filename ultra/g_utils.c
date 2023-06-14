@@ -653,7 +653,7 @@ Adds a skin reference to an .md2 file, saving as filename.md2new
 void AddModelSkin (char *modelfile, char *skinname)
 {
 	FILE	*f, *out;
-	int		count = 0, buffer_int, i;
+	int		/*count = 0,*/ buffer_int, i;
 	char	filename[256], infilename[256];
 	char	buffer;
 

@@ -255,7 +255,7 @@ dmg  = damage to inflict when blocked (2 default)
 void SP_func_door_secret2 (edict_t *ent)
 {
 	vec3_t	forward,right,up;
-	float	lrSize, fbSize;
+//	float	lrSize, fbSize;
 
 	if (ent->sounds != 1)
 	{
@@ -288,47 +288,52 @@ void SP_func_door_secret2 (edict_t *ent)
 
 	if (ent->move_angles[1] == 0 || ent->move_angles[1] == 180)
 	{
-		lrSize = ent->size[1];
-		fbSize = ent->size[0];
+	//	lrSize = ent->size[1];
+	//	fbSize = ent->size[0];
+		if (!ent->width)
+			ent->width = ent->size[1] - 2;	// was lrSize
+		if (!ent->length)
+			ent->length = ent->size[0] - 2;	// was fbSize
 	}		
 	else if (ent->move_angles[1] == 90 || ent->move_angles[1] == 270)
 	{
-		lrSize = ent->size[0];
-		fbSize = ent->size[1];
+	//	lrSize = ent->size[0];
+	//	fbSize = ent->size[1];
+		if (!ent->width)
+			ent->width = ent->size[0] - 2;	// was lrSize
+		if (!ent->length)
+			ent->length = ent->size[1] - 2;	// was fbSize
 	}		
 	else
 	{
-		gi.dprintf("Secret door not at 0,90,180,270!\n");
+		gi.dprintf("Secret door not at 0, 90, 180, 270!\n");
 	}
 
 	if (ent->spawnflags & SEC_MOVE_FORWARD)
-		VectorScale(forward, fbSize, forward);
+		VectorScale (forward, ent->length, forward);		// was fbSize
 	else
-	{
-		VectorScale(forward, fbSize * -1 , forward);
-	}
+		VectorScale (forward, ent->length * -1 , forward);	// was fbSize
 
 	if (ent->spawnflags & SEC_MOVE_RIGHT)
-		VectorScale(right, lrSize, right);
+		VectorScale (right, ent->width, right);			// was lrSize
 	else
-	{
-		VectorScale(right, lrSize * -1, right);
-	}
+		VectorScale (right, ent->width * -1, right);	// was lrSize
 
 	if (ent->spawnflags & SEC_1ST_DOWN)
 	{
-		VectorAdd(ent->s.origin, forward, ent->moveinfo.start_origin);
-		VectorAdd(ent->moveinfo.start_origin, right, ent->moveinfo.end_origin);
+		VectorAdd (ent->s.origin, forward, ent->moveinfo.start_origin);
+		VectorAdd (ent->moveinfo.start_origin, right, ent->moveinfo.end_origin);
 	}
 	else
 	{
-		VectorAdd(ent->s.origin, right, ent->moveinfo.start_origin);
-		VectorAdd(ent->moveinfo.start_origin, forward, ent->moveinfo.end_origin);
+		VectorAdd (ent->s.origin, right, ent->moveinfo.start_origin);
+		VectorAdd (ent->moveinfo.start_origin, forward, ent->moveinfo.end_origin);
 	}
 
 	ent->touch = secret_touch;
 	ent->blocked = secret_blocked;
 	ent->use = fd_secret_use;
+
 	ent->moveinfo.speed = 50;
 	ent->moveinfo.accel = 50;
 	ent->moveinfo.decel = 50;

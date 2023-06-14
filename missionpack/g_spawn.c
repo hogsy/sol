@@ -373,6 +373,16 @@ void SP_trap (edict_t *self);
 void SP_rocket (edict_t *self);
 void SP_missile (edict_t *self);
 void SP_plasmaball (edict_t *self);	// SKWiD MOD
+// Quake1 projectiles
+void SP_q1_nail (edict_t *nail);
+void SP_q1_laser (edict_t *laser);
+void SP_q1_flame (edict_t *bolt);
+void SP_q1_grenade (edict_t *grenade);
+void SP_q1_rocket (edict_t *rocket);
+void SP_q1_firepod (edict_t *pod);
+void SP_q1_lavaball (edict_t *lavaball);
+void SP_q1_acidspit (edict_t *acidbolt);
+void SP_q1_zombiegib (edict_t *gib);
 //
 // end Lazarus
 
@@ -782,6 +792,16 @@ spawn_t	spawns[] = {
 	{"missile", SP_missile},
 	{"homing rocket", SP_missile},
 	{"plasmaball", SP_plasmaball},	// SKWiD MOD
+	// Quake1 projectiles
+	{"q1_nail", SP_q1_nail},
+	{"q1_laser", SP_q1_laser},
+	{"q1_flame", SP_q1_flame},
+	{"q1_grenade", SP_q1_grenade},
+	{"q1_rocket", SP_q1_rocket},
+	{"q1_firepod", SP_q1_firepod},
+	{"chthon_lavaball", SP_q1_lavaball},
+	{"q1_acidbolt", SP_q1_acidspit},
+	{"q1_zombiegib", SP_q1_zombiegib},
 // end Lazarus
 
 	{NULL, NULL}

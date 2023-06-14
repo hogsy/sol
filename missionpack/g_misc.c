@@ -332,7 +332,8 @@ void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage,
 
 void gib_delayed_start (edict_t *gib)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
 		if (gib->count > 0)
 		{
@@ -633,7 +634,8 @@ void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin, in
 
 void debris_delayed_start (edict_t *debris)
 {
-	if (g_edicts[1].linkcount)
+//	if (g_edicts[1].linkcount)
+	if ( AnyPlayerSpawned() )	// Knightmare- function handles multiple players
 	{
 		debris->think = gib_fade;
 		debris->nextthink = level.time + 8 + random() * 5;
