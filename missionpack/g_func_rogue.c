@@ -308,16 +308,16 @@ void SP_func_door_secret2 (edict_t *ent)
 	if (ent->move_angles[1] == 0 || ent->move_angles[1] == 180)
 	{
 		if (!ent->width)
-			ent->width = ent->size[1] - 2; // was lrSize
+			ent->width = ent->size[1] - 2;	// was lrSize
 		if (!ent->length)
-			ent->length = ent->size[0] - 2; // was fbSize
+			ent->length = ent->size[0] - 2;	// was fbSize
 	}		
 	else if (ent->move_angles[1] == 90 || ent->move_angles[1] == 270)
 	{
 		if (!ent->width)
-			ent->width = ent->size[0] - 2; // was lrSize
+			ent->width = ent->size[0] - 2;	// was lrSize
 		if (!ent->length)
-			ent->length = ent->size[1] - 2; // was fbSize
+			ent->length = ent->size[1] - 2;	// was fbSize
 	}		
 	else {
 		gi.dprintf("func_door_secret2 angles not set at 0, 90, 180, 270!\n");

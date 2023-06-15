@@ -756,7 +756,7 @@ void q1_fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 }
 
 
-void q1_rocket_precahce (void)
+void q1_rocket_precache (void)
 {
 	gi.modelindex ("models/objects/rocket/tris.md2");
 	gi.modelindex ("sprites/s_explod.sp2");

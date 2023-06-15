@@ -1078,10 +1078,12 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 
 	// Shamblers take half damage from explosives
 	if ( (targ->svflags & SVF_MONSTER) &&
-		( (Q_stricmp(targ->classname,"q1_monster_shambler") == 0) || (Q_stricmp(targ->classname,"monster_q1_shambler") == 0) ) &&
+		( (Q_stricmp(targ->classname, "q1_monster_shambler") == 0) || (Q_stricmp(targ->classname, "monster_q1_shambler") == 0) ) &&
 		( (Q_stricmp(inflictor->classname, "grenade") == 0) || (Q_stricmp(inflictor->classname, "hgrenade") == 0)
-		|| (Q_stricmp(inflictor->classname, "prox") == 0) || (Q_stricmp(inflictor->classname, "plasma") == 0)
-		|| (Q_stricmp(inflictor->classname, "rocket") == 0) || (Q_stricmp(inflictor->classname, "homing rocket") == 0) ) )
+		|| (Q_stricmp(inflictor->classname, "rocket") == 0) || (Q_stricmp(inflictor->classname, "homing rocket") == 0)
+		|| (Q_stricmp(inflictor->classname, "prox") == 0) || (Q_stricmp(inflictor->classname, "phalanx_plasma") == 0)
+		|| (Q_stricmp(inflictor->classname, "q1_grenade") == 0) || (Q_stricmp(inflictor->classname, "q1_rocket") == 0)
+		|| (Q_stricmp(inflictor->classname, "q1_firepod") == 0) || (Q_stricmp(inflictor->classname, "chthon_lavaball") == 0) ) )
 		damage = (int)((float)damage * 0.5f);
 
 	// Skid - q1 monsters don't go flying

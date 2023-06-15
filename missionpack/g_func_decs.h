@@ -1773,7 +1773,7 @@ extern void q1_firepod_touch ( edict_t * self , edict_t * other , cplane_t * pla
 extern void q1_fire_lightning ( edict_t * self , vec3_t start , vec3_t dir , int damage ) ;
 extern void SP_q1_rocket ( edict_t * rocket ) ;
 extern void q1_rocket_delayed_start ( edict_t * rocket ) ;
-extern void q1_rocket_precahce ( void ) ;
+extern void q1_rocket_precache ( void ) ;
 extern void q1_fire_rocket ( edict_t * self , vec3_t start , vec3_t dir , int damage , int speed , float damage_radius , int radius_damage ) ;
 extern void q1rocket_trail ( edict_t * self , vec3_t start , vec3_t dir ) ;
 extern void q1rocketTrail_touch ( edict_t * ent , edict_t * other , cplane_t * plane , csurface_t * surf ) ;

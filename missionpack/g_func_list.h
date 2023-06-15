@@ -1773,7 +1773,7 @@
 {"q1_fire_lightning", (byte *)q1_fire_lightning},
 {"SP_q1_rocket", (byte *)SP_q1_rocket},
 {"q1_rocket_delayed_start", (byte *)q1_rocket_delayed_start},
-{"q1_rocket_precahce", (byte *)q1_rocket_precahce},
+{"q1_rocket_precache", (byte *)q1_rocket_precache},
 {"q1_fire_rocket", (byte *)q1_fire_rocket},
 {"q1rocket_trail", (byte *)q1rocket_trail},
 {"q1rocketTrail_touch", (byte *)q1rocketTrail_touch},

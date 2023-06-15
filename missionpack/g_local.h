@@ -1567,7 +1567,7 @@ void q1_explode (edict_t *self);
 void q1_fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void q1_grenade_precache (void);
 void q1_fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
-void q1_rocket_precahce (void);
+void q1_rocket_precache (void);
 void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage);
 void q1_fire_firepod (edict_t *self, vec3_t dir);
 void q1_firepod_precache (void);
