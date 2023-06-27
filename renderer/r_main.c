@@ -151,6 +151,7 @@ cvar_t	*r_screenshot_format;		// determines screenshot format
 //cvar_t	*r_screenshot_jpeg;			// Heffo - JPEG Screenshots
 cvar_t	*r_screenshot_jpeg_quality;	// Heffo - JPEG Screenshots
 cvar_t	*r_screenshot_gamma_correct;	// gamma correction for screenshots
+cvar_t	*r_screenshot_use_mapname;	// screenshot filename contains mapname
 
 //cvar_t	*r_motionblur;				// motionblur
 cvar_t	*r_lightcutoff;	//** DMP - allow dynamic light cutoff to be user-settable
@@ -1209,8 +1210,10 @@ void R_Register (void)
 	Cvar_SetDescription ("r_screenshot_jpeg_quality", "Sets the image quality for JPEG screenshots.  Accepted values are 1-100.");
 	r_screenshot_gamma_correct = Cvar_Get( "r_screenshot_gamma_correct", "0", CVAR_ARCHIVE );	// gamma correction for screenshots
 	Cvar_SetDescription ("r_screenshot_gamma_correct", "Enables gamma correction of screenshots.");
+	r_screenshot_use_mapname = Cvar_Get( "r_screenshot_use_mapname", "0", CVAR_ARCHIVE );	// screenshot filename contains mapname
+	Cvar_SetDescription ("r_screenshot_use_mapname", "Enables mapname in screenshot filenames.");
 
-	//r_motionblur = Cvar_Get( "r_motionblur", "0", CVAR_ARCHIVE );	// motionblur
+//	r_motionblur = Cvar_Get( "r_motionblur", "0", CVAR_ARCHIVE );	// motion blur
 
 	r_drawbuffer = Cvar_Get( "r_drawbuffer", "GL_BACK", 0 );
 	Cvar_SetDescription ("r_drawbuffer", "Sets draw buffer type.  Accepted values are GL_BACK and GL_FRONT.");

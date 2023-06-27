@@ -316,6 +316,7 @@ extern	cvar_t	*r_screenshot_format;		// determines screenshot format
 //extern	cvar_t	*r_screenshot_jpeg;			// Heffo - JPEG Screenshots
 extern	cvar_t	*r_screenshot_jpeg_quality;	// Heffo - JPEG Screenshots
 extern	cvar_t	*r_screenshot_gamma_correct;	// gamma correction for screenshots
+extern	cvar_t	*r_screenshot_use_mapname;	// screenshot filename contains mapname
 
 //extern	cvar_t	*r_nosubimage;	// unused
 extern	cvar_t	*r_bitdepth;

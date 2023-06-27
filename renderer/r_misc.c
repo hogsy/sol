@@ -666,20 +666,23 @@ By Robert 'Heffo' Heffernan
 */
 void R_ScreenShot_JPG (qboolean silent)
 {
+	byte							*rgbdata;
+	FILE							*file;
+	char							picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
+	int								i, offset, grab_width, grab_x;
 	struct jpeg_compress_struct		cinfo;
 	struct jpeg_error_mgr			jerr;
-	byte							*rgbdata;
 	JSAMPROW						s[1];
-	FILE							*file;
-	char							picname[80], checkname[MAX_OSPATH];
-	int								i, offset, grab_width, grab_x;
 
 	// Create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
-	// Knightmare- changed screenshot filenames, up to 10000 screenies
+	// Copy mapname to buffer
+	Q_strncpyz (mapname, sizeof(mapname), Cvar_VariableString("mapname"));
+
 	// Find a file name to save it to 
+	// Knightmare- changed screenshot filenames, up to 10000 screenies
 	for (i=0; i<=9999; i++) 
 	{ 
 		int one, ten, hundred, thousand;
@@ -689,7 +692,11 @@ void R_ScreenShot_JPG (qboolean silent)
 		ten = (i - thousand*1000 - hundred*100)*0.1;
 		one = i - thousand*1000 - hundred*100 - ten*10;
 
-		Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.jpg", thousand, hundred, ten, one);
+		// Include mapname in filename if enabled
+		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.jpg", mapname, thousand, hundred, ten, one);
+		else
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.jpg", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		file = fopen (checkname, "rb");
 		if (!file)
@@ -785,22 +792,22 @@ R_ScreenShot_PNG
 */
 void R_ScreenShot_PNG (qboolean silent)
 {
-	char		picname[80], checkname[MAX_OSPATH];
+	char		picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
 	int			i, grab_width, grab_x;
+	byte		*rgbdata;
+	FILE		*file;
 	png_structp	png_sptr;
 	png_infop	png_infoptr;
-	byte		*rgbdata;
 	void		*lineptr;
-	FILE		*file;
 
 	// create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
-// 
-// find a file name to save it to 
-// 
+	// Copy mapname to buffer
+	Q_strncpyz (mapname, sizeof(mapname), Cvar_VariableString("mapname"));
 
+	// Find a file name to save it to 
 	// Knightmare- changed screenshot filenames, up to 10000 screenies
 	for (i=0; i<=9999; i++) 
 	{ 
@@ -811,7 +818,11 @@ void R_ScreenShot_PNG (qboolean silent)
 		ten = (i - thousand*1000 - hundred*100)*0.1;
 		one = i - thousand*1000 - hundred*100 - ten*10;
 
-		Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.png", thousand, hundred, ten, one);
+		// Include mapname in filename if enabled
+		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.png", mapname, thousand, hundred, ten, one);
+		else
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.png", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		file = fopen (checkname, "rb");
 		if (!file)
@@ -909,26 +920,18 @@ R_ScreenShot_TGA
 void R_ScreenShot_TGA (qboolean silent) 
 {
 	byte		*buffer;
-	char		picname[80]; 
-	char		checkname[MAX_OSPATH];
+	char		picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
 	int			i, c, temp, grab_width, grab_x;
 	FILE		*f;
-
-/*	// Heffo - JPEG Screenshots
-	if (r_screenshot_jpeg->integer)
-	{
-		R_ScreenShot_JPG();
-		return;
-	}*/
 
 	// create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
-// 
-// find a file name to save it to 
-// 
+	// Copy mapname to buffer
+	Q_strncpyz (mapname, sizeof(mapname), Cvar_VariableString("mapname"));
 
+	// Find a file name to save it to 
 	// Knightmare- changed screenshot filenames, up to 10000 screenies
 	for (i=0; i<=9999; i++) 
 	{ 
@@ -939,7 +942,11 @@ void R_ScreenShot_TGA (qboolean silent)
 		ten = (i - thousand*1000 - hundred*100)*0.1;
 		one = i - thousand*1000 - hundred*100 - ten*10;
 
-		Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
+		// Include mapname in filename if enabled
+		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.tga", mapname, thousand, hundred, ten, one);
+		else
+			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		f = fopen (checkname, "rb");
 		if (!f)

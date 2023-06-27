@@ -49,7 +49,7 @@ Changes as of v0.20 update 8:
 - Now compresses .sav and .sv2 savegame files into .savz files.  It will still read savegames from earlier
 	KMQ2 versions (with the same game DLL).  This should improve load and save times in multi-level units.
 
-- Save and load menus now display saveshots at the current screen aspect ratio.
+- Save and load menus now display saveshots at the screen aspect ratio they were taken at.
 
 - Added support for Q2Pro-style HTTP URLs.  This can be configured with the cvar cl_http_pathtype (0 = R1Q2, 1 = Q2Pro, 2 = both),
 	or the "HTTP path type" setting in the download options menu.  Also increased max HTTP download connections from 4 to 8.
@@ -125,6 +125,8 @@ Changes as of v0.20 update 8:
 - Increased map texinfo limit from 8192 to 65536.
 
 - Added cvar r_fog_skyratio, for proportional sky fog distance.  Default is 10.
+
+- Added optional mapname in screenshot filenames.  Set cvar r_screenshot_use_mapname to 1 to enable.
 
 - Added optional screenshot gamma correction.  Set cvar r_screenshot_gamma_correct to 1 to enable.
 
