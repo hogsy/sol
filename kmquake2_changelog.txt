@@ -57,6 +57,8 @@ Changes as of v0.20 update 8:
 - Added conversion of filenames to lowercase for HTTP downloading.  This can be disabled from the multiplayer download menu
 	or by setting cvar cl_http_download_lowercase to 0.
 
+- Added conversion of "\" in filenames to "/" for HTTP downloading.
+
 - Added support for quake2:// URLs.
 
 - Added client detection of server protocol from challenge message.  Client also auto-reconnects with cl_servertrick

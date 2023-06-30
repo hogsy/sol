@@ -668,7 +668,7 @@ void R_ScreenShot_JPG (qboolean silent)
 {
 	byte							*rgbdata;
 	FILE							*file;
-	char							picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
+	char							picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
 	int								i, offset, grab_width, grab_x;
 	struct jpeg_compress_struct		cinfo;
 	struct jpeg_error_mgr			jerr;
@@ -694,7 +694,7 @@ void R_ScreenShot_JPG (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.jpg", mapname, thousand, hundred, ten, one);
+			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.jpg", mapname, thousand, hundred, ten, one);
 		else
 			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.jpg", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
@@ -792,7 +792,7 @@ R_ScreenShot_PNG
 */
 void R_ScreenShot_PNG (qboolean silent)
 {
-	char		picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
+	char		picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
 	int			i, grab_width, grab_x;
 	byte		*rgbdata;
 	FILE		*file;
@@ -820,7 +820,7 @@ void R_ScreenShot_PNG (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.png", mapname, thousand, hundred, ten, one);
+			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.png", mapname, thousand, hundred, ten, one);
 		else
 			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.png", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
@@ -920,7 +920,7 @@ R_ScreenShot_TGA
 void R_ScreenShot_TGA (qboolean silent) 
 {
 	byte		*buffer;
-	char		picname[128], mapname[MAX_QPATH], checkname[MAX_OSPATH];	// was picname[80]
+	char		picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
 	int			i, c, temp, grab_width, grab_x;
 	FILE		*f;
 
@@ -944,7 +944,7 @@ void R_ScreenShot_TGA (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%s_%i%i%i%i.tga", mapname, thousand, hundred, ten, one);
+			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.tga", mapname, thousand, hundred, ten, one);
 		else
 			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()

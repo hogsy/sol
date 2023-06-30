@@ -766,6 +766,7 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	size_t		len;
 	char		quakePathFixed[MAX_OSPATH];
 	dlqueue_t	*q, *q2;
+	char		*tmp;
 	qboolean	needList = false, isPak = false, isFilelist = false;
 
 	if ( !qcurl_initialized )	// check if qcurl not initialized
@@ -788,6 +789,14 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	// Convert filename to lowercase if enabled
 	if ( cl_http_download_lowercase->integer )
 		Q_strlwr (quakePathFixed);
+	// Change any '\\' in filename to '/'
+	tmp = &quakePathFixed[0];
+	while ( *tmp != 0 )
+	{
+		if ( *tmp == '\\' ) 
+			*tmp = '/';
+		tmp++;
+	}
 
 	len = strlen (quakePathFixed);
 	if ( (len > 4) && ( !Q_stricmp((char *)quakePathFixed + len - 4, ".pak") || !Q_stricmp((char *)quakePathFixed + len - 4, ".pk3") ) )
