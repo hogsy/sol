@@ -148,8 +148,8 @@ How To Run
 
 	to the command line.  This is disabled by default.
 	
-	If you are launching KMQuake2 from the Steam interface, you can move the included quake2.exe launcher in the
-	steam_wrapper folder into the Quake2 install folder alongside kmquake2.exe.
+	If you are launching KMQuake2 from the Steam interface, you can move the included quake2.exe (or quake2_x64.exe)
+	launcher in the steam_wrapper folder into the Quake2 install folder alongside kmquake2.exe.
 	This is a better method than renaming kmquake2.exe to quake2.exe.
 
 	KMQuake2 writes/reads savegames, config files, demos, etc. to <userprofile>/Saved Games/KMQuake2 on Windows Vista

@@ -351,14 +351,13 @@ void Cmd_RemoveDoors (edict_t *end)//for help with adding bot support
 qboolean	frame_output = false;
 void Cmd_DDebug_f (edict_t *ent) 
 {
-	int		i;
-	float	weight = 0;
-	char	*arg;
-
 #ifndef	DEBUG
 	return;
 //#endif
 #else	// Knightmare- unreachable code in release builds
+	int		i;
+	float	weight = 0;
+	char	*arg;
 
 	arg = gi.args();
 /*

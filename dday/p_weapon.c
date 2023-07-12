@@ -2404,8 +2404,9 @@ void Weapon_Bandage_Use(edict_t *ent)
 {
 	edict_t *target;
 	ent->client->ps.gunframe++;
-	if(!(target=ApplyFirstAid(ent)))return;
-	if(target->wound_location & (CHEST_WOUND|STOMACH_WOUND))
+	if ( !(target = ApplyFirstAid(ent)) )
+		return;
+	if (target->wound_location & (CHEST_WOUND|STOMACH_WOUND))
 	{
 		if(target->die_time) target->die_time+=(BANDAGE_TIME);
 		else target->die_time=BANDAGE_TIME+level.time;

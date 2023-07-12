@@ -2616,9 +2616,9 @@ edict_t *ApplyFirstAid (edict_t *ent)
 #define MIN_ANARCHY_SHOTS 7
 #define MAX_ANARCHY_SHOTS 13
 
-int DoAnarchyStuff(edict_t *ent,char *sound)
+int DoAnarchyStuff (edict_t *ent,char *sound)
 {
-	static lastone;
+	static int lastone;
 	int soundindexM = 0, soundindexF = 0;
 	float RanMale ,RanFemale;
 
