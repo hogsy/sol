@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/wait.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <dlfcn.h>		// needed for GCC to avoid dlopen errors
 #include <sys/resource.h>
 
 #include <SDL.h>
@@ -488,8 +489,8 @@ int main (int argc, char **argv)
 {
 	int 	time, oldtime, newtime, result;
 	// Knightmare added
-	const rlim_t	minStackSize = 16L * 1024L * 1024L;	// min stack size of 16MB
-	struct rlimit	rl;
+//	const rlim_t	minStackSize = 16L * 1024L * 1024L;	// min stack size of 16MB
+//	struct rlimit	rl;
 
 	// go back to real user for config loads
 	saved_euid = geteuid();
@@ -504,8 +505,8 @@ int main (int argc, char **argv)
 	printf ("Compiled: "__DATE__" -- "__TIME__"\n");
 	printf ("==========================================\n\n");
 
-	// Knightmare- set minimum stack size of 4MB
-	printf ("Checking stack size...");
+	// Knightmare- set minimum stack size of 16MB
+/*	printf ("Checking stack size...");
 	result = getrlimit(RLIMIT_STACK, &rl);
 	if (result == 0)
 	{
@@ -527,7 +528,7 @@ int main (int argc, char **argv)
 	}
 	else {
 		printf (" failed!\ngetrlimit() returned result of %i.\n", result);
-	}
+	} */
 
 	// Knightmare- init exe dir
 	Init_ExeDir (argv[0]);
