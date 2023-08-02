@@ -1169,7 +1169,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	if (!raw)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "Bad png file %s\n", filename);
+			VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png file\n", filename);
 		return;
 	}
 
@@ -1204,6 +1204,14 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	png_get_IHDR (png, pnginfo, &r_png_handle->width, &r_png_handle->height, &r_png_handle->bitDepth,
 				&r_png_handle->colorType, &r_png_handle->interlace, &r_png_handle->compression, &r_png_handle->filter);
 	// ...removed bgColor code here...
+
+	// conversion of non-RGB types to RGBA is not working, so exclude them for now
+	if ( (r_png_handle->colorType != PNG_COLOR_TYPE_RGB) && (r_png_handle->colorType != PNG_COLOR_TYPE_RGB_ALPHA) ) {
+		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename);
+		png_destroy_read_struct (&png, &pnginfo, 0);
+		R_DestroyPNG (false);
+		return;
+	}
 
 	if (r_png_handle->colorType == PNG_COLOR_TYPE_PALETTE)  
 		png_set_palette_to_rgb (png);
@@ -1253,7 +1261,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 			*height = r_png_handle->height;
 	}
 	else {
-		VID_Printf (PRINT_DEVELOPER, "Bad png color depth: %s\n", filename);
+		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png color depth\n", filename);
 		*pic = NULL;
 		free (r_png_handle->data);
 	}
@@ -1328,7 +1336,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	if (!rawdata)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "R_LoadJPG: Bad jpg file %s\n", filename);
+			VID_Printf (PRINT_DEVELOPER, "R_LoadJPG (%s): Bad jpg file\n", filename);
 		return;	
 	}
 
@@ -1337,7 +1345,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 		||	rawdata[7] != 'F'
 		||	rawdata[8] != 'I'
 		||	rawdata[9] != 'F' ) {
-		VID_Printf (PRINT_ALL, "R_LoadJPG: Bad jpg file %s\n", filename);
+		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Bad jpg file\n", filename);
 		FS_FreeFile(rawdata);
 		return;
 	}
@@ -1358,7 +1366,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	// Check Color Components
 	if (cinfo.output_components != 3)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG: Invalid JPEG color components in %s\n", filename);
+		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Invalid JPEG color components\n", filename);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
@@ -1368,7 +1376,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	rgbadata = malloc(cinfo.output_width * cinfo.output_height * 4);
 	if (!rgbadata)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG: Insufficient RAM for JPEG buffer for %s\n", filename);
+		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG buffer\n", filename);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
@@ -1384,7 +1392,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	scanline = malloc(cinfo.output_width * 3);
 	if (!scanline)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG: Insufficient RAM for JPEG scanline buffer for %s\n", filename);
+		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG scanline buffer\n", filename);
 		free (rgbadata);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
