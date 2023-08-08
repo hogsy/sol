@@ -751,7 +751,7 @@ void	R_EndRegistration (void);
 
 void	R_RenderFrame (refdef_t *fd);
 
-void	R_SetParticlePicture (int num, char *name); // Knightmare added
+void	R_SetParticleImg (int num, char *name); // Knightmare added
 
 void	R_DrawChar (float x, float y, int c, fontslot_t font, float scale,
 					int red, int green, int blue, int alpha, qboolean italic, qboolean last);
@@ -1021,7 +1021,7 @@ extern cparticle_t	particles[MAX_PARTICLES];
 extern int			cl_numparticles;
 
 void CL_FixParticleCvars (void);
-int CL_GetRandomBloodParticle (void);
+void CL_RegisterParticleImages (void);
 void CL_ClipDecal (cparticle_t *part, float radius, float orient, vec3_t origin, vec3_t dir);
 float CL_NewParticleTime (void);
 

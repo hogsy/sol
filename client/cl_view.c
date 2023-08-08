@@ -400,20 +400,34 @@ Call before entering a new level, or after changing dlls
 */
 void CL_PrepRefresh (void)
 {
-	char		mapname[64];
 	int			i, max;
-	char		pname[MAX_QPATH];
+	int			cs_images, max_images, cs_playerskins;
 	float		rotate;
+	char		mapname[64];
+	char		pname[MAX_QPATH];
 	vec3_t		axis;
 	qboolean	newPlaque = SCR_NeedLoadingPlaque();
 
 	if (!cl.configstrings[CS_MODELS+1][0])
 		return;		// no map loaded
 
+	// Knightmare- hack for connected to server using old protocol
+	// Changed config strings require different parsing
+	if ( LegacyProtocol() ) {
+		cs_images = OLD_CS_IMAGES;
+		max_images = OLD_MAX_IMAGES;
+		cs_playerskins = OLD_CS_PLAYERSKINS;
+	}
+	else {
+		cs_images = CS_IMAGES;
+		max_images = MAX_IMAGES;
+		cs_playerskins = CS_PLAYERSKINS;
+	}
+
 	if (newPlaque)
 		SCR_BeginLoadingPlaque();
 
-	// Knightmare- for Psychospaz's map loading screen
+	// update load message
 	cls.loadingMessage = true;
 	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading %s", cl.configstrings[CS_MODELS+1]);
 	cls.loadingPercent = 0.0f;
@@ -430,10 +444,9 @@ void CL_PrepRefresh (void)
 	R_BeginRegistration (mapname);
 	Com_Printf ("                                     \r");
 
-	// Knightmare- for Psychospaz's map loading screen
+	// update load message
 	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading models...");
 	cls.loadingPercent += 20.0f;
-	// end Knightmare
 
 	// precache status bar pics
 	Com_Printf ("pics\r"); 
@@ -442,12 +455,17 @@ void CL_PrepRefresh (void)
 	Com_Printf ("                                     \r");
 
 	CL_RegisterTEntModels ();
+	CL_RegisterParticleImages ();	// moved from R_InitMedia()
+
+	// increment load percent
+	cls.loadingPercent += 5.0f;
+	SCR_UpdateScreen ();
 
 	num_cl_weaponmodels = 1;
-//	strncpy(cl_weaponmodels[0], "weapon.md2");
-	Q_strncpyz(cl_weaponmodels[0], sizeof(cl_weaponmodels[0]), "weapon.md2");
+//	strncpy (cl_weaponmodels[0], "weapon.md2");
+	Q_strncpyz (cl_weaponmodels[0], sizeof(cl_weaponmodels[0]), "weapon.md2");
 
-	// Knightmare- for Psychospaz's map loading screen
+	// count models for progress indicator
 	for (i=1, max=0 ; i<MAX_MODELS && cl.configstrings[CS_MODELS+i][0] ; i++)
 		max++;
 
@@ -459,8 +477,8 @@ void CL_PrepRefresh (void)
 		if (pname[0] != '*')
 		{
 			Com_Printf ("%s\r", pname); 
-			// Knightmare- for Psychospaz's map loading screen
-			//only make max of 40 chars long
+			// update load message
+			// only make max of 40 chars long
 			if (i > 1)
 				Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages),
 					S_COLOR_ALT"loading %s", (strlen(pname)>40)? &pname[strlen(pname)-40]: pname);
@@ -473,7 +491,7 @@ void CL_PrepRefresh (void)
 			// special player weapon model
 			if (num_cl_weaponmodels < MAX_CLIENTWEAPONMODELS)
 			{
-				strncpy(cl_weaponmodels[num_cl_weaponmodels], cl.configstrings[CS_MODELS+i]+1,
+				strncpy (cl_weaponmodels[num_cl_weaponmodels], cl.configstrings[CS_MODELS+i]+1,
 					sizeof(cl_weaponmodels[num_cl_weaponmodels]) - 1);
 				num_cl_weaponmodels++;
 			}
@@ -488,79 +506,54 @@ void CL_PrepRefresh (void)
 		}
 		if (pname[0] != '*')
 			Com_Printf ("                                     \r");
-		// Knightmare- for Psychospaz's map loading screen
+		// increment load percent
 		cls.loadingPercent += 40.0f/(float)max;
 	}
-	// Knightmare- for Psychospaz's map loading screen
+	// update load message
 	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading pics...");
 
 	Com_Printf ("images\r", i); 
 	SCR_UpdateScreen ();
 
-	// Knightmare- BIG UGLY HACK for connected to server using old protocol
-	// Changed configstrings require different parsing
-	if (LegacyProtocol() )
-	{	// Knightmare- for Psychospaz's map loading screen
-		for (i=1, max=0; i<OLD_MAX_IMAGES && cl.configstrings[OLD_CS_IMAGES+i][0]; i++)
-			max++;
-		for (i=1; i<OLD_MAX_IMAGES && cl.configstrings[OLD_CS_IMAGES+i][0]; i++)
-		{
-			cl.image_precache[i] = R_DrawFindPic (cl.configstrings[OLD_CS_IMAGES+i]);
-			Sys_SendKeyEvents ();	// pump message loop
-			// Knightmare- for Psychospaz's map loading screen
-			cls.loadingPercent += 20.0f/(float)max;
-		}
+	// count images for progress indicator
+	for (i=1, max=0; i<max_images && cl.configstrings[cs_images+i][0]; i++)
+		max++;
+
+	for (i=1; i<max_images && cl.configstrings[cs_images+i][0]; i++)
+	{
+		cl.image_precache[i] = R_DrawFindPic (cl.configstrings[cs_images+i]);
+		Sys_SendKeyEvents ();	// pump message loop
+		// increment load percent
+		cls.loadingPercent += 15.0f/(float)max;		// was += 20.0f/(float)max
 	}
-	else
-	{	// Knightmare- for Psychospaz's map loading screen
-		for (i=1, max=0; i<MAX_IMAGES && cl.configstrings[CS_IMAGES+i][0]; i++)
-			max++;
-		for (i=1; i<MAX_IMAGES && cl.configstrings[CS_IMAGES+i][0]; i++)
-		{
-			cl.image_precache[i] = R_DrawFindPic (cl.configstrings[CS_IMAGES+i]);
-			Sys_SendKeyEvents ();	// pump message loop
-			// Knightmare- for Psychospaz's map loading screen
-			cls.loadingPercent += 20.0f/(float)max;
-		}
-	}
-	// Knightmare- for Psychospaz's map loading screen
+
+	// update load message
 	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...");
 
 	Com_Printf ("                                     \r");
 
-	// Knightmare- for Psychospaz's map loading screen
-	for (i=1, max=0 ; i<MAX_CLIENTS ; i++)
-		if ( LegacyProtocol() ) {
-			if (cl.configstrings[OLD_CS_PLAYERSKINS+i][0])
-				max++;
-		} else {
-			if (cl.configstrings[CS_PLAYERSKINS+i][0])
-				max++;
-		}
+	// count clients for progress indicator
+	for (i=1, max=0; i<MAX_CLIENTS; i++)
+		if (cl.configstrings[cs_playerskins+i][0])
+			max++;
 
 	for (i=0; i < MAX_CLIENTS; i++)
 	{
-		// Knightmare- BIG UGLY HACK for old connected to server using old protocol
-		// Changed configstrings require different parsing
-		if ( LegacyProtocol() ) {
-			if (!cl.configstrings[OLD_CS_PLAYERSKINS+i][0])
-				continue;
-		} else {
-			if (!cl.configstrings[CS_PLAYERSKINS+i][0])
-				continue;
-		}
+		if (!cl.configstrings[cs_playerskins+i][0])
+			continue;
 		Com_Printf ("client %i\r", i); 
 		SCR_UpdateScreen ();
 		Sys_SendKeyEvents ();	// pump message loop
 		CL_ParseClientinfo (i);
 		Com_Printf ("                                     \r");
 
-		// Knightmare- for Psychospaz's map loading screen
+		// increment load percent
 		cls.loadingPercent += 20.0f/(float)max;
 	}
-	// Knightmare- for Psychospaz's map loading screen
+
+	// update load message
 	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...done");
-	//hack hack hack - psychospaz
+	// psychospaz- hack hack hack
 	cls.loadingPercent = 100.0f;
 
 	// Knightmare - Vics fix to get rid of male/grunt flicker
@@ -606,7 +599,7 @@ void CL_PrepRefresh (void)
 	// start the cd track
 	CL_PlayBackgroundTrack ();
 
-	// Knightmare- for Psychospaz's map loading screen
+	// disable load message
 	cls.loadingMessage = false;
 	// Knightmare- close loading screen as soon as done
 	cls.disable_screen = false;

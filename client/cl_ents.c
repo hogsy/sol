@@ -1077,7 +1077,7 @@ struct model_s *S_RegisterSexedModel (entity_state_t *ent, char *base)
 	// determine what model the client is using
 	model[0] = 0;
 
-	// Knightmare- BIG UGLY HACK for old connected to server using old protocol
+	// Knightmare- hack for old connected to server using old protocol
 	// Changed config strings require different parsing
 	if ( LegacyProtocol() )
 		n = OLD_CS_PLAYERSKINS + ent->number - 1;

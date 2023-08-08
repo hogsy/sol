@@ -481,6 +481,16 @@ void CL_ParticleBloodPuffThink (cparticle_t *p, vec3_t org, vec3_t angle, float 
 
 /*
 ===============
+CL_GetRandomBloodParticle
+===============
+*/
+int CL_GetRandomBloodParticle (void)
+{
+	return particle_blooddecal1 + rand()%5;
+}
+
+/*
+===============
 CL_ParticleBloodThink
 ===============
 */

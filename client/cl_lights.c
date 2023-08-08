@@ -93,7 +93,7 @@ void CL_SetLightstyle (int i)
 	char	*s;
 	int		j, k;
 
-	// Knightmare- BIG UGLY HACK for old connected to server using old protocol
+	// Knightmare- hack for old connected to server using old protocol
 	// Changed config strings require different parsing
 	if ( LegacyProtocol() )
 		s = cl.configstrings[i+OLD_CS_LIGHTS];

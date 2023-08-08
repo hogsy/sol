@@ -203,10 +203,10 @@ image_t *LoadPartImg (char *name, imagetype_t type)
 
 /*
 ==================
-R_SetParticlePicture
+R_SetParticleImg
 ==================
 */
-void R_SetParticlePicture (int num, char *name)
+void R_SetParticleImg (int num, char *name)
 {
 	glMedia.particletextures[num] = LoadPartImg (name, it_part);
 }
@@ -340,8 +340,6 @@ void R_InitMedia (void)
 		glMedia.displayLists[x] = 0;	// was NULL
 
 	R_CreateDisplayLists ();
-
-	CL_SetParticleImages ();
 }
 
 

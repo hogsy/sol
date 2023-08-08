@@ -119,55 +119,54 @@ vidmode_t vid_modes[] =
 
 qboolean VID_GetModeInfo( int *width, int *height, int mode )
 {
-    if ( mode < 0 || mode >= VID_NUM_MODES )
-        return false;
+	if ( mode < 0 || mode >= VID_NUM_MODES )
+		return false;
 
-    *width  = vid_modes[mode].width;
-    *height = vid_modes[mode].height;
+	*width  = vid_modes[mode].width;
+	*height = vid_modes[mode].height;
 
-    return true;
+	return true;
 }
 
 
 void	VID_Init (void)
 {
-    refimport_t	ri;
+	refimport_t	ri;
 
-    viddef.width = 320;
-    viddef.height = 240;
+	viddef.width = 320;
+	viddef.height = 240;
 
-    ri.Cmd_AddCommand = Cmd_AddCommand;
-    ri.Cmd_RemoveCommand = Cmd_RemoveCommand;
-    ri.Cmd_Argc = Cmd_Argc;
-    ri.Cmd_Argv = Cmd_Argv;
-    ri.Cmd_ExecuteText = Cbuf_ExecuteText;
-    ri.Con_Printf = VID_Printf;
-    ri.Sys_Error = VID_Error;
-    ri.FS_LoadFile = FS_LoadFile;
-    ri.FS_FreeFile = FS_FreeFile;
-    ri.FS_Gamedir = FS_Gamedir;
+	ri.Cmd_AddCommand = Cmd_AddCommand;
+	ri.Cmd_RemoveCommand = Cmd_RemoveCommand;
+	ri.Cmd_Argc = Cmd_Argc;
+	ri.Cmd_Argv = Cmd_Argv;
+	ri.Cmd_ExecuteText = Cbuf_ExecuteText;
+	ri.Con_Printf = VID_Printf;
+	ri.Sys_Error = VID_Error;
+	ri.FS_LoadFile = FS_LoadFile;
+	ri.FS_FreeFile = FS_FreeFile;
+	ri.FS_Gamedir = FS_Gamedir;
 	ri.Vid_NewWindow = VID_NewWindow;
-    ri.Cvar_Get = Cvar_Get;
-    ri.Cvar_Set = Cvar_Set;
-    ri.Cvar_SetValue = Cvar_SetValue;
-    ri.Vid_GetModeInfo = VID_GetModeInfo;
-	ri.TextColor = CL_TextColor; // Knightmare added
-	ri.SetParticlePics = CL_SetParticleImages; // Knightmare added
+	ri.Cvar_Get = Cvar_Get;
+	ri.Cvar_Set = Cvar_Set;
+	ri.Cvar_SetValue = Cvar_SetValue;
+	ri.Vid_GetModeInfo = VID_GetModeInfo;
+	ri.SetParticlePics = CL_RegisterParticleImages; // Knightmare added
 
-    re = GetRefAPI(ri);
+	re = GetRefAPI(ri);
 
-    if (re.api_version != API_VERSION)
-        Com_Error (ERR_FATAL, "Re has incompatible api_version");
-    
-        // call the init function
-    if (re.Init (NULL, NULL) == -1)
+	if (re.api_version != API_VERSION)
+		Com_Error (ERR_FATAL, "Re has incompatible api_version");
+
+	// call the init function
+	if (re.Init (NULL, NULL) == -1)
 		Com_Error (ERR_FATAL, "Couldn't start refresh");
 }
 
 void	VID_Shutdown (void)
 {
-    if (re.Shutdown)
-	    re.Shutdown ();
+	if (re.Shutdown)
+		re.Shutdown ();
 }
 
 void	VID_CheckChanges (void)

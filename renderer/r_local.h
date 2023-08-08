@@ -982,8 +982,6 @@ IMPORTED FUNCTIONS
 
 void	VID_Error (int err_level, char *str, ...);
 
-void	CL_SetParticleImages (void);
-
 void	Cmd_AddCommand (char *name, void(*cmd)(void));
 void	Cmd_RemoveCommand (char *name);
 int		Cmd_Argc (void);
@@ -1012,8 +1010,6 @@ void	 Cvar_SetValue (char *name, float value);
 
 qboolean	VID_GetModeInfo (int *width, int *height, int mode);
 void		VID_NewWindow (int width, int height);
-// Knightmare- added import of text color for renderer
-void		CL_TextColor (int colornum, int *red, int *green, int *blue);
 
 /*
 ====================================================================
