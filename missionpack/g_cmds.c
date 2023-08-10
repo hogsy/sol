@@ -1490,7 +1490,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	if (weapname)
 	{
 		for (i = 1; i < num_weaps; i++) {
-			if (Q_stricmp(weapname, gi.argv(i)) == 0) {
+			if (Q_stricmp((char *)weapname, gi.argv(i)) == 0) {
 				break;
 			}
 		}

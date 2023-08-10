@@ -1397,7 +1397,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	if (weapname)
 	{
 		for (i = 1; i < num_weaps; i++) {
-			if (Q_stricmp(weapname, gi.argv(i)) == 0) {
+			if (Q_stricmp((char *)weapname, gi.argv(i)) == 0) {
 				break;
 			}
 		}
@@ -2046,22 +2046,28 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "clear_flagpaths") == 0)
 	{
-		edict_t *trav=NULL, *last=NULL;
-		int count=0;
+		edict_t	*trav = NULL, *last = NULL;
+		int		count = 0;
 
-		while (trav = G_Find(last, FOFS(classname), "flag_path_src"))
+		trav = G_Find(last, FOFS(classname), "flag_path_src");
+	//	while (trav = G_Find(last, FOFS(classname), "flag_path_src"))
+		while (trav)
 		{
 			last = trav;
 			G_FreeEdict(trav);
 			count++;
+			trav = G_Find(last, FOFS(classname), "flag_path_src");
 		}
 
 		last = NULL;
-		while (trav = G_Find(last, FOFS(classname), "flag_path_dest"))
+		trav = G_Find(last, FOFS(classname), "flag_path_dest");
+	//	while (trav = G_Find(last, FOFS(classname), "flag_path_dest"))
+		while (trav)
 		{
 			last = trav;
 			G_FreeEdict(trav);
 			count++;
+			trav = G_Find(last, FOFS(classname), "flag_path_dest");
 		}
 
 		if (count)
@@ -2104,26 +2110,34 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "clearflags") == 0)
 	{
-		edict_t *flag;
+		edict_t *flag = NULL;
 
-		flag = NULL;
-		while (flag = G_Find( flag, FOFS(classname), "blueflag" ) )
+		flag = G_Find( flag, FOFS(classname), "blueflag");
+	//	while (flag = G_Find( flag, FOFS(classname), "blueflag"))
+		while (flag)
 		{
-			G_FreeEdict( flag );
+			G_FreeEdict (flag);
+			flag = G_Find( flag, FOFS(classname), "blueflag");
 		}
 
-		flag = NULL;
-		while (flag = G_Find( flag, FOFS(classname), "redflag" ) )
+	//	flag = NULL;
+		flag = G_Find( flag, FOFS(classname), "redflag");
+	//	while (flag = G_Find( flag, FOFS(classname), "redflag"))
+		while (flag)
 		{
-			G_FreeEdict( flag );
+			G_FreeEdict (flag);
+			flag = G_Find( flag, FOFS(classname), "redflag");
 		}
 // AJ
-		while (flag = G_Find( flag, FOFS(classname), "greenflag" ) )
+		flag = G_Find( flag, FOFS(classname), "greenflag");
+	//	while (flag = G_Find( flag, FOFS(classname), "greenflag"))
+		while (flag)
 		{
-			G_FreeEdict( flag );
+			G_FreeEdict (flag);
+			flag = G_Find( flag, FOFS(classname), "greenflag");
 		}
 // end AJ
-		gi.cprintf( ent, PRINT_HIGH, "Cleared user created CTF flags.\n");
+		gi.cprintf (ent, PRINT_HIGH, "Cleared user created CTF flags.\n");
 	}
 	else if (Q_stricmp (cmd, "ctf_item") == 0)
 	{
@@ -2169,9 +2183,14 @@ void ClientCommand (edict_t *ent)
 				edict_t *trav;
 
 				// show lines between alternate routes
-				trav = NULL;
-				while (trav = G_Find(trav, FOFS(classname), "flag_path_src"))
+			//	trav = NULL;
+				trav = G_Find(trav, FOFS(classname), "flag_path_src");
+			//	while (trav = G_Find(trav, FOFS(classname), "flag_path_src"))
+				while (trav)
+				{
 					trav->s.modelindex = 0;
+					trav = G_Find(trav, FOFS(classname), "flag_path_src");
+				}
 			}
 		}
 		else

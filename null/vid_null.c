@@ -85,34 +85,9 @@ typedef struct vidmode_s
     int         mode;
 } vidmode_t;
 
-// Knightmare- added 1280x1024, 1400x1050, 856x480, 1024x480 modes
 vidmode_t vid_modes[] =
 {
-	{ "Mode 0: 320x240",	320, 240,   0 },
-	{ "Mode 1: 400x300",	400, 300,   1 },
-	{ "Mode 2: 512x384",	512, 384,   2 },
-	{ "Mode 3: 640x480",	640, 480,   3 },
-	{ "Mode 4: 800x600",	800, 600,   4 },
-	{ "Mode 5: 960x720",	960, 720,   5 },
-	{ "Mode 6: 1024x768",	1024, 768,  6 },
-	{ "Mode 7: 1152x864",	1152, 864,  7 },
-	{ "Mode 8: 1280x960",	1280, 960,  8 },
-	{ "Mode 9: 1280x1024",	1280, 1024, 9 },	// Knightmare added
-	{ "Mode 10: 1400x1050", 1400, 1050, 10 },	// Knightmare added
-	{ "Mode 11: 1600x1200", 1600, 1200, 11 },
-	{ "Mode 12: 1920x1440",	1920, 1440, 12 },	// Knightmare added
-	{ "Mode 13: 2048x1536",	2048, 1536, 13 },
-	{ "Mode 14: 856x480",   856,  480,	14 },	// Knightmare added
-	{ "Mode 15: 1280x720",	1280, 720,  15 },	// Knightmare added
-	{ "Mode 16: 1280x768",	1280, 768,  16 },	// Knightmare added
-	{ "Mode 17: 1280x800",	1280, 800,  17 },	// Knightmare added
-	{ "Mode 18: 1440x900",	1440, 900,	18 },	// Knightmare added
-	{ "Mode 19: 1680x1050",	1680, 1050, 19 },	// Knightmare added
-	{ "Mode 20: 1920x1080",	1920, 1080, 20 },	// Knightmare added
-	{ "Mode 21: 1920x1200",	1920, 1200, 21 },	// Knightmare added
-	{ "Mode 22: 2560x1080",	2560, 1080, 22 },	// Knightmare added
-	{ "Mode 23: 2560x1440",	2560, 1440, 23 },	// Knightmare added
-	{ "Mode 24: 2560x1600",	2560, 1600, 24 }	// Knightmare added
+#include "../qcommon/vid_modes.h"
 };
 
 #define VID_NUM_MODES ( sizeof( vid_modes ) / sizeof( vid_modes[0] ) )
