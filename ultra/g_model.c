@@ -87,8 +87,8 @@ void model_spawn_use (edict_t *self, edict_t *other, edict_t *activator)
 			self->nextthink = level.time + FRAMETIME;
 		}
 		self->s.sound = self->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef NEW_ENTITY_STATE_MEMBERS
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	else             //we started active
@@ -246,8 +246,8 @@ void SP_model_spawn (edict_t *ent)
 	if (st.noise)
 		ent->noise_index = gi.soundindex  (st.noise);
 	ent->s.sound = ent->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-	ent->s.attenuation = ent->attenuation;
+#ifdef NEW_ENTITY_STATE_MEMBERS
+	ent->s.loop_attenuation = ent->attenuation;
 #endif
 
 	if (ent->skinnum) // Knightmare- selectable skin

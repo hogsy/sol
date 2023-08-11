@@ -555,7 +555,7 @@ NodeDebug("Plat start node has %i visible nodes\n", i);
 	}
 	ent->s.sound = 0;	// Knightmare- make sure this is always set to 0, lead mover or not!
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-	ent->s.attenuation = ent->attenuation;
+	ent->s.loop_attenuation = ent->attenuation;
 #endif
 
 	ent->moveinfo.state = STATE_TOP;
@@ -574,7 +574,7 @@ void plat_hit_bottom (edict_t *ent)
 	}
 	ent->s.sound = 0;	// Knightmare- make sure this is always set to 0, lead mover or not!
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-	ent->s.attenuation = ent->attenuation;
+	ent->s.loop_attenuation = ent->attenuation;
 #endif
 
 	ent->moveinfo.state = STATE_BOTTOM;
@@ -589,7 +589,7 @@ void plat_go_down (edict_t *ent)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // Knightmare- was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		ent->s.attenuation = ent->attenuation;
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_DOWN;
@@ -643,7 +643,7 @@ not_on_plat:
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // Knightmare- was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		ent->s.attenuation = ent->attenuation;
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_UP;
@@ -1058,7 +1058,7 @@ void plat2_go_down (edict_t *ent)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0);	// Knightmare- was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		ent->s.attenuation = ent->attenuation;
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_DOWN;
@@ -1114,7 +1114,7 @@ not_on_plat:
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0);	// Knightmare- was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		ent->s.attenuation = ent->attenuation;
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_UP;
@@ -1449,7 +1449,7 @@ void rotating_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 		VectorScale (self->movedir, self->speed, self->avelocity);
 		if (self->spawnflags & 16)
@@ -1764,7 +1764,7 @@ void door_go_down (edict_t *self)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // Knightmare- was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	if (self->max_health)
@@ -1798,7 +1798,7 @@ void door_go_up (edict_t *self, edict_t *activator)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // Knightmare- was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare added
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	self->moveinfo.state = STATE_UP;
@@ -2824,8 +2824,8 @@ again:
 		if (self->moveinfo.sound_start)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef NEW_ENTITY_STATE_MEMBERS
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -3380,7 +3380,7 @@ void door_secret_use (edict_t *self, edict_t *other, edict_t *activator)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -3417,7 +3417,7 @@ void door_secret_move2 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -3449,7 +3449,7 @@ void door_secret_move4 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -3477,7 +3477,7 @@ void door_secret_move6 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 

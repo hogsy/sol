@@ -85,16 +85,9 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 #define	KMQUAKE2_ENGINE_MOD
 
 #ifdef KMQUAKE2_ENGINE_MOD
-#ifndef ERASER_COMPAT_BUILD
-#define NEW_ENTITY_STATE_MEMBERS
-#endif
-#define NEW_PLAYER_STATE_MEMBERS
 // enable to build exe with 24-bit coordinate transmission
 // changes pmove origin size in game DLLs
 #define LARGE_MAP_SIZE
-// enable to include looping of attenuated sounds
-// changes entity_state_t struct
-#define LOOP_SOUND_ATTENUATION
 #endif
 
 // angle indexes
@@ -1125,7 +1118,7 @@ typedef enum
 #define STAT_WEAPON				255
 
 
-#ifdef KMQUAKE2_ENGINE_MOD // Knightmare increased
+#ifdef KMQUAKE2_ENGINE_MOD	// Knightmare increased
 #define	MAX_STATS				256
 #else
 #define	MAX_STATS				32
@@ -1288,12 +1281,12 @@ typedef struct entity_state_s
 	vec3_t	old_origin;		// for lerping
 	int		modelindex;
 	int		modelindex2, modelindex3, modelindex4;	// weapons, CTF flags, etc
-#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- Privater wanted this
+#ifdef KMQUAKE2_ENGINE_MOD	// Knightmare- Privater wanted this
 	int		modelindex5, modelindex6; 	// more attached models
 #endif
 	int		frame;
 	int		skinnum;
-#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
+#ifdef KMQUAKE2_ENGINE_MOD		// Knightmare- allow the server to set this
 	float	alpha;				// entity transparency
 #endif
 	unsigned int		effects;		// PGM - we're filling it, so it needs to be unsigned
@@ -1302,10 +1295,8 @@ typedef struct entity_state_s
 							// 8*(bits 5-9) is z down distance, 8(bits10-15) is z up
 							// gi.linkentity sets this properly
 	int		sound;			// for looping sounds, to guarantee shutoff
-#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
-#ifdef LOOP_SOUND_ATTENUATION // sound attenuation
-	float	attenuation;
-#endif
+#ifdef KMQUAKE2_ENGINE_MOD		// Knightmare- allow the server to set this
+	float	loop_attenuation;	// looped sound attenuation
 #endif
 	int		event;			// impulse events -- muzzle flashes, footsteps, etc
 							// events only go out for a single frame, they
@@ -1335,7 +1326,7 @@ typedef struct
 	int			gunindex;
 	int			gunframe;
 
-#ifdef NEW_PLAYER_STATE_MEMBERS // Knightmare added
+#ifdef KMQUAKE2_ENGINE_MOD		// Knightmare added
 	int			gunskin;		// for animated weapon skins
 	int			gunindex2;		// for a second weapon model (boot)
 	int			gunframe2;

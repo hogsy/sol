@@ -89,8 +89,6 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 #ifdef KMQUAKE2_ENGINE_MOD
 // 32-bit pmove coords when using custom engine
 #define LARGE_MAP_SIZE
-// looping of attenuated sounds
-#define LOOP_SOUND_ATTENUATION
 #endif
 
 // angle indexes
@@ -843,10 +841,11 @@ typedef enum
 	TE_FLECHETTE,
 // ROGUE
 // Knightmare added
-	TE_REDBLASTER,			//56
-	TE_SHOCKSPLASH,			//57
-	TE_BLASTER_COLORED,		//58
-	TE_RAILTRAIL_COLORED,	//59
+	TE_REDBLASTER,
+	TE_SHOCKSPLASH,
+	TE_BLASTER_COLORED,
+	TE_RAILTRAIL_COLORED,
+	TE_LIGHTNING_ATTACK,
 } temp_event_t;
 
 #define SPLASH_UNKNOWN		0
@@ -1024,21 +1023,21 @@ typedef struct entity_state_s
 	int		modelindex2;	// weapons
 	int		modelindex3;	// CTF flags
 	int		modelindex4;	// indicator sprites/models
-#ifdef KMQUAKE2_ENGINE_MOD //Knightmare- Privater wanted this
-	int		modelindex5, modelindex6;	//more attached models
+#ifdef KMQUAKE2_ENGINE_MOD	// Knightmare- Privater wanted this
+	int		modelindex5, modelindex6;	// more attached models
 #endif
 	int		frame;
 	int		skinnum;
-#ifdef KMQUAKE2_ENGINE_MOD //Knightmare- allow the server to set this
-	float	alpha;	//entity transparency
+#ifdef KMQUAKE2_ENGINE_MOD	// Knightmare- allow the server to set this
+	float	alpha;			// entity transparency
 #endif
 	unsigned int effects;	// PGM - we're filling it, so it needs to be unsigned
 	int		renderfx;
 	int		solid;			// for client side prediction, 8*(bits 0-4) is x/y radius
 							// 8*(bits 5-9) is z down distance, 8(bits10-15) is z up (gi.linkentity sets this properly)
 	int		sound;			// for looping sounds, to guarantee shutoff
-#ifdef LOOP_SOUND_ATTENUATION // Knightmare- added sound attenuation
-	float	attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD		// Knightmare- allow the server to set this
+	float	loop_attenuation;	// looped sound attenuation
 #endif
 	int		event;			// impulse events -- muzzle flashes, footsteps, etc
 							// events only go out for a single frame; they are automatically cleared each frame

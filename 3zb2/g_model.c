@@ -1,4 +1,10 @@
-#include "g_local.h"
+// g_model.c
+
+//CW: This turret code is taken from the Lazarus mod source (version 2.1),
+//    which David Hyde released on 22-Sep-01 for public use.
+//    See 'http://planetquake.com/lazarus' for more information.
+
+// ----------------------------------------------------------------------------
 //
 // mappack stuff by mr. ed, modified extensively for Tremor by dwh
 //
@@ -32,19 +38,22 @@
 //	"tright" = the point that is at the top left of the models bounding box in a model editor
 //
 
+#include "g_local.h"
+
 #define	TOGGLE		    2
 #define	PLAYER_MODEL	8
 #define	NO_MODEL		16
 #define ANIM_ONCE		32
 
-void model_spawn_use (edict_t *self, edict_t *other, edict_t *activator);
+void model_spawn_use(edict_t *self, edict_t *other, edict_t *activator);
+
 void modelspawn_think (edict_t *self)
 {
 	self->s.frame++;
 	if (self->s.frame >= self->framenumbers)
 	{
 		self->s.frame = self->startframe;
-		if (self->spawnflags & ANIM_ONCE)
+		if(self->spawnflags & ANIM_ONCE)
 		{
 			model_spawn_use(self,world,world);
 			return;
@@ -60,14 +69,14 @@ void model_spawn_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		self->svflags &= ~SVF_NOCLIENT;
 		self->delay = 0;
-		if (self->framenumbers > 1)
+		if(self->framenumbers > 1)
 		{
 			self->think = modelspawn_think;
 			self->nextthink = level.time + FRAMETIME;
 		}
 		self->s.sound = self->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	else             //we started active
@@ -88,7 +97,7 @@ void model_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 	e = self->movewith_next;
 	while(e) {
 		next = e->movewith_next;
-		if (e->solid == SOLID_NOT) {
+		if(e->solid == SOLID_NOT) {
 			e->nextthink = 0;
 			G_FreeEdict(e);
 		} else
@@ -225,8 +234,8 @@ void SP_model_spawn (edict_t *ent)
 	if (st.noise)
 		ent->noise_index = gi.soundindex  (st.noise);
 	ent->s.sound = ent->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-	ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+	ent->s.loop_attenuation = ent->attenuation;
 #endif
 
 	if (ent->skinnum) // Knightmare- selectable skin

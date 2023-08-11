@@ -1311,7 +1311,7 @@ typedef struct entity_state_s
 	int		frame;
 	int		skinnum;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-	float	alpha;	// entity transparency
+	float	alpha;				// entity transparency
 #endif
 	unsigned int		effects;		// PGM - we're filling it, so it needs to be unsigned
 	int		renderfx;
@@ -1319,8 +1319,8 @@ typedef struct entity_state_s
 							// 8*(bits 5-9) is z down distance, 8(bits10-15) is z up
 							// gi.linkentity sets this properly
 	int		sound;			// for looping sounds, to guarantee shutoff
-#ifdef NEW_ENTITY_STATE_MEMBERS
-	float	attenuation;	// sound attenuation
+#ifdef NEW_ENTITY_STATE_MEMBERS	// Knightmare- allow the server to set this
+	float	loop_attenuation;	// sound attenuation
 #endif
 	int		event;			// impulse events -- muzzle flashes, footsteps, etc
 							// events only go out for a single frame, they

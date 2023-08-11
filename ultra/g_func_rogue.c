@@ -41,7 +41,7 @@ void fd_secret_use (edict_t *self, edict_t *other, edict_t *activator)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -100,7 +100,7 @@ void fd_secret_move2 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -135,7 +135,7 @@ void fd_secret_move4 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -166,7 +166,7 @@ void fd_secret_move6 (edict_t *self)
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
 #ifdef NEW_ENTITY_STATE_MEMBERS
-		self->s.attenuation = self->attenuation;
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
