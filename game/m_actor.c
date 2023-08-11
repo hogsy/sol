@@ -2013,7 +2013,8 @@ void actor_files (void)
 
 		// repeat this WHOLE DAMN THING for weapons
 
-		for (k=0; k<2; k++) {
+		for (k=0; k<2; k++)
+		{
 			if (w_match[k]) continue;
 			if (!e->actor_weapon[k]) continue;
 			if ((k==1) && (e->actor_weapon[0] == e->actor_weapon[1])) {

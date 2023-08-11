@@ -182,8 +182,8 @@ void trackchange_done (edict_t *self)
 			train->moveinfo.state = train->moveinfo.prevstate;
 			if (train->moveinfo.state && (train->sounds > 0)) {
 				train->s.sound = gi.soundindex(va("%sspeed%d.wav", train->source, abs(train->moveinfo.state)));
-	#ifdef LOOP_SOUND_ATTENUATION
-				train->s.attenuation = train->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+				train->s.loop_attenuation = train->attenuation;
 	#endif
 			}
 			train->moveinfo.next_speed = train->moveinfo.state * train->moveinfo.speed/3;
@@ -295,8 +295,8 @@ void trackchange_use (edict_t *self, edict_t *other, edict_t *activator)
 	if (self->moveinfo.sound_start)
 		gi.positioned_sound (self->s.origin, self, CHAN_AUTO, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_NORM
 	self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-	self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+	self->s.loop_attenuation = self->attenuation;
 #endif
 
 	self->think     = trackchange_done;
@@ -460,8 +460,8 @@ void tracktrain_drive (edict_t *train, edict_t *other )
 	train->moveinfo.next_speed = train->moveinfo.speed;
 	if (train->sounds) {
 		train->s.sound = gi.soundindex(va("%sspeed%d.wav", train->source, abs(train->moveinfo.state)));
-#ifdef LOOP_SOUND_ATTENUATION
-		train->s.attenuation = train->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		train->s.loop_attenuation = train->attenuation;
 #endif
 	}
 	else
@@ -514,8 +514,8 @@ void tracktrain_disengage (edict_t *train)
 			train->moveinfo.state = STOP;
 			train->moveinfo.next_speed = 0;
 			train->s.sound = gi.soundindex(va("%sspeed1.wav",train->source));
-	#ifdef LOOP_SOUND_ATTENUATION
-			train->s.attenuation = train->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+			train->s.loop_attenuation = train->attenuation;
 	#endif
 		}
 
@@ -659,8 +659,8 @@ void tracktrain_think (edict_t *self)
 								self->s.frame = (self->moveinfo.state - RFAST)*2 + (1 - (self->s.frame % 2));
 							if (self->moveinfo.state && (self->sounds > 0)) {
 								self->s.sound = gi.soundindex(va("%sspeed%d.wav", self->source, abs(self->moveinfo.state)));
-						#ifdef LOOP_SOUND_ATTENUATION
-								self->s.attenuation = self->attenuation;
+						#ifdef KMQUAKE2_ENGINE_MOD
+								self->s.loop_attenuation = self->attenuation;
 						#endif
 							}
 							else
@@ -679,8 +679,8 @@ void tracktrain_think (edict_t *self)
 								self->s.frame = (self->moveinfo.state - RFAST)*2 + (1 - (self->s.frame % 2));
 							if (self->moveinfo.state && (self->sounds > 0)) {
 								self->s.sound = gi.soundindex(va("%sspeed%d.wav",self->source,abs(self->moveinfo.state)));
-						#ifdef LOOP_SOUND_ATTENUATION
-								self->s.attenuation = self->attenuation;
+						#ifdef KMQUAKE2_ENGINE_MOD
+								self->s.loop_attenuation = self->attenuation;
 						#endif
 							}
 							else
@@ -1864,8 +1864,8 @@ void tracktrain_use (edict_t *self, edict_t *other, edict_t *activator)
 			self->moveinfo.next_speed = self->moveinfo.speed;
 			if (self->sounds) {
 				self->s.sound = gi.soundindex(va("%sspeed%d.wav", self->source, abs(self->moveinfo.state)));
-		#ifdef LOOP_SOUND_ATTENUATION
-				self->s.attenuation = self->attenuation;
+		#ifdef KMQUAKE2_ENGINE_MOD
+				self->s.loop_attenuation = self->attenuation;
 		#endif
 			}
 			else
@@ -2063,8 +2063,8 @@ void find_tracktrain (edict_t *self)
 	}
 	if (train->moveinfo.state && (train->sounds > 0)) {
 		train->s.sound = gi.soundindex(va("%sspeed%d.wav", train->source, abs(train->moveinfo.state)));
-#ifdef LOOP_SOUND_ATTENUATION
-		train->s.attenuation = train->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		train->s.loop_attenuation = train->attenuation;
 #endif
 	}
 	else

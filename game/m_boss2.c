@@ -686,8 +686,8 @@ void SP_monster_boss2 (edict_t *self)
 	monster_boss2_soundcache (self);
 
 	self->s.sound = gi.soundindex ("bosshovr/bhvengn1.wav");
-#ifdef LOOP_SOUND_ATTENUATION
-	self->s.attenuation = ATTN_IDLE;
+#ifdef KMQUAKE2_ENGINE_MOD
+	self->s.loop_attenuation = ATTN_IDLE;
 #endif
 
 	self->movetype = MOVETYPE_STEP;

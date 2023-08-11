@@ -577,8 +577,8 @@ void jorg_attack(edict_t *self)
 	{
 		gi.sound (self, CHAN_VOICE, sound_attack1, 1, ATTN_NORM,0);
 		self->s.sound = gi.soundindex ("boss3/w_loop.wav");
-	#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = ATTN_IDLE;
+	#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = ATTN_IDLE;
 	#endif
 		self->monsterinfo.currentmove = &jorg_move_start_attack1;
 	}

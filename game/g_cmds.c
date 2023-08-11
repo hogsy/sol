@@ -195,8 +195,8 @@ void SaveEntProps (edict_t *e, FILE *f)
 		"   effects     = 0x%08x\n"
 		"   solid       = 0x%08x\n"
 		"   sound       = %d\n"
-#ifdef LOOP_SOUND_ATTENUATION
-		"   attenuation = %g\n"
+#ifdef KMQUAKE2_ENGINE_MOD
+		"   loop_attenuation = %g\n"
 #endif
 		"   event       = %d\n",
 		e->s.number, vtos(e->s.origin), vtos(e->s.angles),
@@ -210,8 +210,8 @@ void SaveEntProps (edict_t *e, FILE *f)
 		e->s.alpha,
 #endif
 		e->s.effects, e->s.solid, e->s.sound,
-#ifdef LOOP_SOUND_ATTENUATION
-		e->s.attenuation,
+#ifdef KMQUAKE2_ENGINE_MOD
+		e->s.loop_attenuation,
 #endif
 		e->s.event);
 	fprintf(f, "inuse       = %d\n"

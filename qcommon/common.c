@@ -699,10 +699,8 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		bits |= U_SOUND;
 
 #ifdef NEW_ENTITY_STATE_MEMBERS
-#ifdef LOOP_SOUND_ATTENUATION
-	if (to->attenuation != from->attenuation)
+	if (to->loop_attenuation != from->loop_attenuation)
 		bits |= U_ATTENUAT;
-#endif
 #endif
 
 	if (newentity || (to->renderfx & RF_BEAM))
@@ -843,10 +841,8 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		MSG_WriteShort (msg, to->sound);
 
 #ifdef NEW_ENTITY_STATE_MEMBERS
-#ifdef LOOP_SOUND_ATTENUATION
 	if (bits & U_ATTENUAT)
-		MSG_WriteByte (msg, (int)(min(max(to->attenuation, 0.0f), 4.0f)*64.0));
-#endif
+		MSG_WriteByte (msg, (int)(min(max(to->loop_attenuation, 0.0f), 4.0f)*64.0));
 #endif
 
 	if (bits & U_EVENT)

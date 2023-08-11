@@ -927,14 +927,10 @@ void S_AddLoopSounds (void)
 		ent = &cl_parse_entities[num];
 
 #ifdef NEW_ENTITY_STATE_MEMBERS
-	#ifdef LOOP_SOUND_ATTENUATION
-		if (ent->attenuation <= 0.0f || ent->attenuation == ATTN_STATIC)
+		if (ent->loop_attenuation <= 0.0f || ent->loop_attenuation == ATTN_STATIC)
 			dist_mult = SOUND_LOOPATTENUATE;
 		else
-			dist_mult = ent->attenuation * 0.0005;
-	#else
-		dist_mult = SOUND_LOOPATTENUATE;
-	#endif
+			dist_mult = ent->loop_attenuation * 0.0005;
 #else
 		dist_mult = SOUND_LOOPATTENUATE;
 #endif

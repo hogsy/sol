@@ -999,11 +999,11 @@ void target_change_use (edict_t *self, edict_t *activator, edict_t *other)
 			else
 				target_ent->noise_index = self->noise_index;
 		}
-#ifdef LOOP_SOUND_ATTENUATION
+#ifdef KMQUAKE2_ENGINE_MOD
 		if (self->attenuation)
 		{
-			if (target_ent->s.attenuation == target_ent->attenuation)
-				target_ent->s.attenuation = target_ent->attenuation = self->attenuation;
+			if (target_ent->s.loop_attenuation == target_ent->attenuation)
+				target_ent->s.loop_attenuation = target_ent->attenuation = self->attenuation;
 			else
 				target_ent->attenuation = self->attenuation;
 		}
@@ -2302,8 +2302,8 @@ void use_target_attractor(edict_t *self, edict_t *other, edict_t *activator)
 	{
 		self->spawnflags |= (ATTRACTOR_ON + ATTRACTOR_PATHTARGET);
 		self->s.sound = self->noise_index;
-	#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 	#endif
 		if (self->spawnflags & ATTRACTOR_SINGLE)
 			self->think = target_attractor_think_single;

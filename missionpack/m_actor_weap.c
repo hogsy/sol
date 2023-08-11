@@ -349,8 +349,8 @@ void actorChaingun (edict_t *self)
 		self->actor_gunframe++;
 
 	self->s.sound = gi.soundindex("weapons/chngnl1a.wav");
-#ifdef LOOP_SOUND_ATTENUATION
-	self->s.attenuation = ATTN_IDLE;
+#ifdef KMQUAKE2_ENGINE_MOD
+	self->s.loop_attenuation = ATTN_IDLE;
 #endif
 
 	if (self->actor_gunframe <= 9)
@@ -636,8 +636,8 @@ void actorHyperblaster (edict_t *self)
 	}
 
 	self->s.sound = gi.soundindex("weapons/hyprbl1a.wav");
-#ifdef LOOP_SOUND_ATTENUATION
-	self->s.attenuation = ATTN_IDLE;
+#ifdef KMQUAKE2_ENGINE_MOD
+	self->s.loop_attenuation = ATTN_IDLE;
 #endif
 
 	if (level.time >= self->monsterinfo.pausetime)

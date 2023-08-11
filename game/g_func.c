@@ -1208,8 +1208,8 @@ void plat_go_down (edict_t *ent)
 		if (ent->moveinfo.sound_start)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_DOWN;
@@ -1223,8 +1223,8 @@ void plat_go_up (edict_t *ent)
 		if (ent->moveinfo.sound_start)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_UP;
@@ -1546,8 +1546,8 @@ void plat2_go_down (edict_t *ent)
 		if (ent->moveinfo.sound_start)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_DOWN;
@@ -1563,8 +1563,8 @@ void plat2_go_up (edict_t *ent)
 		if (ent->moveinfo.sound_start)
 			gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // was ATTN_STATIC
 		ent->s.sound = ent->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 	ent->moveinfo.state = STATE_UP;
@@ -1942,8 +1942,8 @@ void rotating_use (edict_t *self, edict_t *other, edict_t *activator)
 	else
 	{
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 		if (self->spawnflags & ROTATING_ACCEL)	// accelerate
 			rotating_accel (self);
@@ -2509,8 +2509,8 @@ void door_go_down (edict_t *self)
 		if (self->moveinfo.sound_start)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	if (self->max_health)
@@ -2557,8 +2557,8 @@ void door_go_up (edict_t *self, edict_t *activator)
 		if (self->moveinfo.sound_start)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	if (strcmp(self->classname, "func_door") == 0)
@@ -3751,8 +3751,8 @@ again:
 		if (self->moveinfo.sound_start)
 			gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -4378,8 +4378,8 @@ void door_secret_use (edict_t *self, edict_t *other, edict_t *activator)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 //	Move_Calc (self, self->pos1, door_secret_move1);
@@ -4413,8 +4413,8 @@ void door_secret_move2 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	self->moveinfo.state = STATE_UP;	// Knightmare added
@@ -4442,8 +4442,8 @@ void door_secret_move4 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	self->moveinfo.state = STATE_UP;	// Knightmare added
@@ -4468,8 +4468,8 @@ void door_secret_move6 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 
@@ -4701,8 +4701,8 @@ void door_secret2_use (edict_t *self, edict_t *other, edict_t *activator)
 			gi.sound (door, CHAN_NO_PHS_ADD+CHAN_VOICE, door->moveinfo.sound_start, 1, door->attenuation, 0); // was ATTN_STATIC
 		if (door->moveinfo.sound_middle) {
 			door->s.sound = door->moveinfo.sound_middle;
-	#ifdef LOOP_SOUND_ATTENUATION
-			door->s.attenuation = door->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+			door->s.loop_attenuation = door->attenuation;
 	#endif
 		}
 		if (door->moveinfo.state == STATE_LOWEST) {
@@ -4749,8 +4749,8 @@ void door_secret2_move2 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	self->moveinfo.state = STATE_UP;
@@ -4779,8 +4779,8 @@ void door_secret2_move4 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle) {
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	}
 	self->moveinfo.state = STATE_UP;
@@ -4805,8 +4805,8 @@ void door_secret2_move6 (edict_t *self)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
 	if (self->moveinfo.sound_middle)
 		self->s.sound = self->moveinfo.sound_middle;
-#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 #endif
 	self->moveinfo.state = STATE_DOWN;
 	Move_Calc (self, self->pos0, door_secret2_done);
@@ -5981,8 +5981,8 @@ void swinging_door_killed (edict_t *self, edict_t *inflictor, edict_t *attacker,
 			if (ent->moveinfo.sound_start)
 				gi.sound (ent, CHAN_NO_PHS_ADD+CHAN_VOICE, ent->moveinfo.sound_start, 1, ent->attenuation, 0); // was ATTN_STATIC
 			ent->s.sound = ent->moveinfo.sound_middle;
-	#ifdef LOOP_SOUND_ATTENUATION
-			ent->s.attenuation = ent->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+			ent->s.loop_attenuation = ent->attenuation;
 	#endif
 		}
 		ent->moveinfo.state = STATE_UP;

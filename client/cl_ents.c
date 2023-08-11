@@ -400,13 +400,11 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 		if (bits & U_SOUND)
 			to->sound = MSG_ReadShort (&net_message);
 		
-	#ifdef LOOP_SOUND_ATTENUATION
 		if (bits & U_ATTENUAT)
 	#ifdef NEW_ENTITY_STATE_MEMBERS
-			to->attenuation = MSG_ReadByte (&net_message) / 64.0;
+			to->loop_attenuation = MSG_ReadByte (&net_message) / 64.0;
 	#else // we need to read and ignore this for client compatibility with precompiled game code
 			ignore = MSG_ReadByte (&net_message) / 64.0;
-	#endif
 	#endif
 
 		if (bits & U_EVENT)

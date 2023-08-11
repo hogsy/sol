@@ -140,9 +140,6 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 // enable to build exe with 24-bit coordinate transmission
 // changes pmove origin size in game DLLs
 #define LARGE_MAP_SIZE
-// enable to include looping of attenuated sounds
-// changes entity_state_t struct
-#define LOOP_SOUND_ATTENUATION
 // enable to save compressed savegame files
 #define COMPRESSED_SAVEGAMES
 #endif
@@ -1604,7 +1601,7 @@ typedef struct entity_state_s
 	int		frame;
 	int		skinnum;
 #ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
-	float	alpha;	//entity transparency
+	float	alpha;				// entity transparency
 #endif
 	unsigned int		effects;		// PGM - we're filling it, so it needs to be unsigned
 	int		renderfx;
@@ -1613,9 +1610,7 @@ typedef struct entity_state_s
 							// gi.linkentity sets this properly
 	int		sound;			// for looping sounds, to guarantee shutoff
 #ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
-#ifdef LOOP_SOUND_ATTENUATION // Knightmare- added sound attenuation
-	float	attenuation;
-#endif
+	float	loop_attenuation;	// looped sound attenuation
 #endif
 	int		event;			// impulse events -- muzzle flashes, footsteps, etc
 							// events only go out for a single frame, they

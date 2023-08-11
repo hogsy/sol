@@ -91,8 +91,8 @@ void Use_Target_Speaker (edict_t *ent, edict_t *other, edict_t *activator)
 		}
 		else {
 			ent->s.sound = ent->noise_index;	// start it
-#ifdef LOOP_SOUND_ATTENUATION
-			ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+			ent->s.loop_attenuation = ent->attenuation;
 #endif
 		}
 	}
@@ -169,8 +169,8 @@ void SP_target_speaker (edict_t *ent)
 	// check for prestarted looping sound
 	if (ent->spawnflags & 1) {
 		ent->s.sound = ent->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-		ent->s.attenuation = ent->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		ent->s.loop_attenuation = ent->attenuation;
 #endif
 	}
 
@@ -3098,8 +3098,8 @@ void use_target_attractor(edict_t *self, edict_t *other, edict_t *activator)
 	else {
 		self->spawnflags |= (ATTRACTOR_ON + ATTRACTOR_PATHTARGET);
 		self->s.sound = self->noise_index;
-	#ifdef LOOP_SOUND_ATTENUATION
-		self->s.attenuation = self->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+		self->s.loop_attenuation = self->attenuation;
 	#endif
 
 		if (self->spawnflags & ATTRACTOR_SINGLE)
@@ -3942,11 +3942,11 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 			else
 				target_ent->noise_index = self->noise_index;
 		}
-#ifdef LOOP_SOUND_ATTENUATION
+#ifdef KMQUAKE2_ENGINE_MOD
 		if (self->attenuation)
 		{
-			if (target_ent->s.attenuation == target_ent->attenuation)
-				target_ent->s.attenuation = target_ent->attenuation = self->attenuation;
+			if (target_ent->s.loop_attenuation == target_ent->attenuation)
+				target_ent->s.loop_attenuation = target_ent->attenuation = self->attenuation;
 			else
 				target_ent->attenuation = self->attenuation;
 		}

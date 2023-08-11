@@ -79,8 +79,8 @@ void Moving_Speaker_Think(edict_t *speaker)
 		}
 		if (moved) {
 			speaker->s.sound = speaker->owner->noise_index;
-	#ifdef LOOP_SOUND_ATTENUATION
-			speaker->s.attenuation = speaker->attenuation;
+	#ifdef KMQUAKE2_ENGINE_MOD
+			speaker->s.loop_attenuation = speaker->attenuation;
 	#endif
 		}
 		else
@@ -88,8 +88,8 @@ void Moving_Speaker_Think(edict_t *speaker)
 	}
 	else {
 		speaker->s.sound = speaker->owner->noise_index;
-#ifdef LOOP_SOUND_ATTENUATION
-		speaker->s.attenuation = speaker->attenuation;
+#ifdef KMQUAKE2_ENGINE_MOD
+		speaker->s.loop_attenuation = speaker->attenuation;
 #endif
 	}
 
@@ -1402,7 +1402,7 @@ void SP_crane_hook (edict_t *self)
 	else
 		self->noise_index = 0;
 
-#ifdef LOOP_SOUND_ATTENUATION
+#ifdef KMQUAKE2_ENGINE_MOD
 	if (self->attenuation <= 0)
 		self->attenuation = ATTN_IDLE;
 #endif
@@ -1464,7 +1464,7 @@ void SP_crane_hoist (edict_t *self)
 	else
 		self->noise_index = 0;
 
-#ifdef LOOP_SOUND_ATTENUATION
+#ifdef KMQUAKE2_ENGINE_MOD
 	if (self->attenuation <= 0)
 		self->attenuation = ATTN_IDLE;
 #endif
@@ -1530,7 +1530,7 @@ void SP_crane_beam (edict_t *self)
 	else
 		self->noise_index = 0;
 
-#ifdef LOOP_SOUND_ATTENUATION
+#ifdef KMQUAKE2_ENGINE_MOD
 	if (self->attenuation <= 0)
 		self->attenuation = ATTN_IDLE;
 #endif
