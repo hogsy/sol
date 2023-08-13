@@ -1672,12 +1672,7 @@ void G_PrecachePlayerInventories (void)
 
 /*
 ================
-G_FindTeams
-
-Chain together all entities with a matching team field.
-
-All but the first will have the FL_TEAMSLAVE flag set.
-All but the last will have the teamchain field set to the next one
+G_FixTeams
 ================
 */
 void G_FixTeams (void)
@@ -1694,8 +1689,8 @@ void G_FixTeams (void)
 			continue;
 		if (!e->team)
 			continue;
-		//Lazarus- ignore bmodel spawner (its team isn't used)
-		if (e->classname && !Q_stricmp(e->classname,"target_bmodel_spawner"))
+		// Lazarus- ignore bmodel spawner (its team isn't used)
+		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
 			continue; 
 		if (!strcmp(e->classname, "func_train"))
 		{
@@ -1733,6 +1728,16 @@ void G_FixTeams (void)
 	gi.dprintf ("%i teams repaired\n", c);
 }
 
+/*
+================
+G_FindTeams
+
+Chain together all entities with a matching team field.
+
+All but the first will have the FL_TEAMSLAVE flag set.
+All but the last will have the teamchain field set to the next one
+================
+*/
 void G_FindTeams (void)
 {
 	edict_t	*e, *e2, *chain;
@@ -1748,6 +1753,13 @@ void G_FindTeams (void)
 		if (!e->team)
 			continue;
 		if (e->flags & FL_TEAMSLAVE)
+			continue;
+		// Lazarus: some entities may have psuedo-teams that shouldn't be handled here
+		if (e->classname && !Q_stricmp(e->classname, "target_change"))
+			continue;
+		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
+			continue;
+		if (e->classname && !Q_stricmp(e->classname, "target_clone"))
 			continue;
 		chain = e;
 		e->teammaster = e;
@@ -1772,7 +1784,7 @@ void G_FindTeams (void)
 		}
 	}
 
-	G_FixTeams();
+	G_FixTeams ();
 
 	gi.dprintf ("%i teams with %i entities\n", c, c2);
 }

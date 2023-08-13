@@ -3310,7 +3310,8 @@ void train_wait (edict_t *self)
 	}
 
 	// Lazarus: rotating trains
-	if (self->target_ent)
+//	if ( self->target_ent )
+	if ( self->target_ent && (level.maptype != MAPTYPE_ROGUE) )	// Knightmare- skip this for Rogue maps
 	{
 		if (self->target_ent->speed)
 		{
@@ -3361,7 +3362,13 @@ void train_wait (edict_t *self)
 		}
 		else if (self->spawnflags & TRAIN_TOGGLE)  // && wait < 0
 		{
-			train_next (self);
+			// Knightmare- for Rogue maps, let train_next wait until we get called
+			if (level.maptype == MAPTYPE_ROGUE) {
+				self->target_ent = NULL;
+			}
+			else {
+				train_next (self);
+			}
 			self->spawnflags &= ~TRAIN_START_ON;
 			VectorClear (self->velocity);
 			if ( !(self->spawnflags & TRAIN_ROTATE_CONSTANT) )
@@ -3386,6 +3393,11 @@ void train_wait (edict_t *self)
 		train_next (self);
 	}
 	
+}
+
+// Knightmare- dummy function for Rogue train teams
+void train_piece_wait (edict_t *self)
+{
 }
 
 // Rroff's rotating train stuff, with quite a few changes
@@ -3743,6 +3755,23 @@ again:
 		goto again;
 	}
 
+	// Knightmare- handle speed changes for Rogue maps
+	if ( (ent->speed) && (level.maptype == MAPTYPE_ROGUE) )
+	{
+		self->speed = ent->speed;
+		self->moveinfo.speed = ent->speed;
+		if (ent->accel)
+			self->moveinfo.accel = ent->accel;
+		else
+			self->moveinfo.accel = ent->speed;
+		if (ent->decel)
+			self->moveinfo.decel = ent->decel;
+		else
+			self->moveinfo.decel = ent->speed;
+		self->moveinfo.current_speed = 0;
+	}
+	// end Knightmare
+
 	self->moveinfo.wait = ent->wait;
 	self->target_ent = ent;
 
@@ -3787,7 +3816,7 @@ again:
 	}
 
 	// Rroff rotating
-	if (self->spawnflags & TRAIN_ROTATE && !(ent->spawnflags & 2))
+	if ( (self->spawnflags & TRAIN_ROTATE) && !(ent->spawnflags & 2) )
 	{
 		// Lazarus: No no no :-). This is measuring from the center
 		//          of the func_train to the path_corner. Should
@@ -3835,6 +3864,32 @@ again:
 
 	Move_Calc (self, dest, train_wait);
 	self->spawnflags |= TRAIN_START_ON;
+
+	// Knightmare- special team hack for Rogue maps
+	if ( self->team && (level.maptype == MAPTYPE_ROGUE) )
+	{
+		edict_t	*teamEnt;
+		vec3_t	teamDir, teamDest;
+		int		num_pieces_found = 0;
+
+		VectorSubtract (dest, self->s.origin, teamDir);
+		for (teamEnt = self->teamchain; teamEnt; teamEnt = teamEnt->teamchain)
+		{
+			VectorAdd (teamDir, teamEnt->s.origin, teamDest);
+			VectorCopy (teamEnt->s.origin, teamEnt->moveinfo.start_origin);
+			VectorCopy (teamDest, teamEnt->moveinfo.end_origin);
+
+			teamEnt->moveinfo.state = STATE_TOP;
+			teamEnt->speed = self->speed;
+			teamEnt->moveinfo.speed = self->moveinfo.speed;
+			teamEnt->moveinfo.accel = self->moveinfo.accel;
+			teamEnt->moveinfo.decel = self->moveinfo.decel;
+			teamEnt->movetype = MOVETYPE_PUSH;
+			Move_Calc (teamEnt, teamDest, train_piece_wait);
+			num_pieces_found++;
+		}
+	}
+	// end Knightmare
 }
 
 void train_resume (edict_t *self)
@@ -3846,8 +3901,8 @@ void train_resume (edict_t *self)
 
 	ent = self->target_ent;
 
-	//Knightmare- calc the real target for the train's mins,
-	//since that is 1 unit below the corner of the bmodel in all 3 dimensions
+	// Knightmare- calc the real target for the train's mins,
+	// since that is 1 unit below the corner of the bmodel in all 3 dimensions
 	if (adjust_train_corners->value)
 		VectorSubtract(ent->s.origin, corner_offset, adjusted_pathpoint);
 	else
@@ -3916,12 +3971,15 @@ void func_train_find (edict_t *self)
 	else
 		VectorCopy(ent->s.origin, adjusted_pathpoint);
 
-	if (self->spawnflags & TRAIN_ROTATE)
+	if (self->spawnflags & TRAIN_ROTATE) {
 		ent->think = train_yaw;
-	else if (self->spawnflags & TRAIN_SPLINE)
+	}
+	else if (self->spawnflags & TRAIN_SPLINE) {
 		ent->think = train_spline;
-	else
+	}
+	else {
 		ent->think = train_children_think;
+	}
 	ent->enemy = self;
 	ent->nextthink = level.time + FRAMETIME;
 

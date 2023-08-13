@@ -1101,6 +1101,67 @@ void G_PrecachePlayerInventories (void)
 
 /*
 ================
+G_FixTeams
+
+Borrowed from Rogue source
+================
+*/
+void G_FixTeams (void)
+{
+	edict_t	*e, *e2, *chain;
+	int		i, j;
+	int		c, c2;
+
+	c = 0;
+	c2 = 0;
+	for (i=1, e=g_edicts+i ; i < globals.num_edicts ; i++,e++)
+	{
+		if (!e->inuse)
+			continue;
+		if (!e->team)
+			continue;
+		// Lazarus- ignore bmodel spawner (its team isn't used)
+		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
+			continue; 
+		if (!strcmp(e->classname, "func_train"))
+		{
+			if (e->flags & FL_TEAMSLAVE)
+			{
+				chain = e;
+				e->teammaster = e;
+				e->teamchain = NULL;
+				e->flags &= ~FL_TEAMSLAVE;
+				c++;
+				c2++;
+				for (j=1, e2=g_edicts+j ; j < globals.num_edicts ; j++,e2++)
+				{
+					if (e2 == e)
+						continue;
+					if (!e2->inuse)
+						continue;
+					if (!e2->team)
+						continue;
+					if (!strcmp(e->team, e2->team))
+					{
+						c2++;
+						chain->teamchain = e2;
+						e2->teammaster = e;
+						e2->teamchain = NULL;
+						chain = e2;
+						e2->flags |= FL_TEAMSLAVE;
+						e2->movetype = MOVETYPE_PUSH;
+						e2->speed = e->speed;
+					}
+				}
+			}
+		}
+	}
+	gi.dprintf ("%i teams repaired\n", c);
+}
+
+
+/*
+================
 G_FindTeams
 
 Chain together all entities with a matching team field.
@@ -1126,11 +1187,11 @@ void G_FindTeams (void)
 		if (e->flags & FL_TEAMSLAVE)
 			continue;
 		// Lazarus: some entities may have psuedo-teams that shouldn't be handled here
-		if (e->classname && !Q_stricmp(e->classname,"target_change"))
+		if (e->classname && !Q_stricmp(e->classname, "target_change"))
 			continue;
-		if (e->classname && !Q_stricmp(e->classname,"target_bmodel_spawner"))
+		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
 			continue;
-		if (e->classname && !Q_stricmp(e->classname,"target_clone"))
+		if (e->classname && !Q_stricmp(e->classname, "target_clone"))
 			continue;
 		chain = e;
 		e->teammaster = e;
@@ -1155,7 +1216,12 @@ void G_FindTeams (void)
 		}
 	}
 
-	if(level.time < 2)
+	// Knightmare- set up Rogue train teams
+	if (level.maptype == MAPTYPE_ROGUE) {
+		G_FixTeams ();
+	}
+
+	if (level.time < 2)
 		gi.dprintf ("%i teams with %i entities\n", c, c2);
 }
 

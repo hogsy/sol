@@ -1324,8 +1324,8 @@ void target_laser_think (edict_t *self)
 
 	if (self->enemy)
 	{
-		//Knightmare- calc min coordinate, don't use absmin
-		VectorAdd(self->enemy->s.origin, self->enemy->mins, realmin);
+		// Knightmare- calc min coordinate, don't use absmin
+		VectorAdd (self->enemy->s.origin, self->enemy->mins, realmin);
 
 		VectorCopy (self->movedir, last_movedir);
 	//	VectorMA (self->enemy->absmin, 0.5, self->enemy->size, point);
@@ -1342,8 +1342,8 @@ void target_laser_think (edict_t *self)
 	VectorCopy (self->s.origin, start);
 
 	// Knightmare- if started in solid, move forward
-	//while (gi.pointcontents(start) & CONTENTS_SOLID)
-	//	VectorMA (start, 1, self->movedir, start);
+//	while (gi.pointcontents(start) & CONTENTS_SOLID)
+//		VectorMA (start, 1, self->movedir, start);
 
 	VectorMA (start, 2048, self->movedir, end);
 	while (1)
@@ -1372,9 +1372,9 @@ void target_laser_think (edict_t *self)
 			}
 		}
 
-		//PMM added SVF_DAMAGEABLE
+		// PMM added SVF_DAMAGEABLE
 		// if we hit something that's not a monster or player or is immune to lasers, we're done
-		//if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
+	//	if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client))
 		if (!(tr.ent->svflags & SVF_MONSTER) && (!tr.ent->client) && !(tr.ent->svflags & SVF_DAMAGEABLE))
 		{
 			if (self->spawnflags & 0x80000000 && (self->style != 3))
@@ -1442,32 +1442,32 @@ void target_laser_start (edict_t *self)
 {
 	edict_t *ent;
 	vec3_t	forward;
-	vec3_t	xhangar2laspoint1 = {572,-2848,164};
-	vec3_t	xhangar2laspoint2 = {572,-2848,200};
-	vec3_t	xhangar2laspoint3 = {572,-2848,236};
-	vec3_t	xcompnd2laspoint1 = {768,2088,40};
+	vec3_t	xhangar2laspoint1 = {572, -2848, 164};
+	vec3_t	xhangar2laspoint2 = {572, -2848, 200};
+	vec3_t	xhangar2laspoint3 = {572, -2848, 236};
+	vec3_t	xcompnd2laspoint1 = {768, 2088, 40};
 
 	self->movetype = MOVETYPE_NONE;
 	self->solid = SOLID_NOT;
 	self->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 	self->s.modelindex = 1;		// must be non-zero
 
-	//Knightmare- horrendously ugly hack for the 3 lasers on xhangar2
+	// Knightmare- horrendously ugly hack for the 3 lasers on xhangar2
 	if (!Q_stricmp(level.mapname, "xhangar2")
 		&& ( VectorCompare(self->s.origin, xhangar2laspoint1)
 		||   VectorCompare(self->s.origin, xhangar2laspoint2)
 		|| VectorCompare(self->s.origin, xhangar2laspoint3) ))
 	{
-		//gi.dprintf("Moving target_laser origin backward 4 units\n");
+	//	gi.dprintf("Moving target_laser origin backward 4 units\n");
 		VectorSet (forward, 0, 1, 0);
 		VectorMA (self->s.origin, -4, forward, self->s.origin);
 	}
 
-	//Knightmare- another horrendously ugly hack for the laser on xcompnd2
+	// Knightmare- another horrendously ugly hack for the laser on xcompnd2
 	if (!Q_stricmp(level.mapname, "xcompnd2")
 		&& VectorCompare(self->s.origin, xcompnd2laspoint1) )
 	{
-		//gi.dprintf("Moving target_laser origin backward 1 unit\n");
+	//	gi.dprintf("Moving target_laser origin backward 1 unit\n");
 		VectorSet (forward, 1, 0, 0);
 		VectorMA (self->s.origin, -1, forward, self->s.origin);
 	}
@@ -1516,7 +1516,7 @@ void target_laser_start (edict_t *self)
 		}
 	}
 
-	if (self->spawnflags & 256)
+	if (self->spawnflags & LASER_SEEK_PLAYER)
 	{
 		// player-seeking laser
 		self->enemy = NULL;
@@ -1524,9 +1524,9 @@ void target_laser_start (edict_t *self)
 		self->think = target_laser_ps_think;
 		gi.linkentity(self);
 		if (self->spawnflags & 1)
-			target_laser_ps_on(self);
+			target_laser_ps_on (self);
 		else
-			target_laser_ps_off(self);
+			target_laser_ps_off (self);
 		return;
 	}
 	// end DWH
@@ -1633,7 +1633,10 @@ void old_target_laser_think (edict_t *self)
 	VectorMA (start, 2048, self->movedir, end);
 	while (1)
 	{
-		tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+		if (self->spawnflags & LASER_STOPWINDOW)
+			tr = gi.trace (start, NULL, NULL, end, ignore, MASK_SHOT);
+		else
+			tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
 		if (!tr.ent)
 			break;

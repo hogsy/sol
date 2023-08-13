@@ -837,7 +837,8 @@ void target_blaster_think (edict_t *self)
 	vec3_t	target;
 	int		i;
 
-	if (self->spawnflags & SEEK_PLAYER) {
+	if (self->spawnflags & SEEK_PLAYER)
+	{
 		// this takes precedence over everything else
 
 		// If we are currently targeting a non-player, reset and look for
@@ -1114,10 +1115,14 @@ void SP_target_crosslevel_target (edict_t *self)
 
 //==========================================================
 
-/*QUAKED target_laser (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON RED GREEN BLUE YELLOW ORANGE FAT
+/*QUAKED target_laser (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON RED GREEN BLUE YELLOW ORANGE FAT SEEK_PLAYER x x x x x WINDOW_STOP
 When triggered, fires a laser.  You can either set a target
 or a direction.
 */
+
+#define LASER_SEEK_PLAYER		128
+#define ROGUE_LASER_STOPWINDOW	128
+#define LASER_STOPWINDOW		8192
 
 // DWH - player-seeking laser stuff
 void target_laser_ps_think (edict_t *self)
@@ -1160,16 +1165,19 @@ void target_laser_ps_think (edict_t *self)
 				self->enemy = NULL;
 		}
 	}
-	if (!self->enemy) {
+	if (!self->enemy)
+	{
 		// find a player - as with target_blaster, search entire entity list so
 		// we'll pick up fake players representing camera-viewers
-		for (i=1, player=g_edicts+1; i<globals.num_edicts && !self->enemy; i++, player++) {
+		for (i=1, player=g_edicts+1; i<globals.num_edicts && !self->enemy; i++, player++)
+		{
 			if (!player->inuse) continue;
 			if (!player->client) continue;
 			if (player->svflags & SVF_NOCLIENT) continue;
-			if ((player->health >= player->gib_health) && !(player->flags & FL_NOTARGET) ) {
-				VectorMA(player->absmin,0.5,player->size,target);
-				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,target,self,MASK_OPAQUE);
+			if ((player->health >= player->gib_health) && !(player->flags & FL_NOTARGET) )
+			{
+				VectorMA (player->absmin, 0.5, player->size,target);
+				tr = gi.trace(self->s.origin, vec3_origin, vec3_origin, target, self, MASK_OPAQUE);
 				if (tr.fraction == 1.0) {
 					self->enemy = player;
 					self->spawnflags |= 0x80000001;
@@ -1189,7 +1197,7 @@ void target_laser_ps_think (edict_t *self)
 	VectorMA (self->enemy->absmin, 0.5, self->enemy->size, point);
 	VectorSubtract (point, self->s.origin, self->movedir);
 	VectorNormalize (self->movedir);
-	if (!VectorCompare(self->movedir, last_movedir))
+	if ( !VectorCompare(self->movedir, last_movedir) )
 		self->spawnflags |= 0x80000000;
 
 	ignore = self;
@@ -1318,7 +1326,12 @@ void target_laser_think (edict_t *self)
 	VectorMA (start, 2048, self->movedir, end);
 	while (1)
 	{
-		tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+		// Knightmare- spawnflag 8192 stops at window, or spawnflag 128 in Rogue maps 
+		if ( ( (level.maptype != MAPTYPE_ROGUE) && (self->spawnflags & LASER_STOPWINDOW) ) ||
+			( (level.maptype == MAPTYPE_ROGUE) && (self->spawnflags & ROGUE_LASER_STOPWINDOW) ) )
+			tr = gi.trace (start, NULL, NULL, end, ignore, MASK_SHOT);
+		else
+			tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
 		if (!tr.ent)
 			break;
@@ -1435,7 +1448,8 @@ void target_laser_start (edict_t *self)
 	// DWH
 
 	// pulsed laser
-	if (self->wait > 0) {
+	if (self->wait > 0)
+	{
 		if (self->delay >= self->wait) {
 			gi.dprintf("target_laser at %s, delay must be < wait.\n",
 				vtos(self->s.origin));
@@ -1448,7 +1462,9 @@ void target_laser_start (edict_t *self)
 		}
 	}
 
-	if (self->spawnflags & 128) {
+	// Knightmare- Rogue maps use flag 128 for stopping at CONTENTS_WINDOW
+	if ( (level.maptype != MAPTYPE_ROGUE) && (self->spawnflags & LASER_SEEK_PLAYER) )
+	{
 		// player-seeking laser
 		self->enemy = NULL;
 		self->use = target_laser_ps_use;
