@@ -555,7 +555,8 @@ void Fog (edict_t *ent)
 	VectorCopy(ent->s.origin, viewpoint);
 	viewpoint[2] += ent->viewheight;
 
-	if (Q_stricmp(vid_ref->string, "gl"))
+//	if ( Q_stricmp(vid_ref->string, "gl") )
+	if ( !Q_strncmp(vid_ref->string, "soft", 4) )
 	{
 		last_software_frame = level.framenum;
 		level.active_fog = 0;
@@ -676,7 +677,8 @@ void Fog_Off (edict_t *ent)
 
 	if (gl_driver && vid_ref)
 	{
-		if (!strcmp(vid_ref->string, "gl"))
+	//	if ( !strcmp(vid_ref->string, "gl") )
+		if ( !Q_strncmp(vid_ref->string, "gl", 2) )
 		{
 			if (hOpenGL)
 				GL_glDisable (GL_FOG);
@@ -695,7 +697,8 @@ void Fog_Off_Global (void)
 #ifndef KMQUAKE2_ENGINE_MOD // old sever-side fog
 	if (gl_driver && vid_ref)
 	{
-		if (!strcmp(vid_ref->string, "gl"))
+	//	if ( !strcmp(vid_ref->string, "gl") )
+		if ( !Q_strncmp(vid_ref->string, "gl", 2) )
 		{
 			if (hOpenGL)
 				GL_glDisable (GL_FOG);

@@ -3838,7 +3838,8 @@ void use_target_failure (edict_t *self, edict_t *other, edict_t *activator)
 		gi.sound (activator, CHAN_VOICE|CHAN_RELIABLE, self->noise_index, 1, ATTN_NORM, 0);
 
 	self->target_ent = activator;
-	if (Q_stricmp(vid_ref->string,"gl") && Q_stricmp(vid_ref->string,"kmgl"))
+//	if ( Q_stricmp(vid_ref->string, "gl") && Q_stricmp(vid_ref->string, "kmgl") )
+	if ( !Q_strncmp(vid_ref->string, "soft", 4) )
 	{
 		self->flags = 12;
 		self->think = target_failure_fade_lights;
@@ -4278,7 +4279,7 @@ void use_target_set_effect (edict_t *self, edict_t *other, edict_t *activator)
 {
 	edict_t *target;
 
-	target = G_Find(NULL,FOFS(targetname),self->target);
+	target = G_Find(NULL, FOFS(targetname), self->target);
 	while (target)
 	{
 		if (self->style == 1)
@@ -4296,7 +4297,7 @@ void use_target_set_effect (edict_t *self, edict_t *other, edict_t *activator)
 			target->s.effects = self->effects;
 			target->s.renderfx = self->renderfx;
 		}
-#ifdef KMQUAKE2_ENGINE_MOD //Knightmare added
+#ifdef KMQUAKE2_ENGINE_MOD // Knightmare added
 		if ((self->alpha >= 0.0) && (self->alpha <= 1.0))
 			target->s.alpha = self->alpha;
 #endif
@@ -4642,7 +4643,7 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 		}
 	}
 
-#ifdef KMQUAKE2_ENGINE_MOD //Knightmare added
+#ifdef KMQUAKE2_ENGINE_MOD // Knightmare added
 	if ((self->alpha >= 0.0) && (self->alpha <= 1.0))
 		child->s.alpha = self->alpha;
 #endif
