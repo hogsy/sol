@@ -151,7 +151,7 @@ void V_AddEntity (entity_t *ent)
 		{
 			V_AddViewerEntAlpha(ent);
 			ent->flags &= ~RF_VIEWERMODEL;
-			ent->renderfx |= RF2_CAMERAMODEL;
+			ent->renderfx |= RF_CAMERAMODEL;
 		}
 	}
 	// end Knightmare

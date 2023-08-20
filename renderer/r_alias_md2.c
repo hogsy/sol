@@ -848,7 +848,7 @@ void R_DrawAliasMD2Model (entity_t *e)
 	qboolean	shadowonly = false;
 
 	// also skip this for viewermodels and cameramodels
-	if ( !(e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->renderfx & RF2_CAMERAMODEL) )
+	if ( !(e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->renderfx & RF_CAMERAMODEL) )
 	{
 		if (R_CullAliasMD2Model(bbox, e))
 			/*if (r_shadows->integer == 3)
@@ -864,7 +864,7 @@ void R_DrawAliasMD2Model (entity_t *e)
 		else if (r_lefthand->integer == 1)
 			mirrormodel = true;
 	}
-	else if (e->renderfx & RF2_CAMERAMODEL)
+	else if (e->renderfx & RF_CAMERAMODEL)
 	{
 		if (r_lefthand->integer==1)
 			mirrormodel = true;
@@ -1009,7 +1009,7 @@ void R_DrawAliasMD2ModelShadow (entity_t *e)
 		return;
 
 	// also skip this for viewermodels and cameramodels
-	if ( !(e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->renderfx & RF2_CAMERAMODEL) )
+	if ( !(e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->renderfx & RF_CAMERAMODEL) )
 	{
 		if (R_CullAliasMD2Model(bbox, e))
 			return;
@@ -1019,7 +1019,7 @@ void R_DrawAliasMD2ModelShadow (entity_t *e)
 	if (shadowalpha_md2 < DIV255) // out of range
 		return;
 
-	if (e->renderfx & RF2_CAMERAMODEL)
+	if (e->renderfx & RF_CAMERAMODEL)
 	{
 		if (r_lefthand->integer==1)
 			mirrormodel = true;

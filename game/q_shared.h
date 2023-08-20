@@ -912,6 +912,8 @@ typedef struct
 #define RF_TRANS_ADDITIVE	8192
 #define RF_MIRRORMODEL		16384
 
+#define RF_CAMERAMODEL		RF_WEAPONMODEL		// client camera model
+
 // ROGUE
 #define RF_IR_VISIBLE		0x00008000		// 32768
 #define	RF_SHELL_DOUBLE		0x00010000		// 65536
@@ -919,13 +921,9 @@ typedef struct
 #define RF_USE_DISGUISE		0x00040000
 // ROGUE
 
-#define RF_NOSHADOW			0x00080000 // Knightmare- no shadow flag
+#define RF_NOSHADOW			0x00080000		// Knightmare- no shadow flag
 
 #define RF_MASK_SHELL		(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE|RF_SHELL_DOUBLE|RF_SHELL_HALF_DAM)
-
-#define	RF2_NOSHADOW		0x00000001		//no shadow..
-#define RF2_FORCE_SHADOW	0x00000002		//forced shadow...
-#define RF2_CAMERAMODEL		0x00000004		//client camera model
 
 // player_state_t->refdef flags
 #define	RDF_UNDERWATER		1		// warp the screen as apropriate

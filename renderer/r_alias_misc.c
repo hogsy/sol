@@ -76,7 +76,7 @@ float R_CalcEntAlpha (float alpha, vec3_t point)
 
 	newAlpha = alpha;
 
-	if (!(currententity->renderfx & RF2_CAMERAMODEL) || !(currententity->flags & RF_TRANSLUCENT))
+	if (!(currententity->renderfx & RF_CAMERAMODEL) || !(currententity->flags & RF_TRANSLUCENT))
 	{
 		newAlpha = max(min(newAlpha, 1.0f), 0.0f);
 		return newAlpha;
@@ -566,7 +566,7 @@ void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, 
 	if (!r_showbbox->integer)
 		return;
 
-	if (e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->flags & RF_BEAM || e->renderfx & RF2_CAMERAMODEL)
+	if (e->flags & RF_WEAPONMODEL || e->flags & RF_VIEWERMODEL || e->flags & RF_BEAM || e->renderfx & RF_CAMERAMODEL)
 		return;
 
 	GL_Disable (GL_CULL_FACE);
