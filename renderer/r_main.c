@@ -1167,7 +1167,7 @@ void R_Register (void)
 	Cvar_SetDescription ("r_trans_lighting", "Enables lighting on translucent surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap.");
 
 	// allow disabling of lighting on warp surfaces
-	r_warp_lighting = Cvar_Get( "r_warp_lighting", "1", CVAR_ARCHIVE );
+	r_warp_lighting = Cvar_Get( "r_warp_lighting", "2", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_warp_lighting", "Enables lighting on warp/water surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap (if available).");
 
 	// allow adjustment of lighting sampling offset
@@ -1175,7 +1175,7 @@ void R_Register (void)
 	Cvar_SetDescription ("r_warp_lighting_sample_offset", "Sets offset sampling distance for vertex light sampling.");
 
 	// allow loading of lightmaps on warp surfaces
-	r_load_warp_lightmaps = Cvar_Get( "r_load_warp_lightmaps", "0", CVAR_ARCHIVE );
+	r_load_warp_lightmaps = Cvar_Get( "r_load_warp_lightmaps", "1", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_load_warp_lightmaps", "Enables loading of lightmaps on warp surfaces for Q2 BSPs (version 38).");
 
 	// allow disabling of trans33+trans66 surface flag combining

@@ -848,6 +848,12 @@ void Mod_LoadFaces (lump_t *l)
 	int			i, count, surfnum;
 	int			planenum, side;
 	int			ti;
+	// Knightmare added
+	dface_t		*testFace = NULL;
+	mtexinfo_t	*testTexinfo = NULL;
+	int			num_warp_zero_lightofs = 0;
+	qboolean	bad_warp_lightmaps = false;
+	// end Knightmare
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
@@ -859,6 +865,31 @@ void Mod_LoadFaces (lump_t *l)
 	loadmodel->numsurfaces = count;
 
 	currentmodel = loadmodel;
+
+	// Knightmare- According to Paril, most maps with no warp lightmaps have a lightofs
+	// value of 0 on all warp faces instead of -1. 
+	// A -1 value would cause out->samples to be set to NULL, but a 0 value wouldn't.
+	// So check for multiple warp faces with 0 lightofs, and disable warp lightmaps
+	// if this is found.
+	testFace = in;
+	for (surfnum=0; surfnum<count; surfnum++, testFace++)
+	{
+		ti = LittleShort (testFace->texinfo);
+		if (ti < 0 || ti >= loadmodel->numtexinfo)
+			VID_Error (ERR_DROP, "MOD_LoadBmodel: bad texinfo number");
+		testTexinfo = loadmodel->texinfo + ti;
+		i = LittleLong(testFace->lightofs);
+		if ( (testTexinfo->flags & SURF_WARP) && (i == 0) )
+		{
+			num_warp_zero_lightofs++;
+			if (num_warp_zero_lightofs >= 2) {
+			//	VID_Printf (PRINT_DEVELOPER, "Mod_LoadFaces: %s has multiple warp faces with 0 lightofs.  Loading of warp lightmaps disabled.\n", loadmodel->name);
+				bad_warp_lightmaps = true;
+				break;
+			}
+		}
+	}
+	// end Knightmare
 
 	R_BeginBuildingLightmaps (loadmodel);
 
@@ -900,14 +931,14 @@ void Mod_LoadFaces (lump_t *l)
 			out->flags |= SURF_DRAWTURB;
 #ifdef WARP_LIGHTMAPS
 			// Knightmare- create lightmaps if surface has light data and has properly subdivided size
-			if ( ((loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) || r_load_warp_lightmaps->integer)
+			if ( ((loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) || ( r_load_warp_lightmaps->integer && !bad_warp_lightmaps ))
 				&& (out->samples != NULL)
 				&& ((out->extents[0]>>4)+1 <= LM_BLOCK_WIDTH)
 				&& ((out->extents[1]>>4)+1 <= LM_BLOCK_HEIGHT) )
 			{
 				out->isLightmapped = true;
 				R_CreateSurfaceLightmap (out);
-				if ( !(loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) && r_load_warp_lightmaps->integer )
+				if ( !(loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) )
 					loadmodel->warpLightmapOverride = true;		// warp lightmaps are now force-loaded
 			}
 			else	// Knightmare- only do this for unlit warp faces!
