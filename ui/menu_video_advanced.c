@@ -57,7 +57,6 @@ static menuSlider_s  	s_celshading_width_slider;
 static menuPicker_s  	s_glass_envmap_box;
 static menuPicker_s  	s_screenshotformat_box;
 static menuSlider_s  	s_screenshotjpegquality_slider;
-static menuPicker_s  	s_saveshotsize_box;
 static menuPicker_s		s_npot_mipmap_box;
 static menuPicker_s		s_sgis_mipmap_box;
 static menuPicker_s		s_upscale_font_box;
@@ -117,6 +116,13 @@ void Menu_Video_Advanced_Init (void)
 		0
 	};
 	static const char *lighting_names[] =
+	{
+		"no",
+		"vertex",
+		"lightmap",
+		0
+	};
+	static const char *warp_lighting_names[] =
 	{
 		"no",
 		"vertex",
@@ -279,9 +285,12 @@ void Menu_Video_Advanced_Init (void)
 	s_warp_lighting_box.generic.x			= x;
 	s_warp_lighting_box.generic.y			= y += MENU_LINE_SIZE;
 	s_warp_lighting_box.generic.name		= "warp surface lighting";
-	s_warp_lighting_box.itemNames			= yesno_names;
+	s_warp_lighting_box.itemNames			= warp_lighting_names;
 	s_warp_lighting_box.generic.cvar		= "r_warp_lighting";
-	s_warp_lighting_box.generic.statusbar	= "vertex lighting on water and other warping surfaces";
+	s_warp_lighting_box.generic.cvarClamp	= true;
+	s_warp_lighting_box.generic.cvarMin		= 0;
+	s_warp_lighting_box.generic.cvarMax		= 2;
+	s_warp_lighting_box.generic.statusbar	= "lighting on water and other warping surfaces";
 
 	s_lightcutoff_slider.generic.type		= MTYPE_SLIDER;
 	s_lightcutoff_slider.generic.textSize	= MENU_FONT_SIZE;
@@ -464,15 +473,6 @@ void Menu_Video_Advanced_Init (void)
 	s_screenshotjpegquality_slider.generic.cvarMax		= 100;
 	s_screenshotjpegquality_slider.generic.statusbar	= "quality of JPG screenshots, 50-100%";
 
-	s_saveshotsize_box.generic.type				= MTYPE_PICKER;
-	s_saveshotsize_box.generic.textSize			= MENU_FONT_SIZE;
-	s_saveshotsize_box.generic.x				= x;
-	s_saveshotsize_box.generic.y				= y += MENU_LINE_SIZE;
-	s_saveshotsize_box.generic.name				= "hi-res saveshots";
-	s_saveshotsize_box.itemNames				= yesno_names;
-	s_saveshotsize_box.generic.cvar				= "r_saveshotsize";
-	s_saveshotsize_box.generic.statusbar		= "hi-res saveshots when running at 800x600 or higher";
-
 	s_npot_mipmap_box.generic.type				= MTYPE_PICKER;
 	s_npot_mipmap_box.generic.textSize			= MENU_FONT_SIZE;
 	s_npot_mipmap_box.generic.x					= x;
@@ -550,7 +550,6 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_celshading_width_slider);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_screenshotformat_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_screenshotjpegquality_slider);
-	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_saveshotsize_box);
 
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_npot_mipmap_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_sgis_mipmap_box);

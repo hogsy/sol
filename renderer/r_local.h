@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // fall over
 #define	ROLL	2
 
-//#define	WARP_LIGHTMAPS	// whether to support lightmaps on warp surfaces
+#define	WARP_LIGHTMAPS	// whether to support lightmaps on warp surfaces
 
 #ifndef __VIDDEF_T
 #define __VIDDEF_T
@@ -261,7 +261,6 @@ extern	cvar_t	*r_displayrefresh; // Knightmare- refresh rate control
 extern	cvar_t	*r_waterwave;	// Knightmare- water waves
 extern	cvar_t  *r_caustics;	// Barnes water caustics
 extern	cvar_t  *r_glows;		// texture glows
-extern	cvar_t	*r_saveshotsize;// Knightmare- save shot size option
 
 // Knightmare- lerped dlights on models
 extern	cvar_t *r_dlights_normal;
@@ -300,6 +299,7 @@ extern	cvar_t	*r_pixel_shader_warp; // allow disabling the nVidia water warp
 extern	cvar_t	*r_trans_lighting; // allow disabling of lighting on trans surfaces
 extern	cvar_t	*r_warp_lighting; // allow disabling of lighting on warp surfaces
 extern	cvar_t	*r_warp_lighting_sample_offset; // allow adjustment of lighting sampling offset
+extern	cvar_t	*r_load_warp_lightmaps;		// allow loading of lightmaps on warp surfaces
 extern	cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface flag combining
 extern	cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 extern	cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
@@ -503,7 +503,7 @@ extern gllightmapstate_t gl_lms;
 //void R_LightPoint (vec3_t p, vec3_t color);
 void R_LightPoint (vec3_t p, vec3_t color, qboolean isEnt);
 void R_LightPointDynamics (vec3_t p, vec3_t color, m_dlight_t *list, int *amount, int max);
-void R_SurfLightPoint (msurface_t *surf, vec3_t p, vec3_t color, qboolean baselight);
+void R_SurfLightPoint (msurface_t *surf, vec3_t p, vec3_t color, qboolean vertexLightBase);
 void R_PushDlights (void);
 void R_ShadowLight (vec3_t pos, vec3_t lightAdd);
 void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
@@ -693,6 +693,7 @@ void R_DrawSkyBox (void);
 //extern	surfaceHandle_t	r_surfaceHandles[MAX_SURFACE_HANDLES];
 
 image_t *R_TextureAnimation (msurface_t *surf);
+qboolean R_WarpLightmaps_Enabled (void);
 void R_DrawWorld (void);
 void R_DrawAllAlphaSurfaces (void);
 void R_DrawBrushModel (entity_t *e);

@@ -290,6 +290,8 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 			continue;	// no lightmaps
 		if ( (surf->texinfo->flags & SURF_SKY) || ((surf->texinfo->flags & SURF_WARP) && !surf->isLightmapped) )
 			continue;	// no lightmaps
+		if ( r_worldmodel->warpLightmapOverride && ((surf->flags & SURF_DRAWTURB) || (surf->texinfo->flags & SURF_WARP)) )
+			continue;	// skip warp surfaces if warp lightmap loading is forced, as lightmap may be undefined
 #else	// WARP_LIGHTMAPS
 		if (surf->flags & (SURF_DRAWTURB|SURF_DRAWSKY)) 
 			continue;	// no lightmaps
@@ -550,11 +552,10 @@ void R_LightPointDynamics (vec3_t p, vec3_t color, m_dlight_t *list, int *amount
 R_SurfLightPoint
 ===============
 */
-void R_SurfLightPoint (msurface_t *surf, vec3_t p, vec3_t color, qboolean baselight)
+void R_SurfLightPoint (msurface_t *surf, vec3_t p, vec3_t color, qboolean vertexLightBase)
 {
 	vec3_t		start, end, dist, bestColor;
 	vec3_t		dlorigin, temp, forward, right, up;
-//	vec3_t		startOffset[4] = { {0,0,0}, {-1,0,0}, {0,-1,0}, {-1,-1,0} };
 	vec3_t		startOffset[9] = { {0,0,0}, {-1,0,0}, {-1,-1,0}, {0,-1,0}, {1,-1,0}, {1,0,0}, {1,1,0}, {0,1,0}, {-1,1,0} };
 	float		r, light, add;
 	int			lnum, i;
@@ -578,7 +579,7 @@ void R_SurfLightPoint (msurface_t *surf, vec3_t p, vec3_t color, qboolean baseli
 		AngleVectors (hostent->angles, forward, right, up);
 	}
 
-	if (baselight)
+	if (vertexLightBase)
 	{
 		VectorCopy (vec3_origin, bestColor);
 		for (i=0; i<9; i++) // test multiple offset points to avoid dark corners, select brightest

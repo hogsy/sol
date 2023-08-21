@@ -900,21 +900,24 @@ void Mod_LoadFaces (lump_t *l)
 			out->flags |= SURF_DRAWTURB;
 #ifdef WARP_LIGHTMAPS
 			// Knightmare- create lightmaps if surface has light data and has properly subdivided size
-			if ( (loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) && (out->samples != NULL)
+			if ( ((loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) || r_load_warp_lightmaps->integer)
+				&& (out->samples != NULL)
 				&& ((out->extents[0]>>4)+1 <= LM_BLOCK_WIDTH)
 				&& ((out->extents[1]>>4)+1 <= LM_BLOCK_HEIGHT) )
 			{
 				out->isLightmapped = true;
 				R_CreateSurfaceLightmap (out);
+				if ( !(loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) && r_load_warp_lightmaps->integer )
+					loadmodel->warpLightmapOverride = true;		// warp lightmaps are now force-loaded
 			}
 			else	// Knightmare- only do this for unlit warp faces!
 #endif	// WARP_LIGHTMAPS
 			{
-				for (i=0; i<2; i++)
+			/*	for (i=0; i<2; i++)
 				{
 					out->extents[i] = (WORLD_SIZE*2);	// was 16384
 					out->texturemins[i] = -WORLD_SIZE;	// was -8192
-				}
+				} */
 				out->samples = NULL;
 				out->isLightmapped = false;
 			}
@@ -1188,7 +1191,8 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 		VID_Error (ERR_DROP, "Mod_Load_Q2_BrushModel: %s has wrong version number (%i should be %i)", mod->name, i, Q2_BSPVERSION);
 	}
 
-	loadmodel->bspFeatures = 0;	// set BSP features flags
+	loadmodel->bspFeatures = 0;					// set BSP features flags
+	loadmodel->warpLightmapOverride = false;	// starts as false, can be set to true in Mod_LoadFaces()
 
 	// swap all the lumps
 	mod_base = (byte *)header;

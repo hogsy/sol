@@ -107,7 +107,6 @@ cvar_t	*r_lefthand;
 cvar_t	*r_waterwave;	// water waves
 cvar_t  *r_caustics;	// Barnes water caustics
 cvar_t  *r_glows;		// texture glows
-cvar_t	*r_saveshotsize;//  save shot size option
 
 cvar_t	*r_dlights_normal; // lerped dlights on models
 cvar_t	*r_model_shading;
@@ -138,6 +137,7 @@ cvar_t	*r_pixel_shader_warp; // allow disabling the nVidia water warp
 cvar_t	*r_trans_lighting; // disabling of lightmaps on trans surfaces
 cvar_t	*r_warp_lighting; // allow disabling of lighting on warp surfaces
 cvar_t	*r_warp_lighting_sample_offset; // allow adjustment of lighting sampling offset
+cvar_t	*r_load_warp_lightmaps;		// allow loading of lightmaps on warp surfaces
 cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface flag combining
 cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
@@ -1024,8 +1024,6 @@ void R_Register (void)
 	Cvar_SetDescription ("r_caustics", "Enables rendering of underwater caustic effect.  0 = disabled, 1 = normal, 2 = fragment warp.");
 	r_glows = Cvar_Get ("r_glows", "1", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_glows", "Enables rendering of texture glow layers.");
-	r_saveshotsize = Cvar_Get ("r_saveshotsize", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_saveshotsize", "Enables saveshot resolutions above 256x256.");
 //	r_nosubimage = Cvar_Get( "r_nosubimage", "0", 0 );	// unused
 
 	// correct trasparent sorting
@@ -1170,11 +1168,15 @@ void R_Register (void)
 
 	// allow disabling of lighting on warp surfaces
 	r_warp_lighting = Cvar_Get( "r_warp_lighting", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_warp_lighting", "Enables lighting on warp/water surfaces. 0 = disabled, 1 = vertex lighting.");
+	Cvar_SetDescription ("r_warp_lighting", "Enables lighting on warp/water surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap (if available).");
 
 	// allow adjustment of lighting sampling offset
 	r_warp_lighting_sample_offset = Cvar_Get( "r_warp_lighting_sample_offset", "1", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_warp_lighting_sample_offset", "Sets offset sampling distance for vertex light sampling.");
+
+	// allow loading of lightmaps on warp surfaces
+	r_load_warp_lightmaps = Cvar_Get( "r_load_warp_lightmaps", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ("r_load_warp_lightmaps", "Enables loading of lightmaps on warp surfaces for Q2 BSPs (version 38).");
 
 	// allow disabling of trans33+trans66 surface flag combining
 	r_solidalpha = Cvar_Get( "r_solidalpha", "0", CVAR_ARCHIVE );
@@ -1206,7 +1208,7 @@ void R_Register (void)
 	r_screenshot_format = Cvar_Get( "r_screenshot_format", "jpg", CVAR_ARCHIVE );			// determines screenshot format
 	Cvar_SetDescription ("r_screenshot_format", "Sets the image format for screenshots.  Accepted values are tga, jpg, and png.");
 //	r_screenshot_jpeg = Cvar_Get( "r_screenshot_jpeg", "1", CVAR_ARCHIVE );					// Heffo - JPEG Screenshots
-	r_screenshot_jpeg_quality = Cvar_Get( "r_screenshot_jpeg_quality", "85", CVAR_ARCHIVE );	// Heffo - JPEG Screenshots
+	r_screenshot_jpeg_quality = Cvar_Get( "r_screenshot_jpeg_quality", "100", CVAR_ARCHIVE );	// Heffo - JPEG Screenshots
 	Cvar_SetDescription ("r_screenshot_jpeg_quality", "Sets the image quality for JPEG screenshots.  Accepted values are 1-100.");
 	r_screenshot_gamma_correct = Cvar_Get( "r_screenshot_gamma_correct", "0", CVAR_ARCHIVE );	// gamma correction for screenshots
 	Cvar_SetDescription ("r_screenshot_gamma_correct", "Enables gamma correction of screenshots.");

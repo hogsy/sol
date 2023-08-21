@@ -292,8 +292,9 @@ typedef struct model_s
 	void		*extradata;
 
 	qboolean	hasAlpha;		// if model has scripted transparency
-	int			bspVersion;		// For checking BSP version for compatibility
+	int			bspVersion;		// for checking BSP version for compatibility
 	int			bspFeatures;	// flags for BSP features
+	qboolean	warpLightmapOverride;	// if warp lightmaps are force-loaded on format 38 BSPs
 
 #ifdef PROJECTION_SHADOWS // projection shadows from BeefQuake R6
 	//signed int	edge_tri[MD2_MAX_TRIANGLES][3]; // make this dynamically allocated?

@@ -258,6 +258,21 @@ float R_SurfAlphaCalc (int flags)
 		return 1.0;
 }
 
+
+/*
+================
+R_WarpLightmaps_Enabled
+================
+*/
+qboolean R_WarpLightmaps_Enabled (void)
+{
+	if ( (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS) || (r_worldmodel->warpLightmapOverride && (r_warp_lighting->integer == 2)) )
+		return true;
+	
+	return false;
+}
+
+
 /*
 ================
 R_SurfIsDynamic
@@ -315,7 +330,7 @@ qboolean R_SurfIsLit (msurface_t *s)
 
 	if (s->flags & SURF_DRAWTURB)
 	{
-		if (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)	// map has warp lightmaps
+		if ( R_WarpLightmaps_Enabled() )	// map has warp lightmaps
 			return ( s->isLightmapped && !(s->texinfo->flags & SURF_NOLIGHTENV) );
 		else
 			return ( (r_warp_lighting->integer > 0) && !(s->texinfo->flags & SURF_NOLIGHTENV) );				
@@ -365,7 +380,7 @@ qboolean R_SurfsAreBatchable (msurface_t *s1, msurface_t *s2)
 			return false;
 
 #ifdef WARP_LIGHTMAPS
-		if (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
+		if ( R_WarpLightmaps_Enabled() )
 		{
 			// lightmapped surfaces can't be batched with non-lightmapped ones
 			if ( s1->isLightmapped != s2->isLightmapped )
@@ -580,8 +595,7 @@ void R_DrawAlphaSurface (msurface_t *s, entity_t *e)
 	if (s->flags & SURF_DRAWTURB)
 	{	
 #ifdef WARP_LIGHTMAPS
-		if ( s->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
-			&& !(s->texinfo->flags & SURF_NOLIGHTENV) ) {
+		if ( s->isLightmapped && R_WarpLightmaps_Enabled() && !(s->texinfo->flags & SURF_NOLIGHTENV) ) {
 			GL_EnableMultitexture (true);
 			R_SetLightingMode (RF_TRANSLUCENT);
 			R_DrawWarpSurface (s, R_SurfAlphaCalc(s->texinfo->flags), !R_SurfsAreBatchable (s, s->texturechain));
@@ -1339,8 +1353,7 @@ void R_DrawInlineBModel (entity_t *e, int causticflag)
 				else	// warp surface
 				{ 
 #ifdef WARP_LIGHTMAPS
-					if ( psurf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
-						&& !(psurf->texinfo->flags & SURF_NOLIGHTENV) )
+					if ( psurf->isLightmapped && R_WarpLightmaps_Enabled() && !(psurf->texinfo->flags & SURF_NOLIGHTENV) )
 					{
 						psurf->texturechain = image->warp_lm_texturechain;
 						image->warp_lm_texturechain = psurf;
@@ -1532,8 +1545,7 @@ void R_AddWorldSurface (msurface_t *surf)
 		else	// warp surface
 		{
 #ifdef WARP_LIGHTMAPS
-			if ( surf->isLightmapped && (r_worldmodel->bspFeatures & BSPF_WARPLIGHTMAPS)
-				&& !(surf->texinfo->flags & SURF_NOLIGHTENV) )
+			if ( surf->isLightmapped && R_WarpLightmaps_Enabled() && !(surf->texinfo->flags & SURF_NOLIGHTENV) )
 			{
 				surf->texturechain = image->warp_lm_texturechain;
 				image->warp_lm_texturechain = surf;

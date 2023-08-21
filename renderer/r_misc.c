@@ -541,30 +541,28 @@ void R_ScaledScreenshot (char *name)
 	int								saveshotWidth, saveshotHeight, offset;
 	byte							*jpgdata;
 
-	if (!r_saveShot.buffer)	return;
+	if (!r_saveShot.buffer)
+		return;
 
-	// Optional hi-res saveshots
 	saveshotWidth = saveshotHeight = 256;
-	if (r_saveshotsize->integer)
-	{
-		if (r_saveShot.width >= 2048)
-			saveshotWidth = 2048;
-		else if (r_saveShot.width >= 1024)
-			saveshotWidth = 1024;
-		else if (r_saveShot.width >= 512)
-			saveshotWidth = 512;
+	if (r_saveShot.width >= 2048)
+		saveshotWidth = 2048;
+	else if (r_saveShot.width >= 1024)
+		saveshotWidth = 1024;
+	else if (r_saveShot.width >= 512)
+		saveshotWidth = 512;
 
-		if (r_saveShot.height >= 2048)
-			saveshotHeight = 2048;
-		else if (r_saveShot.height >= 1024)
-			saveshotHeight = 1024;
-		else if (r_saveShot.height >= 512)
-			saveshotHeight = 512;
-	}
+	if (r_saveShot.height >= 2048)
+		saveshotHeight = 2048;
+	else if (r_saveShot.height >= 1024)
+		saveshotHeight = 1024;
+	else if (r_saveShot.height >= 512)
+		saveshotHeight = 512;
 
 	// Allocate room for reduced screenshot
 	jpgdata = malloc(saveshotWidth * saveshotHeight * 3);
-	if (!jpgdata)	return;
+	if (!jpgdata)
+		return;
 
 	// Resize grabbed screen
 	R_ResampleShot (r_saveShot.buffer, r_saveShot.width, r_saveShot.height, jpgdata, saveshotWidth, saveshotHeight);
