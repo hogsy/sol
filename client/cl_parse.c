@@ -49,7 +49,7 @@ char *svc_strings[256] =
 	"svc_packetentities",
 	"svc_deltapacketentities",
 	"svc_frame",
-	"svc_fog"					// Knightmare added
+	"svc_lazarus_fog"			// Knightmare added
 };
 
 //=============================================================================
@@ -834,22 +834,22 @@ qboolean CL_FilterStuffText (char *stufftext, size_t textSize)
 // Knightmare- server-controlled fog
 /*
 =====================
-CL_ParseFog
+CL_ParseLazarusFog
 =====================
 */
 // Fog is sent like this:
-// gi.WriteByte (svc_fog); // svc_fog = 21
-// gi.WriteByte (fog_enable); // 1 = on, 0 = off
-// gi.WriteByte (fog_model); // 0, 1, or 2
-// gi.WriteByte (fog_density); // 1-100
-// gi.WriteShort (fog_near); // >0, < fog_far
-// gi.WriteShort (fog_far); // >fog_near-64, < 10000
-// gi.WriteByte (fog_red); // 0-255
-// gi.WriteByte (fog_green); // 0-255
-// gi.WriteByte (fog_blue); // 0-255
+// gi.WriteByte (svc_lazarus_fog);	// svc_lazarus_fog = 21
+// gi.WriteByte (fog_enable);		// 1 = on, 0 = off
+// gi.WriteByte (fog_model);		// 0, 1, or 2
+// gi.WriteByte (fog_density);		// 1-100
+// gi.WriteShort (fog_near);		// >0, < fog_far
+// gi.WriteShort (fog_far);			// >fog_near-64, < 10000
+// gi.WriteByte (fog_red);			// 0-255
+// gi.WriteByte (fog_green);		// 0-255
+// gi.WriteByte (fog_blue);			// 0-255
 // gi.unicast (player_ent, true); 
 
-void CL_ParseFog (void)
+void CL_ParseLazarusFog (void)
 {
 	qboolean fogenable;
 	int model, density, start, end,
@@ -1012,8 +1012,8 @@ void CL_ParseServerMessage (void)
 			CL_ParseInventory ();
 			break;
 
-		case svc_fog:	// Knightmare added
-			CL_ParseFog ();
+		case svc_lazarus_fog:	// Knightmare added
+			CL_ParseLazarusFog ();
 			break;
 
 		case svc_layout:

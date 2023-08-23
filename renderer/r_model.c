@@ -871,21 +871,24 @@ void Mod_LoadFaces (lump_t *l)
 	// A -1 value would cause out->samples to be set to NULL, but a 0 value wouldn't.
 	// So check for multiple warp faces with 0 lightofs, and disable warp lightmaps
 	// if this is found.
-	testFace = in;
-	for (surfnum=0; surfnum<count; surfnum++, testFace++)
+	if ( !(loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) )	// check not needed if BSP format natively has warp lightmaps
 	{
-		ti = LittleShort (testFace->texinfo);
-		if (ti < 0 || ti >= loadmodel->numtexinfo)
-			VID_Error (ERR_DROP, "MOD_LoadBmodel: bad texinfo number");
-		testTexinfo = loadmodel->texinfo + ti;
-		i = LittleLong(testFace->lightofs);
-		if ( (testTexinfo->flags & SURF_WARP) && (i == 0) )
+		testFace = in;
+		for (surfnum=0; surfnum<count; surfnum++, testFace++)
 		{
-			num_warp_zero_lightofs++;
-			if (num_warp_zero_lightofs >= 2) {
-			//	VID_Printf (PRINT_DEVELOPER, "Mod_LoadFaces: %s has multiple warp faces with 0 lightofs.  Loading of warp lightmaps disabled.\n", loadmodel->name);
-				bad_warp_lightmaps = true;
-				break;
+			ti = LittleShort (testFace->texinfo);
+			if (ti < 0 || ti >= loadmodel->numtexinfo)
+				VID_Error (ERR_DROP, "MOD_LoadBmodel: bad texinfo number");
+			testTexinfo = loadmodel->texinfo + ti;
+			i = LittleLong(testFace->lightofs);
+			if ( (testTexinfo->flags & SURF_WARP) && (i == 0) )
+			{
+				num_warp_zero_lightofs++;
+				if (num_warp_zero_lightofs >= 2) {
+				//	VID_Printf (PRINT_DEVELOPER, "Mod_LoadFaces: %s has multiple warp faces with 0 lightofs.  Loading of warp lightmaps disabled.\n", loadmodel->name);
+					bad_warp_lightmaps = true;
+					break;
+				}
 			}
 		}
 	}

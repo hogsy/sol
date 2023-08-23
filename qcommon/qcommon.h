@@ -402,7 +402,7 @@ enum svc_ops_e
 	svc_packetentities,			// [...]
 	svc_deltapacketentities,	// [...]
 	svc_frame,
-	svc_fog,					// = 21 Knightmare added
+	svc_lazarus_fog,			// = 21 Knightmare added
 
 	num_svc_ops
 };

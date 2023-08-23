@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	svc_layout			4
 #define	svc_inventory		5
 #define	svc_stufftext		11
-#define	svc_fog				21
+#define	svc_lazarus_fog		21
 
 //==================================================================
 
