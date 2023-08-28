@@ -290,8 +290,10 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 			continue;	// no lightmaps
 		if ( (surf->texinfo->flags & SURF_SKY) || ((surf->texinfo->flags & SURF_WARP) && !surf->isLightmapped) )
 			continue;	// no lightmaps
-		if ( r_worldmodel->warpLightmapOverride && ((surf->flags & SURF_DRAWTURB) || (surf->texinfo->flags & SURF_WARP)) )
-			continue;	// skip warp surfaces if warp lightmap loading is enabled, as water lightmaps may screw up model lighting
+		if ( (node->contents & MASK_WATER) && ((surf->flags & SURF_DRAWTURB) || (surf->texinfo->flags & SURF_WARP))  )
+			continue;	// skip inside-liquid warp surfaces, as they will have darker lightmaps
+	//	if ((surf->flags & SURF_DRAWTURB) || (surf->texinfo->flags & SURF_WARP))
+	//		continue;	// skip warp surfaces if warp lightmap loading is enabled, as water lightmaps may screw up model lighting
 #else	// WARP_LIGHTMAPS
 		if (surf->flags & (SURF_DRAWTURB|SURF_DRAWSKY)) 
 			continue;	// no lightmaps
