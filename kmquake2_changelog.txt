@@ -102,7 +102,9 @@ Changes as of v0.20 update 8:
 	Requires vid_restart for changes to take effect.
 	
 - Added cl_drawhud cvar to toggle HUD drawing.  Set to 0 to hide the HUD, such as when taking screenshots to be used as levelshots.
-		
+
+- Added crosshair_red, crosshair_green, and crosshair_blue cvars to adjust crosshair color.
+
 - Renamed cvars hud_scale, hud_alpha, and hud_squeezedigits to scr_hudsize, scr_hudalpha, and scr_hudsqueezedigits.
 
 - Renamed cvar gl_clear to r_clear.

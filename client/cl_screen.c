@@ -87,6 +87,9 @@ cvar_t		*scr_hudsqueezedigits;
 
 cvar_t		*crosshair;
 cvar_t		*crosshair_scale; // Psychospaz's scalable corsshair
+cvar_t		*crosshair_red;
+cvar_t		*crosshair_green;
+cvar_t		*crosshair_blue;
 cvar_t		*crosshair_alpha;
 cvar_t		*crosshair_pulse;
 
@@ -1577,6 +1580,12 @@ void SCR_Init (void)
 	Cvar_SetDescription ("crosshair", "Sets crosshair image.  0 = no crosshair");
 	crosshair_scale = Cvar_Get ("crosshair_scale", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("crosshair_scale", "Sets crosshair size.  Min = 0.25, Max = 15.");
+	crosshair_red = Cvar_Get ("crosshair_red", "255", CVAR_ARCHIVE);
+	Cvar_SetDescription ("crosshair_red", "Sets red color component of crosshair.");
+	crosshair_green = Cvar_Get ("crosshair_green", "255", CVAR_ARCHIVE);
+	Cvar_SetDescription ("crosshair_green", "Sets green color component of crosshair.");
+	crosshair_blue = Cvar_Get ("crosshair_blue", "255", CVAR_ARCHIVE);
+	Cvar_SetDescription ("crosshair_blue", "Sets blue color component of crosshair.");
 	crosshair_alpha = Cvar_Get ("crosshair_alpha", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription ("crosshair_alpha", "Sets base opacity of crosshair.");
 	crosshair_pulse = Cvar_Get ("crosshair_pulse", "0.25", CVAR_ARCHIVE);
@@ -1657,7 +1666,10 @@ Moved from cl_view.c, what the hell was it doing there?
 // Psychospaz's new crosshair code
 void SCR_DrawCrosshair (void)
 {	
-	float	scaledSize, alpha, pulsealpha;
+	float			scaledSize, alpha, pulsealpha, x, y, w, h;
+	int				red, green, blue;
+	vec4_t			crossColor;
+	drawStruct_t	ds = { 0 };
 
 	if ( !crosshair->integer || cl_zoommode->integer || scr_hidehud )
 		return;
@@ -1686,8 +1698,24 @@ void SCR_DrawCrosshair (void)
 	scaledSize = crosshair_scale->value * CROSSHAIR_SIZE;
 	pulsealpha = crosshair_alpha->value * crosshair_pulse->value;
 	alpha = max(min(crosshair_alpha->value - pulsealpha + pulsealpha*sin(anglemod(cl.time*0.005)), 1.0), 0.0);
-	SCR_DrawPic ( ((float)SCREEN_WIDTH - scaledSize)*0.5, ((float)SCREEN_HEIGHT - scaledSize)*0.5,
-					scaledSize, scaledSize, ALIGN_CENTER, false, crosshair_pic, alpha);
+	red = max(min(crosshair_red->integer, 255), 0);
+	green = max(min(crosshair_green->integer, 255), 0);
+	blue = max(min(crosshair_blue->integer, 255), 0);
+	Vector4Set (crossColor, red*DIV255, green*DIV255, blue*DIV255, alpha);
+
+	x = ((float)SCREEN_WIDTH - scaledSize) * 0.5;
+	y = ((float)SCREEN_HEIGHT - scaledSize) * 0.5;
+	w = h = scaledSize;
+	SCR_ScaleCoords (&x, &y, &w, &h, ALIGN_CENTER);
+
+	ds.pic = crosshair_pic;
+	ds.x = x;	ds.y = y;	ds.w = w;	ds.h = h;
+	Vector2Copy (vec2_origin, ds.offset);
+	Vector4Copy (crossColor, ds.color);
+	R_DrawPic (&ds);
+
+//	SCR_DrawPic ( ((float)SCREEN_WIDTH - scaledSize)*0.5, ((float)SCREEN_HEIGHT - scaledSize)*0.5,
+//					scaledSize, scaledSize, ALIGN_CENTER, false, crosshair_pic, alpha);
 }
 
 
