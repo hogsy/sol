@@ -568,7 +568,7 @@ void R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int a
 	GL_Enable (GL_BLEND);
 	GL_DepthMask   (false);
 
-	GL_Bind (glMedia.whitetexture->texnum);
+	GL_Bind (glMedia.whiteTexture->texnum);
 
 	Vector2Set(verts[0], x, y);
 	Vector2Set(verts[1], x+w, y);
@@ -710,13 +710,13 @@ void R_DrawStretchRaw (int x, int y, int w, int h, const byte *raw, int rawWidth
 	}
 
 	// Update the texture as appropriate
-	GL_Bind(glMedia.rawtexture->texnum);
+	GL_Bind(glMedia.rawTexture->texnum);
 	
-	if (rawWidth == glMedia.rawtexture->upload_width && rawHeight == glMedia.rawtexture->upload_height)
+	if (rawWidth == glMedia.rawTexture->upload_width && rawHeight == glMedia.rawTexture->upload_height)
 		qglTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rawWidth, rawHeight, GL_RGBA, GL_UNSIGNED_BYTE, raw);
 	else {
-		glMedia.rawtexture->upload_width = rawWidth;
-		glMedia.rawtexture->upload_height = rawHeight;
+		glMedia.rawTexture->upload_width = rawWidth;
+		glMedia.rawTexture->upload_height = rawHeight;
 	//	qglTexImage2D(GL_TEXTURE_2D, 0, gl_tex_solid_format, rawWidth, rawHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, raw);
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rawWidth, rawHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, raw);
 	}

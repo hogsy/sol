@@ -280,7 +280,7 @@ void RB_RenderAliasMesh (maliasmodel_t *paliashdr, unsigned meshnum, unsigned sk
 		for (i=0; i<rb_vertex; i++)
 			colorArray[i][3] = thisalpha*skinParms->envmap;
 
-		GL_Bind(glMedia.envmappic->texnum);
+		GL_Bind(glMedia.envMapTexture->texnum);
 
 		qglEnable(GL_TEXTURE_GEN_S);
 		qglEnable(GL_TEXTURE_GEN_T);
@@ -302,7 +302,7 @@ void RB_RenderAliasMesh (maliasmodel_t *paliashdr, unsigned meshnum, unsigned sk
 		GL_Enable (GL_BLEND);
 		GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		GL_Bind (glMedia.celshadetexture->texnum);
+		GL_Bind (glMedia.celShadeTexture->texnum);
 
 		qglTexCoordPointer (2, GL_FLOAT, sizeof(celTexCoordArray[0]), celTexCoordArray[0]);
 		qglDisableClientState (GL_COLOR_ARRAY);
@@ -461,7 +461,7 @@ void R_DrawAliasMeshes (maliasmodel_t *paliashdr, entity_t *e, qboolean mirrored
 		}
 		if (!skin) {
 			skinnum = 0;
-			skin = glMedia.notexture;
+			skin = glMedia.noTexture;
 		}
 
 		// md3 skin scripting

@@ -190,19 +190,20 @@ typedef enum {
 } displaylist_t;
 
 typedef struct glmedia_s {
-	image_t		*notexture;			// used for bad textures
-	image_t		*whitetexture;		// used for solid colors
+	image_t		*noTexture;			// used for bad textures
+	image_t		*whiteTexture;		// used for solid colors
 	image_t		*distTextureARB;	// used for warp distortion
-	image_t		*rawtexture;		// used for cinematics
-	image_t		*envmappic;
-	image_t		*spheremappic;
-	image_t		*shelltexture;
-	image_t		*celshadetexture;
-	image_t		*causticwaterpic;
-	image_t		*causticslimepic;
-	image_t		*causticlavapic;
-	image_t		*particlebeam;
-	image_t		*particletextures[PARTICLE_TYPES];
+	image_t		*rawTexture;		// used for cinematics
+	image_t		*envMapTexture;
+	image_t		*sphereMapTexture;
+	image_t		*shellTexture;
+	image_t		*flareTexture;		// used for Kex flares
+	image_t		*celShadeTexture;
+	image_t		*causticWaterTexture;
+	image_t		*causticSlimeTexture;
+	image_t		*causticLavaTexture;
+	image_t		*particleBeam;
+	image_t		*particleTextures[PARTICLE_TYPES];
 	unsigned	displayLists[NUM_DISPLAY_LISTS];
 } glmedia_t;
 

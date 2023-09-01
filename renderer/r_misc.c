@@ -190,13 +190,13 @@ image_t *R_CreateCelShadeTexture (void)
 
 /*
 ==================
-LoadPartImg
+R_LoadPartImg
 ==================
 */
-image_t *LoadPartImg (char *name, imagetype_t type)
+image_t *R_LoadPartImg (char *name, imagetype_t type)
 {
 	image_t *image = R_FindImage(name, type);
-	if (!image) image = glMedia.notexture;
+	if (!image) image = glMedia.noTexture;
 	return image;
 }
 
@@ -208,7 +208,7 @@ R_SetParticleImg
 */
 void R_SetParticleImg (int num, char *name)
 {
-	glMedia.particletextures[num] = LoadPartImg (name, it_part);
+	glMedia.particleTextures[num] = R_LoadPartImg (name, it_part);
 }
 
 
@@ -291,8 +291,13 @@ R_ClearDisplayLists
 */
 void R_ClearDisplayLists (void)
 {
+	int		i;
+
 	if (glMedia.displayLists[0] != 0)	// clear only if not null
 		qglDeleteLists (glMedia.displayLists[0], NUM_DISPLAY_LISTS);
+
+	for (i=0; i<NUM_DISPLAY_LISTS; i++)
+		glMedia.displayLists[i] = 0;
 }
 
 
@@ -303,41 +308,43 @@ R_InitMedia
 */
 void R_InitMedia (void)
 {
-	int		x;
+	int		i;
 	byte	whitetex[NULLTEX_SIZE][NULLTEX_SIZE][4];
 #ifdef ROQ_SUPPORT
 	byte	data2D[256*256*4]; // Raw texture
 #endif // ROQ_SUPPORT
 
-	glMedia.notexture = R_CreateNullTexture (); // Generate null texture
+	glMedia.noTexture = R_CreateNullTexture (); // Generate null texture
 
 	memset (whitetex, 255, sizeof(whitetex));
-	glMedia.whitetexture = R_LoadPic ("*whitetexture", (byte *)whitetex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
+	glMedia.whiteTexture = R_LoadPic ("*whitetexture", (byte *)whitetex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 
 	glMedia.distTextureARB = R_CreateDistTextureARB ();			// Generate warp distortion texture
 
 #ifdef ROQ_SUPPORT
 	memset(data2D, 255, 256*256*4);
-	glMedia.rawtexture = R_LoadPic ("*rawtexture", data2D, 256, 256, it_pic, 32);
+	glMedia.rawTexture = R_LoadPic ("*rawtexture", data2D, 256, 256, it_pic, 32);
 #endif // ROQ_SUPPORT
 	
-	glMedia.envmappic = LoadPartImg ("gfx/effects/envmap.tga", it_wall);
-	glMedia.spheremappic = LoadPartImg ("gfx/effects/spheremap.tga", it_skin);
-	glMedia.shelltexture = LoadPartImg ("gfx/effects/shell_generic.tga", it_skin);
+	glMedia.envMapTexture = R_LoadPartImg ("gfx/effects/envmap.tga", it_wall);
+	glMedia.sphereMapTexture = R_LoadPartImg ("gfx/effects/spheremap.tga", it_skin);
+	glMedia.shellTexture = R_LoadPartImg ("gfx/effects/shell_generic.tga", it_skin);
+	glMedia.flareTexture = R_LoadPartImg ("gfx/effects/flare.tga", it_skin);
+	
+	glMedia.celShadeTexture = R_CreateCelShadeTexture ();
 
-	glMedia.celshadetexture = R_CreateCelShadeTexture ();
-
-	glMedia.causticwaterpic = LoadPartImg ("gfx/water/caustic_water.tga", it_wall);
-	glMedia.causticslimepic = LoadPartImg ("gfx/water/caustic_slime.tga", it_wall);
-	glMedia.causticlavapic = LoadPartImg ("gfx/water/caustic_lava.tga", it_wall);
-	glMedia.particlebeam = LoadPartImg ("gfx/particles/beam.tga", it_part);
+	glMedia.causticWaterTexture = R_LoadPartImg ("gfx/water/caustic_water.tga", it_wall);
+	glMedia.causticSlimeTexture = R_LoadPartImg ("gfx/water/caustic_slime.tga", it_wall);
+	glMedia.causticLavaTexture = R_LoadPartImg ("gfx/water/caustic_lava.tga", it_wall);
+	glMedia.particleBeam = R_LoadPartImg ("gfx/particles/beam.tga", it_part);
 
 	// Psychospaz's enhanced particles
-	for (x=0; x<PARTICLE_TYPES; x++)
-		glMedia.particletextures[x] = NULL;
+	// These are loaded in CL_PrepRefresh
+	for (i=0; i<PARTICLE_TYPES; i++)
+		glMedia.particleTextures[i] = NULL;
 
-	for (x=0; x<NUM_DISPLAY_LISTS; x++) 
-		glMedia.displayLists[x] = 0;	// was NULL
+	for (i=0; i<NUM_DISPLAY_LISTS; i++) 
+		glMedia.displayLists[i] = 0;	// was NULL
 
 	R_CreateDisplayLists ();
 }
@@ -352,23 +359,22 @@ void R_ShutdownMedia (void)
 {
 	int		i;
 
-	glMedia.notexture = NULL;
-	glMedia.whitetexture = NULL;
+	glMedia.noTexture = NULL;
+	glMedia.whiteTexture = NULL;
 	glMedia.distTextureARB = NULL;
-	glMedia.rawtexture = NULL;
-	
-	glMedia.envmappic = NULL;
-	glMedia.spheremappic = NULL;
-	glMedia.shelltexture = NULL;
-	glMedia.celshadetexture = NULL;
-
-	glMedia.causticwaterpic = NULL;
-	glMedia.causticslimepic = NULL;
-	glMedia.causticlavapic = NULL;
-	glMedia.particlebeam = NULL;
+	glMedia.rawTexture = NULL;
+	glMedia.envMapTexture = NULL;
+	glMedia.sphereMapTexture = NULL;
+	glMedia.shellTexture = NULL;
+	glMedia.flareTexture = NULL;
+	glMedia.celShadeTexture = NULL;
+	glMedia.causticWaterTexture = NULL;
+	glMedia.causticSlimeTexture = NULL;
+	glMedia.causticLavaTexture = NULL;
+	glMedia.particleBeam = NULL;
 
 	for (i=0; i<PARTICLE_TYPES; i++)
-		glMedia.particletextures[i] = NULL;
+		glMedia.particleTextures[i] = NULL;
 
 	R_ClearDisplayLists ();
 }

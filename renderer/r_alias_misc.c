@@ -279,13 +279,13 @@ void R_SetShellBlend (qboolean toggle)
 			qglTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 			qglTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
-			GL_Bind(glMedia.spheremappic->texnum);
+			GL_Bind(glMedia.sphereMapTexture->texnum);
 
 			qglEnable(GL_TEXTURE_GEN_S);
 			qglEnable(GL_TEXTURE_GEN_T);
 		}
 		else if (FlowingShell())
-			GL_Bind(glMedia.shelltexture->texnum);
+			GL_Bind(glMedia.shellTexture->texnum);
 		else
 			GL_DisableTexture(0);
 

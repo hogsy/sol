@@ -417,7 +417,7 @@ void R_SetSky (char *name, float rotate, vec3_t axis)
 			sky_images[i] = R_FindImage (pathname, it_sky);
 		}
 		if (!sky_images[i])
-			sky_images[i] = glMedia.notexture;
+			sky_images[i] = glMedia.noTexture;
 
 		if ((sky_images[i]->height == sky_images[i]->width) && (sky_images[i]->width >= 256))
 			imagesize = sky_images[i]->width;

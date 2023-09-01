@@ -564,15 +564,15 @@ image_t	*Mod_FindTexture (const char *name, imagetype_t type)
 	image_t	*image;
 
 	if ( !name || (name[0] == '\0') )
-		return glMedia.notexture;
+		return glMedia.noTexture;
 
 	// don't try again to load a texture that just failed
 	if (Mod_CheckTexFailed (name))
-		return glMedia.notexture;
+		return glMedia.noTexture;
 
 	image = R_FindImage ((char *)name, type);
 
-	if (!image || (image == glMedia.notexture))
+	if (!image || (image == glMedia.noTexture))
 		Mod_AddToFailedTexList (name);
 
 	return image;
@@ -734,14 +734,14 @@ void Mod_LoadTexinfo (lump_t *l)
 		if (!out->image)
 		{
 			VID_Printf (PRINT_ALL, "Couldn't load %s\n", name);
-			out->image = glMedia.notexture;
+			out->image = glMedia.noTexture;
 		}
 
 		// Added glow
 		Com_sprintf (name, sizeof(name), "textures/%s_glow.wal", textureName);
 		out->glow = Mod_FindTexture (name, it_skin); // was R_FindImage
 		if (!out->glow)
-			out->glow = glMedia.notexture;
+			out->glow = glMedia.noTexture;
 		
 		// Q2E HACK: find .wal dimensions for texture coord generation
 		// NOTE: Once Q3 map support is added, be be sure to disable this

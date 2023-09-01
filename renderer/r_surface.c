@@ -404,8 +404,8 @@ qboolean R_SurfsAreBatchable (msurface_t *s1, msurface_t *s2)
 		}
 		// must be single pass to be batchable
 		if ( r_glows->integer
-			&& ((R_TextureAnimationGlow(s1) != glMedia.notexture)
-				|| (R_TextureAnimationGlow(s2) != glMedia.notexture)) )
+			&& ((R_TextureAnimationGlow(s1) != glMedia.noTexture)
+				|| (R_TextureAnimationGlow(s2) != glMedia.noTexture)) )
 			return false;
 		if (R_SurfHasEnvMap(s1) || R_SurfHasEnvMap(s2))
 			return false;
@@ -455,7 +455,7 @@ void RB_RenderGLPoly (msurface_t *surf, qboolean light)
 	if (rb_vertex == 0 || rb_index == 0) // nothing to render
 		return;
 
-	glowPass = ( r_glows->integer && (glow != glMedia.notexture) && light );
+	glowPass = ( r_glows->integer && (glow != glMedia.noTexture) && light );
 	envMap = R_SurfHasEnvMap (surf);
 	causticPass = ( r_caustics->integer && (surf->flags & SURF_MASK_CAUSTIC) && light );
 
@@ -843,7 +843,7 @@ static void RB_DrawEnvMap (void)
 {
 	qboolean	previousBlend = false;
 
-	GL_MBind (0, glMedia.envmappic->texnum);
+	GL_MBind (0, glMedia.envMapTexture->texnum);
 	GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	if (!glState.blend)	GL_Enable (GL_BLEND);
 	else				previousBlend = true;
@@ -893,11 +893,11 @@ RB_CausticForSurface
 image_t *RB_CausticForSurface (msurface_t *surf)
 {
 	if (surf->flags & SURF_UNDERLAVA)
-		return glMedia.causticlavapic;
+		return glMedia.causticLavaTexture;
 	else if (surf->flags & SURF_UNDERSLIME)
-		return glMedia.causticslimepic;
+		return glMedia.causticSlimeTexture;
 	else
-		return glMedia.causticwaterpic;
+		return glMedia.causticWaterTexture;
 }
 
 
@@ -995,8 +995,8 @@ static void RB_RenderLightmappedSurface (msurface_t *surf)
 	if (rb_vertex == 0 || rb_index == 0) // nothing to render
 		return;
 
-	glowLayer = ( r_glows->integer && (glow != glMedia.notexture) && (glConfig.max_texunits > 2) );
-	glowPass = ( r_glows->integer && (glow != glMedia.notexture) && !glowLayer );
+	glowLayer = ( r_glows->integer && (glow != glMedia.noTexture) && (glConfig.max_texunits > 2) );
+	glowPass = ( r_glows->integer && (glow != glMedia.noTexture) && !glowLayer );
 	envMap = R_SurfHasEnvMap (surf);
 	causticPass = ( r_caustics->integer && !(surf->texinfo->flags & SURF_ALPHATEST)
 		&& (surf->flags & SURF_MASK_CAUSTIC) );
@@ -1040,7 +1040,7 @@ static void RB_RenderLightmappedSurface (msurface_t *surf)
 
 	GL_MBind (0, image->texnum);
 	if ( (r_fullbright->integer != 0) || (surf->texinfo->flags & SURF_NOLIGHTENV) )
-		GL_MBind (1, glMedia.whitetexture->texnum);
+		GL_MBind (1, glMedia.whiteTexture->texnum);
 	else
 		GL_MBind (1, glState.lightmap_textures + lmtex);
 	

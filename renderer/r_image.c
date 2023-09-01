@@ -2360,7 +2360,7 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 	{
 		if (type == it_wall)
 			VID_Printf (PRINT_ALL, "R_FindImage: can't load %s\n", name);
-	//	return glMedia.notexture;
+	//	return glMedia.noTexture;
 		return NULL;
 	}
 
@@ -2563,24 +2563,25 @@ void R_FreeUnusedImages (void)
 	image_t	*image;
 
 	// never free notexture or particle textures
-	glMedia.notexture->registration_sequence = registration_sequence;
-	glMedia.whitetexture->registration_sequence = registration_sequence;
+	glMedia.noTexture->registration_sequence = registration_sequence;
+	glMedia.whiteTexture->registration_sequence = registration_sequence;
 	glMedia.distTextureARB->registration_sequence = registration_sequence;
 #ifdef ROQ_SUPPORT
-	glMedia.rawtexture->registration_sequence = registration_sequence;
+	glMedia.rawTexture->registration_sequence = registration_sequence;
 #endif // ROQ_SUPPORT
-	glMedia.envmappic->registration_sequence = registration_sequence;
-	glMedia.spheremappic->registration_sequence = registration_sequence;
-	glMedia.shelltexture->registration_sequence = registration_sequence;
-	glMedia.celshadetexture->registration_sequence = registration_sequence;
-	glMedia.causticwaterpic->registration_sequence = registration_sequence;
-	glMedia.causticslimepic->registration_sequence = registration_sequence;
-	glMedia.causticlavapic->registration_sequence = registration_sequence;
-	glMedia.particlebeam->registration_sequence = registration_sequence;
+	glMedia.envMapTexture->registration_sequence = registration_sequence;
+	glMedia.sphereMapTexture->registration_sequence = registration_sequence;
+	glMedia.shellTexture->registration_sequence = registration_sequence;
+	glMedia.flareTexture->registration_sequence = registration_sequence;
+	glMedia.celShadeTexture->registration_sequence = registration_sequence;
+	glMedia.causticWaterTexture->registration_sequence = registration_sequence;
+	glMedia.causticSlimeTexture->registration_sequence = registration_sequence;
+	glMedia.causticLavaTexture->registration_sequence = registration_sequence;
+	glMedia.particleBeam->registration_sequence = registration_sequence;
 
 	for (i=0; i<PARTICLE_TYPES; i++)
-		if (glMedia.particletextures[i]) // don't mess with null ones silly :p
-			glMedia.particletextures[i]->registration_sequence = registration_sequence;
+		if (glMedia.particleTextures[i]) // don't mess with null ones silly :p
+			glMedia.particleTextures[i]->registration_sequence = registration_sequence;
 
 	for (i=0, image=gltextures; i<numgltextures; i++, image++)
 	{

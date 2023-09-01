@@ -338,12 +338,12 @@ void RB_RenderWarpSurface (msurface_t *surf)
 		if (lightmapped)
 		{
 			if (r_lightmap->integer != 0)
-				GL_MBind (0, glMedia.whitetexture->texnum);
+				GL_MBind (0, glMedia.whiteTexture->texnum);
 			else
 				GL_MBind (0, image->texnum);
 
 			if (r_fullbright->integer != 0)
-				GL_MBind (1, glMedia.whitetexture->texnum);
+				GL_MBind (1, glMedia.whiteTexture->texnum);
 			else
 				GL_MBind (1, glState.lightmap_textures + surf->lightmaptexturenum);
 
@@ -375,7 +375,7 @@ void RB_RenderWarpSurface (msurface_t *surf)
 
 			GL_EnableTexture(1);
 			if (r_fullbright->integer != 0)
-				GL_MBind (1, glMedia.whitetexture->texnum);
+				GL_MBind (1, glMedia.whiteTexture->texnum);
 			else
 				GL_MBind (1, glState.lightmap_textures + surf->lightmaptexturenum);
 		}

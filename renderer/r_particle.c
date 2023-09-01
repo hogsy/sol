@@ -433,9 +433,9 @@ int TexParticle (int type)
 	type =  max( type, 0 );
 	type =  min( type, PARTICLE_TYPES-1 );
 	// check for bad particle image num
-	if (!glMedia.particletextures[type])
-		glMedia.particletextures[type] = glMedia.notexture;
-	return glMedia.particletextures[type]->texnum;
+	if (!glMedia.particleTextures[type])
+		glMedia.particleTextures[type] = glMedia.noTexture;
+	return glMedia.particleTextures[type]->texnum;
 }
 
 
