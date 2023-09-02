@@ -93,22 +93,6 @@ void R_RefreshAllFonts (void)
 	R_RefreshFont (FONT_CONSOLE);
 	R_RefreshFont (FONT_SCREEN);
 	R_RefreshFont (FONT_UI);
-/*
-	con_font->modified = false;
-
-	r_con_draw_chars = R_FindImage (va("fonts/%s.pcx", con_font->string), it_pic);
-	if (!r_con_draw_chars) // fall back on default font
-		r_con_draw_chars = R_FindImage ("fonts/default.pcx", it_pic);
-	if (!r_con_draw_chars) // fall back on old Q2 conchars
-		r_con_draw_chars = R_FindImage ("pics/conchars.pcx", it_pic);
-	if (!r_con_draw_chars) // prevent crash caused by missing font
-		VID_Error (ERR_FATAL, "R_RefreshFont: couldn't load pics/conchars");
-
-	// Don't diable texture filtering for chars, as it causes artifacts when scaling up
-//	GL_Bind (r_con_draw_chars->texnum );
-//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-*/
 }
 
 
@@ -308,13 +292,17 @@ image_t	*R_DrawFindPic (char *name)
 	image_t *gl;
 	char	fullname[MAX_QPATH];
 
-	if (name[0] != '/' && name[0] != '\\')
-	{
+	// paths with a leading slash or containg a '.' aren't relative to pics/
+	if ( (name[0] == '/') || (name[0] == '\\') ) {
+		gl = R_FindImage (name+1, it_pic);
+	}
+	else if ( strstr(name, ".") ) {
+		gl = R_FindImage (name, it_pic);
+	}
+	else {
 		Com_sprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
 		gl = R_FindImage (fullname, it_pic);
 	}
-	else
-		gl = R_FindImage (name+1, it_pic);
 	/* jitfix
 	if (!gl) // jit -- remove "can't find pic" spam
 		return glMedia.notexture;
