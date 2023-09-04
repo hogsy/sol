@@ -2960,6 +2960,18 @@ void R_EndRegistration (void)
 
 /*
 @@@@@@@@@@@@@@@@@@@@@
+R_RegistrationIsActive
+
+@@@@@@@@@@@@@@@@@@@@@
+*/
+qboolean R_RegistrationIsActive (void)
+{
+	return registration_active;
+}
+
+
+/*
+@@@@@@@@@@@@@@@@@@@@@
 R_ModelIsValid
 
 @@@@@@@@@@@@@@@@@@@@@

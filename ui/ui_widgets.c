@@ -3276,6 +3276,9 @@ void UI_MenuModelView_Draw (menuModelView_s *m)
 	qboolean		reRegister;
 	char			scratch[MAX_QPATH];
 
+	if ( R_RegistrationIsActive() )	// don't draw during map load, as forced re-registration can clobber BSP loading
+		return;
+
 	memset(&refdef, 0, sizeof(refdef));
 
 	rx = m->generic.topLeft[0];		ry = m->generic.topLeft[1];

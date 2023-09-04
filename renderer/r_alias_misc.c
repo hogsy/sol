@@ -577,40 +577,46 @@ void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, 
 
 	rb_vertex = rb_index = 0;
 	indexArray[rb_index++] = rb_vertex+0;
-	indexArray[rb_index++] = rb_vertex+1;
 	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+1;
 	indexArray[rb_index++] = rb_vertex+1;
 	indexArray[rb_index++] = rb_vertex+2;
 	indexArray[rb_index++] = rb_vertex+3;
+
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+5;
+	indexArray[rb_index++] = rb_vertex+4; 
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+4;
+	indexArray[rb_index++] = rb_vertex+0;
 
 	indexArray[rb_index++] = rb_vertex+0;
-	indexArray[rb_index++] = rb_vertex+1;
-	indexArray[rb_index++] = rb_vertex+4;
-	indexArray[rb_index++] = rb_vertex+1;
-	indexArray[rb_index++] = rb_vertex+4;
-	indexArray[rb_index++] = rb_vertex+5;
-
+	indexArray[rb_index++] = rb_vertex+6;
 	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+0;
 	indexArray[rb_index++] = rb_vertex+4;
 	indexArray[rb_index++] = rb_vertex+6;
 
-	indexArray[rb_index++] = rb_vertex+1;
-	indexArray[rb_index++] = rb_vertex+5;
-	indexArray[rb_index++] = rb_vertex+7;
-
 	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+6;
+	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+3;
+
+	indexArray[rb_index++] = rb_vertex+3;
+	indexArray[rb_index++] = rb_vertex+5;
+	indexArray[rb_index++] = rb_vertex+1;
 	indexArray[rb_index++] = rb_vertex+3;
 	indexArray[rb_index++] = rb_vertex+7;
-	indexArray[rb_index++] = rb_vertex+2;
-	indexArray[rb_index++] = rb_vertex+6;
-	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+5;
 
 	indexArray[rb_index++] = rb_vertex+4;
 	indexArray[rb_index++] = rb_vertex+5;
 	indexArray[rb_index++] = rb_vertex+7;
 	indexArray[rb_index++] = rb_vertex+4;
-	indexArray[rb_index++] = rb_vertex+6;
 	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+6;
 	for (i=0; i<8; i++) {
 		VA_SetElem3v(vertexArray[rb_vertex], bbox[i]);
 		rb_vertex++;

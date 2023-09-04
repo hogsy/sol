@@ -743,6 +743,7 @@ void	R_BeginRegistration (char *map);
 struct model_s *R_RegisterModel (char *name);
 struct image_s *R_RegisterSkin (char *name);
 struct image_s *R_DrawFindPic (char *name);
+qboolean R_RegistrationIsActive (void);
 qboolean R_ModelIsValid (struct model_s *model);
 
 void	R_FreePic (char *name); // Knightmare added
