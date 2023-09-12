@@ -50,6 +50,20 @@ void R_ClearOcclusionQuerySampleList (void)
 
 /*
 =================
+R_ShutdownOcclusionQueries
+=================
+*/
+void R_ShutdownOcclusionQueries (void)
+{
+	if ( !glConfig.occlusionQuery )
+		return;
+
+	qglDeleteQueries (MAX_EDICTS, r_occlusionQueries);
+}
+
+
+/*
+=================
 R_RotateForEntity
 =================
 */

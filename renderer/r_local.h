@@ -442,6 +442,7 @@ extern	sortedelement_t *ents_viewweaps;
 extern	sortedelement_t *ents_viewweaps_trans;
 
 void R_ClearOcclusionQuerySampleList (void);
+void R_ShutdownOcclusionQueries (void);
 void R_RotateForEntity (entity_t *e, qboolean full);
 int R_RollMult (void);
 void R_OccludeTestEntitiesOnList (sortedelement_t *list);

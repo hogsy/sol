@@ -2308,8 +2308,9 @@ void R_Shutdown (void)
 
 	Mod_FreeAll ();
 
+	R_ShutdownOcclusionQueries ();
+
 	R_ShutdownImages ();
-//	R_ClearDisplayLists ();
 	R_ShutdownMedia ();
 
 	//
