@@ -47,6 +47,7 @@ static menuPicker_s  	s_texshader_warp_box;
 static menuSlider_s  	s_waterwave_slider;
 static menuPicker_s  	s_caustics_box;
 static menuPicker_s		s_particle_overdraw_box;
+static menuPicker_s		s_flare_occlusionquery_box;
 static menuPicker_s		s_lightbloom_box;
 static menuPicker_s		s_modelshading_box;
 static menuPicker_s		s_shadows_box;
@@ -370,6 +371,15 @@ void Menu_Video_Advanced_Init (void)
 	s_particle_overdraw_box.generic.cvar		= "r_particle_overdraw";
 	s_particle_overdraw_box.generic.statusbar	= "redraw particles over trans surfaces";
 
+	s_flare_occlusionquery_box.generic.type			= MTYPE_PICKER;
+	s_flare_occlusionquery_box.generic.textSize		= MENU_FONT_SIZE;
+	s_flare_occlusionquery_box.generic.x			= x;
+	s_flare_occlusionquery_box.generic.y			= y += MENU_LINE_SIZE;
+	s_flare_occlusionquery_box.generic.name			= "flare occlusion queries";
+	s_flare_occlusionquery_box.itemNames			= yesno_names;
+	s_flare_occlusionquery_box.generic.cvar			= "r_occlusion_test";
+	s_flare_occlusionquery_box.generic.statusbar	= "use occlusion queries for flare rendering";
+
 	s_lightbloom_box.generic.type			= MTYPE_PICKER;
 	s_lightbloom_box.generic.textSize		= MENU_FONT_SIZE;
 	s_lightbloom_box.generic.x				= x;
@@ -541,6 +551,7 @@ void Menu_Video_Advanced_Init (void)
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_caustics_box);
 
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_particle_overdraw_box);
+	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_flare_occlusionquery_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_lightbloom_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_modelshading_box);
 	UI_AddMenuItem (&s_video_advanced_menu, (void *) &s_shadows_box);

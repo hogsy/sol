@@ -95,6 +95,7 @@ extern cvar_t	*scr_netgraph_pos;
 
 cvar_t	*r_norefresh;
 cvar_t	*r_drawentities;
+cvar_t	*r_drawflares;
 cvar_t	*r_drawworld;
 cvar_t	*r_speeds;
 cvar_t	*r_fullbright;
@@ -142,6 +143,7 @@ cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface flag combi
 cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
 cvar_t	*r_modelview_lightscale;		// lighting scale for menu modelviews
+cvar_t	*r_occlusion_test;				// allow disabling of OpenGL occlusion test for flares
 
 cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //cvar_t	*r_trans_surf_sorting; // trans bmodel sorting
@@ -229,6 +231,39 @@ cvar_t	*r_skydistance;		// variable sky range
 cvar_t	*r_fog_skyratio;	// variable sky fog ratio
 cvar_t	*r_subdivide_size;	// chop size for warp surfaces
 //cvar_t	*r_saturation;		//** DMP
+
+//=======================================================================
+
+/*
+=================
+R_ClampValue
+=================
+*/
+float R_ClampValue (float in, float min, float max)
+{
+	if (in < min)	return min;
+	if (in > max)	return max;
+	return in;
+}
+
+
+/*
+=================
+R_SmoothStep
+=================
+*/
+float R_SmoothStep (float in, float side0, float side1)
+{
+	float	tmp, diff0, diff1;
+
+	diff0 = in - side0;
+	diff1 = side1 - side0;
+	if (diff1 != 0.0f)	// prevent divide by 0
+		tmp = R_ClampValue ((diff0 / diff1), 0.0f, 1.0f);
+	else
+		tmp = 1.0f;
+	return tmp * tmp * (3.0f - 2.0f * tmp);
+}
 
 
 /*
@@ -730,6 +765,8 @@ void R_RenderView (refdef_t *fd)
 
 		R_DrawAllParticles ();
 
+		R_DrawEntitiesOnList (ents_flares);
+
 		R_DrawEntitiesOnList(ents_viewweaps);
 
 		R_ParticleStencil (1);
@@ -737,8 +774,10 @@ void R_RenderView (refdef_t *fd)
 		R_ParticleStencil (2);
 
 		R_ParticleStencil (3);
-		if (r_particle_overdraw->integer) // redraw over alpha surfaces, those behind are occluded
+		if (r_particle_overdraw->integer) { // redraw over alpha surfaces, those behind are occluded
 			R_DrawAllParticles ();
+			R_DrawEntitiesOnList (ents_flares);
+		}
 		R_ParticleStencil (4);
 
 		// always draw vwep last...
@@ -985,6 +1024,8 @@ void R_Register (void)
 	Cvar_SetDescription ("r_fullbright", "Enables fullbright rendering (no lighting).");
 	r_drawentities = Cvar_Get ("r_drawentities", "1", 0);
 	Cvar_SetDescription ("r_drawentities", "Enables drawing of entities.");
+	r_drawflares = Cvar_Get ("r_drawflares", "1", 0);
+	Cvar_SetDescription ("r_drawflares", "Enables drawing of Kex flares.");
 	r_drawworld = Cvar_Get ("r_drawworld", "1", CVAR_CHEAT);
 	Cvar_SetDescription ("r_drawworld", "Enables drawing of the world.");
 	r_novis = Cvar_Get ("r_novis", "0", CVAR_CHEAT);
@@ -1194,6 +1235,10 @@ void R_Register (void)
 	r_modelview_lightscale = Cvar_Get( "r_modelview_lightscale", "0.8", CVAR_ARCHIVE );	
 	Cvar_SetDescription ("r_modelview_lightscale", "Sets lighting scale for models displayed in menus.  1.0 = fully bright, 0.0 = fully dark.");
 
+	// allow disabling of OpenGL occlusion test for flares
+	r_occlusion_test = Cvar_Get( "r_occlusion_test", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ("r_occlusion_test", "Enables use of occlusion testing for flares.");
+
 	// added Psychospaz's envmapping
 	r_glass_envmaps = Cvar_Get( "r_glass_envmaps", "1", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_glass_envmaps", "Enables environment maps on transparent surfaces.");
@@ -1400,6 +1445,8 @@ qboolean R_CheckGLExtensions (char *reason)
 {
 	qboolean	ogl_multitexture_found = false;
 	qboolean	arb_multitexture_found = false;
+	qboolean	ogl_occlusion_query_found = false;
+	qboolean	arb_occlusion_query_found = false;
 
 	// OpenGL multitexture on GL 1.2.1 or later
 	// This is checked first, either this or GL_ARB_multitexture are required
@@ -1781,6 +1828,67 @@ qboolean R_CheckGLExtensions (char *reason)
 	}
 */
 
+	// OpenGL occlusion query on GL 1.5 or later
+	// This is checked first, either this or GL_ARB_occlusion_query are needed for Kex flares to render properly
+	glConfig.occlusionQuery = false;
+	glConfig.queryBitsSupported = 0;
+	if ( (glConfig.version_major >= 2) || (glConfig.version_major == 1 && glConfig.version_minor >= 5) )
+	{
+	//	VID_Printf (PRINT_ALL, "...checking for OpenGL occlusion query on OpenGL 1.5 or later...\n" );
+		qglGenQueries = (void *) qwglGetProcAddress( "glGenQueries" );
+		qglDeleteQueries = (void *) qwglGetProcAddress( "glDeleteQueries" );
+		qglIsQuery = (void *) qwglGetProcAddress( "glIsQuery" );
+		qglBeginQuery = (void *) qwglGetProcAddress( "glBeginQuery" );
+		qglEndQuery = (void *) qwglGetProcAddress( "glEndQuery" );
+		qglGetQueryiv = (void *) qwglGetProcAddress( "glGetQueryiv" );
+		qglGetQueryObjectiv = (void *) qwglGetProcAddress( "glGetQueryObjectiv" );
+		qglGetQueryObjectuiv = (void *) qwglGetProcAddress( "glGetQueryObjectuiv" );
+		if ( !qglGenQueries || !qglDeleteQueries || !qglIsQuery || !qglBeginQuery ||
+			!qglEndQuery || !qglGetQueryiv || !qglGetQueryObjectiv || !qglGetQueryObjectuiv ) {
+			VID_Printf (PRINT_ALL, "...OpenGL occlusion query not found, checking for GL_ARB_occlusion_query\n" );
+		}
+		else {
+			VID_Printf (PRINT_ALL, "...using OpenGL occlusion query\n" );
+			qglGetQueryiv (GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig.queryBitsSupported);
+			VID_Printf (PRINT_ALL, "...GL_QUERY_COUNTER_BITS: %i\n", glConfig.queryBitsSupported);
+			glConfig.occlusionQuery = true;
+			ogl_occlusion_query_found = true;
+		}
+	}
+
+	// GL_ARB_occlusion_query
+	if ( Q_StrScanToken(glConfig.extensions_string, "GL_ARB_occlusion_query", false ) )
+	{
+		if (ogl_occlusion_query_found) {
+			VID_Printf( PRINT_ALL, "...GL_ARB_occlusion_query deprecated in favor of OpenGL occlusion query\n" );
+		}
+		else
+		{
+			qglGenQueries = (void *) qwglGetProcAddress( "glGenQueriesARB" );
+			qglDeleteQueries = (void *) qwglGetProcAddress( "glDeleteQueriesARB" );
+			qglIsQuery = (void *) qwglGetProcAddress( "glIsQueryARB" );
+			qglBeginQuery = (void *) qwglGetProcAddress( "glBeginQueryARB" );
+			qglEndQuery = (void *) qwglGetProcAddress( "glEndQueryARB" );
+			qglGetQueryiv = (void *) qwglGetProcAddress( "glGetQueryivARB" );
+			qglGetQueryObjectiv = (void *) qwglGetProcAddress( "glGetQueryObjectivARB" );
+			qglGetQueryObjectuiv = (void *) qwglGetProcAddress( "glGetQueryObjectuivARB" );
+			if ( !qglGenQueries || !qglDeleteQueries || !qglIsQuery || !qglBeginQuery ||
+				!qglEndQuery || !qglGetQueryiv || !qglGetQueryObjectiv || !qglGetQueryObjectuiv ) {
+				VID_Printf (PRINT_ALL, "...GL_ARB_occlusion_query functions not implemented in driver!\n" );
+			}
+			else {
+				VID_Printf (PRINT_ALL, "...using GL_ARB_occlusion_query\n" );
+				qglGetQueryiv (GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS_ARB, &glConfig.queryBitsSupported);
+				VID_Printf (PRINT_ALL, "...GL_QUERY_COUNTER_BITS_ARB: %i\n", glConfig.queryBitsSupported);
+				glConfig.occlusionQuery = true;
+				arb_occlusion_query_found = true;
+			}
+		}
+	}
+	if ( !ogl_occlusion_query_found && !arb_occlusion_query_found ) {
+		VID_Printf (PRINT_ALL, "OpenGL occlusion query and GL_ARB_occlusion_query not found.  Kex flares will be rendered conventionally.\n" );
+	}
+
 	// GL_EXT_texture_filter_anisotropic - NeVo
 	glConfig.anisotropic = false;
 	if ( Q_StrScanToken( glConfig.extensions_string, "GL_EXT_texture_filter_anisotropic", false ) )
@@ -2099,7 +2207,9 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	r_clearColor[1] = min(max(r_clearcolor_g->value, 0.0f), 1.0f);
 	r_clearColor[2] = min(max(r_clearcolor_b->value, 0.0f), 1.0f);
 
-	GL_SetDefaultState();
+	GL_SetDefaultState ();
+
+	R_ClearOcclusionQuerySampleList ();
 
 	// draw our stereo patterns
 #if 0 // commented out until H3D pays us the money they owe us
@@ -2133,6 +2243,7 @@ void R_ClearState (void)
 	R_SetFogVars (false, 0, 0, 0, 0, 0, 0, 0); // clear fog effets
 	GL_EnableMultitexture (false);
 	GL_SetDefaultState ();
+	R_ClearOcclusionQuerySampleList ();
 }
 
 

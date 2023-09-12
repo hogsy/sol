@@ -490,6 +490,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_misc_kex.c"
+				>
+			</File>
+			<File
 				RelativePath=".\g_misc_laz.c"
 				>
 			</File>

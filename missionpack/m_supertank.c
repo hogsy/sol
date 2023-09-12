@@ -417,7 +417,7 @@ mframe_t supertank_frames_end_attack1[]=
 mmove_t supertank_move_end_attack1 = {FRAME_attak1_7, FRAME_attak1_20, supertank_frames_end_attack1, supertank_run};
 
 
-void supertank_reattack1(edict_t *self)
+void supertank_reattack1 (edict_t *self)
 {
 	if (visible(self, self->enemy))
 		if (random() < 0.9)

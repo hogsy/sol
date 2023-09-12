@@ -506,6 +506,12 @@ typedef struct
 	float		phase;
 
 	float		shift;
+
+	// Knightmare- added for misc_flare
+	int			fade_start_dist;
+	int			fade_end_dist;
+	char		*image;
+	char		*rgba;
 } spawn_temp_t;
 
 

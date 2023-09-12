@@ -632,8 +632,8 @@ void makron_attack(edict_t *self)
 	VectorSubtract (self->enemy->s.origin, self->s.origin, vec);
 	range = VectorLength (vec);
 	
-	// Knightmare- gross hack for map6 of COS3- no BFG attack
-	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
+	// Knightmare- hack for map6 of COS3- no BFG attack
+	if ( IsMakronNoBFGHackMap() )
 	{
 		if (r <= 0.5)
 			self->monsterinfo.currentmove = &makron_move_attack4;
@@ -1003,8 +1003,8 @@ void MakronSpawn (edict_t *self)
 
 	SP_monster_makron_put (self);
 
-	// Knightmare- gross hack for map6 of COS3- don't jump
-	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
+	// Knightmare- hack for map6 of COS3- don't jump
+	if ( IsMakronNoJumpHackMap() )
 		return;
 
 	// jump at player

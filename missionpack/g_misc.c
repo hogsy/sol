@@ -1565,7 +1565,7 @@ void SP_func_explosive (edict_t *self)
 
 	self->movetype = MOVETYPE_PUSH;
 
-	PrecacheDebris(self->gib_type);
+	PrecacheDebris (self->gib_type);
 
 	gi.modelindex ("models/objects/debris1/tris.md2");
 	gi.modelindex ("models/objects/debris2/tris.md2");
@@ -4601,7 +4601,7 @@ void SP_object_repair (edict_t *ent)
 		ent->delay = 1.0;	
 }
 
-//Knightmare
+// Knightmare
 /*QUAKED misc_sick_guard (1 0 0) (-24 -32 -26) (8 12 -2)
 model="models/monsters/sick_guard/"
 */
@@ -4703,5 +4703,3 @@ void SP_misc_gekk_writhe (edict_t *self)
 	self->think = misc_gekk_writhe_think;
 	self->nextthink = level.time + FRAMETIME;
 }
-
-

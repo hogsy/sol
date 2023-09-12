@@ -618,6 +618,12 @@ typedef struct
 	float		phase;
 
 	float		shift;
+
+	// Knightmare- added for misc_flare
+	int			fade_start_dist;
+	int			fade_end_dist;
+	char		*image;
+	char		*rgba;
 } spawn_temp_t;
 
 
@@ -1262,10 +1268,12 @@ qboolean IsIdMap (void);		// Knightmare added
 qboolean IsXatrixMap (void);	// Knightmare added
 qboolean IsRogueMap (void);		// Knightmare added
 qboolean IsZaeroMap (void);		// Knightmare added
-qboolean IsZaeroRailgunHackMap (void); // Knightmare added
-qboolean CheckCoop_MapHacks (edict_t *ent); // FS: Coop: Check if we have to modify some stuff for coop so we don't have to rely on distributing ent files
-qboolean UseSpecialGoodGuyFlag (edict_t *monster); // Knightmare added
-qboolean UseRegularGoodGuyFlag (edict_t *monster); // Knightmare added
+qboolean IsZaeroRailgunHackMap (void);	// Knightmare added
+qboolean IsMakronNoBFGHackMap (void);	// Knightmare added
+qboolean IsMakronNoJumpHackMap (void);	// Knightmare added
+qboolean CheckCoop_MapHacks (edict_t *ent);	// FS: Coop: Check if we have to modify some stuff for coop so we don't have to rely on distributing ent files
+qboolean UseSpecialGoodGuyFlag (edict_t *monster);	// Knightmare added
+qboolean UseRegularGoodGuyFlag (edict_t *monster);	// Knightmare added
 
 //ROGUE
 void	G_ProjectSource2 (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result);

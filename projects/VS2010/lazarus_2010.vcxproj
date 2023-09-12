@@ -236,6 +236,8 @@
     <ClCompile Include="..\..\game\g_lock.c" />
     <ClCompile Include="..\..\game\g_main.c" />
     <ClCompile Include="..\..\game\g_misc.c" />
+    <ClCompile Include="..\..\game\g_misc_kex.c" />
+    <ClCompile Include="..\..\game\g_misc_laz.c" />
     <ClCompile Include="..\..\game\g_model.c" />
     <ClCompile Include="..\..\game\g_monster.c" />
     <ClCompile Include="..\..\game\g_moreai.c" />

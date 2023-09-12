@@ -249,6 +249,12 @@
     <ClCompile Include="..\..\game\acebot_spawn.c">
       <Filter>Source Files\acesrc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\g_misc_kex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\g_misc_laz.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\game\g_ctf.h">

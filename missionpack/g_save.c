@@ -158,6 +158,11 @@ field_t fields[] = {
 	{"item", STOFS(item), F_LSTRING, FFL_SPAWNTEMP},
 	{"phase", STOFS(phase), F_FLOAT, FFL_SPAWNTEMP},
 	{"shift", STOFS(shift), F_FLOAT, FFL_SPAWNTEMP},
+	// Knightmare added
+	{"fade_start_dist", STOFS(fade_start_dist), F_INT, FFL_SPAWNTEMP},
+	{"fade_end_dist", STOFS(fade_end_dist), F_INT, FFL_SPAWNTEMP},
+	{"image", STOFS(image), F_LSTRING, FFL_SPAWNTEMP},
+	{"rgba", STOFS(rgba), F_LSTRING, FFL_SPAWNTEMP},
 
 	// need for item field in edict struct, FFL_SPAWNTEMP item will be skipped on saves
 	{"item", FOFS(item), F_ITEM},
@@ -419,7 +424,7 @@ void InitGame (void)
 
 	g_aimfix = gi.cvar ("g_aimfix", "0", CVAR_ARCHIVE);								// Knightmare- from Yamagi Q2
 	g_aimfix_min_dist = gi.cvar ("g_aimfix_min_dist", "128", CVAR_ARCHIVE);			// Knightmare- minimum range for aimfix
-	g_aimfix_taper_dist = gi.cvar ("g_aimfix_taper_dist", "128", CVAR_ARCHIVE);	// Knightmare- transition range for aimfix
+	g_aimfix_taper_dist = gi.cvar ("g_aimfix_taper_dist", "128", CVAR_ARCHIVE);		// Knightmare- transition range for aimfix
 
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);								// Knightmare- enables hacks for Neil Manke's Q2 maps
 

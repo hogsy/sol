@@ -440,6 +440,15 @@ extern void ( APIENTRY * qglGetVertexAttribivARB)(GLuint, GLenum, GLint *);
 extern void ( APIENTRY * qglGetVertexAttribPointervARB)(GLuint, GLenum, GLvoid* *);
 extern GLboolean ( APIENTRY * qglIsProgramARB)(GLuint);
 
+// OpenGL/ARB Occlusion query stuff
+extern void ( APIENTRY * qglGenQueries) (GLsizei, GLuint *);
+extern void ( APIENTRY * qglDeleteQueries) (GLsizei, const GLuint *);
+extern GLboolean ( APIENTRY * qglIsQuery) (GLuint);
+extern void ( APIENTRY * qglBeginQuery) (GLenum, GLuint);
+extern void ( APIENTRY * qglEndQuery) (GLenum);
+extern void ( APIENTRY * qglGetQueryiv) (GLenum, GLenum, GLint *);
+extern void ( APIENTRY * qglGetQueryObjectiv) (GLuint, GLenum, GLint *);
+extern void ( APIENTRY * qglGetQueryObjectuiv) (GLuint, GLenum, GLuint *);
 
 #ifdef _WIN32
 

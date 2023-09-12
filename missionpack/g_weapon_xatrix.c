@@ -698,7 +698,6 @@ void fire_trap (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int spee
 	AngleVectors (dir, forward, right, up);
 
 	trap = G_Spawn();
-	trap->classname = "trap";
 	VectorCopy (start, trap->s.origin);
 	VectorScale (aimdir, speed, trap->velocity);
 	VectorMA (trap->velocity, 200 + crandom() * 10.0, up, trap->velocity);
@@ -724,7 +723,7 @@ void fire_trap (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int spee
 	trap->think = Trap_Think;
 	trap->dmg = damage;
 	trap->dmg_radius = damage_radius;
-	trap->classname = "htrap";
+	trap->classname = "trap";	// was "htrap"
 	trap->class_id = ENTITY_TRAP;
 	// RAFAEL 16-APR-98
 	trap->s.sound = gi.soundindex ("weapons/traploop.wav");

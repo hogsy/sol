@@ -387,6 +387,14 @@ typedef struct
 	float		maxyaw;
 	float		minpitch;
 	float		maxpitch;
+
+	// Knightmare- added for misc_flare
+	float		radius;
+	float		alpha;
+	int			fade_start_dist;
+	int			fade_end_dist;
+	char		*image;
+	char		*rgba;
 } spawn_temp_t;
 
 

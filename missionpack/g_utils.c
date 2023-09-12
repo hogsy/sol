@@ -1698,6 +1698,40 @@ qboolean IsZaeroRailgunHackMap (void)
 }
 
 
+// Knightmare added
+/*
+====================
+IsMakronNoBFGHackMap
+
+Checks if the current map is one where the Makon's BFG
+attacks need to be disabled (map6 of COS3: The Final Objective).
+====================
+*/
+qboolean IsMakronNoBFGHackMap (void)
+{
+	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
+		return true;
+	return false;
+}
+
+
+// Knightmare added
+/*
+====================
+IsMakronNoJumpHackMap
+
+Checks if the current map is one where the Makon's jump animation
+at spawn needs to be disabled (map6 of COS3: The Final Objective).
+====================
+*/
+qboolean IsMakronNoJumpHackMap (void)
+{
+	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
+		return true;
+	return false;
+}
+
+
 /*
 ====================
 CheckCoop_MapHacks

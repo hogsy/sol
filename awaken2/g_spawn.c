@@ -85,6 +85,9 @@ void SP_misc_eastertank(edict_t *self);
 void SP_misc_easterchick(edict_t *self);
 void SP_misc_easterchick2(edict_t *self);
 
+// Knightmare- Kex flares
+void SP_misc_flare (edict_t *self);
+
 void SP_turret_breach(edict_t *self);
 void SP_turret_base(edict_t *self);
 //void SP_turret_driver(edict_t *self);	// Knightmare- not used
@@ -217,6 +220,9 @@ spawn_t	spawns[] = {
 	{"misc_eastertank", SP_misc_eastertank},
 	{"misc_easterchick", SP_misc_easterchick},
 	{"misc_easterchick2", SP_misc_easterchick2},
+
+	// Knightmare- Kex flares
+	{"misc_flare", SP_misc_flare},
 
 	// Knightmare- entities that use origin-based train pathing
 	{"func_train_origin", SP_func_train_origin},

@@ -87,6 +87,14 @@ field_t fields[] = {
 	{"play", FOFS(play), F_FUNCTION, FFL_NOSPAWN},
 	// end Knightmare
 
+	// Knightmare- added for misc_flare
+	{"radius", STOFS(radius), F_FLOAT, FFL_SPAWNTEMP},
+	{"alpha", STOFS(alpha), F_FLOAT, FFL_SPAWNTEMP},
+	{"fade_start_dist", STOFS(fade_start_dist), F_INT, FFL_SPAWNTEMP},
+	{"fade_end_dist", STOFS(fade_end_dist), F_INT, FFL_SPAWNTEMP},
+	{"image", STOFS(image), F_LSTRING, FFL_SPAWNTEMP},
+	{"rgba", STOFS(rgba), F_LSTRING, FFL_SPAWNTEMP},
+
 	// temp spawn vars -- only valid when the spawn function is called
 	{"lip", STOFS(lip), F_INT, FFL_SPAWNTEMP},
 	{"distance", STOFS(distance), F_INT, FFL_SPAWNTEMP},

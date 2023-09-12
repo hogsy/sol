@@ -927,6 +927,21 @@ typedef struct
 
 #define RF_NOSHADOW			0x00080000		// Knightmare- no shadow flag
 
+// Knightmare- Kex additions
+#define	RF_CASTSHADOW		0x00100000
+#define	RF_SHELL_LITE_GREEN	0x00200000
+#define	RF_CUSTOM_LIGHT		0x00400000
+#define	RF_FLARE			0x00800000
+#define	RF_OLD_FRAME_LERP	0x01000000
+#define	RF_DOT_SHADOW		0x02000000
+#define	RF_LOW_PRIORITY		0x04000000
+#define	RF_NO_LOD			0x08000000
+#define	RF_NO_STEREO		RF_WEAPONMODEL
+#define	RF_STAIR_STEP		0x10000000
+
+#define RF_FLARE_LOCK_ANGLE	RF_MINLIGHT
+// end Kex additions
+
 #define RF_MASK_SHELL		(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE|RF_SHELL_DOUBLE|RF_SHELL_HALF_DAM)
 
 // player_state_t->refdef flags

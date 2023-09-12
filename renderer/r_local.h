@@ -250,6 +250,7 @@ extern	cvar_t	*r_clear;
 extern	cvar_t	*r_norefresh;
 extern	cvar_t	*r_lefthand;
 extern	cvar_t	*r_drawentities;
+extern	cvar_t	*r_drawflares;
 extern	cvar_t	*r_drawworld;
 extern	cvar_t	*r_speeds;
 extern	cvar_t	*r_fullbright;
@@ -305,6 +306,7 @@ extern	cvar_t	*r_solidalpha;			// allow disabling of trans33+trans66 surface fla
 extern	cvar_t	*r_entity_fliproll;		// allow disabling of backwards alias model roll
 extern	cvar_t	*r_old_nullmodel;		// allow selection of nullmodel
 extern	cvar_t	*r_modelview_lightscale;	// lighting scale for menu modelviews
+extern	cvar_t	*r_occlusion_test;			// allow disabling of OpenGL occlusion test for flares
 
 extern	cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //extern	cvar_t	*r_trans_surf_sorting; // trans bmodel sorting
@@ -430,10 +432,19 @@ void R_MaxColorVec (vec3_t color);
 //
 // r_entity.c
 //
+extern	unsigned int	r_occlusionQueries[MAX_EDICTS];
+extern	unsigned int	r_occlusionQuerySamples[MAX_EDICTS];
+extern	byte			r_occlusionQueryPending[MAX_EDICTS];
+
 extern	sortedelement_t *ents_trans;
+extern	sortedelement_t *ents_flares;
 extern	sortedelement_t *ents_viewweaps;
 extern	sortedelement_t *ents_viewweaps_trans;
 
+void R_ClearOcclusionQuerySampleList (void);
+void R_RotateForEntity (entity_t *e, qboolean full);
+int R_RollMult (void);
+void R_OccludeTestEntitiesOnList (sortedelement_t *list);
 void R_DrawEntitiesOnList (sortedelement_t *list);
 void R_DrawAllEntities (qboolean addViewWeaps);
 void R_DrawAllEntityShadows (void);
@@ -535,6 +546,9 @@ void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 //
 // r_main.c
 //
+float R_ClampValue (float in, float min, float max);
+float R_SmoothStep (float in, float side0, float side1);
+qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 qboolean R_Init (void *hinstance, void *hWnd, char *reason);
 void R_ClearState (void);
 void R_Shutdown (void);
@@ -557,25 +571,16 @@ void R_ScreenShot_JPG_f (void);
 void R_ScreenShot_PNG_f (void);
 
 //
-// r_model.c
+// r_alias_md2.c
 //
 void R_DrawAliasMD2Model (entity_t *e);
 void R_DrawAliasMD2ModelShadow (entity_t *e);
-//Harven++ MD3
+
+//
+// r_alias.c
+//
 void R_DrawAliasModel (entity_t *e);
 void R_DrawAliasModelShadow (entity_t *e);
-//Harven-- MD3
-void R_DrawBrushModel (entity_t *e);
-void R_DrawSpriteModel (entity_t *e);
-void R_DrawBeam( entity_t *e );
-void R_DrawWorld (void);
-void R_DrawAllAlphaSurfaces (void);
-void R_InitMedia (void);
-void R_DrawInitLocal (void);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
-void R_RotateForEntity (entity_t *e, qboolean full);
-int R_RollMult (void);
-void R_MarkLeaves (void);
 
 //
 // r_alias_misc.c
@@ -609,6 +614,18 @@ void	R_SetBlendModeOn (image_t *skin);
 void	R_SetBlendModeOff (void);
 void	R_SetShadeLight (void);
 void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, float blue, float alpha);
+
+//
+// r_sprite.c
+//
+void R_DrawSpriteModel (entity_t *e);
+void R_OccludeTestFlare (entity_t *e);
+void R_DrawFlare (entity_t *e);
+
+//
+// r_beam.c
+//
+void R_DrawBeam( entity_t *e );
 
 //
 // r_backend.c
@@ -699,7 +716,6 @@ void R_DrawWorld (void);
 void R_DrawAllAlphaSurfaces (void);
 void R_DrawBrushModel (entity_t *e);
 void R_MarkLeaves (void);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_BuildPolygonFromSurface (msurface_t *surf);
 void R_ResetVertextLights_f (void);
 void R_BuildVertexLight (msurface_t *surf);
@@ -730,6 +746,7 @@ char	*va(char *format, ...);
 //
 void	R_RefreshFont (fontslot_t font);
 void	R_RefreshAllFonts (void);
+void	R_DrawInitLocal (void);
 void	R_DrawGetPicSize (int *w, int *h, char *name);
 void	R_DrawPic (drawStruct_t *ds);
 void	R_InitChars (void);
@@ -861,6 +878,10 @@ typedef struct
 	qboolean	arb_fragment_program;
 	qboolean	arb_vertex_program;
 //	qboolean	NV_texshaders;
+
+	// ARB occlusion query support
+	qboolean	occlusionQuery;
+	int			queryBitsSupported;
 
 	// anisotropic filtering
 	qboolean	anisotropic;

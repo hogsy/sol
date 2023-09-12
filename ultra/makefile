@@ -63,7 +63,7 @@ GAME_OBJS = \
 	bot_wpns.o camclient.o \
 	dm_ball.o dm_tag.o e_grapple.o e_hook.o funhook.o \
 	g_ai.o g_chase.o g_cmds.o g_combat.o g_compress.o g_ctf.o g_func.o \
-	g_items.o g_main.o g_map_mod.o g_misc.o g_model.o g_monster.o g_mtrain.o \
+	g_items.o g_main.o g_map_mod.o g_misc.o g_misc_kex.o g_model.o g_monster.o g_mtrain.o \
 	g_newdm.o g_newfnc.o g_newtarg.o g_newtrig.o g_newweap.o \	
 	g_phys.o g_save.o g_spawn.o g_svcmds.o g_target.o \
 	g_trigger.o g_utils.o g_weapon.o g_weapon_lmctf.o g_weapon_xatrix.o \

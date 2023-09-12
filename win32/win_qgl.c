@@ -460,6 +460,16 @@ void ( APIENTRY * qglGetVertexAttribivARB)(GLuint, GLenum, GLint *);
 void ( APIENTRY * qglGetVertexAttribPointervARB)(GLuint, GLenum, GLvoid* *);
 GLboolean ( APIENTRY * qglIsProgramARB)(GLuint);
 
+// OpenGL/ARB Occlusion query stuff
+void ( APIENTRY * qglGenQueries) (GLsizei, GLuint *);
+void ( APIENTRY * qglDeleteQueries) (GLsizei, const GLuint *);
+GLboolean ( APIENTRY * qglIsQuery) (GLuint);
+void ( APIENTRY * qglBeginQuery) (GLenum, GLuint);
+void ( APIENTRY * qglEndQuery) (GLenum);
+void ( APIENTRY * qglGetQueryiv) (GLenum, GLenum, GLint *);
+void ( APIENTRY * qglGetQueryObjectiv) (GLuint, GLenum, GLint *);
+void ( APIENTRY * qglGetQueryObjectuiv) (GLuint, GLenum, GLuint *);
+
 
 static void ( APIENTRY * dllAccum )(GLenum op, GLfloat value);
 static void ( APIENTRY * dllAlphaFunc )(GLenum func, GLclampf ref);
@@ -3080,6 +3090,16 @@ void QGL_Shutdown( void )
 	qglGetVertexAttribPointervARB	 = NULL;
 	qglIsProgramARB					 = NULL;
 
+	// OpenGL/ARB Occlusion query stuff
+	qglGenQueries					= NULL;
+	qglDeleteQueries				= NULL;
+	qglIsQuery						= NULL;
+	qglBeginQuery					= NULL;
+	qglEndQuery						= NULL;
+	qglGetQueryiv					= NULL;
+	qglGetQueryObjectiv				= NULL;
+	qglGetQueryObjectuiv			= NULL;
+
 	qwglCopyContext              = NULL;
 	qwglCreateContext            = NULL;
 	qwglCreateLayerContext       = NULL;
@@ -3562,6 +3582,16 @@ qboolean QGL_Init( const char *dllname )
 	qglGetVertexAttribivARB			 = 0;
 	qglGetVertexAttribPointervARB	 = 0;
 	qglIsProgramARB					 = 0;
+
+	// OpenGL/ARB Occlusion query stuff
+	qglGenQueries					= 0;
+	qglDeleteQueries				= 0;
+	qglIsQuery						= 0;
+	qglBeginQuery					= 0;
+	qglEndQuery						= 0;
+	qglGetQueryiv					= 0;
+	qglGetQueryObjectiv				= 0;
+	qglGetQueryObjectuiv			= 0;
 
 	return true;
 }

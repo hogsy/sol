@@ -60,10 +60,10 @@ void flechette_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		if (level.num_reflectors)
 			ReflectSparks(TE_FLECHETTE, self->s.origin, dir);
 
-	//	T_RadiusDamage(self, self->owner, 24, self, 48, MOD_ETF_RIFLE);
+	//	T_RadiusDamage (self, self->owner, 24, self, 48, MOD_ETF_RIFLE);
 	}
 	// Knightmare- added splash damage
-	T_RadiusDamage(self, self->owner, self->radius_dmg, self, self->dmg_radius, MOD_ETF_SPLASH);
+	T_RadiusDamage (self, self->owner, self->radius_dmg, self, self->dmg_radius, MOD_ETF_SPLASH);
 
 	G_FreeEdict (self);
 }
@@ -392,8 +392,8 @@ void Prox_Explode (edict_t *ent)
 	}
 
 	ent->takedamage = DAMAGE_NO;
-//	T_RadiusDamage(ent, owner, ent->dmg, ent, sk_prox_radius->value, MOD_PROX);
-	T_RadiusDamage(ent, owner, ent->dmg, ent, ent->dmg_radius, MOD_PROX);
+//	T_RadiusDamage (ent, owner, ent->dmg, ent, sk_prox_radius->value, MOD_PROX);
+	T_RadiusDamage (ent, owner, ent->dmg, ent, ent->dmg_radius, MOD_PROX);
 
 	VectorMA (ent->s.origin, -0.02, ent->velocity, origin);
 	if (ent->groundentity)
@@ -1197,7 +1197,7 @@ void fire_burst_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t
 		radius = powerunits * 4;
 
 //		T_RadiusDamage (inflictor, attacker, damage, ignore, radius)
-		T_RadiusDamage(ent, ent->owner, damage, ent, radius, DAMAGE_FIRE);
+		T_RadiusDamage (ent, ent->owner, damage, ent, radius, DAMAGE_FIRE);
 
 //		gi.dprintf("Hit world: %d pts, %d rad\n", damage, radius);
 
@@ -1258,7 +1258,7 @@ void fire_burst_think (edict_t *self)
 	else if (current_radius > FLAME_BURST_MAX_SIZE)
 		current_radius = FLAME_BURST_MAX_SIZE;
 
-	T_RadiusDamage(self, self->owner, self->dmg, self, current_radius, DAMAGE_FIRE);
+	T_RadiusDamage (self, self->owner, self->dmg, self, current_radius, DAMAGE_FIRE);
 
 	self->think = fire_burst_think;
 	self->nextthink = level.time + 0.1;
@@ -1365,7 +1365,7 @@ edict_t *StartFire(edict_t *fireOwner, vec3_t fireOrigin, float fireDuration, fl
 		PlayerNoise(ent->owner, ent->s.origin, PNOISE_IMPACT);
 
 	//FIXME: if we are onground then raise our Z just a bit since we are a point?
-	T_RadiusDamage(ent, ent->owner, ent->dmg, NULL, ent->dmg_radius, DAMAGE_FIRE);
+	T_RadiusDamage (ent, ent->owner, ent->dmg, NULL, ent->dmg_radius, DAMAGE_FIRE);
 
 	VectorMA (ent->s.origin, -0.02, ent->velocity, origin);
 	gi.WriteByte (svc_temp_entity);
@@ -1844,21 +1844,21 @@ void tesla_remove (edict_t *self)
 		else //quad sound
 			gi.sound(self, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
 	}
-	Grenade_Explode(self);
+	Grenade_Explode (self);
 }
 
 void tesla_die(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
 //	gi.dprintf("tesla killed\n");
-	tesla_remove(self);
+	tesla_remove (self);
 }
 
 void tesla_blow (edict_t *self)
 {
-//	T_RadiusDamage(self, self->owner, TESLA_EXPLOSION_DAMAGE, NULL, TESLA_EXPLOSION_RADIUS, MOD_TESLA);
+//	T_RadiusDamage (self, self->owner, TESLA_EXPLOSION_DAMAGE, NULL, TESLA_EXPLOSION_RADIUS, MOD_TESLA);
 	self->dmg = self->dmg * TESLA_EXPLOSION_DAMAGE_MULT;
 	self->dmg_radius = TESLA_EXPLOSION_RADIUS;
-	tesla_remove(self);
+	tesla_remove (self);
 }
 
 
@@ -2416,7 +2416,7 @@ void blaster2_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 			damagestat = self->owner->takedamage;
 			self->owner->takedamage = DAMAGE_NO;
 			if (self->dmg >= 5)
-				T_RadiusDamage(self, self->owner, self->dmg*3, other, self->dmg_radius, 0);
+				T_RadiusDamage (self, self->owner, self->dmg*3, other, self->dmg_radius, 0);
 			T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
 			self->owner->takedamage = damagestat;
 		}
@@ -2431,7 +2431,7 @@ void blaster2_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 	{
 		//PMM - yeowch this will get expensive
 		if (self->dmg >= 5)
-			T_RadiusDamage(self, self->owner, self->dmg*3, self->owner, self->dmg_radius, 0);
+			T_RadiusDamage (self, self->owner, self->dmg*3, self->owner, self->dmg_radius, 0);
 
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_BLASTER2);

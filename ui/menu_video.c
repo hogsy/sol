@@ -127,6 +127,7 @@ static void M_ResetVideoDefaults (void)
 	Cvar_SetToDefault ("r_waterwave");
 	Cvar_SetToDefault ("r_caustics");
 	Cvar_SetToDefault ("r_particle_overdraw");
+	Cvar_SetToDefault ("r_occlusion_test");
 	Cvar_SetToDefault ("r_bloom");
 	Cvar_SetToDefault ("r_model_shading");
 	Cvar_SetToDefault ("r_shadows");

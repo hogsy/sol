@@ -1181,6 +1181,8 @@ void CL_AddPacketEntities (frame_t *frame)
 		ent.alpha = 1.0F;
 		// reset this
 		ent.renderfx = 0;
+		// needed for flare occlusion queries
+		ent.edict_num = s1->number;
 
 		// set frame
 		if (effects & EF_ANIM01)
@@ -1256,12 +1258,53 @@ void CL_AddPacketEntities (frame_t *frame)
 			ent.skinnum = (s1->skinnum >> ((rand() % 4)*8)) & 0xff;
 			ent.model = NULL;
 		}
+		// Knightmare- added for Kex flares
+		else if (renderfx & RF_FLARE)
+		{
+			ent.model = NULL;
+			ent.skin = NULL;
+			ent.skinnum = 0;
+			ent.fade_start_dist = 96;
+			ent.fade_end_dist = 384;
+			ent.sprite_radius = 50.0f;
+			ent.scale = 1.0f;
+
+			if ( (renderfx & RF_CUSTOMSKIN) && (s1->frame > 0) && (s1->frame < MAX_IMAGES) )
+				ent.skin = R_RegisterSkin (cl.configstrings[CS_IMAGES + s1->frame]);
+			if (s1->modelindex2)
+				ent.fade_start_dist = s1->modelindex2;
+			if (s1->modelindex3)
+				ent.fade_end_dist = s1->modelindex3;
+			// next game API version will use s1->scale * 50.0f for sprite_radius
+			if (s1->modelindex4) {
+				ent.sprite_radius = (float)s1->modelindex4;
+				ent.scale = ent.sprite_radius * 0.02f;
+			}
+			// color is embedded in 32 bits of skinnum
+			VectorSet (ent.color[0],
+				(float)(s1->skinnum & 255) * DIV255,
+				(float)((s1->skinnum >> 8) & 255) * DIV255,
+				(float)((s1->skinnum >> 16) & 255) * DIV255);
+
+			if (renderfx & (RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE))
+			{
+				VectorCopy (ent.color[1], vec3_origin);
+				if (renderfx & RF_SHELL_RED)
+					ent.color[1][0] = (float)((s1->skinnum >> 24) & 255) * DIV255;
+				else if (renderfx & RF_SHELL_GREEN)
+					ent.color[1][1] = (float)((s1->skinnum >> 24) & 255) * DIV255;
+				else if (renderfx & RF_SHELL_BLUE)
+					ent.color[1][2] = (float)((s1->skinnum >> 24) & 255) * DIV255;
+			}
+			else
+				VectorCopy (ent.color[0], ent.color[1]);
+
+		//	Com_Printf ("CL_AddPacketEntities: adding flare with radius %f color0 (%f %f %f) color1 (%f %f %f)\n",
+		//		ent.sprite_radius, ent.color[0][0], ent.color[0][1], ent.color[0][2], ent.color[1][0], ent.color[1][1], ent.color[1][2]);
+		}
 		else
 		{
 			// set skin
-		/*	if ( s1->modelindex == MAX_MODELS-1 //was 255
-				//Knightmare- GROSS HACK for old demos, use modelindex 255
-				|| ( LegacyProtocol() && s1->modelindex == OLD_MAX_MODELS-1 ) ) */
 			if ( s1->modelindex == (max_models-1)) // was 255
 
 			{	// use custom player skin
@@ -1422,9 +1465,7 @@ void CL_AddPacketEntities (frame_t *frame)
 				V_AddLight (ent.origin, 225, -1.0, -1.0, -1.0);	//PGM
 
 			// Knightmare- save off current player weapon model for player config menu
-		/*	if (s1->modelindex2 == MAX_MODELS-1
-				|| ( LegacyProtocol() && s1->modelindex2 == OLD_MAX_MODELS-1 ) ) */
-			if (s1->modelindex2 == max_models-1)
+			if (s1->modelindex2 == (max_models - 1) )
 			{
 				ci = &cl.clientinfo[s1->skinnum & 0xff];
 				i = (s1->skinnum >> 8); // 0 is default weapon model
@@ -1538,12 +1579,10 @@ void CL_AddPacketEntities (frame_t *frame)
 		ent.alpha = 1.0F;
 
 		// duplicate for linked models
-		if (s1->modelindex2)
+	//	if (s1->modelindex2)
+		if ( s1->modelindex2 && !(renderfx & RF_FLARE) )	// RF_FLARE overloads modelindex2
 		{
-		/*	if (s1->modelindex2 == MAX_MODELS-1
-				//Knightmare- GROSS HACK for old demos, use modelindex 255
-				|| ( LegacyProtocol() && s1->modelindex2 == OLD_MAX_MODELS-1 ) ) */
-			if (s1->modelindex2 == (max_models-1))
+			if (s1->modelindex2 == (max_models - 1))
 			{	// custom weapon
 				ci = &cl.clientinfo[s1->skinnum & 0xff];
 				i = (s1->skinnum >> 8); // 0 is default weapon model
@@ -1586,7 +1625,8 @@ void CL_AddPacketEntities (frame_t *frame)
 			//PGM
 		}
 
-		if (s1->modelindex3)
+	//	if (s1->modelindex3)
+		if ( s1->modelindex3 && !(renderfx & RF_FLARE) )	// RF_FLARE overloads modelindex3
 		{
 			// Knightmare added for Psychospaz's chasecam
 			if (isclientviewer)
@@ -1599,7 +1639,8 @@ void CL_AddPacketEntities (frame_t *frame)
 			ent.model = cl.model_draw[s1->modelindex3];
 			V_AddEntity (&ent);
 		}
-		if (s1->modelindex4)
+	//	if (s1->modelindex4)
+		if ( s1->modelindex4 && !(renderfx & RF_FLARE) )	// RF_FLARE overloads modelindex4
 		{
 			// Knightmare added for Psychospaz's chasecam
 			if (isclientviewer)

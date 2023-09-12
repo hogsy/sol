@@ -283,7 +283,11 @@ void Com_sprintf (char *dest, size_t size, char *fmt, ...);
 size_t Com_strcpy (char *dest, size_t destSize, const char *src);
 size_t Com_strcat (char *dest, size_t destSize, const char *src);
 
-qboolean Com_ParseColorString (const char *s, color_t outColor);	// Knightmare added
+// Knightmare- added color parsing
+qboolean Com_ParseColorString (const char *s, color_t outColor);
+unsigned int Com_ParseColorStringPacked (const char *s);
+qboolean Com_ParseRGBAField (const char *s, color_t outColor);
+unsigned int Com_ParseRGBAFieldPacked (const char *s);
 
 void Com_PageInMemory (byte *buffer, int size);
 
@@ -684,6 +688,21 @@ typedef struct
 #define RF_USE_DISGUISE		0x00040000
 //ROGUE
 #define RF_NOSHADOW			0x00080000
+
+// Knightmare- Kex additions
+#define	RF_CASTSHADOW		0x00100000
+#define	RF_SHELL_LITE_GREEN	0x00200000
+#define	RF_CUSTOM_LIGHT		0x00400000
+#define	RF_FLARE			0x00800000
+#define	RF_OLD_FRAME_LERP	0x01000000
+#define	RF_DOT_SHADOW		0x02000000
+#define	RF_LOW_PRIORITY		0x04000000
+#define	RF_NO_LOD			0x08000000
+#define	RF_NO_STEREO		RF_WEAPONMODEL
+#define	RF_STAIR_STEP		0x10000000
+
+#define RF_FLARE_LOCK_ANGLE	RF_MINLIGHT
+// end Kex additions
 
 // player_state_t->refdef flags
 #define	RDF_UNDERWATER		1		// warp the screen as apropriate

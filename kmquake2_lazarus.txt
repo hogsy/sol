@@ -43,6 +43,31 @@ Support for double-barreled turrets.  Code by Musashi.
 	Set the turret_breach's combattarget to the targetname of the second info_notnull.
 	To have the barrels alternate in firing, give the turret_breach a style value of 1.
 
+Entity alias script support- this enables mappers to create predefined entity aliases, allowing easy placement of
+	pre-configured entities in maps, based on highly configurable generic entities like model_spawn and model_train.
+	These aliases are defined in a text file called ext_data/entalias.def.  Alternately, aliases can be defined on
+	a per-map basis in a map-specific file called ext_data/entalias/<mapname>.alias.  A sample alias file is included. 
+	NOTE: This file can be loaded from inside a pak file.
+
+Func_breakaway, a new bmodel entity that will break away from its surroundings.  See the included QERadiant entity
+	defintion file for more information.
+
+Misc_flare, the customizable flare entity from Quake2 Remaster (Kex).  See the included QERadiant entity defintion file
+	for more information.
+
+Target_command, a new entity that sends a command to the console to be executed. See the included QERadiant entity
+	defintion file for more information.
+
+Item_armor_shard_flat, a version of the armor shard that sits on the ground.
+
+An salpha entity key, to set the transparency of entities.  Give it a decimal value between 0 and 1 (exclusive) to use it.
+	It supports 254 levels of transparency.
+	NOTE: don't combine this with trans33 or trans66 surfaces on the same brush model.
+
+A commander skin spawnflag for misc_eastertank.
+
+A Big spawnflag for target_explosion, which makes it spawn a larger explosion.
+
 Integrated ACE bots.  The ACE Bot is a product of Steve Yeager, and is available from the
 	ACE Bot homepage, at http://www.axionfx.com/ace.  This program is a modification of
 	the ACE Bot, and is therefore in NO WAY supported by Steve Yeager.
@@ -119,28 +144,6 @@ Lithium weapon and item balancing cvars, including how much ammo you can pick up
 		sk_dm_start_hyperblaster-		Whether to start with with hyperblaster in DM
 		sk_dm_start_railgun-			Whether to start with with railgun in DM
 		sk_dm_start_bfg-				Whether to start with with bfg in DM
-
-Entity alias script support- this enables mappers to create predefined entity aliases, allowing easy placement of
-	pre-configured entities in maps, based on highly configurable generic entities like model_spawn and model_train.
-	These aliases are defined in a text file called ext_data/entalias.def.  Alternately, aliases can be defined on
-	a per-map basis in a map-specific file called ext_data/entalias/<mapname>.alias.  A sample alias file is included. 
-	NOTE: This file can be loaded from inside a pak file.
-
-Func_breakaway, a new bmodel entity that will break away from its surroundings.  See the included QERadiant entity
-	defintion file for more information.
-
-Target_command, a new entity that sends a command to the console to be executed. See the included QERadiant entity
-	defintion file for more information.
-
-Item_armor_shard_flat, a version of the armor shard that sits on the ground.
-
-An salpha entity key, to set the transparency of entities.  Give it a decimal value between 0 and 1 (exclusive) to use it.
-	It supports 254 levels of transparency.
-	NOTE: don't combine this with trans33 or trans66 surfaces on the same brush model.
-
-A commander skin spawnflag for misc_eastertank.
-
-A Big spawnflag for target_explosion, which makes it spawn a larger explosion.
 
 Single-player obituaries- tells you which monster killed you and how.
 

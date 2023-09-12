@@ -835,6 +835,8 @@ GAME_OBJS = \
 	$(BUILDDIR)/game/g_lock.o \
 	$(BUILDDIR)/game/g_main.o \
 	$(BUILDDIR)/game/g_misc.o \
+	$(BUILDDIR)/game/g_misc_kex.o \
+	$(BUILDDIR)/game/g_misc_laz.o \
 	$(BUILDDIR)/game/g_model.o \
 	$(BUILDDIR)/game/g_monster.o \
 	$(BUILDDIR)/game/g_moreai.o \
@@ -957,6 +959,12 @@ $(BUILDDIR)/game/g_main.o :       	$(GAME_DIR)/g_main.c
 	$(DO_SHLIB_CC)
 
 $(BUILDDIR)/game/g_misc.o :       	$(GAME_DIR)/g_misc.c
+	$(DO_SHLIB_CC)
+
+$(BUILDDIR)/game/g_misc_kex.o :       	$(GAME_DIR)/g_misc_kex.c
+	$(DO_SHLIB_CC)
+
+$(BUILDDIR)/game/g_misc_laz.o :       	$(GAME_DIR)/g_misc_laz.c
 	$(DO_SHLIB_CC)
 
 $(BUILDDIR)/game/g_model.o :      	$(GAME_DIR)/g_model.c

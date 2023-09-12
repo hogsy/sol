@@ -141,6 +141,10 @@ SOURCE=.\g_misc.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_misc_kex.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_model.c
 # End Source File
 # Begin Source File

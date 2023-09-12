@@ -185,6 +185,14 @@ SOURCE=..\..\game\g_misc.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\game\g_misc_kex.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\game\g_misc_laz.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\game\g_model.c
 # End Source File
 # Begin Source File

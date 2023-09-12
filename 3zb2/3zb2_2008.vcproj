@@ -828,6 +828,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\g_misc_kex.c"
+				>
+			</File>
+			<File
 				RelativePath=".\g_model.c"
 				>
 			</File>

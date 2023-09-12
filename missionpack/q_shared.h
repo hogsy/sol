@@ -332,7 +332,11 @@ void COM_DefaultExtension (char *path, size_t pathSize, char *extension);
 char *COM_Parse (char **data_p);
 // data is an in/out parm, returns a parsed out token
 
-qboolean Com_ParseColorString (const char *s, color_t outColor);	// Knightmare added
+// Knightmare- added color parsing
+qboolean Com_ParseColorString (const char *s, color_t outColor);
+unsigned int Com_ParseColorStringPacked (const char *s);
+qboolean Com_ParseRGBAField (const char *s, color_t outColor);
+unsigned int Com_ParseRGBAFieldPacked (const char *s);
 
 void Com_sprintf (char *dest, size_t size, char *fmt, ...);
 // Knightmare added
@@ -764,11 +768,6 @@ typedef struct
 #define RF_TRANS_ADDITIVE	8192
 #define RF_MIRRORMODEL		16384
 
-//Mappack - temp
-#define	RF_SOLID_GREEN		0x00000800	// solid green shell
-#define	RF_SOLID_RED		0x00000400  // solid red shell
-#define	RF_SOLID_BLUE		0x00001000	// solid blue shell
-
 //ROGUE
 #define RF_IR_VISIBLE		0x00008000		// 32768
 #define	RF_SHELL_DOUBLE		0x00010000		// 65536
@@ -777,6 +776,21 @@ typedef struct
 //ROGUE
 
 #define RF_NOSHADOW			0x00080000 // Knightmare- no shadow flag
+
+// Knightmare- Kex additions
+#define	RF_CASTSHADOW		0x00100000
+#define	RF_SHELL_LITE_GREEN	0x00200000
+#define	RF_CUSTOM_LIGHT		0x00400000
+#define	RF_FLARE			0x00800000
+#define	RF_OLD_FRAME_LERP	0x01000000
+#define	RF_DOT_SHADOW		0x02000000
+#define	RF_LOW_PRIORITY		0x04000000
+#define	RF_NO_LOD			0x08000000
+#define	RF_NO_STEREO		RF_WEAPONMODEL
+#define	RF_STAIR_STEP		0x10000000
+
+#define RF_FLARE_LOCK_ANGLE	RF_MINLIGHT
+// end Kex additions
 
 // player_state_t->refdef flags
 #define	RDF_UNDERWATER		1		// warp the screen as apropriate

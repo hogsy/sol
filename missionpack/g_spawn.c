@@ -125,6 +125,9 @@ void SP_misc_sick_guard (edict_t *self);
 // Knightmare- experiment gekk
 void SP_misc_gekk_writhe (edict_t *self);
 
+// Knightmare- Kex flares
+void SP_misc_flare (edict_t *self);
+
 // Knightmare- Coconut Monkey 3 Flame entities
 void SP_light_flame1 (edict_t *self);
 void SP_light_flame1s (edict_t *self);
@@ -513,6 +516,9 @@ spawn_t	spawns[] = {
 	{"misc_sick_guard", SP_misc_sick_guard},
 // Knightmare- experiment gekks
 	{"misc_gekk_writhe", SP_misc_gekk_writhe},
+
+	// Knightmare- Kex flares
+	{"misc_flare", SP_misc_flare},
 
 	// Knightmare- Coconut Monkey 3 Flame entities
 	{"light_flame1", SP_light_flame1}, 

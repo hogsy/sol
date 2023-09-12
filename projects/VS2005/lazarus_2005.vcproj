@@ -482,6 +482,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\game\g_misc_kex.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\game\g_misc_laz.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\game\g_misc.c"
 				>
 			</File>
