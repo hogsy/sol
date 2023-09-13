@@ -1268,6 +1268,7 @@ void CL_AddPacketEntities (frame_t *frame)
 			ent.fade_end_dist = 384;
 			ent.sprite_radius = 50.0f;
 			ent.scale = 1.0f;
+			VectorSet (ent.color[0], 1.0f, 1.0f, 1.0f);
 
 			if ( (renderfx & RF_CUSTOMSKIN) && (s1->frame > 0) && (s1->frame < MAX_IMAGES) )
 				ent.skin = R_RegisterSkin (cl.configstrings[CS_IMAGES + s1->frame]);
