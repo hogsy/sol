@@ -193,12 +193,12 @@ typedef struct glmedia_s {
 	image_t		*noTexture;			// used for bad textures
 	image_t		*whiteTexture;		// used for solid colors
 	image_t		*distTextureARB;	// used for warp distortion
+	image_t		*celShadeTexture;	// used for cel shading
 	image_t		*rawTexture;		// used for cinematics
 	image_t		*envMapTexture;
 	image_t		*sphereMapTexture;
 	image_t		*shellTexture;
 	image_t		*flareTexture;		// used for Kex flares
-	image_t		*celShadeTexture;
 	image_t		*causticWaterTexture;
 	image_t		*causticSlimeTexture;
 	image_t		*causticLavaTexture;
@@ -311,10 +311,10 @@ extern	cvar_t	*r_occlusion_test;			// allow disabling of OpenGL occlusion test f
 extern	cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //extern	cvar_t	*r_trans_surf_sorting; // trans bmodel sorting
 extern	cvar_t	*r_shelltype; // entity shells: 0 = solid, 1 = warp, 2 = spheremap
-
 extern	cvar_t	*r_ext_texture_compression; // Heffo - ARB Texture Compression
 extern	cvar_t	*r_lightcutoff;	//** DMP - allow dynamic light cutoff to be user-settable
 
+extern	cvar_t	*r_debug_media;		// enables output of generated textures as .tga on startup
 extern	cvar_t	*r_screenshot_format;		// determines screenshot format
 //extern	cvar_t	*r_screenshot_jpeg;			// Heffo - JPEG Screenshots
 extern	cvar_t	*r_screenshot_jpeg_quality;	// Heffo - JPEG Screenshots
@@ -417,18 +417,6 @@ struct sortedelement_s
 	sortedelement_t *left, *right;
 };
 
-
-//
-// r_image.c
-//
-void R_TranslatePlayerSkin (int playernum);
-
-// Knightmare- added some of Psychospaz's shortcuts
-void ElementAddNode (sortedelement_t *base, sortedelement_t *thisElement);
-int transCompare (const void *arg1, const void *arg2);
-
-void R_MaxColorVec (vec3_t color);
-
 //
 // r_entity.c
 //
@@ -445,6 +433,7 @@ void R_ClearOcclusionQuerySampleList (void);
 void R_ShutdownOcclusionQueries (void);
 void R_RotateForEntity (entity_t *e, qboolean full);
 int R_RollMult (void);
+void ElementAddNode (sortedelement_t *base, sortedelement_t *thisElement);
 void R_OccludeTestEntitiesOnList (sortedelement_t *list);
 void R_DrawEntitiesOnList (sortedelement_t *list);
 void R_DrawAllEntities (qboolean addViewWeaps);
@@ -455,6 +444,8 @@ void R_DrawSolidEntities ();
 // r_particle.c
 //
 extern	sortedelement_t *parts_prerender;
+
+int transCompare (const void *arg1, const void *arg2);
 void R_BuildParticleList (void);
 void R_SortParticlesOnList (void);
 void R_DrawParticles (sortedelement_t *list);
@@ -513,6 +504,7 @@ typedef struct
 extern gllightmapstate_t gl_lms;
 
 
+void R_MaxColorVec (vec3_t color);
 //void R_LightPoint (vec3_t p, vec3_t color);
 void R_LightPoint (vec3_t p, vec3_t color, qboolean isEnt);
 void R_LightPointDynamics (vec3_t p, vec3_t color, m_dlight_t *list, int *amount, int max);
@@ -769,14 +761,16 @@ void	r_DrawStretchRaw (int x, int y, int w, int h, int cols, int rows, byte *dat
 //
 // r_image.c
 //
-int		Draw_GetPalette (void);
+void R_GammaCorrect (byte *buffer, int size);
+int	Draw_GetPalette (void);
 void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight);
 struct image_s *R_RegisterSkin (char *name);
 
-void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
-// Knightmare added
-void LoadTGA (const char *name, byte **pic, int *width, int *height);
-void LoadJPG (const char *filename, byte **pic, int *width, int *height);
+void R_LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
+void R_LoadTGA (const char *filename, byte **pic, int *width, int *height);
+void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean checkIfExists);
+void R_LoadPNG (const char *filename, byte **pic, int *width, int *height);
+void R_LoadJPG (const char *filename, byte **pic, int *width, int *height);
 
 image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 image_t	*R_FindImage (const char *rawName, imagetype_t type);

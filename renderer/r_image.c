@@ -1035,6 +1035,72 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 
 #endif
 
+
+/*
+==================
+R_WriteTGA
+
+Writes a raw image to TGA for debugging
+==================
+*/
+void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean checkIfExists)
+{
+	int		i, temp, nBits;
+	size_t	imageSize, c;
+	char	checkname[MAX_OSPATH];
+	byte	*buffer;
+	FILE	*f = NULL;
+	
+	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
+	//	VID_Printf (PRINT_ALL, "R_WriteTGA: bad parms\n", checkname);
+		return;
+	}
+	
+	imageSize = width * height * nBytes;
+	nBits = (nBytes == 4) ? 32 : 24;
+
+	Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+	FS_CreatePath (checkname);
+	if (checkIfExists) {
+		f = fopen (checkname, "rb");
+	}
+	if ( !f )
+	{
+		buffer = malloc(imageSize + 18);
+		memset (buffer, 0, 18);
+		buffer[2] = 2;		// uncompressed type
+		buffer[12] = width & 255;
+		buffer[13] = width >> 8;
+		buffer[14] = height & 255;
+		buffer[15] = height >> 8;
+		buffer[16] = nBits;	// pixel size
+		memcpy (buffer+18, rawImage, imageSize);
+
+		// swap rgb to bgr
+		c = imageSize + 18;
+		for (i=18; i<c; i+=4)
+		{
+			temp = buffer[i];
+			buffer[i] = buffer[i+2];
+			buffer[i+2] = temp;
+		}
+
+		f = fopen (checkname, "wb");
+		if (f != NULL) {
+			fwrite (buffer, 1, c, f);
+			fclose (f);
+		}
+		else
+			VID_Printf (PRINT_ALL, "R_WriteTGA: couldn't open %s for writing\n", checkname);
+
+		free (buffer);
+	}
+	else {
+		fclose (f);
+		VID_Printf (PRINT_ALL, "R_WriteTGA: %s already exists\n", checkname);
+	}
+}
+
 /*
 =================================================================
 
@@ -2566,6 +2632,7 @@ void R_FreeUnusedImages (void)
 	glMedia.noTexture->registration_sequence = registration_sequence;
 	glMedia.whiteTexture->registration_sequence = registration_sequence;
 	glMedia.distTextureARB->registration_sequence = registration_sequence;
+	glMedia.celShadeTexture->registration_sequence = registration_sequence;
 #ifdef ROQ_SUPPORT
 	glMedia.rawTexture->registration_sequence = registration_sequence;
 #endif // ROQ_SUPPORT
@@ -2573,7 +2640,6 @@ void R_FreeUnusedImages (void)
 	glMedia.sphereMapTexture->registration_sequence = registration_sequence;
 	glMedia.shellTexture->registration_sequence = registration_sequence;
 	glMedia.flareTexture->registration_sequence = registration_sequence;
-	glMedia.celShadeTexture->registration_sequence = registration_sequence;
 	glMedia.causticWaterTexture->registration_sequence = registration_sequence;
 	glMedia.causticSlimeTexture->registration_sequence = registration_sequence;
 	glMedia.causticLavaTexture->registration_sequence = registration_sequence;

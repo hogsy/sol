@@ -52,7 +52,7 @@ image_t * R_CreateNullTexture (void)
 	int		x;
 
 	memset (nulltex, 32, sizeof(nulltex));
-	for (x=0; x<NULLTEX_SIZE; x++)
+	for (x = 0; x < NULLTEX_SIZE; x++)
 	{
 		nulltex[0][x][0]=
 		nulltex[0][x][1]=
@@ -74,7 +74,29 @@ image_t * R_CreateNullTexture (void)
 		nulltex[x][NULLTEX_SIZE-1][2]=
 		nulltex[x][NULLTEX_SIZE-1][3]= 255;
 	}
+
+	if (r_debug_media->integer)
+		R_WriteTGA (&nulltex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/null_texture.tga", false);
+
 	return R_LoadPic ("*notexture", (byte *)nulltex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
+}
+
+
+/*
+==================
+R_CreateWhiteTexture
+==================
+*/
+image_t *R_CreateWhiteTexture (void)
+{
+	byte	whitetex[NULLTEX_SIZE][NULLTEX_SIZE][4];
+	
+	memset (whitetex, 255, sizeof(whitetex));
+
+	if (r_debug_media->integer)
+		R_WriteTGA (&whitetex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/white_texture.tga", false);
+
+	return R_LoadPic ("*whitetexture", (byte *)whitetex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 }
 
 
@@ -91,8 +113,8 @@ image_t *R_CreateDistTextureARB (void)
 	image_t	*image;
 
 	srand(Sys_TickCount());
-	for (x=0; x<DIST_SIZE; x++)
-		for (y=0; y<DIST_SIZE; y++) {
+	for (x = 0; x < DIST_SIZE; x++)
+		for (y = 0; y < DIST_SIZE; y++) {
 			dist[x][y][0] = rand()%255;
 			dist[x][y][1] = rand()%255;
 			dist[x][y][2] = rand()%48;
@@ -108,6 +130,9 @@ image_t *R_CreateDistTextureARB (void)
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	qglHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_NICEST);
 	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+
+	if (r_debug_media->integer)
+		R_WriteTGA (&dist[0][0][0], DIST_SIZE, DIST_SIZE, 4, "debug_tex/dist_texture_arb.tga", false);
 
 	return image;
 }
@@ -170,8 +195,8 @@ image_t *R_CreateCelShadeTexture (void)
 	int		x, y;
 	image_t	*image;
 
-	for (x=0; x<CEL_SHADE_SIZE; x++)
-		for (y=0; y<CEL_SHADE_SIZE; y++) {
+	for (x = 0; x < CEL_SHADE_SIZE; x++)
+		for (y = 0; y < CEL_SHADE_SIZE; y++) {
 			cel_tex[x][y][0] = (byte)cel_tex_colors[y][0];
 			cel_tex[x][y][1] = (byte)cel_tex_colors[y][0];
 			cel_tex[x][y][2] = (byte)cel_tex_colors[y][0];
@@ -184,8 +209,28 @@ image_t *R_CreateCelShadeTexture (void)
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+	if (r_debug_media->integer)
+		R_WriteTGA (&cel_tex[0][0][0], CEL_SHADE_SIZE, CEL_SHADE_SIZE, 4, "debug_tex/celshade_texture.tga", false);
+
 	return image;
 }
+
+
+#ifdef ROQ_SUPPORT
+/*
+==================
+R_CreateRawTexture
+==================
+*/
+#define RAW_TEX_SIZE 256
+image_t *R_CreateRawTexture (void)
+{
+	byte	raw_tex[RAW_TEX_SIZE * RAW_TEX_SIZE * 4]; // Raw texture
+
+	memset (raw_tex, 255, sizeof(raw_tex));
+	return R_LoadPic ("*rawtexture", raw_tex, RAW_TEX_SIZE, RAW_TEX_SIZE, it_pic, 32);
+}
+#endif // ROQ_SUPPORT
 
 
 /*
@@ -309,30 +354,20 @@ R_InitMedia
 void R_InitMedia (void)
 {
 	int		i;
-	byte	whitetex[NULLTEX_SIZE][NULLTEX_SIZE][4];
-#ifdef ROQ_SUPPORT
-	byte	data2D[256*256*4]; // Raw texture
-#endif // ROQ_SUPPORT
 
-	glMedia.noTexture = R_CreateNullTexture (); // Generate null texture
-
-	memset (whitetex, 255, sizeof(whitetex));
-	glMedia.whiteTexture = R_LoadPic ("*whitetexture", (byte *)whitetex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
-
-	glMedia.distTextureARB = R_CreateDistTextureARB ();			// Generate warp distortion texture
+	glMedia.noTexture = R_CreateNullTexture ();				// Generate null texture
+	glMedia.whiteTexture = R_CreateWhiteTexture ();			// Generate white texture
+	glMedia.distTextureARB = R_CreateDistTextureARB ();		// Generate warp distortion texture
+	glMedia.celShadeTexture = R_CreateCelShadeTexture ();	// Generate cel shading texture
 
 #ifdef ROQ_SUPPORT
-	memset(data2D, 255, 256*256*4);
-	glMedia.rawTexture = R_LoadPic ("*rawtexture", data2D, 256, 256, it_pic, 32);
+	glMedia.rawTexture = R_CreateRawTexture ();				// Generate raw texture for cinematics
 #endif // ROQ_SUPPORT
 	
 	glMedia.envMapTexture = R_LoadPartImg ("gfx/effects/envmap.tga", it_wall);
 	glMedia.sphereMapTexture = R_LoadPartImg ("gfx/effects/spheremap.tga", it_skin);
 	glMedia.shellTexture = R_LoadPartImg ("gfx/effects/shell_generic.tga", it_skin);
 	glMedia.flareTexture = R_LoadPartImg ("gfx/effects/flare.tga", it_skin);
-	
-	glMedia.celShadeTexture = R_CreateCelShadeTexture ();
-
 	glMedia.causticWaterTexture = R_LoadPartImg ("gfx/water/caustic_water.tga", it_wall);
 	glMedia.causticSlimeTexture = R_LoadPartImg ("gfx/water/caustic_slime.tga", it_wall);
 	glMedia.causticLavaTexture = R_LoadPartImg ("gfx/water/caustic_lava.tga", it_wall);
@@ -344,7 +379,7 @@ void R_InitMedia (void)
 		glMedia.particleTextures[i] = NULL;
 
 	for (i=0; i<NUM_DISPLAY_LISTS; i++) 
-		glMedia.displayLists[i] = 0;	// was NULL
+		glMedia.displayLists[i] = 0;
 
 	R_CreateDisplayLists ();
 }
@@ -362,12 +397,12 @@ void R_ShutdownMedia (void)
 	glMedia.noTexture = NULL;
 	glMedia.whiteTexture = NULL;
 	glMedia.distTextureARB = NULL;
+	glMedia.celShadeTexture = NULL;
 	glMedia.rawTexture = NULL;
 	glMedia.envMapTexture = NULL;
 	glMedia.sphereMapTexture = NULL;
 	glMedia.shellTexture = NULL;
 	glMedia.flareTexture = NULL;
-	glMedia.celShadeTexture = NULL;
 	glMedia.causticWaterTexture = NULL;
 	glMedia.causticSlimeTexture = NULL;
 	glMedia.causticLavaTexture = NULL;

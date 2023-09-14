@@ -149,6 +149,9 @@ cvar_t	*r_glass_envmaps; // Psychospaz's envmapping
 //cvar_t	*r_trans_surf_sorting; // trans bmodel sorting
 cvar_t	*r_shelltype; // entity shells: 0 = solid, 1 = warp, 2 = spheremap
 cvar_t	*r_ext_texture_compression; // Heffo - ARB Texture Compression
+cvar_t	*r_lightcutoff;	//** DMP - allow dynamic light cutoff to be user-settable
+
+cvar_t	*r_debug_media;		// enables output of generated textures as .tga on startup
 cvar_t	*r_screenshot_format;		// determines screenshot format
 //cvar_t	*r_screenshot_jpeg;			// Heffo - JPEG Screenshots
 cvar_t	*r_screenshot_jpeg_quality;	// Heffo - JPEG Screenshots
@@ -156,7 +159,6 @@ cvar_t	*r_screenshot_gamma_correct;	// gamma correction for screenshots
 cvar_t	*r_screenshot_use_mapname;	// screenshot filename contains mapname
 
 //cvar_t	*r_motionblur;				// motionblur
-cvar_t	*r_lightcutoff;	//** DMP - allow dynamic light cutoff to be user-settable
 
 cvar_t	*r_log;
 cvar_t	*r_bitdepth;
@@ -1250,6 +1252,12 @@ void R_Register (void)
 	r_ext_texture_compression = Cvar_Get( "r_ext_texture_compression", "0", CVAR_ARCHIVE ); // Heffo - ARB Texture Compression
 	Cvar_SetDescription ("r_ext_texture_compression", "Enables ARB texure compression.");
 
+	r_lightcutoff = Cvar_Get( "r_lightcutoff", "0", CVAR_ARCHIVE );	//** DMP dynamic light cutoffnow variable
+	Cvar_SetDescription ("r_lightcutoff", "Sets cutoff distance for dynamic lights.  Lower = smoother.  Higher = faster.");
+
+	r_debug_media = Cvar_Get( "r_debug_media", "0", 0 );		// enables output of generated textures as .tga on startup
+	Cvar_SetDescription ("r_debug_media", "Enables output of generated textures as .tga on renderer startup.");
+
 	r_screenshot_format = Cvar_Get( "r_screenshot_format", "jpg", CVAR_ARCHIVE );			// determines screenshot format
 	Cvar_SetDescription ("r_screenshot_format", "Sets the image format for screenshots.  Accepted values are tga, jpg, and png.");
 //	r_screenshot_jpeg = Cvar_Get( "r_screenshot_jpeg", "1", CVAR_ARCHIVE );					// Heffo - JPEG Screenshots
@@ -1305,8 +1313,6 @@ void R_Register (void)
 	Cvar_SetDescription ("r_subdivide_size", "Sets subdivision size of warp surfaces.  Requires vid_restart for changes to take effect.");
 
 //	r_saturation = Cvar_Get( "r_saturation", "1.0", CVAR_ARCHIVE );	//** DMP saturation setting (.89 good for nvidia)
-	r_lightcutoff = Cvar_Get( "r_lightcutoff", "0", CVAR_ARCHIVE );	//** DMP dynamic light cutoffnow variable
-	Cvar_SetDescription ("r_lightcutoff", "Sets cutoff distance for dynamic lights.  Lower = smoother.  Higher = faster.");
 
 	Cmd_AddCommand ("imagelist", R_ImageList_f);
 	Cmd_AddCommand ("screenshot", R_ScreenShot_f);
