@@ -381,6 +381,9 @@
     <ClCompile Include="..\..\client\cl_qcurl.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\renderer\r_utils.c">
+      <Filter>Source Files\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\anorms.h">

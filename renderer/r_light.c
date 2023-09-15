@@ -705,7 +705,7 @@ void R_ShadowLight (vec3_t pos, vec3_t lightAdd)
 	if (shadowdist<=0) return;
 
 	// now rotate according to model yaw
-	vectoangles (lightAdd, angle);
+	R_VecToAngles (lightAdd, angle);
 	angle[YAW] = -(currententity->angles[YAW]-angle[YAW]);
 	AngleVectors (angle, dist, NULL, NULL);
 	VectorScale (dist, shadowdist, lightAdd); 
@@ -727,7 +727,7 @@ void R_ShadowLight (vec3_t pos, vec3_t lightAdd)
 	}
 	else // shadow from dynamic lights
 	{
-		vectoangles (lightAdd, angle);
+		R_VecToAngles (lightAdd, angle);
 		angle[YAW] -= currententity->angles[YAW];
 		AngleVectors (angle, dist, NULL, NULL);
 	}

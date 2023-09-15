@@ -275,6 +275,7 @@
     <ClCompile Include="..\..\renderer\r_sprite.c" />
     <ClCompile Include="..\..\renderer\r_surface.c" />
     <ClCompile Include="..\..\renderer\r_upscale.c" />
+    <ClCompile Include="..\..\renderer\r_utils.c" />
     <ClCompile Include="..\..\renderer\r_vlights.c" />
     <ClCompile Include="..\..\renderer\r_warp.c" />
     <ClCompile Include="..\..\win32\win_glimp.c" />

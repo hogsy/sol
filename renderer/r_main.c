@@ -237,59 +237,6 @@ cvar_t	*r_subdivide_size;	// chop size for warp surfaces
 //=======================================================================
 
 /*
-=================
-R_ClampValue
-=================
-*/
-float R_ClampValue (float in, float min, float max)
-{
-	if (in < min)	return min;
-	if (in > max)	return max;
-	return in;
-}
-
-
-/*
-=================
-R_SmoothStep
-=================
-*/
-float R_SmoothStep (float in, float side0, float side1)
-{
-	float	tmp, diff0, diff1;
-
-	diff0 = in - side0;
-	diff1 = side1 - side0;
-	if (diff1 != 0.0f)	// prevent divide by 0
-		tmp = R_ClampValue ((diff0 / diff1), 0.0f, 1.0f);
-	else
-		tmp = 1.0f;
-	return tmp * tmp * (3.0f - 2.0f * tmp);
-}
-
-
-/*
-=================
-R_CullBox
-
-Returns true if the box is completely outside the frustom
-=================
-*/
-qboolean R_CullBox (vec3_t mins, vec3_t maxs)
-{
-	int		i;
-
-	if (r_nocull->integer)
-		return false;
-
-	for (i=0 ; i<4 ; i++)
-		if ( BOX_ON_PLANE_SIDE(mins, maxs, &frustum[i]) == 2)
-			return true;
-	return false;
-}
-
-
-/*
 ============
 R_PolyBlend
 ============

@@ -441,6 +441,10 @@ SOURCE=..\..\renderer\r_upscale.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\renderer\r_utils.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\renderer\r_vlights.c
 # End Source File
 # Begin Source File

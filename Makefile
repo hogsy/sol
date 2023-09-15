@@ -302,6 +302,7 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/ref_gl/r_sprite.o \
 	$(BUILDDIR)/ref_gl/r_surface.o \
 	$(BUILDDIR)/ref_gl/r_upscale.o \
+	$(BUILDDIR)/ref_gl/r_utils.o \
 	$(BUILDDIR)/ref_gl/r_vlights.o \
 	$(BUILDDIR)/ref_gl/r_warp.o \
 	$(BUILDDIR)/ref_gl/sdl_gl.o \
@@ -667,6 +668,9 @@ $(BUILDDIR)/ref_gl/r_surface.o :       	$(REF_GL_DIR)/r_surface.c
 	$(DO_GL_SHLIB_CC)
 
 $(BUILDDIR)/ref_gl/r_upscale.o :       	$(REF_GL_DIR)/r_upscale.c
+	$(DO_GL_SHLIB_CC)
+
+$(BUILDDIR)/ref_gl/r_utils.o :       	$(REF_GL_DIR)/r_utils.c
 	$(DO_GL_SHLIB_CC)
 
 $(BUILDDIR)/ref_gl/r_vlights.o :       	$(REF_GL_DIR)/r_vlights.c

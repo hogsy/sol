@@ -664,6 +664,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\renderer\r_utils.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\renderer\r_vlights.c"
 					>
 				</File>

@@ -533,17 +533,17 @@ extern	int		registration_sequence;
 
 
 //
-// cl_utils.c
+// r_utils.c
 //
-void vectoangles (vec3_t value1, vec3_t angles);
+float R_ClampValue (float in, float min, float max);
+float R_SmoothStep (float in, float side0, float side1);
+qboolean R_CullBox (vec3_t mins, vec3_t maxs);
+void R_VecToAngles (vec3_t value1, vec3_t angles);
 
 
 //
 // r_main.c
 //
-float R_ClampValue (float in, float min, float max);
-float R_SmoothStep (float in, float side0, float side1);
-qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 qboolean R_Init (void *hinstance, void *hWnd, char *reason);
 void R_ClearState (void);
 void R_Shutdown (void);
