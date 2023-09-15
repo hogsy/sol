@@ -48,37 +48,37 @@ R_CreateNullTexture
 #define NULLTEX_SIZE 16
 image_t * R_CreateNullTexture (void)
 {
-	byte	nulltex[NULLTEX_SIZE][NULLTEX_SIZE][4];
+	byte	null_tex[NULLTEX_SIZE][NULLTEX_SIZE][4];
 	int		x;
 
-	memset (nulltex, 32, sizeof(nulltex));
+	memset (null_tex, 32, sizeof(null_tex));
 	for (x = 0; x < NULLTEX_SIZE; x++)
 	{
-		nulltex[0][x][0]=
-		nulltex[0][x][1]=
-		nulltex[0][x][2]=
-		nulltex[0][x][3]= 255;
+		null_tex[0][x][0]=
+		null_tex[0][x][1]=
+		null_tex[0][x][2]=
+		null_tex[0][x][3]= 255;
 
-		nulltex[x][0][0]=
-		nulltex[x][0][1]=
-		nulltex[x][0][2]=
-		nulltex[x][0][3]= 255;
+		null_tex[x][0][0]=
+		null_tex[x][0][1]=
+		null_tex[x][0][2]=
+		null_tex[x][0][3]= 255;
 
-		nulltex[NULLTEX_SIZE-1][x][0]=
-		nulltex[NULLTEX_SIZE-1][x][1]=
-		nulltex[NULLTEX_SIZE-1][x][2]=
-		nulltex[NULLTEX_SIZE-1][x][3]= 255;
+		null_tex[NULLTEX_SIZE-1][x][0]=
+		null_tex[NULLTEX_SIZE-1][x][1]=
+		null_tex[NULLTEX_SIZE-1][x][2]=
+		null_tex[NULLTEX_SIZE-1][x][3]= 255;
 
-		nulltex[x][NULLTEX_SIZE-1][0]=
-		nulltex[x][NULLTEX_SIZE-1][1]=
-		nulltex[x][NULLTEX_SIZE-1][2]=
-		nulltex[x][NULLTEX_SIZE-1][3]= 255;
+		null_tex[x][NULLTEX_SIZE-1][0]=
+		null_tex[x][NULLTEX_SIZE-1][1]=
+		null_tex[x][NULLTEX_SIZE-1][2]=
+		null_tex[x][NULLTEX_SIZE-1][3]= 255;
 	}
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&nulltex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/null_texture.tga", false);
+		R_WriteTGA (&null_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/null_texture.tga", false);
 
-	return R_LoadPic ("*notexture", (byte *)nulltex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
+	return R_LoadPic ("*notexture", (byte *)null_tex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 }
 
 
@@ -89,14 +89,14 @@ R_CreateWhiteTexture
 */
 image_t *R_CreateWhiteTexture (void)
 {
-	byte	whitetex[NULLTEX_SIZE][NULLTEX_SIZE][4];
+	byte	white_tex[NULLTEX_SIZE][NULLTEX_SIZE][4];
 	
-	memset (whitetex, 255, sizeof(whitetex));
+	memset (white_tex, 255, sizeof(white_tex));
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&whitetex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/white_texture.tga", false);
+		R_WriteTGA (&white_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/white_texture.tga", false);
 
-	return R_LoadPic ("*whitetexture", (byte *)whitetex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
+	return R_LoadPic ("*whitetexture", (byte *)white_tex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 }
 
 
@@ -108,19 +108,19 @@ R_CreateDistTextureARB
 #define DIST_SIZE 16
 image_t *R_CreateDistTextureARB (void)
 {
-	byte	dist[DIST_SIZE][DIST_SIZE][4];
+	byte	dist_tex[DIST_SIZE][DIST_SIZE][4];
 	int		x, y;
 	image_t	*image;
 
 	srand(Sys_TickCount());
 	for (x = 0; x < DIST_SIZE; x++)
 		for (y = 0; y < DIST_SIZE; y++) {
-			dist[x][y][0] = rand()%255;
-			dist[x][y][1] = rand()%255;
-			dist[x][y][2] = rand()%48;
-			dist[x][y][3] = rand()%48;
+			dist_tex[x][y][0] = rand()%255;
+			dist_tex[x][y][1] = rand()%255;
+			dist_tex[x][y][2] = rand()%48;
+			dist_tex[x][y][3] = rand()%48;
 		}
-	image = R_LoadPic ("*disttexture", (byte *)dist, DIST_SIZE, DIST_SIZE, it_wall, 32);
+	image = R_LoadPic ("*disttexture", (byte *)dist_tex, DIST_SIZE, DIST_SIZE, it_wall, 32);
 
 	qglBindTexture(GL_TEXTURE_2D, image->texnum);
 
@@ -132,7 +132,7 @@ image_t *R_CreateDistTextureARB (void)
 	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&dist[0][0][0], DIST_SIZE, DIST_SIZE, 4, "debug_tex/dist_texture_arb.tga", false);
+		R_WriteTGA (&dist_tex[0][0][0], DIST_SIZE, DIST_SIZE, 4, "debug_tex/dist_texture_arb.tga", false);
 
 	return image;
 }
@@ -228,7 +228,7 @@ image_t *R_CreateRawTexture (void)
 	byte	raw_tex[RAW_TEX_SIZE * RAW_TEX_SIZE * 4]; // Raw texture
 
 	memset (raw_tex, 255, sizeof(raw_tex));
-	return R_LoadPic ("*rawtexture", raw_tex, RAW_TEX_SIZE, RAW_TEX_SIZE, it_pic, 32);
+	return R_LoadPic ("*rawtexture", (byte *)raw_tex, RAW_TEX_SIZE, RAW_TEX_SIZE, it_pic, 32);
 }
 #endif // ROQ_SUPPORT
 
