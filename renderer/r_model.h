@@ -307,6 +307,14 @@ typedef struct model_s
 
 //============================================================================
 
+void	R_BeginRegistration (char *map);
+void	R_EndRegistration (void);
+struct model_s *R_RegisterModel (char *name);
+struct image_s *R_RegisterSkin (char *name);
+struct image_s *R_DrawFindPic (char *name);
+qboolean R_RegistrationIsActive (void);
+qboolean R_ModelIsValid (struct model_s *model);
+
 void	Mod_Init (void);
 void	Mod_ClearAll (void);
 void	Mod_SetTCModParmsDefaults (tcmodParms_t *tcmod);

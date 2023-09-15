@@ -417,6 +417,7 @@ struct sortedelement_s
 	sortedelement_t *left, *right;
 };
 
+
 //
 // r_entity.c
 //
@@ -440,6 +441,7 @@ void R_DrawAllEntities (qboolean addViewWeaps);
 void R_DrawAllEntityShadows (void);
 void R_DrawSolidEntities ();
 
+
 //
 // r_particle.c
 //
@@ -452,6 +454,7 @@ void R_DrawParticles (sortedelement_t *list);
 void R_DrawAllParticles (void);
 void R_DrawDecals (void);
 void R_DrawAllDecals (void);
+
 
 //
 // r_light.c
@@ -534,7 +537,6 @@ extern	int		registration_sequence;
 //
 void vectoangles (vec3_t value1, vec3_t angles);
 
-void V_AddBlend (float r, float g, float b, float a, float *v_blend);
 
 //
 // r_main.c
@@ -550,6 +552,7 @@ void R_BeginFrame (float camera_separation);
 void R_SwapBuffers (int);
 void R_SetPalette (const unsigned char *palette);
 
+
 //
 // r_misc.c
 //
@@ -563,17 +566,20 @@ void R_ScreenShot_TGA_f (void);
 void R_ScreenShot_JPG_f (void);
 void R_ScreenShot_PNG_f (void);
 
+
 //
 // r_alias_md2.c
 //
 void R_DrawAliasMD2Model (entity_t *e);
 void R_DrawAliasMD2ModelShadow (entity_t *e);
 
+
 //
 // r_alias.c
 //
 void R_DrawAliasModel (entity_t *e);
 void R_DrawAliasModelShadow (entity_t *e);
+
 
 //
 // r_alias_misc.c
@@ -608,6 +614,7 @@ void	R_SetBlendModeOff (void);
 void	R_SetShadeLight (void);
 void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, float blue, float alpha);
 
+
 //
 // r_sprite.c
 //
@@ -615,10 +622,12 @@ void R_DrawSpriteModel (entity_t *e);
 void R_OccludeTestFlare (entity_t *e);
 void R_DrawFlare (entity_t *e);
 
+
 //
 // r_beam.c
 //
 void R_DrawBeam( entity_t *e );
+
 
 //
 // r_backend.c
@@ -732,8 +741,6 @@ char	*va(char *format, ...);
 #endif
 
 
-//void COM_StripExtension (char *in, char *out, size_t outSize);
-
 //
 // r_draw.c
 //
@@ -741,15 +748,19 @@ void	R_RefreshFont (fontslot_t font);
 void	R_RefreshAllFonts (void);
 void	R_DrawInitLocal (void);
 void	R_DrawGetPicSize (int *w, int *h, char *name);
-void	R_DrawPic (drawStruct_t *ds);
+float	R_CharMapScale (void);
 void	R_InitChars (void);
 void	R_FlushChars (fontslot_t font);
 void	R_DrawChar (float x, float y, int num, fontslot_t font, float scale, 
 			int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	R_DrawString (float x, float y, const char *string, fontslot_t font, float scale, 
 				int red, int green, int blue, int alpha, qboolean italic, qboolean shadow);
+image_t	*R_DrawFindPic (char *name);
+void	R_DrawGetPicSize (int *w, int *h, char *pic);
+void	R_DrawPic (drawStruct_t *ds);
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
-float	R_CharMapScale (void);
+void	R_DrawFadeScreen (void);
+void	R_DrawCameraEffect (void);
 
 #ifdef ROQ_SUPPORT
 void	R_DrawStretchRaw (int x, int y, int w, int h, const byte *raw, int rawWidth, int rawHeight);
@@ -782,6 +793,7 @@ void R_InitImages (void);
 void R_ShutdownImages (void);
 void R_FreeUnusedImages (void);
 
+
 //
 // r_upscale.c
 //
@@ -794,6 +806,7 @@ void R_Upscale_Init (void);
 */
 void GL_DrawParticles( int num_particles );
 
+
 //
 // r_fog.c
 //
@@ -805,6 +818,13 @@ void R_ResumeFog (void);
 void R_InitFogVars (void);
 void R_SetFogVars (qboolean enable, int model, int density,
 				   int start, int end, int red, int green, int blue);
+
+
+//
+// r_fragment.c
+//
+int R_MarkFragments (const vec3_t origin, const vec3_t axis[3], float radius, int maxPoints, vec3_t *points, int maxFragments, markFragment_t *fragments);
+
 
 /*
 ** GL config stuff

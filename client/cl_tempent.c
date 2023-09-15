@@ -1344,8 +1344,8 @@ void CL_ParseTEnt (void)
 		{
 			ex = CL_AllocExplosion ();
 			VectorMA (pos, 16.0*(i+1), dir, ex->ent.origin);
-			vectoangles2(dir, ex->ent.angles);
-			//VectorCopy (dir, ex->ent.angles);
+			vectoangles2 (dir, ex->ent.angles);
+		//	VectorCopy (dir, ex->ent.angles);
 			ex->type = ex_poly2;
 			ex->ent.flags |= RF_FULLBRIGHT|RF_TRANSLUCENT|RF_NOSHADOW;
 			ex->start = cl.frame.servertime - 100;

@@ -581,7 +581,57 @@ void R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int a
 	GL_Disable (GL_BLEND);
 	GL_TexEnv (GL_REPLACE);
 	GL_Enable (GL_ALPHA_TEST);
-//	GL_EnableTexture (0);
+}
+
+//=============================================================================
+
+/*
+================
+R_DrawFadeScreen
+================
+*/
+void R_DrawFadeScreen (void)
+{
+	int		x, y, w, h, i;
+	vec2_t	texCoord[4], verts[4];
+
+	x = y = 0; w = vid.width; h = vid.height;
+	GL_Disable (GL_ALPHA_TEST);
+	GL_TexEnv (GL_MODULATE);
+	GL_Enable (GL_BLEND);
+	GL_DepthMask   (false);
+
+	GL_Bind (glMedia.whiteTexture->texnum);
+
+	Vector2Set(texCoord[0], 0, 0);
+	Vector2Set(texCoord[1], 1, 0);
+	Vector2Set(texCoord[2], 1, 1);
+	Vector2Set(texCoord[3], 0, 1);
+
+	Vector2Set(verts[0], x, y);
+	Vector2Set(verts[1], x+w, y);
+	Vector2Set(verts[2], x+w, y+h);
+	Vector2Set(verts[3], x, y+h);
+
+	rb_vertex = rb_index = 0;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+3;
+	for (i=0; i<4; i++) {
+		VA_SetElem2v(texCoordArray[0][rb_vertex], texCoord[i]);
+		VA_SetElem3(vertexArray[rb_vertex], verts[i][0], verts[i][1], 0);
+		VA_SetElem4(colorArray[rb_vertex], 0.0f, 0.0f, 0.0f, 0.7f);
+		rb_vertex++;
+	}
+	RB_RenderMeshGeneric (false);
+
+	GL_DepthMask (true);
+	GL_Disable (GL_BLEND);
+	GL_TexEnv (GL_REPLACE);
+	GL_Enable (GL_ALPHA_TEST);
 }
 
 //=============================================================================

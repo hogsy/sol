@@ -753,26 +753,25 @@ void	R_EndRegistration (void);
 void	R_RenderFrame (refdef_t *fd);
 
 void	R_SetParticleImg (int num, char *name); // Knightmare added
+void	R_GrabScreen (void); // screenshots for savegames
+void	R_ScaledScreenshot (char *name); //  screenshots for savegames
 
+float	R_CharMapScale (void);
 void	R_DrawChar (float x, float y, int c, fontslot_t font, float scale,
 					int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	R_DrawString (float x, float y, const char *string, fontslot_t font, float scale, 
 					int red, int green, int blue, int alpha, qboolean italic, qboolean shadow);
 
+float	R_CharMapScale (void); // Knightmare added char scaling from Quake2Max
 void	R_DrawGetPicSize (int *w, int *h, char *name);	// will return 0 0 if not found
-
 void	R_DrawPic (drawStruct_t *ds);
 
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
-
+void	R_DrawFadeScreen (void);
 void	R_DrawCameraEffect (void);
-
-void	R_GrabScreen (void); // screenshots for savegames
-void	R_ScaledScreenshot (char *name); //  screenshots for savegames
 
 int		R_MarkFragments (const vec3_t origin, const vec3_t axis[3], float radius, int maxPoints, vec3_t *points, int maxFragments, markFragment_t *fragments);
 
-float	R_CharMapScale (void); // Knightmare added char scaling from Quake2Max
 
 // Draw images for cinematic rendering (which can have a different palette). Note that calls
 #ifdef ROQ_SUPPORT
