@@ -774,7 +774,7 @@ qboolean face_wall (edict_t *monster)
 	trace = gi.trace(monster->s.origin, vec3_origin, vec3_origin, point, monster, MASK_MONSTERSOLID);
 	if (trace.fraction < 1 && !trace.startsolid && !trace.allsolid)
 	{
-		vectoangles2(trace.plane.normal, angles);
+		vectoangles2 (trace.plane.normal, angles);
 		monster->ideal_yaw = angles[YAW] + 180;
 		if (monster->ideal_yaw > 360) monster->ideal_yaw -= 360;
 		M_ChangeYaw(monster);

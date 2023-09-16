@@ -1239,7 +1239,6 @@ void	stuffcmd(edict_t *ent,char *command);
 float	*tv (float x, float y, float z);
 char	*vtos (vec3_t v);
 float vectoyaw (vec3_t vec);
-void vectoangles (vec3_t vec, vec3_t angles);
 qboolean point_infront (edict_t *self, vec3_t point);
 void AnglesNormalize(vec3_t vec);
 float SnapToEights(float x);
@@ -1268,7 +1267,6 @@ qboolean UseRegularGoodGuyFlag (edict_t *monster); // Knightmare added
 
 void	G_ProjectSource2 (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result);
 float	vectoyaw2 (vec3_t vec);
-void	vectoangles2 (vec3_t vec, vec3_t angles);
 edict_t *findradius2 (edict_t *from, vec3_t org, float rad);
 
 //

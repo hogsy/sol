@@ -446,7 +446,7 @@ void spline_calc (edict_t *train, vec3_t p1, vec3_t p2, vec3_t a1, vec3_t a2, fl
 	v[0] = (n2 * p1[0] - (n2 - mn_2) * c1[0] - (mn_2 - m2) * c2[0] - m2 * p2[0]) / -s;
 	v[1] = (n2 * p1[1] - (n2 - mn_2) * c1[1] - (mn_2 - m2) * c2[1] - m2 * p2[1]) / -s;
 	v[2] = (n2 * p1[2] - (n2 - mn_2) * c1[2] - (mn_2 - m2) * c2[2] - m2 * p2[2]) / -s;
-	vectoangles2(v, a);
+	vectoangles2 (v, a);
 	if (train->roll_speed > 0)	// Knightmare added
 		a[ROLL] = a1[ROLL] + m*(a2[ROLL] - a1[ROLL]);
 }
@@ -873,7 +873,7 @@ void Move_Begin (edict_t *ent)
 					VectorAdd(ent->s.origin,ent->mins,v);
 					VectorSubtract(ent->target_ent->s.origin,v,v);
 				}
-				vectoangles2(v,angles);
+				vectoangles2 (v, angles);
 				ent->ideal_yaw = angles[YAW];
 				ent->ideal_pitch = angles[PITCH];
 				if (ent->ideal_pitch < 0) ent->ideal_pitch += 360;
@@ -3829,13 +3829,13 @@ again:
 			VectorAdd(self->s.origin,self->mins,v);
 			VectorSubtract(adjusted_pathpoint, v, v); // was ent->s.origin
 		}
-		vectoangles2(v,angles);
+		vectoangles2 (v, angles);
 		self->ideal_yaw = angles[YAW];
 		self->ideal_pitch = angles[PITCH];
 		if (self->ideal_pitch < 0) self->ideal_pitch += 360;
 		self->ideal_roll = ent->roll;
 
-		VectorClear(self->movedir);
+		VectorClear (self->movedir);
 		self->movedir[1] = 1.0;
 
 	}

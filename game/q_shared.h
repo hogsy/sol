@@ -359,6 +359,10 @@ void VectorScale (vec3_t in, vec_t scale, vec3_t out);
 int Q_log2(int val);
 float Q_rsqrt (float in);	// From Q2E
 
+// Knightmare- moved these from g_utils.c so they can be used by the client
+void vectoangles (vec3_t vec, vec3_t angles);
+void vectoangles2 (vec3_t vec, vec3_t angles);
+
 // From Q2E
 void VectorRotate (const vec3_t v, const vec3_t matrix[3], vec3_t out);
 void AnglesToAxis (const vec3_t angles, vec3_t axis[3]);

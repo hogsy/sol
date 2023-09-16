@@ -628,7 +628,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 				if (best_dist == 0.)
 					return;
 				thing = SpawnThing();
-				vectoangles(best_dir,thing->s.angles);
+				vectoangles (best_dir, thing->s.angles);
 			}
 			if ( (!Q_stricmp(attacker->classname,"func_door"))    ||
 				(!Q_stricmp(attacker->classname,"func_pushable"))   )
@@ -645,7 +645,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 			else
 				thing->touch_debounce_time = level.time + max(5.0,dist/50.);
 			thing->target_ent = targ;
-			ED_CallSpawn(thing);
+			ED_CallSpawn (thing);
 			targ->movetarget = targ->goalentity = thing;
 			targ->monsterinfo.aiflags &= ~AI_SOUND_TARGET;
 			targ->monsterinfo.aiflags |= AI_CHASE_THING;

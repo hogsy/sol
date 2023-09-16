@@ -538,7 +538,6 @@ extern	int		registration_sequence;
 float R_ClampValue (float in, float min, float max);
 float R_SmoothStep (float in, float side0, float side1);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
-void R_VecToAngles (vec3_t value1, vec3_t angles);
 
 
 //

@@ -1119,8 +1119,6 @@ int stringLengthExtra (const char *string);
 char *unformattedString (const char *string);
 int listSize (char *list[][2]);
 qboolean isNumeric (char ch);
-void vectoangles (vec3_t value1, vec3_t angles);
-void vectoangles2 (vec3_t value1, vec3_t angles);
 qboolean FartherPoint (vec3_t pt1, vec3_t pt2);
 qboolean LegacyProtocol (void);
 qboolean R1Q2Protocol (void);
