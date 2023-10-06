@@ -434,9 +434,9 @@ void FootStep (edict_t *ent)
 		case SURF_WOOD:
 			PlayFootstep(ent,FOOTSTEP_WOOD1 + r);
 			break;
-		//case SURF_STANDARD:
-		//	PlayFootstep(ent,-1);
-		//	break;
+	//	case SURF_STANDARD:
+	//		PlayFootstep(ent,-1);
+	//		break;
 		default:
 			if (footstep_sounds->value && num_texsurfs)
 			{
@@ -666,7 +666,7 @@ void FootStep (edict_t *ent)
 	}
 }
 
-#else // FMOD footsteps
+#else // FMOD_FOOTSTEPS
 
 void PlayFootstep (edict_t *ent, footstep_t index)
 {
@@ -678,7 +678,7 @@ void FootStep (edict_t *ent)
 	// Dummy function
 }
 
-#endif // FMOD footsteps
+#endif // FMOD_FOOTSTEPS
 
 /* All other footstep-related code is in p_view.c. Short version: replace all 
    "ent->s.event = EV_FOOTSTEP" with a call to Footstep and check out G_SetClientEvent,

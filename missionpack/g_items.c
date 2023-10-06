@@ -787,7 +787,7 @@ void Use_IR (edict_t *ent, gitem_t *item)
 
 void Use_Double (edict_t *ent, gitem_t *item)
 {
-		int		timeout;
+	int		timeout;
 
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
@@ -802,9 +802,9 @@ void Use_Double (edict_t *ent, gitem_t *item)
 	}
 
 	if (ent->client->double_framenum > level.framenum)
-		ent->client->double_framenum += (sk_double_time->value * 10);
+		ent->client->double_framenum += timeout;
 	else
-		ent->client->double_framenum = level.framenum + (sk_double_time->value * 10);
+		ent->client->double_framenum = level.framenum + timeout;
 
 	gi.sound(ent, CHAN_ITEM, gi.soundindex("misc/ddamage1.wav"), 1, ATTN_NORM, 0);
 }
