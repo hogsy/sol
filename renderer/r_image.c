@@ -53,10 +53,10 @@ static unsigned char gammatable[256];
 
 cvar_t		*r_intensity;
 
-unsigned	d_8to24table[256];
+unsigned int	d_8to24table[256];
 
 qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type);
-qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type);
+qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t type);
 
 int		gl_filter_min;
 int		gl_filter_max;
@@ -1585,8 +1585,6 @@ void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 
 //=======================================================
 
-
-
 /*
 ================
 GL_ResampleTextureLerpLine
@@ -1693,13 +1691,13 @@ void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,
 	free (row2); 
 } 
 /*
-void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
+void GL_ResampleTexture (unsigned int *in, int inwidth, int inheight, unsigned int *out, int outwidth, int outheight)
 {
-	int		i, j;
-	unsigned	*inrow, *inrow2;
-	unsigned	frac, fracstep;
-	unsigned	p1[1024], p2[1024];
-	byte		*pix1, *pix2, *pix3, *pix4;
+	int				i, j;
+	unsigned int	*inrow, *inrow2;
+	unsigned int	frac, fracstep;
+	unsigned int	p1[1024], p2[1024];
+	byte			*pix1, *pix2, *pix3, *pix4;
 
 	fracstep = inwidth*0x10000/outwidth;
 
@@ -1757,14 +1755,14 @@ void GL_UpscaleTexture (void *indata, int inwidth, int inheight, void *outdata, 
 	}
 	else // if (scaleFactor >= 3)	// just block-copy each pixel
 	{
-		int			sizeMult = (1 << scaleFactor);
-		int			x, y, i, j;
-		unsigned	*inL, *inP, *outL, *outP;
+		int				sizeMult = (1 << scaleFactor);
+		int				x, y, i, j;
+		unsigned int	*inL, *inP, *outL, *outP;
 
 		for (y = 0; y < inheight; y++)
 		{
-			inL = (unsigned *)indata + (y * inwidth);
-			outL = (unsigned *)outdata + (y * inwidth * sizeMult * sizeMult);
+			inL = (unsigned int *)indata + (y * inwidth);
+			outL = (unsigned int *)outdata + (y * inwidth * sizeMult * sizeMult);
 
 			for (x = 0; x < inwidth; x++)
 			{
@@ -1792,7 +1790,7 @@ Scale up the pixel values in a texture to increase the
 lighting range
 ================
 */
-void GL_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean only_gamma )
+void GL_LightScaleTexture (unsigned int *in, int inwidth, int inheight, qboolean only_gamma )
 {
 	if ( only_gamma )
 	{
@@ -1853,6 +1851,7 @@ void GL_MipMap (byte *in, int width, int height)
 	}
 }
 
+
 #if 0
 /*
 ================
@@ -1880,6 +1879,7 @@ void GL_BuildPalettedTexture (unsigned char *paletted_texture, unsigned char *sc
 }
 #endif
 
+
 /*
 ===============
 here starts modified code
@@ -1890,8 +1890,7 @@ by Heffo/changes by Nexus
 static	int		upload_width, upload_height; //** DMP made local to module
 static	qboolean uploaded_paletted;			//** DMP ditto
 
-/*
-static qboolean IsPowerOf2 (int value)
+/*static qboolean IsPowerOf2 (int value)
 {
 	int i = 1;
 	while (1) {
@@ -1901,9 +1900,13 @@ static qboolean IsPowerOf2 (int value)
 			return false;
 		i <<= 1;
 	}
-}
-*/
+} */
 
+/*
+================
+NearestPowerOf2
+================
+*/
 int NearestPowerOf2 (int size)
 {
 	int i = 2;
@@ -1936,13 +1939,13 @@ GL_Upload32
 Returns has_alpha
 ===============
 */
-qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
+qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t type)
 {
-	unsigned 	*scaled = NULL;
-	int			scaled_width, scaled_height;
-	int			i, c, comp, idealImgRes = 256, upscaleFactor = 0;
-	qboolean	mipmap, hasAlpha, isNPOT, resampled = false;
-	byte		*scan;
+	unsigned int	*scaled = NULL;
+	int				scaled_width, scaled_height;
+	int				i, c, comp, idealImgRes = 256, upscaleFactor = 0;
+	qboolean		mipmap, hasAlpha, isNPOT, resampled = false;
+	byte			*scan;
 
 	mipmap = ( (type != it_pic) && (type != it_font) && (type != it_scrap) && (type != it_sky) );
 	uploaded_paletted = false;
@@ -2094,9 +2097,9 @@ qboolean GL_Upload32 (unsigned *data, int width, int height, imagetype_t type)
 	qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 	if (mipmap)
 	{
-		int			mip_width, mip_height, miplevel = 0;
-		unsigned 	*mip_scaled = NULL;
-		qboolean	mip_resampled = false;
+		int				mip_width, mip_height, miplevel = 0;
+		unsigned int	*mip_scaled = NULL;
+		qboolean		mip_resampled = false;
 
 /*		if (isNPOT)	// resample NPOT tetures to POT dimensions before mipping
 		{
@@ -2156,18 +2159,18 @@ Returns has_alpha
 */
 qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type)
 {
-//	unsigned	trans[512*256];
-	unsigned	*trans = NULL;	// Knightmare- changed to dynamic allocation
-	int			i, s;
-	int			p;
-	qboolean	has_alpha;	// Knightmare added
+//	unsigned int	trans[512*256];
+	unsigned int	*trans = NULL;	// Knightmare- changed to dynamic allocation
+	int				i, s;
+	int				p;
+	qboolean		has_alpha;	// Knightmare added
 
 	s = width*height;
 
 //	if (s > sizeof(trans)/4)
 //		VID_Error (ERR_DROP, "GL_Upload8: too large");
 
-	trans = (unsigned *)malloc(s*4);	// Knightmare- changed to dynamic allocation
+	trans = (unsigned int *)malloc(s*4);	// Knightmare- changed to dynamic allocation
 
 	for (i=0 ; i<s ; i++)
 	{
@@ -2240,7 +2243,6 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 
 	if (strlen(name) >= sizeof(image->name))
 		VID_Error (ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name);
-//	strncpy (image->name, name);
 	Q_strncpyz (image->name, sizeof(image->name), name);
 	image->hash = Com_HashFileName(name, 0, false);	// Knightmare added
 	image->registration_sequence = registration_sequence;
@@ -2250,14 +2252,13 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	image->type = type;
 	image->replace_scale_w = image->replace_scale_h = 1.0f; // Knightmare added
 
-	if (type == it_skin && bits == 8)
-		R_FloodFillSkin(pic, width, height);
+	if ( (type == it_skin) && (bits == 8) )
+		R_FloodFillSkin (pic, width, height);
 
 	// replacement scaling hack for TGA/JPEG HUD images and skins
 	// TODO: replace this with shaders as soon as they are supported
 	nameLen = (int)strlen(name); 
-//	strncpy(s,name);
-	Q_strncpyz(refName, sizeof(refName), name);
+	Q_strncpyz (refName, sizeof(refName), name);
 
 	// Load .pcx for size refereence, check if we have a tga/jpg/png pic
 #ifdef PNG_SUPPORT
@@ -2266,19 +2267,20 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	if ( (nameLen >= 5) && ((type == it_pic) || (type == it_font)) && (!strcmp(refName+nameLen-4, ".tga") || !strcmp(refName+nameLen-4, ".jpg")) )
 #endif	// PNG_SUPPORT
 	{ 
-		byte	*pic, *palette;
-		int		pcxwidth, pcxheight;
-		refName[nameLen-3]='p'; refName[nameLen-2]='c'; refName[nameLen-1]='x'; // replace extension 
-		LoadPCX (refName, &pic, &palette, &pcxwidth, &pcxheight); // load .pcx file 
+		byte	*pcxPic, *pcxPalette;
+		int		pcxWidth, pcxHeight;
+
+		refName[nameLen-3] = 'p'; refName[nameLen-2] = 'c'; refName[nameLen-1] = 'x';	// replace extension
+		LoadPCX (refName, &pcxPic, &pcxPalette, &pcxWidth, &pcxHeight);					// load .pcx file
 		
-		if (pic && (pcxwidth > 0) && (pcxheight > 0)) {
-			image->replace_scale_w = (float)pcxwidth/image->width;
-			image->replace_scale_h = (float)pcxheight/image->height;
+		if ( pcxPic && (pcxWidth > 0) && (pcxHeight > 0) ) {
+			image->replace_scale_w = (float)pcxWidth / image->width;
+			image->replace_scale_h = (float)pcxHeight / image->height;
 		}
-		if (pic)
-			free (pic);
-		if (palette)
-			free (palette);
+		if (pcxPic)
+			free (pcxPic);
+		if (pcxPalette)
+			free (pcxPalette);
 	}	
 
 	// load little pics into the scrap
@@ -2317,7 +2319,7 @@ nonscrap:
 		if (bits == 8)
 			image->has_alpha = GL_Upload8 (pic, width, height, image->type);
 		else
-			image->has_alpha = GL_Upload32 ((unsigned *)pic, width, height, image->type);
+			image->has_alpha = GL_Upload32 ((unsigned int *)pic, width, height, image->type);
 		image->upload_width = upload_width;		// after power of 2 and scales
 		image->upload_height = upload_height;
 		image->paletted = uploaded_paletted;
@@ -2335,7 +2337,7 @@ nonscrap:
 #define NUM_FAIL_IMAGES 1024
 char lastFailedImage[NUM_FAIL_IMAGES][MAX_OSPATH];
 unsigned int lastFailedImageHash[NUM_FAIL_IMAGES];
-static unsigned failedImgListIndex;
+static unsigned int failedImgListIndex;
 
 /*
 ===============
@@ -2490,7 +2492,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	// don't try again to load an image that just failed
 	if (R_CheckImgFailed (name))
 	{
-		if (!strcmp(name+len-4, ".tga"))
+		if ( !strcmp(name+len-4, ".tga") )
 		{
 #ifdef PNG_SUPPORT
 			// fall back to png
@@ -2505,7 +2507,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 #endif	// PNG_SUPPORT
 		}
 #ifdef PNG_SUPPORT
-		else if (!strcmp(name+len-4, ".png"))
+		else if ( !strcmp(name+len-4, ".png") )
 		{	// fall back to jpg
 			Q_strncpyz (s, sizeof(s), name);
 			s[len-3]='j'; s[len-2]='p'; s[len-1]='g';
@@ -2518,7 +2520,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 
 	// MrG's automatic JPG & TGA loading
 	// search for TGAs or JPGs to replace .pcx and .wal images
-	if (!strcmp(name+len-4, ".pcx") || !strcmp(name+len-4, ".wal"))
+	if ( !strcmp(name+len-4, ".pcx") || !strcmp(name+len-4, ".wal") )
 	{
 		Q_strncpyz (s, sizeof(s), name);
 		s[len-3]='t'; s[len-2]='g'; s[len-1]='a';
@@ -2533,7 +2535,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	pic = NULL;
 	palette = NULL;
 
-	if (!strcmp(name+len-4, ".pcx"))
+	if ( !strcmp(name+len-4, ".pcx") )
 	{
 		LoadPCX (name, &pic, &palette, &width, &height);
 		if (pic)
@@ -2541,11 +2543,11 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 		else
 			image = NULL;
 	}
-	else if (!strcmp(name+len-4, ".wal"))
+	else if ( !strcmp(name+len-4, ".wal") )
 	{
 		image = R_LoadWal (name, type);
 	}
-	else if (!strcmp(name+len-4, ".tga"))
+	else if ( !strcmp(name+len-4, ".tga") )
 	{
 		R_LoadTGA (name, &pic, &width, &height);
 		if (pic)
@@ -2567,7 +2569,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 #endif	// PNG_SUPPORT
 	}
 #ifdef PNG_SUPPORT
-	else if (!strcmp(name+len-4, ".png"))
+	else if ( !strcmp(name+len-4, ".png") )
 	{
 		R_LoadPNG (name, &pic, &width, &height);
 		if (pic)
@@ -2672,13 +2674,11 @@ Draw_GetPalette
 */
 int Draw_GetPalette (void)
 {
-	int		i;
-	int		r, g, b;
-	unsigned	v;
-	byte	*pic, *pal;
-	int		width, height;
-	//int		avg, dr, dg, db, d1, d2, d3;	//** DMP
-	//float	sat;							//** DMP
+	int				i;
+	int				r, g, b;
+	unsigned int	v;
+	byte			*pic, *pal;
+	int				width, height;
 
 	// get the palette
 
@@ -2692,38 +2692,6 @@ int Draw_GetPalette (void)
 		g = pal[i*3+1];
 		b = pal[i*3+2];
 		
-		//** DMP adjust saturation
-		/*avg = (r + g + b + 2) / 3;			// first calc grey value we'll desaturate to
-		dr = avg - r;						// calc distance from grey value to each gun
-		dg = avg - g;
-		db = avg - b;
-		d1 = abs(r - g);					// find greatest distance between all the guns
-		d2 = abs(g - b);
-		d3 = abs(b - r);
-		if (d1 > d2)						// we will use this for our existing saturation
-			if (d1 > d3)
-				sat = d1;
-			else
-				if (d2 > d3)
-					sat = d2;
-				else
-					sat = d3;
-		else
-			if (d2 > d3)
-				sat = d2;
-			else
-				sat = d3;
-		sat /= 255.0;						// convert existing saturationn to ratio
-		sat = 1.0 - sat;					// invert so the most saturation causes the desaturation to lessen
-		sat *= (1.0 - r_saturation->value); // scale the desaturation value so our desaturation is non-linear (keeps lava looking good)
-		dr *= sat;							// scale the differences by the amount we want to desaturate
-		dg *= sat;
-		db *= sat;
-		r += dr;							// now move the gun values towards total grey by the amount we desaturated
-		g += dg;
-		b += db;*/
-		//** DMP end saturation mod
-
 		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
 		d_8to24table[i] = LittleLong(v);
 	}

@@ -199,9 +199,9 @@ Loads in a model for the given name
 */
 model_t *Mod_ForName (char *name, qboolean crash)
 {
-	model_t	*mod;
-	unsigned *buf;
-	int		i;
+	model_t			*mod;
+	unsigned int	*buf;
+	int				i;
 	
 	if (!name[0])
 		VID_Error (ERR_DROP, "Mod_ForName: NULL name");
@@ -263,10 +263,9 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	// fill it in
 	//
 
-
 	// call the apropriate loader
 	
-	switch (LittleLong(*(unsigned *)buf))
+	switch (LittleLong(*(unsigned int *)buf))
 	{
 	case IDMD2HEADER:
 #ifdef MD2_AS_MD3
@@ -487,7 +486,7 @@ void Mod_LoadEdges (lump_t *l)
 #define NUM_FAIL_TEXTURES 256
 char lastFailedTexture[NUM_FAIL_TEXTURES][MAX_OSPATH];
 unsigned int lastFailedTextureHash[NUM_FAIL_TEXTURES];
-static unsigned failedTexListIndex;
+static unsigned int failedTexListIndex;
 
 /*
 ===============
@@ -591,7 +590,7 @@ typedef struct walsize_s
 
 #define NUM_WALSIZES 1024
 walsize_t walSizeList[NUM_WALSIZES];
-static unsigned walSizeListIndex;
+static unsigned int walSizeListIndex;
 
 /*
 ===============
@@ -2131,34 +2130,34 @@ Calc exact alloc size for MD2 in memory
 size_t Mod_GetAllocSizeMD2New (model_t *mod, void *buffer)
 {
 	int					i, j, numFrames, numMeshes, numTris, numIndex, numVerts, numSkins;
-	dmd2_t				*pinmodel;
-	dmd2triangle_t		*pintri;
-//	int					md2IndRemap[MAX_TRIANGLES*3];
-//	unsigned int		md2TempIndex[MAX_TRIANGLES*3], md2TempStIndex[MAX_TRIANGLES*3];
+	dmd2_t				*pinModel;
+	dmd2triangle_t		*pinTri;
+//	int					md2IndRemap[MD2_MAX_TRIANGLES*3];
+//	unsigned int		md2TempIndex[MD2_MAX_TRIANGLES*3], md2TempStIndex[MD2_MAX_TRIANGLES*3];
 	size_t				headerSize, meshSize, indexSize, coordSize, frameSize, vertSize, trNeighborsSize, skinSize;
 	size_t				allocSize;
 	
-	pinmodel = (dmd2_t *)buffer;
+	pinModel = (dmd2_t *)buffer;
 
-	numFrames = LittleLong(pinmodel->num_frames);
+	numFrames = LittleLong(pinModel->num_frames);
 	numMeshes = 1;
-	numTris = LittleLong(pinmodel->num_tris);
+	numTris = LittleLong(pinModel->num_tris);
 
 	// count unique verts
-//	numVerts = LittleLong(pinmodel->num_xyz);
+//	numVerts = LittleLong(pinModel->num_xyz);
 	numVerts = 0;
 	numIndex = numTris * 3;
-	pintri = (dmd2triangle_t *)((byte *)pinmodel + LittleLong(pinmodel->ofs_tris));
+	pinTri = (dmd2triangle_t *)((byte *)pinModel + LittleLong(pinModel->ofs_tris));
 
 	for (i=0; i < numTris; i++)
 	{
-		md2TempIndex[i*3+0] = (unsigned)LittleShort(pintri[i].index_xyz[0]);
-		md2TempIndex[i*3+1] = (unsigned)LittleShort(pintri[i].index_xyz[1]);
-		md2TempIndex[i*3+2] = (unsigned)LittleShort(pintri[i].index_xyz[2]);
+		md2TempIndex[i*3+0] = (unsigned int)LittleShort(pinTri[i].index_xyz[0]);
+		md2TempIndex[i*3+1] = (unsigned int)LittleShort(pinTri[i].index_xyz[1]);
+		md2TempIndex[i*3+2] = (unsigned int)LittleShort(pinTri[i].index_xyz[2]);
 
-		md2TempStIndex[i*3+0] = (unsigned)LittleShort(pintri[i].index_st[0]);
-		md2TempStIndex[i*3+1] = (unsigned)LittleShort(pintri[i].index_st[1]);
-		md2TempStIndex[i*3+2] = (unsigned)LittleShort(pintri[i].index_st[2]);
+		md2TempStIndex[i*3+0] = (unsigned int)LittleShort(pinTri[i].index_st[0]);
+		md2TempStIndex[i*3+1] = (unsigned int)LittleShort(pinTri[i].index_st[1]);
+		md2TempStIndex[i*3+2] = (unsigned int)LittleShort(pinTri[i].index_st[2]);
 	}
 	memset(md2IndRemap, -1, MD2_MAX_TRIANGLES * 3 * sizeof(int));
 	for (i=0; i < numIndex; i++)
@@ -2176,7 +2175,7 @@ size_t Mod_GetAllocSizeMD2New (model_t *mod, void *buffer)
 		if (md2IndRemap[i] == -1)	numVerts++;
 	}
 
-	numSkins = max(LittleLong(pinmodel->num_skins), 1);	// hack because player models have no skin refs
+	numSkins = max(LittleLong(pinModel->num_skins), 1);	// hack because player models have no skin refs
 	
 	// calc sizes rounded to cacheline
 	headerSize = (sizeof(maliasmodel_t) + 31) & ~31;
@@ -2207,88 +2206,87 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 {
 	int					i, j;
 	int					version;
-	dmd2_t				*pinmodel;
-	dmd2frame_t			*pinframe;
-	dmd2triangle_t		*pintri;
-	dmd2coord_t			*pincoord;
-	maliasmodel_t		*poutmodel;
-	maliasframe_t		*poutframe;
-	maliasmesh_t		*poutmesh;
-	maliasskin_t		*poutskin;
-	maliasvertex_t		*poutvert;
-	maliascoord_t		*poutcoord;
-	index_t				*poutindex;
+	dmd2_t				*pinModel;
+	dmd2frame_t			*pinFrame;
+	dmd2triangle_t		*pinTri;
+	dmd2coord_t			*pinCoord;
+	maliasmodel_t		*poutModel;
+	maliasframe_t		*poutFrame;
+	maliasmesh_t		*poutMesh;
+	maliasskin_t		*poutSkin;
+	maliasvertex_t		*poutVert;
+	maliascoord_t		*poutCoord;
+	index_t				*poutIndex;
 	char				name[MD3_MAX_PATH];
 //	int					md2IndRemap[MD2_MAX_TRIANGLES*3];
-//	unsigned			md2TempIndex[MD2_MAX_TRIANGLES*3], md2TempStIndex[MD2_MAX_TRIANGLES*3];
+//	unsigned int		md2TempIndex[MD2_MAX_TRIANGLES*3], md2TempStIndex[MD2_MAX_TRIANGLES*3];
 	int					numIndices, numVertices;
 	double				skinWidth, skinHeight;
 	vec3_t				normal;
 
-	pinmodel = (dmd2_t *)buffer;
-
-//	poutmodel = Hunk_Alloc (sizeof(maliasmodel_t));
-	poutmodel = ModChunk_Alloc (sizeof(maliasmodel_t));
+	pinModel = (dmd2_t *)buffer;
+//	poutModel = Hunk_Alloc (sizeof(maliasmodel_t));
+	poutModel = ModChunk_Alloc (sizeof(maliasmodel_t));
 
 	// byte swap the header fields and sanity check
-	version = LittleLong (pinmodel->version);
+	version = LittleLong (pinModel->version);
 	if (version != MD2_ALIAS_VERSION) {
 		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i)",
 				 mod->name, version, MD2_ALIAS_VERSION);
 	}
 
-	poutmodel->num_frames = LittleLong ( pinmodel->num_frames );
-	if (poutmodel->num_frames > MD2_MAX_FRAMES || poutmodel->num_frames <= 0)
-		VID_Error (ERR_DROP, "model %s has invalid number of frames (%i)", mod->name, poutmodel->num_frames);
+	poutModel->num_frames = LittleLong (pinModel->num_frames);
+	if ( (poutModel->num_frames > MD2_MAX_FRAMES) || (poutModel->num_frames <= 0) )
+		VID_Error (ERR_DROP, "model %s has invalid number of frames (%i)", mod->name, poutModel->num_frames);
 
-	poutmodel->num_tags = 0;
-	poutmodel->num_meshes = 1;
+	poutModel->num_tags = 0;
+	poutModel->num_meshes = 1;
 
-	skinWidth = 1.0 / (double)LittleLong(pinmodel->skinwidth);
-	skinHeight = 1.0 / (double)LittleLong(pinmodel->skinheight);
+	skinWidth = 1.0 / (double)LittleLong(pinModel->skinwidth);
+	skinHeight = 1.0 / (double)LittleLong(pinModel->skinheight);
 
 	//
 	// load mesh info
 	//
-//	poutmesh = poutmodel->meshes = Hunk_Alloc(sizeof(maliasmesh_t));
-	poutmesh = poutmodel->meshes = ModChunk_Alloc(sizeof(maliasmesh_t));
+//	poutMesh = poutModel->meshes = Hunk_Alloc(sizeof(maliasmesh_t));
+	poutMesh = poutModel->meshes = ModChunk_Alloc(sizeof(maliasmesh_t));
 
-	Com_sprintf(poutmesh->name, sizeof(poutmesh->name), "md2mesh"); // mesh name in script must match this
+	Com_sprintf(poutMesh->name, sizeof(poutMesh->name), "md2mesh"); // mesh name in script must match this
 
-	poutmesh->num_tris = LittleLong(pinmodel->num_tris);
-	if (poutmesh->num_tris > MD2_MAX_TRIANGLES || poutmesh->num_tris <= 0)
-		VID_Error (ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutmesh->num_tris);
+	poutMesh->num_tris = LittleLong(pinModel->num_tris);
+	if ( (poutMesh->num_tris > MD2_MAX_TRIANGLES) || (poutMesh->num_tris <= 0) )
+		VID_Error (ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutMesh->num_tris);
 
-	poutmesh->num_verts = LittleLong(pinmodel->num_xyz);
-	if (poutmesh->num_verts > MD2_MAX_VERTS || poutmesh->num_verts <= 0)
-		VID_Error (ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, poutmesh->num_verts);
+	poutMesh->num_verts = LittleLong(pinModel->num_xyz);
+	if ( (poutMesh->num_verts > MD2_MAX_VERTS) || (poutMesh->num_verts <= 0) )
+		VID_Error (ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, poutMesh->num_verts);
 
-	poutmesh->num_skins = LittleLong(pinmodel->num_skins);
-	if (poutmesh->num_skins > MD2_MAX_SKINS || poutmesh->num_skins < 0)
-		Com_Error(ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutmesh->num_skins);
+	poutMesh->num_skins = LittleLong(pinModel->num_skins);
+	if ( (poutMesh->num_skins > MD2_MAX_SKINS) || (poutMesh->num_skins < 0) )
+		Com_Error(ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutMesh->num_skins);
 
-	pintri = (dmd2triangle_t *)((byte *)pinmodel + LittleLong(pinmodel->ofs_tris));
+	pinTri = (dmd2triangle_t *)((byte *)pinModel + LittleLong(pinModel->ofs_tris));
 
 //	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeMD2() is removed!
-/*	for (i=0; i < poutmesh->num_tris; i++)
+/*	for (i=0; i < poutMesh->num_tris; i++)
 	{
-		md2TempIndex[i*3+0] = (unsigned)LittleShort(pintri[i].index_xyz[0]);
-		md2TempIndex[i*3+1] = (unsigned)LittleShort(pintri[i].index_xyz[1]);
-		md2TempIndex[i*3+2] = (unsigned)LittleShort(pintri[i].index_xyz[2]);
+		md2TempIndex[i*3+0] = (unsigned int)LittleShort(pinTri[i].index_xyz[0]);
+		md2TempIndex[i*3+1] = (unsigned int)LittleShort(pinTri[i].index_xyz[1]);
+		md2TempIndex[i*3+2] = (unsigned int)LittleShort(pinTri[i].index_xyz[2]);
 
-		md2TempStIndex[i*3+0] = (unsigned)LittleShort(pintri[i].index_st[0]);
-		md2TempStIndex[i*3+1] = (unsigned)LittleShort(pintri[i].index_st[1]);
-		md2TempStIndex[i*3+2] = (unsigned)LittleShort(pintri[i].index_st[2]);
+		md2TempStIndex[i*3+0] = (unsigned int)LittleShort(pinTri[i].index_st[0]);
+		md2TempStIndex[i*3+1] = (unsigned int)LittleShort(pinTri[i].index_st[1]);
+		md2TempStIndex[i*3+2] = (unsigned int)LittleShort(pinTri[i].index_st[2]);
 	}*/
 
 	//
 	// build list of unique vertices
 	//
-	numIndices = poutmesh->num_tris * 3;
+	numIndices = poutMesh->num_tris * 3;
 	numVertices = 0;
 
-//	poutindex = poutmesh->indexes = Hunk_Alloc( sizeof(index_t) * poutmesh->num_tris * 3 );
-	poutindex = poutmesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutmesh->num_tris * 3 );
+//	poutIndex = poutMesh->indexes = Hunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
+	poutIndex = poutMesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
 
 //	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeMD2() is removed!
 /*	memset(md2IndRemap, -1, MD2_MAX_TRIANGLES * 3 * sizeof(int));
@@ -2313,120 +2311,121 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	{
 		if (md2IndRemap[i] != -1)
 			continue;
-		poutindex[i] = numVertices++;
+		poutIndex[i] = numVertices++;
 		md2IndRemap[i] = i;
 	}
-	poutmesh->num_verts = numVertices;
+//	VID_Printf (PRINT_ALL, "Mod_LoadAliasMD2Model: extracted %i unique vertices from %i in %s\n", numVertices, poutMesh->num_verts, mod->name);
+	poutMesh->num_verts = numVertices;
 
 	//
 	// remap remaining indices
 	//
 	for (i=0; i < numIndices; i++) {
 		if (md2IndRemap[i] != i)
-			poutindex[i] = poutindex[md2IndRemap[i]];
+			poutIndex[i] = poutIndex[md2IndRemap[i]];
 	}
 
 	//
 	// load base S and T vertices
 	//
-	pincoord = (dmd2coord_t *)((byte *)pinmodel + LittleLong(pinmodel->ofs_st));
-//	poutcoord = poutmesh->stcoords = Hunk_Alloc ( sizeof(maliascoord_t) * poutmesh->num_verts );
-	poutcoord = poutmesh->stcoords = ModChunk_Alloc (sizeof(maliascoord_t) * poutmesh->num_verts);
+	pinCoord = (dmd2coord_t *)((byte *)pinModel + LittleLong(pinModel->ofs_st));
+//	poutCoord = poutMesh->stcoords = Hunk_Alloc (sizeof(maliascoord_t) * poutMesh->num_verts);
+	poutCoord = poutMesh->stcoords = ModChunk_Alloc (sizeof(maliascoord_t) * poutMesh->num_verts);
 
 	for (i=0; i < numIndices; i++) {
-		poutcoord[poutindex[i]].st[0] = (float)(((double)LittleShort(pincoord[md2TempStIndex[md2IndRemap[i]]].s) + 0.5) * skinWidth);
-		poutcoord[poutindex[i]].st[1] = (float)(((double)LittleShort(pincoord[md2TempStIndex[md2IndRemap[i]]].t) + 0.5) * skinHeight);
+		poutCoord[poutIndex[i]].st[0] = (float)(((double)LittleShort(pinCoord[md2TempStIndex[md2IndRemap[i]]].s) + 0.5) * skinWidth);
+		poutCoord[poutIndex[i]].st[1] = (float)(((double)LittleShort(pinCoord[md2TempStIndex[md2IndRemap[i]]].t) + 0.5) * skinHeight);
 	}
 
 	//
 	// load the frames
 	//
-//	poutframe = poutmodel->frames = Hunk_Alloc ( sizeof(maliasframe_t) * poutmodel->num_frames );
-//	poutvert = poutmesh->vertexes = Hunk_Alloc ( poutmodel->num_frames * poutmesh->num_verts * sizeof(maliasvertex_t) );
-	poutframe = poutmodel->frames = ModChunk_Alloc (sizeof(maliasframe_t) * poutmodel->num_frames);
-	poutvert = poutmesh->vertexes = ModChunk_Alloc (poutmodel->num_frames * poutmesh->num_verts * sizeof(maliasvertex_t));
+//	poutFrame = poutModel->frames = Hunk_Alloc (sizeof(maliasframe_t) * poutModel->num_frames);
+//	poutVert = poutMesh->vertexes = Hunk_Alloc (poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
+	poutFrame = poutModel->frames = ModChunk_Alloc (sizeof(maliasframe_t) * poutModel->num_frames);
+	poutVert = poutMesh->vertexes = ModChunk_Alloc (poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
 
 	mod->radius = 0;
 	ClearBounds(mod->mins, mod->maxs);
 
-	for (i=0; i < poutmodel->num_frames; i++, pinframe++, poutframe++, poutvert += numVertices)
+	for (i=0; i < poutModel->num_frames; i++, pinFrame++, poutFrame++, poutVert += numVertices)
 	{
-		pinframe = (dmd2frame_t *)((byte *)pinmodel + LittleLong(pinmodel->ofs_frames) + i*LittleLong(pinmodel->framesize));
+		pinFrame = (dmd2frame_t *)((byte *)pinModel + LittleLong(pinModel->ofs_frames) + i*LittleLong(pinModel->framesize));
 
-		poutframe->scale[0] = LittleFloat(pinframe->scale[0]);
-		poutframe->scale[1] = LittleFloat(pinframe->scale[1]);
-		poutframe->scale[2] = LittleFloat(pinframe->scale[2]);
+		poutFrame->scale[0] = LittleFloat(pinFrame->scale[0]);	// crashes here
+		poutFrame->scale[1] = LittleFloat(pinFrame->scale[1]);
+		poutFrame->scale[2] = LittleFloat(pinFrame->scale[2]);
 
-		poutframe->translate[0] = LittleFloat(pinframe->translate[0]);
-		poutframe->translate[1] = LittleFloat(pinframe->translate[1]);
-		poutframe->translate[2] = LittleFloat(pinframe->translate[2]);
+		poutFrame->translate[0] = LittleFloat(pinFrame->translate[0]);
+		poutFrame->translate[1] = LittleFloat(pinFrame->translate[1]);
+		poutFrame->translate[2] = LittleFloat(pinFrame->translate[2]);
 
-		VectorCopy (poutframe->translate, poutframe->mins);
-		VectorMA (poutframe->translate, 255, poutframe->scale, poutframe->maxs);
+		VectorCopy (poutFrame->translate, poutFrame->mins);
+		VectorMA (poutFrame->translate, 255, poutFrame->scale, poutFrame->maxs);
 
-		poutframe->radius = RadiusFromBounds(poutframe->mins, poutframe->maxs);
+		poutFrame->radius = RadiusFromBounds(poutFrame->mins, poutFrame->maxs);
 
-		mod->radius = max ( mod->radius, poutframe->radius );
-		AddPointToBounds(poutframe->mins, mod->mins, mod->maxs);
-		AddPointToBounds(poutframe->maxs, mod->mins, mod->maxs);
+		mod->radius = max ( mod->radius, poutFrame->radius );
+		AddPointToBounds(poutFrame->mins, mod->mins, mod->maxs);
+		AddPointToBounds(poutFrame->maxs, mod->mins, mod->maxs);
 
 		//
 		// load the vertexes and normals
 		//
 		for (j=0; j < numIndices; j++)
 		{
-			poutvert[poutindex[j]].xyz[0] = (short)pinframe->verts[md2TempIndex[md2IndRemap[j]]].v[0];
-			poutvert[poutindex[j]].xyz[1] = (short)pinframe->verts[md2TempIndex[md2IndRemap[j]]].v[1];
-			poutvert[poutindex[j]].xyz[2] = (short)pinframe->verts[md2TempIndex[md2IndRemap[j]]].v[2];
+			poutVert[poutIndex[j]].xyz[0] = (short)pinFrame->verts[md2TempIndex[md2IndRemap[j]]].v[0];
+			poutVert[poutIndex[j]].xyz[1] = (short)pinFrame->verts[md2TempIndex[md2IndRemap[j]]].v[1];
+			poutVert[poutIndex[j]].xyz[2] = (short)pinFrame->verts[md2TempIndex[md2IndRemap[j]]].v[2];
 
-			poutvert[poutindex[j]].lightnormalindex = pinframe->verts[md2TempIndex[md2IndRemap[j]]].lightnormalindex;
+			poutVert[poutIndex[j]].lightnormalindex = pinFrame->verts[md2TempIndex[md2IndRemap[j]]].lightnormalindex;
 
-			normal[0] = r_avertexnormals[poutvert[poutindex[j]].lightnormalindex][0];
-			normal[1] = r_avertexnormals[poutvert[poutindex[j]].lightnormalindex][1];
-			normal[2] = r_avertexnormals[poutvert[poutindex[j]].lightnormalindex][2];
+			normal[0] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][0];
+			normal[1] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][1];
+			normal[2] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][2];
 
-			NormalToLatLong(normal, poutvert[poutindex[j]].normal);			
+			NormalToLatLong(normal, poutVert[poutIndex[j]].normal);			
 		}
 	}
 
 	//
 	// build triangle neighbors
 	//
-//	poutmesh->trneighbors = Hunk_Alloc ( sizeof(int) * poutmesh->num_tris * 3 );
-	poutmesh->trneighbors = ModChunk_Alloc (sizeof(int) * poutmesh->num_tris * 3);
-	Mod_BuildTriangleNeighbors (poutmesh);
+//	poutMesh->trneighbors = Hunk_Alloc (sizeof(int) * poutMesh->num_tris * 3);
+	poutMesh->trneighbors = ModChunk_Alloc (sizeof(int) * poutMesh->num_tris * 3);
+	Mod_BuildTriangleNeighbors (poutMesh);
 
 	//
 	// register all skins
 	//
-	if (poutmesh->num_skins <= 0) // hack for player models with no skin refs
+	if (poutMesh->num_skins <= 0) // hack for player models with no skin refs
 	{
-	//	poutskin = poutmesh->skins = Hunk_Alloc ( sizeof(maliasskin_t) * 1 );
-		poutskin = poutmesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * 1);
-		poutmesh->num_skins = 1;
+	//	poutSkin = poutMesh->skins = Hunk_Alloc (sizeof(maliasskin_t) * 1);
+		poutSkin = poutMesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * 1);
+		poutMesh->num_skins = 1;
 		Com_sprintf(name, sizeof(name), "players/male/grunt.pcx");
-		memcpy(poutskin->name, name, MD3_MAX_PATH);
-		Com_sprintf(poutskin->glowname, sizeof(poutskin->glowname), "\0"); // set null glowskin
+		memcpy(poutSkin->name, name, MD3_MAX_PATH);
+		Com_sprintf(poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 		mod->skins[0][0] = R_FindImage (name, it_skin);
 	}
 	else
 	{
-	//	poutskin = poutmesh->skins = Hunk_Alloc ( sizeof(maliasskin_t) * poutmesh->num_skins );
-		poutskin = poutmesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * poutmesh->num_skins);
-		for (i=0; i < poutmesh->num_skins; i++, poutskin++)
+	//	poutSkin = poutMesh->skins = Hunk_Alloc (sizeof(maliasskin_t) * poutMesh->num_skins);
+		poutSkin = poutMesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * poutMesh->num_skins);
+		for (i=0; i < poutMesh->num_skins; i++, poutSkin++)
 		{
-			memcpy(name, ((char *)pinmodel + LittleLong(pinmodel->ofs_skins) + i*MD2_MAX_SKINNAME), MD3_MAX_PATH);
-			memcpy(poutskin->name, name, MD3_MAX_PATH);
-			Com_sprintf(poutskin->glowname, sizeof(poutskin->glowname), "\0"); // set null glowskin
+			memcpy(name, ((char *)pinModel + LittleLong(pinModel->ofs_skins) + i*MD2_MAX_SKINNAME), MD3_MAX_PATH);
+			memcpy(poutSkin->name, name, MD3_MAX_PATH);
+			Com_sprintf(poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 			mod->skins[0][i] = R_FindImage (name, it_skin);
 		}
 	}
 
 	mod->hasAlpha = false;
-	Mod_LoadModelScript (mod, poutmodel); // md3 skin scripting
+	Mod_LoadModelScript (mod, poutModel); // md3 skin scripting
 
-	//if (mod->hasAlpha)
-	//	VID_Printf (PRINT_ALL, "Mod_LoadAliasMD2Model: model %s has trans mesh\n", mod->name);
+//	if (mod->hasAlpha)
+//		VID_Printf (PRINT_ALL, "Mod_LoadAliasMD2Model: model %s has trans mesh\n", mod->name);
 
 	mod->type = mod_alias;
 }
@@ -2446,16 +2445,16 @@ Calc exact alloc size for MD3 in memory
 size_t Mod_GetAllocSizeMD3 (model_t *mod, void *buffer)
 {
 	int					i, numFrames, numTags, numMeshes, numSkins, numTris, numVerts;
-	dmd3_t				*pinmodel;
-	dmd3mesh_t			*pinmesh;
+	dmd3_t				*pinModel;
+	dmd3mesh_t			*pinMesh;
 	size_t				headerSize, frameSize, tagSize, meshSize;
 	size_t				skinSize=0, indexSize=0, coordSize=0, vertSize=0, trNeighborsSize=0;
 	size_t				allocSize;
 	
-	pinmodel = (dmd3_t *)buffer;
-	numFrames = LittleLong(pinmodel->num_frames);
-	numTags = LittleLong(pinmodel->num_tags);
-	numMeshes = LittleLong(pinmodel->num_meshes);
+	pinModel = (dmd3_t *)buffer;
+	numFrames = LittleLong(pinModel->num_frames);
+	numTags = LittleLong(pinModel->num_tags);
+	numMeshes = LittleLong(pinModel->num_meshes);
 	
 	// calc sizes rounded to cacheline
 	headerSize = (sizeof(maliasmodel_t) + 31) & ~31;
@@ -2463,12 +2462,12 @@ size_t Mod_GetAllocSizeMD3 (model_t *mod, void *buffer)
 	tagSize = ((sizeof(maliastag_t) * numFrames * numTags) + 31) & ~31;
 	meshSize = ((sizeof(maliasmesh_t) * numMeshes) + 31) & ~31;
 
-	pinmesh = (dmd3mesh_t *)((byte *)pinmodel + LittleLong (pinmodel->ofs_meshes));
+	pinMesh = (dmd3mesh_t *)((byte *)pinModel + LittleLong (pinModel->ofs_meshes));
 	for (i=0; i < numMeshes; i++)
 	{
-		numSkins = LittleLong(pinmesh->num_skins);
-		numTris = LittleLong(pinmesh->num_tris);
-		numVerts = LittleLong(pinmesh->num_verts);
+		numSkins = LittleLong(pinMesh->num_skins);
+		numTris = LittleLong(pinMesh->num_tris);
+		numVerts = LittleLong(pinMesh->num_verts);
 
 		skinSize += ((sizeof(maliasskin_t) * numSkins) + 31) & ~31;
 		indexSize += ((sizeof(index_t) * numTris * 3) + 31) & ~31;
@@ -2476,7 +2475,7 @@ size_t Mod_GetAllocSizeMD3 (model_t *mod, void *buffer)
 		vertSize += ((numFrames * numVerts * sizeof(maliasvertex_t)) + 31) & ~31;
 		trNeighborsSize += ((sizeof(int) * numTris * 3) + 31) & ~31;
 
-		pinmesh = (dmd3mesh_t *)((byte *)pinmesh + LittleLong (pinmesh->meshsize));
+		pinMesh = (dmd3mesh_t *)((byte *)pinMesh + LittleLong (pinMesh->meshsize));
 	}
 	allocSize = headerSize + frameSize + tagSize + meshSize + skinSize + indexSize + coordSize + vertSize + trNeighborsSize;
 	
@@ -2491,28 +2490,29 @@ Mod_LoadAliasMD3Model
 */
 void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 {
-	int					version, maxdotindex, i, j, l, k;
-	dmd3_t				*pinmodel;
-	dmd3frame_t			*pinframe;
-	dmd3tag_t			*pintag;
-	dmd3mesh_t			*pinmesh;
-	dmd3skin_t			*pinskin;
-	dmd3coord_t			*pincoord;
-	dmd3vertex_t		*pinvert;
-	index_t				*pinindex, *poutindex;
-	maliasvertex_t		*poutvert;
-	maliascoord_t		*poutcoord;
-	maliasskin_t		*poutskin;
-	maliasmesh_t		*poutmesh;
-	maliastag_t			*pouttag;
-	maliasframe_t		*poutframe;
-	maliasmodel_t		*poutmodel;
+	int					i, j, l, k;
+	int					version, maxDotIndex;
+	dmd3_t				*pinModel;
+	dmd3frame_t			*pinFrame;
+	dmd3tag_t			*pinTag;
+	dmd3mesh_t			*pinMesh;
+	dmd3skin_t			*pinSkin;
+	dmd3coord_t			*pinCoord;
+	dmd3vertex_t		*pinVert;
+	index_t				*pinIndex, *poutIndex;
+	maliasvertex_t		*poutVert;
+	maliascoord_t		*poutCoord;
+	maliasskin_t		*poutSkin;
+	maliasmesh_t		*poutMesh;
+	maliastag_t			*poutTag;
+	maliasframe_t		*poutFrame;
+	maliasmodel_t		*poutModel;
 	char				name[MD3_MAX_PATH];
 	float				lat, lng, maxdot;
 	vec3_t				normal;
 
-	pinmodel = ( dmd3_t * )buffer;
-	version = LittleLong( pinmodel->version );
+	pinModel = ( dmd3_t * )buffer;
+	version = LittleLong( pinModel->version );
 
 	if ( version != MD3_ALIAS_VERSION )
 	{
@@ -2520,79 +2520,79 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 			mod->name, version, MD3_ALIAS_VERSION);
 	}
 
-//	poutmodel = Hunk_Alloc (sizeof(maliasmodel_t));
-	poutmodel = ModChunk_Alloc (sizeof(maliasmodel_t));
+//	poutModel = Hunk_Alloc (sizeof(maliasmodel_t));
+	poutModel = ModChunk_Alloc (sizeof(maliasmodel_t));
 
 	// byte swap the header fields and sanity check
-	poutmodel->num_frames = LittleLong ( pinmodel->num_frames );
-	poutmodel->num_tags = LittleLong ( pinmodel->num_tags );
-	poutmodel->num_meshes = LittleLong ( pinmodel->num_meshes );
+	poutModel->num_frames = LittleLong ( pinModel->num_frames );
+	poutModel->num_tags = LittleLong ( pinModel->num_tags );
+	poutModel->num_meshes = LittleLong ( pinModel->num_meshes );
 
-	if ( poutmodel->num_frames <= 0 )
+	if ( poutModel->num_frames <= 0 )
 		VID_Error ( ERR_DROP, "model %s has no frames", mod->name );
-	else if ( poutmodel->num_frames > MD3_MAX_FRAMES )
+	else if ( poutModel->num_frames > MD3_MAX_FRAMES )
 		VID_Error ( ERR_DROP, "model %s has too many frames", mod->name );
 
-	if ( poutmodel->num_tags > MD3_MAX_TAGS )
+	if ( poutModel->num_tags > MD3_MAX_TAGS )
 		VID_Error ( ERR_DROP, "model %s has too many tags", mod->name );
-	else if ( poutmodel->num_tags < 0 )
+	else if ( poutModel->num_tags < 0 )
 		VID_Error ( ERR_DROP, "model %s has invalid number of tags", mod->name );
 
-	if ( poutmodel->num_meshes <= 0 )
+	if ( poutModel->num_meshes <= 0 )
 		VID_Error ( ERR_DROP, "model %s has no meshes", mod->name );
-	else if ( poutmodel->num_meshes > MD3_MAX_MESHES )
+	else if ( poutModel->num_meshes > MD3_MAX_MESHES )
 		VID_Error ( ERR_DROP, "model %s has too many meshes", mod->name );
 
 	//
 	// load the frames
 	//
-	pinframe = (dmd3frame_t *)((byte *)pinmodel + LittleLong (pinmodel->ofs_frames));
-//	poutframe = poutmodel->frames = Hunk_Alloc ( sizeof(maliasframe_t) * poutmodel->num_frames);
-	poutframe = poutmodel->frames = ModChunk_Alloc ( sizeof(maliasframe_t) * poutmodel->num_frames);
+	pinFrame = (dmd3frame_t *)((byte *)pinModel + LittleLong (pinModel->ofs_frames));
+//	poutFrame = poutModel->frames = Hunk_Alloc ( sizeof(maliasframe_t) * poutModel->num_frames);
+	poutFrame = poutModel->frames = ModChunk_Alloc ( sizeof(maliasframe_t) * poutModel->num_frames);
 
 	mod->radius = 0;
 	ClearBounds ( mod->mins, mod->maxs );
 
-	for ( i = 0; i < poutmodel->num_frames; i++, pinframe++, poutframe++ )
+	for ( i = 0; i < poutModel->num_frames; i++, pinFrame++, poutFrame++ )
 	{
 		for ( j = 0; j < 3; j++ )
 		{
-			poutframe->mins[j] = LittleFloat ( pinframe->mins[j] );
-			poutframe->maxs[j] = LittleFloat ( pinframe->maxs[j] );
-			poutframe->scale[j] = MD3_XYZ_SCALE;
-			poutframe->translate[j] = LittleFloat ( pinframe->translate[j] );
+			poutFrame->mins[j] = LittleFloat ( pinFrame->mins[j] );
+			poutFrame->maxs[j] = LittleFloat ( pinFrame->maxs[j] );
+			poutFrame->scale[j] = MD3_XYZ_SCALE;
+			poutFrame->translate[j] = LittleFloat ( pinFrame->translate[j] );
 		}
 
-		poutframe->radius = LittleFloat ( pinframe->radius );
+		poutFrame->radius = LittleFloat ( pinFrame->radius );
 
-		mod->radius = max ( mod->radius, poutframe->radius );
-		AddPointToBounds ( poutframe->mins, mod->mins, mod->maxs );
-		AddPointToBounds ( poutframe->maxs, mod->mins, mod->maxs );
+		mod->radius = max ( mod->radius, poutFrame->radius );
+		AddPointToBounds ( poutFrame->mins, mod->mins, mod->maxs );
+		AddPointToBounds ( poutFrame->maxs, mod->mins, mod->maxs );
 	}
 
 	//
 	// load the tags
 	//
-	pintag = (dmd3tag_t *)((byte *)pinmodel + LittleLong (pinmodel->ofs_tags));
-//	pouttag = poutmodel->tags = Hunk_Alloc( sizeof(maliastag_t) * poutmodel->num_frames * poutmodel->num_tags);
-	pouttag = poutmodel->tags = ModChunk_Alloc(sizeof(maliastag_t) * poutmodel->num_frames * poutmodel->num_tags);
+	pinTag = (dmd3tag_t *)((byte *)pinModel + LittleLong (pinModel->ofs_tags));
+//	poutTag = poutModel->tags = Hunk_Alloc(sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
+	poutTag = poutModel->tags = ModChunk_Alloc(sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
 
-	for ( i = 0; i < poutmodel->num_frames; i++ )
+	for ( i = 0; i < poutModel->num_frames; i++ )
 	{
-		for ( l = 0; l < poutmodel->num_tags; l++, pintag++, pouttag++ )
+		for ( l = 0; l < poutModel->num_tags; l++, pinTag++, poutTag++ )
 		{
-			memcpy ( pouttag->name, pintag->name, MD3_MAX_PATH );
+			memcpy ( poutTag->name, pinTag->name, MD3_MAX_PATH );
 			for ( j = 0; j < 3; j++ ) {
-				pouttag->orient.origin[j] = LittleFloat ( pintag->orient.origin[j] );
-				pouttag->orient.axis[0][j] = LittleFloat ( pintag->orient.axis[0][j] );
-				pouttag->orient.axis[1][j] = LittleFloat ( pintag->orient.axis[1][j] );
-				pouttag->orient.axis[2][j] = LittleFloat ( pintag->orient.axis[2][j] );
+				poutTag->orient.origin[j] = LittleFloat ( pinTag->orient.origin[j] );
+				poutTag->orient.axis[0][j] = LittleFloat ( pinTag->orient.axis[0][j] );
+				poutTag->orient.axis[1][j] = LittleFloat ( pinTag->orient.axis[1][j] );
+				poutTag->orient.axis[2][j] = LittleFloat ( pinTag->orient.axis[2][j] );
 			}
 		/*	VID_Printf (PRINT_ALL, "Tag origin: (%f %f %f) axis X: (%f %f %f) Y: (%f %f %f) Z: (%f %f %f)\n",
-						pouttag->orient.origin[0], pouttag->orient.origin[1], pouttag->orient.origin[2],
-						pouttag->orient.axis[0][0], pouttag->orient.axis[0][1], pouttag->orient.axis[0][2],
-						pouttag->orient.axis[1][0], pouttag->orient.axis[1][1], pouttag->orient.axis[1][2],
-						pouttag->orient.axis[2][0], pouttag->orient.axis[2][1], pouttag->orient.axis[2][2]);
+						poutTag->orient.origin[0], poutTag->orient.origin[1], poutTag->orient.origin[2],
+						poutTag->orient.axis[0][0], poutTag->orient.axis[0][1], poutTag->orient.axis[0][2],
+						poutTag->orient.axis[1][0], poutTag->orient.axis[1][1], poutTag->orient.axis[1][2],
+						poutTag->orient.axis[2][0], poutTag->orient.axis[2][1], poutTag->orient.axis[2][2]);
 		*/
 		}
 	}
@@ -2600,105 +2600,105 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 	//
 	// load the meshes
 	//
-	pinmesh = (dmd3mesh_t *)((byte *)pinmodel + LittleLong (pinmodel->ofs_meshes));
-//	poutmesh = poutmodel->meshes = Hunk_Alloc ( sizeof(maliasmesh_t)*poutmodel->num_meshes);
-	poutmesh = poutmodel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t)*poutmodel->num_meshes);
+	pinMesh = (dmd3mesh_t *)((byte *)pinModel + LittleLong (pinModel->ofs_meshes));
+//	poutMesh = poutModel->meshes = Hunk_Alloc (sizeof(maliasmesh_t)*poutModel->num_meshes);
+	poutMesh = poutModel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t)*poutModel->num_meshes);
 
-	for ( i = 0; i < poutmodel->num_meshes; i++, poutmesh++)
+	for ( i = 0; i < poutModel->num_meshes; i++, poutMesh++)
 	{
-		memcpy (poutmesh->name, pinmesh->name, MD3_MAX_PATH);
+		memcpy (poutMesh->name, pinMesh->name, MD3_MAX_PATH);
 
-		if ( strncmp ((const char *)pinmesh->id, "IDP3", 4))
+		if ( strncmp ((const char *)pinMesh->id, "IDP3", 4))
 		{
 			VID_Error ( ERR_DROP, "mesh %s in model %s has wrong id (%i should be %i)",
-					 poutmesh->name, mod->name, LittleLong((int)pinmesh->id), IDMD3HEADER );
+					 poutMesh->name, mod->name, LittleLong((int)pinMesh->id), IDMD3HEADER );
 		}
 
-		poutmesh->num_tris = LittleLong ( pinmesh->num_tris );
-		poutmesh->num_skins = LittleLong ( pinmesh->num_skins );
-		poutmesh->num_verts = LittleLong ( pinmesh->num_verts );
+		poutMesh->num_tris = LittleLong ( pinMesh->num_tris );
+		poutMesh->num_skins = LittleLong ( pinMesh->num_skins );
+		poutMesh->num_verts = LittleLong ( pinMesh->num_verts );
 
-		if ( poutmesh->num_skins <= 0 )
+		if ( poutMesh->num_skins <= 0 )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has no skins", i, mod->name );
-		else if ( poutmesh->num_skins > MD3_MAX_SHADERS )
+		else if ( poutMesh->num_skins > MD3_MAX_SHADERS )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has too many skins", i, mod->name );
 
-		if ( poutmesh->num_tris <= 0 )
+		if ( poutMesh->num_tris <= 0 )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has no triangles", i, mod->name );
-		else if ( poutmesh->num_tris > MD3_MAX_TRIANGLES )
+		else if ( poutMesh->num_tris > MD3_MAX_TRIANGLES )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has too many triangles", i, mod->name );
 
-		if ( poutmesh->num_verts <= 0 )
+		if ( poutMesh->num_verts <= 0 )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has no vertices", i, mod->name );
-		else if ( poutmesh->num_verts > MD3_MAX_VERTS )
+		else if ( poutMesh->num_verts > MD3_MAX_VERTS )
 			VID_Error ( ERR_DROP, "mesh %i in model %s has too many vertices", i, mod->name );
 
 		//
 		// register all skins
 		//
-		pinskin = (dmd3skin_t *)((byte *)pinmesh + LittleLong (pinmesh->ofs_skins));
-	//	poutskin = poutmesh->skins = Hunk_Alloc( sizeof(maliasskin_t) * poutmesh->num_skins );
-		poutskin = poutmesh->skins = ModChunk_Alloc(sizeof(maliasskin_t) * poutmesh->num_skins);
+		pinSkin = (dmd3skin_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_skins));
+	//	poutSkin = poutMesh->skins = Hunk_Alloc(sizeof(maliasskin_t) * poutMesh->num_skins);
+		poutSkin = poutMesh->skins = ModChunk_Alloc(sizeof(maliasskin_t) * poutMesh->num_skins);
 
-		for ( j = 0; j < poutmesh->num_skins; j++, pinskin++, poutskin++ )
+		for ( j = 0; j < poutMesh->num_skins; j++, pinSkin++, poutSkin++ )
 		{
-			memcpy (name, pinskin->name, MD3_MAX_PATH);
+			memcpy (name, pinSkin->name, MD3_MAX_PATH);
 			if (name[1] == 'o')
 				name[0] = 'm';
 			if (name[1] == 'l')
 				name[0] = 'p';
-			memcpy (poutskin->name, name, MD3_MAX_PATH);
-			Com_sprintf(poutskin->glowname, sizeof(poutskin->glowname), "\0"); // set null glowskin
+			memcpy (poutSkin->name, name, MD3_MAX_PATH);
+			Com_sprintf(poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 			mod->skins[i][j] = R_FindImage (name, it_skin);
 		}
 
 		//
 		// load the indexes
 		//
-		pinindex = (index_t *)((byte *)pinmesh + LittleLong (pinmesh->ofs_tris));
-	//	poutindex = poutmesh->indexes = Hunk_Alloc( sizeof(index_t) * poutmesh->num_tris * 3 );
-		poutindex = poutmesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutmesh->num_tris * 3);
+		pinIndex = (index_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_tris));
+	//	poutIndex = poutMesh->indexes = Hunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3);
+		poutIndex = poutMesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3);
 
-		for ( j = 0; j < poutmesh->num_tris; j++, pinindex += 3, poutindex += 3 )
+		for ( j = 0; j < poutMesh->num_tris; j++, pinIndex += 3, poutIndex += 3 )
 		{
-			poutindex[0] = (index_t)LittleLong ( pinindex[0] );
-			poutindex[1] = (index_t)LittleLong ( pinindex[1] );
-			poutindex[2] = (index_t)LittleLong ( pinindex[2] );
+			poutIndex[0] = (index_t)LittleLong ( pinIndex[0] );
+			poutIndex[1] = (index_t)LittleLong ( pinIndex[1] );
+			poutIndex[2] = (index_t)LittleLong ( pinIndex[2] );
 		}
 
 		//
 		// load the texture coordinates
 		//
-		pincoord = (dmd3coord_t *)((byte *)pinmesh + LittleLong (pinmesh->ofs_tcs));
-	//	poutcoord = poutmesh->stcoords = Hunk_Alloc( sizeof(maliascoord_t) * poutmesh->num_verts);
-		poutcoord = poutmesh->stcoords = ModChunk_Alloc(sizeof(maliascoord_t) * poutmesh->num_verts);
+		pinCoord = (dmd3coord_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_tcs));
+	//	poutCoord = poutMesh->stcoords = Hunk_Alloc(sizeof(maliascoord_t) * poutMesh->num_verts);
+		poutCoord = poutMesh->stcoords = ModChunk_Alloc(sizeof(maliascoord_t) * poutMesh->num_verts);
 
-		for ( j = 0; j < poutmesh->num_verts; j++, pincoord++, poutcoord++ )
+		for ( j = 0; j < poutMesh->num_verts; j++, pinCoord++, poutCoord++ )
 		{
-			poutcoord->st[0] = LittleFloat ( pincoord->st[0] );
-			poutcoord->st[1] = LittleFloat ( pincoord->st[1] );
+			poutCoord->st[0] = LittleFloat ( pinCoord->st[0] );
+			poutCoord->st[1] = LittleFloat ( pinCoord->st[1] );
 		}
 
 		//
 		// load the vertexes and normals
 		//
-		pinvert = (dmd3vertex_t *)((byte *)pinmesh + LittleLong (pinmesh->ofs_verts));
-	//	poutvert = poutmesh->vertexes = Hunk_Alloc(poutmodel->num_frames * poutmesh->num_verts * sizeof(maliasvertex_t));
-		poutvert = poutmesh->vertexes = ModChunk_Alloc(poutmodel->num_frames * poutmesh->num_verts * sizeof(maliasvertex_t));
+		pinVert = (dmd3vertex_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_verts));
+	//	poutVert = poutMesh->vertexes = Hunk_Alloc(poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
+		poutVert = poutMesh->vertexes = ModChunk_Alloc(poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
 
-		for ( l = 0; l < poutmodel->num_frames; l++ )
+		for ( l = 0; l < poutModel->num_frames; l++ )
 		{
-			for ( j = 0; j < poutmesh->num_verts; j++, pinvert++, poutvert++ )
+			for ( j = 0; j < poutMesh->num_verts; j++, pinVert++, poutVert++ )
 			{
-				poutvert->xyz[0] = LittleShort(pinvert->point[0]);
-				poutvert->xyz[1] = LittleShort(pinvert->point[1]);
-				poutvert->xyz[2] = LittleShort(pinvert->point[2]);
+				poutVert->xyz[0] = LittleShort(pinVert->point[0]);
+				poutVert->xyz[1] = LittleShort(pinVert->point[1]);
+				poutVert->xyz[2] = LittleShort(pinVert->point[2]);
 
-				poutvert->normal[0] = (LittleShort(pinvert->norm) >> 0) & 0xff;
-				poutvert->normal[1] = (LittleShort(pinvert->norm) >> 8) & 0xff;
+				poutVert->normal[0] = (LittleShort(pinVert->norm) >> 0) & 0xff;
+				poutVert->normal[1] = (LittleShort(pinVert->norm) >> 8) & 0xff;
 
-				lat = (pinvert->norm >> 8) & 0xff;
-				lng = (pinvert->norm & 0xff);
+				lat = (pinVert->norm >> 8) & 0xff;
+				lng = (pinVert->norm & 0xff);
 				
 				lat *= M_PI/128;
 				lng *= M_PI/128;
@@ -2709,34 +2709,34 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 
 				// use ye olde quantized normals for shading
 				maxdot = -999999.0;
-				maxdotindex = -1;
+				maxDotIndex = -1;
 
 				for (k=0; k<NUMVERTEXNORMALS; k++)
 				{
 					float dot = DotProduct (normal, r_avertexnormals[k]);
 					if (dot > maxdot) {
 						maxdot = dot;
-						maxdotindex = k;
+						maxDotIndex = k;
 					}
 				}
-				poutvert->lightnormalindex = maxdotindex;
+				poutVert->lightnormalindex = maxDotIndex;
 			}
 		}
-		pinmesh = (dmd3mesh_t *)((byte *)pinmesh + LittleLong (pinmesh->meshsize));
+		pinMesh = (dmd3mesh_t *)((byte *)pinMesh + LittleLong (pinMesh->meshsize));
 
 		//
 		// build triangle neighbors
 		//
-	//	poutmesh->trneighbors = Hunk_Alloc (sizeof(int) * poutmesh->num_tris * 3);
-		poutmesh->trneighbors = ModChunk_Alloc (sizeof(int) * poutmesh->num_tris * 3);
-		Mod_BuildTriangleNeighbors (poutmesh);
+	//	poutMesh->trneighbors = Hunk_Alloc (sizeof(int) * poutMesh->num_tris * 3);
+		poutMesh->trneighbors = ModChunk_Alloc (sizeof(int) * poutMesh->num_tris * 3);
+		Mod_BuildTriangleNeighbors (poutMesh);
 	}
 
 	mod->hasAlpha = false;
-	Mod_LoadModelScript (mod, poutmodel); // md3 skin scripting
+	Mod_LoadModelScript (mod, poutModel); // md3 skin scripting
 
-	//if (mod->hasAlpha)
-	//	VID_Printf (PRINT_ALL, "Mod_LoadAliasMD3Model: model %s has trans mesh\n", mod->name);
+//	if (mod->hasAlpha)
+//		VID_Printf (PRINT_ALL, "Mod_LoadAliasMD3Model: model %s has trans mesh\n", mod->name);
 
 	mod->type = mod_alias;
 }
