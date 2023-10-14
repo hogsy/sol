@@ -50,21 +50,21 @@ void R_DrawSpriteModel (entity_t *e)
 {
 	float			alpha = 1.0f;
 	vec3_t			point[4];
-	dspr2_t			*psprite;
-	dspr2frame_t	*frame;
+	mspritemodel_t	*pSprite;
+	mspriteframe_t	*pFrame;
 	float			*up, *right;
 	int				i, framenum;
 
 	// don't even bother culling, because it's just a single
 	// polygon without a surface cache
 
-	psprite = (dspr2_t *)currentmodel->extradata;
+	pSprite = (mspritemodel_t *)currentmodel->extradata;
 
-	e->frame %= psprite->numframes;
+	e->frame %= pSprite->num_frames;
 
-	frame = &psprite->frames[e->frame];
+	pFrame = &pSprite->frames[e->frame];
 
-	if (!frame) return;
+	if ( !pFrame ) return;
 
 	c_alias_polys += 2;
 
@@ -101,24 +101,23 @@ void R_DrawSpriteModel (entity_t *e)
 		}
 	}
 
-//	GL_Bind(currentmodel->skins[0][e->frame]->texnum);
 	// catch out of bounds framenum
 	framenum = e->frame;
-	if (( framenum >= psprite->numframes) || (framenum < 0) )
+	if (( framenum >= pSprite->num_frames) || (framenum < 0) )
 		framenum = 0;
 	GL_Bind (currentmodel->skins[0][framenum]->texnum);
 
-	VectorMA (e->origin, -frame->origin_y, up, point[0]);
-	VectorMA (point[0], -frame->origin_x, right, point[0]);
+	VectorMA (e->origin, -pFrame->origin_y, up, point[0]);
+	VectorMA (point[0], -pFrame->origin_x, right, point[0]);
 
-	VectorMA (e->origin, frame->height - frame->origin_y, up, point[1]);
-	VectorMA (point[1], -frame->origin_x, right, point[1]);
+	VectorMA (e->origin, pFrame->height - pFrame->origin_y, up, point[1]);
+	VectorMA (point[1], -pFrame->origin_x, right, point[1]);
 
-	VectorMA (e->origin, frame->height - frame->origin_y, up, point[2]);
-	VectorMA (point[2], frame->width - frame->origin_x, right, point[2]);
+	VectorMA (e->origin, pFrame->height - pFrame->origin_y, up, point[2]);
+	VectorMA (point[2], pFrame->width - pFrame->origin_x, right, point[2]);
 
-	VectorMA (e->origin, -frame->origin_y, up, point[3]);
-	VectorMA (point[3], frame->width - frame->origin_x, right, point[3]);
+	VectorMA (e->origin, -pFrame->origin_y, up, point[3]);
+	VectorMA (point[3], pFrame->width - pFrame->origin_x, right, point[3]);
 
 	rb_vertex = rb_index = 0;
 	indexArray[rb_index++] = rb_vertex+0;
@@ -129,7 +128,7 @@ void R_DrawSpriteModel (entity_t *e)
 	indexArray[rb_index++] = rb_vertex+3;
 	for (i=0; i<4; i++) {
 		VA_SetElem2v(texCoordArray[0][rb_vertex], r_spriteTexCoord[i]);
-		VA_SetElem3(vertexArray[rb_vertex], point[i][0], point[i][1], point[i][2]);
+		VA_SetElem3v(vertexArray[rb_vertex], point[i]);
 		VA_SetElem4(colorArray[rb_vertex], 1.0f, 1.0f, 1.0f, alpha);
 		rb_vertex++;
 	}

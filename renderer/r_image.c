@@ -53,9 +53,13 @@ static unsigned char gammatable[256];
 
 cvar_t		*r_intensity;
 
-unsigned int	d_8to24table[256];
+unsigned int	d_8to24table[256];			// palette loaded from colormap.pcx
+unsigned int	d_quakePalette[256];		// palette for MDL models
+const byte		default_quakePal[768] = {	// default internal palette for MDL models
+#include "../qcommon/q1palette.h"
+};
 
-qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type);
+qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type, qboolean useQuakePalette);
 qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t type);
 
 int		gl_filter_min;
@@ -342,7 +346,7 @@ void Scrap_Upload (void)
 {
 /*	scrap_uploads++;
 	GL_Bind (TEXNUM_SCRAPS);
-	GL_Upload8 (scrap_texels[0], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
+	GL_Upload8 (scrap_texels[0], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap, false);	// was it_pic
 	scrap_dirty = false;
 */
 	int		i;
@@ -353,7 +357,7 @@ void Scrap_Upload (void)
 		if (scrap_dirty[i]) {
 			scrap_uploads++;
 			GL_Bind (TEXNUM_SCRAPS + i);
-			GL_Upload8 (scrap_texels[i], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap);	// was it_pic
+			GL_Upload8 (scrap_texels[i], SCRAP_BLOCK_WIDTH, SCRAP_BLOCK_HEIGHT, it_scrap, false);	// was it_pic
 			scrap_dirty[i] = false;
 		}
 	}
@@ -1537,30 +1541,40 @@ typedef struct
 	else if (pos[off] != 255) fdc = pos[off]; \
 }
 
-void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
+void R_FloodFillSkin (byte *skin, int skinwidth, int skinheight, qboolean useQuakePalette)
 {
 	byte				fillcolor = *skin; // assume this is the pixel to fill
+	unsigned int		*palette = NULL;
 	floodfill_t			fifo[FLOODFILL_FIFO_SIZE];
 	int					inpt = 0, outpt = 0;
 	int					filledcolor = -1;
 	int					i;
+
+	// Knightmare- Quake palette support
+	if ( useQuakePalette )
+		palette = d_quakePalette;
+	else
+		palette = d_8to24table;
 
 	if (filledcolor == -1)
 	{
 		filledcolor = 0;
 		// attempt to find opaque black
 		for (i = 0; i < 256; ++i)
-			if (d_8to24table[i] == (255 << 0)) // alpha 1.0
-			{
+		{
+		//	if (d_8to24table[i] == (255 << 0) {) // alpha 1.0
+			// Knightmare- Quake palette support
+			if (palette[i] == (255 << 0)) { // alpha 1.0
 				filledcolor = i;
 				break;
 			}
+		}
 	}
 
 	// can't fill to filled color or to transparent color (used as visited marker)
 	if ((fillcolor == filledcolor) || (fillcolor == 255))
 	{
-		//printf( "not filling skin from %d to %d\n", fillcolor, filledcolor );
+	//	VID_Printf (PRINT_ALL, "not filling skin from %d to %d\n", fillcolor, filledcolor);
 		return;
 	}
 
@@ -2157,10 +2171,11 @@ GL_Upload8
 Returns has_alpha
 ===============
 */
-qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type)
+qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type, qboolean useQuakePalette)
 {
 //	unsigned int	trans[512*256];
 	unsigned int	*trans = NULL;	// Knightmare- changed to dynamic allocation
+	unsigned int	*palette = NULL;
 	int				i, s;
 	int				p;
 	qboolean		has_alpha;	// Knightmare added
@@ -2172,10 +2187,18 @@ qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type)
 
 	trans = (unsigned int *)malloc(s*4);	// Knightmare- changed to dynamic allocation
 
+	// Knightmare- Quake palette support
+	if ( useQuakePalette )
+		palette = d_quakePalette;
+	else
+		palette = d_8to24table;
+
 	for (i=0 ; i<s ; i++)
 	{
 		p = data[i];
-		trans[i] = d_8to24table[p];
+	//	trans[i] = d_8to24table[p];
+		// Knightmare- Quake palette support
+		trans[i] = palette[p];
 
 		if (p == 255)
 		{	// transparent, so scan around for another color
@@ -2192,9 +2215,13 @@ qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type)
 			else
 				p = 0;
 			// copy rgb components
-			((byte *)&trans[i])[0] = ((byte *)&d_8to24table[p])[0];
-			((byte *)&trans[i])[1] = ((byte *)&d_8to24table[p])[1];
-			((byte *)&trans[i])[2] = ((byte *)&d_8to24table[p])[2];
+		//	((byte *)&trans[i])[0] = ((byte *)&d_8to24table[p])[0];
+		//	((byte *)&trans[i])[1] = ((byte *)&d_8to24table[p])[1];
+		//	((byte *)&trans[i])[2] = ((byte *)&d_8to24table[p])[2];
+			// Knightmare- Quake palette support
+			((byte *)&trans[i])[0] = ((byte *)&palette[p])[0];
+			((byte *)&trans[i])[1] = ((byte *)&palette[p])[1];
+			((byte *)&trans[i])[2] = ((byte *)&palette[p])[2];
 		}
 	}
 
@@ -2253,7 +2280,7 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	image->replace_scale_w = image->replace_scale_h = 1.0f; // Knightmare added
 
 	if ( (type == it_skin) && (bits == 8) )
-		R_FloodFillSkin (pic, width, height);
+		R_FloodFillSkin (pic, width, height, false);
 
 	// replacement scaling hack for TGA/JPEG HUD images and skins
 	// TODO: replace this with shaders as soon as they are supported
@@ -2317,7 +2344,7 @@ nonscrap:
 		image->texnum = TEXNUM_IMAGES + (image - gltextures);
 		GL_Bind(image->texnum);
 		if (bits == 8)
-			image->has_alpha = GL_Upload8 (pic, width, height, image->type);
+			image->has_alpha = GL_Upload8 (pic, width, height, image->type, false);
 		else
 			image->has_alpha = GL_Upload32 ((unsigned int *)pic, width, height, image->type);
 		image->upload_width = upload_width;		// after power of 2 and scales
@@ -2328,6 +2355,80 @@ nonscrap:
 		image->tl = 0;
 		image->th = 1;
 	}
+
+	return image;
+}
+
+
+/*
+================
+R_LoadQuakePic
+
+Loads embedded skins/textures using Quake palette
+Example filename: models/objects/tree.mdl_0.pcx
+================
+*/
+image_t *R_LoadQuakePic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits)
+{
+	image_t		*image;
+	int			i;
+	int			nameLen; 
+	char		replaceName[128];
+
+	// TGA/PNG/JPG auto-replace
+	nameLen = (int)strlen(name);
+	if ( (bits == 8) && ( !strcmp(name+nameLen-4, ".pcx") || !strcmp(name+nameLen-4, ".wal") ) )
+	{
+		Q_strncpyz (replaceName, sizeof(replaceName), name);
+		replaceName[nameLen-3] = 't'; replaceName[nameLen-2] = 'g'; replaceName[nameLen-1] = 'a';
+		image = R_FindImage (replaceName, type);	// will automatically fall back to .png and .jpg
+		if (image != NULL) {
+			return image;
+		}
+	}
+
+	// find a free image_t
+	for (i=0, image=gltextures ; i<numgltextures ; i++,image++)
+	{
+		if (!image->texnum)
+			break;
+	}
+	if (i == numgltextures)
+	{
+		if (numgltextures == MAX_GLTEXTURES)
+			VID_Error (ERR_DROP, "MAX_GLTEXTURES");
+		numgltextures++;
+	}
+	image = &gltextures[i];
+
+	if (strlen(name) >= sizeof(image->name))
+		VID_Error (ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name);
+	Q_strncpyz (image->name, sizeof(image->name), name);
+	image->hash = Com_HashFileName(name, 0, false);
+	image->registration_sequence = registration_sequence;
+
+	image->width = width;
+	image->height = height;
+	image->type = type;
+	image->replace_scale_w = image->replace_scale_h = 1.0f;
+
+	if ( (type == it_skin) && (bits == 8) )
+		R_FloodFillSkin (pic, width, height, true);
+
+	image->scrap = false;
+	image->texnum = TEXNUM_IMAGES + (image - gltextures);
+	GL_Bind(image->texnum);
+	if (bits == 8)
+		image->has_alpha = GL_Upload8 (pic, width, height, image->type, true);
+	else
+		image->has_alpha = GL_Upload32 ((unsigned int *)pic, width, height, image->type);
+	image->upload_width = upload_width;		// after power of 2 and scales
+	image->upload_height = upload_height;
+	image->paletted = uploaded_paletted;
+	image->sl = 0;
+	image->sh = 1;
+	image->tl = 0;
+	image->th = 1;
 
 	return image;
 }
@@ -2707,6 +2808,53 @@ int Draw_GetPalette (void)
 
 /*
 ===============
+Draw_GetQuakePalette
+
+Loads Quake Palette for MDL models
+===============
+*/
+void Draw_GetQuakePalette (void)
+{
+	int				i, len;
+	int				r, g, b;
+	unsigned int	v;
+	byte			*pal;
+	qboolean		useDefaultPal = false;
+
+	len = FS_LoadFile ("gfx/palette.lmp", &pal);
+	if ( !pal ) {
+		VID_Printf (PRINT_DEVELOPER, "gfx/palette.lmp not found, using internal default\n");
+		useDefaultPal = true;
+	}
+	else if (len < 768) {
+		VID_Printf (PRINT_DEVELOPER, "gfx/palette.lmp has wrong size, using internal default\n");
+		FS_FreeFile (pal);
+		useDefaultPal = true;
+	}
+
+	if ( useDefaultPal ) {
+		pal = default_quakePal;
+	}
+
+	for (i = 0; i < 256; i++)
+	{
+		r = pal[i*3+0];
+		g = pal[i*3+1];
+		b = pal[i*3+2];
+		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
+		d_quakePalette[i] = LittleLong(v);
+	}
+	d_quakePalette[255] &= LittleLong(0xffffff);	// 255 is transparent
+
+	if ( !useDefaultPal ) {
+		FS_FreeFile (pal);
+		VID_Printf (PRINT_DEVELOPER, "Sucessfully loaded gfx/palette.lmp\n");
+	}
+}
+
+
+/*
+===============
 R_InitImages
 ===============
 */
@@ -2735,9 +2883,11 @@ void R_InitImages (void)
 
 	glState.inverse_intensity = 1 / r_intensity->value;
 
-	R_InitFailedImgList (); // Knightmare added
+	R_InitFailedImgList ();		// Knightmare added
 
 	Draw_GetPalette ();
+
+	Draw_GetQuakePalette ();	// Knightmare added
 
 #if 0
 	if (qglColorTableEXT)

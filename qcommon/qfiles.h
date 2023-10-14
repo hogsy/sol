@@ -50,7 +50,6 @@ typedef struct
 
 #define	MAX_FILES_IN_PACK	4096
 
-
 /*
 ========================================================================
 
@@ -76,6 +75,96 @@ typedef struct
     unsigned char	data;			// unbounded
 } pcx_t;
 
+/*
+========================================================================
+
+.MDL triangle model file format, from Quake source
+
+========================================================================
+*/
+
+#define IDMDLHEADER		(('O'<<24)+('P'<<16)+('D'<<8)+'I')
+#define MDL_ALIAS_VERSION	6
+#define MDL_ONSEAM			0x0020
+
+#define MDL_MAX_TRIANGLES	2048
+#define MDL_MAX_VERTS		1024
+#define MDL_MAX_FRAMES		256
+#define MDL_MAX_SKINS		32
+
+typedef enum { ST_SYNC = 0, ST_RAND } mdl_synctype_t;
+
+typedef enum { MDL_SINGLE = 0, MDL_GROUP } mdl_frametype_t;
+
+typedef enum { MDL_SKIN_SINGLE = 0, MDL_SKIN_GROUP } mdl_skintype_t;
+
+typedef struct {
+	int		onSeam;
+	int		s;
+	int		t;
+} dmdl_stvert_t;
+
+typedef struct {
+	byte	v[3];
+	byte	lightnormalindex;
+} dmdl_trivertx_t;
+
+typedef struct dtriangle_s {
+	int		facesFront;
+	int		vertIndex[3];
+} dmdl_triangle_t;
+
+typedef struct {
+	mdl_frametype_t	type;
+} dmdl_frametype_t;
+
+typedef struct {
+	dmdl_trivertx_t	bbox_min;	// lightnormal isn't used
+	dmdl_trivertx_t	bbox_max;	// lightnormal isn't used
+	char			name[16];		// frame name from grabbing
+} dmdl_frame_t;
+
+typedef struct {
+	int				num_frames;
+	dmdl_trivertx_t	bbox_min;	// lightnormal isn't used
+	dmdl_trivertx_t	bbox_max;	// lightnormal isn't used
+} dmdl_group_t;
+
+typedef struct {
+	float	interval;
+} dmdl_interval_t;
+
+typedef struct {
+	mdl_skintype_t	type;
+} dmdl_skintype_t;
+
+typedef struct {
+	int			num_skins;
+} dmdl_skingroup_t;
+
+typedef struct {
+	float	interval;
+} dmdl_skininterval_t;
+
+typedef struct {
+	int				ident;
+	int				version;
+
+	vec3_t			scale;
+	vec3_t			scale_origin;
+	float			bounding_radius;
+	vec3_t			eye_position;
+
+	int				num_skins;
+	int				skin_width;
+	int				skin_height;
+	int				num_verts;
+	int				num_tris;
+	int				num_frames;
+	mdl_synctype_t	sync_type;
+	int				flags;
+	float			size;
+} dmdl_t;
 
 /*
 ========================================================================
@@ -271,6 +360,59 @@ typedef struct
     int				ofs_end;
 } dmd3_t;
 
+/*
+========================================================================
+
+.SPR sprite file format, from Quake source
+
+========================================================================
+*/
+
+#define IDSPRHEADER		(('P'<<24)+('S'<<16)+('D'<<8)+'I')
+		// little-endian "IDSP"
+#define SPR_VERSION		1
+#define SPR32_VERSION	32
+
+#define SPR_VP_PARALLEL_UPRIGHT		0
+#define SPR_FACING_UPRIGHT			1
+#define SPR_VP_PARALLEL				2
+#define SPR_ORIENTED				3
+#define SPR_VP_PARALLEL_ORIENTED	4
+
+typedef enum { SPR_SINGLE=0, SPR_GROUP } spr1_frametype_t;
+
+typedef struct
+{
+	spr1_frametype_t	type;
+} dspr1_frametype_t;
+
+typedef struct
+{
+	int		origin[2];
+	int		width, height;
+} dspr1_frame_t;
+
+typedef struct
+{
+	int		num_frames;
+} dspr1_group_t;
+
+typedef struct
+{
+	float	interval;
+} dspr1_interval_t;
+
+typedef struct
+{
+	int				ident;
+	int				version;
+	int				type;
+	float			bounding_radius;
+	int				width, height;
+	int				num_frames;
+	float			beam_length;
+	mdl_synctype_t	synctype;
+} dspr1_t;
 
 /*
 ========================================================================
@@ -306,7 +448,6 @@ typedef struct {
 ==============================================================================
 */
 
-
 #define	MIPLEVELS	4
 typedef struct miptex_s
 {
@@ -318,8 +459,6 @@ typedef struct miptex_s
 	int			contents;
 	int			value;
 } miptex_t;
-
-
 
 /*
 ==============================================================================

@@ -343,11 +343,12 @@
     <ClInclude Include="..\..\client\qcurl.h" />
     <ClInclude Include="..\..\qcommon\filesystem.h" />
     <ClInclude Include="..\..\game\game.h" />
+    <ClInclude Include="..\..\qcommon\q1palette.h" />
+    <ClInclude Include="..\..\qcommon\q2palette.h" />
     <ClInclude Include="..\..\renderer\glext.h" />
     <ClInclude Include="..\..\client\input.h" />
     <ClInclude Include="..\..\client\keys.h" />
     <ClInclude Include="..\..\client\particles.h" />
-    <ClInclude Include="..\..\client\q2palette.h" />
     <ClInclude Include="..\..\game\q_shared.h" />
     <ClInclude Include="..\..\qcommon\qcommon.h" />
     <ClInclude Include="..\..\qcommon\qfiles.h" />

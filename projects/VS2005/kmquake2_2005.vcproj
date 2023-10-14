@@ -958,7 +958,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\client\q2palette.h"
+				RelativePath="..\..\qcommon\q1palette.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\qcommon\q2palette.h"
 				>
 			</File>
 			<File

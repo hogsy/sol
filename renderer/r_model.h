@@ -291,9 +291,10 @@ typedef struct model_s
 	size_t		extradatasize;
 	void		*extradata;
 
-	qboolean	hasAlpha;		// if model has scripted transparency
-	int			bspVersion;		// for checking BSP version for compatibility
-	int			bspFeatures;	// flags for BSP features
+	qboolean	usingModChunk;			// if model is using ModChunk allocation instead of Hunk system
+	qboolean	hasAlpha;				// if model has scripted transparency
+	int			bspVersion;				// for checking BSP version for compatibility
+	int			bspFeatures;			// flags for BSP features
 	qboolean	warpLightmapOverride;	// if warp lightmaps are force-loaded on format 38 BSPs
 
 #ifdef PROJECTION_SHADOWS // projection shadows from BeefQuake R6

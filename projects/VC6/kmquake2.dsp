@@ -638,7 +638,11 @@ SOURCE=..\..\client\particles.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\client\q2palette.h
+SOURCE=..\..\qcommon\q1palette.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\qcommon\q2palette.h
 # End Source File
 # Begin Source File
 

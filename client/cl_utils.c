@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Here I convert old 256 color palette to RGB
 const byte default_pal[768] = {
-#include "q2palette.h"
+#include "../qcommon/q2palette.h"
 };
 
 

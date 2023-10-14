@@ -419,9 +419,6 @@
     <ClInclude Include="..\..\client\particles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\client\q2palette.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\game\q_shared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -477,6 +474,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\qcurl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qcommon\q1palette.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qcommon\q2palette.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
