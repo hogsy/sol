@@ -803,7 +803,7 @@ void Cmd_DetTrap_f (edict_t *ent)
 
 	while ((blip = findradius(blip, ent->s.origin, 2048)) != NULL)	// was 1024
 	{
-		if (!strcmp(blip->classname, "htrap") && blip->owner == ent)
+		if (!strcmp(blip->classname, "trap") && blip->owner == ent)	// was "htrap"
 		{
 			blip->think = Trap_Explode;
 			blip->nextthink = level.time + 0.1;

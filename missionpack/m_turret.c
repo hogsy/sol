@@ -1031,7 +1031,7 @@ void SP_monster_turret (edict_t *self)
 	self->die = turret_die;
 
 	// map designer didn't specify weapon type. set it now.
-	if (!(self->spawnflags & SPAWN_WEAPONCHOICE))
+	if ( !(self->spawnflags & SPAWN_WEAPONCHOICE) )
 	{
 		self->spawnflags |= SPAWN_BLASTER;
 	//	self->spawnflags |= SPAWN_MACHINEGUN;
