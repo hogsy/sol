@@ -389,21 +389,21 @@ void UI_RefreshData (void)
 	// Close all menus before refreshing data
 	UI_ForceMenuOff ();
 
-	UI_FreeVideoInfo ();
+//	UI_FreeVideoInfo ();	// Removed, unnecessary to re-init this
 	UI_FreeFontNames ();
 	UI_FreeHudNames ();
 	UI_FreeCrosshairs ();
 	UI_FreeKeyBindList ();
-	UI_FreeModList ();
+//	UI_FreeModList ();		// Removed, unnecessary to re-init this
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
-	UI_GetVideoInfo ();		// build video mode list
+//	UI_GetVideoInfo ();		// build video mode list	Removed, unnecessary to re-init this
 	UI_LoadFontNames ();	// load font list
 	UI_LoadHudNames ();		// load hud list
 	UI_LoadCrosshairs ();	// load crosshairs
 	UI_LoadKeyBindList ();	// load key bind list
-	UI_GetModList ();		// load mods list
+//	UI_GetModList ();		// load mods list			Removed, unnecessary to re-init this
 	UI_InitServerList ();	// init join server list
 	UI_LoadMapList ();		// load map list
 	UI_LoadPlayerModels (); // load player models

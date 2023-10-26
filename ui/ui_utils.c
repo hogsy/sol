@@ -1773,32 +1773,34 @@ void UI_BuildModList (void)
 	
 		// Must have a pak or pk3 file, a maps dir, or a modinfo.def file
 		if ( !Sys_FindFirst( va("%s/*.pak", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-			Sys_FindClose();
+			Sys_FindClose ();
 			if ( !Sys_FindFirst( va("%s/*.pk3", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-				Sys_FindClose();
+				Sys_FindClose ();
 				if ( !Sys_FindFirst( va("%s/maps", dirnames[i]), SFF_SUBDIR, 0) ) {
-					Sys_FindClose();
+					Sys_FindClose ();
 					if ( !Sys_FindFirst( va("%s/modinfo.def", dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-						Sys_FindClose();
+						Sys_FindClose ();
 						continue;
 					}
 				}
 			}
 		}
-		Sys_FindClose();
+		Sys_FindClose ();
 
 		// check if this mod has a gamex86.dll/gamei386.so without an equivalent KMQ2 dll/so
 		unsupportedMod = false;
-		if ( Sys_FindFirst( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
+	//	if ( Sys_FindFirst( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
+		if ( FS_DirectFileExists( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]) ) )
 		{
-			Sys_FindClose();
-			if ( !Sys_FindFirst( va("%s/"KMQ2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
-				Sys_FindClose();
+		//	Sys_FindClose ();
+		//	if ( !Sys_FindFirst( va("%s/"KMQ2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) ) {
+			if ( !FS_DirectFileExists( va("%s/"KMQ2_GAME_LIBRARY_NAME, dirnames[i]) ) ) {
+			//	Sys_FindClose ();
 				unsupportedMod = true;
 			//	Com_Printf ("UI_BuildModList: mod %s has an unsupported game library.\n", modDir);
 			}
 		}
-		Sys_FindClose();
+	//	Sys_FindClose ();
 
 		// clear optional fields
 		baseGame[0] = baseGame2[0] = baseGame3[0] = 0;
@@ -3279,10 +3281,10 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 			{
 				free (dirnames[i]);
 				dirnames[i] = 0;
-				Sys_FindClose();
+				Sys_FindClose ();
 				continue;
 			}
-			Sys_FindClose();
+			Sys_FindClose ();
 
 			// verify the existence of at least one skin
 			Q_strncpyz (scratch, sizeof(scratch), va("%s%s", dirnames[i], "/*.*")); // was "/*.pcx"

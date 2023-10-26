@@ -65,6 +65,7 @@ instruct clients to write files over areas they shouldn't.
 void CDAudio_Stop (void);
 void Com_FileExtension (const char *path, char *dst, int dstSize);
 
+
 /*
 =================
 FS_FilePath
@@ -117,6 +118,7 @@ char *type_extensions[] =
 	0
 };
 
+
 /*
 =================
 FS_TypeFlagForPakItem
@@ -153,26 +155,6 @@ int FS_FileLength (FILE *f)
 
 	return end;
 }
-
-#if 0
-/*
-================
-FS_Filelength
-================
-*/
-int FS_Filelength (FILE *f)
-{
-	int		pos;
-	int		end;
-
-	pos = ftell (f);
-	fseek (f, 0, SEEK_END);
-	end = ftell (f);
-	fseek (f, pos, SEEK_SET);
-
-	return end;
-}
-#endif
 
 
 /*
@@ -417,6 +399,7 @@ fsHandle_t *FS_GetFileByHandle (fileHandle_t f)
 	return &fs_handles[f-1];
 }
 
+
 #ifdef BINARY_PACK_SEARCH
 /*
 =================
@@ -468,6 +451,7 @@ int FS_FindPackItem (fsPack_t *pack, char *itemName, unsigned int itemHash)
 	return -1;
 }
 #endif	// BINARY_PACK_SEARCH
+
 
 /*
 =================
@@ -674,6 +658,7 @@ int FS_FOpenFileRead (fsHandle_t *handle)
 	return -1;
 }
 
+
 /*
 =================
 FS_FOpenFile
@@ -872,6 +857,7 @@ int FS_FOpenCompressedFile (const char *zipName, const char *fileName, fileHandl
 	return -1;
 }
 
+
 /*
 =================
 FS_FCloseFile
@@ -897,6 +883,7 @@ void FS_FCloseFile (fileHandle_t f)
 
 	memset(handle, 0, sizeof(*handle));
 }
+
 
 /*
 =================
@@ -1009,6 +996,7 @@ int FS_FRead (void *buffer, int size, int count, fileHandle_t f)
 	return size;
 }
 
+
 /*
 =================
 FS_Write
@@ -1057,6 +1045,7 @@ int FS_Write (const void *buffer, int size, fileHandle_t f)
 	return size;
 }
 
+
 /*
 =================
 FS_CompressFile
@@ -1093,6 +1082,7 @@ int FS_CompressFile (const char *fileName, const char *zipName, const char *inte
 	return size;
 }
 
+
 /*
 =================
 FS_DecompressFile
@@ -1127,6 +1117,7 @@ int FS_DecompressFile (const char *fileName, const char *zipName, const char *in
 	return size;
 }
 
+
 /*
 =================
 FS_FTell
@@ -1152,6 +1143,7 @@ int FS_FTell (fileHandle_t f)
 
 	return 0;
 }
+
 
 /*
 =================
@@ -1210,6 +1202,7 @@ char **FS_ListPak (const char *find, int *num)
 
 	return list;		
 }
+
 
 /*
 =================
@@ -1318,6 +1311,7 @@ char **FS_FindFiles (const char *path, const char *extension, int *num)
 	return outList;
 }
 
+
 /*
 =================
 FS_FilteredFindFiles
@@ -1408,6 +1402,7 @@ char **FS_FilteredFindFiles (const char *pattern, int *num)
 	return outList;
 }
 
+
 /*
 =================
 FS_GetFileList
@@ -1424,6 +1419,7 @@ char **FS_GetFileList (const char *path, const char *extension, int *num)
 	else
 		return FS_FindFiles (path, extension, num);
 }
+
 
 /*
 =================
@@ -1512,6 +1508,7 @@ void FS_Seek (fileHandle_t f, int offset, fsOrigin_t origin)
 	}
 }
 
+
 /*
 =================
 FS_Tell
@@ -1539,6 +1536,7 @@ int FS_Tell (fileHandle_t f)
 		return -1;
 }
 
+
 /*
 =================
 FS_FileExists
@@ -1557,9 +1555,36 @@ qboolean FS_FileExists (const char *path)
 	return false;
 }
 
+
+/*
+=================
+FS_DirectFileExists
+
+Similar to FS_FileExists,
+but only takes absolute paths.
+Does not use FS_FOpenFile() or searchpaths.
+================
+*/
+qboolean FS_DirectFileExists (const char *rawPath)
+{
+	FILE		*f;
+
+	f = fopen (rawPath, "rb");
+	if (f) {
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
+
 /*
 =================
 FS_LocalFileExists
+
+Similar to FS_FileExists,
+but only looks under fs_gamedir.
+Does not use FS_FOpenFile() or searchpaths.
 ================
 */
 qboolean FS_LocalFileExists (const char *path)
@@ -1576,9 +1601,14 @@ qboolean FS_LocalFileExists (const char *path)
 	return false;
 }
 
+
 /*
 =================
 FS_SaveFileExists
+
+Similar to FS_FileExists,
+but only looks under fs_savegamedir.
+Does not use FS_FOpenFile() or searchpaths.
 ================
 */
 qboolean FS_SaveFileExists (const char *path)
@@ -1595,9 +1625,14 @@ qboolean FS_SaveFileExists (const char *path)
 	return false;
 }
 
+
 /*
 =================
 FS_DownloadFileExists
+
+Similar to FS_FileExists,
+but only looks under fs_downloaddir.
+Does not use FS_FOpenFile() or searchpaths.
 ================
 */
 qboolean FS_DownloadFileExists (const char *path)
@@ -1613,6 +1648,8 @@ qboolean FS_DownloadFileExists (const char *path)
 	}
 	return false;
 }
+
+
 /*
 ================
 FS_CopyFile
@@ -1648,6 +1685,7 @@ void FS_CopyFile (const char *src, const char *dst)
 	fclose (f2);
 }
 
+
 /*
 =================
 FS_RenameFile
@@ -1661,6 +1699,7 @@ void FS_RenameFile (const char *oldPath, const char *newPath)
 		FS_DPrintf("FS_RenameFile: failed to rename %s to %s\n", oldPath, newPath);
 }
 
+
 /*
 =================
 FS_DeleteFile
@@ -1673,6 +1712,7 @@ void FS_DeleteFile (const char *path)
 	if (remove(path))
 		FS_DPrintf("FS_DeleteFile: failed to delete %s\n", path);
 }
+
 
 /*
 =================
@@ -1713,6 +1753,7 @@ int FS_LoadFile (const char *path, void **buffer)
 	return size;
 }
 
+
 /*
 =================
 FS_FreeFile
@@ -1727,6 +1768,7 @@ void FS_FreeFile (void *buffer)
 	}
 	Z_Free (buffer);
 }
+
 
 // Some incompetently packaged mods have these files in their paks!
 char *pakfile_ignore_names[] =
@@ -1921,6 +1963,7 @@ fsPack_t *FS_LoadPAK (const char *packPath)
 	return pack;
 }
 
+
 /*
 =================
 FS_AddPAKFile
@@ -1942,6 +1985,7 @@ void FS_AddPAKFile (const char *packPath, qboolean isProtected)
     search->next = fs_searchPaths;
     fs_searchPaths = search;
 }
+
 
 /*
 =================
@@ -2063,6 +2107,7 @@ fsPack_t *FS_LoadPK3 (const char *packPath)
 	return pack;
 }
 
+
 /*
 =================
 FS_AddPK3File
@@ -2084,6 +2129,7 @@ void FS_AddPK3File (const char *packPath, qboolean isProtected)
     search->next = fs_searchPaths;
     fs_searchPaths = search;
 }
+
 
 /*
 =================
@@ -2178,6 +2224,7 @@ void FS_AddPaksInDirectory (const char *dir)
         // VoiD -E- *.pack support
     } 
 }
+
 
 /*
 =================
@@ -2412,6 +2459,7 @@ void FS_Path_f (void)
 	Com_Printf("%i files in PAK/PK3 files\n\n", totalFiles);
 }
 
+
 /*
 =================
 FS_Startup
@@ -2629,6 +2677,7 @@ void FS_InitFilesystem (void)
 
 	FS_Path_f(); // output path data
 }
+
 
 /*
 =================

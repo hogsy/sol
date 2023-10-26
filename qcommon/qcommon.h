@@ -990,6 +990,7 @@ void		FS_Seek (fileHandle_t f, int offset, fsOrigin_t origin);
 int			FS_FTell (fileHandle_t f);
 int			FS_Tell (fileHandle_t f);
 qboolean	FS_FileExists (const char *path);
+qboolean	FS_DirectFileExists (const char *rawPath);
 qboolean	FS_LocalFileExists (const char *path);
 qboolean	FS_SaveFileExists (const char *path);
 qboolean	FS_DownloadFileExists (const char *path);
