@@ -514,13 +514,13 @@ void CarrierSpawn (edict_t *self)
 		gi.sound (self, CHAN_BODY, sound_spawn, 1, ATTN_NONE, 0);
 
 		self->monsterinfo.monster_slots--;
-//		if ((g_showlogic) && (g_showlogic->value))
-//			gi.dprintf ("carrier: post-spawn : %d slots left\n", self->monsterinfo.monster_slots);
+	//	if ((g_showlogic) && (g_showlogic->value))
+	//		gi.dprintf ("carrier: post-spawn : %d slots left\n", self->monsterinfo.monster_slots);
 
 		ent->nextthink = level.time;
 		ent->think (ent);
 		
-		//ent->monsterinfo.aiflags |= AI_SPAWNED_CARRIER|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
+	//	ent->monsterinfo.aiflags |= AI_SPAWNED_CARRIER|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
 		ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS;
 		ent->monsterinfo.monsterflags |= MFL_SPAWNED_CARRIER|MFL_DO_NOT_COUNT;
 
@@ -550,8 +550,8 @@ void CarrierSpawn (edict_t *self)
 				ent->monsterinfo.attack_state = AS_SLIDING;
 				ent->monsterinfo.currentmove = &flyer_move_attack3;
 			}
-//			else if ((g_showlogic) && (g_showlogic->value))
-//				gi.dprintf ("carrier:  unexpected time %d!\n", mytime);
+		//	else if ((g_showlogic) && (g_showlogic->value))
+		//		gi.dprintf ("carrier:  unexpected time %d!\n", mytime);
 		}
 	}
 }

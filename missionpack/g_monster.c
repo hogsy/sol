@@ -1414,7 +1414,7 @@ qboolean monster_start (edict_t *self)
 		|| (UseSpecialGoodGuyFlag(self) && (self->spawnflags & 16)) )
 	{
 		self->monsterinfo.aiflags |= AI_GOOD_GUY;
-		if (!self->dmgteam)
+		if ( !self->dmgteam )
 		{
 			size_t	dmgSize = 8*sizeof(char);
 			self->dmgteam = gi.TagMalloc(dmgSize, TAG_LEVEL);
@@ -1440,10 +1440,12 @@ qboolean monster_start (edict_t *self)
 	if ( (self->spawnflags & SF_MONSTER_AMBUSH) && !(self->monsterinfo.aiflags & AI_GOOD_GUY) )
 		self->spawnflags |= SF_MONSTER_SIGHT;
 
+	// Lazarus: Don't add trigger spawned monsters until they are actually spawned
+	// Knightmare- this is annoying, and will likely annoy most Q2 players as well
 	// Zaero- spawnflag 16 = do not count
-	//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.aiflags & AI_DO_NOT_COUNT) )
-	//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT)/* && !(self->spawnflags & SF_MONSTER_TRIGGER_SPAWN*/ )
-	// Zaero- spawnflag 16 = do not count
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.aiflags & AI_DO_NOT_COUNT) )
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT) && !(self->spawnflags & SF_MONSTER_TRIGGER_SPAWN) )
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT) )
 	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT) && !( (level.maptype == MAPTYPE_ZAERO) && (self->spawnflags & 16) ) )
 		level.total_monsters++;
 
@@ -1455,7 +1457,7 @@ qboolean monster_start (edict_t *self)
 	self->use = monster_use;
 
 	// Lazarus - don't reset max_health unnecessarily
-	if (!self->max_health)
+	if ( !self->max_health )
 		self->max_health = self->health;
 
 	// Reset skinnum for revived monsters
@@ -1792,7 +1794,8 @@ void stationarymonster_triggered_spawn_use (edict_t *self, edict_t *other, edict
 	if (activator->client && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
 		self->enemy = activator;
 	// Lazarus: Add 'em up
-//	if (!(self->monsterinfo.aiflags & AI_GOOD_GUY))
+	// Knightmare- this is annoying, and will likely annoy most Q2 players as well
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) )
 //		level.total_monsters++;
 	self->use = monster_use;
 }

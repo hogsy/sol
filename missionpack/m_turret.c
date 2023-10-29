@@ -805,7 +805,7 @@ void turret_wake (edict_t *self)
 	self->takedamage = DAMAGE_AIM;
 	self->movetype = MOVETYPE_NONE;
 	// prevent counting twice
-	//self->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
+//	self->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 	self->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
 	gi.linkentity (self);
@@ -818,7 +818,7 @@ void turret_wake (edict_t *self)
 		self->s.skinnum = 2;
 
 	// but we do want the death to count
-	//self->monsterinfo.aiflags &= ~AI_DO_NOT_COUNT;
+//	self->monsterinfo.aiflags &= ~AI_DO_NOT_COUNT;
 	self->monsterinfo.monsterflags &= ~MFL_DO_NOT_COUNT;
 }
 
@@ -1133,7 +1133,7 @@ void SP_monster_turret (edict_t *self)
 		self->takedamage = DAMAGE_NO;
 		self->use = turret_activate;
 		turret_wall_spawn(self);
-		//if ((!(self->monsterinfo.aiflags & AI_GOOD_GUY)) && (!(self->monsterinfo.aiflags & AI_DO_NOT_COUNT)))
+	//	if ((!(self->monsterinfo.aiflags & AI_GOOD_GUY)) && (!(self->monsterinfo.aiflags & AI_DO_NOT_COUNT)))
 		if ((!(self->monsterinfo.aiflags & AI_GOOD_GUY)) && (!(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT)))
 			level.total_monsters++;
 	}

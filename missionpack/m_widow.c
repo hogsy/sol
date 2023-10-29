@@ -411,7 +411,7 @@ void WidowSpawn (edict_t *self)
 			ent->nextthink = level.time;
 			ent->think (ent);
 
-			//ent->monsterinfo.aiflags |= AI_SPAWNED_WIDOW|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
+		//	ent->monsterinfo.aiflags |= AI_SPAWNED_WIDOW|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
 			ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS;
 			ent->monsterinfo.monsterflags |= MFL_SPAWNED_WIDOW|MFL_DO_NOT_COUNT;
 

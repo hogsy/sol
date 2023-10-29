@@ -1654,7 +1654,7 @@ void medic_finish_spawn (edict_t *self)
 			ent->think (ent);
 		}
 
-		//ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS|AI_DO_NOT_COUNT|AI_SPAWNED_MEDIC_C;
+	//	ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS|AI_DO_NOT_COUNT|AI_SPAWNED_MEDIC_C;
 		ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS;
 		ent->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT|MFL_SPAWNED_MEDIC_C;
 		ent->monsterinfo.commander = self;
@@ -1957,9 +1957,9 @@ void medic_dodge (edict_t *self, edict_t *attacker, float eta, trace_t *tr)
 
 void MedicCommanderCache (void)
 {
-	//edict_t	*newEnt;
-	int	modelidx;
-	//int i;
+//	edict_t	*newEnt;
+	int		modelidx;
+//	int		i;
 
 	//Knightmare- this is not needed and crashes some maps
 /*	//FIXME - better way to do this?  this is quick and dirty
@@ -1971,14 +1971,13 @@ void MedicCommanderCache (void)
 		VectorCopy(vec3_origin, newEnt->s.angles);
 		newEnt->classname = ED_NewString (reinforcements[i]);
 		
-		//newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
+	//	newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 		newEnt->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
 		ED_CallSpawn(newEnt);
 		// FIXME - could copy mins/maxs into reinforcements from here
 		G_FreeEdict (newEnt);
-	}
-*/
+	} */
 	modelidx = gi.modelindex("models/items/spawngro/tris.md2");
 	modelidx = gi.modelindex("models/items/spawngro2/tris.md2");
 }

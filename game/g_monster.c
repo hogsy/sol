@@ -40,20 +40,20 @@ void FadeSink (edict_t *ent)
 		ent->s.renderfx &= ~RF_TRANSLUCENT;
 		ent->s.effects |= EF_SPHERETRANS;
 	}
-	if (ent->count==10)
-		ent->think=G_FreeEdict;
-	ent->nextthink=level.time+FRAMETIME;
+	if (ent->count == 10)
+		ent->think = G_FreeEdict;
+	ent->nextthink = level.time+FRAMETIME;
 }
 void FadeDieSink (edict_t *ent)
 {
 	ent->takedamage = DAMAGE_NO;	// can't gib 'em once they start sinking
 	ent->s.effects &= ~EF_FLIES;
 	ent->s.sound = 0;
-	ent->s.origin[2]-=SINKAMT;
-	ent->s.renderfx=RF_TRANSLUCENT;
-	ent->think=FadeSink;
-	ent->nextthink=level.time+FRAMETIME;
-	ent->count=0;
+	ent->s.origin[2] -= SINKAMT;
+	ent->s.renderfx = RF_TRANSLUCENT;
+	ent->think = FadeSink;
+	ent->nextthink = level.time + FRAMETIME;
+	ent->count = 0;
 }
 
 
@@ -63,7 +63,7 @@ void FadeDieSink (edict_t *ent)
 
 qboolean M_SetDeath (edict_t *self, mmove_t **deathmoves)
 {
-	mmove_t	*move=NULL;
+	mmove_t	*move = NULL;
 	mmove_t *dmove;
 
 	if (self->health > 0)
@@ -681,8 +681,9 @@ void monster_triggered_spawn_use (edict_t *self, edict_t *other, edict_t *activa
 	if (activator->client && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
 		self->enemy = activator;
 	// Lazarus: Add 'em up
-	if (!(self->monsterinfo.aiflags & AI_GOOD_GUY))
-		level.total_monsters++;
+	// Knightmare- this is annoying, and will likely annoy most Q2 players as well
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) )
+//		level.total_monsters++;
 	self->use = monster_use;
 }
 
@@ -760,7 +761,7 @@ qboolean monster_start (edict_t *self)
 	if ( UseRegularGoodGuyFlag(self) && (self->spawnflags & SF_MONSTER_GOODGUY) )
 	{
 		self->monsterinfo.aiflags |= AI_GOOD_GUY;
-		if (!self->dmgteam) {
+		if ( !self->dmgteam ) {
 			self->dmgteam = gi.TagMalloc(8*sizeof(char), TAG_LEVEL);
 		//	strncpy(self->dmgteam,"player");
 			Q_strncpyz(self->dmgteam, 8, "player");
@@ -780,11 +781,13 @@ qboolean monster_start (edict_t *self)
 		self->spawnflags &= ~MONSTER_SIGHT;
 		self->spawnflags |= MONSTER_AMBUSH;
 	} */
-	if ((self->spawnflags & SF_MONSTER_AMBUSH) && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
+	if ( (self->spawnflags & SF_MONSTER_AMBUSH) && !(self->monsterinfo.aiflags & AI_GOOD_GUY) )
 		self->spawnflags |= SF_MONSTER_SIGHT;
 
 	// Lazarus: Don't add trigger spawned monsters until they are actually spawned
-	if (!(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->spawnflags & SF_MONSTER_TRIGGER_SPAWN))
+	// Knightmare- this is annoying, and will likely annoy most Q2 players as well
+//	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->spawnflags & SF_MONSTER_TRIGGER_SPAWN) )
+	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) )
 		level.total_monsters++;
 
 	self->nextthink = level.time + FRAMETIME;

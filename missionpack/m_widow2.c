@@ -219,13 +219,13 @@ void Widow2Spawn (edict_t *self)
 
 			self->monsterinfo.monster_used++;
 			ent->monsterinfo.commander = self;
-//			if ((g_showlogic) && (g_showlogic->value))
-//				gi.dprintf ("widow: post-spawn : %d slots left\n", SELF_SLOTS_LEFT);
+		//	if ((g_showlogic) && (g_showlogic->value))
+		//		gi.dprintf ("widow: post-spawn : %d slots left\n", SELF_SLOTS_LEFT);
 
 			ent->nextthink = level.time;
 			ent->think (ent);
 			
-			//ent->monsterinfo.aiflags |= AI_SPAWNED_WIDOW|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
+		//	ent->monsterinfo.aiflags |= AI_SPAWNED_WIDOW|AI_DO_NOT_COUNT|AI_IGNORE_SHOTS;
 			ent->monsterinfo.aiflags |= AI_IGNORE_SHOTS;
 			ent->monsterinfo.monsterflags |= MFL_SPAWNED_WIDOW|MFL_DO_NOT_COUNT;
 
@@ -244,27 +244,27 @@ void Widow2Spawn (edict_t *self)
 						designated_enemy = PickCoopTarget(ent);
 						if (designated_enemy)
 						{
-//							if ((g_showlogic) && (g_showlogic->value))
-//							{
-//								gi.dprintf ("PickCoopTarget returned a %s - ", designated_enemy->classname);
-//								if (designated_enemy->client)
-//									gi.dprintf ("with name %s\n", designated_enemy->client->pers.netname);
-//								else
-//									gi.dprintf ("NOT A CLIENT\n");
-//							}
+						/*	if ((g_showlogic) && (g_showlogic->value))
+							{
+								gi.dprintf ("PickCoopTarget returned a %s - ", designated_enemy->classname);
+								if (designated_enemy->client)
+									gi.dprintf ("with name %s\n", designated_enemy->client->pers.netname);
+								else
+									gi.dprintf ("NOT A CLIENT\n");
+							} */
 						}
 						else
 						{
-//							if ((g_showlogic) && (g_showlogic->value))
-//								gi.dprintf ("pick coop failed, using my current enemy\n");
+						//	if ((g_showlogic) && (g_showlogic->value))
+						//		gi.dprintf ("pick coop failed, using my current enemy\n");
 							designated_enemy = self->enemy;
 						}
 					}
 				}
 				else
 				{
-//					if ((g_showlogic) && (g_showlogic->value))
-//						gi.dprintf ("pick coop failed, using my current enemy\n");
+				//	if ((g_showlogic) && (g_showlogic->value))
+				//		gi.dprintf ("pick coop failed, using my current enemy\n");
 					designated_enemy = self->enemy;
 				}
 			}

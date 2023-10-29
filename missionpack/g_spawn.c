@@ -2738,7 +2738,7 @@ edict_t *CreateMonster (vec3_t origin, vec3_t angles, char *classname)
 	VectorCopy (origin, newEnt->s.origin);
 	VectorCopy (angles, newEnt->s.angles);
 	newEnt->classname = ED_NewString (classname);
-	//newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
+//	newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 	newEnt->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
 	VectorSet (newEnt->gravityVector, 0, 0, -1);
