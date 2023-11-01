@@ -1280,6 +1280,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename);
 		png_destroy_read_struct (&png, &pnginfo, 0);
 		R_DestroyPNG (false);
+		FS_FreeFile ((void *)raw);
 		return;
 	}
 
