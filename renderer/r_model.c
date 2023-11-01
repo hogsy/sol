@@ -3414,7 +3414,7 @@ void Mod_LoadSPRModel (model_t *mod, void *buffer)
 	// count total frames
 	//
 	pinFrameType = (dspr1_frametype_t *)(pinSprite + 1);
-//	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeMDL() is removed!
+//	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeSPR() is removed!
 /*	inFrameTypePtr = pinFrameType;
 	sprTotalFrames = 0;
 	for (i = 0; i < numFramesInitial; i++)
