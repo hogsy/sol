@@ -39,7 +39,7 @@ static int	sound_search;
 
 void ChickMoan (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH))
+	if ( !(self->spawnflags & SF_MONSTER_AMBUSH) )
 	{
 		if (random() < 0.5)
 			gi.sound (self, CHAN_VOICE, sound_idle1, 1, ATTN_IDLE, 0);
@@ -662,9 +662,9 @@ void ChickRocket (edict_t *self)
 				//	else
 				//		monster_fire_rocket (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1, NULL);
 				}
-//				else if ((g_showlogic) && (g_showlogic->value))
-//					// ok, I give up
-//					gi.dprintf ("chick avoiding blindfire shot\n");
+			//	else if ((g_showlogic) && (g_showlogic->value))
+					// ok, I give up
+			//		gi.dprintf ("chick avoiding blindfire shot\n");
 			}
 		}
 	}
@@ -677,14 +677,14 @@ void ChickRocket (edict_t *self)
 				|| (self->monsterinfo.visibility < FOG_CANSEEGOOD))
 			{
 			//	if (self->s.skinnum > 1)
-				//	monster_fire_rocket_heat (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1);
+			//		monster_fire_rocket_heat (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1);
 					monster_fire_rocket (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1,
 						(self->spawnflags & SF_MONSTER_SPECIAL ? self->enemy : NULL) );
 			//	else
 			//		monster_fire_rocket (self, start, dir, 50, 500, MZ2_CHICK_ROCKET_1, NULL);
 			}
-	//		else
-	//			gi.dprintf("didn't make it halfway to target...aborting\n");
+		//	else
+		//		gi.dprintf("didn't make it halfway to target...aborting\n");
 		}
 	}
 }	
@@ -749,7 +749,7 @@ mframe_t chick_frames_end_attack1 [] =
 };
 mmove_t chick_move_end_attack1 = {FRAME_attak128, FRAME_attak132, chick_frames_end_attack1, chick_run};
 
-void chick_rerocket(edict_t *self)
+void chick_rerocket (edict_t *self)
 {
 	if (self->monsterinfo.aiflags & AI_MANUAL_STEERING)
 	{
@@ -770,7 +770,7 @@ void chick_rerocket(edict_t *self)
 	self->monsterinfo.currentmove = &chick_move_end_attack1;
 }
 
-void chick_attack1(edict_t *self)
+void chick_attack1 (edict_t *self)
 {
 	self->monsterinfo.currentmove = &chick_move_attack1;
 }
@@ -799,7 +799,7 @@ mframe_t chick_frames_end_slash [] =
 mmove_t chick_move_end_slash = {FRAME_attak213, FRAME_attak216, chick_frames_end_slash, chick_run};
 
 
-void chick_reslash(edict_t *self)
+void chick_reslash (edict_t *self)
 {
 	if (self->enemy->health > 0)
 	{
@@ -818,7 +818,7 @@ void chick_reslash(edict_t *self)
 	self->monsterinfo.currentmove = &chick_move_end_slash;
 }
 
-void chick_slash(edict_t *self)
+void chick_slash (edict_t *self)
 {
 	self->monsterinfo.currentmove = &chick_move_slash;
 }
@@ -834,13 +834,13 @@ mmove_t chick_move_start_slash = {FRAME_attak201, FRAME_attak203, chick_frames_s
 
 
 
-void chick_melee(edict_t *self)
+void chick_melee (edict_t *self)
 {
 	self->monsterinfo.currentmove = &chick_move_start_slash;
 }
 
 
-void chick_attack(edict_t *self)
+void chick_attack (edict_t *self)
 {
 	float r, chance;
 
@@ -885,9 +885,15 @@ void chick_attack(edict_t *self)
 	self->monsterinfo.currentmove = &chick_move_start_attack1;
 }
 
-void chick_sight(edict_t *self, edict_t *other)
+void chick_sight (edict_t *self, edict_t *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+}
+
+// Knightmare added- this sound was unused
+void chick_search (edict_t *self)
+{
+	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_NORM, 0);
 }
 
 //===========
@@ -1005,7 +1011,7 @@ void SP_monster_chick (edict_t *self)
 	if (!self->health)
 		self->health = 175;
 	if (!self->gib_health)
-		self->gib_health = -150;
+		self->gib_health = -150;	// Knightmare- was -70
 	if (!self->mass)
 		self->mass = 200;
 
@@ -1020,11 +1026,12 @@ void SP_monster_chick (edict_t *self)
 	self->monsterinfo.duck = chick_duck;
 	self->monsterinfo.unduck = monster_duck_up;
 	self->monsterinfo.sidestep = chick_sidestep;
-	//self->monsterinfo.dodge = chick_dodge;
+//	self->monsterinfo.dodge = chick_dodge;
 	// pmm
 	self->monsterinfo.attack = chick_attack;
 	self->monsterinfo.melee = chick_melee;
 	self->monsterinfo.sight = chick_sight;
+	self->monsterinfo.search = chick_search;		// Knightmare added
 	self->monsterinfo.blocked = chick_blocked;		// PGM
 
 	gi.linkentity (self);

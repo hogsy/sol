@@ -355,7 +355,7 @@ void medic_NextPatrolPoint (edict_t *self, edict_t *hint)
 
 void medic_idle (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH))
+	if ( !(self->spawnflags & SF_MONSTER_AMBUSH) )
 		gi.sound (self, CHAN_VOICE, sound_idle1, 1, ATTN_IDLE, 0);
 
 	if (self->monsterinfo.aiflags & AI_MEDIC)

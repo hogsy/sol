@@ -45,10 +45,10 @@ static int	sound_sight;
 
 void flipper_stand (edict_t *self);
 
-//Knightmare added- these sounds were unused
+// Knightmare added- these sounds were unused
 void flipper_breathe (edict_t *self)
 {
-	if (self->waterlevel > 0) //only make bubble sounds if submerged
+	if (self->waterlevel > 0) // only make bubble sounds if submerged
 		gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 

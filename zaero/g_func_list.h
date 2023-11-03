@@ -726,6 +726,7 @@
 {"SP_monster_chick", (byte *)SP_monster_chick},
 {"SP_monster_chick_precache", (byte *)SP_monster_chick_precache},
 {"monster_chick_soundcache", (byte *)monster_chick_soundcache},
+{"chick_search", (byte *)chick_search},
 {"chick_sight", (byte *)chick_sight},
 {"chick_attack", (byte *)chick_attack},
 {"chick_melee", (byte *)chick_melee},

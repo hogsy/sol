@@ -22,7 +22,7 @@ static int	sound_sight;
 
 void flipper_stand (edict_t *self);
 
-//Knightmare added- these sounds were unused
+// Knightmare added- these sounds were unused
 void flipper_breathe (edict_t *self)
 {
 	if (self->waterlevel > 0) //only make bubble sounds if submerged
@@ -404,7 +404,7 @@ void SP_monster_flipper (edict_t *self)
 	self->monsterinfo.run = flipper_start_run;
 	self->monsterinfo.melee = flipper_melee;
 	self->monsterinfo.sight = flipper_sight;
-	self->monsterinfo.search = flipper_search;	//Knightmare added
+	self->monsterinfo.search = flipper_search;	// Knightmare added
 
 	gi.linkentity (self);
 

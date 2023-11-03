@@ -1435,6 +1435,7 @@
 {"chick_sidestep", (byte *)chick_sidestep},
 {"chick_duck", (byte *)chick_duck},
 {"chick_blocked", (byte *)chick_blocked},
+{"chick_search", (byte *)chick_search},
 {"chick_sight", (byte *)chick_sight},
 {"chick_attack", (byte *)chick_attack},
 {"chick_melee", (byte *)chick_melee},

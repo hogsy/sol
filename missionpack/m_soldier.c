@@ -61,7 +61,7 @@ void soldier_stop_charge (edict_t *self)
 
 void soldier_idle (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH))
+	if ( !(self->spawnflags & SF_MONSTER_AMBUSH) )
 	{
 		if (random() > 0.8)
 			gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
@@ -1721,7 +1721,7 @@ void soldier_blind (edict_t *self)
 
 void soldierh_idle (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH))
+	if ( !(self->spawnflags & SF_MONSTER_AMBUSH) )
 	{  
 		if (random() > 0.8)
 			gi.sound (self, CHAN_VOICE, h_sound_idle, 1, ATTN_IDLE, 0);
@@ -3672,7 +3672,7 @@ void SP_monster_soldier_lasergun (edict_t *self)
 
 void soldierq25_idle (edict_t *self)
 {
-	if (!(self->spawnflags & SF_MONSTER_AMBUSH))
+	if ( !(self->spawnflags & SF_MONSTER_AMBUSH) )
 	{  
 		if (random() > 0.8)
 			gi.sound (self, CHAN_VOICE, q25_sound_idle, 1, ATTN_IDLE, 0);

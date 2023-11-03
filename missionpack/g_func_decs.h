@@ -1435,6 +1435,7 @@ extern void monster_chick_soundcache ( edict_t * self ) ;
 extern void chick_sidestep ( edict_t * self ) ;
 extern void chick_duck ( edict_t * self , float eta ) ;
 extern qboolean chick_blocked ( edict_t * self , float dist ) ;
+extern void chick_search ( edict_t * self ) ;
 extern void chick_sight ( edict_t * self , edict_t * other ) ;
 extern void chick_attack ( edict_t * self ) ;
 extern void chick_melee ( edict_t * self ) ;

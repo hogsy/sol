@@ -25,7 +25,7 @@ void flipper_stand (edict_t *self);
 // Knightmare added- these sounds were unused
 void flipper_breathe (edict_t *self)
 {
-	if (self->waterlevel > 0) //only make bubble sounds if submerged
+	if (self->waterlevel > 0) // only make bubble sounds if submerged
 		gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
@@ -33,7 +33,7 @@ void flipper_search (edict_t *self)
 {
 	gi.sound (self, CHAN_VOICE, sound_search, 1, ATTN_IDLE, 0);
 }
-
+// end Knightmare
 
 mframe_t flipper_frames_stand [] =
 {
@@ -45,7 +45,7 @@ mmove_t	flipper_move_stand = {FRAME_flphor01, FRAME_flphor01, flipper_frames_sta
 void flipper_stand (edict_t *self)
 {
 	self->monsterinfo.currentmove = &flipper_move_stand;
-	//Knightmare- added idle breathing
+	// Knightmare- added idle breathing
 	if (random() < 0.02)
 		flipper_breathe (self);
 }
@@ -74,7 +74,7 @@ mframe_t flipper_frames_run [] =
 	ai_run, FLIPPER_RUN_SPEED, NULL,
 	ai_run, FLIPPER_RUN_SPEED, NULL,
 	ai_run, FLIPPER_RUN_SPEED, NULL,
-	ai_run, FLIPPER_RUN_SPEED, flipper_breathe, //Knightmare added- breathing
+	ai_run, FLIPPER_RUN_SPEED, flipper_breathe, // Knightmare added- breathing
 	ai_run, FLIPPER_RUN_SPEED, NULL,
 	ai_run, FLIPPER_RUN_SPEED, NULL,
 	ai_run, FLIPPER_RUN_SPEED, NULL,
@@ -422,7 +422,7 @@ void SP_monster_flipper (edict_t *self)
 	self->monsterinfo.run = flipper_start_run;
 	self->monsterinfo.melee = flipper_melee;
 	self->monsterinfo.sight = flipper_sight;
-	self->monsterinfo.search = flipper_search;	//Knightmare added
+	self->monsterinfo.search = flipper_search;	// Knightmare added
 
 	if (!self->monsterinfo.flies)
 		self->monsterinfo.flies = 0.90;
