@@ -2596,11 +2596,11 @@ void FS_InitFilesystem (void)
 	fs_downloaddir[0] = '\0';
 
 	// Register our commands and cvars
-	Cmd_AddCommand("path", FS_Path_f);
-	Cmd_AddCommand("link", FS_Link_f);
-	Cmd_AddCommand("dir", FS_Dir_f);
+	Cmd_AddCommand ("path", FS_Path_f);
+	Cmd_AddCommand ("link", FS_Link_f);
+	Cmd_AddCommand ("dir", FS_Dir_f);
 
-	Com_Printf("\n----- Filesystem Initialization -----\n");
+	Com_Printf ("\n----- Filesystem Initialization -----\n");
 
 	// basedir <path>
 	// allows the game to run from outside the data tree
@@ -2625,7 +2625,7 @@ void FS_InitFilesystem (void)
 	fs_baseSearchPaths = fs_searchPaths;
 
 //	strncpy(fs_currentGame, BASEDIRNAME);
-	Q_strncpyz(fs_currentGame, sizeof(fs_currentGame), BASEDIRNAME);
+	Q_strncpyz (fs_currentGame, sizeof(fs_currentGame), BASEDIRNAME);
 
 	// check for game override
 	fs_homepath = Cvar_Get("homepath", Sys_GetCurrentDirectory(), CVAR_NOSET);
@@ -2691,10 +2691,10 @@ void FS_Shutdown (void)
 	fsPack_t		*pack;
 	int				i;
 
-	Cmd_RemoveCommand("dir");
-	//Cmd_RemoveCommand("fdir");
-	Cmd_RemoveCommand("link");
-	Cmd_RemoveCommand("path");
+	Cmd_RemoveCommand ("dir");
+//	Cmd_RemoveCommand ("fdir");
+	Cmd_RemoveCommand ("link");
+	Cmd_RemoveCommand ("path");
 
 	// Close all files
 	for (i = 0, handle = fs_handles; i < MAX_HANDLES; i++, handle++)

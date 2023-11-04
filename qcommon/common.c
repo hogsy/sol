@@ -387,7 +387,7 @@ void MSG_WriteString (sizebuf_t *sb, char *s)
 #define UPRBITS	0xFF000000
 qboolean LegacyProtocol (void);
 
-void MSG_WriteCoordNew (sizebuf_t *sb, float f)
+void MSG_WriteCoord24 (sizebuf_t *sb, float f)
 {
 	int tmp;
 	byte trans1;
@@ -403,7 +403,7 @@ void MSG_WriteCoordNew (sizebuf_t *sb, float f)
 	MSG_WriteShort (sb, trans2);
 }
 
-float MSG_ReadCoordNew (sizebuf_t *msg_read)
+float MSG_ReadCoord24 (sizebuf_t *msg_read)
 {
 	int tmp;
 	byte trans1;
@@ -424,7 +424,7 @@ float MSG_ReadCoordNew (sizebuf_t *msg_read)
 }
 
 // Player movement coords are already in 1/8 precision integer form
-void MSG_WritePMCoordNew (sizebuf_t *sb, int in)
+void MSG_WritePMCoord24 (sizebuf_t *sb, int in)
 {
 	byte trans1;
 	unsigned short trans2;
@@ -436,7 +436,7 @@ void MSG_WritePMCoordNew (sizebuf_t *sb, int in)
 	MSG_WriteShort (sb, trans2);
 }
 
-int MSG_ReadPMCoordNew (sizebuf_t *msg_read)
+int MSG_ReadPMCoord24 (sizebuf_t *msg_read)
 {
 	int tmp;
 	byte trans1;
@@ -463,7 +463,7 @@ int MSG_ReadPMCoordNew (sizebuf_t *msg_read)
 
 void MSG_WriteCoord (sizebuf_t *sb, float f)
 {
-	MSG_WriteCoordNew (sb, f);
+	MSG_WriteCoord24 (sb, f);
 }
 
 #else // LARGE_MAP_SIZE
@@ -480,9 +480,9 @@ void MSG_WriteCoord (sizebuf_t *sb, float f)
 
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos)
 {
-	MSG_WriteCoordNew (sb, pos[0]);
-	MSG_WriteCoordNew (sb, pos[1]);
-	MSG_WriteCoordNew (sb, pos[2]);
+	MSG_WriteCoord24 (sb, pos[0]);
+	MSG_WriteCoord24 (sb, pos[1]);
+	MSG_WriteCoord24 (sb, pos[2]);
 }
 
 #else // LARGE_MAP_SIZE
@@ -995,7 +995,7 @@ float MSG_ReadCoord (sizebuf_t *msg_read)
 	if (LegacyProtocol())
 		return MSG_ReadShort(msg_read) * (1.0/8);
 	else
-		return MSG_ReadCoordNew(msg_read);
+		return MSG_ReadCoord24(msg_read);
 }
 
 #else // LARGE_MAP_SIZE
@@ -1020,9 +1020,9 @@ void MSG_ReadPos (sizebuf_t *msg_read, vec3_t pos)
 	}
 	else
 	{
-		pos[0] = MSG_ReadCoordNew(msg_read);
-		pos[1] = MSG_ReadCoordNew(msg_read);
-		pos[2] = MSG_ReadCoordNew(msg_read);
+		pos[0] = MSG_ReadCoord24(msg_read);
+		pos[1] = MSG_ReadCoord24(msg_read);
+		pos[2] = MSG_ReadCoord24(msg_read);
 	}
 }
 

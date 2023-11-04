@@ -286,8 +286,8 @@ void	MSG_ReadDir (sizebuf_t *sb, vec3_t vector);
 void	MSG_ReadData (sizebuf_t *sb, void *buffer, int size);
 
 #ifdef LARGE_MAP_SIZE // 24-bit pmove origin coordinate transmission code
-void	MSG_WritePMCoordNew (sizebuf_t *sb, int in);
-int		MSG_ReadPMCoordNew (sizebuf_t *msg_read);
+void	MSG_WritePMCoord24 (sizebuf_t *sb, int in);
+int		MSG_ReadPMCoord24 (sizebuf_t *msg_read);
 #endif
 
 //============================================================================
@@ -359,12 +359,15 @@ PROTOCOL
 #define	PORT_SERVER	27910
 
 //=========================================
-//Knightmare- increase UPDATE_BACKUP to eliminate "U_REMOVE: oldnum != newnum"
-#define	UPDATE_BACKUP	64	// copies of entity_state_t to keep buffered
+#define	UPDATE_BACKUP	16	// copies of entity_state_t to keep buffered
 							// must be power of two
-//#define	UPDATE_BACKUP	16
+//#define	UPDATE_BACKUP	64
 
 #define	UPDATE_MASK		(UPDATE_BACKUP-1)
+
+// Knightmare- increase MAX_PACKET_ENTITIES to eliminate "U_REMOVE: oldnum != newnum"
+//#define MAX_PACKET_ENTITIES	64
+#define MAX_PACKET_ENTITIES	1024
 
 //==================
 // the svc_strings[] array in cl_parse.c should mirror this

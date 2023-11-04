@@ -760,9 +760,9 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 		if (flags & PS_M_ORIGIN)
 		{
 #ifdef LARGE_MAP_SIZE
-			state->pmove.origin[0] = MSG_ReadPMCoordNew (&net_message);
-			state->pmove.origin[1] = MSG_ReadPMCoordNew (&net_message);
-			state->pmove.origin[2] = MSG_ReadPMCoordNew (&net_message);
+			state->pmove.origin[0] = MSG_ReadPMCoord24 (&net_message);
+			state->pmove.origin[1] = MSG_ReadPMCoord24 (&net_message);
+			state->pmove.origin[2] = MSG_ReadPMCoord24 (&net_message);
 #else
 			state->pmove.origin[0] = MSG_ReadShort (&net_message);
 			state->pmove.origin[1] = MSG_ReadShort (&net_message);
