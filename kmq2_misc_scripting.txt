@@ -48,12 +48,57 @@ modInfo
 	baseGame	"xatrix"
 	baseGame2	"rogue"
 	baseGame3	"zaero"	
+	quakeImportPath "D:\Quake"
+	quakeMainGame	"id1"
+	quakeGame1		"hipnotic"
+	quakeGame2		"rogue"
+	quakeGame3		"nehahra"
+	quakeGame4		"ad"
 }
 
 This script specifies that that the title of the mod is "Meadow Rumble II: Revenge of the Ovinomancer",
 that the game folder for the mod is named mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders.
 The latter is done by the menu internally setting the basegame, basegame2, and basegame3 cvars.
+It also mounts pak files in the id1, hipnotic, rogue, nehahra, and ad folders under the Quake import path D:\Quake.
 
+================================
+
+	PAK REMAP LIST SCRIPTING
+
+================================
+
+KMQuake2 0.20u8 supports remapping pak files under the Quake import path.  Only pak files are mounted, and
+only pak items that are remapped will load from those paks.  The other pak items are ignored.
+
+The pak remap list is loaded from a separate script for each folder under the Quake import path.
+For example, the paks under the id1 folder are remapped using a script called pak_remap_id1.def.
+This script must be located inside the game folder for the mod using it.  It must be a loose file, it
+cannot be loaded from a pak or pk3 file.
+
+Here's an example of a pak remap script for the id1 folder:
+
+pakRemapList
+{
+	{ "progs/gib1.mdl" "models/objects/q1gibs/q1gib1/tris.md2" }
+	{ "progs/gib2.mdl" "models/objects/q1gibs/q1gib2/tris.md2" }
+	{ "progs/gib3.mdl" "models/objects/q1gibs/q1gib3/tris.md2" }
+	{ "progs/shambler.mdl" "models/monsters/q1shambler/tris.md2" }
+	{ "progs/h_shams.mdl" "models/monsters/q1shambler/head/tris.md2" }
+	{ "progs/s_light.mdl" "models/monsters/q1shambler/s_light/tris.md2" }
+	{ "sound/player/udeath.wav" "sound/q1player/udeath.wav" }
+	{ "sound/shambler/melee1.wav" "sound/q1shambler/melee1.wav" }
+	{ "sound/shambler/melee2.wav" "sound/q1shambler/melee2.wav" }
+	{ "sound/shambler/sattck1.wav" "sound/q1shambler/sattck1.wav" }
+	{ "sound/shambler/sboom.wav" "sound/q1shambler/sboom.wav" }
+	{ "sound/shambler/sdeath.wav" "sound/q1shambler/sdeath.wav" }
+	{ "sound/shambler/shurt2.wav" "sound/q1shambler/shurt2.wav" }
+	{ "sound/shambler/sidle.wav" "sound/q1shambler/sidle.wav" }
+	{ "sound/shambler/smack.wav" "sound/q1shambler/smack.wav" }
+	{ "sound/shambler/ssight.wav" "sound/q1shambler/ssight.wav" }
+}
+
+This pak remap list remaps the models and sounds used by the Shambler, including gibs and the lightning bolt
+attachement.
 
 ================================
 
