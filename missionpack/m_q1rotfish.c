@@ -20,7 +20,7 @@ static int	sound_idle;
 void q1rotfish_idle (edict_t *self)
 {
 	if (random() < 0.5)
-		gi.sound (self, CHAN_AUTO, sound_idle, 1, ATTN_IDLE, 0);
+		gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
 }
 
 void q1rotfish_stand (edict_t *self);
@@ -55,7 +55,7 @@ void q1rotfish_stand (edict_t *self)
 
 mframe_t q1rotfish_frrun_loop [] =
 {
-	ai_run, Q1_FISH_RUN_SPEED, NULL,
+	ai_run, Q1_FISH_RUN_SPEED, q1rotfish_idle,
 	ai_run, Q1_FISH_RUN_SPEED, NULL,
 	ai_run, Q1_FISH_RUN_SPEED, NULL,
 	ai_run, Q1_FISH_RUN_SPEED, NULL,

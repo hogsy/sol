@@ -535,12 +535,15 @@ void UI_LoadModFromList (int index)
 	if ( Q_strcasecmp(Cvar_VariableString("game"), ui_mod_info[index].gameDir) != 0 )
 	{
 		UI_ForceMenuOff ();
-		Cvar_ForceSet ("basegame", ui_mod_info[index].baseGame);
+		Cvar_ForceSet ("basegame", ui_mod_info[index].baseGame1);
 		Cvar_ForceSet ("basegame2", ui_mod_info[index].baseGame2);
 		Cvar_ForceSet ("basegame3", ui_mod_info[index].baseGame3);
-	//	Cvar_ForceSet ("quakepath", ui_mod_info[index].quakePath);
-	//	Cvar_ForceSet ("quakepath2", ui_mod_info[index].quakePath2);
-	//	Cvar_ForceSet ("quakepath3", ui_mod_info[index].quakePath3);
+		Cvar_ForceSet ("quakeimportpath", ui_mod_info[index].quakeImportPath);
+		Cvar_ForceSet ("quakemaingame", ui_mod_info[index].quakeMainGame);
+		Cvar_ForceSet ("quakegame1", ui_mod_info[index].quakeGame1);
+		Cvar_ForceSet ("quakegame2", ui_mod_info[index].quakeGame2);
+		Cvar_ForceSet ("quakegame3", ui_mod_info[index].quakeGame3);
+		Cvar_ForceSet ("quakegame4", ui_mod_info[index].quakeGame4);
 		Cbuf_AddText ( va("changegame %s\n", ui_mod_info[index].gameDir) );
 	}
 }
@@ -1583,8 +1586,8 @@ int			ui_num_mods = 0;
 UI_ParseModInfoFromFile
 ==========================
 */
-qboolean UI_ParseModInfoFromFile (const char *filename, char *gameDir, char *modTitle, char *baseGame, char *baseGame2, char *baseGame3,
-								  char *quakePath, char *quakePath2, char *quakePath3, size_t bufSize)
+qboolean UI_ParseModInfoFromFile (const char *filename, char *gameDir, char *modTitle, char *baseGame1, char *baseGame2, char *baseGame3, char *quakeImportPath,
+								   char *quakeMainGame, char *quakeGame1, char *quakeGame2, char *quakeGame3, char *quakeGame4, size_t bufSize)
 {
 	int				len;
 	fileHandle_t	f;
@@ -1593,14 +1596,14 @@ qboolean UI_ParseModInfoFromFile (const char *filename, char *gameDir, char *mod
 	qboolean		foundModInfo = false;
 
 	// sanity check pointers and bufSize
-	if ( !filename || !gameDir || !modTitle || !baseGame || !baseGame2 || !baseGame3 ||
-		!quakePath || !quakePath2 || !quakePath3 || (bufSize < 1) )
+	if ( !filename || !gameDir || !modTitle || !baseGame1 || !baseGame2 || !baseGame3 || !quakeImportPath ||
+		!quakeMainGame || !quakeGame1 || !quakeGame2  || !quakeGame3  || !quakeGame4  || (bufSize < 1) )
 		return false;
 
 	// clear buffers
 	gameDir[0] = modTitle[0] = 0;
-	baseGame[0] = baseGame2[0] = baseGame3[0] = 0;
-	quakePath[0] = quakePath2[0] = quakePath3[0] = 0;
+	baseGame1[0] = baseGame2[0] = baseGame3[0] = 0;
+	quakeImportPath[0] = quakeMainGame[0] = quakeGame1[0] = quakeGame2[0] = quakeGame3[0] = quakeGame4[0] = 0;
 
 	len = FS_FOpenFile (filename, &f, FS_READ);
 	if (!f) {
@@ -1658,17 +1661,23 @@ qboolean UI_ParseModInfoFromFile (const char *filename, char *gameDir, char *mod
 				else if ( !Q_strcasecmp(token, "title") )
 					dest = modTitle;
 				else if ( !Q_strcasecmp(token, "baseGame") )
-					dest = baseGame;
+					dest = baseGame1;
 				else if ( !Q_strcasecmp(token, "baseGame2") )
 					dest = baseGame2;
 				else if ( !Q_strcasecmp(token, "baseGame3") )
 					dest = baseGame3;
-				else if ( !Q_strcasecmp(token, "quakePath") )
-					dest = quakePath;
-				else if ( !Q_strcasecmp(token, "quakePath2") )
-					dest = quakePath2;
-				else if ( !Q_strcasecmp(token, "quakePath3") )
-					dest = quakePath3;
+				else if ( !Q_strcasecmp(token, "quakeImportPath") )
+					dest = quakeImportPath;
+				else if ( !Q_strcasecmp(token, "quakeMainGame") )
+					dest = quakeMainGame;
+				else if ( !Q_strcasecmp(token, "quakeGame1") )
+					dest = quakeGame1;
+				else if ( !Q_strcasecmp(token, "quakeGame2") )
+					dest = quakeGame2;
+				else if ( !Q_strcasecmp(token, "quakeGame3") )
+					dest = quakeGame3;
+				else if ( !Q_strcasecmp(token, "quakeGame4") )
+					dest = quakeGame4;
 				else
 					Com_Printf ("UI_ParseModInfoFromFile: unknown parameter '%s' in file %s\n", token, filename);
 
@@ -1722,11 +1731,12 @@ void UI_BuildModList (void)
 	char		modFormatedName[MAX_TOKEN_CHARS];
 	char		**dirnames;
 	char		*modDir, *modName;
-	char		gameDir[MAX_TOKEN_CHARS], baseGame[MAX_TOKEN_CHARS], baseGame2[MAX_TOKEN_CHARS], baseGame3[MAX_TOKEN_CHARS];
-	char		quakePath[MAX_TOKEN_CHARS], quakePath2[MAX_TOKEN_CHARS], quakePath3[MAX_TOKEN_CHARS];
+	char		gameDir[MAX_TOKEN_CHARS], baseGame1[MAX_TOKEN_CHARS], baseGame2[MAX_TOKEN_CHARS], baseGame3[MAX_TOKEN_CHARS];
+	char		quakeImportPath[MAX_TOKEN_CHARS], quakeMainGame[MAX_TOKEN_CHARS];
+	char		quakeGame1[MAX_TOKEN_CHARS], quakeGame2[MAX_TOKEN_CHARS], quakeGame3[MAX_TOKEN_CHARS], quakeGame4[MAX_TOKEN_CHARS];
 	int			count = 0, ndirs = 0, nmods = 0;
 	int			i;
-	qboolean	unsupportedMod;
+	qboolean	unsupportedMod = false;
 
 	ui_mod_names = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
 	ui_mod_values = UI_Malloc(sizeof(char *) * (UI_MAX_MODS+1));
@@ -1736,23 +1746,26 @@ void UI_BuildModList (void)
 	ui_mod_names[0] = UI_CopyString("Quake II (vanilla)"); 
 	ui_mod_values[0] = UI_CopyString(BASEDIRNAME);
 	ui_mod_info[0].gameDir = UI_CopyString(BASEDIRNAME);
-	ui_mod_info[0].baseGame = UI_CopyString("");
+	ui_mod_info[0].baseGame1 = UI_CopyString("");
 	ui_mod_info[0].baseGame2 = UI_CopyString("");
 	ui_mod_info[0].baseGame3 = UI_CopyString("");
-	ui_mod_info[0].quakePath = UI_CopyString("");
-	ui_mod_info[0].quakePath2 = UI_CopyString("");
-	ui_mod_info[0].quakePath3 = UI_CopyString("");
+	ui_mod_info[0].quakeImportPath = UI_CopyString("");
+	ui_mod_info[0].quakeMainGame = UI_CopyString(Q1_MAINDIRNAME);
+	ui_mod_info[0].quakeGame1 = UI_CopyString("");
+	ui_mod_info[0].quakeGame2 = UI_CopyString("");
+	ui_mod_info[0].quakeGame3 = UI_CopyString("");
+	ui_mod_info[0].quakeGame4 = UI_CopyString("");
 	ui_mod_info[0].isUnsupported = false;
 	count++;
 
 	// get a list of directories
-	Com_sprintf(findName, sizeof(findName), "%s/*.*", FS_HomePath());
+	Com_sprintf (findName, sizeof(findName), "%s/*.*", FS_HomePath());
 	dirnames = FS_ListFiles (findName, &ndirs, SFF_SUBDIR, 0);
 	if (!dirnames) {
 		ui_num_mods = count;
 		return;
 	}
-		
+	
 	// go through the directories
 	nmods = ndirs;
 	if (nmods > UI_MAX_MODS)
@@ -1789,6 +1802,7 @@ void UI_BuildModList (void)
 
 		// check if this mod has a gamex86.dll/gamei386.so without an equivalent KMQ2 dll/so
 		unsupportedMod = false;
+
 	//	if ( Sys_FindFirst( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM) )
 		if ( FS_DirectFileExists( va("%s/"STOCK_Q2_GAME_LIBRARY_NAME, dirnames[i]) ) )
 		{
@@ -1803,17 +1817,21 @@ void UI_BuildModList (void)
 	//	Sys_FindClose ();
 
 		// clear optional fields
-		baseGame[0] = baseGame2[0] = baseGame3[0] = 0;
-		quakePath[0] = quakePath2[0] = quakePath3[0] = 0;
+		baseGame1[0] = baseGame2[0] = baseGame3[0] = 0;
+		quakeImportPath[0] = quakeMainGame[0] = 0;
+		quakeGame1[0] = quakeGame2[0] = quakeGame3[0] = quakeGame4[0] = 0;
 
 		// try to load and parse modinfo.def
 		Com_sprintf (infoFile, sizeof(infoFile), "../%s/modinfo.def", modDir);
-		if ( UI_ParseModInfoFromFile(infoFile, gameDir, modDesc, baseGame, baseGame2, baseGame3,
-										quakePath, quakePath2, quakePath3, MAX_TOKEN_CHARS) )
+		if ( UI_ParseModInfoFromFile(infoFile, gameDir, modDesc, baseGame1, baseGame2, baseGame3, quakeImportPath,
+									quakeMainGame, quakeGame1, quakeGame2, quakeGame3, quakeGame4, MAX_TOKEN_CHARS) )
 		{
 		//	Com_Printf ("UI_BuildModList: loaded modinfo file %s\n  gameDir: %s modDesc: \"%s\"^r\n", infoFile, gameDir, modDesc);
-		//	Com_Printf ("  baseGame: %s baseGame2: %s baseGame3: %s\n", baseGame, baseGame2, baseGame3);
-		//	Com_Printf ("  quakePath: %s quakePath2: %s quakePath3: %s\n", quakePath, quakePath2, quakePath3);
+		//	Com_Printf ("  baseGame: %s baseGame2: %s baseGame3: %s quakeImportPath: %s \n", baseGame, baseGame2, baseGame3, quakeImportPath);
+		//	Com_Printf ("  quakeMainGame: %s quakeGame1: %s quakeGame2: %s quakeGame3: %s quakeGame4: %s\n", quakeMainGame, quakeGame1, quakeGame2, quakeGame3, quakeGame4);
+			// make sure quakeMainGame is set
+			if (quakeMainGame[0] == 0)
+				Q_strncpyz (quakeMainGame, sizeof(quakeMainGame), Q1_MAINDIRNAME);
 			// catch gameDir in modinfo not matching game path
 			if ( Q_strcasecmp(modDir, gameDir) != 0 ) {
 				Com_Printf (S_COLOR_ORANGE"UI_BuildModList: modinfo file %s has conflicting 'gameDir' value: %s\n", infoFile, gameDir);
@@ -1857,12 +1875,15 @@ void UI_BuildModList (void)
 			UI_InsertInAssetList (ui_mod_names, modFormatedName, count, 1, false);	// start=1 so first item stays first!
 			UI_InsertInAssetList (ui_mod_values, modDir, count, 1, false);	// start=1 so first item stays first!
 			ui_mod_info[count].gameDir = UI_CopyString(modDir);
-			ui_mod_info[count].baseGame = UI_CopyString(baseGame);
+			ui_mod_info[count].baseGame1 = UI_CopyString(baseGame1);
 			ui_mod_info[count].baseGame2 = UI_CopyString(baseGame2);
 			ui_mod_info[count].baseGame3 = UI_CopyString(baseGame3);
-			ui_mod_info[count].quakePath = UI_CopyString(quakePath);
-			ui_mod_info[count].quakePath2 = UI_CopyString(quakePath2);
-			ui_mod_info[count].quakePath3 = UI_CopyString(quakePath3);
+			ui_mod_info[count].quakeImportPath = UI_CopyString(quakeImportPath);
+			ui_mod_info[count].quakeMainGame = UI_CopyString(quakeMainGame);
+			ui_mod_info[count].quakeGame1 = UI_CopyString(quakeGame1);
+			ui_mod_info[count].quakeGame2 = UI_CopyString(quakeGame2);
+			ui_mod_info[count].quakeGame3 = UI_CopyString(quakeGame3);
+			ui_mod_info[count].quakeGame4 = UI_CopyString(quakeGame4);
 			ui_mod_info[count].isUnsupported = unsupportedMod;
 			count++;
 		}
@@ -1904,19 +1925,25 @@ void UI_FreeModList (void)
 		for (i = 0; i < ui_num_mods; i++)
 		{
 			UI_Free (ui_mod_info[i].gameDir);
-			UI_Free (ui_mod_info[i].baseGame);
+			UI_Free (ui_mod_info[i].baseGame1);
 			UI_Free (ui_mod_info[i].baseGame2);
 			UI_Free (ui_mod_info[i].baseGame3);
-			UI_Free (ui_mod_info[i].quakePath);
-			UI_Free (ui_mod_info[i].quakePath2);
-			UI_Free (ui_mod_info[i].quakePath3);
+			UI_Free (ui_mod_info[i].quakeImportPath);
+			UI_Free (ui_mod_info[i].quakeMainGame);
+			UI_Free (ui_mod_info[i].quakeGame1);
+			UI_Free (ui_mod_info[i].quakeGame2);
+			UI_Free (ui_mod_info[i].quakeGame3);
+			UI_Free (ui_mod_info[i].quakeGame4);
 			ui_mod_info[i].gameDir = NULL;
-			ui_mod_info[i].baseGame = NULL;
+			ui_mod_info[i].baseGame1 = NULL;
 			ui_mod_info[i].baseGame2 = NULL;
 			ui_mod_info[i].baseGame3 = NULL;
-			ui_mod_info[i].quakePath = NULL;
-			ui_mod_info[i].quakePath2 = NULL;
-			ui_mod_info[i].quakePath3 = NULL;
+			ui_mod_info[i].quakeImportPath = NULL;
+			ui_mod_info[i].quakeMainGame = NULL;
+			ui_mod_info[i].quakeGame1 = NULL;
+			ui_mod_info[i].quakeGame2 = NULL;
+			ui_mod_info[i].quakeGame3 = NULL;
+			ui_mod_info[i].quakeGame4 = NULL;
 		}
 		UI_Free (ui_mod_info);
 	}

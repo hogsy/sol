@@ -1480,7 +1480,7 @@ static void CL_FinishHTTPDownload (void)
 				if (!strcmp (tempName + len - 4, ".pk3")) 
 					FS_AddPK3File (tempName, false);
 				else
-					FS_AddPAKFile (tempName, false);
+					FS_AddPAKFile (tempName, false, false);
 
 				CL_ReVerifyHTTPQueue ();
 				downloading_pak = false;

@@ -57,16 +57,8 @@ typedef struct {
 	int				size;
 	int				offset;				// This is ignored in PK3 files
 	qboolean		ignore;				// Whether this file should be ignored
+	qboolean		isRemapped;			// Whether this file is renamed via an import list
 } fsPackFile_t;
-
-typedef struct {
-	char			name[MAX_QPATH];
-	fsMode_t		mode;
-	FILE			*file;				// Only one of file or
-	unzFile			*zip;				// zip will be used
-	zipFile			*writeZip;			// Only used for writing to zip file
-	fsPackFile_t	*pakFile;			// Only used for seek/tell in .pak files
-} fsHandle_t;
 
 typedef struct fsLink_s {
 	char			*from;
@@ -83,7 +75,9 @@ typedef struct {
 	int				numFiles;
 	fsPackFile_t	*files;
 	unsigned int	contentFlags;
-	qboolean		isProtectedPak;	// from Yamagi Q2
+	qboolean		isProtectedPak;		// from Yamagi Q2
+	qboolean		isQuakeImportPak;	// Whether this pak is a Quake import
+	int				numRemappedFiles;	// Num of remapped files if pak is a Quake import
 } fsPack_t;
 
 typedef struct fsSearchPath_s {
@@ -92,10 +86,26 @@ typedef struct fsSearchPath_s {
 	struct fsSearchPath_s	*next;
 } fsSearchPath_t;
 
+typedef struct {
+	char			name[MAX_QPATH];
+	fsMode_t		mode;
+	FILE			*file;				// Only one of file or
+	unzFile			*zip;				// zip will be used
+	zipFile			*writeZip;			// Only used for writing to zip file
+	fsPackFile_t	*pakFile;			// Only used for seek/tell in .pak files
+} fsHandle_t;
+
+typedef struct {
+	char			orgName[MAX_QPATH];
+	char			remapName[MAX_QPATH];
+} fsPackItemRemap_t;
+
 fsHandle_t		fs_handles[MAX_HANDLES];
 fsLink_t		*fs_links;
 fsSearchPath_t	*fs_searchPaths;
 fsSearchPath_t	*fs_baseSearchPaths;
+fsPackItemRemap_t *fs_pakItemRemaps;
+extern int		fs_numPakItemRemaps;
 
 char			fs_gamedir[MAX_OSPATH];
 char			fs_savegamedir[MAX_OSPATH];
@@ -105,18 +115,24 @@ static char		fs_currentGame[MAX_QPATH];
 static char				fs_fileInPath[MAX_OSPATH];
 static qboolean			fs_fileInPack;
 
-int		file_from_protected_pak;	// This is set by FS_FOpenFile, from Yamagi Q2
-int		file_from_pak = 0;		// This is set by FS_FOpenFile
-int		file_from_pk3 = 0;		// This is set by FS_FOpenFile
-char	last_pk3_name[MAX_QPATH];	// This is set by FS_FOpenFile
+extern int		file_from_protected_pak;	// This is set by FS_FOpenFile, from Yamagi Q2
+extern int		file_from_pak;				// This is set by FS_FOpenFile
+extern int		file_from_pk3;				// This is set by FS_FOpenFile
+extern char		last_pk3_name[MAX_QPATH];	// This is set by FS_FOpenFile
 
 cvar_t	*fs_homepath;
 cvar_t	*fs_basedir;
 cvar_t	*fs_cddir;
-cvar_t	*fs_basegamedir;
+cvar_t	*fs_basegamedir1;
 cvar_t	*fs_basegamedir2;
 cvar_t	*fs_basegamedir3;	// So we can mount Rogue, Xatrix, and Zaero assets at once
 cvar_t	*fs_gamedirvar;
+cvar_t	*fs_quakeimportpath;	// Install path of Quake1 for content mounting, id1 folder paks are automatically added
+cvar_t	*fs_quakemaingame;		// Name override of Quake1 id1 folder, to allow mounting content for other Quake1 engine games such as Hexen2
+cvar_t	*fs_quakegamedir1;		// Additional gamedirs for mounting the Quake mission packs and mods' .pak files
+cvar_t	*fs_quakegamedir2;
+cvar_t	*fs_quakegamedir3;
+cvar_t	*fs_quakegamedir4;
 cvar_t	*fs_debug;
 cvar_t	*fs_xatrixgame;
 cvar_t	*fs_roguegame;

@@ -1584,7 +1584,7 @@ void q1_fire_lavaball_precache (void);
 void q1_fire_acidspit (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed);
 void q1_acidspit_precache (void);
 void q1_fire_gib (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
-void q1_gib_precache (void);
+void q1_zombiegib_precache (void);
 
 //
 // g_ptrail.c

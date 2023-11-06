@@ -52,7 +52,7 @@ void R_DrawSpriteModel (entity_t *e)
 	vec3_t			point[4];
 	mspritemodel_t	*pSprite;
 	mspriteframe_t	*pFrame;
-	float			*up, *right;
+	float			*up, *right, scale = 1.0f;
 	int				i, framenum;
 
 	// don't even bother culling, because it's just a single
@@ -71,6 +71,9 @@ void R_DrawSpriteModel (entity_t *e)
 	// normal sprite
 	up = vup;
 	right = vright;
+
+	if (e->scale > 0.0f)
+		scale = e->scale;
 
 	if (e->flags & RF_TRANSLUCENT)
 		alpha = e->alpha;
@@ -107,17 +110,17 @@ void R_DrawSpriteModel (entity_t *e)
 		framenum = 0;
 	GL_Bind (currentmodel->skins[0][framenum]->texnum);
 
-	VectorMA (e->origin, -pFrame->origin_y, up, point[0]);
-	VectorMA (point[0], -pFrame->origin_x, right, point[0]);
+	VectorMA (e->origin, -(pFrame->origin_y) * scale, up, point[0]);
+	VectorMA (point[0], -(pFrame->origin_x) * scale, right, point[0]);
 
-	VectorMA (e->origin, pFrame->height - pFrame->origin_y, up, point[1]);
-	VectorMA (point[1], -pFrame->origin_x, right, point[1]);
+	VectorMA (e->origin, (pFrame->height - pFrame->origin_y) * scale, up, point[1]);
+	VectorMA (point[1], -(pFrame->origin_x) * scale, right, point[1]);
 
-	VectorMA (e->origin, pFrame->height - pFrame->origin_y, up, point[2]);
-	VectorMA (point[2], pFrame->width - pFrame->origin_x, right, point[2]);
+	VectorMA (e->origin, (pFrame->height - pFrame->origin_y) * scale, up, point[2]);
+	VectorMA (point[2], (pFrame->width - pFrame->origin_x) * scale, right, point[2]);
 
-	VectorMA (e->origin, -pFrame->origin_y, up, point[3]);
-	VectorMA (point[3], pFrame->width - pFrame->origin_x, right, point[3]);
+	VectorMA (e->origin, -(pFrame->origin_y) * scale, up, point[3]);
+	VectorMA (point[3], (pFrame->width - pFrame->origin_x) * scale, right, point[3]);
 
 	rb_vertex = rb_index = 0;
 	indexArray[rb_index++] = rb_vertex+0;

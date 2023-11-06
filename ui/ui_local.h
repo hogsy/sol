@@ -604,12 +604,18 @@ extern keyBindListHandle_t ui_customKeyBindList;
 
 typedef struct {
 	char		*gameDir;
-	char		*baseGame;
+	char		*baseGame1;
 	char		*baseGame2;
 	char		*baseGame3;
 	char		*quakePath;
 	char		*quakePath2;
 	char		*quakePath3;
+	char		*quakeImportPath;
+	char		*quakeMainGame;
+	char		*quakeGame1;
+	char		*quakeGame2;
+	char		*quakeGame3;
+	char		*quakeGame4;
 	qboolean	isUnsupported;
 } modInfo_t;
 

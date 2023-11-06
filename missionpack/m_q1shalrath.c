@@ -156,8 +156,8 @@ void q1shalrath_fire (edict_t *self)
 	vectoangles (aim, dir);
 	AngleVectors (dir, forward, right, up);
 
-	r = crandom()*1000;
-	u = crandom()*500;
+	r = crandom() * 1000;
+	u = crandom() * 500;
 	VectorMA (start, 8192, forward, end);
 	VectorMA (end, r, right, end);
 	VectorMA (end, u, up, end);
@@ -171,7 +171,7 @@ void q1shalrath_fire (edict_t *self)
 
 void q1shalrath_attack_snd (edict_t *self)
 {
-	gi.sound (self, CHAN_AUTO, sound_attack, 1, ATTN_NORM, 0);
+	gi.sound (self, CHAN_VOICE, sound_attack, 1, ATTN_NORM, 0);
 }
 
 mframe_t q1shalrath_frames_attack [] =

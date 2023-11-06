@@ -293,7 +293,7 @@ void scrag_fire2 (edict_t *self)
 	gi.WriteByte (MZ2_FLYER_BLASTER_2);
 	gi.multicast (start, MULTICAST_PVS);
 */
-	q1_fire_acidspit(self,start, dir, 9, 500);
+	q1_fire_acidspit (self,start, dir, 9, 500);
 }
 
 

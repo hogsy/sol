@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	VERSION_UPDATE	8
 
 #define	BASEDIRNAME	"baseq2"
+#define	Q1_MAINDIRNAME	"id1"
 
 // Savegame subdir varies by CPU architecture
 // This prevents comingling different binary save formats
@@ -1019,7 +1020,7 @@ void		FS_ExecAutoexec (void);
 void		FS_ExecConfigs (qboolean unbind);	// Knightmare added
 
 int			FS_LoadFile (const char *path, void **buffer);
-void		FS_AddPAKFile (const char *packPath, qboolean isProtected); // add pak file function
+void		FS_AddPAKFile (const char *packPath, qboolean isProtected, qboolean isQuakeImport); // add pak file function
 void		FS_AddPK3File (const char *packPath, qboolean isProtected); // add pk3 file function
 char		**FS_ListPak (const char *find, int *num); // pak list function
 char		**FS_GetFileList (const char *path, const char *extension, int *num);

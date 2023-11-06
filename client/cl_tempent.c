@@ -126,6 +126,8 @@ void CL_RegisterTEntSounds (void)
 	clMedia.sfx_disrexp = S_RegisterSound ("weapons/disrupthit.wav");
 	// shockwave impact
 	clMedia.sfx_shockhit = S_RegisterSound ("weapons/shockhit.wav");
+	// Quake explosion
+	clMedia.sfx_explo_quake = S_RegisterSound ("q1weapons/r_exp3.wav");
 
 	for (i=0 ; i<4 ; i++) {
 		Com_sprintf (name, sizeof(name), "player/step%i.wav", i+1);
@@ -250,6 +252,7 @@ void CL_RegisterTEntModels (void)
 
 	// new effect models
 	clMedia.mod_shocksplash = R_RegisterModel ("models/objects/shocksplash/tris.md2");
+	clMedia.mod_explo_quake = R_RegisterModel ("sprites/s_explod.sp2");
 
 	R_RegisterModel ("models/objects/laser/tris.md2");
 	R_RegisterModel ("models/objects/grenade2/tris.md2");
@@ -1134,6 +1137,27 @@ void CL_ParseTEnt (void)
 			S_StartSound (pos, 0, 0, clMedia.sfx_watrexp, 1, ATTN_NORM, 0);
 		else
 			S_StartSound (pos, 0, 0, clMedia.sfx_rockexp, 1, ATTN_NORM, 0);
+		break;
+
+	case TE_EXPLOSION_QUAKE:
+		MSG_ReadPos (&net_message, pos);
+		ex = CL_AllocExplosion ();
+		VectorCopy (pos, ex->ent.origin);
+		ex->type = ex_poly;
+		ex->ent.flags = RF_FULLBRIGHT|RF_NOSHADOW; // noshadow flag
+		ex->start = cl.frame.servertime - 100;
+		ex->light = 350;
+		ex->lightcolor[0] = 1.0;
+		ex->lightcolor[1] = 0.5;
+		ex->lightcolor[2] = 0.5;
+		ex->ent.model = clMedia.mod_explo_quake;
+		ex->ent.scale = 3.0f;
+		ex->baseframe = 0;
+		ex->frames = 6;
+		CL_Explosion_Flash (pos, 10, 50, false);
+		CL_Explosion_Sparks (pos, 24, 128);
+		CL_Explosion_Decal (pos, 50, particle_burnmark);
+		S_StartSound (pos, 0, 0, clMedia.sfx_explo_quake, 1, ATTN_NORM, 0);
 		break;
 
 	case TE_BFG_EXPLOSION:

@@ -2,9 +2,7 @@
 
 #include "g_local.h"
 
-
 void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed);
-
 
 /*
 =================
@@ -468,22 +466,31 @@ void q1_grenade_explode (edict_t *ent)
 	// FIXME: if we are onground then raise our Z just a bit since we are a point?
 	if (ent->enemy)
 	{
-		float	points;
+		int		points;
 		vec3_t	v;
 		vec3_t	dir;
 
 		VectorAdd (ent->enemy->mins, ent->enemy->maxs, v);
 		VectorMA (ent->enemy->s.origin, 0.5, v, v);
 		VectorSubtract (ent->s.origin, v, v);
-		points = ent->dmg - 0.5 * VectorLength (v);
+		points = ent->dmg - (int)(0.5 * VectorLength(v));
+		points = max(0, points);
 		VectorSubtract (ent->enemy->s.origin, ent->s.origin, dir);
-		T_Damage (ent->enemy, ent, ent->owner, dir, ent->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, MOD_Q1_GL);
+		T_Damage (ent->enemy, ent, ent->owner, dir, ent->s.origin, vec3_origin, points, points, DAMAGE_RADIUS, MOD_Q1_GL);
 	}
 
-	T_RadiusDamage(ent, ent->owner, ent->dmg, ent->enemy, ent->dmg_radius, MOD_Q1_GL_SPLASH);
-
+	T_RadiusDamage (ent, ent->owner, ent->dmg, ent->enemy, ent->dmg_radius, MOD_Q1_GL_SPLASH);
 	VectorMA (ent->s.origin, -0.02, ent->velocity, origin);
-	gi.sound (ent, CHAN_AUTO, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WritePosition (origin);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	G_FreeEdict (ent);
+#else	// KMQUAKE2_ENGINE_MOD
+	gi.sound (ent, CHAN_WEAPON, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
 
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_ROCKET_EXPLOSION);
@@ -494,8 +501,8 @@ void q1_grenade_explode (edict_t *ent)
 	gi.unlinkentity (ent);
 	ent->solid = SOLID_NOT;
 	ent->touch = NULL;
-	VectorCopy( origin, ent->s.origin);
-	VectorCopy( origin, ent->s.old_origin);
+	VectorCopy (origin, ent->s.origin);
+	VectorCopy (origin, ent->s.old_origin);
 	VectorClear (ent->velocity);
 	ent->s.modelindex = gi.modelindex ("sprites/s_explod.sp2"); 
 	ent->s.frame = 0; 
@@ -504,6 +511,7 @@ void q1_grenade_explode (edict_t *ent)
 	ent->think = q1_explode; 
 	ent->nextthink = level.time + FRAMETIME;
 	gi.linkentity (ent);
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -558,7 +566,7 @@ void q1_fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, in
 	grenade->s.renderfx |= RF_IR_VISIBLE;
 	VectorClear (grenade->mins);
 	VectorClear (grenade->maxs);
-	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2"); 
+	grenade->s.modelindex = gi.modelindex ("models/objects/q1grenade/tris.md2"); 
 	grenade->owner = self;
 	grenade->touch = q1_grenade_touch;
 	grenade->nextthink = level.time + timer;
@@ -577,10 +585,12 @@ void q1_fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, in
 
 void q1_grenade_precache (void)
 {
-	gi.modelindex ("models/objects/grenade/tris.md2");
-	gi.modelindex ("sprites/s_explod.sp2");
+	gi.modelindex ("models/objects/q1grenade/tris.md2");
 	gi.soundindex ("q1weapons/bounce.wav");
+#ifndef KMQUAKE2_ENGINE_MOD
+	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -603,7 +613,7 @@ void q1_grenade_delayed_start (edict_t *grenade)
 void SP_q1_grenade (edict_t *grenade)
 {
 	grenade->s.skinnum = 0;
-	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
+	grenade->s.modelindex = gi.modelindex ("models/objects/q1grenade/tris.md2");
 	grenade->touch = q1_grenade_touch;
 
 	// For SP, freeze grenade until player spawns in
@@ -657,8 +667,17 @@ void q1_rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t 
 	{
 		T_Damage (other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_Q1_RL);
 	}
-	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_Q1_RL_SPLASH);
-	gi.sound (ent, CHAN_AUTO, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
+	T_RadiusDamage (ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_Q1_RL_SPLASH);
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WritePosition (origin);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	G_FreeEdict (ent);
+#else	// KMQUAKE2_ENGINE_MOD
+	gi.sound (ent, CHAN_WEAPON, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
 
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_ROCKET_EXPLOSION); 
@@ -666,14 +685,14 @@ void q1_rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t 
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 //	if (ent->target_ent)
-//		G_FreeEdict(ent->target_ent);
+//		G_FreeEdict (ent->target_ent);
 
 	// explosion sprite
 	gi.unlinkentity (ent);
 	ent->solid = SOLID_NOT;
 	ent->touch = NULL;
-	VectorCopy( origin, ent->s.origin);
-	VectorCopy( origin, ent->s.old_origin);
+	VectorCopy (origin, ent->s.origin);
+	VectorCopy (origin, ent->s.old_origin);
 	VectorClear (ent->velocity);
 	ent->s.modelindex = gi.modelindex ("sprites/s_explod.sp2"); 
 	ent->s.frame = 0; 
@@ -682,6 +701,7 @@ void q1_rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t 
 	ent->think = q1_explode; 
 	ent->nextthink = level.time + FRAMETIME;
 	gi.linkentity (ent);
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -736,7 +756,7 @@ void q1_fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	rocket->s.effects |= EF_GRENADE;
 	VectorClear (rocket->mins);
 	VectorClear (rocket->maxs);
-	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	rocket->s.modelindex = gi.modelindex ("models/objects/q1rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = q1_rocket_touch;
 	rocket->nextthink = level.time + 8000/speed;
@@ -758,10 +778,12 @@ void q1_fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 
 void q1_rocket_precache (void)
 {
-	gi.modelindex ("models/objects/rocket/tris.md2");
-	gi.modelindex ("sprites/s_explod.sp2");
+	gi.modelindex ("models/objects/q1rocket/tris.md2");
 	gi.soundindex ("weapons/rockfly.wav");
+#ifndef KMQUAKE2_ENGINE_MOD
+	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -786,7 +808,7 @@ void SP_q1_rocket (edict_t *rocket)
 {
 	vec3_t	dir;
 
-	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	rocket->s.modelindex = gi.modelindex ("models/objects/q1rocket/tris.md2");
 	rocket->s.sound      = gi.soundindex ("weapons/rockfly.wav");
 	rocket->touch = q1_rocket_touch;
 	AngleVectors (rocket->s.angles, dir, NULL, NULL);
@@ -894,9 +916,17 @@ void q1_firepod_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 		T_Damage (other, self, self->owner, vec3_origin, other->s.origin, vec3_origin, 200, 0, 0, 0);
 	T_RadiusDamage (self, self->owner, 40, NULL, 40, MOD_Q1_FIREPOD);
 
-	gi.sound (self, CHAN_AUTO, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
-
 	VectorMA (self->s.origin, -0.02, self->velocity, origin);
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WritePosition (origin);
+	gi.multicast (self->s.origin, MULTICAST_PVS);
+
+	G_FreeEdict (self);
+#else	// KMQUAKE2_ENGINE_MOD
+	gi.sound (self, CHAN_WEAPON, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
 
 //	gi.WriteByte (svc_temp_entity);
 //	gi.WriteByte (TE_Q1_EXPLOSION); 
@@ -922,6 +952,7 @@ void q1_firepod_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 //	q1_explo_particles (self, origin);
 //	if (Q_stricmp(self->classname, "freed"))
 //		G_FreeEdict (self);
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -1014,8 +1045,10 @@ void q1_fire_firepod (edict_t *self, vec3_t dir)
 void q1_firepod_precache (void)
 {
 	gi.modelindex ("models/monsters/q1shalrath/v_spike/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -1089,20 +1122,28 @@ Fires a lavaball.  Used by Chthon.
 
 	if (other->takedamage)
 	{
-		T_Damage (other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg,(ent->dmg*2), 0, MOD_Q1_RL);
+		T_Damage (other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, (ent->dmg*2), 0, MOD_Q1_RL);
 	}
 
-	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_Q1_RL_SPLASH);
+	T_RadiusDamage (ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_Q1_RL_SPLASH);
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WritePosition (origin);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	G_FreeEdict (ent);
+#else	// KMQUAKE2_ENGINE_MOD
 	gi.sound (ent, CHAN_WEAPON, gi.soundindex ("q1weapons/r_exp3.wav"), 1.0, ATTN_NORM, 0);	
 
-//
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_ROCKET_EXPLOSION);
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
-//	
+	
 	// explosion sprite 
-	gi.unlinkentity(ent);
+	gi.unlinkentity (ent);
 	ent->solid = SOLID_NOT;
 	ent->touch = NULL;
 	VectorCopy(ent->s.origin, origin);
@@ -1116,6 +1157,7 @@ Fires a lavaball.  Used by Chthon.
 	ent->nextthink = level.time + FRAMETIME;
 	ent->enemy = other;
 	gi.linkentity (ent);
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -1157,8 +1199,10 @@ void q1_fire_lavaball (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 void q1_fire_lavaball_precache (void)
 {
 	gi.modelindex ("models/monsters/q1chthon/lavaball/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.modelindex ("sprites/s_explod.sp2");
 	gi.soundindex ("q1weapons/r_exp3.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 

@@ -942,6 +942,7 @@ typedef struct {
 	struct sfx_s	*sfx_lightning;
 	struct sfx_s	*sfx_disrexp;
 	struct sfx_s	*sfx_shockhit;
+	struct sfx_s	*sfx_explo_quake;
 	struct sfx_s	*sfx_footsteps[4];
 	struct sfx_s	*sfx_metal_footsteps[4];
 	struct sfx_s	*sfx_dirt_footsteps[4];
@@ -980,6 +981,7 @@ typedef struct {
 	struct model_s	*mod_monster_heatbeam;
 	struct model_s	*mod_explo_big;
 	struct model_s	*mod_shocksplash;
+	struct model_s	*mod_explo_quake;
 } clientMedia_t;
 
 extern clientMedia_t clMedia;

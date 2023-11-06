@@ -687,6 +687,7 @@ typedef struct
 #define	RF_SHELL_HALF_DAM	0x00020000
 #define RF_USE_DISGUISE		0x00040000
 //ROGUE
+
 #define RF_NOSHADOW			0x00080000
 
 // Knightmare- Kex additions
@@ -1110,6 +1111,7 @@ typedef enum
 	TE_BLASTER_COLORED,
 	TE_RAILTRAIL_COLORED,
 	TE_LIGHTNING_ATTACK,
+	TE_EXPLOSION_QUAKE,
 } temp_event_t;
 
 #define SPLASH_UNKNOWN		0
