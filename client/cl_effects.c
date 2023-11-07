@@ -408,6 +408,40 @@ void CL_Explosion_Sparks (vec3_t org, int size, int count)
 
 
 /*
+===============
+CL_Explosion_Sparks_Q1
+===============
+*/
+void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
+{
+	int		i;
+	vec3_t	colvel;
+
+	for (i=0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
+	{
+		if (i & 1)
+			VectorSet (colvel, -32, -64, 10);
+		else
+			VectorSet (colvel, -16, -32, 5);
+
+		CL_SetupParticle (
+			0,	0,	0,
+			org[0] + ((rand()%32)-16),	org[1] + ((rand()%32)-16),	org[2] + ((rand()%32)-16),
+			(rand()%512)-256,	(rand()%512)-256,	(rand()%512)-256,
+			0,		0,		PARTICLE_GRAVITY,
+			255,	243,	27,
+			colvel[0],	colvel[1],	colvel[2],
+			1,		-0.4 / (0.5 + frand()*0.3),
+			GL_SRC_ALPHA, GL_ONE,
+			size,		size*-1.5f,
+			particle_generic,
+			0,
+			NULL, false);
+	}
+}
+
+
+/*
 =====================
 
 Blood effects

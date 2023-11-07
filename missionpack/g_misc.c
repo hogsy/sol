@@ -4260,7 +4260,7 @@ void SP_trigger_teleporter (edict_t *self)
 		self->noise_index = 0;
 
 	gi.setmodel (self, self->model);
-	self->touch   = teleporter_touch;
+	self->touch = teleporter_touch;
 	self->use = trigger_teleporter_use;
 	self->svflags = SVF_NOCLIENT;
 	if (self->spawnflags & 2)
@@ -4310,7 +4310,7 @@ void SP_trigger_teleporter_bbox (edict_t *self)
 	}
 	VectorCopy (self->bleft, self->mins);
 	VectorCopy (self->tright, self->maxs);
-	self->touch   = teleporter_touch;
+	self->touch = teleporter_touch;
 	self->use = trigger_teleporter_use;
 	self->svflags = SVF_NOCLIENT;
 	if (self->spawnflags & 2)

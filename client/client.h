@@ -942,7 +942,7 @@ typedef struct {
 	struct sfx_s	*sfx_lightning;
 	struct sfx_s	*sfx_disrexp;
 	struct sfx_s	*sfx_shockhit;
-	struct sfx_s	*sfx_explo_quake;
+	struct sfx_s	*sfx_explo_q1;
 	struct sfx_s	*sfx_footsteps[4];
 	struct sfx_s	*sfx_metal_footsteps[4];
 	struct sfx_s	*sfx_dirt_footsteps[4];
@@ -981,7 +981,7 @@ typedef struct {
 	struct model_s	*mod_monster_heatbeam;
 	struct model_s	*mod_explo_big;
 	struct model_s	*mod_shocksplash;
-	struct model_s	*mod_explo_quake;
+	struct model_s	*mod_explo_q1;
 } clientMedia_t;
 
 extern clientMedia_t clMedia;
@@ -1060,6 +1060,19 @@ void CL_ReclipDecals (void);
 //
 // cl_effects.c
 //
+void CL_Explosion_Decal (vec3_t org, float size, int decalnum);
+void CL_Explosion_Particle (vec3_t org, float scale, qboolean rocket);
+void CL_Explosion_FlashParticle (vec3_t org, float size, qboolean large);
+void CL_BloodHit (vec3_t org, vec3_t dir);
+void CL_GreenBloodHit (vec3_t org, vec3_t dir);
+void CL_ParticleEffectSparks (vec3_t org, vec3_t dir, vec3_t color, int count);
+void CL_ParticleBulletDecal(vec3_t org, vec3_t dir, float size);
+void CL_ParticlePlasmaBeamDecal(vec3_t org, vec3_t dir, float size);
+void CL_ParticleBlasterDecal (vec3_t org, vec3_t dir, float size, int red, int green, int blue);
+void CL_Explosion_Sparks (vec3_t org, int size, int count);
+void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count);
+void CL_BFGExplosionParticles (vec3_t org);
+void CL_TeleportParticles (vec3_t org);
 void CL_BigTeleportParticles (vec3_t org);
 void CL_RocketTrail (vec3_t start, vec3_t end, centity_t *old);
 void CL_DiminishingTrail (vec3_t start, vec3_t end, centity_t *old, int flags);
