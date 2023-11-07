@@ -1783,15 +1783,15 @@ void FS_FreeFile (void *buffer)
 =================
 FS_LoadPakRemapScript
  
-Parses import pak remap script named pak_remap<dirName>.def
+Parses import pak remap script named <dirName>_pakremap.def
 =================
 */
-byte	pakRemapFileBuf[0x40000];
 void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 {
 	char		fileName[MAX_OSPATH];
-	FILE		*scriptFile;
-	size_t		len;
+	FILE		*scriptFile = NULL;
+	size_t		fileSize, bufSize, len;
+	byte		*pakRemapFileBuf;
 	char		*s, *token, *remapStart, *orgName, *remapName;
 	int			i, numItemRemaps = 0;
 	qboolean	foundPakRemap = false;
@@ -1804,20 +1804,35 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 	}
 
 	// load the remap script
-	Com_sprintf (fileName, sizeof(fileName), "%s/%s/pak_remap_%s.def", fs_basedir->string, gameDir, importDir);
+	Com_sprintf (fileName, sizeof(fileName), "%s/%s/%s_pakremap.def", fs_basedir->string, gameDir, importDir);
 	scriptFile = fopen(fileName, "rb");
 	if ( !scriptFile ) {
 		Com_DPrintf ("FS_LoadPakRemapScript: couldn't load %s\n", fileName);
 		return;
 	}
 
-	len = fread (pakRemapFileBuf, 1, sizeof(pakRemapFileBuf), scriptFile);
+	// get size of remap script
+	fseek (scriptFile, 0L, SEEK_END);
+	fileSize = ftell(scriptFile);
+	rewind (scriptFile);
+
+	// allocate file size + 1 for null terminator
+	bufSize = fileSize + 1;
+	pakRemapFileBuf = Z_Malloc (bufSize);
+
+	// read the script
+	len = fread (pakRemapFileBuf, 1, fileSize, scriptFile);
 	fclose (scriptFile);
 	scriptFile = NULL;
+	if (len != fileSize) {
+		Com_Printf ("FS_LoadPakRemapScript: couldn't read %i bytes from %s\n", fileSize, fileName);
+		Z_Free (pakRemapFileBuf);
+		return;
+	}
 
 	// parse it
 	s = pakRemapFileBuf;
-	while (s < (&pakRemapFileBuf[0] + len))
+	while (s < (pakRemapFileBuf + len))
 	{
 		token = COM_ParseExt (&s, true);
 		if (!token[0])
@@ -1828,6 +1843,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 			// only one pakRemapList per file!
 			if (foundPakRemap) {
 				Com_Printf ("FS_LoadPakRemapScript: found extra 'pakRemapList' in file %s\n", fileName);
+				Z_Free (pakRemapFileBuf);
 				return;
 			}
 			foundPakRemap = true;
@@ -1835,6 +1851,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 			token = COM_ParseExt (&s, true);
 			if (token[0] != '{') {
 				Com_Printf ("FS_LoadPakRemapScript: found %s when expecting '{' in file %s\n", token, fileName);
+				Z_Free (pakRemapFileBuf);
 				return;
 			}
 
@@ -1842,7 +1859,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 			remapStart = s;
 
 			// count number of remap pairs
-			while (s < (&pakRemapFileBuf[0] + len))
+			while (s < (pakRemapFileBuf + len))
 			{
 				token = COM_ParseExt (&s, true);
 				if ( !token[0] || !s ) {
@@ -1855,6 +1872,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 				}
 				else if (token[0] != '{') {
 					Com_Printf ("FS_LoadPakRemapScript: found %s when expecting '{' in file %s\n", token, fileName);
+					Z_Free (pakRemapFileBuf);
 					return;
 				}
 				// get orgName
@@ -1886,6 +1904,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 			// bail out if we couldn't load any remaps
 			if (numItemRemaps == 0) {
 				Com_Printf ("FS_LoadPakRemapScript: couldn't parse any item remaps in file %s\n", fileName);
+				Z_Free (pakRemapFileBuf);
 				return;
 			}
 
@@ -1895,7 +1914,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 			// now go through all the remap pairs and put them in the list
 			s = remapStart;
 			i = 0;
-			while ( (s < (&pakRemapFileBuf[0] + len)) && (i < numItemRemaps) )
+			while ( (s < (pakRemapFileBuf + len)) && (i < numItemRemaps) )
 			{
 				token = COM_ParseExt (&s, true);
 				if ( !token[0] || !s ) {
@@ -1908,6 +1927,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 				}
 				else if (token[0] != '{') {
 					Com_Printf ("FS_LoadPakRemapScript: found %s when expecting '{' in file %s\n", token, fileName);
+					Z_Free (pakRemapFileBuf);
 					return;
 				}
 
@@ -1946,9 +1966,13 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 		// ignore any crap after the pakRemapList
 		else if ( !foundPakRemap ) {
 			Com_Printf ("FS_LoadPakRemapScript: unknown command '%s' while looking for 'pakRemapList' in file %s\n", token, fileName);
+			Z_Free (pakRemapFileBuf);
 			return;
 		}
 	}
+
+	// free the buffer
+	Z_Free (pakRemapFileBuf);
 
 	Com_Printf ("FS_LoadPakRemapScript: loaded %i pak remaps from file %s\n", numItemRemaps, fileName);
 	fs_numPakItemRemaps = numItemRemaps;
@@ -1959,7 +1983,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 =================
 FS_FreePakRemapScript
  
-Frees import pak remap script named pak_remap<dirName>.def
+Frees import pak remap script named <dirName>_pakremap.def
 =================
 */
 void FS_FreePakRemapScript (void)
