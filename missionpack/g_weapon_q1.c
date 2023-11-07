@@ -484,7 +484,7 @@ void q1_grenade_explode (edict_t *ent)
 
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
@@ -671,7 +671,7 @@ void q1_rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t 
 
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
@@ -920,7 +920,7 @@ void q1_firepod_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
@@ -1129,7 +1129,7 @@ Fires a lavaball.  Used by Chthon.
 
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_EXPLOSION_QUAKE);
+	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 

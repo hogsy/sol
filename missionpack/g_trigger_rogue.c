@@ -36,16 +36,12 @@ SOUND: play a custom sound when touched
 void trigger_teleport_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	edict_t *dest;
-	edict_t	*tempent; //for teleport effect
+	edict_t	*tempent; // for teleport effect
 	int		i;
 
-
-	tempent = G_Spawn();
-	VectorCopy (other->s.origin, tempent->s.origin);
-
-	if ((self->spawnflags & TELEPORT_PLAYER_ONLY) && !(other->client))
+	if ( (self->spawnflags & TELEPORT_PLAYER_ONLY) && !(other->client) )
 		return;
-	if (!other->client && (!other->svflags & SVF_MONSTER))
+	if ( !other->client && !(other->svflags & SVF_MONSTER) )
 		return;
 	if (self->delay)
 		return;
@@ -53,9 +49,14 @@ void trigger_teleport_touch (edict_t *self, edict_t *other, cplane_t *plane, csu
 	dest = G_Find (NULL, FOFS(targetname), self->target);
 	if (!dest)
 	{
-		gi.dprintf("Teleport Destination not found!\n");
+		gi.dprintf ("Teleport Destination not found!\n");
 		return;
 	}
+
+	// spawn tempent here to make sure it gets freed
+	tempent = G_Spawn ();
+	VectorCopy (other->s.origin, tempent->s.origin);
+
 	if (!self->spawnflags & TELEPORT_NO_EFFECTS)
 	{
 		gi.WriteByte (svc_temp_entity);

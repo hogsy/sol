@@ -76,27 +76,11 @@ laser_t		cl_lasers[MAX_LASERS];
 cl_sustain_t	cl_sustains[MAX_SUSTAINS];
 //ROGUE
 
-//PGM
-extern void CL_TeleportParticles (vec3_t org);
-//PGM
 
-// Psychospaz's enhanced particle code
-void CL_Explosion_Particle (vec3_t org, float scale, qboolean rocket);
-void CL_Explosion_FlashParticle (vec3_t org, float size, qboolean large);
-void CL_BloodHit (vec3_t org, vec3_t dir);
-void CL_GreenBloodHit (vec3_t org, vec3_t dir);
-void CL_ParticleEffectSparks (vec3_t org, vec3_t dir, vec3_t color, int count);
-void CL_ParticleBulletDecal(vec3_t org, vec3_t dir, float size);
-void CL_ParticlePlasmaBeamDecal(vec3_t org, vec3_t dir, float size);
-void CL_ParticleBlasterDecal (vec3_t org, vec3_t dir, float size, int red, int green, int blue);
-void CL_Explosion_Decal (vec3_t org, float size, int decalnum);
-
-void CL_Explosion_Sparks (vec3_t org, int size, int count);
-void CL_BFGExplosionParticles (vec3_t org);
 
 clientMedia_t clMedia;
 
-void ReadTextureSurfaceAssignments();
+void ReadTextureSurfaceAssignments (void);
 
 /*
 =================
@@ -127,7 +111,7 @@ void CL_RegisterTEntSounds (void)
 	// shockwave impact
 	clMedia.sfx_shockhit = S_RegisterSound ("weapons/shockhit.wav");
 	// Quake explosion
-	clMedia.sfx_explo_quake = S_RegisterSound ("q1weapons/r_exp3.wav");
+	clMedia.sfx_explo_q1 = S_RegisterSound ("q1weapons/r_exp3.wav");
 
 	for (i=0 ; i<4 ; i++) {
 		Com_sprintf (name, sizeof(name), "player/step%i.wav", i+1);
@@ -252,7 +236,7 @@ void CL_RegisterTEntModels (void)
 
 	// new effect models
 	clMedia.mod_shocksplash = R_RegisterModel ("models/objects/shocksplash/tris.md2");
-	clMedia.mod_explo_quake = R_RegisterModel ("sprites/s_explod.sp2");
+	clMedia.mod_explo_q1 = R_RegisterModel ("sprites/s_explod.sp2");
 
 	R_RegisterModel ("models/objects/laser/tris.md2");
 	R_RegisterModel ("models/objects/grenade2/tris.md2");
@@ -1139,7 +1123,7 @@ void CL_ParseTEnt (void)
 			S_StartSound (pos, 0, 0, clMedia.sfx_rockexp, 1, ATTN_NORM, 0);
 		break;
 
-	case TE_EXPLOSION_QUAKE:
+	case TE_EXPLOSION_Q1:
 		MSG_ReadPos (&net_message, pos);
 		ex = CL_AllocExplosion ();
 		VectorCopy (pos, ex->ent.origin);
@@ -1150,14 +1134,14 @@ void CL_ParseTEnt (void)
 		ex->lightcolor[0] = 1.0;
 		ex->lightcolor[1] = 0.5;
 		ex->lightcolor[2] = 0.5;
-		ex->ent.model = clMedia.mod_explo_quake;
-		ex->ent.scale = 3.0f;
+		ex->ent.model = clMedia.mod_explo_q1;
+		ex->ent.scale = 1.5f;
 		ex->baseframe = 0;
 		ex->frames = 6;
 		CL_Explosion_Flash (pos, 10, 50, false);
-		CL_Explosion_Sparks (pos, 24, 128);
+		CL_Explosion_Sparks_Q1 (pos, 4, 512);
 		CL_Explosion_Decal (pos, 50, particle_burnmark);
-		S_StartSound (pos, 0, 0, clMedia.sfx_explo_quake, 1, ATTN_NORM, 0);
+		S_StartSound (pos, 0, 0, clMedia.sfx_explo_q1, 1, ATTN_NORM, 0);
 		break;
 
 	case TE_BFG_EXPLOSION:
