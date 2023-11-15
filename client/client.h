@@ -1071,6 +1071,8 @@ void CL_ParticlePlasmaBeamDecal(vec3_t org, vec3_t dir, float size);
 void CL_ParticleBlasterDecal (vec3_t org, vec3_t dir, float size, int red, int green, int blue);
 void CL_Explosion_Sparks (vec3_t org, int size, int count);
 void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count);
+void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count);
+void CL_Lavasplash_Q1 (vec3_t org, int size);
 void CL_BFGExplosionParticles (vec3_t org);
 void CL_TeleportParticles (vec3_t org);
 void CL_BigTeleportParticles (vec3_t org);

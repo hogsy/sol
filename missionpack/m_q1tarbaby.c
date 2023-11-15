@@ -244,8 +244,10 @@ void tarbaby_pain (edict_t *self, edict_t *other, float kick, int damage)
 
 void tarbaby_dead (edict_t *self)
 {
-	edict_t	*explode;
 	vec3_t	temp;
+#ifndef KMQUAKE2_ENGINE_MOD
+	edict_t	*explode = NULL;
+#endif	// KMQUAKE2_ENGINE_MOD
 
 	T_RadiusDamage (self, self, 120, NULL, 120, MOD_UNKNOWN);
 
@@ -256,6 +258,12 @@ void tarbaby_dead (edict_t *self)
 	VectorScale (temp, -8, temp);
 	VectorAdd (self->s.origin, temp, temp);
 
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_EXPLOSION_BLOB_Q1);
+	gi.WritePosition (temp);
+	gi.multicast (temp, MULTICAST_PVS);
+#else	// KMQUAKE2_ENGINE_MOD
 	explode = G_Spawn ();
 	VectorCopy (temp, explode->s.origin);
 	VectorCopy (temp, explode->s.old_origin);
@@ -270,6 +278,7 @@ void tarbaby_dead (edict_t *self)
 	explode->think = q1_explode; 
 	explode->nextthink = level.time + FRAMETIME;
 	gi.linkentity (explode);
+#endif	// KMQUAKE2_ENGINE_MOD
 
 	gi.unlinkentity (self);
 	self->solid = SOLID_NOT;

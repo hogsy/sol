@@ -11,6 +11,8 @@ CHTHON !!!!!! HE LIVES !
 
 void q1_fire_lavaball (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void monster_use (edict_t *self, edict_t *other, edict_t *activator);
+void chthon_run (edict_t *self);
+void chthon_check_attack (edict_t *self);
 
 static int	sound_pain;
 static int	sound_death;
@@ -18,16 +20,15 @@ static int	sound_sight;
 static int  sound_throw;
 static int  sound_rise;
 
-/*static*/ void chthon_rise_sound (edict_t *self)
-{
-
-	gi.sound (self, CHAN_VOICE, sound_rise, 1, ATTN_NONE, 0);
-	//gi.dprintf("RISE\n");
-//	chthon_lava_splash (self); // added lava splash
-}
 
 void chthon_lava_splash (edict_t *self)
 {
+#ifdef KMQUAKE2_ENGINE_MOD
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_LAVASPLASH_Q1);
+	gi.WritePosition (self->s.origin);
+	gi.multicast (self->s.origin, MULTICAST_PVS);
+#else	// KMQUAKE2_ENGINE_MOD
 	int count = 60;
 	int i;
 	float rx, ry, r1, r2;
@@ -35,7 +36,6 @@ void chthon_lava_splash (edict_t *self)
 	vec3_t MOVEDIR_UP	= {0, 0, 1};
 //	vec3_t MOVEDIR_DOWN	= {0, 0, -1};
 
-	chthon_rise_sound (self);
 	for (i = 0; i < 80; i++)
 	{
 		rx = random() * 128;
@@ -60,6 +60,12 @@ void chthon_lava_splash (edict_t *self)
 		gi.WriteByte (SPLASH_LAVA);
 		gi.multicast (splashorigin, MULTICAST_PVS);
 	}
+#endif	// KMQUAKE2_ENGINE_MOD
+}
+
+/*static*/ void chthon_rise_sound (edict_t *self)
+{
+	gi.sound (self, CHAN_BODY, sound_rise, 1, ATTN_NORM, 0);
 }
 
 /*static*/ void chthon_sight_sound (edict_t *self)
@@ -70,13 +76,8 @@ void chthon_lava_splash (edict_t *self)
 /*static*/ void chthon_sight_sound2 (edict_t *self)
 {
 	if (random() < 0.1)
-	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
+		gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_NORM, 0);
 }
-
-
-void chthon_stand (edict_t *self);
-void chthon_rise (edict_t *self);
-/*static*/ void chthon_check_attack(edict_t *self);
 
 mframe_t chthon_frames_stand [] =
 {
@@ -114,26 +115,28 @@ mframe_t chthon_frames_stand [] =
 };
 mmove_t chthon_move_stand = {FRAME_walk1, FRAME_walk31, chthon_frames_stand, NULL};
 
-
-void chthon_stand(edict_t *self)
+void chthon_stand (edict_t *self)
 {
 	self->monsterinfo.currentmove = &chthon_move_stand;
 }
 
-void chthon_frameend(edict_t *self)
-{//	gi.dprintf("RISE:%d\n", self->s.frame);
+void chthon_frameend (edict_t *self)
+{
+//	gi.dprintf ("RISE:%d\n", self->s.frame);
 }
-void chthon_framemid(edict_t *self)
-{//	gi.dprintf("RISE:%d\n", self->s.frame);
+void chthon_framemid( edict_t *self)
+{
+//	gi.dprintf ("RISE:%d\n", self->s.frame);
 }
-void chthon_framestart(edict_t *self)
-{//	gi.dprintf("RISE:%d\n", self->s.frame);
+void chthon_framestart (edict_t *self)
+{
+//	gi.dprintf ("RISE:%d\n", self->s.frame);
 }
 
 mframe_t chthon_frames_rise [] =
 {
-	ai_move, 0, NULL,	// was chthon_rise_sound
-	ai_move, 0, chthon_lava_splash,
+	ai_move, 0, chthon_rise_sound,
+	ai_move, 0, NULL,
 	ai_move, 0, chthon_sight_sound,
 	ai_move, 0, NULL,	// was chthon_framestart
 	ai_move, 0, NULL,
@@ -151,11 +154,12 @@ mframe_t chthon_frames_rise [] =
 	ai_move, 0, NULL	// was chthon_stand
 };
 
-mmove_t	chthon_move_rise = {FRAME_rise1, FRAME_rise17, chthon_frames_rise, chthon_stand}; //chthon_rise
+mmove_t	chthon_move_rise = {FRAME_rise1, FRAME_rise17, chthon_frames_rise, chthon_stand};
 
 void chthon_rise (edict_t *self)
 {
-//	gi.dprintf("RISE chthon !\n");
+//	gi.dprintf ("RISE chthon!\n");
+	chthon_lava_splash (self); // added lava splash
 	self->monsterinfo.currentmove = &chthon_move_rise;
 }
 
@@ -200,7 +204,6 @@ void chthon_walk (edict_t *self)
 	self->monsterinfo.currentmove = &chthon_move_walk;
 }
 
-void chthon_run (edict_t *self);
 mframe_t chthon_frames_run [] =
 {
 	ai_charge, 0, NULL,
@@ -289,14 +292,14 @@ void chthon_pain (edict_t *self, edict_t *other, float kick, int damage)
 	if (level.time < self->pain_debounce_time)
 		return;
 
-/*	if (Q_stricmp(level.mapname,"qe1m7") == 0)
-	if (stricmp(other->classname,"target_q1_bolt") == 0)
+	if (Q_stricmp(level.mapname, "qe1m7") == 0)
+	if (stricmp(other->classname, "target_q1_bolt") == 0)
 	{
 		gi.dprintf("HIT BY BOLT");
 		self->pain_debounce_time = level.time + 5;
-	} */
+	}
 
-	gi.sound (self, CHAN_VOICE, sound_pain, 1.0, ATTN_NORM, 0);	
+	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
 
 	if (damage > 25)
 	{
@@ -343,7 +346,7 @@ mframe_t chthon_frames_death [] =
 	ai_move, 0, NULL,
 	ai_move, 0,	NULL,
 	ai_move, 0,	NULL,
-	ai_move, 0,	chthon_lava_splash //was chthon_rise_sound
+	ai_move, 0,	chthon_lava_splash	// was chthon_rise_sound
 };
 mmove_t chthon_move_death = {FRAME_death1, FRAME_death9, chthon_frames_death, chthon_dead};
 
@@ -352,7 +355,7 @@ void chthon_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 {
 	int		n;
 
-// check for gib
+	// check for gib
 	if (self->health <= self->gib_health)
 	{
 		gi.sound (self, CHAN_VOICE, gi.soundindex ("q1player/udeath.wav"), 1, ATTN_NORM, 0);
@@ -369,7 +372,7 @@ void chthon_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	if (self->deadflag == DEAD_DEAD)
 		return;
 
-// regular death
+	// regular death
 	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
 	self->deadflag = DEAD_DEAD;
 	self->takedamage = DAMAGE_NO;
@@ -377,26 +380,24 @@ void chthon_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->monsterinfo.currentmove = &chthon_move_death;
 }
 
-//void door_use (edict_t *self, edict_t *other, edict_t *activator);;
 void chthon_bolt (edict_t *self, int no)
 {
 	switch (no)
 	{
 	case 1:
-
-		gi.sound (self, CHAN_VOICE, sound_pain, 1.0, ATTN_NORM, 0);	
+		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
 		self->monsterinfo.currentmove = &chthon_frames_move_shock1;
 		self->pain_debounce_time = level.time + 6;
 		break;
 	case 2:
-		gi.sound (self, CHAN_VOICE, sound_pain, 1.0, ATTN_NORM, 0);	
+		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
 		self->monsterinfo.currentmove = &chthon_frames_move_shock2;
 		self->pain_debounce_time = level.time + 6;
 		break;
 	case 3:
-		gi.sound (self, CHAN_VOICE, sound_pain, 1.0, ATTN_NORM, 0);	
-		self->monsterinfo.currentmove = &chthon_frames_move_shock3;
-		self->pain_debounce_time = level.time + 6;
+	//	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+	//	self->monsterinfo.currentmove = &chthon_frames_move_shock3;
+	//	self->pain_debounce_time = level.time + 6;
 		self->health = -50;
 		gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
 		self->deadflag = DEAD_DEAD;
@@ -423,7 +424,7 @@ void chthon_attack_left (edict_t *self)
 	dist = range (self, self->enemy);
 
 	AngleVectors (self->s.angles, forward, right, NULL); //was NULL
-//	gi.dprintf("ENEMY:%f\nSELF:%f\nDIFF:%f\n",self->enemy->s.origin[2],self->s.origin[2],
+//	gi.dprintf ("ENEMY:%f\nSELF:%f\nDIFF:%f\n",self->enemy->s.origin[2],self->s.origin[2],
 //	self->enemy->s.origin[2] - (self->s.origin[2] + 50.00));	
 	
 	if ((self->enemy->s.origin[2] - (self->s.origin[2] + 50.00)) > 100)
@@ -474,7 +475,6 @@ void chthon_attack_left (edict_t *self)
 			break;
 		}
 	}
-
 
 	VectorSubtract (vec, start, dir);
 	VectorNormalize (dir);
@@ -551,7 +551,6 @@ void chthon_attack_right (edict_t *self)
 		}
 	}
 
-	
 	VectorSubtract (vec, start, dir);
 	VectorNormalize (dir);
 	
@@ -592,12 +591,12 @@ mframe_t chthon_frames_attack [] =
 };
 mmove_t chthon_move_attack = {FRAME_attack1, FRAME_attack23, chthon_frames_attack, chthon_walk};
 
-void chthon_attack(edict_t *self)
+void chthon_attack (edict_t *self)
 {
 	self->monsterinfo.currentmove = &chthon_move_attack;
 }
 
-void chthon_sight(edict_t *self, edict_t *other)
+void chthon_sight (edict_t *self, edict_t *other)
 {
 	gi.sound (self, CHAN_VOICE, sound_sight, 1, ATTN_IDLE, 0);
 
@@ -606,17 +605,17 @@ void chthon_sight(edict_t *self, edict_t *other)
 	else
 		gi.dprintf("chthon SEES OLD ENEMY\n");
 */
-	//	self->monsterinfo.currentmove = &chthon_move_rise;
-//	chthon_attack(self);
+//	self->monsterinfo.currentmove = &chthon_move_rise;
+//	chthon_attack (self);
 }
 
 /*static*/ void chthon_check_attack (edict_t *self)
 {
 	if (!self->enemy || !self->enemy->inuse || self->enemy->health <= 0)
 		return;
+
 	self->monsterinfo.currentmove = &chthon_move_attack;
 }
-
 
 qboolean chthon_checkattack (edict_t *self)
 {
@@ -632,7 +631,7 @@ qboolean chthon_checkattack (edict_t *self)
 // Chthon is really set up here
 void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if (!Q_stricmp(level.mapname,"qe1m7"))
+	if ( !Q_stricmp(level.mapname, "qe1m7") )
 		self->movetype = MOVETYPE_NONE;
 	else
 		self->movetype = MOVETYPE_STEP;
@@ -641,10 +640,10 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 
 	self->solid = SOLID_BBOX;
 	self->s.modelindex = gi.modelindex ("models/monsters/q1chthon/tris.md2");
-//	self->s.frame = FRAME_rise1;
-	if (!Q_stricmp(level.mapname, "qe1m7")) {
-		self->use = monster_use;
-		self->s.origin[2] -= 32;
+	self->use = monster_use;
+	if ( !Q_stricmp(level.mapname, "qe1m7") ) {
+	//	self->s.origin[2] -= 32;
+		self->s.origin[2] -= 24;
 	}
 
 	VectorSet (self->mins, -128, -128, -24);
@@ -694,6 +693,7 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	self->s.renderfx |= RF_FULLBRIGHT;
 
 	self->monsterinfo.scale = MODEL_SCALE;
+	chthon_lava_splash (self); // added lava splash
 	self->monsterinfo.currentmove = &chthon_move_rise;
 
 	walkmonster_start (self);

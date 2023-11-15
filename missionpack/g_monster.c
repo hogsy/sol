@@ -916,7 +916,7 @@ void M_WorldEffects (edict_t *ent)
 		return;
 	}
 
-	if ((ent->watertype & CONTENTS_LAVA) && !(ent->flags & FL_IMMUNE_LAVA))
+	if ( (ent->watertype & CONTENTS_LAVA) && !(ent->flags & FL_IMMUNE_LAVA) )
 	{
 		if (ent->damage_debounce_time < level.time)
 		{
@@ -925,7 +925,7 @@ void M_WorldEffects (edict_t *ent)
 		}
 	}
 	// No slime damage for dead monsters
-	if ((ent->watertype & CONTENTS_SLIME) && !(ent->flags & FL_IMMUNE_SLIME) && !(ent->svflags & SVF_DEADMONSTER))
+	if ( (ent->watertype & CONTENTS_SLIME) && !(ent->flags & FL_IMMUNE_SLIME) && !(ent->svflags & SVF_DEADMONSTER) )
 	{
 		if (ent->damage_debounce_time < level.time)
 		{
@@ -936,9 +936,9 @@ void M_WorldEffects (edict_t *ent)
 
 	if ( !(ent->flags & FL_INWATER) )
 	{
-		if (!(ent->svflags & SVF_DEADMONSTER))
-		{
-			if ((ent->watertype & CONTENTS_LAVA) && (ent->health > 0))
+		if ( !(ent->svflags & SVF_DEADMONSTER) )
+		{	// No falling in lava sound for Chthon
+			if ( (ent->watertype & CONTENTS_LAVA) && (ent->health > 0) && !(ent->flags & FL_IMMUNE_LAVA) )
 			{
 				if (random() <= 0.5)
 					gi.sound (ent, CHAN_BODY, gi.soundindex("player/lava1.wav"), 1, ATTN_NORM, 0);

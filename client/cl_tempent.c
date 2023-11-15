@@ -1144,6 +1144,30 @@ void CL_ParseTEnt (void)
 		S_StartSound (pos, 0, 0, clMedia.sfx_explo_q1, 1, ATTN_NORM, 0);
 		break;
 
+	case TE_EXPLOSION_BLOB_Q1:
+		MSG_ReadPos (&net_message, pos);
+		ex = CL_AllocExplosion ();
+		VectorCopy (pos, ex->ent.origin);
+		ex->type = ex_poly;
+		ex->ent.flags = RF_FULLBRIGHT|RF_NOSHADOW;
+		ex->start = cl.frame.servertime - 100;
+		ex->light = 350;
+		ex->lightcolor[0] = 0.8;
+		ex->lightcolor[1] = 0.4;
+		ex->lightcolor[2] = 1.0;
+		ex->ent.model = clMedia.mod_explo_q1;
+		ex->ent.scale = 1.5f;
+		ex->baseframe = 0;
+		ex->frames = 6;
+		CL_Explosion_Blob_Q1 (pos, 4, 512);
+		S_StartSound (pos, 0, 0, clMedia.sfx_explo_q1, 1, ATTN_NORM, 0);
+		break;
+
+	case TE_LAVASPLASH_Q1:
+		MSG_ReadPos (&net_message, pos);
+		CL_Lavasplash_Q1 (pos, 4);
+		break;
+
 	case TE_BFG_EXPLOSION:
 		MSG_ReadPos (&net_message, pos);
 		ex = CL_AllocExplosion ();

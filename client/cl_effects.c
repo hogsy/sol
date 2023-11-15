@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static vec3_t avelocities [NUMVERTEXNORMALS];
 
+static const byte	q1Palette[768] = {
+#include "../qcommon/q1palette.h"
+};
 
 //=================================================
 
@@ -414,11 +417,14 @@ CL_Explosion_Sparks_Q1
 */
 void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 {
-	int		i;
-	vec3_t	colvel;
+	int		i, palIdx;
+	vec3_t	color, colvel;
 
-	for (i=0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
+	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
+		palIdx = 111;
+		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+
 		if (i & 1)
 			VectorSet (colvel, -32, -64, 10);
 		else
@@ -428,8 +434,8 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 			0,	0,	0,
 			org[0] + ((rand()%32)-16),	org[1] + ((rand()%32)-16),	org[2] + ((rand()%32)-16),
 			(rand()%512)-256,	(rand()%512)-256,	(rand()%512)-256,
-			0,		0,		PARTICLE_GRAVITY,
-			255,	243,	27,
+			0,		0,		0,
+			color[0],	color[1],	color[2],
 			colvel[0],	colvel[1],	colvel[2],
 			1,		-0.4 / (0.5 + frand()*0.3),
 			GL_SRC_ALPHA, GL_ONE,
@@ -440,6 +446,94 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 	}
 }
 
+
+/*
+===============
+CL_Explosion_Blob_Q1
+===============
+*/
+void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count)
+{
+	int		i, palIdx;
+	vec3_t	color;
+
+	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
+	{
+		if (i & 1) {
+			palIdx = 66 + (rand()%6);
+			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		}
+		else {
+			palIdx = 150 + (rand()%6);
+			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		}
+
+		CL_SetupParticle (
+			0,	0,	0,
+			org[0] + ((rand()%32)-16),	org[1] + ((rand()%32)-16),	org[2] + ((rand()%32)-16),
+			(rand()%512)-256,	(rand()%512)-256,	(rand()%512)-256,
+			0,		0,		0,
+			color[0],	color[1],	color[2],
+			0,			0,			0,
+			1,		-1.0 / (4.0 + frand()*0.35),
+			GL_SRC_ALPHA, GL_ONE,
+			size,		size*-0.75f,
+			particle_generic,
+			0,
+			NULL, false);
+	}
+}
+
+
+/*
+===============
+CL_Lavasplash_Q1
+===============
+*/
+void CL_Lavasplash_Q1 (vec3_t org, int size)
+{
+	int		i, j, palIdx;
+	int		start, end;
+	float	vel;
+	vec3_t	color, dir, pOrg, velocity;
+
+	if ( (cl_particle_scale->integer >= 2) && (cl_particle_scale->integer <= 5) ) {
+		start = -16 + ((cl_particle_scale->integer - 1) * 2);
+		end = 16 - ((cl_particle_scale->integer - 1) * 2);
+	}
+	else {
+		start = -16;
+		end = 16;
+	}
+
+	for (i = start; i < end; i++)
+	{
+		for (j = start; j < end; j++)
+		{
+			palIdx = 224 + (rand()%7);
+			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+			VectorSet (dir, j*8 + (rand()&7), i*8 + (rand()&7), 256);
+			VectorSet (pOrg, org[0] + dir[0], org[1] + dir[1], org[2] + (rand()&63));
+			VectorNormalize (dir);
+			vel = (float)(50 + (rand()&63));
+			VectorScale (dir, vel, velocity);
+
+			CL_SetupParticle (
+				0,	0,	0,
+				pOrg[0],		pOrg[1],		pOrg[2],
+				velocity[0],	velocity[1],	velocity[2],
+				0,		0,		-PARTICLE_GRAVITY,
+				color[0],	color[1],	color[2],
+				0,			0,			0,
+				1,		-1.0 / (4.0 + frand()*0.62),
+				GL_SRC_ALPHA, GL_ONE,
+				size,		0,	// size*-1.5f,
+				particle_generic,
+				0,
+				NULL, false);
+		}
+	}
+}
 
 /*
 =====================

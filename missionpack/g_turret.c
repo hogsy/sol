@@ -1407,12 +1407,12 @@ void turret_breach_die (edict_t *self, edict_t *inflictor, edict_t *attacker, in
 			{
 				// we were already dead, so destroytarget has been fired
 				edict_t	*target;
-				target = G_Find(NULL,FOFS(targetname),self->destroytarget);
+				target = G_Find(NULL, FOFS(targetname), self->destroytarget);
 				while (target)
 				{
 					if (target && target->use)
-						target->use(target,attacker,attacker);
-					target = G_Find(target,FOFS(targetname),self->destroytarget);
+						target->use (target, attacker, attacker);
+					target = G_Find(target, FOFS(targetname), self->destroytarget);
 				}
 			}
 			else
