@@ -350,6 +350,7 @@ extern mmove_t q1dog_move_walk ;
 extern mmove_t q1dog_move_stand ;
 extern mmove_t chthon_move_attack ;
 extern mmove_t chthon_move_death ;
+extern mmove_t chthon_frames_move_shock3_die ;
 extern mmove_t chthon_frames_move_shock3 ;
 extern mmove_t chthon_frames_move_shock2 ;
 extern mmove_t chthon_frames_move_shock1 ;

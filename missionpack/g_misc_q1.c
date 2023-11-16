@@ -409,7 +409,7 @@ void SP_target_q1_trap (edict_t *self)
 	gi.multicast (start, MULTICAST_PVS);
 		
 	if ( (tr.ent != self) && (tr.ent->takedamage) )
-		T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, damage, 0, DAMAGE_ENERGY, MOD_Q1_LG);
+		T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, damage, 0, DAMAGE_ENERGY, MOD_Q1_LIGHTNING_TRAP);
 }
 
 void think_targetbolt (edict_t *self)
@@ -417,9 +417,9 @@ void think_targetbolt (edict_t *self)
 	int			bstate1 = 0, bstate2 = 0;
 	qboolean	electrodes_found = false;
 	qboolean	electrodes_aligned = false;
+	qboolean	discharge_done = false;
 	edict_t		*le1 = NULL;
 	edict_t		*le2 = NULL;
-	edict_t		*chthon = NULL;
 
 	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
 		le1 = G_Find (NULL, FOFS(targetname), "t12");
@@ -438,68 +438,30 @@ void think_targetbolt (edict_t *self)
 			electrodes_aligned = true;
 	}
 
-/*	if ( !le1 || !le2 )
-		return;
-
-	bstate1 = le1->moveinfo.state;
-	bstate2 = le2->moveinfo.state;
-	
-	if (bstate1 != bstate2)
-		return;
-*/
-	// bail out if on qe1m7 and electrodes not found or not aligned
-	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) || electrodes_found ) {
-		if ( !electrodes_aligned )
-			return;
-	}
-
-	if (level.time >= self->delay)
-	{
+	// bail out if on qe1m7 and electrodes not found
+	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && !electrodes_found ) {
 		self->nextthink = 0;
-		self->think = 0;
-		self->delay = 0.0;
+		self->think = NULL;
+		self->delay = 0;
 		return;
 	}
 
-	target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
-	gi.sound (self, CHAN_AUTO, gi.soundindex ("q1weapons/lhit.wav"), 1.0, ATTN_NORM, 0);
+	if (level.time >= self->delay) {
+		self->nextthink = 0;
+		self->think = NULL;
+		self->delay = 0;
+		discharge_done = true;
+	}
+	else {
+		target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
+	//	gi.sound (self, CHAN_AUTO, gi.soundindex ("q1weapons/lhit.wav"), 1.0, ATTN_NORM, 0);
+		self->nextthink = level.time + 0.2;
+		self->think = think_targetbolt;
+	}
 
-//	if (Q_stricmp(level.mapname, "qe1m7") == 0)
-	if ( electrodes_found && (bstate2 == 0) && (bstate1 == 0) )
-	{
+	if ( electrodes_found && discharge_done ) {
 		door_go_down (le1);
 		door_go_down (le2);
-		chthon = G_Find (NULL, FOFS(classname), "q1_monster_chton");
-		if ( !chthon )
-			chthon = G_Find (NULL, FOFS(classname), "monster_q1_chthon");
-		if (chthon)
-		{
-			if ( !chthon->deadflag && chthon->enemy )
-			{
-				self->style++;
-			//	gi.dprintf ("HIT NUMBER: %d\n", self->style);
-
-				switch (self->style)
-				{
-				case 1:
-					chthon_bolt (chthon, 1);
-					break;
-				case 2:
-					chthon_bolt (chthon, 2);
-					break;
-				case 3:
-					chthon_bolt (chthon, 3);
-					break;
-				default:
-					self->style = 0;
-					break;
-				}
-			}
-		//	else
-		//		gi.dprintf("CHTHON does not have an enemy\n");
-		}
-	//	else
-	//		gi.dprintf("Could not find Chthon\n");
 	}
 }
 
@@ -511,6 +473,7 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 	edict_t		*le1 = NULL;
 	edict_t		*le2 = NULL;
 	edict_t		*t = NULL;
+	edict_t		*chthon = NULL;
 
 	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
 		le1 = G_Find (NULL, FOFS(targetname), "t12");
@@ -529,43 +492,72 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 			electrodes_aligned = true;
 	}
 		
-/*	if ( !le1 || !le2 )
-		return;
-
-	bstate1 = le1->moveinfo.state;
-	bstate2 = le2->moveinfo.state;
-	
-	if (bstate1 != bstate2)
-		return;
-*/
-	// bail out if on qe1m7 and electrodes not found or not aligned
+	// bail out if on qe1m7 or electrodes not found and not aligned
 	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) || electrodes_found ) {
 		if ( !electrodes_aligned )
 			return;
 	}
 
-//	if (bstate1)	
-	if ( electrodes_aligned && bstate1 )	
+	if ( electrodes_aligned && bstate1 )
 	{
+		// fire lightning from our target ent if both electrodes are up
 		t = G_Find (NULL, FOFS(targetname), self->target);
-		if ( t )
+		if ( t && !Q_stricmp(t->classname, "target_q1_bolt") )
 		{
 			target_fire_lightning (t, t->s.origin, t->movedir, t->dmg);
-			gi.sound (t, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
-			t->nextthink = level.time + 0.4;
+		//	gi.sound (t, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
+			gi.sound (t, CHAN_AUTO, t->noise_index, 1.0, ATTN_NORM, 0);
+			t->nextthink = level.time + 0.2;
 			t->think = think_targetbolt;
-			t->delay = level.time + 5.0;
-			gi.sound (t, CHAN_AUTO, t->noise_index, 1, ATTN_NORM, 0);
+			t->delay = level.time + 1.8;
 			return;
 		}
 	}
+	else if ( electrodes_aligned && (bstate2 == 0) && (bstate1 == 0) )
+	{
+		// prevent electrodes from retracting until shock is finished
+		le1->nextthink = 0;
+		le2->nextthink = 0;
+
+		// find and shock Chthon
+		chthon = G_Find (NULL, FOFS(classname), "q1_monster_chton");
+		if ( !chthon )
+			chthon = G_Find (NULL, FOFS(classname), "monster_q1_chthon");
+		if (chthon)
+		{
+			if ( !chthon->deadflag && chthon->enemy )
+			{
+				self->bossFireCount++;
+			//	gi.dprintf ("HIT NUMBER: %d\n", self->bossFireCount);
+				switch (self->bossFireCount)
+				{
+				case 1:
+					chthon_bolt (chthon, 1);
+					break;
+				case 2:
+					chthon_bolt (chthon, 2);
+					break;
+				case 3:
+					chthon_bolt (chthon, 3);
+					break;
+				default:
+					self->bossFireCount = 0;
+					break;
+				}
+			}
+		//	else
+		//		gi.dprintf("CHTHON does not have an enemy\n");
+		}
+	//	else
+	//		gi.dprintf("Could not find Chthon\n");
+	}
 
 	target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
-	gi.sound (self, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
-	self->nextthink = level.time + 0.4;
+//	gi.sound (self, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
+	gi.sound (self, CHAN_AUTO, self->noise_index, 1.0, ATTN_NORM, 0);
+	self->nextthink = level.time + 0.2;
 	self->think = think_targetbolt;
-	self->delay = level.time + 5.0;
-	gi.sound (self, CHAN_AUTO, self->noise_index, 1, ATTN_NORM, 0);
+	self->delay = level.time + 1.8;
 }
 
 /*QUAKED q1_target_bolt (1 0 0) (-8 -8 -8) (8 8 8)
@@ -575,10 +567,11 @@ Fires lightning bolt in the set direction when triggered.
 void SP_target_q1_bolt (edict_t *self)
 {
 	self->use = use_target_bolt;
-	self->style = 0;
+	self->bossFireCount = 0;
 	G_SetMovedir (self->s.angles, self->movedir);
-	self->noise_index = gi.soundindex ("q1weapons/lhit.wav"); 
-	gi.soundindex ("q1weapons/lstart.wav");
+//	self->noise_index = gi.soundindex ("q1weapons/lhit.wav"); 
+//	gi.soundindex ("q1weapons/lstart.wav");
+	self->noise_index = gi.soundindex ("q1misc/power.wav"); 
 	
 	if (!self->dmg)
 		self->dmg = 50;

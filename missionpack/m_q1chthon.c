@@ -9,9 +9,11 @@ CHTHON !!!!!! HE LIVES !
 #include "g_local.h"
 #include "m_q1chthon.h"
 
-void q1_fire_lavaball (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
+#define SF_CHTHON_LIGHTNING_ONLY	32
+
 void monster_use (edict_t *self, edict_t *other, edict_t *activator);
 void chthon_run (edict_t *self);
+void chthon_set_dead (edict_t *self);
 void chthon_check_attack (edict_t *self);
 
 static int	sound_pain;
@@ -65,7 +67,13 @@ void chthon_lava_splash (edict_t *self)
 
 /*static*/ void chthon_rise_sound (edict_t *self)
 {
-	gi.sound (self, CHAN_BODY, sound_rise, 1, ATTN_NORM, 0);
+	gi.sound (self, CHAN_WEAPON, sound_rise, 1, ATTN_NONE, 0);
+}
+
+void chthon_sink (edict_t *self)
+{
+	chthon_rise_sound (self);
+	chthon_lava_splash (self);
 }
 
 /*static*/ void chthon_sight_sound (edict_t *self)
@@ -135,8 +143,8 @@ void chthon_framestart (edict_t *self)
 
 mframe_t chthon_frames_rise [] =
 {
-	ai_move, 0, chthon_rise_sound,
 	ai_move, 0, NULL,
+	ai_move, 0, chthon_rise_sound,
 	ai_move, 0, chthon_sight_sound,
 	ai_move, 0, NULL,	// was chthon_framestart
 	ai_move, 0, NULL,
@@ -286,16 +294,29 @@ mframe_t chthon_frames_shock3 [] =
 };
 mmove_t chthon_frames_move_shock3 = {FRAME_shockc1, FRAME_shockc10, chthon_frames_shock3, chthon_walk};
 
+mframe_t chthon_frames_shock3_die [] =
+{
+	ai_move, 0,  NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,  NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL,
+	ai_move, 0,	 NULL
+};
+mmove_t chthon_frames_move_shock3_die = {FRAME_shockc1, FRAME_shockc10, chthon_frames_shock3_die, chthon_set_dead};
 
 void chthon_pain (edict_t *self, edict_t *other, float kick, int damage)
 {
 	if (level.time < self->pain_debounce_time)
 		return;
 
-	if (Q_stricmp(level.mapname, "qe1m7") == 0)
-	if (stricmp(other->classname, "target_q1_bolt") == 0)
+	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && (stricmp(other->classname, "target_q1_bolt") == 0) )
 	{
-		gi.dprintf("HIT BY BOLT");
+	//	gi.dprintf("HIT BY BOLT");
 		self->pain_debounce_time = level.time + 5;
 	}
 
@@ -346,7 +367,7 @@ mframe_t chthon_frames_death [] =
 	ai_move, 0, NULL,
 	ai_move, 0,	NULL,
 	ai_move, 0,	NULL,
-	ai_move, 0,	chthon_lava_splash	// was chthon_rise_sound
+	ai_move, 0,	chthon_sink	// was chthon_rise_sound
 };
 mmove_t chthon_move_death = {FRAME_death1, FRAME_death9, chthon_frames_death, chthon_dead};
 
@@ -380,34 +401,46 @@ void chthon_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->monsterinfo.currentmove = &chthon_move_death;
 }
 
-void chthon_bolt (edict_t *self, int no)
+void chthon_set_dead (edict_t *self)
 {
-	switch (no)
+	if ( !(self->monsterinfo.aiflags & AI_GOOD_GUY) && !(self->monsterinfo.monsterflags & MFL_DO_NOT_COUNT) )
+		level.killed_monsters++;
+
+	self->health = -50;
+	gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
+	self->deadflag = DEAD_DEAD;
+	self->takedamage = DAMAGE_NO;
+	self->monsterinfo.currentmove = &chthon_move_death;
+}
+
+void chthon_bolt (edict_t *self, int num)
+{
+	int		 health_1_3, health_2_3;
+
+	health_1_3 = self->max_health * (1.0f/3.0f);
+	health_2_3 = self->max_health * (2.0f/3.0f);
+
+	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+	self->pain_debounce_time = level.time + 6;
+
+	switch (num)
 	{
 	case 1:
-		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+		if (self->health > health_2_3)
+			self->health = health_2_3;
 		self->monsterinfo.currentmove = &chthon_frames_move_shock1;
-		self->pain_debounce_time = level.time + 6;
 		break;
 	case 2:
-		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+		if (self->health > health_1_3)
+			self->health = health_1_3;
 		self->monsterinfo.currentmove = &chthon_frames_move_shock2;
-		self->pain_debounce_time = level.time + 6;
 		break;
 	case 3:
-	//	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
-	//	self->monsterinfo.currentmove = &chthon_frames_move_shock3;
-	//	self->pain_debounce_time = level.time + 6;
-		self->health = -50;
-		gi.sound (self, CHAN_VOICE, sound_death, 1, ATTN_NONE, 0);
-		self->deadflag = DEAD_DEAD;
-		self->takedamage = DAMAGE_NO;
-		self->monsterinfo.currentmove = &chthon_move_death;
-		monster_death_use (self);
+		self->health = 0;
+		self->monsterinfo.currentmove = &chthon_frames_move_shock3_die;
 		break;
 	}
 }
-
 
 void chthon_attack_left (edict_t *self)
 {
@@ -649,21 +682,27 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	VectorSet (self->mins, -128, -128, -24);
 	VectorSet (self->maxs, 128, 128, 226);
 
-	if (!self->health)
+	if (self->spawnflags & SF_CHTHON_LIGHTNING_ONLY) {
+		self->health = 6000;
+		self->takedamage = DAMAGE_LIGHTING_ONLY;
+	}
+	else if (!self->health)
 	{
 		if (skill->value == 0)
 			self->health = 3000;
 		else if (skill->value == 1)
 			self->health = 4000;
-		else
+		else if (skill->value == 2)
 			self->health = 5000;
+		else
+			self->health = 6000;
 	}
 
 	if (!self->gib_health)
 		self->gib_health = -500;
 	if (!self->mass)
 		self->mass = 1500;
-	self->style = 0;
+//	self->style = 0;
 
 	self->flags |= (FL_Q1_MONSTER|FL_IMMUNE_LAVA);
 
@@ -717,8 +756,8 @@ void monster_q1_chthon_soundcache (edict_t *self)
 // SPAWN
 //
 
-/*QUAKED monster_q1_chthon (1 .5 0) (-128 -128 -24) (128 128 226) Ambush Trigger_Spawn Sight
-"style" 	set to 1 for orignal lightning-kill only mode
+/*QUAKED monster_q1_chthon (1 .5 0) (-128 -128 -24) (128 128 226) Ambush Trigger_Spawn Sight GoodGuy x 
+LightningOnly: specifies orignal lightning-kill only mode
 model="models/monsters/q1chthon/tris.md2"
 */
 void SP_monster_q1_chthon (edict_t *self)

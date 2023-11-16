@@ -1243,7 +1243,7 @@ void monster_use (edict_t *self, edict_t *other, edict_t *activator)
 		if (self->monsterinfo.aiflags & AI_GOOD_GUY)
 			self->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 		self->monsterinfo.aiflags &= ~(AI_GOOD_GUY + AI_FOLLOW_LEADER);
-		if (self->dmgteam && !Q_stricmp(self->dmgteam,"player"))
+		if (self->dmgteam && !Q_stricmp(self->dmgteam, "player"))
 			self->dmgteam = NULL;
 	}
 

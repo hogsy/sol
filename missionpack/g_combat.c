@@ -1283,6 +1283,11 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 				}
 				if (!good_damage) return;
 			}
+			// Knightmare- lightning-only damage flag for Chthon
+			if ( (targ->takedamage == DAMAGE_LIGHTING_ONLY) &&
+				!( (mod == MOD_Q1_LIGHTNING_TRAP) || (mod == MOD_Q1_LG) ) )
+				take = 0;
+
 			// Zaero
 			if (targ->takedamage != DAMAGE_IMMORTAL)
 				targ->health = targ->health - take;
@@ -1319,14 +1324,14 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 	}
 //PGM
 
-	if ((targ->svflags & SVF_MONSTER)
+	if ( (targ->svflags & SVF_MONSTER)
 		// Knightmare- no damage reaction from negative damage lasers and triggers
-		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ))
+		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ) )
 	{
 		M_ReactToDamage (targ, attacker, inflictor);
 		// PMM - fixme - if anyone else but the medic ever uses AI_MEDIC, check for it here instead
 		// of in the medic's pain function
-		if (!(targ->monsterinfo.aiflags & AI_DUCKED) && (take))
+		if ( !(targ->monsterinfo.aiflags & AI_DUCKED) && (take) )
 		{
 			if (targ->pain)
 				targ->pain (targ, attacker, knockback, take);
@@ -1335,18 +1340,18 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 				targ->pain_debounce_time = level.time + 5;
 		}
 	}
-	else if ((client)
+	else if ( (client)
 		// Knightmare- no damage reaction from negative damage lasers and triggers
-		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ))
+		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ) )
 	{
-		if (!(targ->flags & FL_GODMODE) && (take)) {
+		if ( !(targ->flags & FL_GODMODE) && (take) ) {
 			if (targ->pain)
 				targ->pain (targ, attacker, knockback, take);
 		}
 	}
-	else if ((take)
+	else if ( (take)
 		// Knightmare- no damage reaction from negative damage lasers and triggers
-		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ))
+		&& ( (damage > 0) || ((mod != MOD_TRIGGER_HURT) && (mod != MOD_TARGET_LASER)) ) )
 	{
 		if (targ->pain)
 			targ->pain (targ, attacker, knockback, take);

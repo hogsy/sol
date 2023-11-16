@@ -39,7 +39,7 @@ static int	tactician_sound_sight;
 #define GRENADE_VELOCITY			632.4555320337f
 #define GRENADE_VELOCITY_SQUARED	400000.0f
 // Knightmare- placement spread for Tactician Gunner prox mines
-#define	GUNNER_PROX_SPREAD			48.0f
+#define	GUNNER_PROX_SPREAD			60.0f
 #define	HALF_GUNNER_PROX_SPREAD		(GUNNER_PROX_SPREAD * 0.5f)
 #define	QUARTER_GUNNER_PROX_SPREAD	(GUNNER_PROX_SPREAD * 0.25f)
 #define GUNNER_PROX_OFFSET			(HALF_GUNNER_PROX_SPREAD + (random() * HALF_GUNNER_PROX_SPREAD))
@@ -874,23 +874,36 @@ void GunnerGrenade (edict_t *self)
 		if (isProx)
 		{
 			qboolean	useRandomProxOffset = false;
+
 			switch (self->bossFireCount)	// use ordered dispersion
 			{
-			case 0:
-				VectorNegate (forward, spreadOffsetForward);
+		/*	case 0:
+				VectorCopy (forward, spreadOffsetForward);
 				VectorCopy (right, spreadOffsetRight);
 				break;
 			case 1:
-				VectorNegate (forward, spreadOffsetForward);
+				VectorCopy (forward, spreadOffsetForward);
 				VectorNegate (right, spreadOffsetRight);
 				break;
 			case 2:
-				VectorCopy (forward, spreadOffsetForward);
+				VectorNegate (forward, spreadOffsetForward);
 				VectorNegate (right, spreadOffsetRight);
 				break;
 			case 3:
-				VectorCopy (forward, spreadOffsetForward);
+				VectorNegate (forward, spreadOffsetForward);
 				VectorCopy (right, spreadOffsetRight);
+				break; */
+			case 0:
+				VectorScale (right, -HALF_GUNNER_PROX_SPREAD, spreadOffsetRight);
+				break;
+			case 1:
+				VectorScale (right, -QUARTER_GUNNER_PROX_SPREAD, spreadOffsetRight);
+				break;
+			case 2:
+				VectorScale (right, QUARTER_GUNNER_PROX_SPREAD, spreadOffsetRight);
+				break;
+			case 3:
+				VectorScale (right, HALF_GUNNER_PROX_SPREAD, spreadOffsetRight);
 				break;
 			default:		// use random dispersion if counter got screwed up
 				useRandomProxOffset = true;
@@ -901,10 +914,14 @@ void GunnerGrenade (edict_t *self)
 				target[1] += crandom() * GUNNER_PROX_SPREAD;
 			}
 			else {
+			//	VectorAdd (spreadOffsetForward, spreadOffsetRight, spreadOffset);
+			//	spreadOffset[2] = 0;
+			//	VectorNormalize (spreadOffset);
+			//	VectorScale (spreadOffset, GUNNER_PROX_OFFSET, spreadOffset);
+
+				VectorScale (forward, (crandom() * GUNNER_PROX_SPREAD), spreadOffsetForward);
 				VectorAdd (spreadOffsetForward, spreadOffsetRight, spreadOffset);
 				spreadOffset[2] = 0;
-				VectorNormalize (spreadOffset);
-				VectorScale (spreadOffset, GUNNER_PROX_OFFSET, spreadOffset);
 				VectorAdd (target, spreadOffset, target);
 			}
 			self->bossFireCount++;

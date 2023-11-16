@@ -350,6 +350,7 @@
 {"q1dog_move_stand", &q1dog_move_stand},
 {"chthon_move_attack", &chthon_move_attack},
 {"chthon_move_death", &chthon_move_death},
+{"chthon_frames_move_shock3_die", &chthon_frames_move_shock3_die},
 {"chthon_frames_move_shock3", &chthon_frames_move_shock3},
 {"chthon_frames_move_shock2", &chthon_frames_move_shock2},
 {"chthon_frames_move_shock1", &chthon_frames_move_shock1},

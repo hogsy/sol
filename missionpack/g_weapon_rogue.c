@@ -607,7 +607,7 @@ void prox_land (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 	if (surf && (surf->flags & SURF_SKY))
 	{
 	//	Grenade_Remove_From_Chain (ent);
-		G_FreeEdict(ent);
+		G_FreeEdict (ent);
 		return;
 	}
 
@@ -787,11 +787,15 @@ void fire_prox (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int dama
 	VectorScale (aimdir, speed, prox->velocity);
 	// Lazarus - keep same vertical boost for players, but monsters do a better job
 	//           of calculating aim direction, so throw that out
-	if (self->client)
+	if (self->client) {
 		VectorMA (prox->velocity, 200 + crandom() * 10.0, up, prox->velocity);
-	else
+		// Knightmare- made horizontal randomization only for players to improve Tactician Gunner aiming
+		VectorMA (prox->velocity, crandom() * 10.0, right, prox->velocity);
+	}
+	else {
 		VectorMA (prox->velocity, crandom() * 10.0, up, prox->velocity);
-	VectorMA (prox->velocity, crandom() * 10.0, right, prox->velocity);
+	}
+
 	// Knightmare- add player's base velocity to prox
 	if (add_velocity_throw->value && self->client)
 		VectorAdd (prox->velocity, self->velocity, prox->velocity);

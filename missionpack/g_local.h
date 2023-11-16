@@ -158,7 +158,8 @@ typedef enum
 	DAMAGE_YES,			// will take damage if hit
 	DAMAGE_AIM,			// auto targeting recognizes this
 	// Zaero
-	DAMAGE_IMMORTAL		// similar to DAMAGE_YES, but health is not deducted
+	DAMAGE_IMMORTAL,		// similar to DAMAGE_YES, but health is not deducted
+	DAMAGE_LIGHTING_ONLY	// only damaged by lightning
 } damage_t;
 
 typedef enum 
@@ -967,6 +968,7 @@ extern int lastgibframe;
 #define MOD_Q1_LASER			87
 #define MOD_Q1_FLAMEBOLT		88
 #define MOD_Q1_FIREPOD			89
+#define MOD_Q1_LIGHTNING_TRAP	90
 
 #define MOD_FRIENDLY_FIRE	0x8000000
 

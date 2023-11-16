@@ -312,6 +312,9 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			case MOD_FALLING_ROCKS:
 				message = "was killed by falling rocks";
 				break;
+			case MOD_Q1_LIGHTNING_TRAP:
+				message = "had an enlightening experience";
+				break;
 		}
 		if (attacker == self)
 		{
