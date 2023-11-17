@@ -897,11 +897,11 @@ void SP_target_movewith (edict_t *self)
 	self->class_id = ENTITY_TARGET_MOVEWITH;
 
 	if (!self->targetname)
-		gi.dprintf("target_movewith without a targetname at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_movewith without a targetname at %s\n", vtos(self->s.origin));
 	if (!self->target)
-		gi.dprintf("target_movewith without a target at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_movewith without a target at %s\n", vtos(self->s.origin));
 	if (!self->pathtarget && !(self->spawnflags & 1))
-		gi.dprintf("target_movewith without a pathtarget at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_movewith without a pathtarget at %s\n", vtos(self->s.origin));
 
 	self->svflags |= SVF_NOCLIENT;
 	self->use = target_movewith_use;
@@ -1138,9 +1138,9 @@ void SP_target_change (edict_t *self)
 	self->class_id = ENTITY_TARGET_CHANGE;
 
 	if (!self->targetname)
-		gi.dprintf("target_change without a targetname at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_change without a targetname at %s\n", vtos(self->s.origin));
 	if (!self->target)
-		gi.dprintf("target_change without a target at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_change without a target at %s\n", vtos(self->s.origin));
 
 	self->svflags |= SVF_NOCLIENT;
 	self->use = target_change_use;
@@ -1255,7 +1255,7 @@ void SP_target_rotation (edict_t *self)
 
 	if (!self->target)
 	{
-		gi.dprintf("target_rotation without a target at %s\n",vtos(self->s.origin));
+		gi.dprintf ("target_rotation without a target at %s\n",vtos(self->s.origin));
 		G_FreeEdict(self);
 		return;
 	}
@@ -1264,7 +1264,7 @@ void SP_target_rotation (edict_t *self)
 
 	if ( (self->spawnflags & 3) == 3)
 	{
-		gi.dprintf("target_rotation at %s: NO_LOOP and RANDOM are mutually exclusive.\n");
+		gi.dprintf ("target_rotation at %s: NO_LOOP and RANDOM are mutually exclusive.\n");
 		self->spawnflags = 2;
 	}
 
@@ -1281,9 +1281,9 @@ void SP_target_rotation (edict_t *self)
 	self->sounds++;
 	
 /*	if (!self->targetname)
-		gi.dprintf("target_rotation without a targetname at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_rotation without a targetname at %s\n", vtos(self->s.origin));
 	if (!self->target)
-		gi.dprintf("target_rotation without a target at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_rotation without a target at %s\n", vtos(self->s.origin));
 	if (!strstr(self->target, ","))
 	{
 		gi.dprintf("target_rotation with less than 2 targets at %s\n", vtos(self->s.origin));
@@ -1336,7 +1336,7 @@ void SP_target_cd (edict_t *self)
 	self->class_id = ENTITY_TARGET_CD;
 
 	if (!self->targetname)
-		gi.dprintf("target_cd without a targetname at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_cd without a targetname at %s\n", vtos(self->s.origin));
 	if (!self->sounds)
 		self->sounds = 2;
 	if (!self->dmg)
@@ -1634,7 +1634,7 @@ void SP_target_rocks (edict_t *self)
 	gi.modelindex ("models/objects/rock2/tris.md2");
 
 	if (!self->targetname)
-		gi.dprintf("target_rocks without a targetname at %s\n", vtos(self->s.origin));
+		gi.dprintf ("target_rocks without a targetname at %s\n", vtos(self->s.origin));
 	if (!self->mass)
 		self->mass = 500;
 	if (!self->speed)
@@ -1863,13 +1863,13 @@ void SP_target_clone (edict_t *self)
 {
 	if (!self->targetname && !(self->spawnflags & 1))
 	{
-		gi.dprintf("%s without a targetname and without start_on at %s\n", self->classname, vtos(self->s.origin));
+		gi.dprintf ("%s without a targetname and without start_on at %s\n", self->classname, vtos(self->s.origin));
 		G_FreeEdict(self);
 		return;
 	}
 	if (!self->source)
 	{
-		gi.dprintf("%s without a source at %s\n", self->classname, vtos(self->s.origin));
+		gi.dprintf ("%s without a source at %s\n", self->classname, vtos(self->s.origin));
 		G_FreeEdict(self);
 		return;
 	}
@@ -2320,8 +2320,8 @@ void SP_target_attractor (edict_t *self)
 	if (!self->target && !(self->spawnflags & ATTRACTOR_PLAYER) &&
 		!(self->spawnflags & ATTRACTOR_MONSTER))
 	{
-		gi.dprintf("target_attractor without a target at %s\n",vtos(self->s.origin));
-		G_FreeEdict(self);
+		gi.dprintf ("target_attractor without a target at %s\n",vtos(self->s.origin));
+		G_FreeEdict (self);
 		return;
 	}
 	self->class_id = ENTITY_TARGET_ATTRACTOR;

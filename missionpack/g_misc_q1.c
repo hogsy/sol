@@ -606,11 +606,15 @@ void SP_target_q1_bolt (edict_t *self)
 //	gi.soundindex ("q1weapons/lstart.wav");
 	self->noise_index = gi.soundindex ("q1misc/power.wav"); 
 	
-	// check if pathtarget and followtarget are unset
-	if ( !self->pathtarget || (strlen(self->pathtarget) == 0) )
+	// check pathtarget and followtarget, set default values if unset
+	if ( !self->pathtarget || (strlen(self->pathtarget) == 0) ) {
 		gi.dprintf ("target_q1_bolt without a pathtarget at %s\n", vtos(self->s.origin));
-	if ( !self->followtarget || (strlen(self->followtarget) == 0) )
+		self->pathtarget = G_CopyString ("foo");
+	}
+	if ( !self->followtarget || (strlen(self->followtarget) == 0) ) {
 		gi.dprintf ("target_q1_bolt without a followtarget at %s\n", vtos(self->s.origin));
+		self->followtarget = G_CopyString ("foo");
+	}
 
 	if (!self->dmg)
 		self->dmg = 50;
