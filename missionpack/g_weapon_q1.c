@@ -867,12 +867,16 @@ void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 			gi.WriteByte (svc_temp_entity);
 #ifdef KMQUAKE2_ENGINE_MOD
 			gi.WriteByte (TE_LIGHTNING_ATTACK);
-#else
-			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-#endif	// KMQUAKE2_ENGINE_MOD
 			gi.WriteShort (self->client->oldplayer - g_edicts);
 			gi.WritePosition (start);
 			gi.WritePosition (tr.endpos); 
+			gi.WriteByte (2);	// model 2 specifies player bolt model 
+#else
+			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
+			gi.WriteShort (self->client->oldplayer - g_edicts);
+			gi.WritePosition (start);
+			gi.WritePosition (tr.endpos); 
+#endif	// KMQUAKE2_ENGINE_MOD
 			gi.multicast (self->client->oldplayer->s.origin, MULTICAST_PVS);
 		//	gi.multicast (self->client->oldplayer->s.origin, MULTICAST_ALL);
 		}
@@ -881,12 +885,16 @@ void q1_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 			gi.WriteByte (svc_temp_entity);
 #ifdef KMQUAKE2_ENGINE_MOD
 			gi.WriteByte (TE_LIGHTNING_ATTACK);
-#else
-			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-#endif	// KMQUAKE2_ENGINE_MOD
 			gi.WriteShort (self - g_edicts);
 			gi.WritePosition (start);
-			gi.WritePosition (tr.endpos); 
+			gi.WritePosition (tr.endpos);
+			gi.WriteByte (2);	// model 2 specifies player bolt model 
+#else
+			gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
+			gi.WriteShort (self - g_edicts);
+			gi.WritePosition (start);
+			gi.WritePosition (tr.endpos);
+#endif	// KMQUAKE2_ENGINE_MOD
 			gi.multicast (self->s.origin, MULTICAST_PVS);
 		//	gi.multicast (self->s.origin, MULTICAST_ALL);
 		}

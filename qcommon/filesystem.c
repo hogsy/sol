@@ -67,6 +67,7 @@ int		file_from_pak = 0;		// This is set by FS_FOpenFile
 int		file_from_pk3 = 0;		// This is set by FS_FOpenFile
 char	last_pk3_name[MAX_QPATH];	// This is set by FS_FOpenFile
 int		fs_numPakItemRemaps = 0;
+char	fs_pakRemapScriptName[MAX_OSPATH];
 
 void CDAudio_Stop (void);
 void Com_FileExtension (const char *path, char *dst, int dstSize);
@@ -1805,6 +1806,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 
 	// load the remap script
 	Com_sprintf (fileName, sizeof(fileName), "%s/%s/%s_pakremap.def", fs_basedir->string, gameDir, importDir);
+	Q_strncpyz (fs_pakRemapScriptName, sizeof(fs_pakRemapScriptName), fileName);
 	scriptFile = fopen(fileName, "rb");
 	if ( !scriptFile ) {
 		Com_DPrintf ("FS_LoadPakRemapScript: couldn't load %s\n", fileName);
@@ -1974,7 +1976,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 	// free the buffer
 	Z_Free (pakRemapFileBuf);
 
-	Com_Printf ("FS_LoadPakRemapScript: loaded %i pak remaps from file %s\n", numItemRemaps, fileName);
+	Com_Printf ("Loaded %i pak remaps from file %s\n", numItemRemaps, fileName);
 	fs_numPakItemRemaps = numItemRemaps;
 }
 
@@ -1988,10 +1990,20 @@ Frees import pak remap script named <dirName>_pakremap.def
 */
 void FS_FreePakRemapScript (void)
 {
+	int			i;
+
+	// check for unused rename entries
+	for (i = 0; i < fs_numPakItemRemaps; i++)
+	{
+		if (fs_pakItemRemaps[i].timesUsed == 0)
+			Com_Printf ("Pak remap orgName %s in %s was not found in any paks\n", fs_pakItemRemaps[i].orgName, fs_pakRemapScriptName);
+	}
+
 	if (fs_pakItemRemaps)
 		Z_Free (fs_pakItemRemaps);
 	fs_pakItemRemaps = NULL;
 	fs_numPakItemRemaps = 0;
+	fs_pakRemapScriptName[0] = 0;
 }
 
 
@@ -2015,6 +2027,7 @@ qboolean FS_GetPakFileRemapName (const char *pakItemName, char *remapName, size_
 	{
 		if ( !Q_stricmp(fs_pakItemRemaps[i].orgName, (char *)pakItemName) ) {
 			Q_strncpyz (remapName, remapNameSize, fs_pakItemRemaps[i].remapName);
+			fs_pakItemRemaps[i].timesUsed++;
 			nameRemapped = true;
 			break;
 		}
@@ -2274,7 +2287,7 @@ fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 	pack->numRemappedFiles = numRemappedItems;
 
 	if ( isQuakeImport && (numRemappedItems > 0) )
-		Com_Printf ("FS_LoadPAK: remapped %i items in pak %s\n", numRemappedItems, packPath);
+		Com_Printf ("Remapped %i items in pak %s\n", numRemappedItems, packPath);
 
 	return pack;
 }

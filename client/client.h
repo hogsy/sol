@@ -982,6 +982,9 @@ typedef struct {
 	struct model_s	*mod_explo_big;
 	struct model_s	*mod_shocksplash;
 	struct model_s	*mod_explo_q1;
+	struct model_s	*mod_lightning_q1_1;
+	struct model_s	*mod_lightning_q1_2;
+	struct model_s	*mod_lightning_q1_3;
 } clientMedia_t;
 
 extern clientMedia_t clMedia;

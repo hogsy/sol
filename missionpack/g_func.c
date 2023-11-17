@@ -1417,7 +1417,7 @@ void plat2_activate (edict_t *ent, edict_t *other, edict_t *activator)
 	
 	trigger->touch = Touch_Plat_Center2;		// Override trigger touch function
 
-	plat2_go_down(ent);
+	plat2_go_down (ent);
 }
 
 /*QUAKED func_plat2 (0 .5 .8) ? PLAT_LOW_TRIGGER PLAT2_TOGGLE PLAT2_TOP PLAT2_TRIGGER_TOP PLAT2_TRIGGER_BOTTOM BOX_LIFT
@@ -1768,7 +1768,7 @@ void func_rotating_dh_init (edict_t *ent)
 
 	new_origin = G_Find (NULL, FOFS(targetname), ent->pathtarget);
 	if (new_origin)
-		VectorCopy (new_origin->s.origin,ent->s.origin);
+		VectorCopy (new_origin->s.origin, ent->s.origin);
 	SP_func_rotating (ent);
 }
 
@@ -1783,7 +1783,7 @@ void SP_func_rotating_dh (edict_t *ent)
 	// Wait a few frames so that we're sure pathtarget has been parsed.
 	ent->think = func_rotating_dh_init;
 	ent->nextthink = level.time + 2*FRAMETIME;
-	gi.linkentity(ent);
+	gi.linkentity (ent);
 }
 
 /*
@@ -3086,7 +3086,7 @@ void func_door_rot_dh_init (edict_t *ent)
 
 void SP_func_door_rot_dh (edict_t *ent)
 {
-	SP_func_door_rotating(ent);
+	SP_func_door_rotating (ent);
 	if (!ent->pathtarget) return;
 
 	// Wait a few frames so that we're sure pathtarget has been parsed.

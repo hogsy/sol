@@ -311,33 +311,37 @@ mmove_t chthon_frames_move_shock3_die = {FRAME_shockc1, FRAME_shockc10, chthon_f
 
 void chthon_pain (edict_t *self, edict_t *other, float kick, int damage)
 {
+	int		 health_1_4, health_2_4, health_3_4;
+
 	if (level.time < self->pain_debounce_time)
 		return;
 
-	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && (stricmp(other->classname, "target_q1_bolt") == 0) )
-	{
+	health_1_4 = self->max_health * (1.0f/4.0f);
+	health_2_4 = self->max_health * (2.0f/4.0f);
+	health_3_4 = self->max_health * (3.0f/4.0f);
+
+/*	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && (stricmp(other->classname, "target_q1_bolt") == 0) ) {
 	//	gi.dprintf("HIT BY BOLT");
 		self->pain_debounce_time = level.time + 5;
-	}
+	} */
 
-	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+//	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
 
 	if (damage > 25)
 	{
-		if (self->health < 1500)
-		{
-			self->monsterinfo.currentmove = &chthon_frames_move_shock1;
+		// no pain sound for small amounts of damage
+		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
+
+		if (self->health < health_1_4) {
+			self->monsterinfo.currentmove = &chthon_frames_move_shock3;
 			self->pain_debounce_time = level.time + 6;
-		
 		}
-		else if (self->health < 1000)
-		{
+		else if (self->health < health_2_4) {
 			self->monsterinfo.currentmove = &chthon_frames_move_shock2;
 			self->pain_debounce_time = level.time + 6;
 		}
-		else if (self->health < 500)
-		{
-			self->monsterinfo.currentmove = &chthon_frames_move_shock3;
+		else if (self->health < health_3_4) {
+			self->monsterinfo.currentmove = &chthon_frames_move_shock1;
 			self->pain_debounce_time = level.time + 6;
 		}
 	}
@@ -664,9 +668,9 @@ qboolean chthon_checkattack (edict_t *self)
 // Chthon is really set up here
 void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if ( !Q_stricmp(level.mapname, "qe1m7") )
-		self->movetype = MOVETYPE_NONE;
-	else
+//	if ( !Q_stricmp(level.mapname, "qe1m7") )
+//		self->movetype = MOVETYPE_NONE;
+//	else
 		self->movetype = MOVETYPE_STEP;
 
 	self->svflags &= ~SVF_NOCLIENT;
@@ -674,10 +678,9 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	self->solid = SOLID_BBOX;
 	self->s.modelindex = gi.modelindex ("models/monsters/q1chthon/tris.md2");
 	self->use = monster_use;
-	if ( !Q_stricmp(level.mapname, "qe1m7") ) {
-	//	self->s.origin[2] -= 32;
+/*	if ( !Q_stricmp(level.mapname, "qe1m7") ) {
 		self->s.origin[2] -= 24;
-	}
+	} */
 
 	VectorSet (self->mins, -128, -128, -24);
 	VectorSet (self->maxs, 128, 128, 226);

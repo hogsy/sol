@@ -428,6 +428,7 @@ void shambler_magic_attack (edict_t *self)
 	gi.WriteShort (self - g_edicts);
 	gi.WritePosition (start);
 	gi.WritePosition (end);
+	gi.WriteByte (1);	// model 1 specifies Shambler bolt model 
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 #else
 #if 1	// From Decino's Q2Infighter mod

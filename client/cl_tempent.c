@@ -237,6 +237,9 @@ void CL_RegisterTEntModels (void)
 	// new effect models
 	clMedia.mod_shocksplash = R_RegisterModel ("models/objects/shocksplash/tris.md2");
 	clMedia.mod_explo_q1 = R_RegisterModel ("sprites/s_explod.sp2");
+	clMedia.mod_lightning_q1_1 = R_RegisterModel ("models/objects/q1lightning1/tris.md2");
+	clMedia.mod_lightning_q1_2 = R_RegisterModel ("models/objects/q1lightning2/tris.md2");
+	clMedia.mod_lightning_q1_3 = R_RegisterModel ("models/objects/q1lightning3/tris.md2");
 
 	R_RegisterModel ("models/objects/laser/tris.md2");
 	R_RegisterModel ("models/objects/grenade2/tris.md2");
@@ -387,17 +390,31 @@ void CL_ParseParticles (void)
 CL_ParseBeam
 =================
 */
-int CL_ParseBeam (struct model_s *model)
+int CL_ParseBeam (int type, struct model_s *model)
 {
 	int		ent;
 	vec3_t	start, end;
 	beam_t	*b;
-	int		i;
+	int		i, modelNum;
 	
 	ent = MSG_ReadShort (&net_message);
 	
 	MSG_ReadPos (&net_message, start);
 	MSG_ReadPos (&net_message, end);
+
+	// Read an additional byte to override model for TE_LIGHTNING_ATTACK
+	if (type == TE_LIGHTNING_ATTACK)
+	{
+		modelNum = MSG_ReadByte (&net_message);
+		if (modelNum == 1)
+			model = clMedia.mod_lightning_q1_1;
+		else if (modelNum == 2)
+			model = clMedia.mod_lightning_q1_2;
+		else if (modelNum == 3)
+			model = clMedia.mod_lightning_q1_3;
+		else
+			model = clMedia.mod_lightning;
+	}
 
 	// Psychspaz's enhanced particles
 	if ( (model == clMedia.mod_lightning) && !cl_old_explosions->integer )
@@ -442,7 +459,7 @@ int CL_ParseBeam (struct model_s *model)
 CL_ParseBeam2
 =================
 */
-int CL_ParseBeam2 (struct model_s *model)
+int CL_ParseBeam2 (int type, struct model_s *model)
 {
 	int		ent;
 	vec3_t	start, end, offset;
@@ -1203,7 +1220,7 @@ void CL_ParseTEnt (void)
 
 	case TE_PARASITE_ATTACK:
 	case TE_MEDIC_CABLE_ATTACK:
-		ent = CL_ParseBeam (clMedia.mod_parasite_segment);
+		ent = CL_ParseBeam (type, clMedia.mod_parasite_segment);
 		break;
 
 	case TE_BOSSTPORT:			// boss teleporting to station
@@ -1213,7 +1230,7 @@ void CL_ParseTEnt (void)
 		break;
 
 	case TE_GRAPPLE_CABLE:
-		ent = CL_ParseBeam2 (clMedia.mod_grapple_cable);
+		ent = CL_ParseBeam2 (type, clMedia.mod_grapple_cable);
 		break;
 
 	// RAFAEL
@@ -1402,7 +1419,7 @@ void CL_ParseTEnt (void)
 		break;
 
 	case TE_LIGHTNING_ATTACK:	
-		ent = CL_ParseBeam (clMedia.mod_lightning);
+		ent = CL_ParseBeam (type, clMedia.mod_lightning);
 		break;
 
 	case TE_DEBUGTRAIL:
@@ -1697,7 +1714,13 @@ void CL_AddBeams (void)
 				ent.angles[1] = yaw;
 				ent.angles[2] = rand()%360;
 			}
-			//AnglesToAxis(ent.angles, ent.axis);
+			// Knightmare- make all lightning beams fullbright
+			if ( (b->model == clMedia.mod_lightning_q1_1) ||
+				(b->model == clMedia.mod_lightning_q1_2) ||
+				(b->model == clMedia.mod_lightning_q1_3) ) {
+				ent.flags |= RF_FULLBRIGHT;
+			}
+		//	AnglesToAxis(ent.angles, ent.axis);
 
 			ent.flags |= RF_NOSHADOW; // beams don't cast shadows
 //			Com_Printf("B: %d -> %d\n", b->entity, b->dest_entity);
@@ -2021,7 +2044,14 @@ void CL_AddPlayerBeams (void)
 				ent.angles[1] = yaw;
 				ent.angles[2] = rand()%360;
 			}
-			//AnglesToAxis(ent.angles, ent.axis);
+			// Knightmare- make all lightning beams fullbright
+			if ( (b->model == clMedia.mod_lightning_q1_1) ||
+				(b->model == clMedia.mod_lightning_q1_2) ||
+				(b->model == clMedia.mod_lightning_q1_3) ) {
+				ent.flags |= RF_FULLBRIGHT;
+			}
+		//	AnglesToAxis(ent.angles, ent.axis);
+
 			ent.flags |= RF_NOSHADOW; // beams don't cast shadows
 		//	Com_Printf("B: %d -> %d\n", b->entity, b->dest_entity);
 			V_AddEntity (&ent);

@@ -400,12 +400,16 @@ void SP_target_q1_trap (edict_t *self)
 	gi.WriteByte (svc_temp_entity);
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (TE_LIGHTNING_ATTACK);
-#else
-	gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
-#endif	// KMQUAKE2_ENGINE_MOD
 	gi.WriteShort (self - g_edicts);
 	gi.WritePosition (start);
 	gi.WritePosition (tr.endpos); 
+	gi.WriteByte (3);	// model 3 specifies trap bolt model 
+#else
+	gi.WriteByte (TE_MEDIC_CABLE_ATTACK);
+	gi.WriteShort (self - g_edicts);
+	gi.WritePosition (start);
+	gi.WritePosition (tr.endpos); 
+#endif	// KMQUAKE2_ENGINE_MOD
 	gi.multicast (start, MULTICAST_PVS);
 		
 	if ( (tr.ent != self) && (tr.ent->takedamage) )
@@ -414,51 +418,59 @@ void SP_target_q1_trap (edict_t *self)
 
 void think_targetbolt (edict_t *self)
 {
-	int			bstate1 = 0, bstate2 = 0;
 	qboolean	electrodes_found = false;
-	qboolean	electrodes_aligned = false;
 	qboolean	discharge_done = false;
 	edict_t		*le1 = NULL;
 	edict_t		*le2 = NULL;
 
-	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
+	// find our electrodes
+/*	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
 		le1 = G_Find (NULL, FOFS(targetname), "t12");
 		le2 = G_Find (NULL, FOFS(targetname), "t13");
 	}
-	else {
-		le1 = G_Find (NULL, FOFS(targetname), self->followtarget);
-		le2 = G_Find (NULL, FOFS(targetname), self->destroytarget);
-	}
+	else { */
+		le1 = G_Find (NULL, FOFS(targetname), self->pathtarget);
+		le2 = G_Find (NULL, FOFS(targetname), self->followtarget);
+//	}
 
-	if ( (le1 != NULL) && (le2 != NULL) ) {
-		electrodes_found = true;
-		bstate1 = le1->moveinfo.state;
-		bstate2 = le2->moveinfo.state;
-		if (bstate1 == bstate2)
-			electrodes_aligned = true;
+	// check if electrodes exist and are the correct entity type
+	if ( (le1 != NULL) && (le2 != NULL) )
+	{
+		if ( ( !strcmp(le1->classname, "func_door") ||
+			!strcmp(le1->classname, "func_door_rotating") ||
+			!strcmp(le1->classname, "func_door_rot_dh") ) &&
+			( !strcmp(le2->classname, "func_door") ||
+			!strcmp(le2->classname, "func_door_rotating") ||
+			!strcmp(le2->classname, "func_door_rot_dh") ) )
+		{
+			electrodes_found = true;
+		}
 	}
 
 	// bail out if on qe1m7 and electrodes not found
-	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && !electrodes_found ) {
+/*	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) && !electrodes_found ) {
 		self->nextthink = 0;
 		self->think = NULL;
 		self->delay = 0;
 		return;
-	}
+	} */
 
+	// if discnarge is complete, clear think pointer and timer
 	if (level.time >= self->delay) {
 		self->nextthink = 0;
 		self->think = NULL;
 		self->delay = 0;
 		discharge_done = true;
 	}
+	// if not done, fire lightning bolt again
 	else {
-		target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
+		target_fire_lightning (self, self->s.origin, self->movedir, 0);	// damage is 0 because we're just extending the effect
 	//	gi.sound (self, CHAN_AUTO, gi.soundindex ("q1weapons/lhit.wav"), 1.0, ATTN_NORM, 0);
 		self->nextthink = level.time + 0.2;
 		self->think = think_targetbolt;
 	}
 
+	// if discnarge is complete, retract electrodes
 	if ( electrodes_found && discharge_done ) {
 		door_go_down (le1);
 		door_go_down (le2);
@@ -470,37 +482,52 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 	int			bstate1 = 0, bstate2 = 0;
 	qboolean	electrodes_found = false;
 	qboolean	electrodes_aligned = false;
+	qboolean	chthon_shocked = false;
 	edict_t		*le1 = NULL;
 	edict_t		*le2 = NULL;
 	edict_t		*t = NULL;
 	edict_t		*chthon = NULL;
 
-	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
+	// find our electrodes
+/*	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
 		le1 = G_Find (NULL, FOFS(targetname), "t12");
 		le2 = G_Find (NULL, FOFS(targetname), "t13");
 	}
-	else {
-		le1 = G_Find (NULL, FOFS(targetname), self->followtarget);
-		le2 = G_Find (NULL, FOFS(targetname), self->destroytarget);
+	else { */
+		le1 = G_Find (NULL, FOFS(targetname), self->pathtarget);
+		le2 = G_Find (NULL, FOFS(targetname), self->followtarget);
+//	}
+		
+	// check if electrodes exist and are the correct entity type
+	// also check if they are aligned
+	if ( (le1 != NULL) && (le2 != NULL) )
+	{
+		if ( ( !strcmp(le1->classname, "func_door") ||
+			!strcmp(le1->classname, "func_door_rotating") ||
+			!strcmp(le1->classname, "func_door_rot_dh") ) &&
+			( !strcmp(le2->classname, "func_door") ||
+			!strcmp(le2->classname, "func_door_rotating") ||
+			!strcmp(le2->classname, "func_door_rot_dh") ) )
+		{
+			electrodes_found = true;
+			bstate1 = le1->moveinfo.state;
+			bstate2 = le2->moveinfo.state;
+		//	if (bstate1 == bstate2)
+			if ( ( (bstate1 == 0) && (bstate2 == 0) ) || ( (bstate1 == 1) && (bstate2 == 1) ) )
+				electrodes_aligned = true;
+		}
 	}
 		
-	if ( (le1 != NULL) && (le2 != NULL) ) {
-		electrodes_found = true;
-		bstate1 = le1->moveinfo.state;
-		bstate2 = le2->moveinfo.state;
-		if (bstate1 == bstate2)
-			electrodes_aligned = true;
-	}
-		
-	// bail out if on qe1m7 or electrodes not found and not aligned
-	if ( (Q_stricmp(level.mapname, "qe1m7") == 0) || electrodes_found ) {
-		if ( !electrodes_aligned )
-			return;
+	// bail out if on qe1m7 (or electrodes not found) and not aligned
+//	if ( ( !Q_stricmp(level.mapname, "qe1m7") || electrodes_found ) && !electrodes_aligned ) {
+	// bail out if electrodes found and not aligned
+	if ( electrodes_found && !electrodes_aligned ) {
+		return;
 	}
 
+	// if both electrodes are up, fire lightning from our target ent target_q1_bolt 
 	if ( electrodes_aligned && bstate1 )
 	{
-		// fire lightning from our target ent if both electrodes are up
 		t = G_Find (NULL, FOFS(targetname), self->target);
 		if ( t && !Q_stricmp(t->classname, "target_q1_bolt") )
 		{
@@ -513,6 +540,7 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 			return;
 		}
 	}
+	// if both electrodes are down, so find Chthon and shock him
 	else if ( electrodes_aligned && (bstate2 == 0) && (bstate1 == 0) )
 	{
 		// prevent electrodes from retracting until shock is finished
@@ -527,9 +555,10 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 		{
 			if ( !chthon->deadflag && chthon->enemy )
 			{
-				self->bossFireCount++;
-			//	gi.dprintf ("HIT NUMBER: %d\n", self->bossFireCount);
-				switch (self->bossFireCount)
+				self->count++;
+				chthon_shocked = true;
+			//	gi.dprintf ("HIT NUMBER: %d\n", self->count);
+				switch (self->count)
 				{
 				case 1:
 					chthon_bolt (chthon, 1);
@@ -541,7 +570,7 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 					chthon_bolt (chthon, 3);
 					break;
 				default:
-					self->bossFireCount = 0;
+					self->count = 0;
 					break;
 				}
 			}
@@ -552,7 +581,11 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 	//		gi.dprintf("Could not find Chthon\n");
 	}
 
-	target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
+	// do no extra damage to chthon to avoid causing early death sequence
+	if (chthon_shocked)
+		target_fire_lightning (self, self->s.origin, self->movedir, 0);
+	else
+		target_fire_lightning (self, self->s.origin, self->movedir, self->dmg);
 //	gi.sound (self, CHAN_AUTO, gi.soundindex("q1weapons/lstart.wav"), 1.0, ATTN_NORM, 0);
 	gi.sound (self, CHAN_AUTO, self->noise_index, 1.0, ATTN_NORM, 0);
 	self->nextthink = level.time + 0.2;
@@ -567,12 +600,18 @@ Fires lightning bolt in the set direction when triggered.
 void SP_target_q1_bolt (edict_t *self)
 {
 	self->use = use_target_bolt;
-	self->bossFireCount = 0;
+	self->count = 0;
 	G_SetMovedir (self->s.angles, self->movedir);
 //	self->noise_index = gi.soundindex ("q1weapons/lhit.wav"); 
 //	gi.soundindex ("q1weapons/lstart.wav");
 	self->noise_index = gi.soundindex ("q1misc/power.wav"); 
 	
+	// check if pathtarget and followtarget are unset
+	if ( !self->pathtarget || (strlen(self->pathtarget) == 0) )
+		gi.dprintf ("target_q1_bolt without a pathtarget at %s\n", vtos(self->s.origin));
+	if ( !self->followtarget || (strlen(self->followtarget) == 0) )
+		gi.dprintf ("target_q1_bolt without a followtarget at %s\n", vtos(self->s.origin));
+
 	if (!self->dmg)
 		self->dmg = 50;
 	self->svflags = SVF_NOCLIENT;

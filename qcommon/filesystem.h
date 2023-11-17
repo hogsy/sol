@@ -98,6 +98,7 @@ typedef struct {
 typedef struct {
 	char			orgName[MAX_QPATH];
 	char			remapName[MAX_QPATH];
+	unsigned int	timesUsed;
 } fsPackItemRemap_t;
 
 fsHandle_t		fs_handles[MAX_HANDLES];
@@ -106,6 +107,7 @@ fsSearchPath_t	*fs_searchPaths;
 fsSearchPath_t	*fs_baseSearchPaths;
 fsPackItemRemap_t *fs_pakItemRemaps;
 extern int		fs_numPakItemRemaps;
+extern char		fs_pakRemapScriptName[MAX_OSPATH];
 
 char			fs_gamedir[MAX_OSPATH];
 char			fs_savegamedir[MAX_OSPATH];

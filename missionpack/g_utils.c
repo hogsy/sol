@@ -347,7 +347,7 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 			// doors fire area portals in a specific way
 			if (!Q_stricmp(t->classname, "func_areaportal") &&
 				(!Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating")
-				/*DWH*/ || !Q_stricmp(ent->classname,"func_door_rot_dh")
+				/*DWH*/ || !Q_stricmp(ent->classname, "func_door_rot_dh")
 				/*Knightmare*/|| !Q_stricmp(ent->classname, "func_door_secret") || !Q_stricmp(ent->classname, "func_door_secret2")))
 				continue;
 
@@ -1360,7 +1360,7 @@ void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target)
 		// doors fire area portals in a specific way
 		if (!Q_stricmp(target->classname, "func_areaportal") &&
 			(!Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating") 
-			|| !Q_stricmp(ent->classname,"func_door_rot_dh")))
+			|| !Q_stricmp(ent->classname, "func_door_rot_dh")))
 			return;
 
 		if (target == ent)
