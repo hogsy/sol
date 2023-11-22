@@ -2569,7 +2569,7 @@ gitem_t	itemlist[] =
 		"" // precache
 	},
 
-//Knightmare- armor shard that lies flat on the ground
+// Knightmare- armor shard that lies flat on the ground
 // 5
 /*QUAKED item_armor_shard_flat (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
 */

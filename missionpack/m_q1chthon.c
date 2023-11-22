@@ -10,6 +10,7 @@ CHTHON !!!!!! HE LIVES !
 #include "m_q1chthon.h"
 
 #define SF_CHTHON_LIGHTNING_ONLY	32
+#define SF_CHTHON_MOBILE			64
 
 void monster_use (edict_t *self, edict_t *other, edict_t *activator);
 void chthon_run (edict_t *self);
@@ -171,6 +172,42 @@ void chthon_rise (edict_t *self)
 	self->monsterinfo.currentmove = &chthon_move_rise;
 }
 
+mframe_t chthon_frames_walk_mobile [] =
+{
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, chthon_sight_sound2,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, chthon_check_attack,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, NULL,
+	ai_walk, 6, chthon_check_attack
+};
+mmove_t chthon_move_walk_mobile = {FRAME_walk1, FRAME_walk31, chthon_frames_walk_mobile, NULL};
+
 mframe_t chthon_frames_walk [] =
 {
 	ai_walk, 0, NULL,
@@ -209,8 +246,47 @@ mmove_t chthon_move_walk = {FRAME_walk1, FRAME_walk31, chthon_frames_walk, NULL}
 
 void chthon_walk (edict_t *self)
 {
-	self->monsterinfo.currentmove = &chthon_move_walk;
+	if (self->spawnflags & SF_CHTHON_MOBILE)	// Chthon actually moves
+		self->monsterinfo.currentmove = &chthon_move_walk_mobile;
+	else
+		self->monsterinfo.currentmove = &chthon_move_walk;
 }
+
+mframe_t chthon_frames_run_mobile [] =
+{
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, chthon_sight_sound2,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, chthon_check_attack,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, chthon_check_attack,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, NULL,
+	ai_charge, 6, chthon_check_attack
+};
+mmove_t chthon_move_run_mobile = {FRAME_walk1, FRAME_walk31, chthon_frames_walk_mobile, NULL};
 
 mframe_t chthon_frames_run [] =
 {
@@ -246,11 +322,14 @@ mframe_t chthon_frames_run [] =
 	ai_charge, 0, NULL,
 	ai_charge, 0, chthon_check_attack
 };
-mmove_t chthon_move_run = {FRAME_walk1, FRAME_walk31, chthon_frames_walk, chthon_run};
+mmove_t chthon_move_run = {FRAME_walk1, FRAME_walk31, chthon_frames_walk, NULL};
 
 void chthon_run (edict_t *self)
 {
-	self->monsterinfo.currentmove = &chthon_move_run;
+	if (self->spawnflags & SF_CHTHON_MOBILE)	// Chthon actually moves
+		self->monsterinfo.currentmove = &chthon_move_run_mobile;
+	else
+		self->monsterinfo.currentmove = &chthon_move_run;
 }
 
 mframe_t chthon_frames_shock1 [] =
@@ -325,22 +404,20 @@ void chthon_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->pain_debounce_time = level.time + 5;
 	} */
 
-//	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
-
-	if (damage > 25)
+	// no pain sound or anim for small amounts of damage
+	if (damage >= 100)
 	{
-		// no pain sound for small amounts of damage
 		gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);
 
-		if (self->health < health_1_4) {
+		if (self->health <= health_1_4) {
 			self->monsterinfo.currentmove = &chthon_frames_move_shock3;
 			self->pain_debounce_time = level.time + 6;
 		}
-		else if (self->health < health_2_4) {
+		else if (self->health <= health_2_4) {
 			self->monsterinfo.currentmove = &chthon_frames_move_shock2;
 			self->pain_debounce_time = level.time + 6;
 		}
-		else if (self->health < health_3_4) {
+		else if (self->health <= health_3_4) {
 			self->monsterinfo.currentmove = &chthon_frames_move_shock1;
 			self->pain_debounce_time = level.time + 6;
 		}
@@ -417,33 +494,35 @@ void chthon_set_dead (edict_t *self)
 	self->monsterinfo.currentmove = &chthon_move_death;
 }
 
-void chthon_bolt (edict_t *self, int num)
+// Returns true if Chthon is killed
+qboolean chthon_bolt (edict_t *self, int num)
 {
 	int		 health_1_3, health_2_3;
+	
+	// This can't be called multiple times in one frame
+	// (in the case of multiple target_q1_bolt emitters)
+	if (level.time < self->pain_debounce_time)
+		return false;
 
 	health_1_3 = self->max_health * (1.0f/3.0f);
 	health_2_3 = self->max_health * (2.0f/3.0f);
 
 	gi.sound (self, CHAN_VOICE, sound_pain, 1, ATTN_NORM, 0);	
+	self->health -= (self->max_health / self->bossFireCount);
 	self->pain_debounce_time = level.time + 6;
 
-	switch (num)
-	{
-	case 1:
-		if (self->health > health_2_3)
-			self->health = health_2_3;
+	if (self->health >= health_2_3)
 		self->monsterinfo.currentmove = &chthon_frames_move_shock1;
-		break;
-	case 2:
-		if (self->health > health_1_3)
-			self->health = health_1_3;
+	else if (self->health >= health_1_3)
 		self->monsterinfo.currentmove = &chthon_frames_move_shock2;
-		break;
-	case 3:
-		self->health = 0;
+	else if (self->health > 0)
+		self->monsterinfo.currentmove = &chthon_frames_move_shock3;
+	else
 		self->monsterinfo.currentmove = &chthon_frames_move_shock3_die;
-		break;
-	}
+
+//	gi.dprintf ("chthon_bolt: hit #%i, health = %i\n", num, self->health);
+
+	return (self->health <= 0);
 }
 
 void chthon_attack_left (edict_t *self)
@@ -685,8 +764,14 @@ void chthon_awake (edict_t *self, edict_t *other, edict_t *activator)
 	VectorSet (self->mins, -128, -128, -24);
 	VectorSet (self->maxs, 128, 128, 226);
 
+	// get number of times to be shocked
+	if ( !self->count )
+		self->bossFireCount = 3;
+	else
+		self->bossFireCount = max(self->count, 1);
+
 	if (self->spawnflags & SF_CHTHON_LIGHTNING_ONLY) {
-		self->health = 6000;
+		self->health = self->bossFireCount * 2000;
 		self->takedamage = DAMAGE_LIGHTING_ONLY;
 	}
 	else if (!self->health)
@@ -759,9 +844,12 @@ void monster_q1_chthon_soundcache (edict_t *self)
 // SPAWN
 //
 
-/*QUAKED monster_q1_chthon (1 .5 0) (-128 -128 -24) (128 128 226) Ambush Trigger_Spawn Sight GoodGuy x 
+/*QUAKED monster_q1_chthon (1 .5 0) (-128 -128 -24) (128 128 226) Ambush Trigger_Spawn Sight GoodGuy x LightningOnly Mobile
 LightningOnly: specifies orignal lightning-kill only mode
+Mobile: Chthon moves around
+"count"	Number of times needed to shock Chthon
 model="models/monsters/q1chthon/tris.md2"
+frame="17"
 */
 void SP_monster_q1_chthon (edict_t *self)
 {

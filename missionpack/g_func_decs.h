@@ -1026,7 +1026,7 @@ extern void chthon_sight ( edict_t * self , edict_t * other ) ;
 extern void chthon_attack ( edict_t * self ) ;
 extern void chthon_attack_right ( edict_t * self ) ;
 extern void chthon_attack_left ( edict_t * self ) ;
-extern void chthon_bolt ( edict_t * self , int num ) ;
+extern qboolean chthon_bolt ( edict_t * self , int num ) ;
 extern void chthon_set_dead ( edict_t * self ) ;
 extern void chthon_die ( edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point ) ;
 extern void chthon_dead ( edict_t * self ) ;

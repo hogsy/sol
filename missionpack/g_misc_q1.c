@@ -3,7 +3,7 @@
 #include "g_local.h"
 
 void door_go_down (edict_t *self);
-void chthon_bolt (edict_t *self, int no);
+qboolean chthon_bolt (edict_t *self, int no);
 
 //======================================================================
 // CRUCIFIED ZOMBIE
@@ -390,8 +390,8 @@ void SP_target_q1_trap (edict_t *self)
 
 /*static*/ void target_fire_lightning (edict_t *self, vec3_t start, vec3_t dir, int damage)
 {
-	vec3_t end;
-	trace_t  tr;
+	vec3_t	end;
+	trace_t	tr;
 
 	VectorNormalize (dir);
 	VectorMA (start, 600, dir, end);
@@ -424,24 +424,20 @@ void think_targetbolt (edict_t *self)
 	edict_t		*le2 = NULL;
 
 	// find our electrodes
-/*	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
-		le1 = G_Find (NULL, FOFS(targetname), "t12");
-		le2 = G_Find (NULL, FOFS(targetname), "t13");
-	}
-	else { */
+	if ( self->pathtarget && (self->pathtarget[0] != 0) )
 		le1 = G_Find (NULL, FOFS(targetname), self->pathtarget);
+	if ( self->followtarget && (self->followtarget[0] != 0) )
 		le2 = G_Find (NULL, FOFS(targetname), self->followtarget);
-//	}
 
 	// check if electrodes exist and are the correct entity type
 	if ( (le1 != NULL) && (le2 != NULL) )
 	{
-		if ( ( !strcmp(le1->classname, "func_door") ||
-			!strcmp(le1->classname, "func_door_rotating") ||
-			!strcmp(le1->classname, "func_door_rot_dh") ) &&
-			( !strcmp(le2->classname, "func_door") ||
-			!strcmp(le2->classname, "func_door_rotating") ||
-			!strcmp(le2->classname, "func_door_rot_dh") ) )
+		if ( ( !Q_stricmp(le1->classname, "func_door") ||
+			!Q_stricmp(le1->classname, "func_door_rotating") ||
+			!Q_stricmp(le1->classname, "func_door_rot_dh") ) &&
+			( !Q_stricmp(le2->classname, "func_door") ||
+			!Q_stricmp(le2->classname, "func_door_rotating") ||
+			!Q_stricmp(le2->classname, "func_door_rot_dh") ) )
 		{
 			electrodes_found = true;
 		}
@@ -480,6 +476,8 @@ void think_targetbolt (edict_t *self)
 void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 {
 	int			bstate1 = 0, bstate2 = 0;
+	vec3_t		dir, start, end;
+	trace_t		tr;
 	qboolean	electrodes_found = false;
 	qboolean	electrodes_aligned = false;
 	qboolean	chthon_shocked = false;
@@ -489,25 +487,21 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 	edict_t		*chthon = NULL;
 
 	// find our electrodes
-/*	if (Q_stricmp(level.mapname, "qe1m7") == 0) {
-		le1 = G_Find (NULL, FOFS(targetname), "t12");
-		le2 = G_Find (NULL, FOFS(targetname), "t13");
-	}
-	else { */
+	if ( self->pathtarget && (self->pathtarget[0] != 0) )
 		le1 = G_Find (NULL, FOFS(targetname), self->pathtarget);
+	if ( self->followtarget && (self->followtarget[0] != 0) )
 		le2 = G_Find (NULL, FOFS(targetname), self->followtarget);
-//	}
 		
 	// check if electrodes exist and are the correct entity type
 	// also check if they are aligned
 	if ( (le1 != NULL) && (le2 != NULL) )
 	{
-		if ( ( !strcmp(le1->classname, "func_door") ||
-			!strcmp(le1->classname, "func_door_rotating") ||
-			!strcmp(le1->classname, "func_door_rot_dh") ) &&
-			( !strcmp(le2->classname, "func_door") ||
-			!strcmp(le2->classname, "func_door_rotating") ||
-			!strcmp(le2->classname, "func_door_rot_dh") ) )
+		if ( ( !Q_stricmp(le1->classname, "func_door") ||
+			!Q_stricmp(le1->classname, "func_door_rotating") ||
+			!Q_stricmp(le1->classname, "func_door_rot_dh") ) &&
+			( !Q_stricmp(le2->classname, "func_door") ||
+			!Q_stricmp(le2->classname, "func_door_rotating") ||
+			!Q_stricmp(le2->classname, "func_door_rot_dh") ) )
 		{
 			electrodes_found = true;
 			bstate1 = le1->moveinfo.state;
@@ -518,8 +512,6 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 		}
 	}
 		
-	// bail out if on qe1m7 (or electrodes not found) and not aligned
-//	if ( ( !Q_stricmp(level.mapname, "qe1m7") || electrodes_found ) && !electrodes_aligned ) {
 	// bail out if electrodes found and not aligned
 	if ( electrodes_found && !electrodes_aligned ) {
 		return;
@@ -540,48 +532,37 @@ void use_target_bolt (edict_t *self, edict_t *other, edict_t *activator)
 			return;
 		}
 	}
-	// if both electrodes are down, so find Chthon and shock him
+	// if both electrodes are down, find Chthon and shock him
 	else if ( electrodes_aligned && (bstate2 == 0) && (bstate1 == 0) )
 	{
 		// prevent electrodes from retracting until shock is finished
 		le1->nextthink = 0;
 		le2->nextthink = 0;
 
-		// find and shock Chthon
-		chthon = G_Find (NULL, FOFS(classname), "q1_monster_chton");
-		if ( !chthon )
-			chthon = G_Find (NULL, FOFS(classname), "monster_q1_chthon");
-		if (chthon)
+		// trace forward according to movedir and see if we hit Chthon
+		VectorCopy (self->movedir, dir);
+		VectorNormalize (dir);
+		VectorCopy (self->s.origin, start);
+		VectorMA (start, 600, dir, end);
+		tr = gi.trace (start, NULL, NULL, end, self, MASK_SHOT);
+		if ( (tr.ent != self) && tr.ent->classname && (tr.ent->classname[0] != 0) &&
+			( !Q_stricmp(tr.ent->classname, "q1_monster_chton") || !Q_stricmp(tr.ent->classname, "monster_q1_chthon") ) )
 		{
-			if ( !chthon->deadflag && chthon->enemy )
-			{
-				self->count++;
+			chthon = tr.ent;
+			if ( !chthon->deadflag && chthon->enemy ) {
 				chthon_shocked = true;
-			//	gi.dprintf ("HIT NUMBER: %d\n", self->count);
-				switch (self->count)
-				{
-				case 1:
-					chthon_bolt (chthon, 1);
-					break;
-				case 2:
-					chthon_bolt (chthon, 2);
-					break;
-				case 3:
-					chthon_bolt (chthon, 3);
-					break;
-				default:
+				self->count++;
+				if ( chthon_bolt (chthon, self->count) )
 					self->count = 0;
-					break;
-				}
 			}
 		//	else
-		//		gi.dprintf("CHTHON does not have an enemy\n");
+		//		gi.dprintf ("Chthon does not have an enemy\n");
 		}
 	//	else
-	//		gi.dprintf("Could not find Chthon\n");
+	//		gi.dprintf ("Could not find Chthon\n");
 	}
 
-	// do no extra damage to chthon to avoid causing early death sequence
+	// do no extra damage to Chthon to avoid causing early death sequence
 	if (chthon_shocked)
 		target_fire_lightning (self, self->s.origin, self->movedir, 0);
 	else
@@ -607,14 +588,25 @@ void SP_target_q1_bolt (edict_t *self)
 	self->noise_index = gi.soundindex ("q1misc/power.wav"); 
 	
 	// check pathtarget and followtarget, set default values if unset
-	if ( !self->pathtarget || (strlen(self->pathtarget) == 0) ) {
-		gi.dprintf ("target_q1_bolt without a pathtarget at %s\n", vtos(self->s.origin));
-		self->pathtarget = G_CopyString ("foo");
+/*	if (Q_stricmp(level.mapname, "qe1m7") == 0)	// qe1m7 uses hardcoded targetnames for electrodes
+	{
+		if ( !self->pathtarget || (self->pathtarget[0] == 0) || !self->followtarget || (self->followtarget[0] == 0) ) {
+			gi.dprintf ("target_q1_bolt without a pathtarget/followtarget at %s\n", vtos(self->s.origin));
+			self->pathtarget = G_CopyString ("t12");
+			self->followtarget = G_CopyString ("t13");
+		}
 	}
-	if ( !self->followtarget || (strlen(self->followtarget) == 0) ) {
-		gi.dprintf ("target_q1_bolt without a followtarget at %s\n", vtos(self->s.origin));
-		self->followtarget = G_CopyString ("foo");
-	}
+	else
+	{ */
+		if ( !self->pathtarget || (strlen(self->pathtarget) == 0) ) {
+			gi.dprintf ("target_q1_bolt without a pathtarget at %s\n", vtos(self->s.origin));
+			self->pathtarget = G_CopyString ("foo_1");
+		}
+		if ( !self->followtarget || (strlen(self->followtarget) == 0) ) {
+			gi.dprintf ("target_q1_bolt without a followtarget at %s\n", vtos(self->s.origin));
+			self->followtarget = G_CopyString ("foo_2");
+		}
+//	}
 
 	if (!self->dmg)
 		self->dmg = 50;

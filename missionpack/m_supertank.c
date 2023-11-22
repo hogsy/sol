@@ -441,8 +441,8 @@ void supertank_pain (edict_t *self, edict_t *other, float kick, int damage)
 			return;
 
 	// Lessen the chance of him going into his pain frames
-	if (damage <=25)
-		if (random()<0.2)
+	if (damage <= 25)
+		if (random() < 0.2)
 			return;
 
 	// Don't go into pain if he's firing his rockets
