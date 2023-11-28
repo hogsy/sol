@@ -78,6 +78,7 @@ void CL_RegisterParticleImages (void)
 	R_SetParticleImg (particle_shadow,		"gfx/decals/shadow.tga");
 	R_SetParticleImg (particle_bulletmark,	"gfx/decals/bulletmark.tga");
 	R_SetParticleImg (particle_trackermark,	"gfx/decals/trackermark.tga");
+	R_SetParticleImg (particle_acidmark,	"gfx/decals/acidmark.tga");
 //	R_SetParticleImg (particle_footprint,	"gfx/decals/footprint.tga");
 }
 

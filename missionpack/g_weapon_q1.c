@@ -37,13 +37,23 @@ void q1_nail_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	}
 	else
 	{
+#ifdef KMQUAKE2_ENGINE_MOD
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPIKEIMPACT_Q1);
+		gi.WritePosition (self->s.origin);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
+		if (self->spawnflags == 1)
+			gi.WriteByte (1);	// subtype 1 specifies superspike impact
+		else
+			gi.WriteByte (0);	// subtype 0 specifies spike impact
+		gi.multicast (self->s.origin, MULTICAST_PVS);	
+
+#else	// KMQUAKE2_ENGINE_MOD
+
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_SHOTGUN);
 		gi.WritePosition (self->s.origin);
-		if (!plane)
-			gi.WriteDir (vec3_origin);
-		else
-			gi.WriteDir (plane->normal);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
 		gi.multicast (self->s.origin, MULTICAST_PVS);	
 
 		// not if online, too laggy
@@ -62,7 +72,7 @@ void q1_nail_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 			else if (sound < 0.5)
 				gi.sound (self, CHAN_WEAPON, gi.soundindex ("q1weapons/tink1.wav"), 1, ATTN_STATIC, 0);
 		}
-
+#endif	// KMQUAKE2_ENGINE_MOD
 	}
 	G_FreeEdict (self);
 }
@@ -117,10 +127,12 @@ void q1_fire_nail (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 void q1_nail_precache (void)
 {
 	gi.modelindex ("models/objects/q1nail/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.soundindex ("q1weapons/tink1.wav");
 	gi.soundindex ("q1weapons/ric1.wav");
 	gi.soundindex ("q1weapons/ric2.wav");
 	gi.soundindex ("q1weapons/ric3.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 // NOTE: SP_q1_nail should ONLY be used to spawn nails that change
@@ -180,7 +192,23 @@ void q1_laser_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 	}
 	else
 	{
-#if 1	// From Decino's Q2Infighter mod
+#ifdef KMQUAKE2_ENGINE_MOD
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPIKEIMPACT_Q1);
+		gi.WritePosition (self->s.origin);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
+		gi.WriteByte (2);	// subtype 2 specifies enforcer laser impact
+		gi.multicast (self->s.origin, MULTICAST_PVS);
+
+#else	// KMQUAKE2_ENGINE_MOD
+
+	/*	gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SHOTGUN);
+		gi.WritePosition (self->s.origin);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
+		gi.multicast (self->s.origin, MULTICAST_PVS); */
+
+		// From Decino's Q2Infighter mod
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_WELDING_SPARKS);
 		gi.WriteByte (15);
@@ -188,22 +216,13 @@ void q1_laser_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
 		gi.WriteByte (226);
 		gi.multicast (self->s.origin, MULTICAST_PVS);	
-#else
-		gi.WriteByte (svc_temp_entity);
-		gi.WriteByte (TE_SHOTGUN);
-		gi.WritePosition (self->s.origin);
-		if (!plane)
-			gi.WriteDir (vec3_origin);
-		else
-			gi.WriteDir (plane->normal);
-		gi.multicast (self->s.origin, MULTICAST_PVS);	
-#endif
 
 		// not if online, too laggy
 		if (!deathmatch->value)
 		{
-			gi.sound (self, CHAN_WEAPON, gi.soundindex ("q1enforcer/enfstop.wav"), 1, ATTN_STATIC, 0);
+			gi.sound (self, CHAN_WEAPON, gi.soundindex ("q1enforcer/enfstop.wav"), 1, ATTN_NORM, 0);	// was ATTN_STATIC
 		}
+#endif	// KMQUAKE2_ENGINE_MOD
 	}
 	G_FreeEdict (self);
 }
@@ -254,7 +273,9 @@ void q1_fire_laser (edict_t *self, vec3_t start, vec3_t dir, int damage, int spe
 void q1_laser_precache (void)
 {
 	gi.modelindex ("models/monsters/q1enforcer/laser/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.soundindex ("q1enforcer/enfstop.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -328,7 +349,19 @@ void q1_flame_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 	}
 	else
 	{
-#if 1	// From Decino's Q2Infighter mod
+#ifdef KMQUAKE2_ENGINE_MOD
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPIKEIMPACT_Q1);
+		gi.WritePosition (self->s.origin);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
+		gi.WriteByte (4);	// subtype 4 specifies hell knight flame impact
+		gi.multicast (self->s.origin, MULTICAST_PVS);
+
+#else	// KMQUAKE2_ENGINE_MOD
+
+	//	q1_flame_splash (TE_TUNNEL_SPARKS, 16, 71, self->s.origin, plane->normal, self->s.origin);
+
+		// From Decino's Q2Infighter mod
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_WELDING_SPARKS);
 		gi.WriteByte (15);
@@ -337,12 +370,12 @@ void q1_flame_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t 
 	//	gi.WriteByte (66);
 		gi.WriteByte (228);
 		gi.multicast (self->s.origin, MULTICAST_PVS);
-#else
-		q1_flame_splash (TE_TUNNEL_SPARKS, 16, 71, self->s.origin, plane->normal, self->s.origin);
-#endif
+
+		gi.sound (self, CHAN_WEAPON, gi.soundindex("q1hknight/hit.wav"), 1, ATTN_NORM, 0);
+#endif	// KMQUAKE2_ENGINE_MOD
 	}
 
-	gi.sound (self, CHAN_WEAPON, gi.soundindex("q1hknight/hit.wav"), 1, ATTN_NORM, 0);
+//	gi.sound (self, CHAN_WEAPON, gi.soundindex("q1hknight/hit.wav"), 1, ATTN_NORM, 0);
 
 	G_FreeEdict (self);
 }
@@ -403,7 +436,9 @@ void q1_fire_flame (edict_t *self, vec3_t start, vec3_t dir, float leftrightoff)
 void q1_flame_precache (void)
 {
 	gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.soundindex ("q1hknight/hit.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 
@@ -486,6 +521,7 @@ void q1_grenade_explode (edict_t *ent)
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
+	gi.WriteByte (0);	// subtype 0 specifies default explosion
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (ent);
@@ -673,6 +709,7 @@ void q1_rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t 
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
+	gi.WriteByte (0);	// subtype 0 specifies default explosion
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (ent);
@@ -930,6 +967,7 @@ void q1_firepod_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
+	gi.WriteByte (0);	// subtype 0 specifies default explosion
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (self);
@@ -1139,6 +1177,7 @@ Fires a lavaball.  Used by Chthon.
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (origin);
+	gi.WriteByte (0);	// subtype 0 specifies default explosion
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (ent);
@@ -1285,6 +1324,16 @@ Fires a bolt of acid spit.  Used by the Scrag.
 	}
 	else
 	{
+#ifdef KMQUAKE2_ENGINE_MOD
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPIKEIMPACT_Q1);
+		gi.WritePosition (ent->s.origin);
+		gi.WriteDir ((!plane) ? vec3_origin : plane->normal);
+		gi.WriteByte (3);	// subtype 3 specifies scrag acid impact
+		gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+#else	// KMQUAKE2_ENGINE_MOD
+
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_WELDING_SPARKS);
 		gi.WriteByte (15);
@@ -1295,20 +1344,21 @@ Fires a bolt of acid spit.  Used by the Scrag.
 		gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 		gi.sound (ent, CHAN_VOICE, gi.soundindex ("q1scrag/hit.wav"), 1, ATTN_NORM, 0);
+#endif	// KMQUAKE2_ENGINE_MOD
 	}
 
 	G_FreeEdict (ent);
 }
 
 /*
-void G_Spawn_Trails(int type, vec3_t start, vec3_t endpos, vec3_t origin ) {
-gi.WriteByte(svc_temp_entity);
-gi.WriteByte(type);
-gi.WritePosition(start);
-gi.WritePosition(endpos);
-gi.multicast(origin, MULTICAST_PVS);
-}
-*/
+void G_Spawn_Trails(int type, vec3_t start, vec3_t endpos, vec3_t origin )
+{
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (type);
+	gi.WritePosition (start);
+	gi.WritePosition (endpos);
+	gi.multicast (origin, MULTICAST_PVS);
+} */
 
 void q1_fire_acidspit (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed)
 {
@@ -1346,7 +1396,9 @@ void q1_fire_acidspit (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 void q1_acidspit_precache (void)
 {
 	gi.modelindex ("models/monsters/q1scrag/w_spike/tris.md2");
+#ifndef KMQUAKE2_ENGINE_MOD
 	gi.soundindex ("q1scrag/hit.wav");
+#endif	// KMQUAKE2_ENGINE_MOD
 }
 
 

@@ -49,14 +49,14 @@ void CL_LightningBeam (vec3_t start, vec3_t end, int srcEnt, int dstEnt, float s
 		{
 			p=list;
 			p->time = cl.time;
-			VectorCopy(start, p->angle);
-			VectorCopy(end, p->org);
+			VectorCopy (start, p->angle);
+			VectorCopy (end, p->org);
 
 			if (p->link)
 			{
 				p->link->time = cl.time;
-				VectorCopy(start, p->link->angle);
-				VectorCopy(end, p->link->org);
+				VectorCopy (start, p->link->angle);
+				VectorCopy (end, p->link->org);
 			}
 			else
 			{
@@ -120,8 +120,8 @@ void CL_LightningBeam (vec3_t start, vec3_t end, int srcEnt, int dstEnt, float s
 		{
 			p = list;
 			/*p->start =*/ p->time = cl.time;
-			VectorCopy(start, p->angle);
-			VectorCopy(end, p->org);
+			VectorCopy (start, p->angle);
+			VectorCopy (end, p->org);
 
 			return;
 		}
@@ -165,35 +165,36 @@ void CL_Explosion_Decal (vec3_t org, float size, int decalnum)
 		vec3_t		end1, end2, normal, sorg, dorg;
 		vec3_t		planenormals[6];
 
-		VectorSet(angle[0], -1, 0, 0);
-		VectorSet(angle[1], 1, 0, 0);
-		VectorSet(angle[2], 0, 1, 0);
-		VectorSet(angle[3], 0, -1, 0);
-		VectorSet(angle[4], 0, 0, 1);
-		VectorSet(angle[5], 0, 0, -1);
+		VectorSet (angle[0], -1, 0, 0);
+		VectorSet (angle[1], 1, 0, 0);
+		VectorSet (angle[2], 0, 1, 0);
+		VectorSet (angle[3], 0, -1, 0);
+		VectorSet (angle[4], 0, 0, 1);
+		VectorSet (angle[5], 0, 0, -1);
 
 		for (i=0; i<6; i++)
 		{
-			VectorMA(org, -offset, angle[i], sorg); // move origin 8 units back
-			VectorMA(sorg, size/2+offset, angle[i], end1);
+			VectorMA (org, -offset, angle[i], sorg); // move origin 8 units back
+			VectorMA (sorg, size/2+offset, angle[i], end1);
 			trace1 = CL_Trace (sorg, end1, 0, CONTENTS_SOLID);
 			if (trace1.fraction < 1) // hit a surface
 			{	// make sure we haven't hit this plane before
-				VectorCopy(trace1.plane.normal, planenormals[i]);
+				VectorCopy (trace1.plane.normal, planenormals[i]);
 				for (j=0; j<i; j++)
-					if (VectorCompare(planenormals[j],planenormals[i])) continue;
+					if ( VectorCompare(planenormals[j],planenormals[i]) )
+						continue;
 				// try tracing directly to hit plane
-				VectorNegate(trace1.plane.normal, normal);
-				VectorMA(sorg, size/2, normal, end2);
+				VectorNegate (trace1.plane.normal, normal);
+				VectorMA (sorg, size/2, normal, end2);
 				trace2 = CL_Trace (sorg, end2, 0, CONTENTS_SOLID);
 				// if seond trace hit same plane
-				if (trace2.fraction < 1 && VectorCompare(trace2.plane.normal, trace1.plane.normal))
-					VectorCopy(trace2.endpos, dorg);
+				if ( (trace2.fraction < 1) && VectorCompare(trace2.plane.normal, trace1.plane.normal) )
+					VectorCopy (trace2.endpos, dorg);
 				else
-					VectorCopy(trace1.endpos, dorg);
-				//if (CM_PointContents(dorg,0) & MASK_WATER) // no scorch marks underwater
-				//	continue;
-				VecToAngleRolled(normal, rand()%360, ang);
+					VectorCopy (trace1.endpos, dorg);
+			//	if (CM_PointContents(dorg,0) & MASK_WATER) // no scorch marks underwater
+			//		continue;
+				VecToAngleRolled (normal, rand()%360, ang);
 				p = CL_SetupParticle (
 					ang[0],	ang[1],	ang[2],
 					dorg[0],dorg[1],dorg[2],
@@ -208,7 +209,7 @@ void CL_Explosion_Decal (vec3_t org, float size, int decalnum)
 					PART_SHADED|PART_DECAL|PART_ALPHACOLOR,
 					CL_DecalAlphaThink, true);
 			}
-			/*VecToAngleRolled(angle[i], rand()%360, ang);
+		/*	VecToAngleRolled (angle[i], rand()%360, ang);
 			p = CL_SetupParticle (
 				ang[0],	ang[1],	ang[2],
 				org[0],	org[1],	org[2],
@@ -221,7 +222,7 @@ void CL_Explosion_Decal (vec3_t org, float size, int decalnum)
 				size,		0,			
 				particle_burnmark,
 				PART_SHADED|PART_DECAL|PART_ALPHACOLOR,
-				CL_DecalAlphaThink, true);*/
+				CL_DecalAlphaThink, true); */
 		}
 	}
 }
@@ -455,29 +456,64 @@ CL_Explosion_Blob_Q1
 void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count)
 {
 	int		i, palIdx;
-	vec3_t	color;
+	vec3_t	color, accel;
 
 	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
 		if (i & 1) {
 			palIdx = 66 + (rand()%6);
 			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+			VectorSet (accel, 0, 0, PARTICLE_GRAVITY);
 		}
 		else {
 			palIdx = 150 + (rand()%6);
 			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+			VectorSet (accel, 0, 0, -PARTICLE_GRAVITY);
 		}
 
 		CL_SetupParticle (
 			0,	0,	0,
 			org[0] + ((rand()%32)-16),	org[1] + ((rand()%32)-16),	org[2] + ((rand()%32)-16),
 			(rand()%512)-256,	(rand()%512)-256,	(rand()%512)-256,
-			0,		0,		0,
+			accel[0],	accel[1],	accel[2],
 			color[0],	color[1],	color[2],
 			0,			0,			0,
-			1,		-1.0 / (4.0 + frand()*0.35),
+			1,		-1.0 / (5.0 + frand()*0.35),
 			GL_SRC_ALPHA, GL_ONE,
-			size,		size*-0.75f,
+			size,	size*-0.75f,
+			particle_generic,
+			0,
+			NULL, false);
+	}
+}
+
+
+/*
+===============
+CL_ParticleImapact_Q1
+===============
+*/
+void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int count)
+{
+	int		i, palIdx;
+	vec3_t	color;
+
+	palIdx = (colorIdx & ~7) + (rand() & 7);
+	VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+
+	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
+	{
+		CL_SetupParticle (
+			0,	0,	0,
+			org[0] + ((rand()%15)-8),	org[1] + ((rand()%15)-8),	org[2] + ((rand()%15)-8),
+			dir[0] * 15 + ((rand()%30)-15),	dir[1] * 15 + ((rand()%30)-15),	dir[2] * 15 + ((rand()%30)-15),
+			0,			0,			-PARTICLE_GRAVITY,
+			color[0],	color[1],	color[2],
+			0,			0,			0,
+			1,		-1.0 / (5.0 + frand()*0.35),
+		//	1,		-0.5 / (0.5 + frand()*0.3),
+			GL_SRC_ALPHA, GL_ONE,
+			size,	size*-0.25f,
 			particle_generic,
 			0,
 			NULL, false);
@@ -563,7 +599,7 @@ void CL_ParticleBloodDecalThink (cparticle_t *p, vec3_t org, vec3_t angle, float
 		*size *= sqrt(0.5 + 0.5*(*time/TIMEBLOODGROW));
 
 		AngleVectors (angle, dir, NULL, NULL);
-		VectorNegate(dir, dir);
+		VectorNegate (dir, dir);
 		CL_ClipDecal(p, *size, angle[2], org, dir);
 	}*/
 
@@ -630,9 +666,9 @@ void CL_ParticleBloodThink (cparticle_t *p, vec3_t org, vec3_t angle, float *alp
 	if (trace.fraction < 1.0) // delete and stain...
 	{
 	//	if (r_decals->value && (p->flags & PART_LEAVEMARK)
-		if (r_decals->integer && (p->flags & PART_LEAVEMARK)
+		if ( r_decals->integer && (p->flags & PART_LEAVEMARK)
 			&& !VectorCompare(trace.plane.normal, vec3_origin)
-			&& !(CM_PointContents(p->oldorg,0) & MASK_WATER)) // no blood splatters underwater...
+			&& !(CM_PointContents(p->oldorg,0) & MASK_WATER) ) // no blood splatters underwater...
 		{
 			vec3_t	normal, dir;
 			int		i;
@@ -651,10 +687,10 @@ void CL_ParticleBloodThink (cparticle_t *p, vec3_t org, vec3_t angle, float *alp
 
 			if (!timedout)
 			{
-				VectorNegate(trace.plane.normal, normal);
-				VecToAngleRolled(normal, rand()%360, p->angle);
+				VectorNegate (trace.plane.normal, normal);
+				VecToAngleRolled (normal, rand()%360, p->angle);
 				
-				VectorCopy(trace.endpos, p->org);
+				VectorCopy (trace.endpos, p->org);
 				VectorClear(p->vel);
 				VectorClear(p->accel);
 				p->image = CL_GetRandomBloodParticle();
@@ -678,7 +714,7 @@ void CL_ParticleBloodThink (cparticle_t *p, vec3_t org, vec3_t angle, float *alp
 				p->decalnum = 0;
 				p->decal = NULL;
 				AngleVectors (p->angle, dir, NULL, NULL);
-				VectorNegate(dir, dir);
+				VectorNegate (dir, dir);
 				CL_ClipDecal(p, p->size, -p->angle[2], p->org, dir);
 				if (p->decalnum)
 					became_decal = true;
@@ -693,7 +729,7 @@ void CL_ParticleBloodThink (cparticle_t *p, vec3_t org, vec3_t angle, float *alp
 			p->alpha = 0;
 		}
 	}
-	VectorCopy(org, p->oldorg);
+	VectorCopy (org, p->oldorg);
 
 	p->thinknext = true;
 }
@@ -740,7 +776,7 @@ void CL_BloodBleed (vec3_t org, vec3_t dir, int count)
 	VectorScale(dir, 10, pos);
 	for (i=0; i<count; i++)
 	{
-		VectorSet(pos,
+		VectorSet (pos,
 			dir[0]+random()*(cl_blood->value-2)*0.01,
 			dir[1]+random()*(cl_blood->value-2)*0.01,
 			dir[2]+random()*(cl_blood->value-2)*0.01);
@@ -1090,8 +1126,8 @@ void CL_ParticleBulletDecal (vec3_t org, vec3_t dir, float size)
 	if (!r_decals->integer)
 		return;
 
-	VectorMA(org, DECAL_OFFSET, dir, origin);
-	VectorMA(org, -DECAL_OFFSET, dir, end);
+	VectorMA (org, DECAL_OFFSET, dir, origin);
+	VectorMA (org, -DECAL_OFFSET, dir, end);
 	tr = CL_Trace (origin, end, 0, CONTENTS_SOLID);
 	//tr = CL_Trace (origin, end, 1, 1);
 
@@ -1099,10 +1135,10 @@ void CL_ParticleBulletDecal (vec3_t org, vec3_t dir, float size)
 	//if (!tr.allsolid)
 		return;
 
-	VectorNegate(tr.plane.normal, angle);
-	//VectorNegate(dir, angle);
-	VecToAngleRolled(angle, rand()%360, ang);
-	VectorCopy(tr.endpos, origin);
+	VectorNegate (tr.plane.normal, angle);
+	//VectorNegate (dir, angle);
+	VecToAngleRolled (angle, rand()%360, ang);
+	VectorCopy (tr.endpos, origin);
 
 	p = CL_SetupParticle (
 		ang[0],	ang[1],	ang[2],
@@ -1134,18 +1170,18 @@ void CL_ParticleRailDecal (vec3_t org, vec3_t dir, float size, int red, int gree
 	if (!r_decals->integer)
 		return;
 
-	VectorMA(org, -RAIL_DECAL_OFFSET, dir, origin);
-	VectorMA(org, 2*RAIL_DECAL_OFFSET, dir, end);
+	VectorMA (org, -RAIL_DECAL_OFFSET, dir, origin);
+	VectorMA (org, 2*RAIL_DECAL_OFFSET, dir, end);
 	tr = CL_Trace (origin, end, 0, CONTENTS_SOLID);
 
-	if (tr.fraction==1)
+	if (tr.fraction == 1)
 		return;
-	if (VectorCompare(tr.plane.normal, vec3_origin))
+	if ( VectorCompare(tr.plane.normal, vec3_origin) )
 		return;
 
-	VectorNegate(tr.plane.normal, angle);
-	VecToAngleRolled(angle, rand()%360, ang);
-	VectorCopy(tr.endpos, origin);
+	VectorNegate (tr.plane.normal, angle);
+	VecToAngleRolled (angle, rand()%360, ang);
+	VectorCopy (tr.endpos, origin);
 
 	CL_SetupParticle (
 		ang[0],	ang[1],	ang[2],
@@ -1205,18 +1241,18 @@ void CL_ParticleBlasterDecal (vec3_t org, vec3_t dir, float size, int red, int g
 	if (!r_decals->integer)
 		return;
  
-	VectorMA(org, DECAL_OFFSET, dir, origin);
-	VectorMA(org, -DECAL_OFFSET, dir, end);
+	VectorMA (org, DECAL_OFFSET, dir, origin);
+	VectorMA (org, -DECAL_OFFSET, dir, end);
 	tr = CL_Trace (origin, end, 0, CONTENTS_SOLID);
 
-	if (tr.fraction==1)
+	if (tr.fraction == 1)
 		return;
-	if (VectorCompare(tr.plane.normal, vec3_origin))
+	if ( VectorCompare(tr.plane.normal, vec3_origin) )
 		return;
 
-	VectorNegate(tr.plane.normal, angle);
-	VecToAngleRolled(angle, rand()%360, ang);
-	VectorCopy(tr.endpos, origin);
+	VectorNegate (tr.plane.normal, angle);
+	VecToAngleRolled (angle, rand()%360, ang);
+	VectorCopy (tr.endpos, origin);
 
 	p = CL_SetupParticle (
 		ang[0],	ang[1],	ang[2],
@@ -1276,18 +1312,18 @@ void CL_ParticlePlasmaBeamDecal (vec3_t org, vec3_t dir, float size)
 	if (!r_decals->integer)
 		return;
  
-	VectorMA(org, DECAL_OFFSET, dir, origin);
-	VectorMA(org, -DECAL_OFFSET, dir, end);
+	VectorMA (org, DECAL_OFFSET, dir, origin);
+	VectorMA (org, -DECAL_OFFSET, dir, end);
 	tr = CL_Trace (origin, end, 0, CONTENTS_SOLID);
 
-	if (tr.fraction==1)
+	if (tr.fraction == 1)
 		return;
-	if (VectorCompare(tr.plane.normal, vec3_origin))
+	if ( VectorCompare(tr.plane.normal, vec3_origin) )
 		return;
 
-	VectorNegate(tr.plane.normal, angle);
-	VecToAngleRolled(angle, rand()%360, ang);
-	VectorCopy(tr.endpos, origin);
+	VectorNegate (tr.plane.normal, angle);
+	VecToAngleRolled (angle, rand()%360, ang);
+	VectorCopy (tr.endpos, origin);
 
 	p = CL_SetupParticle (
 		ang[0],	ang[1],	ang[2],
@@ -1300,6 +1336,49 @@ void CL_ParticlePlasmaBeamDecal (vec3_t org, vec3_t dir, float size)
 		GL_ZERO, GL_ONE_MINUS_SRC_ALPHA,
 		size,		0,			
 		particle_shadow,
+		PART_SHADED|PART_DECAL,
+		NULL, false);
+}
+
+
+/*
+===============
+CL_ParticleAcidDecal
+===============
+*/
+void CL_ParticleAcidDecal (vec3_t org, vec3_t dir, float size, int red, int green, int blue)
+{
+	cparticle_t	*p;
+	vec3_t		ang, angle, end, origin;
+	trace_t		tr;
+
+	if (!r_decals->integer)
+		return;
+ 
+	VectorMA (org, DECAL_OFFSET, dir, origin);
+	VectorMA (org, -DECAL_OFFSET, dir, end);
+	tr = CL_Trace (origin, end, 0, CONTENTS_SOLID);
+
+	if (tr.fraction == 1)
+		return;
+	if ( VectorCompare(tr.plane.normal, vec3_origin) )
+		return;
+
+	VectorNegate (tr.plane.normal, angle);
+	VecToAngleRolled (angle, rand()%360, ang);
+	VectorCopy (tr.endpos, origin);
+
+	p = CL_SetupParticle (
+		ang[0],	ang[1],	ang[2],
+		origin[0],	origin[1],	origin[2],
+		0,		0,		0,
+		0,		0,		0,
+		red,	green,	blue,
+		0,		0,		0,
+		0.85,	-1/r_decal_life->value,
+		GL_SRC_ALPHA, GL_ONE,
+		size,		0,			
+		particle_acidmark,
 		PART_SHADED|PART_DECAL,
 		NULL, false);
 }
@@ -1507,7 +1586,7 @@ void CL_BlasterParticles (vec3_t org, vec3_t dir, int count, float size,
 
 	for (i = 0; i < count; i++)
 	{
-		VectorSet(origin,
+		VectorSet (origin,
 			org[0] + dir[0]*(1 + random()*3 + pBlasterMaxSize/2.0),
 			org[1] + dir[1]*(1 + random()*3 + pBlasterMaxSize/2.0),
 			org[2] + dir[2]*(1 + random()*3 + pBlasterMaxSize/2.0)
@@ -2192,7 +2271,7 @@ void CL_DevRailTrail (vec3_t start, vec3_t end, int red, int green, int blue)
 	}
 	len = VectorNormalize (vec);
 	len = min (len, cl_rail_length->value);  // cap length
-	VectorCopy(vec, point);
+	VectorCopy (vec, point);
 
 	dec = 4;
 	VectorScale (vec, dec, vec);
@@ -3156,7 +3235,7 @@ void CL_TrackerTrail (vec3_t start, vec3_t end)
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
 
-	VectorCopy(vec, forward);
+	VectorCopy (vec, forward);
 	vectoangles2 (forward, angle_dir);
 	AngleVectors (angle_dir, forward, right, up);
 
@@ -3186,7 +3265,7 @@ void CL_TrackerTrail (vec3_t start, vec3_t end)
 			return;
 
 		dist = DotProduct(move, forward);
-		VectorMA(move, 8 * cos(dist), up, p->org);
+		VectorMA (move, 8 * cos(dist), up, p->org);
 
 		VectorAdd (move, vec, move);
 	}
@@ -3227,7 +3306,7 @@ void CL_Tracker_Shell (vec3_t origin)
 		dir[1] = crand();
 		dir[2] = crand();
 		VectorNormalize(dir);
-		VectorMA(origin, 40, dir, p->org);
+		VectorMA (origin, 40, dir, p->org);
 	}
 }
 
@@ -3267,7 +3346,7 @@ void CL_MonsterPlasma_Shell(vec3_t origin)
 		dir[2] = crand();
 		VectorNormalize(dir);
 	
-		VectorMA(origin, 10, dir, p->org);
+		VectorMA (origin, 10, dir, p->org);
 	}
 }
 
@@ -3315,7 +3394,7 @@ void CL_Widowbeamout (cl_sustain_t *self)
 		dir[2] = crand();
 		VectorNormalize(dir);
 	
-		VectorMA(self->org, (45.0 * ratio), dir, p->org);
+		VectorMA (self->org, (45.0 * ratio), dir, p->org);
 	}
 }
 
@@ -3365,8 +3444,8 @@ void CL_Nukeblast (cl_sustain_t *self)
 		dir[2] = crand();
 		VectorNormalize(dir);
 		VectorScale(dir, -1, p->angle);
-		VectorMA(self->org, 200.0*size, dir, p->org); //was 100
-		VectorMA(vec3_origin, 400.0*size, dir, p->vel); //was 100
+		VectorMA (self->org, 200.0*size, dir, p->org); //was 100
+		VectorMA (vec3_origin, 400.0*size, dir, p->vel); //was 100
 
 	}
 }
@@ -3407,8 +3486,8 @@ void CL_WidowSplash (vec3_t org)
 		dir[1] = crand();
 		dir[2] = crand();
 		VectorNormalize(dir);
-		VectorMA(org, 45.0, dir, p->org);
-		VectorMA(vec3_origin, 40.0, dir, p->vel);
+		VectorMA (org, 45.0, dir, p->org);
+		VectorMA (vec3_origin, 40.0, dir, p->vel);
 	}
 }
 
@@ -3450,7 +3529,7 @@ void CL_Tracker_Explode (vec3_t	origin)
 		VectorScale(dir, -1, backdir);
 
 		VectorCopy (origin, p->org); //Knightmare- start at center, not edge
-	//	VectorMA(origin, 64, dir, p->org); 
+	//	VectorMA (origin, 64, dir, p->org); 
 		VectorScale(dir, (crand()*128), p->vel); //was backdir, 64
 	}
 	

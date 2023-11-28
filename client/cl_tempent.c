@@ -111,7 +111,15 @@ void CL_RegisterTEntSounds (void)
 	// shockwave impact
 	clMedia.sfx_shockhit = S_RegisterSound ("weapons/shockhit.wav");
 	// Quake explosion
-	clMedia.sfx_explo_q1 = S_RegisterSound ("q1weapons/r_exp3.wav");
+	clMedia.sfx_q1_explo = S_RegisterSound ("q1weapons/r_exp3.wav");
+	// Quake spike impacts
+	clMedia.sfx_q1_tink = S_RegisterSound ("q1weapons/tink1.wav");
+	clMedia.sfx_q1_ric1 = S_RegisterSound ("q1weapons/ric1.wav");
+	clMedia.sfx_q1_ric2 = S_RegisterSound ("q1weapons/ric2.wav");
+	clMedia.sfx_q1_ric3 = S_RegisterSound ("q1weapons/ric3.wav");
+	clMedia.sfx_q1_laserhit = S_RegisterSound ("q1enforcer/enfstop.wav");
+	clMedia.sfx_q1_scraghit = S_RegisterSound ("q1scrag/hit.wav");
+	clMedia.sfx_q1_hknighthit = S_RegisterSound ("q1hknight/hit.wav");
 
 	for (i=0 ; i<4 ; i++) {
 		Com_sprintf (name, sizeof(name), "player/step%i.wav", i+1);
@@ -236,10 +244,10 @@ void CL_RegisterTEntModels (void)
 
 	// new effect models
 	clMedia.mod_shocksplash = R_RegisterModel ("models/objects/shocksplash/tris.md2");
-	clMedia.mod_explo_q1 = R_RegisterModel ("sprites/s_explod.sp2");
-	clMedia.mod_lightning_q1_1 = R_RegisterModel ("models/objects/q1lightning1/tris.md2");
-	clMedia.mod_lightning_q1_2 = R_RegisterModel ("models/objects/q1lightning2/tris.md2");
-	clMedia.mod_lightning_q1_3 = R_RegisterModel ("models/objects/q1lightning3/tris.md2");
+	clMedia.mod_q1_explo = R_RegisterModel ("sprites/s_explod.sp2");
+	clMedia.mod_q1_lightning_1 = R_RegisterModel ("models/objects/q1lightning1/tris.md2");
+	clMedia.mod_q1_lightning_2 = R_RegisterModel ("models/objects/q1lightning2/tris.md2");
+	clMedia.mod_q1_lightning_3 = R_RegisterModel ("models/objects/q1lightning3/tris.md2");
 
 	R_RegisterModel ("models/objects/laser/tris.md2");
 	R_RegisterModel ("models/objects/grenade2/tris.md2");
@@ -407,11 +415,11 @@ int CL_ParseBeam (int type, struct model_s *model)
 	{
 		modelNum = MSG_ReadByte (&net_message);
 		if (modelNum == 1)
-			model = clMedia.mod_lightning_q1_1;
+			model = clMedia.mod_q1_lightning_1;
 		else if (modelNum == 2)
-			model = clMedia.mod_lightning_q1_2;
+			model = clMedia.mod_q1_lightning_2;
 		else if (modelNum == 3)
-			model = clMedia.mod_lightning_q1_3;
+			model = clMedia.mod_q1_lightning_3;
 		else
 			model = clMedia.mod_lightning;
 	}
@@ -847,15 +855,17 @@ static byte splash_color[] = {0x00, 0xe0, 0xb0, 0x50, 0xd0, 0xe0, 0xe8};
 
 void CL_ParseTEnt (void)
 {
-	int		type = 0;
+	int		type = 0, subtype = 0;
 	vec3_t	pos, pos2, dir;
 	explosion_t	*ex;
-	int		cnt = 0;
+	int		cnt = 0, rnd = 0;
 	int		color = 0;
 	int		red = 0, green = 0, blue = 0;
+	int		pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta, numparts;
 	int		r, i;
 	int		ent = 0;
 	int		magnitude = 0;
+	float	partsize;
 
 	CL_FixParticleCvars (); // clamp critical effects vars to acceptable bounds
 
@@ -1142,42 +1152,88 @@ void CL_ParseTEnt (void)
 
 	case TE_EXPLOSION_Q1:
 		MSG_ReadPos (&net_message, pos);
-		ex = CL_AllocExplosion ();
-		VectorCopy (pos, ex->ent.origin);
-		ex->type = ex_poly;
-		ex->ent.flags = RF_FULLBRIGHT|RF_NOSHADOW; // noshadow flag
-		ex->start = cl.frame.servertime - 100;
-		ex->light = 350;
-		ex->lightcolor[0] = 1.0;
-		ex->lightcolor[1] = 0.5;
-		ex->lightcolor[2] = 0.5;
-		ex->ent.model = clMedia.mod_explo_q1;
-		ex->ent.scale = 1.5f;
-		ex->baseframe = 0;
-		ex->frames = 6;
-		CL_Explosion_Flash (pos, 10, 50, false);
-		CL_Explosion_Sparks_Q1 (pos, 4, 512);
-		CL_Explosion_Decal (pos, 50, particle_burnmark);
-		S_StartSound (pos, 0, 0, clMedia.sfx_explo_q1, 1, ATTN_NORM, 0);
-		break;
-
-	case TE_EXPLOSION_BLOB_Q1:
-		MSG_ReadPos (&net_message, pos);
+		subtype = MSG_ReadByte (&net_message);
 		ex = CL_AllocExplosion ();
 		VectorCopy (pos, ex->ent.origin);
 		ex->type = ex_poly;
 		ex->ent.flags = RF_FULLBRIGHT|RF_NOSHADOW;
 		ex->start = cl.frame.servertime - 100;
 		ex->light = 350;
-		ex->lightcolor[0] = 0.8;
-		ex->lightcolor[1] = 0.4;
-		ex->lightcolor[2] = 1.0;
-		ex->ent.model = clMedia.mod_explo_q1;
+		if (subtype == 1) {	// blob explosion
+			ex->lightcolor[0] = 0.8;
+			ex->lightcolor[1] = 0.4;
+			ex->lightcolor[2] = 1.0;
+		}
+		else {				// standard explosion
+			ex->lightcolor[0] = 1.0;
+			ex->lightcolor[1] = 0.5;
+			ex->lightcolor[2] = 0.5;
+		}
+		ex->ent.model = clMedia.mod_q1_explo;
 		ex->ent.scale = 1.5f;
 		ex->baseframe = 0;
 		ex->frames = 6;
-		CL_Explosion_Blob_Q1 (pos, 4, 512);
-		S_StartSound (pos, 0, 0, clMedia.sfx_explo_q1, 1, ATTN_NORM, 0);
+		if (subtype == 1) {	// blob explosion
+			CL_Explosion_Blob_Q1 (pos, 4, 512);
+		}
+		else {				// standard explosion
+			CL_Explosion_Flash (pos, 10, 50, false);
+			CL_Explosion_Sparks_Q1 (pos, 4, 512);
+			CL_Explosion_Decal (pos, 50, particle_burnmark);
+		}
+		S_StartSound (pos, 0, 0, clMedia.sfx_q1_explo, 1, ATTN_NORM, 0);
+		break;
+
+	case TE_SPIKEIMPACT_Q1:
+		MSG_ReadPos (&net_message, pos);
+		MSG_ReadDir (&net_message, dir);
+		subtype = MSG_ReadByte (&net_message);
+		if (subtype > 4)
+			subtype = 0;
+		if ( (subtype == 0) || (subtype == 1) )	// Q1 spike or superspike
+		{
+			CL_ParticleImapact_Q1 (pos, dir, 0, 3, (subtype == 1) ? 20 : 10);
+			CL_ParticleBulletDecal (pos, dir, 2.8);
+			if (rand() % 5) {
+				S_StartSound (pos, 0, 0, clMedia.sfx_q1_tink, 1, ATTN_NORM, 0);
+			}
+			else
+			{
+				rnd = rand() & 3;
+				if (rnd == 1)
+					S_StartSound (pos, 0, 0, clMedia.sfx_q1_ric1, 1, ATTN_NORM, 0);
+				else if (rnd == 2)
+					S_StartSound (pos, 0, 0, clMedia.sfx_q1_ric2, 1, ATTN_NORM, 0);
+				else
+					S_StartSound (pos, 0, 0, clMedia.sfx_q1_ric3, 1, ATTN_NORM, 0);
+			}
+		}
+		else if (subtype == 2)	// Q1 enforcer laser
+		{
+			if (cl_old_explosions->integer) {
+				CL_ParticleImapact_Q1 (pos, dir, 0, 3, 20);
+			}
+			else {
+				numparts = 24 / max(cl_particle_scale->value/2, 1);
+				pRed = 219;		pGreen = 127;		pBlue = 59;
+				redDelta = 255;	greenDelta = -90;	blueDelta = -30;
+				CL_BlasterParticles (pos, dir, numparts, 3, pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta);
+				CL_ParticleBlasterDecal (pos, dir, 10, pRed, pGreen, pBlue);
+			}
+			S_StartSound (pos, 0, 0, clMedia.sfx_q1_laserhit, 1, ATTN_NORM, 0);
+		}
+		else if (subtype == 3)	// Q1 scrag acid bolt
+		{
+			CL_ParticleImapact_Q1 (pos, dir, 20, 3, 30);
+			CL_ParticleAcidDecal (pos, dir, 14, 219, 203, 19);	// was color 239 223 23
+			S_StartSound (pos, 0, 0, clMedia.sfx_q1_scraghit, 1, ATTN_NORM, 0);
+		}
+		else if (subtype == 4)	// Q1 hell knight flame
+		{
+			CL_ParticleImapact_Q1 (pos, dir, 226, 3, 20);
+			CL_ParticlePlasmaBeamDecal (pos, dir, 10);
+			S_StartSound (pos, 0, 0, clMedia.sfx_q1_hknighthit, 1, ATTN_NORM, 0);
+		}
 		break;
 
 	case TE_LAVASPLASH_Q1:
@@ -1350,37 +1406,34 @@ void CL_ParseTEnt (void)
 			ex->frames = 4;
 		}
 		// Psychospaz's enhanced particle code	
-		{
-			int		pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta, numparts;
-			float	partsize = (cl_old_explosions->integer) ? 2 : 4;
-			numparts = (cl_old_explosions->integer) ? 12 : (32 / max(cl_particle_scale->value/2, 1));
-			if (type == TE_BLASTER2) {
-				pRed = 50;		pGreen = 235;		pBlue = 50;
-				redDelta = -10;	greenDelta = 0;		blueDelta = -10;
-			}
-			else if (type == TE_BLUEHYPERBLASTER) {
-				pRed = 50;		pGreen = 50;		pBlue = 235;
-				redDelta = -10;	greenDelta = 0;		blueDelta = -10;
-			}
-			else if (type == TE_REDBLASTER) {
-				pRed = 235;		pGreen = 50;		pBlue = 50;
-				redDelta = 255;	greenDelta = -30;	blueDelta = -30;
-			}
-			else if (type == TE_FLECHETTE) {
-				pRed = 100;		pGreen = 100;		pBlue = 195;
-				redDelta = -10;	greenDelta = 0;		blueDelta = -10;
-			}
-			else if (type == TE_BLASTER_COLORED) {
-				pRed = red;		pGreen = green;		pBlue = blue;
-				redDelta = -10;	greenDelta = -10;		blueDelta = -10;
-			}
-			else { // TE_BLASTER
-				pRed = 255;		pGreen = 150;		pBlue = 50; // was 40
-				redDelta = 255;	greenDelta = -90;	blueDelta = -30;
-			}
-			CL_BlasterParticles (pos, dir, numparts, partsize, pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta);
-			CL_ParticleBlasterDecal(pos, dir, 10, pRed, pGreen, pBlue);
+		partsize = (cl_old_explosions->integer) ? 2 : 4;
+		numparts = (cl_old_explosions->integer) ? 12 : (32 / max(cl_particle_scale->value/2, 1));
+		if (type == TE_BLASTER2) {
+			pRed = 50;		pGreen = 235;		pBlue = 50;
+			redDelta = -10;	greenDelta = 0;		blueDelta = -10;
 		}
+		else if (type == TE_BLUEHYPERBLASTER) {
+			pRed = 50;		pGreen = 50;		pBlue = 235;
+			redDelta = -10;	greenDelta = 0;		blueDelta = -10;
+		}
+		else if (type == TE_REDBLASTER) {
+			pRed = 235;		pGreen = 50;		pBlue = 50;
+			redDelta = 255;	greenDelta = -30;	blueDelta = -30;
+		}
+		else if (type == TE_FLECHETTE) {
+			pRed = 100;		pGreen = 100;		pBlue = 195;
+			redDelta = -10;	greenDelta = 0;		blueDelta = -10;
+		}
+		else if (type == TE_BLASTER_COLORED) {
+			pRed = red;		pGreen = green;		pBlue = blue;
+			redDelta = -10;	greenDelta = -10;		blueDelta = -10;
+		}
+		else { // TE_BLASTER
+			pRed = 255;		pGreen = 150;		pBlue = 50; // was 40
+			redDelta = 255;	greenDelta = -90;	blueDelta = -30;
+		}
+		CL_BlasterParticles (pos, dir, numparts, partsize, pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta);
+		CL_ParticleBlasterDecal(pos, dir, 10, pRed, pGreen, pBlue);
 		S_StartSound (pos,  0, 0, clMedia.sfx_lashit, 1, ATTN_NORM, 0);
 		break;
 
@@ -1715,9 +1768,9 @@ void CL_AddBeams (void)
 				ent.angles[2] = rand()%360;
 			}
 			// Knightmare- make all lightning beams fullbright
-			if ( (b->model == clMedia.mod_lightning_q1_1) ||
-				(b->model == clMedia.mod_lightning_q1_2) ||
-				(b->model == clMedia.mod_lightning_q1_3) ) {
+			if ( (b->model == clMedia.mod_q1_lightning_1) ||
+				(b->model == clMedia.mod_q1_lightning_2) ||
+				(b->model == clMedia.mod_q1_lightning_3) ) {
 				ent.flags |= RF_FULLBRIGHT;
 			}
 		//	AnglesToAxis(ent.angles, ent.axis);
@@ -2045,9 +2098,9 @@ void CL_AddPlayerBeams (void)
 				ent.angles[2] = rand()%360;
 			}
 			// Knightmare- make all lightning beams fullbright
-			if ( (b->model == clMedia.mod_lightning_q1_1) ||
-				(b->model == clMedia.mod_lightning_q1_2) ||
-				(b->model == clMedia.mod_lightning_q1_3) ) {
+			if ( (b->model == clMedia.mod_q1_lightning_1) ||
+				(b->model == clMedia.mod_q1_lightning_2) ||
+				(b->model == clMedia.mod_q1_lightning_3) ) {
 				ent.flags |= RF_FULLBRIGHT;
 			}
 		//	AnglesToAxis(ent.angles, ent.axis);

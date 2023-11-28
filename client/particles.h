@@ -62,6 +62,7 @@ typedef enum
 	particle_shadow,
 	particle_bulletmark,
 	particle_trackermark,
+	particle_acidmark,
 //	particle_footprint,
 } particle_type;
 

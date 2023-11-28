@@ -260,8 +260,9 @@ void tarbaby_dead (edict_t *self)
 
 #ifdef KMQUAKE2_ENGINE_MOD
 	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_EXPLOSION_BLOB_Q1);
+	gi.WriteByte (TE_EXPLOSION_Q1);
 	gi.WritePosition (temp);
+	gi.WriteByte (1);	// subtype 1 specifies blob explosion
 	gi.multicast (temp, MULTICAST_PVS);
 #else	// KMQUAKE2_ENGINE_MOD
 	explode = G_Spawn ();
