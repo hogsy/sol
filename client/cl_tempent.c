@@ -1210,22 +1210,22 @@ void CL_ParseTEnt (void)
 		}
 		else if (subtype == 2)	// Q1 enforcer laser
 		{
-			if (cl_old_explosions->integer) {
-				CL_ParticleImapact_Q1 (pos, dir, 0, 3, 20);
-			}
+			pRed = 207;		pGreen = 99;		pBlue = 43;
+		//	if (cl_old_explosions->integer) {
+				CL_ParticleImapact_Q1 (pos, dir, 234, 3, 24);	// original Q1 palette idx was 0
+		/*	}
 			else {
 				numparts = 24 / max(cl_particle_scale->value/2, 1);
-				pRed = 219;		pGreen = 127;		pBlue = 59;
-				redDelta = 255;	greenDelta = -90;	blueDelta = -30;
+				redDelta = 205;	greenDelta = -90;	blueDelta = -39;
 				CL_BlasterParticles (pos, dir, numparts, 3, pRed, pGreen, pBlue, redDelta, greenDelta, blueDelta);
-				CL_ParticleBlasterDecal (pos, dir, 10, pRed, pGreen, pBlue);
-			}
+			} */
+			CL_ParticleBlasterDecal (pos, dir, 10, pRed, pGreen, pBlue);
 			S_StartSound (pos, 0, 0, clMedia.sfx_q1_laserhit, 1, ATTN_NORM, 0);
 		}
 		else if (subtype == 3)	// Q1 scrag acid bolt
 		{
-			CL_ParticleImapact_Q1 (pos, dir, 20, 3, 30);
-			CL_ParticleAcidDecal (pos, dir, 14, 219, 203, 19);	// was color 239 223 23
+			CL_ParticleImapact_Q1 (pos, dir, 196, 3, 30);	// original Q1 palette idx was 20
+			CL_ParticleAcidDecal (pos, dir, 14, 187, 167, 15);
 			S_StartSound (pos, 0, 0, clMedia.sfx_q1_scraghit, 1, ATTN_NORM, 0);
 		}
 		else if (subtype == 4)	// Q1 hell knight flame

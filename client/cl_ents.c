@@ -1786,6 +1786,23 @@ void CL_AddPacketEntities (frame_t *frame)
 				i = (rand()%100) + 100;
 				V_AddLight (ent.origin, i, 1, 0.8, 0.1);
 			}
+			// Knightmare added
+			else if ( (effects & (EF_GREENGIB|EF_TRACKER)) == (EF_GREENGIB|EF_TRACKER) )	// scrag acid bolt tracer
+			{
+				CL_TracerTrail_Q1 (cent->lerp_origin, ent.origin, cent, 1);
+				V_AddLight (ent.origin, 75, 1, 0.893, 0.08);	// 187, 167, 15
+			}
+			else if ( (effects & (EF_IONRIPPER|EF_TRACKER)) == (EF_IONRIPPER|EF_TRACKER) )	// hell knight flame tracer
+			{
+				CL_TracerTrail_Q1 (cent->lerp_origin, ent.origin, cent, 2);
+				V_AddLight (ent.origin, 75, 1, 0.093, 0);	// 75, 7, 0
+			}
+			else if ( (effects & (EF_FLAG1|EF_BLUEHYPERBLASTER)) == (EF_FLAG1|EF_BLUEHYPERBLASTER) )	// vore firepod tracer
+			{
+				CL_TracerTrail_Q1 (cent->lerp_origin, ent.origin, cent, 3);
+				V_AddLight (ent.origin, 100, 1, 0.537, 0.663);	// 95, 51, 63
+			}
+			// end Knightmare
 			else if (effects & EF_FLAG1)
 			{	// Knightmare 1/3/2002
 				// EF_FLAG1|EF_FLAG2 is a special case for EF_FLAG3...  More cheese!

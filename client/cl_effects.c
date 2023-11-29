@@ -438,9 +438,9 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 			0,		0,		0,
 			color[0],	color[1],	color[2],
 			colvel[0],	colvel[1],	colvel[2],
-			1,		-0.4 / (0.5 + frand()*0.3),
+			1,		0,
 			GL_SRC_ALPHA, GL_ONE,
-			size,		size*-1.5f,
+			size,	size*-1.5f,
 			particle_generic,
 			0,
 			NULL, false);
@@ -461,30 +461,51 @@ void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count)
 	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
 		if (i & 1) {
-			palIdx = 66 + (rand()%6);
-			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		//	palIdx = 66 + (rand()%6);
 			VectorSet (accel, 0, 0, PARTICLE_GRAVITY);
 		}
 		else {
-			palIdx = 150 + (rand()%6);
-			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		//	palIdx = 150 + (rand()%6);
 			VectorSet (accel, 0, 0, -PARTICLE_GRAVITY);
 		}
+		palIdx = 150 + (rand()%6);
+		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
 
 		CL_SetupParticle (
 			0,	0,	0,
 			org[0] + ((rand()%32)-16),	org[1] + ((rand()%32)-16),	org[2] + ((rand()%32)-16),
-			(rand()%512)-256,	(rand()%512)-256,	(rand()%512)-256,
+			(rand()%256)-128,	(rand()%256)-128,	(rand()%512)-256,
 			accel[0],	accel[1],	accel[2],
 			color[0],	color[1],	color[2],
 			0,			0,			0,
-			1,		-1.0 / (5.0 + frand()*0.35),
-			GL_SRC_ALPHA, GL_ONE,
+			1,		0,
+			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
 			size,	size*-0.75f,
 			particle_generic,
 			0,
 			NULL, false);
 	}
+}
+
+
+/*
+===============
+CL_ParticleImapact_Q1_Think
+===============
+*/
+#define pImpactMaxVelocity 100
+void CL_ParticleImapact_Q1_Think (cparticle_t *p, vec3_t org, vec3_t angle, float *alpha, float *size, int *image, float *time)
+{
+	vec_t	length;
+	float	clipsize = 1.0;
+
+	CL_ParticleBounceThink (p, org, angle, alpha, &clipsize, image, time);
+
+	length = VectorNormalize(p->vel);
+	if (length > pImpactMaxVelocity)
+		VectorScale (p->vel, pImpactMaxVelocity, p->vel);
+	else
+		VectorScale (p->vel, length, p->vel);
 }
 
 
@@ -496,27 +517,31 @@ CL_ParticleImapact_Q1
 void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int count)
 {
 	int		i, palIdx;
-	vec3_t	color;
-
-	palIdx = (colorIdx & ~7) + (rand() & 7);
-	VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+	vec3_t	origin, color;
 
 	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
+	//	VectorSet (origin, org[0] + ((rand()%15)-8), org[1] + ((rand()%15)-8), org[2] + ((rand()%15)-8));
+		VectorSet (origin,
+			org[0] + dir[0]*(1 + size*0.5 + random()*3),
+			org[1] + dir[1]*(1 + size*0.5 + random()*3),
+			org[2] + dir[2]*(1 + size*0.5 + random()*3) );
+		palIdx = (colorIdx & ~7) + (rand() & 7);
+		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+
 		CL_SetupParticle (
 			0,	0,	0,
-			org[0] + ((rand()%15)-8),	org[1] + ((rand()%15)-8),	org[2] + ((rand()%15)-8),
+			origin[0],	origin[1],	origin[2],
 			dir[0] * 15 + ((rand()%30)-15),	dir[1] * 15 + ((rand()%30)-15),	dir[2] * 15 + ((rand()%30)-15),
-			0,			0,			-PARTICLE_GRAVITY,
+			0,			0,			0,
 			color[0],	color[1],	color[2],
 			0,			0,			0,
-			1,		-1.0 / (5.0 + frand()*0.35),
-		//	1,		-0.5 / (0.5 + frand()*0.3),
-			GL_SRC_ALPHA, GL_ONE,
-			size,	size*-0.25f,
+			1,		0,
+			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+			size,	size*-0.66f,
 			particle_generic,
-			0,
-			NULL, false);
+			PART_GRAVITY,
+			CL_ParticleImapact_Q1_Think, true);
 	}
 }
 
@@ -558,16 +583,93 @@ void CL_Lavasplash_Q1 (vec3_t org, int size)
 				0,	0,	0,
 				pOrg[0],		pOrg[1],		pOrg[2],
 				velocity[0],	velocity[1],	velocity[2],
-				0,		0,		-PARTICLE_GRAVITY,
+				0,		0,		0,
 				color[0],	color[1],	color[2],
 				0,			0,			0,
-				1,		-1.0 / (4.0 + frand()*0.62),
-				GL_SRC_ALPHA, GL_ONE,
-				size,		0,	// size*-1.5f,
+				1,		0,
+				GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+				size,	size*-0.25f,
 				particle_generic,
-				0,
+				PART_GRAVITY,
 				NULL, false);
 		}
+	}
+}
+
+
+/*
+===============
+CL_TracerTrail_Q1
+===============
+*/
+void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
+{
+	int			palIdx;
+	static int	tracerCount = 0;
+	vec3_t		pStart, vec, pOrg, vel, color;
+	float		len, oldlen, dec, size, sizeVel;
+
+	VectorCopy (start, pStart);
+	VectorSubtract (end, start, vec);
+	len = oldlen = VectorNormalize (vec);
+	size = 3;
+
+	dec = 3;
+	VectorScale (vec, dec, vec);
+
+	while (len > 0.0f)
+	{
+		len -= dec;
+		
+		VectorClear (vel);
+		switch (type)
+		{
+		case 1:	// acid tracer
+		case 2:	// flame tracer
+			sizeVel = -2.0f;
+			if (type == 1)
+				palIdx = 196 + ((tracerCount & 4) << 1);	// was 52
+			else
+				palIdx = 226 + ((tracerCount & 4) << 1);	// was 230
+			VectorCopy (pStart, pOrg);
+			tracerCount++;
+			if (tracerCount & 1) {
+				vel[0] = 30 * vec[1];
+				vel[1] = 30 * -vec[0];
+			}
+			else {
+				vel[0] = 30 * -vec[1];
+				vel[1] = 30 * vec[0];
+			}
+			break;
+		case 3:	// firepod tracer
+			sizeVel = -3.0f;
+			palIdx = 152 + (rand() & 3);
+			VectorSet (pOrg, pStart[0] + ((rand()&15) - 8), pStart[1] + ((rand()&15) - 8), pStart[2] + ((rand()&15) - 8) );
+			break;
+		default:
+			sizeVel = -2.0f;
+			palIdx = 20 + (rand() & 7);
+			VectorCopy (pStart, pOrg);
+			break;
+		}
+		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+
+		CL_SetupParticle (
+			0,	0,	0,
+			pOrg[0],	pOrg[1],	pOrg[2],
+			vel[0],		vel[1],		vel[2],
+			0,			0,			0,
+			color[0],	color[1],	color[2],
+			0,			0,			0,
+			1,		0,
+			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+			size,	size * sizeVel,			
+			particle_generic,
+			0,
+			NULL, false);
+
+		VectorAdd (pStart, vec, pStart);
 	}
 }
 

@@ -628,6 +628,16 @@ void CL_AddParticles (void)
 			alpha = p->alpha;
 		}
 
+		size = p->size + p->sizevel * time;	// moved from below
+		if (size <= 0.0f)	// shrank away to nothing
+		{
+			p->alpha = 0.0f;
+			p->flags = 0;
+			p->next = free_particles;
+			free_particles = p;
+			continue;
+		}
+
 		p->next = NULL;
 		if (!tail)
 			active = tail = p;
@@ -648,19 +658,20 @@ void CL_AddParticles (void)
 		for (i=0;i<3;i++)
 		{
 			color[i] = p->color[i] + p->colorvel[i]*time;
-			if (color[i]>255) color[i]=255;
-			if (color[i]<0) color[i]=0;
+			color[i] = min(max(color[i], 0), 255);
+		//	if (color[i] > 255) color[i] = 255;
+		//	if (color[i] < 0) color[i] = 0;
 			
 			angle[i] = p->angle[i];
 			org[i] = p->org[i] + p->vel[i]*time + p->accel[i]*time2;
 		}
 
-		if (p->flags&PART_GRAVITY)
-			org[2]+=time2*-PARTICLE_GRAVITY;
+		if (p->flags & PART_GRAVITY)
+			org[2] += time2 * -PARTICLE_GRAVITY;
 
-		size = p->size + p->sizevel*time;
+	//	size = p->size + p->sizevel*time;	// moved above
 
-		for (i=0;i<P_LIGHTS_MAX;i++)
+		for (i = 0; i < P_LIGHTS_MAX; i++)
 		{
 			const cplight_t *plight = &p->lights[i];
 			if (plight->isactive)
@@ -672,15 +683,15 @@ void CL_AddParticles (void)
 
 		if (p->thinknext && p->think)
 		{
-			p->thinknext=false;
-			p->think(p, org, angle, &alpha, &size, &image, &time);
+			p->thinknext = false;
+			p->think (p, org, angle, &alpha, &size, &image, &time);
 		}
 
 		if (flags & PART_DECAL)
 		{
 			decalpolys_t *d;
 			if (p->decalnum > 0 && p->decal)
-				for (d=p->decal; d; d=d->nextpoly)
+				for (d = p->decal; d; d = d->nextpoly)
 					V_AddDecal (org, angle, color, alpha, p->blendfunc_src, p->blendfunc_dst, size, image, flags, d);
 			else
 				V_AddDecal (org, angle, color, alpha, p->blendfunc_src, p->blendfunc_dst, size, image, flags, NULL);
@@ -699,7 +710,7 @@ void CL_AddParticles (void)
 
 	active_particles = active;
 
-	CL_CleanDecalPolys(); // clean up active_decals linked list
+	CL_CleanDecalPolys (); // clean up active_decals linked list
 }
 
 

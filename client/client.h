@@ -1085,6 +1085,7 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count);
 void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count);
 void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int count);
 void CL_Lavasplash_Q1 (vec3_t org, int size);
+void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type);
 void CL_BFGExplosionParticles (vec3_t org);
 void CL_TeleportParticles (vec3_t org);
 void CL_BigTeleportParticles (vec3_t org);

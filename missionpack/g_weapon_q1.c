@@ -408,7 +408,11 @@ void q1_fire_flame (edict_t *self, vec3_t start, vec3_t dir, float leftrightoff)
 	bolt->movetype = MOVETYPE_FLYMISSILE;
 	bolt->clipmask = MASK_SHOT;
 	bolt->solid = SOLID_BBOX;
+#ifdef KMQUAKE2_ENGINE_MOD
+	bolt->s.effects |= (EF_IONRIPPER|EF_TRACKER);
+#else	// KMQUAKE2_ENGINE_MOD
 	bolt->s.effects |= EF_IONRIPPER;
+#endif	// KMQUAKE2_ENGINE_MOD
 	VectorClear (bolt->mins);
 	VectorClear (bolt->maxs);
 	bolt->s.modelindex = gi.modelindex ("models/monsters/q1hknight/k_spike/tris.md2");
@@ -1057,9 +1061,9 @@ void q1_fire_firepod (edict_t *self, vec3_t dir)
 	VectorSet (pod->avelocity, 300, 300, 300);
 #ifdef KMQUAKE2_ENGINE_MOD
 	pod->s.effects |= EF_FLAG1|EF_BLUEHYPERBLASTER;
-#else
+#else	// KMQUAKE2_ENGINE_MOD
 	pod->s.effects |= EF_FLAG1|EF_FLAG2;
-#endif
+#endif	// KMQUAKE2_ENGINE_MOD
 	VectorClear (pod->mins);
 	VectorClear (pod->maxs);
 	pod->s.modelindex = gi.modelindex ("models/monsters/q1shalrath/v_spike/tris.md2");
@@ -1372,7 +1376,11 @@ void q1_fire_acidspit (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 	acidbolt->movetype = MOVETYPE_FLYMISSILE;
 	acidbolt->clipmask = MASK_SHOT;
 	acidbolt->solid = SOLID_BBOX;
+#ifdef KMQUAKE2_ENGINE_MOD
+	acidbolt->s.effects |= (EF_GREENGIB|EF_TRACKER);
+#else	// KMQUAKE2_ENGINE_MOD
 	acidbolt->s.effects |= EF_GREENGIB;		// EF_HYPERBLASTER EF_BFG EF_GREENTRAIL
+#endif	// KMQUAKE2_ENGINE_MOD
 	acidbolt->s.renderfx |= RF_TRANSLUCENT;	// FULLBRIGHT
 
 	VectorClear (acidbolt->mins);
