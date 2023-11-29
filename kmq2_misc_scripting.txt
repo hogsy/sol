@@ -47,7 +47,7 @@ modInfo
 	gameDir		"mwrumble2"
 	baseGame	"xatrix"
 	baseGame2	"rogue"
-	baseGame3	"zaero"	
+	baseGame3	"zaero"
 	quakeImportPath "D:\Quake"
 	quakeMainGame	"id1"
 	quakeGame1		"hipnotic"
@@ -99,6 +99,20 @@ pakRemapList
 
 This pak remap script remaps the models and sounds used by the Shambler, including gibs and the lightning bolt
 attachement.
+
+The remap script parser will output any errors it encounters.  This output from filesystem initialization is not visible in the in-game console.  So you will need to start KMQuake2 in dedicated mode to see if the script was correctly
+parsed.  Here's an example of such output:
+
+Loaded 267 pak remaps from file ./gamedir/id1_pakremap.def
+Remapped 214 items in pak D:\Quake/id1/pak0.pak
+Remapped 53 items in pak D:\Quake/id1/pak1.pak
+
+If the total number of remapped items in all paks in the mounted gamedir does not match the number of pak remaps
+in the script, then one of the remaps is misspelled.  In which case the filesystem will output a message:
+
+Pak remap orgName gfx/palete.lmp in ./gamedir/id1_pakremap.def was not found in any paks
+
+Check the spelling of the remap against the contents of the gamedir's paks to correct it.
 
 ================================
 
