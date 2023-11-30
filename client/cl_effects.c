@@ -439,7 +439,7 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 			color[0],	color[1],	color[2],
 			colvel[0],	colvel[1],	colvel[2],
 			1,		0,
-			GL_SRC_ALPHA, GL_ONE,
+			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
 			size,	size*-1.5f,
 			particle_generic,
 			0,

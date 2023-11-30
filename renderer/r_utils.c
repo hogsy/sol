@@ -72,8 +72,25 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 	if (r_nocull->integer)
 		return false;
 
-	for (i=0 ; i<4 ; i++)
-		if ( BOX_ON_PLANE_SIDE(mins, maxs, &frustum[i]) == 2)
+	for (i=0; i<4; i++)
+		if (BOX_ON_PLANE_SIDE(mins, maxs, &frustum[i]) == 2)
 			return true;
 	return false;
+}
+
+
+/*
+=================
+R_CopyString
+=================
+*/
+char *R_CopyString (char *in)
+{
+	char	*out;
+	size_t	outSize;
+	
+	outSize = strlen(in)+1;
+	out = Z_Malloc (outSize);
+	Q_strncpyz (out, outSize, in);
+	return out;
 }
