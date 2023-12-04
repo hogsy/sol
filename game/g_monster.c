@@ -678,7 +678,7 @@ void monster_triggered_spawn_use (edict_t *self, edict_t *other, edict_t *activa
 	self->think = monster_triggered_spawn;
 	self->nextthink = level.time + FRAMETIME;
 	// Knightmare- good guy monsters shouldn't have an enemy from this
-	if (activator->client && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
+	if (activator && activator->client && !(self->monsterinfo.aiflags & AI_GOOD_GUY))
 		self->enemy = activator;
 	// Lazarus: Add 'em up
 	// Knightmare- this is annoying, and will likely annoy most Q2 players as well
