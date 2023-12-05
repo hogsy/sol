@@ -1070,7 +1070,7 @@ void SCR_DrawDebugGraph (void)
 		if (min>y+h) min = y+h;
 		if (min+max > y+h) max = y+h-max;
 
-		R_DrawFill (x+w-a, min, 1, max, color8red(color), color8green(color), color8blue(color), 255);
+		R_DrawFill (x+w-a, min, 1, max, Q2PalColorRed(color), Q2PalColorGreen(color), Q2PalColorBlue(color), 255);
 	}
 
 	if (cls.realtime - lasttime > 50)

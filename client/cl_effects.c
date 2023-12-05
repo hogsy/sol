@@ -27,10 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static vec3_t avelocities [NUMVERTEXNORMALS];
 
-static const byte	q1Palette[768] = {
-#include "../qcommon/q1palette.h"
-};
-
 //=================================================
 
 /*
@@ -424,7 +420,7 @@ void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count)
 	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
 		palIdx = 111;
-		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
 
 		if (i & 1)
 			VectorSet (colvel, -32, -64, 10);
@@ -469,7 +465,7 @@ void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count)
 			VectorSet (accel, 0, 0, -PARTICLE_GRAVITY);
 		}
 		palIdx = 150 + (rand()%6);
-		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
 
 		CL_SetupParticle (
 			0,	0,	0,
@@ -511,13 +507,15 @@ void CL_ParticleImapact_Q1_Think (cparticle_t *p, vec3_t org, vec3_t angle, floa
 
 /*
 ===============
-CL_ParticleImapact_Q1
+CL_ParticleImpact_Q1
 ===============
 */
-void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int count)
+void CL_ParticleImpact_Q1 (vec3_t org, vec3_t dir, int colorIdx, float size, int count, qboolean shaded)
 {
-	int		i, palIdx;
+	int		i, palIdx, flags;
 	vec3_t	origin, color;
+
+	flags = (shaded) ? (PART_GRAVITY|PART_SHADED) : PART_GRAVITY;
 
 	for (i = 0; i < (int)((float)count/max(cl_particle_scale->value, 1.0f)); i++)
 	{
@@ -527,7 +525,7 @@ void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int 
 			org[1] + dir[1]*(1 + size*0.5 + random()*3),
 			org[2] + dir[2]*(1 + size*0.5 + random()*3) );
 		palIdx = (colorIdx & ~7) + (rand() & 7);
-		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
 
 		CL_SetupParticle (
 			0,	0,	0,
@@ -540,7 +538,7 @@ void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int 
 			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
 			size,	size*-0.66f,
 			particle_generic,
-			PART_GRAVITY,
+			flags,
 			CL_ParticleImapact_Q1_Think, true);
 	}
 }
@@ -572,7 +570,7 @@ void CL_Lavasplash_Q1 (vec3_t org, int size)
 		for (j = start; j < end; j++)
 		{
 			palIdx = 224 + (rand()%7);
-			VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+			VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
 			VectorSet (dir, j*8 + (rand()&7), i*8 + (rand()&7), 256);
 			VectorSet (pOrg, org[0] + dir[0], org[1] + dir[1], org[2] + (rand()&63));
 			VectorNormalize (dir);
@@ -604,7 +602,7 @@ CL_TracerTrail_Q1
 */
 void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
 {
-	int			palIdx;
+	int			palIdx, flags = 0;
 	static int	tracerCount = 0;
 	vec3_t		pStart, vec, pOrg, vel, color;
 	float		len, oldlen, dec, size, sizeVel;
@@ -625,6 +623,7 @@ void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
 		switch (type)
 		{
 		case 1:	// acid tracer
+			flags |= PART_SHADED;
 		case 2:	// flame tracer
 			sizeVel = -2.0f;
 			if (type == 1)
@@ -653,7 +652,7 @@ void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
 			VectorCopy (pStart, pOrg);
 			break;
 		}
-		VectorSet (color, q1Palette[palIdx*3+0], q1Palette[palIdx*3+1], q1Palette[palIdx*3+2]);
+		VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
 
 		CL_SetupParticle (
 			0,	0,	0,
@@ -666,7 +665,7 @@ void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
 			GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
 			size,	size * sizeVel,			
 			particle_generic,
-			0,
+			flags,
 			NULL, false);
 
 		VectorAdd (pStart, vec, pStart);
@@ -1006,7 +1005,7 @@ void CL_ParticleEffect (vec3_t org, vec3_t dir, int color8, int count)
 {
 	int			i;
 	float		d;
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	for (i=0 ; i<count ; i++)
 	{
@@ -1038,7 +1037,7 @@ void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color8, int count)
 {
 	int			i;
 	float		d;
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	for (i=0 ; i<count ; i++)
 	{
@@ -1070,7 +1069,7 @@ void CL_ParticleEffect3 (vec3_t org, vec3_t dir, int color8, int count)
 {
 	int			i;
 	float		d;
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	for (i=0 ; i<count ; i++)
 	{
@@ -1134,7 +1133,7 @@ void CL_ParticleEffectSplash (vec3_t org, vec3_t dir, int color8, int count)
 {
 	int			i;
 	float		d;
-	vec3_t color = {color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	for (i=0 ; i<count ; i++)
 	{
@@ -3038,7 +3037,7 @@ void CL_ForceWall (vec3_t start, vec3_t end, int color8)
 	vec3_t		move;
 	vec3_t		vec;
 	float		len;
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
@@ -3230,7 +3229,7 @@ void CL_ParticleSteamEffect (vec3_t org, vec3_t dir, int red, int green, int blu
 	cparticle_t	*p;
 	float		d;
 	vec3_t		r, u;
-	//vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	//vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	//vectoangles2 (dir, angle_dir);
 	//AngleVectors (angle_dir, f, r, u);
@@ -3281,7 +3280,7 @@ void CL_ParticleSteamEffect2 (cl_sustain_t *self)
 	vec3_t		r, u;
 	vec3_t		dir;
 	int			color8 = self->color + (rand()&7);
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	//vectoangles2 (dir, angle_dir);
 	//AngleVectors (angle_dir, f, r, u);
@@ -3649,7 +3648,7 @@ void CL_TagTrail (vec3_t start, vec3_t end, int color8)
 	vec3_t		vec;
 	float		len;
 	int			dec;
-	vec3_t color = { color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
@@ -3689,7 +3688,7 @@ CL_ColorExplosionParticles
 void CL_ColorExplosionParticles (vec3_t org, int color8, int run)
 {
 	int			i;
-	vec3_t color = {color8red(color8), color8green(color8), color8blue(color8)};
+	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
 	for (i=0 ; i<128 ; i++)
 	{

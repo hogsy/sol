@@ -756,7 +756,7 @@ void CL_ParseSteam (void)
 		magnitude = MSG_ReadShort (&net_message);
 		color = r & 0xff;
 		CL_ParticleSteamEffect (pos, dir,
-			color8red(color), color8green(color), color8blue(color),
+			Q2PalColorRed(color), Q2PalColorGreen(color), Q2PalColorBlue(color),
 			-20, -20, -20, cnt, magnitude);
 		//CL_ParticleSteamEffect (pos, dir, 240, 240, 240, -20, -20, -20, cnt, magnitude);
 		//S_StartSound (pos,  0, 0, clMedia.sfx_lashit, 1, ATTN_NORM, 0);
@@ -1192,7 +1192,7 @@ void CL_ParseTEnt (void)
 			subtype = 0;
 		if ( (subtype == 0) || (subtype == 1) )	// Q1 spike or superspike
 		{
-			CL_ParticleImapact_Q1 (pos, dir, 0, 3, (subtype == 1) ? 20 : 10);
+			CL_ParticleImpact_Q1 (pos, dir, 0, 3, (subtype == 1) ? 20 : 10, true);
 			CL_ParticleBulletDecal (pos, dir, 2.8);
 			if (rand() % 5) {
 				S_StartSound (pos, 0, 0, clMedia.sfx_q1_tink, 1, ATTN_NORM, 0);
@@ -1212,7 +1212,7 @@ void CL_ParseTEnt (void)
 		{
 			pRed = 207;		pGreen = 99;		pBlue = 43;
 		//	if (cl_old_explosions->integer) {
-				CL_ParticleImapact_Q1 (pos, dir, 234, 3, 24);	// original Q1 palette idx was 0
+				CL_ParticleImpact_Q1 (pos, dir, 234, 3, 24, false);	// original Q1 palette idx was 0
 		/*	}
 			else {
 				numparts = 24 / max(cl_particle_scale->value/2, 1);
@@ -1224,13 +1224,13 @@ void CL_ParseTEnt (void)
 		}
 		else if (subtype == 3)	// Q1 scrag acid bolt
 		{
-			CL_ParticleImapact_Q1 (pos, dir, 196, 3, 30);	// original Q1 palette idx was 20
-			CL_ParticleAcidDecal (pos, dir, 14, 187, 167, 15);
+			CL_ParticleImpact_Q1 (pos, dir, 196, 3, 30, true);	// original Q1 palette idx was 20
+			CL_ParticleAcidDecal (pos, dir, 14, Q1PalColorRed(196), Q1PalColorGreen(196), Q1PalColorBlue(196));
 			S_StartSound (pos, 0, 0, clMedia.sfx_q1_scraghit, 1, ATTN_NORM, 0);
 		}
 		else if (subtype == 4)	// Q1 hell knight flame
 		{
-			CL_ParticleImapact_Q1 (pos, dir, 226, 3, 20);
+			CL_ParticleImpact_Q1 (pos, dir, 226, 3, 20, false);
 			CL_ParticlePlasmaBeamDecal (pos, dir, 10);
 			S_StartSound (pos, 0, 0, clMedia.sfx_q1_hknighthit, 1, ATTN_NORM, 0);
 		}
@@ -1297,7 +1297,7 @@ void CL_ParseTEnt (void)
 		color = MSG_ReadByte (&net_message);
 	// Psychospaz's enhanced particle code
 		{
-			vec3_t sparkcolor = {color8red(color), color8green(color), color8blue(color)};
+			vec3_t sparkcolor = { Q2PalColorRed(color), Q2PalColorGreen(color), Q2PalColorBlue(color) };
 			CL_ParticleEffectSparks (pos, dir, sparkcolor, 40);
 		}
 		ex = CL_AllocExplosion ();

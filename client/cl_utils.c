@@ -27,26 +27,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //=================================================
 
 // Here I convert old 256 color palette to RGB
-const byte default_pal[768] = {
+const byte	q2Palette[768] = {
 #include "../qcommon/q2palette.h"
 };
 
+const byte	q1Palette[768] = {
+#include "../qcommon/q1palette.h"
+};
 
-int	color8red (int color8)
+int	Q2PalColorRed (int palIdx)
 { 
-	return (default_pal[color8*3+0]);
+	return q2Palette[palIdx*3+0];
 }
 
-
-int	color8green (int color8)
+int	Q2PalColorGreen (int palIdx)
 {
-	return (default_pal[color8*3+1]);;
+	return q2Palette[palIdx*3+1];
 }
 
-
-int	color8blue (int color8)
+int	Q2PalColorBlue (int palIdx)
 {
-	return (default_pal[color8*3+2]);;
+	return q2Palette[palIdx*3+2];
+}
+
+int	Q1PalColorRed (int palIdx)
+{ 
+	return q1Palette[palIdx*3+0];
+}
+
+int	Q1PalColorGreen (int palIdx)
+{
+	return q1Palette[palIdx*3+1];
+}
+
+int	Q1PalColorBlue (int palIdx)
+{
+	return q1Palette[palIdx*3+2];
 }
 
 //=================================================

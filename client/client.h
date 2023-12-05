@@ -1083,7 +1083,7 @@ void CL_ParticleAcidDecal (vec3_t org, vec3_t dir, float size, int red, int gree
 void CL_Explosion_Sparks (vec3_t org, int size, int count);
 void CL_Explosion_Sparks_Q1 (vec3_t org, int size, int count);
 void CL_Explosion_Blob_Q1 (vec3_t org, int size, int count);
-void CL_ParticleImapact_Q1 (vec3_t org, vec3_t dir, int colorIdx, int size, int count);
+void CL_ParticleImpact_Q1 (vec3_t org, vec3_t dir, int colorIdx, float size, int count, qboolean shaded);
 void CL_Lavasplash_Q1 (vec3_t org, int size);
 void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type);
 void CL_BFGExplosionParticles (vec3_t org);
@@ -1138,9 +1138,12 @@ void CL_WidowSplash (vec3_t org);
 //
 // cl_utils.c
 //
-int	color8red (int color8);
-int	color8green (int color8);
-int	color8blue (int color8);
+int	Q2PalColorRed (int palIdx);
+int	Q2PalColorGreen (int palIdx);
+int	Q2PalColorBlue (int palIdx);
+int	Q1PalColorRed (int palIdx);
+int	Q1PalColorGreen (int palIdx);
+int	Q1PalColorBlue (int palIdx);
 void CL_TextColor (int colornum, int *red, int *green, int *blue);	// for use with the alt_text_color cvar
 void CL_EffectColor (int colornum, int *red, int *green, int *blue);
 float ClampCvar (float min, float max, float value);
