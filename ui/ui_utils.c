@@ -538,22 +538,22 @@ void UI_LoadModFromList (int index)
 		Cvar_ForceSet ("basegame", ui_mod_info[index].baseGame1);
 		Cvar_ForceSet ("basegame2", ui_mod_info[index].baseGame2);
 		Cvar_ForceSet ("basegame3", ui_mod_info[index].baseGame3);
-		Cvar_ForceSet ("quakeimportpath_auto", va("%i", ui_mod_info[index].quakeImportPathAuto));
-		Cvar_ForceSet ("quake_rr_importpath_auto", va("%i", ui_mod_info[index].quakeRRImportPathAuto));
-		Cvar_ForceSet ("quakeimportpath", ui_mod_info[index].quakeImportPath);
-		Cvar_ForceSet ("quakemaingame", ui_mod_info[index].quakeMainGame);
-		Cvar_ForceSet ("quakegame1", ui_mod_info[index].quakeGame1);
-		Cvar_ForceSet ("quakegame2", ui_mod_info[index].quakeGame2);
-		Cvar_ForceSet ("quakegame3", ui_mod_info[index].quakeGame3);
-		Cvar_ForceSet ("quakegame4", ui_mod_info[index].quakeGame4);
+		Cvar_ForceSet ("quake_importpath_auto", va("%i", ui_mod_info[index].quakeImportPathAuto));
+		Cvar_ForceSet ("quakerr_importpath_auto", va("%i", ui_mod_info[index].quakeRRImportPathAuto));
+		Cvar_ForceSet ("quake_importpath", ui_mod_info[index].quakeImportPath);
+		Cvar_ForceSet ("quake_maingame", ui_mod_info[index].quakeMainGame);
+		Cvar_ForceSet ("quake_game1", ui_mod_info[index].quakeGame1);
+		Cvar_ForceSet ("quake_game2", ui_mod_info[index].quakeGame2);
+		Cvar_ForceSet ("quake_game3", ui_mod_info[index].quakeGame3);
+		Cvar_ForceSet ("quake_game4", ui_mod_info[index].quakeGame4);
 	/*
-		Cvar_ForceSet ("quake2_rr_importpath_auto", va("%i", ui_mod_info[index].quake2RRImportPathAuto));
-		Cvar_ForceSet ("quake2_rr_importpath", ui_mod_info[index].quake2RRImportPath);
-		Cvar_ForceSet ("quake2_rr_maingame", ui_mod_info[index].quake2RRMainGame);
-		Cvar_ForceSet ("quake2_rr_game1", ui_mod_info[index].quake2RRGame1);
-		Cvar_ForceSet ("quake2_rr_game2", ui_mod_info[index].quake2RRGame2);
-		Cvar_ForceSet ("quake2_rr_game3", ui_mod_info[index].quake2RRGame3);
-		Cvar_ForceSet ("quake2_rr_game4", ui_mod_info[index].quake2RRGame4);
+		Cvar_ForceSet ("quake2rr_importpath_auto", va("%i", ui_mod_info[index].quake2RRImportPathAuto));
+		Cvar_ForceSet ("quake2rr_importpath", ui_mod_info[index].quake2RRImportPath);
+		Cvar_ForceSet ("quake2rr_maingame", ui_mod_info[index].quake2RRMainGame);
+		Cvar_ForceSet ("quake2rr_game1", ui_mod_info[index].quake2RRGame1);
+		Cvar_ForceSet ("quake2rr_game2", ui_mod_info[index].quake2RRGame2);
+		Cvar_ForceSet ("quake2rr_game3", ui_mod_info[index].quake2RRGame3);
+		Cvar_ForceSet ("quake2rr_game4", ui_mod_info[index].quake2RRGame4);
 	*/
 		Cbuf_AddText ( va("changegame %s\n", ui_mod_info[index].gameDir) );
 	}
