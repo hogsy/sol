@@ -2136,20 +2136,20 @@ the list so they override previous pack files.
 */
 fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 {
-	int				numFiles, i;
-	fsPackFile_t	*files;
-	fsPack_t		*pack;
-	FILE			*handle;
-	dpackheader_t	header;
-	dpackfile_t		info[MAX_FILES_IN_PACK];
-	unsigned		contentFlags = 0;
-	int				numRemappedItems = 0;
+	int					numFiles, i;
+	fsPackFile_t		*files;
+	fsPack_t			*pack;
+	FILE				*handle;
+	dpackheader_t		header;
+	static dpackfile_t	info[MAX_FILES_IN_PACK];	// made this static to avoid stack overflow
+	unsigned			contentFlags = 0;
+	int					numRemappedItems = 0;
 #ifdef BINARY_PACK_SEARCH
-	char			**remapNames = NULL;
-	int				*sortIndices;
-	unsigned int	*sortHashes;
+	char				**remapNames = NULL;
+	int					*sortIndices;
+	unsigned int		*sortHashes;
 #else
-	char			remapName[MAX_QPATH];
+	char				remapName[MAX_QPATH];
 #endif	// BINARY_PACK_SEARCH
 
 	handle = fopen(packPath, "rb");
@@ -2786,7 +2786,11 @@ void FS_Path_f (void)
 	{
 		if (search->pack)
 		{
-			Com_Printf("%s (%i files)\n", search->pack->name, search->pack->numFiles);
+		//	Com_Printf("%s (%i files)\n", search->pack->name, search->pack->numFiles);
+			if (search->pack->isQuakeImportPak)
+				Com_Printf ("%s (%i files, %i remapped)\n", search->pack->name, search->pack->numFiles,  search->pack->numRemappedFiles);
+			else
+				Com_Printf ("%s (%i files)\n", search->pack->name, search->pack->numFiles);
 			totalFiles += search->pack->numFiles;
 		}
 		else
@@ -2871,7 +2875,7 @@ void FS_Startup (void)
 //	strncpy(fs_currentGame, fs_gamedirvar->string);
 	Q_strncpyz(fs_currentGame, sizeof(fs_currentGame), fs_gamedirvar->string);
 
-	FS_Path_f();
+	FS_Path_f ();
 }
 #endif
 
@@ -3000,6 +3004,12 @@ void FS_InitFilesystem (void)
 	fs_gamedirvar = Cvar_Get ("game", "", CVAR_LATCH|CVAR_SERVERINFO|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("game", "Sets the mod/game dir.  Only set this from the command line with \"+set game <moddir>\".  Use the \"changegame\" command to change game folders while KMQuake2 is running.");
 
+	// Whether to auto-detect Quake1 Steam install path
+	fs_quakeimportpath_auto = Cvar_Get("quakeimportpath_auto", "0", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quakeimportpath_auto", "Whether to auto-detect Steam install path of Quake1 for content mounting.");
+	// Whether to auto-detect Quake1RR Steam install path
+	fs_quakerrimportpath_auto = Cvar_Get("quake_rr_importpath_auto", "0", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake_rr_importpath_auto", "Whether to auto-detect Steam install path of Quake1 re-release for content mounting.");
 	// Install path of Quake1 for content mounting, id1 folder paks are automatically added
 	fs_quakeimportpath = Cvar_Get("quakeimportpath", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
 	Cvar_SetDescription ("quakeimportpath", "Install path of Quake1 for content mounting (e.g. X:/Quake).  Id1 folder is automatically added.");
@@ -3008,13 +3018,34 @@ void FS_InitFilesystem (void)
 	Cvar_SetDescription ("quakemaingame", "Name override of Quake1 id1 folder.  Allows mounting content for other Quake1 engine games such as Hexen2.");
 	// Additional gamedirs for mounting the Quake mission packs and mods' .pak files
 	fs_quakegamedir1 = Cvar_Get("quakegame1", "", CVAR_LATCH|CVAR_SAVE_IGNORE);	
-	Cvar_SetDescription ("quakegame1", "First additional gamedir under Quake 1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
+	Cvar_SetDescription ("quakegame1", "First additional gamedir under Quake1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
 	fs_quakegamedir2 = Cvar_Get("quakegame2", "", CVAR_LATCH|CVAR_SAVE_IGNORE);	
-	Cvar_SetDescription ("quakegame2", "Second additional gamedir under Quake 1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
+	Cvar_SetDescription ("quakegame2", "Second additional gamedir under Quake1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
 	fs_quakegamedir3 = Cvar_Get("quakegame3", "", CVAR_LATCH|CVAR_SAVE_IGNORE);	
-	Cvar_SetDescription ("quakegame3", "Third additional gamedir under Quake 1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
+	Cvar_SetDescription ("quakegame3", "Third additional gamedir under Quake1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
 	fs_quakegamedir4 = Cvar_Get("quakegame4", "", CVAR_LATCH|CVAR_SAVE_IGNORE);	
-	Cvar_SetDescription ("quakegame4", "Fourth additional gamedir under Quake 1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
+	Cvar_SetDescription ("quakegame4", "Fourth additional gamedir under Quake1 install path for content mounting.  Use for Hipnotic/Rogue mission packs or other mods.");
+
+#ifdef USE_Q2RR_IMPORT_PATH
+	// Whether to auto-detect Quake2RR Steam install path
+	fs_quake2rrimportpath_auto = Cvar_Get("quake2_rr_importpath_auto", "0", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_importpath_auto", "Whether to auto-detect Steam install path of Quake2 re-release for content mounting.");
+	// Install path of Quake2RR for content mounting, baseq2 folder paks are automatically added
+	fs_quake2rrimportpath = Cvar_Get("quake2_rr_importpath", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_importpath", "Install path of Quake2 re-release for content mounting (e.g. X:/Quake2RR).  Baseq2 folder is automatically added.");
+	// Name override of Quake2RR baseq2 folder, to allow mounting content for other Quake2 engine games
+	fs_quake2rrmaingame = Cvar_Get("quake2_rr_maingame", BASEDIRNAME, CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_maingame", "Name override of Quake2 re-release baseq2 folder.  Allows mounting content for other Quake2 engine games.");
+	// Additional gamedirs for mounting Quake2RR mods' .pak files
+	fs_quake2rrgamedir1 = Cvar_Get("quake2_rr_game1", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_game1", "First additional gamedir under Quake2 re-release install path for content mounting.  Use for Q2RR mods.");
+	fs_quake2rrgamedir2 = Cvar_Get("quake2_rr_game2", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_game2", "Second additional gamedir under Quake2 re-release install path for content mounting.  Use for Q2RR mods.");
+	fs_quake2rrgamedir3 = Cvar_Get("quake2_rr_game3", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_game3", "Third additional gamedir under Quake2 re-release install path for content mounting.  Use for Q2RR mods.");
+	fs_quake2rrgamedir4 = Cvar_Get("quake2_rr_game4", "", CVAR_LATCH|CVAR_SAVE_IGNORE);
+	Cvar_SetDescription ("quake2_rr_game4", "Fourth additional gamedir under Quake2 re-release install path for content mounting.  Use for Q2RR mods.");
+#endif	// USE_Q2RR_IMPORT_PATH
 
 	// Set up pref dir under Win32 here
 #ifdef _WIN32
@@ -3045,7 +3076,7 @@ void FS_InitFilesystem (void)
 	// Copy over configs from gamedir to savegamedir if it's empty
 	FS_CopyConfigsToSavegameDir ();
 
-	FS_Path_f(); // output path data
+	FS_Path_f (); // output path data
 }
 
 
@@ -3158,7 +3189,18 @@ void FS_CheckBaseGameVars (const char *dir)
 			Com_Printf ("Basegame3 should not be the same as "BASEDIRNAME", gamedir, basegame, or basegame2.\n");
 		}
 	}
+}
 
+
+/*
+================
+FS_CheckImportGameVars
+
+Cvar checks moved from FS_SetGamedir().
+================
+*/
+void FS_CheckImportGameVars (const char *dir)
+{
 	// check quakeimportpath var
 	if ( fs_quakeimportpath->string[0] )
 	{
@@ -3169,7 +3211,7 @@ void FS_CheckBaseGameVars (const char *dir)
 		}
 	}
 
-	// check quakebasedirname var
+	// check quakemaingame var
 	if ( fs_quakemaingame->string[0] == 0 ) {
 		Cvar_Set ("quakemaingame", "id1");	// must not be 0-length string
 	}
@@ -3256,6 +3298,212 @@ void FS_CheckBaseGameVars (const char *dir)
 			Com_Printf ("Quakegame4 should not be the same as quakemaingame, quakegame1, quakegame2, or quakegame3.\n");
 		}
 	}
+
+#ifdef USE_Q2RR_IMPORT_PATH
+	// check quake2rrimportpath var
+	if ( fs_quake2rrimportpath->string[0] )
+	{
+		if (fs_quake2rrimportpath->string[0] == '.') 
+		{
+			Cvar_Set ("quake2_rr_importpath", "");
+			Com_Printf ("Quake2_rr_importpath should be an absolute path, not a relative one.\n");
+		}
+	}
+
+	// check quake2rrmaingame var
+	if ( fs_quake2rrmaingame->string[0] == 0 ) {
+		Cvar_Set ("quake2_rr_maingame", BASEDIRNAME);	// must not be 0-length string
+	}
+	else if ( fs_quake2rrmaingame->string[0] )
+	{
+		if ( strstr(fs_quake2rrmaingame->string, "..") || strstr(fs_quake2rrmaingame->string, "/")
+			|| strstr(fs_quake2rrmaingame->string, "\\") || strstr(fs_quake2rrmaingame->string, ":") )
+		{
+			Cvar_Set ("quake2_rr_maingame", BASEDIRNAME);
+			Com_Printf ("Quake2_rr_maingame should be a single filename, not a path.\n");
+		}
+		if ( !Q_stricmp(fs_quake2rrmaingame->string, fs_quake2rrgamedir1->string) || !Q_stricmp(fs_quake2rrmaingame->string, fs_quake2rrgamedir2->string)
+			|| !Q_stricmp(fs_quake2rrmaingame->string, fs_quake2rrgamedir3->string) || !Q_stricmp(fs_quake2rrmaingame->string, fs_quake2rrgamedir4->string) )
+		{
+			Cvar_Set ("quake2_rr_maingame", BASEDIRNAME);
+			Com_Printf ("Quake2_rr_maingame should not be the same as quake2rrgame1, quake2rrgame2, quake2rrgame3, or quake2rrgame4.\n");
+		}
+	}
+
+	// check quake2rrgamedir1 var
+	if ( fs_quake2rrgamedir1->string[0] )
+	{
+		if ( strstr(fs_quake2rrgamedir1->string, "..") || strstr(fs_quake2rrgamedir1->string, "/")
+			|| strstr(fs_quake2rrgamedir1->string, "\\") || strstr(fs_quake2rrgamedir1->string, ":") )
+		{
+			Cvar_Set ("quake2_rr_game1", "");
+			Com_Printf ("Quake2_rr_game1 should be a single filename, not a path.\n");
+		}
+		if ( !Q_stricmp(fs_quake2rrgamedir1->string, fs_quake2rrmaingame->string) || !Q_stricmp(fs_quake2rrgamedir1->string, fs_quake2rrgamedir2->string)
+			|| !Q_stricmp(fs_quake2rrgamedir1->string, fs_quake2rrgamedir3->string) || !Q_stricmp(fs_quake2rrgamedir1->string, fs_quake2rrgamedir4->string) )
+		{
+			Cvar_Set ("quake2_rr_game1", "");
+			Com_Printf ("Quake2_rr_game1 should not be the same as quake2rrmaingame, quake2rrgame2, quake2rrgame3, or quake2rrgame4.\n");
+		}
+	}
+
+	// check quake2rrgamedir2 var
+	if ( fs_quake2rrgamedir2->string[0] )
+	{
+		if ( strstr(fs_quake2rrgamedir2->string, "..") || strstr(fs_quake2rrgamedir2->string, "/")
+			|| strstr(fs_quake2rrgamedir2->string, "\\") || strstr(fs_quake2rrgamedir2->string, ":") )
+		{
+			Cvar_Set ("quake2_rr_game2", "");
+			Com_Printf ("Quake2_rr_game2 should be a single filename, not a path.\n");
+		}
+		if ( !Q_stricmp(fs_quake2rrgamedir2->string, fs_quake2rrmaingame->string) || !Q_stricmp(fs_quake2rrgamedir2->string, fs_quake2rrgamedir1->string)
+			|| !Q_stricmp(fs_quake2rrgamedir2->string, fs_quake2rrgamedir3->string) || !Q_stricmp(fs_quake2rrgamedir2->string, fs_quake2rrgamedir4->string) )
+		{
+			Cvar_Set ("quake2_rr_game2", "");
+			Com_Printf ("Quake2_rr_game2 should not be the same as quake2rrmaingame, quake2rrgame1, quake2rrgame3, or quake2rrgame4.\n");
+		}
+	}
+
+	// check quake2rrgamedir3 var
+	if ( fs_quake2rrgamedir3->string[0] )
+	{
+		if ( strstr(fs_quake2rrgamedir3->string, "..") || strstr(fs_quake2rrgamedir3->string, "/")
+			|| strstr(fs_quake2rrgamedir3->string, "\\") || strstr(fs_quake2rrgamedir3->string, ":") )
+		{
+			Cvar_Set ("quake2_rr_game3", "");
+			Com_Printf ("Quake2_rr_game3 should be a single filename, not a path.\n");
+		}
+		if ( !Q_stricmp(fs_quake2rrgamedir3->string, fs_quake2rrmaingame->string) || !Q_stricmp(fs_quake2rrgamedir3->string, fs_quake2rrgamedir1->string)
+			|| !Q_stricmp(fs_quake2rrgamedir3->string, fs_quake2rrgamedir2->string) || !Q_stricmp(fs_quake2rrgamedir3->string, fs_quake2rrgamedir4->string) )
+		{
+			Cvar_Set ("quake2_rr_game3", "");
+			Com_Printf ("Quake2_rr_game3 should not be the same as quake2rrmaingame, quake2rrgame1, quake2rrgame2, or quake2rrgame4.\n");
+		}
+	}
+
+	// check quake2rrgamedir4 var
+	if ( fs_quake2rrgamedir4->string[0] )
+	{
+		if ( strstr(fs_quake2rrgamedir4->string, "..") || strstr(fs_quake2rrgamedir4->string, "/")
+			|| strstr(fs_quake2rrgamedir4->string, "\\") || strstr(fs_quake2rrgamedir4->string, ":") )
+		{
+			Cvar_Set ("quake2_rr_2rrgame4", "");
+			Com_Printf ("Quake2_rr_2rrgame4 should be a single filename, not a path.\n");
+		}
+		if ( !Q_stricmp(fs_quake2rrgamedir4->string, fs_quake2rrmaingame->string) || !Q_stricmp(fs_quake2rrgamedir4->string, fs_quake2rrgamedir1->string)
+			|| !Q_stricmp(fs_quake2rrgamedir4->string, fs_quake2rrgamedir2->string) || !Q_stricmp(fs_quake2rrgamedir4->string, fs_quake2rrgamedir3->string) )
+		{
+			Cvar_Set ("quake2_rr_game4", "");
+			Com_Printf ("Quake2_rr_game4 should not be the same as quake2rrmaingame, quake2rrgame1, quake2rrgame2, or quake2rrgame3.\n");
+		}
+	}
+#endif	// USE_Q2RR_IMPORT_PATH
+}
+
+
+/*
+================
+FS_AddQuakeImportGame
+
+Adds the quakeImportPath / quake2RRImportPath paks
+================
+*/
+void FS_AddQuakeImportGame (const char *dir)
+{
+	char		tempPath[MAX_OSPATH];
+	qboolean	quakegame1_loaded = false, quakegame2_loaded = false, quakegame3_loaded = false;
+	qboolean	quakeimportpath_autoset = false;
+	qboolean	quake2rrgame1_loaded = false, quake2rrgame2_loaded = false, quake2rrgame3_loaded = false;
+
+	// set QuakeImportPath if quakeimportpath_auto or quakerrimportpath_auto is enabled
+#ifdef _WIN32
+	if (fs_quakerrimportpath_auto->integer) {
+		Sys_InitQ1RRSteamInstallDir ();	// auto-detect Q1 Steam install dir
+		Q_strncpyz (tempPath, sizeof(tempPath), Sys_Q1RRSteamInstallDir());
+		if (tempPath[0] != 0) {
+			Cvar_ForceSet ("quakeimportpath", tempPath);
+			quakeimportpath_autoset = true;
+		}
+	}
+	if ( !quakeimportpath_autoset && fs_quakeimportpath_auto->integer ) {
+		Sys_InitQ1SteamInstallDir ();	// auto-detect Q1RR Steam install dir
+		Q_strncpyz (tempPath, sizeof(tempPath), Sys_Q1SteamInstallDir());
+		if (tempPath[0] != 0)
+			Cvar_ForceSet ("quakeimportpath", tempPath);
+	}
+#endif
+	// check and load QuakeImportPath/id1 and quakegame dirs
+	if ( fs_quakeimportpath->string[0] )
+	{
+		// TODO: load pak remap script for quakebasedirname here
+		FS_LoadPakRemapScript (dir, fs_quakemaingame->string);
+		FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakemaingame->string));
+
+		if ( fs_quakegamedir1->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quakegamedir1->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir1->string));
+			quakegame1_loaded = true;
+		}
+		if ( quakegame1_loaded && fs_quakegamedir2->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quakegamedir2->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir2->string));
+			quakegame2_loaded = true;
+		}
+		if ( quakegame2_loaded && fs_quakegamedir3->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quakegamedir3->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir3->string));
+			quakegame3_loaded = true;
+		}
+		if ( quakegame3_loaded && fs_quakegamedir4->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quakegamedir4->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir4->string));
+		}
+
+		// Free pak remap script, as we're done with it
+		FS_FreePakRemapScript ();
+	}
+
+#ifdef USE_Q2RR_IMPORT_PATH
+	// set Quake2RRImportPath if quake2rrimportpath_auto is enabled
+#ifdef _WIN32
+	if (fs_quake2rrimportpath_auto->integer) {
+		Sys_InitQ2RRSteamInstallDir ();	// auto-detect Q1 Steam install dir
+		Q_strncpyz (tempPath, sizeof(tempPath), Sys_Q2RRSteamInstallDir());
+		if (tempPath[0] != 0)
+			Cvar_ForceSet ("quake2_rr_importpath", tempPath);
+	}
+#endif
+	// check and load Quake2RRImportPath/id1 and quake2rrgame dirs
+	if ( fs_quake2rrimportpath->string[0] )
+	{
+		// TODO: load pak remap script for quakebasedirname here
+		FS_LoadPakRemapScript (dir, fs_quake2rrmaingame->string);
+		FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quake2rrimportpath->string, fs_quake2rrmaingame->string));
+
+		if ( fs_quake2rrgamedir1->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quake2rrgamedir1->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quake2rrimportpath->string, fs_quake2rrgamedir1->string));
+			quake2rrgame1_loaded = true;
+		}
+		if ( quake2rrgame1_loaded && fs_quake2rrgamedir2->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quake2rrgamedir2->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quake2rrimportpath->string, fs_quake2rrgamedir2->string));
+			quake2rrgame2_loaded = true;
+		}
+		if ( quake2rrgame2_loaded && fs_quake2rrgamedir3->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quake2rrgamedir3->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quake2rrimportpath->string, fs_quake2rrgamedir3->string));
+			quake2rrgame3_loaded = true;
+		}
+		if ( quake2rrgame3_loaded && fs_quake2rrgamedir4->string[0] ) {
+			FS_LoadPakRemapScript (dir, fs_quake2rrgamedir4->string);
+			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quake2rrimportpath->string, fs_quake2rrgamedir4->string));
+		}
+
+		// Free pak remap script, as we're done with it
+		FS_FreePakRemapScript ();
+	}
+#endif	// USE_Q2RR_IMPORT_PATH
 }
 
 
@@ -3270,7 +3518,6 @@ void FS_SetGamedir (const char *dir)
 {
 	fsSearchPath_t	*next;
 	qboolean		basegame1_loaded = false, basegame2_loaded = false;
-	qboolean		quakegame1_loaded = false, quakegame2_loaded = false, quakegame3_loaded = false;
 
 	if ( strstr(dir, "..") || strstr(dir, "/")
 		|| strstr(dir, "\\") || strstr(dir, ":") )
@@ -3283,6 +3530,7 @@ void FS_SetGamedir (const char *dir)
 	// check our basegame/quakegame cvars
 	//
 	FS_CheckBaseGameVars (dir);
+	FS_CheckImportGameVars (dir);
 
 	//
 	// free up any current game dir info
@@ -3365,36 +3613,8 @@ void FS_SetGamedir (const char *dir)
 			FS_AddGameDirectory (va("%s/%s", fs_cddir->string, dir) );
 		FS_AddGameDirectory (va("%s/%s", fs_basedir->string, dir) );
 
-		// check and load QuakeImportPath/id1 and quakegame dirs
-		if ( fs_quakeimportpath->string[0] )
-		{
-			// TODO: load pak remap script for quakebasedirname here
-			FS_LoadPakRemapScript (dir, fs_quakemaingame->string);
-			FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakemaingame->string));
-
-			if ( fs_quakegamedir1->string[0] ) {
-				FS_LoadPakRemapScript (dir, fs_quakegamedir1->string);
-				FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir1->string));
-				quakegame1_loaded = true;
-			}
-			if ( quakegame1_loaded && fs_quakegamedir2->string[0] ) {
-				FS_LoadPakRemapScript (dir, fs_quakegamedir2->string);
-				FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir2->string));
-				quakegame2_loaded = true;
-			}
-			if ( quakegame2_loaded && fs_quakegamedir3->string[0] ) {
-				FS_LoadPakRemapScript (dir, fs_quakegamedir3->string);
-				FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir3->string));
-				quakegame3_loaded = true;
-			}
-			if ( quakegame3_loaded && fs_quakegamedir4->string[0] ) {
-				FS_LoadPakRemapScript (dir, fs_quakegamedir4->string);
-				FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakegamedir4->string));
-			}
-
-			// Free pak remap script, as we're done with it
-			FS_FreePakRemapScript ();
-		}
+		// load the Quake import paks
+		FS_AddQuakeImportGame (dir);
 
 		// set our savegame/download dirs with Sys_PrefDir() and baseq2
 #ifdef USE_SAVEGAMEDIR

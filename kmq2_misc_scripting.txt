@@ -48,6 +48,8 @@ modInfo
 	baseGame	"xatrix"
 	baseGame2	"rogue"
 	baseGame3	"zaero"
+	quakeImportPathAuto "1"
+	quakeRRImportPathAuto "1"
 	quakeImportPath "D:\Quake"
 	quakeMainGame	"id1"
 	quakeGame1		"hipnotic"
@@ -59,7 +61,10 @@ modInfo
 This script specifies that that the title of the mod is "Meadow Rumble II: Revenge of the Ovinomancer",
 that the game folder for the mod is named mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders.
 The latter is done by the menu internally setting the basegame, basegame2, and basegame3 cvars.
-It also mounts pak files in the id1, hipnotic, rogue, nehahra, and ad folders under the Quake import path D:\Quake.
+It also mounts pak files in the id1, hipnotic, rogue, nehahra, and ad folders under the Quake import path.
+For the Quake import path, it will first try to find the the Quake re-release Steam install path.
+If it can't find the Quake re-release Steam install path, it will then try to find the original Quake Steam install path.
+If it can't find the original Quake Steam install path, it will then use the path D:\Quake as the Quake import path.
 
 ================================
 

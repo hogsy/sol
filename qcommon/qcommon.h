@@ -1139,6 +1139,16 @@ void	*Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **lib
 void	Sys_FreeLibrary (void *libHandle);
 void	*Sys_GetProcAddress (void *libHandle, const char *funcName);
 
+// Knightmare- these init Q1/Q1RR/Q2RR Steam install dirs
+void Sys_InitQ1SteamInstallDir (void);
+void Sys_InitQ1RRSteamInstallDir (void);
+void Sys_InitQ2RRSteamInstallDir (void);
+
+// Knightmare- these return Steam install dirs of Q1/Q1RR/Q2RR, if available
+const char *Sys_Q1SteamInstallDir (void);
+const char *Sys_Q1RRSteamInstallDir (void);
+const char *Sys_Q2RRSteamInstallDir (void);
+
 // Knightmare- inits pref and download dirs
 //		Must be called after cvar fs_basegame is initialized in FS_InitFilesystem()
 void Sys_InitPrefDir (void);

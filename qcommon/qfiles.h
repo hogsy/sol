@@ -37,18 +37,18 @@ The .pak files are just a linear collapse of a directory tree
 
 typedef struct
 {
-	char	name[56];
-	int		filepos, filelen;
+	char				name[56];
+	unsigned int		filepos, filelen;
 } dpackfile_t;
 
 typedef struct
 {
-	int		ident;		// == IDPAKHEADER
-	int		dirofs;
-	int		dirlen;
+	unsigned int		ident;		// == IDPAKHEADER
+	unsigned int		dirofs;
+	unsigned int		dirlen;
 } dpackheader_t;
 
-#define	MAX_FILES_IN_PACK	4096
+#define	MAX_FILES_IN_PACK	16384	// Knightmare- was 4096, increased for Q2 re-release pak
 
 /*
 ========================================================================

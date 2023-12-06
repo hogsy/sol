@@ -43,6 +43,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	USE_SAVEGAMEDIR			// whether to use new fs_savegamedir/fs_downloaddir paths
 
+//#define USE_Q2RR_IMPORT_PATH	// whether to use Quake2 re-release import paths
+
 //
 // in memory
 //
@@ -51,15 +53,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Berserk's pk3 file support
 //
 
-typedef struct {
-	char			name[MAX_QPATH];
-	unsigned int	hash;				// To speed up searching
-	int				size;
-	int				offset;				// This is ignored in PK3 files
-	qboolean		ignore;				// Whether this file should be ignored
-	qboolean		isRemapped;			// Whether this file is renamed via an import list
-} fsPackFile_t;
-
 typedef struct fsLink_s {
 	char			*from;
 	int				length;
@@ -67,6 +60,14 @@ typedef struct fsLink_s {
 	struct fsLink_s	*next;
 } fsLink_t;
 
+typedef struct {
+	char			name[MAX_QPATH];
+	unsigned int	hash;				// To speed up searching
+	unsigned int	size;
+	unsigned int	offset;				// This is ignored in PK3 files
+	qboolean		ignore;				// Whether this file should be ignored
+	qboolean		isRemapped;			// Whether this file is renamed via an import list
+} fsPackFile_t;
 
 typedef struct {
 	char			name[MAX_OSPATH];
@@ -129,12 +130,25 @@ cvar_t	*fs_basegamedir1;
 cvar_t	*fs_basegamedir2;
 cvar_t	*fs_basegamedir3;	// So we can mount Rogue, Xatrix, and Zaero assets at once
 cvar_t	*fs_gamedirvar;
-cvar_t	*fs_quakeimportpath;	// Install path of Quake1 for content mounting, id1 folder paks are automatically added
-cvar_t	*fs_quakemaingame;		// Name override of Quake1 id1 folder, to allow mounting content for other Quake1 engine games such as Hexen2
-cvar_t	*fs_quakegamedir1;		// Additional gamedirs for mounting the Quake mission packs and mods' .pak files
+cvar_t	*fs_quakeimportpath_auto;		// Whether to auto-detect Quake1 Steam install path
+cvar_t	*fs_quakerrimportpath_auto;		// Whether to auto-detect Quake1RR Steam install path
+cvar_t	*fs_quakeimportpath;			// Install path of Quake1 for content mounting, id1 folder paks are automatically added
+cvar_t	*fs_quakemaingame;				// Name override of Quake1 id1 folder, to allow mounting content for other Quake1 engine games such as Hexen2
+cvar_t	*fs_quakegamedir1;				// Additional gamedirs for mounting the Quake mission packs and mods' .pak files
 cvar_t	*fs_quakegamedir2;
 cvar_t	*fs_quakegamedir3;
 cvar_t	*fs_quakegamedir4;
+
+#ifdef USE_Q2RR_IMPORT_PATH
+cvar_t	*fs_quake2rrimportpath_auto;	// Whether to auto-detect Quake2RR Steam install path
+cvar_t	*fs_quake2rrimportpath;			// Install path of Quake2RR for content mounting, baseq2 folder paks are automatically added
+cvar_t	*fs_quake2rrmaingame;			// Name override of Quake2RR baseq2 folder, to allow mounting content for other Quake2 engine games
+cvar_t	*fs_quake2rrgamedir1;			// Additional gamedirs for mounting Quake2RR mods' .pak files
+cvar_t	*fs_quake2rrgamedir2;
+cvar_t	*fs_quake2rrgamedir3;
+cvar_t	*fs_quake2rrgamedir4;
+#endif	// USE_Q2RR_IMPORT_PATH
+
 cvar_t	*fs_debug;
 cvar_t	*fs_xatrixgame;
 cvar_t	*fs_roguegame;

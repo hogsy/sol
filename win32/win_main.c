@@ -69,6 +69,10 @@ static HANDLE		qwclsemaphore;
 int			argc;
 char		*argv[MAX_NUM_ARGVS];
 
+static char Q1_install_path[MAX_OSPATH];
+static char Q1RR_install_path[MAX_OSPATH];
+static char Q2RR_install_path[MAX_OSPATH];
+
 #define NT5_SAVEDIR "My Games/KMQuake2"
 #define NT6_SAVEDIR "KMQuake2"
 #define NT5_DLDIR "My Downloads/KMQuake2"
@@ -1782,6 +1786,277 @@ static void ReplaceBackSlashes (char *path)
 	}
 }
 
+/*
+=======================================================================
+	STEAM INSTALL PATH DETECTION
+	Based on code by Paril
+=======================================================================
+*/
+
+#define	QUAKE1_STEAM_APP_ID "2310"
+#define QUAKE1_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake"
+#define QUAKE1RR_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake\\rerelease"
+#define	QUAKE2_STEAM_APP_ID "2320"
+#define	QUAKE2RR_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake 2\\rerelease"
+
+#if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
+#define REGISTRY_STEAM_INSTALL_PATH "SOFTWARE\\WOW6432Node\\Valve\\Steam\\"
+#define REGISTRY_GOG_Q1_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q1RR_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q2RR_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\1947927225"
+#else
+#define REGISTRY_STEAM_INSTALL_PATH "SOFTWARE\\Valve\\Steam\\"
+#define REGISTRY_GOG_Q1_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q1RR_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q2RR_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\1947927225"
+#endif
+
+/*
+==================
+Sys_ParseSteamLibraryFolders
+==================
+*/
+static char *Sys_ParseSteamLibraryFolders (const char *fileContents, size_t contentsLen, const char *relPath, const char *appID)
+{
+	int			libraryNum = 0;
+	char		*s = NULL, *token = NULL;
+	char		*key = NULL, *value = NULL;
+	char		keySave[128];
+	static char	libraryPath[MAX_OSPATH];
+	static char	gamePath[MAX_OSPATH];
+	qboolean	foundPath = false;
+
+	if ( !fileContents || (fileContents[0] == 0) || !relPath || (relPath[0] == 0) || !appID || (appID[0] == 0) )
+		return NULL;
+
+	gamePath[0] = 0;
+	s = (char *)fileContents;
+
+	if (strcmp(COM_ParseExt(&s, true), "libraryfolders") != 0)
+		return NULL;
+	if (strcmp(COM_ParseExt(&s, true), "{") != 0)
+		return NULL;
+
+	while (s < (fileContents + contentsLen))
+	{
+		// get library number, check if at end of file
+		token = COM_ParseExt(&s, true);
+		if ( !token || (token[0] == 0) || !strcmp(token, "}") )
+			break;
+		libraryNum = atoi(token);
+
+		// get opening brace for this library section
+		token = COM_ParseExt(&s, true);
+		if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
+			break;
+
+	//	Com_Printf ("Sys_ParseSteamLibraryFolders: Parsing library VDF (%i)...\n", libraryNum);
+
+		// parse key/value pairs for this library
+		while (s < (fileContents + contentsLen))
+		{
+			key = COM_ParseExt(&s, true);
+			if ( !key || (key[0] == 0) || !strcmp(key, "}") ) {
+				break;
+			}
+			else if ( !strcmp(key, "path") ) {
+				value = COM_ParseExt(&s, true);
+				Q_strncpyz (libraryPath, sizeof(libraryPath), value);
+			//	Com_Printf ("Sys_ParseSteamLibraryFolders: found library path of %s\n", libraryPath);
+			}
+			else if ( !strcmp(key, "apps") )
+			{
+			//	Com_Printf ("Sys_ParseSteamLibraryFolders: Parsing apps list for library path %s...\n", libraryPath);
+				// get opening brace for this apps section
+				token = COM_ParseExt(&s, true);
+				if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
+					break;
+
+				// parse key/value pairs for this apps section
+				while (s < (fileContents + contentsLen))
+				{
+					key = COM_ParseExt(&s, true);
+					if ( !key || (key[0] == 0) || !strcmp(key, "}") )
+						break;
+
+					Q_strncpyz (keySave, sizeof(keySave), key);
+					value = COM_ParseExt(&s, true);
+
+					if ( !strcmp(keySave, appID) ) {
+						Q_strncpyz (gamePath, sizeof(gamePath), libraryPath);
+						Q_strncatz (gamePath, sizeof(gamePath), relPath);
+						foundPath = true;
+					//	Com_Printf ("Sys_ParseSteamLibraryFolders: found matching appID\n");
+					}
+
+					if ( foundPath && (gamePath[0] != 0) )
+						break;
+				}
+			}
+			else {
+				// just grab the value for this key pair
+				value = COM_ParseExt(&s, true);
+			}
+
+			if ( foundPath && (gamePath[0] != 0) )
+				break;
+		}
+
+		if ( foundPath && (gamePath[0] != 0) ) {
+		//	Com_Printf ("Sys_ParseSteamLibraryFolders: Found game path %s...\n", gamePath);
+			break;
+		}
+	}
+
+	if (gamePath[0] != 0)
+		return gamePath;
+	else
+		return NULL;
+}
+
+
+/*
+==================
+Sys_GetSteamInstallPath
+==================
+*/
+void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibraryPath, const char *steamAppID)
+{
+	LSTATUS	status;
+	char	folderPath[MAX_OSPATH];
+	DWORD	folderPathLen = MAX_OSPATH;
+	size_t	readLen;
+	size_t	fileSize;
+	char	*fileContents = NULL;
+	char	*gameInstallPath = NULL;
+	FILE	*libraryFoldersFile = NULL;
+
+	if ( !path || (pathSize < 1) || !steamLibraryPath || (steamLibraryPath[0] == 0) || !steamAppID || (steamAppID[0] == 0) )
+		return;
+
+	path[0] = 0;
+
+	status = RegGetValueA(HKEY_LOCAL_MACHINE, REGISTRY_STEAM_INSTALL_PATH, "InstallPath", RRF_RT_REG_SZ, NULL, (PVOID) &folderPath, &folderPathLen);
+
+	if (status != ERROR_SUCCESS) {
+		Com_Printf ("Sys_GetSteamInstallPath: Error %lu finding Steam install path\n", GetLastError());
+		return;
+	}
+
+//	Com_Printf ("Sys_GetSteamInstallPath: Found Steam install path of %s\n", folderPath);
+
+	Q_strncatz (folderPath, sizeof(folderPath), "\\steamapps\\libraryfolders.vdf");
+	libraryFoldersFile = fopen(folderPath, "rb");
+
+	if (!libraryFoldersFile)
+		return;
+
+	fseek (libraryFoldersFile, 0L, SEEK_END);
+	fileSize = ftell(libraryFoldersFile);
+	fseek (libraryFoldersFile, 0L, SEEK_SET);
+
+	fileContents = Z_Malloc(fileSize + 1);
+
+	readLen = fread (fileContents, 1, fileSize, libraryFoldersFile);
+	fclose (libraryFoldersFile);
+	libraryFoldersFile = NULL;
+
+	if (readLen != fileSize) {
+		Com_Printf ("Sys_GetSteamInstallPath: Error %lu reading libraryfolders.vdf\n", GetLastError());
+		Z_Free (fileContents);
+		return;
+	}
+
+//	Com_Printf ("Sys_GetSteamInstallPath: Parsing %s (size %i)...\n", folderPath, fileSize);
+	gameInstallPath = Sys_ParseSteamLibraryFolders (fileContents, readLen, steamLibraryPath, steamAppID);
+
+	if ( gameInstallPath && (gameInstallPath[0] != 0) ) {	// copy off install path
+		Q_strncpyz (path, pathSize, gameInstallPath);
+	//	Com_Printf ("Sys_GetSteamInstallPath: Found Steam install path of %s\n", path);
+	}
+
+	Z_Free (fileContents);
+}
+
+
+/*
+==================
+Sys_InitQ1SteamInstallDir
+==================
+*/
+void Sys_InitQ1SteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q1_install_path, sizeof(Q1_install_path), QUAKE1_STEAM_LIBRARY_PATH, QUAKE1_STEAM_APP_ID);
+
+	if (Q1_install_path[0] != 0)
+		Com_Printf ("Found Q1 Steam install path of %s\n", Q1_install_path);
+	// TODO: if above fails, check for GOG Q1 intstall path (if available)
+}
+
+
+/*
+==================
+Sys_InitQ1RRSteamInstallDir
+==================
+*/
+void Sys_InitQ1RRSteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q1RR_install_path, sizeof(Q1RR_install_path), QUAKE1RR_STEAM_LIBRARY_PATH, QUAKE1_STEAM_APP_ID);
+
+	if (Q1RR_install_path[0] != 0)
+		Com_Printf ("Found Q1RR Steam install path of %s\n", Q1RR_install_path);
+	// TODO: if above fails, check for GOG Q1RR intstall path (if available)
+}
+
+
+/*
+==================
+Sys_InitQ2RRSteamInstallDir
+==================
+*/
+void Sys_InitQ2RRSteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q2RR_install_path, sizeof(Q2RR_install_path), QUAKE2RR_STEAM_LIBRARY_PATH, QUAKE2_STEAM_APP_ID);
+
+	if (Q2RR_install_path[0] != 0)
+		Com_Printf ("Found Q2RR Steam install path of %s\n", Q2RR_install_path);
+	// TODO: if above fails, check for GOG Q2RR intstall path (if available)
+}
+
+
+/*
+==================
+Sys_Q1SteamInstallDir
+==================
+*/
+const char *Sys_Q1SteamInstallDir (void)
+{
+	return Q1_install_path;
+}
+
+
+/*
+==================
+Sys_Q1RRSteamInstallDir
+==================
+*/
+const char *Sys_Q1RRSteamInstallDir (void)
+{
+	return Q1RR_install_path;
+}
+
+
+/*
+==================
+Sys_Q2RRSteamInstallDir
+==================
+*/
+const char *Sys_Q2RRSteamInstallDir (void)
+{
+	return Q2RR_install_path;
+}
+
+//=======================================================================
 
 /*
 ==================

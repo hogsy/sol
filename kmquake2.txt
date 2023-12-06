@@ -135,7 +135,15 @@ How To Run
 	
 	+set basegame xatrix +set basegame2 rogue +set basegame3 zaero
 
-	To mount assets from Quake1 using a pak remap script (see kmq2_misc_scripting.txt), add 
+	To mount assets from the Steam re-release version of Quake1 using a pak remap script (see kmq2_misc_scripting.txt), add 
+	
+	+set quake_rr_importpath_auto 1
+	
+	For the original Steam version, add
+	
+	+set quakeimportpath_auto 1
+	
+	For non-Steam versions of Quake1, add
 	
 	+set quakeimportpath X:\Quake
 	
