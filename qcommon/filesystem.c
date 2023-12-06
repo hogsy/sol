@@ -1816,7 +1816,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 	// get size of remap script
 	fseek (scriptFile, 0L, SEEK_END);
 	fileSize = ftell(scriptFile);
-	rewind (scriptFile);
+	fseek (scriptFile, 0L, SEEK_SET);
 
 	// allocate file size + 1 for null terminator
 	bufSize = fileSize + 1;
@@ -2136,20 +2136,20 @@ the list so they override previous pack files.
 */
 fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 {
-	int					numFiles, i;
-	fsPackFile_t		*files;
-	fsPack_t			*pack;
-	FILE				*handle;
-	dpackheader_t		header;
-	static dpackfile_t	info[MAX_FILES_IN_PACK];	// made this static to avoid stack overflow
-	unsigned			contentFlags = 0;
-	int					numRemappedItems = 0;
+	int				numFiles, i;
+	fsPackFile_t	*files;
+	fsPack_t		*pack;
+	FILE			*handle;
+	dpackheader_t	header;
+	dpackfile_t		*info = NULL;		// made this dynamically allocated to avoid stack overflow
+	unsigned		contentFlags = 0;
+	int				numRemappedItems = 0;
 #ifdef BINARY_PACK_SEARCH
-	char				**remapNames = NULL;
-	int					*sortIndices;
-	unsigned int		*sortHashes;
+	char			**remapNames = NULL;
+	int				*sortIndices;
+	unsigned int	*sortHashes;
 #else
-	char				remapName[MAX_QPATH];
+	char			remapName[MAX_QPATH];
 #endif	// BINARY_PACK_SEARCH
 
 	handle = fopen(packPath, "rb");
@@ -2158,8 +2158,7 @@ fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 
 	fread(&header, 1, sizeof(dpackheader_t), handle);
 	
-	if (LittleLong(header.ident) != IDPAKHEADER)
-	{
+	if (LittleLong(header.ident) != IDPAKHEADER) {
 		fclose(handle);
 		Com_Error(ERR_FATAL, "FS_LoadPAK: %s is not a pack file", packPath);
 	}
@@ -2168,12 +2167,12 @@ fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 	header.dirlen = LittleLong(header.dirlen);
 
 	numFiles = header.dirlen / sizeof(dpackfile_t);
-	if (numFiles > MAX_FILES_IN_PACK || numFiles == 0)
-	{
+	if (numFiles == 0) {
 		fclose(handle);
 		Com_Error(ERR_FATAL, "FS_LoadPAK: %s has %i files", packPath, numFiles);
 	}
 
+	info = Z_Malloc(header.dirlen);
 	files = Z_Malloc(numFiles * sizeof(fsPackFile_t));
 
 	fseek(handle, header.dirofs, SEEK_SET);
@@ -2276,6 +2275,8 @@ fsPack_t *FS_LoadPAK (const char *packPath, qboolean isQuakeImport)
 	}
 #endif	// BINARY_PACK_SEARCH
 
+	Z_Free (info);
+
 	pack = Z_Malloc(sizeof(fsPack_t));
 	Q_strncpyz(pack->name, sizeof(pack->name), packPath);
 	pack->pak = handle;
@@ -2347,14 +2348,13 @@ fsPack_t *FS_LoadPK3 (const char *packPath)
 	if (!handle)
 		return NULL;
 
-	if (unzGetGlobalInfo(handle, &global) != UNZ_OK)
-	{
+	if (unzGetGlobalInfo(handle, &global) != UNZ_OK) {
 		unzClose(handle);
 		Com_Error(ERR_FATAL, "FS_LoadPK3: %s is not a pack file", packPath);
 	}
+
 	numFiles = global.number_entry;
-	if (numFiles > MAX_FILES_IN_PACK || numFiles == 0)
-	{
+	if (numFiles == 0) {
 		unzClose(handle);
 		Com_Error(ERR_FATAL, "FS_LoadPK3: %s has %i files", packPath, numFiles);
 	}

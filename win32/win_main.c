@@ -1793,23 +1793,21 @@ static void ReplaceBackSlashes (char *path)
 =======================================================================
 */
 
-#define	QUAKE1_STEAM_APP_ID "2310"
+#define QUAKE1_STEAM_APP_ID "2310"
 #define QUAKE1_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake"
 #define QUAKE1RR_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake\\rerelease"
-#define	QUAKE2_STEAM_APP_ID "2320"
-#define	QUAKE2RR_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake 2\\rerelease"
+#define QUAKE2_STEAM_APP_ID "2320"
+#define QUAKE2RR_STEAM_LIBRARY_PATH "\\steamapps\\common\\Quake 2\\rerelease"
 
-#if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
-#define REGISTRY_STEAM_INSTALL_PATH "SOFTWARE\\WOW6432Node\\Valve\\Steam\\"
-#define REGISTRY_GOG_Q1_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
-#define REGISTRY_GOG_Q1RR_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
-#define REGISTRY_GOG_Q2RR_INSTALL_PATH "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\1947927225"
-#else
-#define REGISTRY_STEAM_INSTALL_PATH "SOFTWARE\\Valve\\Steam\\"
-#define REGISTRY_GOG_Q1_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\?"
-#define REGISTRY_GOG_Q1RR_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\?"
-#define REGISTRY_GOG_Q2RR_INSTALL_PATH "SOFTWARE\\GOG.com\\Games\\1947927225"
-#endif
+#define REGISTRY_STEAM_INSTALL_PATH_X64 "SOFTWARE\\WOW6432Node\\Valve\\Steam\\"
+#define REGISTRY_GOG_Q1_INSTALL_PATH_X64 "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q1RR_INSTALL_PATH_X64 "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q2RR_INSTALL_PATH_X64 "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\1947927225"
+
+#define REGISTRY_STEAM_INSTALL_PATH_X86 "SOFTWARE\\Valve\\Steam\\"
+#define REGISTRY_GOG_Q1_INSTALL_PATH_X86 "SOFTWARE\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q1RR_INSTALL_PATH_X86 "SOFTWARE\\GOG.com\\Games\\?"
+#define REGISTRY_GOG_Q2RR_INSTALL_PATH_X86 "SOFTWARE\\GOG.com\\Games\\1947927225"
 
 /*
 ==================
@@ -1922,21 +1920,26 @@ Sys_GetSteamInstallPath
 */
 void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibraryPath, const char *steamAppID)
 {
-	LSTATUS	status;
-	char	folderPath[MAX_OSPATH];
-	DWORD	folderPathLen = MAX_OSPATH;
-	size_t	readLen;
-	size_t	fileSize;
-	char	*fileContents = NULL;
-	char	*gameInstallPath = NULL;
-	FILE	*libraryFoldersFile = NULL;
+	SYSTEM_INFO	sysInfo;
+	LSTATUS		status;
+	char		folderPath[MAX_OSPATH];
+	DWORD		folderPathLen = MAX_OSPATH;
+	size_t		readLen;
+	size_t		fileSize;
+	char		*fileContents = NULL;
+	char		*gameInstallPath = NULL;
+	FILE		*libraryFoldersFile = NULL;
 
 	if ( !path || (pathSize < 1) || !steamLibraryPath || (steamLibraryPath[0] == 0) || !steamAppID || (steamAppID[0] == 0) )
 		return;
 
 	path[0] = 0;
 
-	status = RegGetValueA(HKEY_LOCAL_MACHINE, REGISTRY_STEAM_INSTALL_PATH, "InstallPath", RRF_RT_REG_SZ, NULL, (PVOID) &folderPath, &folderPathLen);
+	GetSystemInfo(&sysInfo);
+	if (sysInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+		status = RegGetValueA(HKEY_LOCAL_MACHINE, REGISTRY_STEAM_INSTALL_PATH_X64, "InstallPath", RRF_RT_REG_SZ, NULL, (PVOID) &folderPath, &folderPathLen);
+	else
+		status = RegGetValueA(HKEY_LOCAL_MACHINE, REGISTRY_STEAM_INSTALL_PATH_X86, "InstallPath", RRF_RT_REG_SZ, NULL, (PVOID) &folderPath, &folderPathLen);
 
 	if (status != ERROR_SUCCESS) {
 		Com_Printf ("Sys_GetSteamInstallPath: Error %lu finding Steam install path\n", GetLastError());
