@@ -1283,16 +1283,16 @@ keyBindListHandle_t ui_customKeyBindList;
 UI_CountKeyBinds
 ==========================
 */
-void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script)
+void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script, char *buffer, int bufSize)
 {
 	char		*p, *tok;
 	qboolean	validBindItem;
 
-	if ( !handle || !script )
+	if ( !handle || !script || !buffer )
 		return;
 
 	p = *script;
-	while (1)
+	while (p < (buffer + bufSize))
 	{
 		tok = COM_ParseExt (&p, true);
 		if (!tok[0]) {
@@ -1313,7 +1313,7 @@ void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script)
 
 			if ( !Q_stricmp(tok, "{") )
 			{
-				while (1)
+				while (p < (buffer + bufSize))
 				{
 					tok = COM_ParseExt (&p, true);
 					if (!tok[0]) {
@@ -1347,14 +1347,14 @@ void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script)
 UI_ParseKeyBind
 ==========================
 */
-qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
+qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script, char *buffer, int bufSize)
 {
 	char		command[MAX_OSPATH] = {0};
 	char		display[MAX_OSPATH] = {0};
 	char		*tok;
 	qboolean	gotCommand = false, gotDisplay = false;
 
-	if ( !handle || !script )
+	if ( !handle || !script || !buffer )
 		return false;
 
 	if (handle->numKeyBinds == handle->maxKeyBinds) {
@@ -1370,7 +1370,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
 
 	if ( !Q_stricmp(tok, "{") )
 	{
-		while (1)
+		while ( (*script) < (buffer + bufSize) )
 		{
 			tok = COM_ParseExt (script, true);
 			if (!tok[0]) {
@@ -1429,7 +1429,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script)
 UI_ParseKeyBindList
 ==========================
 */
-qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
+qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer, int bufSize)
 {
 	char		*p, *tok;
 	qboolean	foundKeyBindList = false;
@@ -1438,7 +1438,7 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
 		return false;
 
 	p = buffer;
-	while (1)
+	while (p < (buffer + bufSize) )
 	{
 		tok = COM_ParseExt (&p, true);
 		if (!tok[0])
@@ -1460,12 +1460,12 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
 			}
 
 			// count num of keybinds and alloc memory accordingly
-			UI_CountKeyBinds (handle, &p);
+			UI_CountKeyBinds (handle, &p, buffer, bufSize);
 		//	Com_Printf ("UI_ParseKeyBindList: allocating memory for %i 'keyBind' items in keybind list %s\n", handle->maxKeyBinds, handle->fileName);
 			handle->bindList = UI_Malloc(sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
 		//	memset (handle->bindList, 0, sizeof(keyBindSubitem_t) * (handle->maxKeyBinds+1));
 
-			while (1)
+			while (p < (buffer + bufSize))
 			{
 				tok = COM_ParseExt (&p, true);
 				if (!tok[0]) {
@@ -1475,7 +1475,7 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer)
 				if ( !Q_stricmp(tok, "}") )
 					break;
 				else if ( !Q_strcasecmp(tok, "keyBind") ) {
-					if ( !UI_ParseKeyBind(handle, &p) )
+					if ( !UI_ParseKeyBind(handle, &p, buffer, bufSize) )
 						return false;
 				}
 				else {
@@ -1502,21 +1502,27 @@ UI_LoadKeyBindListFromFile
 */
 void UI_LoadKeyBindListFromFile (keyBindListHandle_t *handle)
 {
-	int		i;
+	int		i, bufSize;
 	char	*buffer;
 
 	if ( !handle || !handle->fileName || (strlen(handle->fileName) < 1) )
 		return;
 
-	FS_LoadFile (handle->fileName, (void **)&buffer);
-	if (!buffer) {
+	bufSize = FS_LoadFile (handle->fileName, (void **)&buffer);
+	if ( !buffer ) {
 		// failed to load, keep bindlist if already loaded
 		Com_Printf ("UI_LoadKeyBindListFromFile: couldn't load %s\n", handle->fileName);
 		return;
 	}
+	if (bufSize < 1) {
+		// 0 size file, keep bindlist if already loaded
+		Com_Printf ("UI_LoadKeyBindListFromFile: %s has 0 size\n", handle->fileName);
+		FS_FreeFile (buffer);
+		return;
+	}
 
 	// Parse it
-	if ( UI_ParseKeyBindList(handle, buffer) ) {
+	if ( UI_ParseKeyBindList(handle, buffer, bufSize) ) {
 		Com_Printf ("UI_LoadKeyBindListFromFile: loaded keyBindList %s with %i keyBinds\n", handle->fileName, handle->numKeyBinds);
 	}
 	else {	// handle parse failure

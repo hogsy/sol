@@ -82,11 +82,11 @@ char *Hud_NameForDrawItem (hudDrawItem_t *drawItem)
 Hud_Parse_Variant
 ================
 */
-qboolean Hud_Parse_Variant (hudVariant_t *variant, char **script)
+qboolean Hud_Parse_Variant (hudVariant_t *variant, char **script, char *buffer, int bufSize)
 {
 	char		*tok;
 
-	if (!variant)
+	if ( !variant || !script || !buffer )
 		return false;
 
 	tok = COM_ParseExt (script, false);
@@ -102,11 +102,14 @@ qboolean Hud_Parse_Variant (hudVariant_t *variant, char **script)
 Hud_Parse_SkipIfStat
 ================
 */
-qboolean Hud_Parse_SkipIfStat (hudSkipIfStat_t *skipIfStat, char **script)
+qboolean Hud_Parse_SkipIfStat (hudSkipIfStat_t *skipIfStat, char **script, char *buffer, int bufSize)
 {
 	char		*tok;
 	int			cmp = 0;
 	qboolean	nextCmp;
+
+	if ( !skipIfStat || !script || !buffer )
+		return false;
 
 	do
 	{
@@ -170,11 +173,11 @@ qboolean Hud_Parse_SkipIfStat (hudSkipIfStat_t *skipIfStat, char **script)
 Hud_Parse_Int
 ================
 */
-qboolean Hud_Parse_Int (int *value, char **script)
+qboolean Hud_Parse_Int (int *value, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 
-	if (!value)
+	if ( !value || !script || !buffer )
 		return false;
 
 	tok = COM_ParseExt (script, false);
@@ -191,11 +194,11 @@ qboolean Hud_Parse_Int (int *value, char **script)
 Hud_Parse_Float
 ================
 */
-qboolean Hud_Parse_Float (float *value, char **script)
+qboolean Hud_Parse_Float (float *value, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 
-	if (!value)
+	if ( !value || !script || !buffer )
 		return false;
 
 	tok = COM_ParseExt (script, false);
@@ -211,12 +214,12 @@ qboolean Hud_Parse_Float (float *value, char **script)
 Hud_Parse_ColorVec
 ================
 */
-qboolean Hud_Parse_ColorVec (color_t *value, char **script)
+qboolean Hud_Parse_ColorVec (color_t *value, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 	int		i;
 
-	if (!value)
+	if ( !value || !script || !buffer )
 		return false;
 
 	for (i=0; i<4; i++)
@@ -236,9 +239,12 @@ qboolean Hud_Parse_ColorVec (color_t *value, char **script)
 Hud_ParseItem_Name
 ================
 */
-qboolean Hud_ParseItem_Name (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Name (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -255,9 +261,12 @@ qboolean Hud_ParseItem_Name (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Type
 ================
 */
-qboolean Hud_ParseItem_Type (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Type (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -285,13 +294,16 @@ qboolean Hud_ParseItem_Type (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Rect
 ================
 */
-qboolean Hud_ParseItem_Rect (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Rect (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<4; i++)
 	{
-		if ( !Hud_Parse_Int(&drawItem->rect[i], script) ) {
+		if ( !Hud_Parse_Int(&drawItem->rect[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Rect: missing parameters for 'rect' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -305,9 +317,12 @@ qboolean Hud_ParseItem_Rect (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_ScrAlign
 ================
 */
-qboolean Hud_ParseItem_ScrAlign (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_ScrAlign (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -351,13 +366,16 @@ qboolean Hud_ParseItem_ScrAlign (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Size
 ================
 */
-qboolean Hud_ParseItem_Size (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Size (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<2; i++)
 	{
-		if ( !Hud_Parse_Int(&drawItem->size[i], script) ) {
+		if ( !Hud_Parse_Int(&drawItem->size[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Size: missing parameters for 'size' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -371,10 +389,13 @@ qboolean Hud_ParseItem_Size (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_MinRange
 ================
 */
-qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -383,7 +404,7 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 	}
 	if ( !Q_strcasecmp(tok, "fromStat") )
 	{
-		if ( !Hud_Parse_Int(&drawItem->minRangeStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->minRangeStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -396,7 +417,7 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 			if ( !Q_strcasecmp(tok, "statClamp") )
 			{
 				for (i=0; i<2; i++) {
-					if ( !Hud_Parse_Int(&drawItem->minRangeStatClamp[i], script) ) {
+					if ( !Hud_Parse_Int(&drawItem->minRangeStatClamp[i], script, buffer, bufSize) ) {
 						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MinRange: missing 'statClamp' parameters for 'minRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 						return false;
 					}
@@ -405,7 +426,7 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 			}
 			else if ( Q_strcasecmp(tok, "statMult") == 0 )
 			{
-				if ( Hud_Parse_Float(&drawItem->minRangeStatMult, script) ) {
+				if ( Hud_Parse_Float(&drawItem->minRangeStatMult, script, buffer, bufSize) ) {
 					// do nothing here
 				}
 				else {
@@ -432,10 +453,13 @@ qboolean Hud_ParseItem_MinRange (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_MaxRange
 ================
 */
-qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -444,7 +468,7 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 	}
 	if ( !Q_strcasecmp(tok, "fromStat") )
 	{
-		if ( !Hud_Parse_Int(&drawItem->maxRangeStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->maxRangeStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -457,7 +481,7 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 			if ( !Q_strcasecmp(tok, "statClamp") )
 			{
 				for (i=0; i<2; i++) {
-					if ( !Hud_Parse_Int(&drawItem->maxRangeStatClamp[i], script) ) {
+					if ( !Hud_Parse_Int(&drawItem->maxRangeStatClamp[i], script, buffer, bufSize) ) {
 						Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_MaxRange: missing 'statClamp' parameters for 'maxRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 						return false;
 					}
@@ -466,7 +490,7 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 			}
 			else if ( Q_strcasecmp(tok, "statMult") == 0 )
 			{
-				if ( Hud_Parse_Float(&drawItem->maxRangeStatMult, script) ) {
+				if ( Hud_Parse_Float(&drawItem->maxRangeStatMult, script, buffer, bufSize) ) {
 					// do nothing here
 				}
 				else {
@@ -493,13 +517,16 @@ qboolean Hud_ParseItem_MaxRange (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Range
 ================
 */
-qboolean Hud_ParseItem_Range (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Range (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<2; i++)
 	{
-		if ( !Hud_Parse_Int(&drawItem->range[i], script) ) {
+		if ( !Hud_Parse_Int(&drawItem->range[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Range: missing parameters for 'range' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -513,13 +540,16 @@ qboolean Hud_ParseItem_Range (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Offset
 ================
 */
-qboolean Hud_ParseItem_Offset (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Offset (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<2; i++)
 	{
-		if ( !Hud_Parse_Float(&drawItem->offset[i], script) ) {
+		if ( !Hud_Parse_Float(&drawItem->offset[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Offset: missing parameters for 'offset' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -533,13 +563,16 @@ qboolean Hud_ParseItem_Offset (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Skew
 ================
 */
-qboolean Hud_ParseItem_Skew (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Skew (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<2; i++)
 	{
-		if ( !Hud_Parse_Float(&drawItem->skew[i], script) ) {
+		if ( !Hud_Parse_Float(&drawItem->skew[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Skew: missing parameters for 'skew' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -553,13 +586,16 @@ qboolean Hud_ParseItem_Skew (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Scroll
 ================
 */
-qboolean Hud_ParseItem_Scroll (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Scroll (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	int		i;
 
+	if ( !drawItem || !script || !buffer )
+		return false;
+
 	for (i=0; i<2; i++)
 	{
-		if ( !Hud_Parse_Float(&drawItem->scroll[i], script) ) {
+		if ( !Hud_Parse_Float(&drawItem->scroll[i], script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Scroll: missing parameters for 'scroll' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -573,9 +609,12 @@ qboolean Hud_ParseItem_Scroll (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Padding
 ================
 */
-qboolean Hud_ParseItem_Padding (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Padding (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
-	if ( !Hud_Parse_Float(&drawItem->padding, script) ) {
+	if ( !drawItem || !script || !buffer )
+		return false;
+
+	if ( !Hud_Parse_Float(&drawItem->padding, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Padding: missing parameter for 'padding' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 		return false;
 	}
@@ -588,9 +627,12 @@ qboolean Hud_ParseItem_Padding (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_FillDir
 ================
 */
-qboolean Hud_ParseItem_FillDir (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_FillDir (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -618,11 +660,14 @@ qboolean Hud_ParseItem_FillDir (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Color
 ================
 */
-qboolean Hud_ParseItem_Color (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Color (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 
-	if ( !Hud_Parse_ColorVec(&drawItem->color, script) ) {
+	if ( !drawItem || !script || !buffer )
+		return false;
+
+	if ( !Hud_Parse_ColorVec(&drawItem->color, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Color: missing parameters for 'color' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 		return false;
 	}
@@ -634,7 +679,7 @@ qboolean Hud_ParseItem_Color (hudDrawItem_t *drawItem, char **script)
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Color: expected 'blink', found '%s' instead in 'color' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
-		if ( !Hud_Parse_ColorVec(&drawItem->blinkColor, script) ) {
+		if ( !Hud_Parse_ColorVec(&drawItem->blinkColor, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Color: missing parameters for 'color' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -648,10 +693,13 @@ qboolean Hud_ParseItem_Color (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_ColorRange
 ================
 */
-qboolean Hud_ParseItem_ColorRange (hudDrawItem_t *drawItem, char **script, int type)
+qboolean Hud_ParseItem_ColorRange (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize, int type)
 {
 	char	*tok;
 	int		index;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	if (drawItem->numColorRanges == HUD_MAX_COLOR_RANGES) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRange: exceeded HUD_MAX_COLOR_RANGES for %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
@@ -664,9 +712,9 @@ qboolean Hud_ParseItem_ColorRange (hudDrawItem_t *drawItem, char **script, int t
 
 	index = drawItem->numColorRanges;
 	drawItem->colorRangeType = type;
-	if ( !Hud_Parse_Float(&drawItem->colorRanges[index].low, script) ||
-		 !Hud_Parse_Float(&drawItem->colorRanges[index].high, script) ||
-		 !Hud_Parse_ColorVec(&drawItem->colorRanges[index].color, script) ) {
+	if ( !Hud_Parse_Float(&drawItem->colorRanges[index].low, script, buffer, bufSize) ||
+		 !Hud_Parse_Float(&drawItem->colorRanges[index].high, script, buffer, bufSize) ||
+		 !Hud_Parse_ColorVec(&drawItem->colorRanges[index].color, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRange: missing parameters for 'addColorRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 		return false;
 	}
@@ -678,7 +726,7 @@ qboolean Hud_ParseItem_ColorRange (hudDrawItem_t *drawItem, char **script, int t
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRange: expected 'blink', found '%s' instead in 'addColorRange' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
-		if ( !Hud_Parse_ColorVec(&drawItem->colorRanges[index].blinkColor, script) ) {
+		if ( !Hud_Parse_ColorVec(&drawItem->colorRanges[index].blinkColor, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRange: missing parameters for 'addColorRange' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -693,11 +741,14 @@ qboolean Hud_ParseItem_ColorRange (hudDrawItem_t *drawItem, char **script, int t
 Hud_ParseItem_ColorRangeStat
 ================
 */
-qboolean Hud_ParseItem_ColorRangeStat (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_ColorRangeStat (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 
-	if ( !Hud_Parse_Int(&drawItem->colorRangeStat, script) ) {
+	if ( !drawItem || !script || !buffer )
+		return false;
+
+	if ( !Hud_Parse_Int(&drawItem->colorRangeStat, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRangeStat: missing parameters for 'colorRangeStat' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 		return false;
 	}
@@ -708,7 +759,7 @@ qboolean Hud_ParseItem_ColorRangeStat (hudDrawItem_t *drawItem, char **script)
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRangeStat: expected 'maxStat', found '%s' instead in 'colorRangeStat' in %s in hud script %s\n", tok, Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
-		if ( !Hud_Parse_Int(&drawItem->colorRangeMaxStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->colorRangeMaxStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_ColorRangeStat: missing parameters for 'colorRangeStat' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -722,11 +773,14 @@ qboolean Hud_ParseItem_ColorRangeStat (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_StatFlash
 ================
 */
-qboolean Hud_ParseItem_StatFlash (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_StatFlash (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
-	if ( !Hud_Parse_Int(&drawItem->statFlash.stat, script) || 
-		 !Hud_Parse_Int(&drawItem->statFlash.bit, script) ||
-		 !Hud_Parse_ColorVec(&drawItem->statFlash.color, script) ) {
+	if ( !drawItem || !script || !buffer )
+		return false;
+
+	if ( !Hud_Parse_Int(&drawItem->statFlash.stat, script, buffer, bufSize) || 
+		 !Hud_Parse_Int(&drawItem->statFlash.bit, script, buffer, bufSize) ||
+		 !Hud_Parse_ColorVec(&drawItem->statFlash.color, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_StatFlash: missing parameters for 'statFlash' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 		return false;
 	}
@@ -739,11 +793,11 @@ qboolean Hud_ParseItem_StatFlash (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_SkipIfStat
 ================
 */
-qboolean Hud_ParseItem_SkipIfStat (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_SkipIfStat (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	hudSkipIfStat_t		*skipIfStat;
 
-	if (!drawItem)
+	if ( !drawItem || !script || !buffer )
 		return false;
 
 	if (drawItem->numSkipIfStats == HUD_ITEM_MAX_SKIPIFSTATS) {
@@ -752,7 +806,7 @@ qboolean Hud_ParseItem_SkipIfStat (hudDrawItem_t *drawItem, char **script)
 	}
 	skipIfStat = &drawItem->skipIfStats[drawItem->numSkipIfStats++];
 
-	return Hud_Parse_SkipIfStat(skipIfStat, script);
+	return Hud_Parse_SkipIfStat(skipIfStat, script, buffer, bufSize);
 }
 
 
@@ -761,11 +815,14 @@ qboolean Hud_ParseItem_SkipIfStat (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Flags
 ================
 */
-qboolean Hud_ParseItem_Flags (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Flags (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
 
-	while (1)
+	if ( !drawItem || !script || !buffer )
+		return false;
+
+	while ( (*script) < (buffer + bufSize) )
 	{
 		tok = COM_ParseExt (script, false);
 		if (!tok[0])
@@ -807,9 +864,12 @@ qboolean Hud_ParseItem_Flags (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_String
 ================
 */
-qboolean Hud_ParseItem_String (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_String (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -818,7 +878,7 @@ qboolean Hud_ParseItem_String (hudDrawItem_t *drawItem, char **script)
 	}
 	if ( !Q_strcasecmp(tok, "fromStat") )
 	{
-		if ( !Hud_Parse_Int(&drawItem->stringStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->stringStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_String: missing parameters for 'string' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -839,9 +899,12 @@ qboolean Hud_ParseItem_String (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Number
 ================
 */
-qboolean Hud_ParseItem_Number (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Number (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -850,7 +913,7 @@ qboolean Hud_ParseItem_Number (hudDrawItem_t *drawItem, char **script)
 	}
 	if ( !Q_strcasecmp(tok, "fromStat") )
 	{
-		if ( !Hud_Parse_Int(&drawItem->numberStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->numberStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Number: missing parameters for 'number' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -868,9 +931,12 @@ qboolean Hud_ParseItem_Number (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Value
 ================
 */
-qboolean Hud_ParseItem_Value (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Value (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -879,7 +945,7 @@ qboolean Hud_ParseItem_Value (hudDrawItem_t *drawItem, char **script)
 	}
 	if ( !Q_strcasecmp(tok, "fromStat") )
 	{
-		if ( !Hud_Parse_Int(&drawItem->valueStat, script) ) {
+		if ( !Hud_Parse_Int(&drawItem->valueStat, script, buffer, bufSize) ) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_Value: missing parameters for 'value' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 			return false;
 		}
@@ -897,9 +963,12 @@ qboolean Hud_ParseItem_Value (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_Shader
 ================
 */
-qboolean Hud_ParseItem_Shader (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_Shader (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	Q_strncpyz (drawItem->shaderRenameSet, sizeof(drawItem->shaderRenameSet), "\0");
 	tok = COM_ParseExt (script, false);
@@ -951,9 +1020,12 @@ qboolean Hud_ParseItem_Shader (hudDrawItem_t *drawItem, char **script)
 Hud_ParseItem_ShaderMinus
 ================
 */
-qboolean Hud_ParseItem_ShaderMinus (hudDrawItem_t *drawItem, char **script)
+qboolean Hud_ParseItem_ShaderMinus (hudDrawItem_t *drawItem, char **script, char *buffer, int bufSize)
 {
 	char	*tok;
+
+	if ( !drawItem || !script || !buffer )
+		return false;
 
 	tok = COM_ParseExt (script, false);
 	if (!tok[0]) {
@@ -970,12 +1042,12 @@ qboolean Hud_ParseItem_ShaderMinus (hudDrawItem_t *drawItem, char **script)
 Hud_ParseDrawItem
 ================
 */
-qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script)
+qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script, char *buffer, int bufSize)
 {
 	hudDrawItem_t	*drawItem;
 	char			*tok;
 
-	if (!itemGroup)
+	if ( !itemGroup || !script || !buffer )
 		return false;
 
 	if (itemGroup->numDrawItems == HUD_MAX_DRAWITEMS) {
@@ -1007,7 +1079,7 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script)
 
 	if ( !Q_stricmp(tok, "{") )
 	{
-		while (1)
+		while ( (*script) < (buffer + bufSize) )
 		{
 			tok = COM_ParseExt (script, true);
 			if (!tok[0]) {
@@ -1018,127 +1090,127 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script)
 				break;
 			if ( !Q_strcasecmp(tok, "name") )
 			{
-				if ( !Hud_ParseItem_Name(drawItem, script) )
+				if ( !Hud_ParseItem_Name(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "type") )
 			{
-				if ( !Hud_ParseItem_Type(drawItem, script) )
+				if ( !Hud_ParseItem_Type(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "rect") )
 			{
-				if ( !Hud_ParseItem_Rect(drawItem, script) )
+				if ( !Hud_ParseItem_Rect(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "scralign") || !Q_strcasecmp(tok, "align") )
 			{
-				if ( !Hud_ParseItem_ScrAlign(drawItem, script) )
+				if ( !Hud_ParseItem_ScrAlign(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "size") )
 			{
-				if ( !Hud_ParseItem_Size(drawItem, script) )
+				if ( !Hud_ParseItem_Size(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "minRange") )
 			{
-				if ( !Hud_ParseItem_MinRange(drawItem, script) )
+				if ( !Hud_ParseItem_MinRange(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "maxRange") )
 			{
-				if ( !Hud_ParseItem_MaxRange(drawItem, script) )
+				if ( !Hud_ParseItem_MaxRange(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "range") )
 			{
-				if ( !Hud_ParseItem_Range(drawItem, script) )
+				if ( !Hud_ParseItem_Range(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "offset") )
 			{
-				if ( !Hud_ParseItem_Offset(drawItem, script) )
+				if ( !Hud_ParseItem_Offset(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "skew") )
 			{
-				if ( !Hud_ParseItem_Skew(drawItem, script) )
+				if ( !Hud_ParseItem_Skew(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "scroll") )
 			{
-				if ( !Hud_ParseItem_Scroll(drawItem, script) )
+				if ( !Hud_ParseItem_Scroll(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "padding") )
 			{
-				if ( !Hud_ParseItem_Padding(drawItem, script) )
+				if ( !Hud_ParseItem_Padding(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "fillDir") )
 			{
-				if ( !Hud_ParseItem_FillDir(drawItem, script) )
+				if ( !Hud_ParseItem_FillDir(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "color") )
 			{
-				if ( !Hud_ParseItem_Color(drawItem, script) )
+				if ( !Hud_ParseItem_Color(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "addColorRange") )
 			{
-				if ( !Hud_ParseItem_ColorRange(drawItem, script, HUD_RANGETYPE_ABSOLUTE) )
+				if ( !Hud_ParseItem_ColorRange(drawItem, script, buffer, bufSize, HUD_RANGETYPE_ABSOLUTE) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "addColorRangeRel") )
 			{
-				if ( !Hud_ParseItem_ColorRange(drawItem, script, HUD_RANGETYPE_RELATIVE) )
+				if ( !Hud_ParseItem_ColorRange(drawItem, script, buffer, bufSize, HUD_RANGETYPE_RELATIVE) )
 					return false;				
 			}
 			else if ( !Q_strcasecmp(tok, "colorRangeStat") )
 			{
-				if ( !Hud_ParseItem_ColorRangeStat(drawItem, script) )
+				if ( !Hud_ParseItem_ColorRangeStat(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "statFlash") )
 			{
-				if ( !Hud_ParseItem_StatFlash(drawItem, script) )
+				if ( !Hud_ParseItem_StatFlash(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "skipIfStat") )
 			{
-				if ( !Hud_ParseItem_SkipIfStat(drawItem, script) )
+				if ( !Hud_ParseItem_SkipIfStat(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "flags") )
 			{
-				if ( !Hud_ParseItem_Flags(drawItem, script) )
+				if ( !Hud_ParseItem_Flags(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "string") )
 			{
-				if ( !Hud_ParseItem_String(drawItem, script) )
+				if ( !Hud_ParseItem_String(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "number") )
 			{
-				if ( !Hud_ParseItem_Number(drawItem, script) )
+				if ( !Hud_ParseItem_Number(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "value") )
 			{
-				if ( !Hud_ParseItem_Value(drawItem, script) )
+				if ( !Hud_ParseItem_Value(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "shader") )
 			{
-				if ( !Hud_ParseItem_Shader(drawItem, script) )
+				if ( !Hud_ParseItem_Shader(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "shaderMinus") || !Q_strcasecmp(tok, "minus") )
 			{
-				if ( !Hud_ParseItem_ShaderMinus(drawItem, script) )
+				if ( !Hud_ParseItem_ShaderMinus(drawItem, script, buffer, bufSize) )
 					return false;
 			}
 			else {
@@ -1161,11 +1233,11 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script)
 Hud_ParseItemGroup_SkipIfStat
 ================
 */
-qboolean Hud_ParseItemGroup_Variant (hudItemGroup_t *itemGroup, char **script)
+qboolean Hud_ParseItemGroup_Variant (hudItemGroup_t *itemGroup, char **script, char *buffer, int bufSize)
 {
 	hudVariant_t		*variant;
 
-	if (!itemGroup)
+	if ( !itemGroup || !script || !buffer )
 		return false;
 
 	if (itemGroup->numVariants == HUD_GROUP_MAX_VARIANTS) {
@@ -1174,7 +1246,7 @@ qboolean Hud_ParseItemGroup_Variant (hudItemGroup_t *itemGroup, char **script)
 	}
 	variant = &itemGroup->variants[itemGroup->numVariants++];
 
-	return Hud_Parse_Variant(variant, script);
+	return Hud_Parse_Variant(variant, script, buffer, bufSize);
 }
 
 
@@ -1183,11 +1255,11 @@ qboolean Hud_ParseItemGroup_Variant (hudItemGroup_t *itemGroup, char **script)
 Hud_ParseItemGroup_SkipIfStat
 ================
 */
-qboolean Hud_ParseItemGroup_SkipIfStat (hudItemGroup_t *itemGroup, char **script)
+qboolean Hud_ParseItemGroup_SkipIfStat (hudItemGroup_t *itemGroup, char **script, char *buffer, int bufSize)
 {
 	hudSkipIfStat_t		*skipIfStat;
 
-	if (!itemGroup)
+	if ( !itemGroup || !script || !buffer )
 		return false;
 
 	if (itemGroup->numSkipIfStats == HUD_GROUP_MAX_SKIPIFSTATS) {
@@ -1196,7 +1268,7 @@ qboolean Hud_ParseItemGroup_SkipIfStat (hudItemGroup_t *itemGroup, char **script
 	}
 	skipIfStat = &itemGroup->skipIfStats[itemGroup->numSkipIfStats++];
 
-	return Hud_Parse_SkipIfStat(skipIfStat, script);
+	return Hud_Parse_SkipIfStat(skipIfStat, script, buffer, bufSize);
 }
 
 
@@ -1205,12 +1277,12 @@ qboolean Hud_ParseItemGroup_SkipIfStat (hudItemGroup_t *itemGroup, char **script
 Hud_ParseItemGroup
 ================
 */
-qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script)
+qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script, char *buffer, int bufSize)
 {
 	hudItemGroup_t	*itemGroup;
 	char			*tok;
 
-	if (!hudDef)
+	if ( !hudDef || !script || !buffer )
 		return false;
 
 	if (hudDef->numItemGroups == HUD_MAX_ITEMGROUPS) {
@@ -1230,7 +1302,7 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script)
 
 	if ( !Q_stricmp(tok, "{") )
 	{
-		while (1)
+		while ( (*script) < (buffer + bufSize) )
 		{
 			tok = COM_ParseExt (script, true);
 			if (!tok[0]) {
@@ -1251,15 +1323,15 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script)
 				itemGroup->onlyMultiPlayer = true;
 			}
 			else if ( !Q_strcasecmp(tok, "variant") ) {
-				if ( !Hud_ParseItemGroup_Variant(itemGroup, script) )
+				if ( !Hud_ParseItemGroup_Variant(itemGroup, script, buffer, bufSize) )
 					return false;				
 			}
 			else if ( !Q_strcasecmp(tok, "skipIfStat") ) {
-				if ( !Hud_ParseItemGroup_SkipIfStat(itemGroup, script) )
+				if ( !Hud_ParseItemGroup_SkipIfStat(itemGroup, script, buffer, bufSize) )
 					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "drawItem") || !Q_strcasecmp(tok, "itemDef") ) {
-				if ( !Hud_ParseDrawItem(itemGroup, script) )
+				if ( !Hud_ParseDrawItem(itemGroup, script, buffer, bufSize) )
 					return false;
 			}
 			else {
@@ -1282,11 +1354,11 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script)
 Hud_CountRenameItemDef
 ================
 */
-qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script)
+qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script, char *buffer, int bufSize)
 {
 	char		*tok;
 
-	if (!renameSet)
+	if ( !renameSet || !script || !buffer )
 		return false;
 
 	tok = COM_ParseExt (script, true);
@@ -1297,7 +1369,7 @@ qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script)
 
 	if ( !Q_stricmp(tok, "{") )
 	{
-		while (1)
+		while ( (*script) < (buffer + bufSize) )
 		{
 			tok = COM_ParseExt (script, true);
 			if (!tok[0]) {
@@ -1322,15 +1394,15 @@ qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script)
 Hud_CountRenameItems
 ================
 */
-void Hud_CountRenameItems (hudRenameSet_t *renameSet, char **buffer)
+void Hud_CountRenameItems (hudRenameSet_t *renameSet, char **script, char *buffer, int bufSize)
 {
 	char	*p, *tok;
 
-	if (!renameSet)
+	if ( !renameSet || !script || !buffer )
 		return;
 
-	p = *buffer;
-	while (1)
+	p = *script;
+	while ( p < (buffer + bufSize) )
 	{
 		tok = COM_ParseExt (&p, true);
 		if (!tok[0]) {
@@ -1347,7 +1419,7 @@ void Hud_CountRenameItems (hudRenameSet_t *renameSet, char **buffer)
 			}
 		}
 		else if ( !Q_strcasecmp(tok, "renameItemDef") ) {
-			if ( !Hud_CountRenameItemDef(renameSet, &p) )
+			if ( !Hud_CountRenameItemDef(renameSet, &p, buffer, bufSize) )
 				return;
 			renameSet->maxRenameItems++;
 		}
@@ -1364,12 +1436,12 @@ void Hud_CountRenameItems (hudRenameSet_t *renameSet, char **buffer)
 Hud_ParseRenameItemDef
 ================
 */
-qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script)
+qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script, char *buffer, int bufSize)
 {
 	hudRenameItem_t	*renameItem;
 	char			*tok;
 
-	if (!renameSet)
+	if ( !renameSet || !script || !buffer )
 		return false;
 
 	if (renameSet->numRenameItems == renameSet->maxRenameItems) {
@@ -1386,7 +1458,7 @@ qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script)
 
 	if ( !Q_stricmp(tok, "{") )
 	{
-		while (1)
+		while ( (*script) < (buffer + bufSize) )
 		{
 			tok = COM_ParseExt (script, true);
 			if (!tok[0]) {
@@ -1443,10 +1515,13 @@ qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script)
 Hud_ParseRenameSet
 ================
 */
-qboolean Hud_ParseRenameSet (char **buffer)
+qboolean Hud_ParseRenameSet (char **script, char *buffer, int bufSize)
 {
 	hudRenameSet_t	*renameSet;
 	char			*tok;
+
+	if ( !script || !buffer )
+		return false;
 
 	if (cl_numHudRenames == HUD_MAX_RENAMESETS) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: exceeded HUD_MAX_RENAMESETS in hud script %s\n", cl_hudName);
@@ -1454,20 +1529,20 @@ qboolean Hud_ParseRenameSet (char **buffer)
 	}
 	renameSet = &cl_hudRenames[cl_numHudRenames++];
 
-	tok = COM_ParseExt (buffer, true);
+	tok = COM_ParseExt (script, true);
 	if ( Q_stricmp(tok, "{") ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: expected '{', found %s instead in hud script %s\n", tok, cl_hudName);
 		return false;
 	}
 
 	// count num of renames and alloc accordingly
-	Hud_CountRenameItems (renameSet, buffer);
+	Hud_CountRenameItems (renameSet, script, buffer, bufSize);
 //	renameSet->maxRenameItems++;
 	renameSet->renameItems = Z_Malloc((renameSet->maxRenameItems+1) * sizeof(hudRenameItem_t));
 
-	while (1)
+	while ( (*script) < (buffer + bufSize) )
 	{
-		tok = COM_ParseExt (buffer, true);
+		tok = COM_ParseExt (script, true);
 		if (!tok[0]) {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: no concluding '}' in 'renameSetDef' in hud script %s\n", cl_hudName);
 			return false;
@@ -1475,7 +1550,7 @@ qboolean Hud_ParseRenameSet (char **buffer)
 		if ( !Q_stricmp(tok, "}") )
 			break;
 		if ( !Q_strcasecmp(tok, "name") ) {
-			tok = COM_ParseExt (buffer, false);
+			tok = COM_ParseExt (script, false);
 			if (!tok[0]) {
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: missing parameter for 'name' in 'renameSetDef' in hud script %s\n", cl_hudName);
 				return false;
@@ -1484,7 +1559,7 @@ qboolean Hud_ParseRenameSet (char **buffer)
 		}
 		else if ( !Q_strcasecmp(tok, "renameItemDef") )
 		{
-			if ( !Hud_ParseRenameItemDef(renameSet, buffer) )
+			if ( !Hud_ParseRenameItemDef(renameSet, script, buffer, bufSize) )
 				return false;
 		}
 		else {
@@ -1506,12 +1581,15 @@ qboolean Hud_ParseRenameSet (char **buffer)
 Hud_ParseHud
 ================
 */
-qboolean Hud_ParseHud (char *buffer)
+qboolean Hud_ParseHud (char *buffer, int bufSize)
 {
 	char	*p, *tok;
 
+	if ( !buffer )
+		return false;
+
 	p = buffer;
-	while (1)
+	while (p < (buffer + bufSize))
 	{
 		tok = COM_ParseExt (&p, true);
 		if (!tok[0])
@@ -1525,7 +1603,7 @@ qboolean Hud_ParseHud (char *buffer)
 				return false;
 			}
 
-			while (1)
+			while (p < (buffer + bufSize))
 			{
 				tok = COM_ParseExt (&p, true);
 				if (!tok[0]) {
@@ -1543,7 +1621,7 @@ qboolean Hud_ParseHud (char *buffer)
 					Q_strncpyz (cl_hudDef.overridePath, sizeof(cl_hudDef.overridePath), tok);
 				}
 				else if ( !Q_strcasecmp(tok, "itemGroup") ) {
-					if ( !Hud_ParseItemGroup(&cl_hudDef, &p) )
+					if ( !Hud_ParseItemGroup(&cl_hudDef, &p, buffer, bufSize) )
 						return false;
 				}
 				else {
@@ -1554,7 +1632,7 @@ qboolean Hud_ParseHud (char *buffer)
 		}
 		else if ( !Q_strcasecmp(tok, "renameSetDef") )
 		{
-			if ( !Hud_ParseRenameSet(&p) )
+			if ( !Hud_ParseRenameSet(&p, buffer, bufSize) )
 				return false;
 		}
 		// ignore any crap after the hudDef
@@ -1628,6 +1706,7 @@ void CL_LoadHud (qboolean startup)
 {
 	char	fileName[MAX_QPATH];
 	char	*hudName, *buffer;
+	int		bufSize;
 
 	if (startup)
 		Hud_ClearHudData ();
@@ -1654,8 +1733,8 @@ void CL_LoadHud (qboolean startup)
 
 	// Load the file
 	Com_sprintf (fileName, sizeof(fileName), "scripts/huds/%s.hud", hudName);
-	FS_LoadFile (fileName, (void **)&buffer);
-	if (!buffer)
+	bufSize = FS_LoadFile (fileName, (void **)&buffer);
+	if ( !buffer )
 	{	// failed to load, keep scripted hud if already loaded
 		Com_Printf ("CL_LoadHud: couldn't load %s\n", fileName);
 	//	if (cl_hudDef.numItemGroups > 0)
@@ -1664,13 +1743,20 @@ void CL_LoadHud (qboolean startup)
 		Cvar_ForceSetToDefault ("cl_hud");
 		return;
 	}
+	if (bufSize < 1) {
+		// 0 size file, keep bindlist if already loaded
+		Com_Printf ("CL_LoadHud: %s has 0 size\n", fileName);
+		Cvar_ForceSetToDefault ("cl_hud");
+		FS_FreeFile (buffer);
+		return;
+	}
 
 	// Parse it
 	cl_hudName = Cvar_VariableString("cl_hud");
 	if (!startup) {
 		Hud_ClearHudData ();
 	}
-	if ( Hud_ParseHud (buffer) ) {
+	if ( Hud_ParseHud (buffer, bufSize) ) {
 		Com_Printf ("CL_LoadHud: loaded hud %s with %i item groups\n", cl_hudDef.name, cl_hudDef.numItemGroups);
 	}
 	else {

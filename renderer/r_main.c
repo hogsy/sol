@@ -1344,48 +1344,6 @@ qboolean R_SetMode (void)
 	return true;
 }
 
-#if 0	// replaced by Q_StrScanToken()
-/*
-===============
-StringContainsToken
-
-A non-ambiguous alternative to strstr.
-Useful for parsing the GL extension string.
-Similar to code in Fruitz of Dojo Quake2 MacOSX Port.
-===============
-*/
-qboolean StringContainsToken (const char *string, const char *findToken)
-{
-	int			tokenLen;
-	const char	*strPos;
-	char		*tokPos, *terminatorPos;
-
-	if ( !string || !findToken ) 
-		return false;
-	if ( (strchr(findToken, ' ') != NULL) || (findToken[0] == 0) )
-		return false;
-
-	strPos = string;
-	tokenLen = (int)strlen(findToken);
-	
-	while (1)
-	{
-		tokPos = strstr (strPos, findToken);
-
-		if ( !tokPos )
-			break;
-
-		terminatorPos = tokPos + tokenLen;
-
-		if ( (tokPos == strPos || *(tokPos - 1) == ' ') && (*terminatorPos == ' ' || *terminatorPos == 0) )
-			return true;
-
-		strPos = terminatorPos;
-	}
-
-	return false;
-}
-#endif
 
 /*
 ===============
@@ -2037,13 +1995,17 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 //	VID_Printf (PRINT_DEVELOPER, "GL_EXTENSIONS: %s\n", glConfig.extensions_string );
 	if (developer->integer > 0)	// print extensions 2 to a line
 	{
-		char		*extString, *extTok;
+		char		*extString, *p, *extTok;
 		unsigned	line = 0;
+		size_t		extLen;
+
 		VID_Printf (PRINT_DEVELOPER, "GL_EXTENSIONS: " );
 		extString = (char *)glConfig.extensions_string;
-		while (1)
+		extLen = strlen(extString);
+		p = extString;
+		while (p < (extString + extLen))
 		{
-			extTok = COM_Parse(&extString);
+			extTok = COM_Parse(&p);
 			if (!extTok[0])
 				break;
 			line++;
@@ -2207,20 +2169,24 @@ GL_Strings_f
 */
 void GL_Strings_f (void)
 {
-	char		*extString, *extTok;
+	char		*extString, *p, *extTok;
 	unsigned	line = 0;
+	size_t		extLen;
 
 	VID_Printf (PRINT_ALL, "GL_VENDOR: %s\n", glConfig.vendor_string );
 	VID_Printf (PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
 	VID_Printf (PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
 	VID_Printf (PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %i\n", glConfig.max_texsize );
+	VID_Printf (PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits);
 //	VID_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", glConfig.extensions_string );
 	// print extensions 2 to a line
 	VID_Printf (PRINT_ALL, "GL_EXTENSIONS: " );
 	extString = (char *)glConfig.extensions_string;
-	while (1)
+	extLen = strlen(extString);
+	p = extString;
+	while (p < (extString + extLen))
 	{
-		extTok = COM_Parse(&extString);
+		extTok = COM_Parse(&p);
 		if (!extTok[0])
 			break;
 		line++;
