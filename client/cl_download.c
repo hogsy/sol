@@ -170,56 +170,49 @@ void CL_RequestNextDownload (void)
 						precache_check++;
 						continue; // couldn't load it
 					}
-					if (LittleLong(*(unsigned *)precache_model) != IDMD2HEADER)
-					{	// is it an md3?
-						if (LittleLong(*(unsigned *)precache_model) != IDMD3HEADER)
-						{	// is it a sprite?
-							if (LittleLong(*(unsigned *)precache_model) != IDSP2HEADER)
-							{
-								// not a recognized model
-								FS_FreeFile(precache_model);
-								precache_model = 0;
-								precache_model_skin = 0;
-								precache_check++;
-								continue;
-							}
-							else
-							{	// get sprite header
-								sp2header = (dspr2_t *)precache_model;
-								if (LittleLong (sp2header->version) != SP2_VERSION)
-								{	// not a recognized sprite
-									FS_FreeFile(precache_model);
-									precache_model = 0;
-									precache_check++;
-									precache_model_skin = 0;
-									continue; // couldn't load it
-								}
-							}
-						}
-						else
-						{	// get md3 header
-							md3header = (dmd3_t *)precache_model;
-							if (LittleLong (md3header->version) != MD3_ALIAS_VERSION)
-							{	// not a recognized md3
-								FS_FreeFile(precache_model);
-								precache_model = 0;
-								precache_check++;
-								precache_model_skin = 0;
-								continue; // couldn't load it
-							}
-						}
-					}
-					else
+					if (LittleLong(*(unsigned *)precache_model) == IDMD2HEADER)		// is it an md2?
 					{	// get md2 header
 						md2header = (dmd2_t *)precache_model;
 						if (LittleLong (md2header->version) != MD2_ALIAS_VERSION)
 						{	// not a recognized md2
-							FS_FreeFile(precache_model);
+							FS_FreeFile (precache_model);
 							precache_model = 0;
 							precache_check++;
 							precache_model_skin = 0;
 							continue; // couldn't load it
 						}
+					}
+					else if (LittleLong(*(unsigned *)precache_model) == IDMD3HEADER)	// is it an md3?
+					{	// get md3 header
+						md3header = (dmd3_t *)precache_model;
+						if (LittleLong (md3header->version) != MD3_ALIAS_VERSION)
+						{	// not a recognized md3
+							FS_FreeFile (precache_model);
+							precache_model = 0;
+							precache_check++;
+							precache_model_skin = 0;
+							continue; // couldn't load it
+						}
+					}
+					else if (LittleLong(*(unsigned *)precache_model) != IDSP2HEADER)	// is it an sp2?
+					{	// get sprite header
+						sp2header = (dspr2_t *)precache_model;
+						if (LittleLong (sp2header->version) != SP2_VERSION)
+						{	// not a recognized sprite
+							FS_FreeFile (precache_model);
+							precache_model = 0;
+							precache_check++;
+							precache_model_skin = 0;
+							continue; // couldn't load it
+						}
+					}
+					else	// not a recognized model with external skins
+					{
+						FS_FreeFile (precache_model);
+						precache_model = 0;
+						precache_model_skin = 0;
+						precache_check++;
+						continue;
 					}
 				}
 
