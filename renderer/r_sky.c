@@ -67,13 +67,6 @@ int	vec_to_st[6][3] =
 //	{1,2,-3}
 };
 
-//char	skyname[MAX_QPATH];
-//float	skyrotate;
-//vec3_t	skyaxis;
-//image_t	*sky_images[6];
-//float	skymins[2][6], skymaxs[2][6];
-//float	sky_min, sky_max;
-
 skyInfo_t	r_skyInfo;
 
 //===========================================================================
