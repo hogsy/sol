@@ -805,15 +805,18 @@ pushed_t	pushed[MAX_EDICTS], *pushed_p;
 
 edict_t	*obstacle;
 
-void MoveRiders(edict_t *platform, edict_t *ignore, vec3_t move, vec3_t amove, qboolean turn)
+void MoveRiders (edict_t *platform, edict_t *ignore, vec3_t move, vec3_t amove, qboolean turn)
 {
 	int	i;
 	edict_t	*rider;
 
-	for (i=1, rider=g_edicts+i; i<=globals.num_edicts; i++, rider++) {
-		if ((rider->groundentity == platform) && (rider != ignore)) {
+	for (i=1, rider=g_edicts+i; i<=globals.num_edicts; i++, rider++)
+	{
+		if ((rider->groundentity == platform) && (rider != ignore))
+		{
 			VectorAdd(rider->s.origin,move,rider->s.origin);
-			if (turn && (amove[YAW] != 0.)) {
+			if (turn && (amove[YAW] != 0.))
+			{
 				if (!rider->client)
 					rider->s.angles[YAW] += amove[YAW];
 				else
@@ -825,11 +828,13 @@ void MoveRiders(edict_t *platform, edict_t *ignore, vec3_t move, vec3_t amove, q
 				}
 			}
 			gi.linkentity(rider);
-			if (SV_TestEntityPosition(rider)) {
+			if (SV_TestEntityPosition(rider))
+			{
 				// Move is blocked. Since this is for riders, not pushees,
 				// it should be ok to just back the move for this rider off
 				VectorSubtract(rider->s.origin,move,rider->s.origin);
-				if (turn && (amove[YAW] != 0.)) {
+				if (turn && (amove[YAW] != 0.))
+				{
 					rider->s.angles[YAW] -= amove[YAW];
 					if (rider->client)
 					{
@@ -838,7 +843,8 @@ void MoveRiders(edict_t *platform, edict_t *ignore, vec3_t move, vec3_t amove, q
 					}
 				}
 				gi.linkentity(rider);
-			} else {
+			}
+			else {
 				// move this rider's riders
 				MoveRiders(rider,ignore,move,amove,turn);
 			}
@@ -857,7 +863,7 @@ false block tests in SV_Push if another bmodel is in the vicinity.
 ============
 */
 
-void RealBoundingBox(edict_t *ent, vec3_t mins, vec3_t maxs)
+void RealBoundingBox (edict_t *ent, vec3_t mins, vec3_t maxs)
 {
 	vec3_t	forward, left, up, f1, l1, u1;
 	vec3_t	p[8];

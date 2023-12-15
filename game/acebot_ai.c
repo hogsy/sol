@@ -92,7 +92,7 @@ void ACEAI_Think (edict_t *self)
 	usercmd_t	ucmd;
 
 	// Set up client movement
-	VectorCopy(self->client->ps.viewangles,self->s.angles);
+	VectorCopy (self->client->ps.viewangles, self->s.angles);
 	VectorSet (self->client->ps.pmove.delta_angles, 0, 0, 0);
 	memset (&ucmd, 0, sizeof (ucmd));
 	self->enemy = NULL;
@@ -105,7 +105,7 @@ void ACEAI_Think (edict_t *self)
 		ucmd.buttons = BUTTON_ATTACK;
 	}
 	
-	if (self->state == STATE_WANDER && self->wander_timeout < level.time)
+	if ( (self->state == STATE_WANDER) && (self->wander_timeout < level.time) )
 	  ACEAI_PickLongRangeGoal(self); // pick a new long range goal
 
 	// Kill the bot if completely stuck somewhere
@@ -119,10 +119,10 @@ void ACEAI_Think (edict_t *self)
 	}
 	
 	// Find any short range goal
-	ACEAI_PickShortRangeGoal(self);
+	ACEAI_PickShortRangeGoal (self);
 	
 	// Look for enemies
-	if (ACEAI_FindEnemy(self))
+	if ( ACEAI_FindEnemy(self) )
 	{	
 		ACEAI_ChooseWeapon(self);
 		ACEMV_Attack (self, &ucmd);

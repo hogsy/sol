@@ -507,6 +507,21 @@ typedef struct
 
 	float		shift;
 
+	// Knightmare- added for DK-style clouds
+	char		*cloudname;
+	float		lightningfreq;
+	float		cloudxdir;
+	float		cloudydir;
+	float		cloud1tile;
+	float		cloud1speed;
+	float		cloud1alpha;
+	float		cloud2tile;
+	float		cloud2speed;
+	float		cloud2alpha;
+	float		cloud3tile;
+	float		cloud3speed;
+	float		cloud3alpha;
+
 	// Knightmare- added for misc_flare
 	int			fade_start_dist;
 	int			fade_end_dist;
@@ -861,6 +876,7 @@ extern	int		max_soundindex;
 //
 #define FFL_SPAWNTEMP		1
 #define FFL_NOSPAWN			2
+#define FFL_DEFAULT_NEG		4	// Knightmare- spawntemp that defaults to -1
 
 typedef enum {
 	F_INT, 

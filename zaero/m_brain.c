@@ -138,7 +138,7 @@ void brain_idle (edict_t *self)
 	else if (r < 0.67)
 		gi.sound (self, CHAN_VOICE, sound_idle2, 1, ATTN_IDLE, 0);
 	else
-		gi.sound (self, CHAN_VOICE, sound_idle3, 1, ATTN_IDLE, 0); //Knightmare- changed channel
+		gi.sound (self, CHAN_VOICE, sound_idle3, 1, ATTN_IDLE, 0); // Knightmare- changed channel
 
 	self->monsterinfo.currentmove = &brain_move_idle;
 }

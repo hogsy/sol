@@ -740,6 +740,7 @@ void	R_Shutdown (void);
 // an implicit "pics/" prepended to the name. (a pic name that starts with a
 // slash will not use the "pics/" prefix or the ".pcx" postfix)
 void	R_BeginRegistration (char *map);
+void	R_EndRegistration (void);
 struct model_s *R_RegisterModel (char *name);
 struct image_s *R_RegisterSkin (char *name);
 struct image_s *R_DrawFindPic (char *name);
@@ -747,8 +748,8 @@ qboolean R_RegistrationIsActive (void);
 qboolean R_ModelIsValid (struct model_s *model);
 
 void	R_FreePic (char *name); // Knightmare added
-void	R_SetSky (char *name, float rotate, vec3_t axis);
-void	R_EndRegistration (void);
+void	R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis,
+					 float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha);
 
 void	R_RenderFrame (refdef_t *fd);
 

@@ -865,9 +865,9 @@ void target_movewith_use (edict_t *self, edict_t *activator, edict_t *other)
 {
 	edict_t	*t = NULL;
 
-	if (!self->target)
+	if ( !self->target )
 		return;
-	while ((t = G_Find (t, FOFS(targetname), self->target)))
+	while ( (t = G_Find (t, FOFS(targetname), self->target)) )
 	{
 		if (self->spawnflags & 1)
 		{
@@ -1317,12 +1317,12 @@ A CD/OGG track player
 
 void target_cd_use (edict_t *self, edict_t *activator, edict_t *other)
 {
-	if (self->musictrack && strlen(self->musictrack))
+	if ( self->musictrack && strlen(self->musictrack) )
 		gi.configstring (CS_CDTRACK, self->musictrack);
 	else
 		gi.configstring (CS_CDTRACK, va("%d", self->sounds) );
-	if ((self->dmg > 0) && (!deathmatch->value) && (!coop->value))
-		stuffcmd(&g_edicts[1],va("cd_loopcount %d\n",self->dmg)); 
+	if ( (self->dmg > 0) && (!deathmatch->value) && (!coop->value) )
+		stuffcmd (&g_edicts[1], va("cd_loopcount %d\n", self->dmg)); 
 	self->count--;
 	if (self->count == 0)
 	{
@@ -1379,29 +1379,79 @@ void SP_target_skill (edict_t *self)
 Change the level's environment map
 
 "sky" env map name
+"cloudname" clouds image name
+"skyrotate" sky rotation speed
+"skyaxis" sky rotation axis
+"lightningfreq" time between lighting flashes
+"cloudxdir" movement of clouds on X axis
+"cloudydir" movement of clouds on Y axis
+"cloud1tile" tile size of first cloud layer
+"cloud2tile" tile size of second cloud layer
+"cloud3tile" tile size of third cloud layer
+"cloud1speed" movment speed of first cloud layer
+"cloud2speed" movment speed of second cloud layer
+"cloud3speed" movment speed of third cloud layer
+"cloud1alpha" translucency of first cloud layer
+"cloud2alpha" translucency of second cloud layer
+"cloud3alpha" translucency of third cloud layer
 "count" number of times it can be used
 */
 
 void target_sky_use (edict_t *self, edict_t *activator, edict_t *other)
 {
-	gi.configstring(CS_SKY,self->pathtarget);
-	stuffcmd(&g_edicts[1],va("sky %s\n",self->pathtarget));
+	int		i;
+	char	string[1024];
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	// Knightmare- added cloudname support
+	if ( self->followtarget && (self->followtarget[0] != 0) )
+	{
+		gi.configstring (CS_SKY, self->pathtarget);
+		gi.configstring (CS_CLOUDNAME, self->followtarget);
+		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
+		gi.configstring (CS_SKYAXIS, va("%f %f %f",
+						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+		gi.configstring (CS_CLOUDLIGHTFREQ, va("%f", self->duration) );
+		gi.configstring (CS_CLOUDDIR, va("%f %f", self->offset[0], self->offset[1]) );
+		gi.configstring (CS_CLOUDTILE, va("%f %f %f", self->size[0], self->size[1], self->size[2]) );
+		gi.configstring (CS_CLOUDSPEED, va("%f %f %f", self->velocity[0], self->velocity[1], self->velocity[2]) );
+		gi.configstring (CS_CLOUDALPHA, va("%f %f %f", self->color[0], self->color[1], self->color[2]) );
+		Com_sprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+					self->pathtarget, self->followtarget, self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2],
+					self->duration, self->offset[0], self->offset[1], self->size[0], self->size[1], self->size[2],
+					self->velocity[0], self->velocity[1], self->velocity[2], self->color[0], self->color[1], self->color[2]);
+	}
+	else {
+#endif	// KMQUAKE2_ENGINE_MOD
+		gi.configstring (CS_SKY, self->pathtarget);
+		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
+		gi.configstring (CS_SKYAXIS, va("%f %f %f",
+						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f\n", self->pathtarget,
+					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2]);
+#ifdef KMQUAKE2_ENGINE_MOD
+	}
+#endif	// KMQUAKE2_ENGINE_MOD
+	for (i = 0; i < game.maxclients; i++)
+		stuffcmd (&g_edicts[i + 1], string);
+	// end Knightmare
+
 	self->count--;
 	if (self->count == 0)
 	{
-		self->nextthink = level.time + FRAMETIME;
 		self->think = G_FreeEdict;
+		self->nextthink = level.time + 1;
 	}
 }
 
 void SP_target_sky (edict_t *self)
 {
-	size_t	pathSize;
+	size_t	pathSize, followSize;
 
 	if (!st.sky || !*st.sky)
 	{
-		gi.dprintf("Target_sky with no sky string at %s\n",vtos(self->s.origin));
-		G_FreeEdict(self);
+		gi.dprintf ("Target_sky with no sky string at %s\n", vtos(self->s.origin));
+		G_FreeEdict (self);
 		return;
 	}
 	self->class_id = ENTITY_TARGET_SKY;
@@ -1409,11 +1459,34 @@ void SP_target_sky (edict_t *self)
 	pathSize = strlen(st.sky)+1;
 	self->pathtarget = gi.TagMalloc(pathSize, TAG_LEVEL);
 	Com_strcpy (self->pathtarget, pathSize, st.sky);
+	self->speed = st.skyrotate;
+	VectorCopy (st.skyaxis, self->avelocity);
 
-	self->svflags |= SVF_NOCLIENT;
+	// Knightmare- added cloudname support
+	if ( st.cloudname && (st.cloudname[0] != 0) )
+	{
+		followSize = strlen(st.cloudname) + 1;
+		self->followtarget = gi.TagMalloc(followSize, TAG_LEVEL);
+		Com_strcpy (self->followtarget, followSize, st.cloudname);
+		self->duration = st.lightningfreq;
+		self->offset[0] = st.cloudxdir;
+		self->offset[1] = st.cloudydir;
+		self->size[0] = st.cloud1tile;
+		self->velocity[0] = st.cloud1speed;
+		self->color[0] = st.cloud1alpha;
+		self->size[1] = st.cloud2tile;
+		self->velocity[1] = st.cloud2speed;
+		self->color[1] = st.cloud2alpha;
+		self->size[2] = st.cloud3tile;
+		self->velocity[2] = st.cloud3speed;
+		self->color[2] = st.cloud3alpha;
+	}
+	// end Knightmare
+
+//	self->svflags |= SVF_NOCLIENT;
+//	gi.linkentity (self);
+
 	self->use = target_sky_use;
-
-	gi.linkentity (self);
 }
 
 
@@ -2921,7 +2994,8 @@ void target_failure_wipe (edict_t *self)
 	edict_t	*player;
 
 	player = &g_edicts[1];	// Gotta be, since this is SP only
-	if (player->client->textdisplay) Text_Close(player);
+	if (player->client->textdisplay)
+		Text_Close (player);
 }
 
 void target_failure_player_die (edict_t *player)

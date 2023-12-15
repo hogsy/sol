@@ -62,6 +62,8 @@ Changes as of v0.20 update 8:
 	
 - Added support for Kex flares (misc_flare).  Uses cvar r_drawflares to disable drawing, and cvar r_occlusion_test to toggle use of occlusion queries.
 
+- Added support for skyboxes with clouds and lightning flash effects.  See kmquake2_lazarus.txt for details.
+
 - Added support for Q2Pro-style HTTP URLs.  This can be configured with the cvar cl_http_pathtype (0 = R1Q2, 1 = Q2Pro, 2 = both),
 	or the "HTTP path type" setting in the download options menu.  Also increased max HTTP download connections from 4 to 8.
 

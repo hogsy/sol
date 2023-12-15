@@ -460,7 +460,7 @@ void SP_monster_dog (edict_t *self)
 	monster_dog_soundcache (self);
 
 	// precache gibs
-	gi.modelindex ("mmodels/monsters/dog/h_dog.md2");
+	gi.modelindex ("models/monsters/dog/h_dog.md2");
 	
 	self->movetype = MOVETYPE_STEP;
 	self->solid = SOLID_BBOX;

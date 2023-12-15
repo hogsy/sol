@@ -39,6 +39,23 @@ Support for mapper-specified Ogg Vorbis music.  Use the key "musictrack" in the 
 	the name of the track, e.g. a musictrack key "foo" will play "gamedir/music/foo.ogg".  This key
 	also works with target_cd.  Tracks are not yet supported inside pak or pk3 files.
 
+Support for mapper-specified skyboxes with clouds.  Skyboxes must be made with an alpha channel to define
+	the foreground and horizon line that is drawn in front of the clouds.
+	The following keys can be set in worldpsawn and target_sky:
+	"cloudname"		clouds image name (in folder <gamedir>/env)
+	"lightningfreq"	time between lighting flashes
+	"cloudxdir"		movement of clouds on X axis
+	"cloudydir"		movement of clouds on Y axis
+	"cloud1tile"	tile size of first cloud layer
+	"cloud2tile"	tile size of second cloud layer
+	"cloud3tile"	tile size of third cloud layer
+	"cloud1speed"	movment speed of first cloud layer
+	"cloud2speed"	movment speed of second cloud layer
+	"cloud3speed"	movment speed of third cloud layer
+	"cloud1alpha"	translucency of first cloud layer
+	"cloud2alpha"	translucency of second cloud layer
+	"cloud3alpha"	translucency of third cloud layer
+
 Support for double-barreled turrets.  Code by Musashi.
 	Set the turret_breach's combattarget to the targetname of the second info_notnull.
 	To have the barrels alternate in firing, give the turret_breach a style value of 1.

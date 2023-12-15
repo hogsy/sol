@@ -1057,6 +1057,7 @@ extern void G_PrecachePlayerInventories ( void ) ;
 extern char * ED_ParseEdict ( char * data , edict_t * ent ) ;
 extern qboolean ED_ParseEntityAlias ( char * data , edict_t * ent ) ;
 extern void LoadAliasData ( void ) ;
+extern void ED_SetDefaultFields ( edict_t * ent ) ;
 extern void ED_ParseField ( char * key , char * value , edict_t * ent ) ;
 extern char * ED_NewString ( char * string ) ;
 extern void ReInitialize_Entity ( edict_t * ent ) ;

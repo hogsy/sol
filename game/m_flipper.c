@@ -150,7 +150,7 @@ mframe_t flipper_frames_walk [] =
 	ai_walk, 4, NULL,
 	ai_walk, 4, NULL,
 	ai_walk, 4, NULL,
-	ai_walk, 4, flipper_breathe, //Knightmare added- breathing
+	ai_walk, 4, flipper_breathe, // Knightmare added- breathing
 	ai_walk, 4, NULL,
 	ai_walk, 4, NULL,
 	ai_walk, 4, NULL

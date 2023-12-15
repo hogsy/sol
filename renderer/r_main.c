@@ -71,7 +71,7 @@ float	r_world_matrix[16];
 float	r_base_world_matrix[16];
 vec4_t	r_clearColor = {0, 0.5, 0.5, 0.5};				// for r_clear
 
-GLdouble	r_farz;	// Knightmare- variable sky range, made this a global var
+GLdouble	r_farZ;	// Knightmare- variable sky range, made this a global var
 
 //
 // screen size info
@@ -484,22 +484,24 @@ void R_SetupGL (void)
 	// calc farz falue from skybox size
 	if (r_skydistance->modified)
 	{
-		GLdouble boxsize, farz;	// variable sky range
+		GLdouble boxsize, farZ;	// variable sky range
 
-		r_skydistance->modified = false;
-		boxsize = r_skydistance->value;
-		boxsize -= 252 * ceil (boxsize / 2300);
-		farz = 1.0;
-		while (farz < boxsize) //make this a power of 2
+		boxsize = r_skydistance->value * SKY_DOME_MULT;
+	//	boxsize -= 252 * ceil (boxsize / 2300);
+		farZ = 1.0;
+		while (farZ < boxsize) // make this a power of 2
 		{
-			farz *= 2.0;
-			if (farz >= 65536) //don't make it larger than this
+			farZ *= 2.0;
+			if (farZ >= (GLdouble)(WORLD_SIZE*4)) // don't make it larger than this, was 65536
 				break;
 		}
-		farz *= 2.0;	// double since boxsize is distance from camera to edge of skybox
+		farZ *= 2.0;	// double since boxsize is distance from camera to edge of skybox
 						// not total size of skybox
-		VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farz);
-		r_farz = farz;	// save to global var
+		VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farZ);
+		r_farZ = farZ;	// save to global var
+
+		r_skydistance->modified = false;
+		R_InitSkyBoxInfo ();		// reset skybox data
 	}
 	// end Knightmare
 
@@ -512,7 +514,7 @@ void R_SetupGL (void)
     qglLoadIdentity ();
 
 	//Knightmare- 12/26/2001- increase back clipping plane distance
-    MYgluPerspective (r_newrefdef.fov_y,  screenaspect,  4, r_farz);	// was 4096
+    MYgluPerspective (r_newrefdef.fov_y,  screenaspect,  4, r_farZ);	// was 4096
 	//end Knightmare
 
 	GL_CullFace(GL_FRONT);
@@ -1255,7 +1257,7 @@ void R_Register (void)
 	r_skydistance = Cvar_Get("r_skydistance", "24000", CVAR_ARCHIVE); // variable sky range
 	Cvar_SetDescription ("r_skydistance", "Sets render distance of skybox.  Larger values mean a longer visible distance areas with the skybox visible.");
 	r_fog_skyratio = Cvar_Get("r_fog_skyratio", "10", CVAR_ARCHIVE);	// variable sky fog ratio
-	Cvar_SetDescription ("r_fog_skyratio", "Sets ratio of fog far distance for skyboxes versus standard world surfaces.");
+	Cvar_SetDescription ("r_fog_skyratio", "Sets ratio of fog far distance for skyboxes versus standard world surfaces.  -1 = auto.");
 	r_subdivide_size = Cvar_Get("r_subdivide_size", "64", CVAR_ARCHIVE);	// chop size for warp surfaces
 	Cvar_SetDescription ("r_subdivide_size", "Sets subdivision size of warp surfaces.  Requires vid_restart for changes to take effect.");
 
@@ -2155,7 +2157,8 @@ R_ClearState
 */
 void R_ClearState (void)
 {	
-	R_SetFogVars (false, 0, 0, 0, 0, 0, 0, 0); // clear fog effets
+	R_SetFogVars (false, 0, 0, 0, 0, 0, 0, 0);	// clear fog effets
+	R_InitSkyBoxInfo ();						// reset skybox data
 	GL_EnableMultitexture (false);
 	GL_SetDefaultState ();
 	R_ClearOcclusionQuerySampleList ();

@@ -2592,7 +2592,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	}
 
 	// don't try again to load an image that just failed
-	if (R_CheckImgFailed (name))
+	if ( R_CheckImgFailed (name) )
 	{
 		if ( !strcmp(name+len-4, ".tga") )
 		{
@@ -2834,7 +2834,7 @@ void Draw_GetQuakePalette (void)
 	}
 
 	if ( useDefaultPal ) {
-		pal = default_quakePal;
+		pal = (byte *)default_quakePal;
 	}
 
 	for (i = 0; i < 256; i++)

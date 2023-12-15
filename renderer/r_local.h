@@ -56,6 +56,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	WARP_LIGHTMAPS	// whether to support lightmaps on warp surfaces
 
+#define random()	((rand () & 0x7fff) / ((float)0x7fff))
+#define crandom()	(2.0 * (random() - 0.5))
+
 #ifndef __VIDDEF_T
 #define __VIDDEF_T
 typedef struct
@@ -236,7 +239,7 @@ extern	vec3_t	vpn;
 extern	vec3_t	vright;
 extern	vec3_t	r_origin;
 
-extern	GLdouble	r_farz;	// Knightmare- variable sky range, made this a global var
+extern	GLdouble	r_farZ;	// Knightmare- variable sky range, made this a global var
 
 //
 // screen size info
@@ -702,9 +705,58 @@ void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render);
 //
 // r_sky.c
 //
+#define OLD_Q2_SKYDIST		2300
+#define	SKY_GRID_NUMVERTS	24
+#define	SKY_DOME_MULT		1.5f
+
+typedef struct {
+	int			ctr_i, ctr_j;	// center point
+	int			numFlashes;
+	float		startRad;
+	float		curRad;
+	float		startBright;
+	float		curBright;
+	float		decay;
+	float		lastTime;		// last update timestamp
+} skyLightning_t;
+
+typedef struct {
+	char		skyBoxName[MAX_QPATH];
+	char		cloudName[MAX_QPATH];
+
+	float		skyRotate;
+	vec3_t		skyAxis;
+
+	image_t		*sky_images[6];
+	image_t		*cloud_image;
+
+	float		skyMins[2][6];
+	float		skyMaxs[2][6];
+	float		sky_min, sky_max;
+
+	float		lightningFreq;
+	vec2_t		cloudDir;
+	vec3_t		cloudTile;
+	vec3_t		cloudSpeed;
+	vec3_t		cloudAlpha;
+
+	vec3_t		cloudVerts[SKY_GRID_NUMVERTS * SKY_GRID_NUMVERTS];
+	vec2_t		cloudBaseTexCoords[SKY_GRID_NUMVERTS * SKY_GRID_NUMVERTS];
+	vec2_t		cloudTexCoords[SKY_GRID_NUMVERTS * SKY_GRID_NUMVERTS];
+	float		cloudTileSize;
+	qboolean	cloudVertsInitialized;
+
+	skyLightning_t	lightning;
+} skyInfo_t;
+
+extern skyInfo_t	r_skyInfo;
+
 void R_AddSkySurface (msurface_t *surf);
+void R_InitSkyBoxInfo (void);
 void R_ClearSkyBox (void);
 void R_DrawSkyBox (void);
+void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis,
+			   float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha);
 
 
 //

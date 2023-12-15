@@ -5352,7 +5352,7 @@ qboolean CTFCheckRules (void)
 	}
 
 //ZOID
-	CTFPlayerResetGrapple(other);
+	CTFPlayerResetGrapple (other);
 //ZOID
 
 	// unlink to make sure it can't possibly interfere with KillBox

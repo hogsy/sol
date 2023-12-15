@@ -3198,12 +3198,12 @@ void SP_target_attractor(edict_t *self)
 ===================================================================*/
 void use_target_CD (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if (self->musictrack && strlen(self->musictrack))
+	if ( self->musictrack && strlen(self->musictrack) )
 		gi.configstring (CS_CDTRACK, self->musictrack);
 	else
 		gi.configstring (CS_CDTRACK, va("%d",self->sounds));
-	if ((self->dmg > 0) && (!deathmatch->value) && (!coop->value))
-		stuffcmd(&g_edicts[1],va("cd_loopcount %d\n",self->dmg));
+	if ( (self->dmg > 0) && (!deathmatch->value) && (!coop->value) )
+		stuffcmd (&g_edicts[1], va("cd_loopcount %d\n", self->dmg));
 
 	self->count--;
 	if (!self->count) {
@@ -3745,7 +3745,7 @@ void target_failure_wipe (edict_t *self)
 
 	player = &g_edicts[1];	// Gotta be, since this is SP only
 	if (player->client->textdisplay)
-		Text_Close(player);
+		Text_Close (player);
 }
 
 void target_failure_player_die (edict_t *player)
@@ -4334,8 +4334,43 @@ void SP_target_set_effect (edict_t *self)
 =============================================================================*/
 void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 {
-	gi.configstring(CS_SKY,self->pathtarget);
-	stuffcmd(&g_edicts[1],va("sky %s\n",self->pathtarget));
+	int		i;
+	char	string[1024];
+
+#ifdef KMQUAKE2_ENGINE_MOD
+	// Knightmare- added cloudname support
+	if ( self->followtarget && (self->followtarget[0] != 0) )
+	{
+		gi.configstring (CS_SKY, self->pathtarget);
+		gi.configstring (CS_CLOUDNAME, self->followtarget);
+		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
+		gi.configstring (CS_SKYAXIS, va("%f %f %f",
+						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+		gi.configstring (CS_CLOUDLIGHTFREQ, va("%f", self->duration) );
+		gi.configstring (CS_CLOUDDIR, va("%f %f", self->offset[0], self->offset[1]) );
+		gi.configstring (CS_CLOUDTILE, va("%f %f %f", self->size[0], self->size[1], self->size[2]) );
+		gi.configstring (CS_CLOUDSPEED, va("%f %f %f", self->velocity[0], self->velocity[1], self->velocity[2]) );
+		gi.configstring (CS_CLOUDALPHA, va("%f %f %f", self->color[0], self->color[1], self->color[2]) );
+		Com_sprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+					self->pathtarget, self->followtarget, self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2],
+					self->duration, self->offset[0], self->offset[1], self->size[0], self->size[1], self->size[2],
+					self->velocity[0], self->velocity[1], self->velocity[2], self->color[0], self->color[1], self->color[2]);
+	}
+	else {
+#endif	// KMQUAKE2_ENGINE_MOD
+		gi.configstring (CS_SKY, self->pathtarget);
+		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
+		gi.configstring (CS_SKYAXIS, va("%f %f %f",
+						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f\n", self->pathtarget,
+					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2]);
+#ifdef KMQUAKE2_ENGINE_MOD
+	}
+#endif	// KMQUAKE2_ENGINE_MOD
+	for (i = 0; i < game.maxclients; i++)
+		stuffcmd (&g_edicts[i + 1], string);
+	// end Knightmare
+
 	self->count--;
 	if (!self->count) {
 		self->think = G_FreeEdict;
@@ -4345,21 +4380,44 @@ void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 
 void SP_target_sky (edict_t *self)
 {
-	size_t	pathSize;
+	size_t	pathSize, followSize;
 
-	if (!st.sky || !*st.sky)
+	if ( !st.sky || !*st.sky )
 	{
-		gi.dprintf("Target_sky with no sky string at %s\n",vtos(self->s.origin));
-		G_FreeEdict(self);
+		gi.dprintf ("Target_sky with no sky string at %s\n", vtos(self->s.origin));
+		G_FreeEdict (self);
 		return;
 	}
 
 	self->class_id = ENTITY_TARGET_SKY;
 
-	pathSize = strlen(st.sky)+1;
+	pathSize = strlen(st.sky) + 1;
 	self->pathtarget = gi.TagMalloc(pathSize, TAG_LEVEL);
-//	strncpy(self->pathtarget, st.sky);
 	Q_strncpyz (self->pathtarget, pathSize, st.sky);
+	self->speed = st.skyrotate;
+	VectorCopy (st.skyaxis, self->avelocity);
+
+	// Knightmare- added cloudname support
+	if ( st.cloudname && (st.cloudname[0] != 0) )
+	{
+		followSize = strlen(st.cloudname) + 1;
+		self->followtarget = gi.TagMalloc(followSize, TAG_LEVEL);
+		Q_strncpyz (self->followtarget, followSize, st.cloudname);
+		self->duration = st.lightningfreq;
+		self->offset[0] = st.cloudxdir;
+		self->offset[1] = st.cloudydir;
+		self->size[0] = st.cloud1tile;
+		self->velocity[0] = st.cloud1speed;
+		self->color[0] = st.cloud1alpha;
+		self->size[1] = st.cloud2tile;
+		self->velocity[1] = st.cloud2speed;
+		self->color[1] = st.cloud2alpha;
+		self->size[2] = st.cloud3tile;
+		self->velocity[2] = st.cloud3speed;
+		self->color[2] = st.cloud3alpha;
+	}
+	// end Knightmare
+
 	self->use = use_target_sky;
 }
 

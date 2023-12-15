@@ -2241,6 +2241,7 @@
 {"LoadAliasData", (byte *)LoadAliasData},
 {"LoadAliasFile", (byte *)LoadAliasFile},
 {"ReadTextFile", (byte *)ReadTextFile},
+{"ED_SetDefaultFields", (byte *)ED_SetDefaultFields},
 {"ED_ParseField", (byte *)ED_ParseField},
 {"ED_NewString", (byte *)ED_NewString},
 {"ReInitialize_Entity", (byte *)ReInitialize_Entity},

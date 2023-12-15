@@ -1277,6 +1277,7 @@ void SCR_Sky_f (void)
 {
 	float	rotate;
 	vec3_t	axis;
+	char	blankName[8] = {0};
 
 	if (Cmd_Argc() < 2)
 	{
@@ -1300,7 +1301,88 @@ void SCR_Sky_f (void)
 		axis[2] = 1;
 	}
 
-	R_SetSky (Cmd_Argv(1), rotate, axis);
+//	R_SetSky (Cmd_Argv(1), rotate, axis);
+	R_SetSky (Cmd_Argv(1), blankName, rotate, axis, 0, vec2_origin, vec3_origin, vec3_origin, vec3_origin);
+}
+
+
+/*
+=================
+SCR_SkyClouds_f
+
+Set a specific sky, clouds name, rotation speed, axis, lightning freq, etc.
+=================
+*/
+void SCR_SkyClouds_f (void)
+{
+	float	rotate;
+	vec3_t	axis;
+	float	lightningFreq = 0.0f;
+	vec2_t	cloudDir = {0};
+	vec3_t	cloudTile = {0}, cloudSpeed = {0}, cloudAlpha = {0};
+
+	if (Cmd_Argc() < 3) {
+		Com_Printf ("Usage: sky <skyboxName> <cloudsName> <rotate> <axis x y z> <lightningFreq> <cloudDir x y> <cloudTile 1 2 3> <cloudSpeed 1 2 3> <cloudAlpha 1 2 3>\n");
+		return;
+	}
+
+	if (Cmd_Argc() > 3)
+		rotate = atof(Cmd_Argv(3));
+	else
+		rotate = 0.0f;
+
+	if (Cmd_Argc() > 6) {
+		axis[0] = atof(Cmd_Argv(4));
+		axis[1] = atof(Cmd_Argv(5));
+		axis[2] = atof(Cmd_Argv(6));
+	}
+	else {
+		axis[0] = 0.0f;
+		axis[1] = 0.0f;
+		axis[2] = 1.0f;
+	}
+
+	if (Cmd_Argc() > 7)
+		lightningFreq = atof(Cmd_Argv(7));
+	else
+		lightningFreq = 0.25f;
+
+	if (Cmd_Argc() > 9) {
+		cloudDir[0] = atof(Cmd_Argv(8));
+		cloudDir[1] = atof(Cmd_Argv(9));
+	}
+	else {
+		Vector2Set (cloudDir, 1.0f, 0.8f);
+	}
+
+	if (Cmd_Argc() > 12) {
+		cloudTile[0] = atof(Cmd_Argv(10));
+		cloudTile[1] = atof(Cmd_Argv(11));
+		cloudTile[2] = atof(Cmd_Argv(12));
+	}
+	else {
+		VectorSet (cloudTile, 8.0f, 2.0f, 1.0f);
+	}
+
+	if (Cmd_Argc() > 15) {
+		cloudSpeed[0] = atof(Cmd_Argv(13));
+		cloudSpeed[1] = atof(Cmd_Argv(14));
+		cloudSpeed[2] = atof(Cmd_Argv(15));
+	}
+	else {
+		VectorSet (cloudSpeed, 1.0f, 4.0f, 8.0f);
+	}
+
+	if (Cmd_Argc() > 18) {
+		cloudAlpha[0] = atof(Cmd_Argv(16));
+		cloudAlpha[1] = atof(Cmd_Argv(17));
+		cloudAlpha[2] = atof(Cmd_Argv(18));
+	}
+	else {
+		VectorSet (cloudAlpha, 0.9f, 0.6f, 0.0f);
+	}
+
+	R_SetSky (Cmd_Argv(1), Cmd_Argv(2), rotate, axis, lightningFreq, cloudDir, cloudTile, cloudSpeed, cloudAlpha);
 }
 
 
@@ -1618,6 +1700,7 @@ void SCR_Init (void)
 	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
 	Cmd_AddCommand ("sizedown", SCR_SizeDown_f);
 	Cmd_AddCommand ("sky", SCR_Sky_f);
+	Cmd_AddCommand ("skyclouds", SCR_SkyClouds_f);
 	Cmd_AddCommand ("sethud", SCR_SetHud_f);
 	Cmd_AddCommand ("dumpstatuslayout", SCR_DumpStatusLayout_f);
 	Cmd_AddCommand ("dumpgenerallayout", SCR_DumpGeneralLayout_f);
@@ -1645,6 +1728,7 @@ void SCR_Shutdown (void)
 	Cmd_RemoveCommand ("sizeup");
 	Cmd_RemoveCommand ("sizedown");
 	Cmd_RemoveCommand ("sky");
+	Cmd_RemoveCommand ("skyclouds");
 	Cmd_RemoveCommand ("sethud");
 	Cmd_RemoveCommand ("dumpstatuslayout");
 	Cmd_RemoveCommand ("dumpgenerallayout");

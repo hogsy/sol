@@ -2241,6 +2241,7 @@ extern qboolean ED_ParseEntityAlias ( char * data , edict_t * ent ) ;
 extern void LoadAliasData ( void ) ;
 extern qboolean LoadAliasFile ( char * name ) ;
 extern char * ReadTextFile ( char * filename , int * size ) ;
+extern void ED_SetDefaultFields ( edict_t * ent ) ;
 extern void ED_ParseField ( char * key , char * value , edict_t * ent ) ;
 extern char * ED_NewString ( char * string ) ;
 extern void ReInitialize_Entity ( edict_t * ent ) ;

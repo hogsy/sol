@@ -1057,6 +1057,7 @@
 {"ED_ParseEdict", (byte *)ED_ParseEdict},
 {"ED_ParseEntityAlias", (byte *)ED_ParseEntityAlias},
 {"LoadAliasData", (byte *)LoadAliasData},
+{"ED_SetDefaultFields", (byte *)ED_SetDefaultFields},
 {"ED_ParseField", (byte *)ED_ParseField},
 {"ED_NewString", (byte *)ED_NewString},
 {"ReInitialize_Entity", (byte *)ReInitialize_Entity},

@@ -1003,6 +1003,7 @@
 {"G_FindTeams", (byte *)G_FindTeams},
 {"G_PrecachePlayerInventories", (byte *)G_PrecachePlayerInventories},
 {"ED_ParseEdict", (byte *)ED_ParseEdict},
+{"ED_SetDefaultFields", (byte *)ED_SetDefaultFields},
 {"ED_ParseField", (byte *)ED_ParseField},
 {"ED_NewString", (byte *)ED_NewString},
 {"ED_CallSpawn", (byte *)ED_CallSpawn},

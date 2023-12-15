@@ -255,16 +255,16 @@ void ai_stand (edict_t *self, float dist)
 void ai_walk (edict_t *self, float dist)
 {
 	// Lazarus: If we're following the leader and have no enemy, run to him
-	if ((!self->enemy) && (self->monsterinfo.aiflags & AI_FOLLOW_LEADER))
+	if ( (!self->enemy) && (self->monsterinfo.aiflags & AI_FOLLOW_LEADER) )
 		self->movetarget = self->goalentity = self->monsterinfo.leader;
 
 	M_MoveToGoal (self, dist);
 
 	// check for noticing a player
-	if (FindTarget (self))
+	if ( FindTarget(self) )
 		return;
 
-	if ((self->monsterinfo.search) && (level.time > self->monsterinfo.idle_time))
+	if ( (self->monsterinfo.search) && (level.time > self->monsterinfo.idle_time) )
 	{
 		if (self->monsterinfo.aiflags & AI_MEDIC)
 			abortHeal(self,false);
@@ -1562,13 +1562,13 @@ void ai_run (edict_t *self, float dist)
 		&& !((self->monsterinfo.last_hint_time + HINT_PATH_RESTART_TIME) > level.time) )
 	{	// ...then go find a path, you foo!
 		self->monsterinfo.last_hint_time = level.time;
-		if (hintcheck_monsterlost(self)) return;
+		if ( hintcheck_monsterlost(self) ) return;
 	}
 
 	// coop will change to another enemy if visible
 	if (coop->value)
 	{	// FIXME: insane guys get mad with this, which causes crashes!
-		if (FindTarget (self))
+		if ( FindTarget(self) )
 			return;
 	}
 
@@ -1576,15 +1576,15 @@ void ai_run (edict_t *self, float dist)
 	//          search time and let him go idle so he'll start tracking hint_paths
 	if (self->monsterinfo.search_time)
 	{
-		if (!Q_stricmp(self->classname,"monster_medic") && hint_chains_exist)
+		if ( !Q_stricmp(self->classname, "monster_medic") && hint_chains_exist )
 		{
 			if (developer->value)
-				gi.dprintf("medic search_time=%g\n",level.time - self->monsterinfo.search_time);
+				gi.dprintf ("medic search_time=%g\n", level.time - self->monsterinfo.search_time);
 
 			if (level.time > (self->monsterinfo.search_time + 15))
 			{
 				if (developer->value)
-					gi.dprintf("medic search timeout, going idle\n");
+					gi.dprintf ("medic search timeout, going idle\n");
 
 				if (!alreadyMoved)
 					M_MoveToGoal (self, dist);
@@ -1595,7 +1595,7 @@ void ai_run (edict_t *self, float dist)
 					self->movetarget = NULL;
 				self->enemy = self->oldenemy = NULL;
 				self->monsterinfo.pausetime = level.time + 2;
-				self->monsterinfo.stand(self);
+				self->monsterinfo.stand (self);
 				return;
 			}
 		}
@@ -1626,14 +1626,14 @@ void ai_run (edict_t *self, float dist)
 	if (self->monsterinfo.aiflags & AI_PURSUE_NEXT)
 	{
 		self->monsterinfo.aiflags &= ~AI_PURSUE_NEXT;
-//		dprint("reached current goal: "); dprint(vtos(self.origin)); dprint(" "); dprint(vtos(self.last_sighting)); dprint(" "); dprint(ftos(vlen(self.origin - self.last_sighting))); dprint("\n");
+	//	dprint("reached current goal: "); dprint(vtos(self.origin)); dprint(" "); dprint(vtos(self.last_sighting)); dprint(" "); dprint(ftos(vlen(self.origin - self.last_sighting))); dprint("\n");
 
 		// give ourself more time since we got this far
 		self->monsterinfo.search_time = level.time + 5;
 
 		if (self->monsterinfo.aiflags & AI_PURSUE_TEMP)
 		{
-//			dprint("was temp goal; retrying original\n");
+		//	dprint("was temp goal; retrying original\n");
 			self->monsterinfo.aiflags &= ~AI_PURSUE_TEMP;
 			marker = NULL;
 			VectorCopy (self->monsterinfo.saved_goal, self->monsterinfo.last_sighting);

@@ -868,9 +868,9 @@ void turret_breach_think (edict_t *self)
 			// jump button disables turret
 
 		//	if (self->owner->client->ps.pmove.velocity[2] > 15) 
-		//		turret_disengage(self);
+		//		turret_disengage (self);
 			else if (self->owner->client->ucmd.upmove >= 20)
-				turret_disengage(self);
+				turret_disengage (self);
 		}
 	}
 	else if ((self->spawnflags & SF_TURRET_PLAYER_CONTROLLABLE

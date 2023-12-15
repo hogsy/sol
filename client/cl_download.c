@@ -292,7 +292,7 @@ void CL_RequestNextDownload (void)
 				}
 
 				if (precache_model) { 
-					FS_FreeFile(precache_model);
+					FS_FreeFile (precache_model);
 					precache_model = 0;
 				}
 				precache_model_skin = 0;
