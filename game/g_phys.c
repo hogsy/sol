@@ -205,8 +205,12 @@ qboolean SV_RunThink (edict_t *ent)
 		return true;
 	
 	ent->nextthink = 0;
-	if (!ent->think)
-		gi.error ("NULL ent->think for %s", ent->classname);
+	if ( !ent->think )
+	{
+	//	gi.error ("NULL ent->think for %s", ent->classname);
+		gi.dprintf ("NULL ent->think for %s\n", ent->classname);
+		return true;
+	}
 	ent->think (ent);
 
 	return false;
@@ -1292,7 +1296,7 @@ void SV_Physics_Pusher (edict_t *ent)
 	edict_t		*part, *mv;
 
 	// if not a team captain, movement will be handled elsewhere
-	if ( ent->flags & FL_TEAMSLAVE)
+	if (ent->flags & FL_TEAMSLAVE)
 		return;
 
 	// make sure all team slaves can move before commiting
@@ -1450,11 +1454,15 @@ void SV_Physics_Toss (edict_t *ent)
 	qboolean	isinwater;
 	vec3_t		old_origin;
 
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
 
+	// Phatman fix: ent was somtimes being freed inside SV_RunThink
+    if ( !ent->inuse )
+        return;
+
 	// if not a team captain, so movement will be handled elsewhere
-	if ( ent->flags & FL_TEAMSLAVE)
+	if (ent->flags & FL_TEAMSLAVE)
 		return;
 
 	if (ent->groundentity)
@@ -1463,12 +1471,12 @@ void SV_Physics_Toss (edict_t *ent)
 	if (ent->velocity[2] > 0)
 		ent->groundentity = NULL;
 
-// check for the groundentity going away
+	// check for the groundentity going away
 	if (ent->groundentity)
 		if (!ent->groundentity->inuse)
 			ent->groundentity = NULL;
 
-// Lazarus: conveyor
+	// Lazarus: conveyor
 	if (ent->groundentity && (ent->groundentity->movetype == MOVETYPE_CONVEYOR))
 	{
 		vec3_t	point, end;
@@ -2059,9 +2067,10 @@ void SV_Physics_Step (edict_t *ent)
 			gi.sound (ent, CHAN_BODY, gi.soundindex("player/watr_in.wav"), 1, ATTN_NORM, 0);
 	}
 
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
-	VectorCopy(ent->velocity,ent->oldvelocity);
+
+	VectorCopy (ent->velocity, ent->oldvelocity);
 }
 
 
@@ -2409,9 +2418,11 @@ void SV_Physics_Vehicle (edict_t *ent)
 		if (!ent->inuse)
 			return;
 	}
-//  regular thinking
+
+	// regular thinking
 	SV_RunThink (ent);
-	VectorCopy(ent->velocity,ent->oldvelocity);
+
+	VectorCopy (ent->velocity, ent->oldvelocity);
 }
 
 //============================================================================
@@ -2531,18 +2542,22 @@ void SV_Physics_Debris (edict_t *ent)
 	qboolean	isinwater;
 	vec3_t		old_origin;
 
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
+
+	// Phatman fix: ent was somtimes being freed inside SV_RunThink
+    if ( !ent->inuse )
+        return;
 
 	if (ent->velocity[2] > 0)
 		ent->groundentity = NULL;
 
-// check for the groundentity going away
+	// check for the groundentity going away
 	if (ent->groundentity)
 		if (!ent->groundentity->inuse)
 			ent->groundentity = NULL;
 
-// if onground, return without moving
+	// if onground, return without moving
 	if ( ent->groundentity )
 		return;
 
@@ -2551,7 +2566,7 @@ void SV_Physics_Debris (edict_t *ent)
 	SV_AddGravity (ent);
 
 // move angles
-	//Knightmare- avelocity of target angle breakaway is constant
+	// Knightmare- avelocity of target angle breakaway is constant
 	VectorMA (ent->s.angles, FRAMETIME, ent->avelocity, ent->s.angles);
 
 // move origin

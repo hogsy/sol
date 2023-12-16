@@ -617,7 +617,7 @@ Using a monster makes it angry at the current activator
 */
 void monster_use (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if (self->enemy)
+	if ( !activator || self->enemy )	// Phatman: Solves a crash condition
 		return;
 	if (self->health <= 0)
 		return;
@@ -717,8 +717,11 @@ void monster_death_use (edict_t *self)
 
 	// Lazarus: If actor/monster is being used as a camera by a player,
 	// turn camera off for that player
-	for (i=0,player=g_edicts+1; i<maxclients->value; i++, player++) {
-		if (player->client && player->client->spycam == self)
+	for (i = 0, player = g_edicts+1; i<maxclients->value; i++, player++)
+	{
+		if ( !player->inuse )	// Phatman: Solves a crash condition
+			continue;
+		if ( player->client && (player->client->spycam == self) )
 			camera_off(player);
 	}
 

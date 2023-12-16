@@ -3422,6 +3422,7 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 	cl = (gclient_t *)gi.TagMalloc(sizeof(gclient_t), TAG_LEVEL); 
 	faker->client = cl; 
 	faker->target_ent = activator;
+	faker->s.number = faker - g_edicts;	// Phatman: silence server warning
 	gi.linkentity (faker); 
 
 	if (self->target_ent && self->target_ent->inuse)

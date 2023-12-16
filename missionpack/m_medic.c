@@ -114,16 +114,16 @@ void cleanupHeal (edict_t *self, qboolean change_frame)
 
 void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mark)
 {
-	int hurt;
-	static vec3_t	pain_normal = { 0, 0, 1 };
+	int				hurt;
+	static vec3_t	pain_normal = {0, 0, 1};
 
 	// clean up target
 	cleanupHeal (self, change_frame);
 	// gib em!
-	if ((mark) && (self->enemy) && (self->enemy->inuse))
+	if ( (mark) && (self->enemy) && (self->enemy->inuse) )
 	{
-//		if ((g_showlogic) && (g_showlogic->value))
-//			gi.dprintf ("%s - marking target as bad\n", self->classname);
+	//	if ((g_showlogic) && (g_showlogic->value))
+	//		gi.dprintf ("%s - marking target as bad\n", self->classname);
 		// if the first badMedic slot is filled by a medic, skip it and use the second one
 		if ((self->enemy->monsterinfo.badMedic1) && (self->enemy->monsterinfo.badMedic1->inuse)
 			&& (!strncmp(self->enemy->monsterinfo.badMedic1->classname, "monster_medic", 13)) )
@@ -135,10 +135,10 @@ void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mar
 			self->enemy->monsterinfo.badMedic1 = self;
 		}
 	}
-	if ((gib) && (self->enemy) && (self->enemy->inuse))
+	if ( (gib) && (self->enemy) && (self->enemy->inuse) )
 	{
-//		if ((g_showlogic) && (g_showlogic->value))
-//			gi.dprintf ("%s - gibbing bad heal target", self->classname);
+	//	if ((g_showlogic) && (g_showlogic->value))
+	//		gi.dprintf ("%s - gibbing bad heal target", self->classname);
 
 		if (self->enemy->gib_health)
 			hurt = - self->enemy->gib_health;
@@ -148,10 +148,10 @@ void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mar
 		T_Damage (self->enemy, self, self, vec3_origin, self->enemy->s.origin,
 					pain_normal, hurt, 0, 0, MOD_UNKNOWN);
 	}
-	// clean up self
 
+	// clean up self
 	self->monsterinfo.aiflags &= ~AI_MEDIC;
-	if ((self->oldenemy) && (self->oldenemy->inuse) && (self->oldenemy != self->enemy))
+	if ( (self->oldenemy) && (self->oldenemy->inuse) && (self->oldenemy != self->enemy) )
 	{
 		self->enemy = self->oldenemy;
 		self->oldenemy = NULL;
@@ -290,7 +290,7 @@ void medic_StopPatrolling (edict_t *self)
 		return;
 	}
 	if (self->monsterinfo.aiflags & AI_MEDIC)
-		abortHeal(self,false,false,false);
+		abortHeal (self, false, false, false);
 }
 
 void medic_NextPatrolPoint (edict_t *self, edict_t *hint)
@@ -678,10 +678,10 @@ void medic_run (edict_t *self)
 			return;
 		}
 	}
-//	else if (!canReach(self, self->enemy))
-//	{
-//		abortHeal (self, 0);
-//	}
+/*	else if (!canReach(self, self->enemy))
+	{
+		abortHeal (self, false, false, false);
+	} */
 
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &medic_move_stand;
@@ -1075,36 +1075,36 @@ void medic_cable_attack (edict_t *self)
 	{
 	//	if ((g_showlogic) && (g_showlogic->value))
 	//		gi.dprintf ("medic - aborting heal due to proximity to target ");
-		abortHeal (self, true, false, false );
+		abortHeal (self, true, false, false);
 		return;
 	}
-	/*if ((g_showlogic)&&(g_showlogic->value))
+/*	if ((g_showlogic)&&(g_showlogic->value))
 		gi.dprintf ("distance to target is %f\n", distance);
 	if (distance > 300)
-		return;*/
+		return; */
 
 	// Lazarus: Check for enemy behind muzzle... don't do these guys, 'cause usually this
 	// results in monster entanglement
-	/*VectorNormalize(dir);
-	if (DotProduct(dir,f) < 0.)
+/*	VectorNormalize(dir);
+	if (DotProduct(dir, f) < 0.0f)
 	{
 		gi.dprintf ("medic - aborting heal due to proximity to target ");
 		abortHeal (self, true, false, false);
 		return;
-	}*.
+	} */
 
 	// check for min/max pitch
 	// PMM -- took out since it doesn't look bad when it fails
-	/*vectoangles (dir, angles);
+/*	vectoangles (dir, angles);
 	if (angles[0] < -180)
 		angles[0] += 360;
 	if (fabs(angles[0]) > 45)
 	{
 		if ((g_showlogic) && (g_showlogic->value))
 			gi.dprintf ("medic - aborting heal due to bad angle\n");
-		abortHeal(self);
+		abortHeal (self, true, false, false);
 		return;
-	}*/
+	} */
 
 	tr = gi.trace (start, NULL, NULL, self->enemy->s.origin, self, MASK_SOLID);
 	if (tr.fraction != 1.0 && tr.ent != self->enemy)
@@ -1118,7 +1118,7 @@ void medic_cable_attack (edict_t *self)
 				return;
 			}
 			self->monsterinfo.medicTries++;
-			cleanupHeal (self, 1);
+			cleanupHeal (self, true);
 			return;
 		}
 	//	if ((g_showlogic) && (g_showlogic->value))
@@ -1170,7 +1170,7 @@ void medic_cable_attack (edict_t *self)
 		maxs[2] += 48;   // compensate for change when they die
 
 		tr = gi.trace (self->enemy->s.origin, self->enemy->mins, maxs, self->enemy->s.origin, self->enemy, MASK_MONSTERSOLID);
-		if (tr.startsolid || tr.allsolid)
+		if ( tr.startsolid || tr.allsolid )
 		{
 		//	if ((g_showlogic) && (g_showlogic->value))
 		//		gi.dprintf ("Spawn point obstructed, aborting heal!\n");
@@ -1188,10 +1188,10 @@ void medic_cable_attack (edict_t *self)
 		{
 			if ((g_showlogic) && (g_showlogic->value))
 				gi.dprintf ("heal in world, aborting!\n");
-			abortHeal (self, 1);
+			abortHeal (self, true, false, false);
 			return;
-		}*/
-		else
+		} */
+		else if ( strncmp(self->enemy->classname, "player", 6) != 0 )	// Phatman: Prevent player_noise spawn function error
 		{
 		//	self->enemy->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
 			self->enemy->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
@@ -1209,9 +1209,11 @@ void medic_cable_attack (edict_t *self)
 			self->enemy->pain_debounce_time = 0;
 			self->enemy->damage_debounce_time = 0;
 			self->enemy->deadflag = DEAD_NO;
+
 			// turn off flies
 			if (self->enemy->s.effects & EF_FLIES)
 				M_FliesOff(self->enemy);
+
 			ED_CallSpawn (self->enemy);
 			self->enemy->monsterinfo.healer = NULL;
 		//	self->enemy->owner = NULL;
@@ -1231,8 +1233,8 @@ void medic_cable_attack (edict_t *self)
 			self->enemy->monsterinfo.aiflags |= AI_IGNORE_SHOTS;
 			self->enemy->monsterinfo.monsterflags |= MFL_DO_NOT_COUNT;
 
-			if ((self->oldenemy) && (self->oldenemy->inuse) && (self->oldenemy->health > 0)
-				&& (self->oldenemy != self->enemy)) // Knightmare- don't have monster attack himself
+			if ( (self->oldenemy) && (self->oldenemy->inuse) && (self->oldenemy->health > 0)
+				&& (self->oldenemy != self->enemy) ) // Knightmare- don't have monster attack himself
 			{	// turn healed monster on our enemy
 			//	if ((g_showlogic) && (g_showlogic->value))
 			//		gi.dprintf ("setting heal target's enemy to %s\n", self->oldenemy->classname);
@@ -1240,7 +1242,7 @@ void medic_cable_attack (edict_t *self)
 				FoundTarget (self->enemy);
 			}
 			// Knightmare- maybe this will fix it
-			else if (self->monsterinfo.last_player_enemy && (self->monsterinfo.last_player_enemy->health > 0))
+			else if ( self->monsterinfo.last_player_enemy && (self->monsterinfo.last_player_enemy->health > 0) )
 			{
 			//	gi.dprintf ("setting medic's healmonster's enemy to last player\n");
 				self->enemy->enemy = self->monsterinfo.last_player_enemy;
@@ -1252,7 +1254,7 @@ void medic_cable_attack (edict_t *self)
 			//	if (g_showlogic && g_showlogic->value)
 			//		gi.dprintf ("no valid enemy to set!\n");
 				self->enemy->enemy = NULL;
-				if (!FindTarget (self->enemy))
+				if ( !FindTarget (self->enemy) )
 				{
 					// no valid enemy, so stop acting
 					self->enemy->monsterinfo.pausetime = level.time + 100000000;
@@ -1260,7 +1262,7 @@ void medic_cable_attack (edict_t *self)
 				}
 				self->enemy = NULL;
 				self->oldenemy = NULL;
-				if (!FindTarget (self))
+				if ( !FindTarget (self) )
 				{
 					// no valid enemy, so stop acting
 					self->monsterinfo.pausetime = level.time + 100000000;
@@ -1799,7 +1801,7 @@ qboolean medic_checkattack (edict_t *self)
 	if (self->monsterinfo.aiflags & AI_MEDIC)
 	{
 		// if our target went away
-		if ((!self->enemy) || (!self->enemy->inuse))
+		if ( (!self->enemy) || (!self->enemy->inuse) )
 		{
 		//	if (g_showlogic && g_showlogic->value)
 		//		gi.dprintf ("aborting heal target due to gib\n");

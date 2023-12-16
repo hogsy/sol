@@ -392,7 +392,7 @@ extern void medic_NextPatrolPoint ( edict_t * self , edict_t * hint ) ;
 extern void medic_StopPatrolling ( edict_t * self ) ;
 extern edict_t * medic_FindDeadMonster ( edict_t * self ) ;
 extern qboolean embedded ( edict_t * ent ) ;
-extern void abortHeal ( edict_t * self , qboolean mark ) ;
+extern void abortHeal ( edict_t * self , qboolean change_frame , qboolean gib , qboolean mark ) ;
 extern void DeleteBadMedic ( edict_t * self ) ;
 extern void cleanupHeal ( edict_t * self , qboolean change_frame ) ;
 extern void medic_deadmonster_think ( edict_t * self ) ;

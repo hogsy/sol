@@ -1335,7 +1335,7 @@ extern mmove_t	actor_move_walk_back;
 #define MEDIC_MAX_HEAL_DISTANCE	400
 #define	MEDIC_TRY_TIME		10.0
 
-void abortHeal (edict_t *ent,qboolean mark);
+void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mark);
 void medic_NextPatrolPoint(edict_t *ent,edict_t *hintpath);
 edict_t *medic_FindDeadMonster (edict_t *ent);
 void medic_StopPatrolling(edict_t *ent);

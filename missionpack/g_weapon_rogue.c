@@ -318,21 +318,21 @@ movefield:
 		p11[0] = self->org_maxs[0]*ca - self->org_maxs[1]*sa;
 		p11[1] = self->org_maxs[1]*ca + self->org_maxs[0]*sa;
 		self->mins[0] = p00[0];
-		self->mins[0] = min(self->mins[0],p01[0]);
-		self->mins[0] = min(self->mins[0],p10[0]);
-		self->mins[0] = min(self->mins[0],p11[0]);
+		self->mins[0] = min(self->mins[0], p01[0]);
+		self->mins[0] = min(self->mins[0], p10[0]);
+		self->mins[0] = min(self->mins[0], p11[0]);
 		self->mins[1] = p00[1];
-		self->mins[1] = min(self->mins[1],p01[1]);
-		self->mins[1] = min(self->mins[1],p10[1]);
-		self->mins[1] = min(self->mins[1],p11[1]);
+		self->mins[1] = min(self->mins[1], p01[1]);
+		self->mins[1] = min(self->mins[1], p10[1]);
+		self->mins[1] = min(self->mins[1], p11[1]);
 		self->maxs[0] = p00[0];
-		self->maxs[0] = max(self->maxs[0],p01[0]);
-		self->maxs[0] = max(self->maxs[0],p10[0]);
-		self->maxs[0] = max(self->maxs[0],p11[0]);
+		self->maxs[0] = max(self->maxs[0], p01[0]);
+		self->maxs[0] = max(self->maxs[0], p10[0]);
+		self->maxs[0] = max(self->maxs[0], p11[0]);
 		self->maxs[1] = p00[1];
-		self->maxs[1] = max(self->maxs[1],p01[1]);
-		self->maxs[1] = max(self->maxs[1],p10[1]);
-		self->maxs[1] = max(self->maxs[1],p11[1]);
+		self->maxs[1] = max(self->maxs[1], p01[1]);
+		self->maxs[1] = max(self->maxs[1], p10[1]);
+		self->maxs[1] = max(self->maxs[1], p11[1]);
 	}
 	self->s.event = host->s.event;
 	gi.linkentity (self);
@@ -421,7 +421,7 @@ void prox_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	if (strcmp(inflictor->classname, "prox") != 0)
 	{
 		self->takedamage = DAMAGE_NO;
-		Prox_Explode(self);
+		Prox_Explode (self);
 	}
 	else
 	{
@@ -471,7 +471,7 @@ void prox_seek (edict_t *ent)
 {
 	if (level.time > ent->wait)
 	{
-		Prox_Explode(ent);
+		Prox_Explode (ent);
 	}
 	else
 	{

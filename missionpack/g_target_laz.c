@@ -2669,9 +2669,10 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 	VectorCopy (activator->mins, faker->mins);
 	VectorCopy (activator->maxs, faker->maxs);
     // create a client so you can pick up items/be shot/etc while in camera
-	cl = (gclient_t *) gi.TagMalloc(sizeof(gclient_t), TAG_LEVEL); 
+	cl = (gclient_t *)gi.TagMalloc(sizeof(gclient_t), TAG_LEVEL); 
 	faker->client = cl; 
 	faker->target_ent = activator;
+	faker->s.number = faker - g_edicts;	// Phatman: silence server warning
 	gi.linkentity (faker); 
 
 	if (self->target_ent && self->target_ent->inuse)

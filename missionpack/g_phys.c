@@ -212,10 +212,10 @@ qboolean SV_RunThink (edict_t *ent)
 		return true;
 
 	ent->nextthink = 0;
-	if (!ent->think)
+	if ( !ent->think )
 	{
-	//	gi.error ("NULL ent->think");
-		gi.dprintf ("NULL ent->think\n");
+	//	gi.error ("NULL ent->think for %s\n", ent->classname);
+		gi.dprintf ("NULL ent->think for %s\n", ent->classname);
 		return true;
 	}
 	ent->think (ent);
@@ -1394,10 +1394,15 @@ void SV_Physics_Pusher (edict_t *ent)
 		return;
 
 	// Knightmare- always call think function for prox mines
-	if (!strcmp(ent->classname, "prox") || !strcmp(ent->classname, "prox_field"))
+	if ( !strcmp(ent->classname, "prox") || !strcmp(ent->classname, "prox_field") )
 	{
 		if (ent->inuse)
+		{
 			SV_RunThink (ent);
+
+			if ( !ent->inuse )	// get outta here if we exploded
+				return;
+		}
 	}
 	// make sure all team slaves can move before commiting
 	// any moves or calling any think functions
@@ -1512,7 +1517,7 @@ void SV_Physics_None (edict_t *ent)
 	if (!ent)
 		return;
 
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
 }
 
@@ -1568,6 +1573,10 @@ void SV_Physics_Toss (edict_t *ent)
 
 	// regular thinking
 	SV_RunThink (ent);
+
+	// Phatman fix: ent was somtimes being freed inside SV_RunThink
+    if ( !ent->inuse )
+        return;
 
 	// if not a team captain, so movement will be handled elsewhere
 	if (ent->flags & FL_TEAMSLAVE)
@@ -2239,8 +2248,9 @@ void SV_Physics_Step (edict_t *ent)
 	if (!ent->inuse)			// PGM g_touchtrigger free problem
 		return;
 
-// regular thinking
+	// regular thinking
 	SV_RunThink (ent);
+
 	VectorCopy(ent->velocity,ent->oldvelocity);
 }
 
@@ -2591,9 +2601,11 @@ void SV_Physics_Vehicle (edict_t *ent)
 		if (!ent->inuse)
 			return;
 	}
-//  regular thinking
+
+	// regular thinking
 	SV_RunThink (ent);
-	VectorCopy(ent->velocity,ent->oldvelocity);
+
+	VectorCopy (ent->velocity, ent->oldvelocity);
 }
 
 //============================================================================
@@ -2720,6 +2732,10 @@ void SV_Physics_Debris (edict_t *ent)
 
 // regular thinking
 	SV_RunThink (ent);
+
+	// Phatman fix: ent was somtimes being freed inside SV_RunThink
+    if ( !ent->inuse )
+        return;
 
 	if (ent->velocity[2] > 0)
 		ent->groundentity = NULL;
@@ -3143,8 +3159,12 @@ void SV_Physics_NewToss (edict_t *ent)
 	// regular thinking
 	SV_RunThink (ent);
 
+	// Phatman fix: ent was somtimes being freed inside SV_RunThink
+    if ( !ent->inuse )
+        return;
+
 	// if not a team captain, so movement will be handled elsewhere
-	if ( ent->flags & FL_TEAMSLAVE)
+	if (ent->flags & FL_TEAMSLAVE)
 		return;
 
 	if (ent->groundentity)

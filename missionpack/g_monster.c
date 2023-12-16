@@ -1219,7 +1219,7 @@ Using a monster makes it angry at the current activator
 
 void monster_use (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if (self->enemy)
+	if ( !activator || self->enemy )	// Phatman: Solves a crash condition
 		return;
 	if (self->health <= 0)
 		return;
@@ -1355,22 +1355,24 @@ void monster_death_use (edict_t *self)
 	edict_t	*player;
 	int		i;
 
-	if (!strcmp(self->classname, "monster_turret"))
-		gi.dprintf("monster_turret firing targets\n");
+//	if ( !strcmp(self->classname, "monster_turret") )
+//		gi.dprintf ("monster_turret firing targets\n");
 
 	self->flags &= ~(FL_FLY|FL_SWIM);
 	self->monsterinfo.aiflags &= AI_GOOD_GUY;
 
-	//Knightmare- remove powerscreen and other effects from dead monsters
+	// Knightmare- remove powerscreen and other effects from dead monsters
 	self->s.effects &= ~(EF_COLOR_SHELL|EF_POWERSCREEN|EF_DOUBLE|EF_QUAD|EF_PENT);
 	self->s.renderfx &= ~(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE|RF_SHELL_DOUBLE);
 
 	// Lazarus: If actor/monster is being used as a camera by a player,
 	// turn camera off for that player
-	for(i=0,player=g_edicts+1; i<maxclients->value; i++, player++)
+	for (i = 0, player = g_edicts+1; i<maxclients->value; i++, player++)
 	{
-		if (player->client && player->client->spycam == self)
-			camera_off(player);
+		if ( !player->inuse )	// Phatman: Solves a crash condition
+			continue;
+		if ( player->client && (player->client->spycam == self) )
+			camera_off (player);
 	}
 
 	if (self->item)

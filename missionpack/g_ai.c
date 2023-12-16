@@ -212,7 +212,7 @@ void ai_stand (edict_t *self, float dist)
 	if (!(self->spawnflags & SF_MONSTER_SIGHT) && (self->monsterinfo.idle) && (level.time > self->monsterinfo.idle_time))
 	{
 			if (self->monsterinfo.aiflags & AI_MEDIC)
-			abortHeal(self,false, false, false);
+			abortHeal (self, false, false, false);
 
 		if (self->monsterinfo.idle_time)
 		{
