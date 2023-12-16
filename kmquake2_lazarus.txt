@@ -43,18 +43,18 @@ Support for mapper-specified skyboxes with clouds.  Skyboxes must be made with a
 	the foreground and horizon line that is drawn in front of the clouds.
 	The following keys can be set in worldpsawn and target_sky:
 	"cloudname"		clouds image name (in folder <gamedir>/env)
-	"lightningfreq"	time between lighting flashes
-	"cloudxdir"		movement of clouds on X axis
-	"cloudydir"		movement of clouds on Y axis
-	"cloud1tile"	tile size of first cloud layer
-	"cloud2tile"	tile size of second cloud layer
-	"cloud3tile"	tile size of third cloud layer
-	"cloud1speed"	movment speed of first cloud layer
-	"cloud2speed"	movment speed of second cloud layer
-	"cloud3speed"	movment speed of third cloud layer
-	"cloud1alpha"	translucency of first cloud layer
-	"cloud2alpha"	translucency of second cloud layer
-	"cloud3alpha"	translucency of third cloud layer
+	"lightningfreq"	time between lighting flashes (default 0.0)
+	"cloudxdir"		movement direction of clouds on X axis (default 1.0)
+	"cloudydir"		movement direction of clouds on Y axis (default 0.8)
+	"cloud1tile"	tile size of first cloud layer (default 8.0)
+	"cloud2tile"	tile size of second cloud layer (default 2.0)
+	"cloud3tile"	tile size of third cloud layer (default 1.0)
+	"cloud1speed"	movment speed of first cloud layer (default 1.0)
+	"cloud2speed"	movment speed of second cloud layer (default 4.0)
+	"cloud3speed"	movment speed of third cloud layer (default 8.0)
+	"cloud1alpha"	translucency of first cloud layer (default 0.9)
+	"cloud2alpha"	translucency of second cloud layer (default 0.6)
+	"cloud3alpha"	translucency of third cloud layer (default 0.0)
 
 Support for double-barreled turrets.  Code by Musashi.
 	Set the turret_breach's combattarget to the targetname of the second info_notnull.
