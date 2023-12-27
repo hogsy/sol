@@ -68,6 +68,8 @@ int		time_after_game;
 int		time_before_ref;
 int		time_after_ref;
 
+qboolean LegacyProtocol (void);
+
 /*
 ============================================================================
 
@@ -296,6 +298,9 @@ Handles byte ordering and avoids alignment errors
 ==============================================================================
 */
 
+#define BIT_23	0x00800000
+#define UPRBITS	0xFF000000
+
 vec3_t	bytedirs[NUMVERTEXNORMALS] =
 {
 #include "../client/anorms.h"
@@ -380,61 +385,41 @@ void MSG_WriteString (sizebuf_t *sb, char *s)
 }
 
 
-// 24-bit coordinate transmission code
-#ifdef LARGE_MAP_SIZE
-
-#define BIT_23	0x00800000
-#define UPRBITS	0xFF000000
-qboolean LegacyProtocol (void);
-
-void MSG_WriteCoord24 (sizebuf_t *sb, float f)
-{
-	int tmp;
-	byte trans1;
-	unsigned short trans2;
-
-	tmp = f*8;			// 1/8 granulation, leaves bounds of +/-1M in signed 24-bit form
-	trans1 = tmp >>16;	// bits 16-23
-	trans2 = tmp;		// bits 0-15
-
-	// Don't mess with sign bits on this end to allow overflow (map wrap-around).
-
-	MSG_WriteByte (sb, trans1);
-	MSG_WriteShort (sb, trans2);
-}
-
-float MSG_ReadCoord24 (sizebuf_t *msg_read)
-{
-	int tmp;
-	byte trans1;
-	unsigned short trans2;
-
-	trans1 = MSG_ReadByte(msg_read);
-	trans2 = MSG_ReadShort(msg_read);
-
-	tmp = trans1 <<16;	// bits 16-23
-	tmp += trans2;		// bits 0-15
-
-	// Sign bit 23 means it's negative, so fill upper
-	// 8 bits with 1s for 2's complement negative.
-	if (tmp & BIT_23)	
-		tmp |= UPRBITS;
-
-	return tmp * (1.0/8);	// restore 1/8 granulation
-}
-
+// Knightmare- 24-bit player coordinate transmission code
 // Player movement coords are already in 1/8 precision integer form
 void MSG_WritePMCoord24 (sizebuf_t *sb, int in)
 {
 	byte trans1;
 	unsigned short trans2;
 
-	trans1 = in >>16;	// bits 16-23
+	trans1 = in >> 16;	// bits 16-23
 	trans2 = in;		// bits 0-15
 
 	MSG_WriteByte (sb, trans1);
 	MSG_WriteShort (sb, trans2);
 }
+
+void MSG_WritePMCoord16 (sizebuf_t *sb, int in)
+{
+	MSG_WriteShort (sb, in);
+}
+
+#ifdef LARGE_MAP_SIZE
+
+void MSG_WritePMCoord (sizebuf_t *sb, int in)
+{
+	MSG_WritePMCoord24 (sb, in);
+}
+
+#else // LARGE_MAP_SIZE
+
+void MSG_WritePMCoord (sizebuf_t *sb, int in)
+{
+	MSG_WritePMCoord16 (sb, in);
+}
+
+#endif // LARGE_MAP_SIZE
+
 
 int MSG_ReadPMCoord24 (sizebuf_t *msg_read)
 {
@@ -445,7 +430,7 @@ int MSG_ReadPMCoord24 (sizebuf_t *msg_read)
 	trans1 = MSG_ReadByte(msg_read);
 	trans2 = MSG_ReadShort(msg_read);
 
-	tmp = trans1 <<16;	// bits 16-23
+	tmp = trans1 << 16;	// bits 16-23
 	tmp += trans2;		// bits 0-15
 
 	// Sign bit 23 means it's negative, so fill upper
@@ -456,8 +441,50 @@ int MSG_ReadPMCoord24 (sizebuf_t *msg_read)
 	return tmp;
 }
 
+int MSG_ReadPMCoord16 (sizebuf_t *msg_read)
+{
+	return MSG_ReadShort (&net_message);
+}
+
+#ifdef LARGE_MAP_SIZE
+
+int MSG_ReadPMCoord (sizebuf_t *msg_read)
+{
+	if ( LegacyProtocol() )
+		return MSG_ReadPMCoord16 (msg_read);
+	else
+		return MSG_ReadPMCoord24 (msg_read);
+}
+
+#else // LARGE_MAP_SIZE
+
+int MSG_ReadPMCoord (sizebuf_t *msg_read)
+{
+	return MSG_ReadPMCoord16 (msg_read);
+}
+
 #endif // LARGE_MAP_SIZE
 
+void MSG_WriteCoord24 (sizebuf_t *sb, float f)
+{
+	int tmp;
+	byte trans1;
+	unsigned short trans2;
+
+	tmp = f*8;			// 1/8 granulation, leaves bounds of +/-1M in signed 24-bit form
+	trans1 = tmp >> 16;	// bits 16-23
+	trans2 = tmp;		// bits 0-15
+
+	// Don't mess with sign bits on this end to allow overflow (map wrap-around).
+
+	MSG_WriteByte (sb, trans1);
+	MSG_WriteShort (sb, trans2);
+}
+
+void MSG_WriteCoord16 (sizebuf_t *sb, float f)
+{
+	MSG_WriteShort (sb, (int)(f*8));
+}
 
 #ifdef LARGE_MAP_SIZE
 
@@ -470,34 +497,43 @@ void MSG_WriteCoord (sizebuf_t *sb, float f)
 
 void MSG_WriteCoord (sizebuf_t *sb, float f)
 {
-	MSG_WriteShort (sb, (int)(f*8));
+	MSG_WriteCoord16 (sb, f);
 }
 
 #endif // LARGE_MAP_SIZE
 
+void MSG_WritePos24 (sizebuf_t *sb, vec3_t pos)
+{
+	 MSG_WriteCoord24 (sb, pos[0]);
+	 MSG_WriteCoord24 (sb, pos[1]);
+	 MSG_WriteCoord24 (sb, pos[2]);
+}
+
+void MSG_WritePos16 (sizebuf_t *sb, vec3_t pos)
+{
+	 MSG_WriteCoord16 (sb, pos[0]);
+	 MSG_WriteCoord16 (sb, pos[1]);
+	 MSG_WriteCoord16 (sb, pos[2]);
+}
 
 #ifdef LARGE_MAP_SIZE
 
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos)
 {
-	MSG_WriteCoord24 (sb, pos[0]);
-	MSG_WriteCoord24 (sb, pos[1]);
-	MSG_WriteCoord24 (sb, pos[2]);
+	MSG_WritePos24 (sb, pos);
 }
 
 #else // LARGE_MAP_SIZE
 
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos)
 {
-	MSG_WriteShort (sb, (int)(pos[0]*8));
-	MSG_WriteShort (sb, (int)(pos[1]*8));
-	MSG_WriteShort (sb, (int)(pos[2]*8));
+	MSG_WritePos16 (sb, pos);
 }
 
 #endif // LARGE_MAP_SIZE
 
 
-void MSG_WriteAngle (sizebuf_t *sb, float f)
+void MSG_WriteAngle8 (sizebuf_t *sb, float f)
 {
 	MSG_WriteByte (sb, (int)(f*256/360) & 255);
 }
@@ -505,6 +541,11 @@ void MSG_WriteAngle (sizebuf_t *sb, float f)
 void MSG_WriteAngle16 (sizebuf_t *sb, float f)
 {
 	MSG_WriteShort (sb, ANGLE2SHORT(f));
+}
+
+void MSG_WriteAngle (sizebuf_t *sb, float f)
+{
+	MSG_WriteAngle8 (sb, f);
 }
 
 
@@ -987,58 +1028,85 @@ char *MSG_ReadStringLine (sizebuf_t *msg_read)
 	return string;
 }
 
-
-#ifdef LARGE_MAP_SIZE
-
-float MSG_ReadCoord (sizebuf_t *msg_read)
+float MSG_ReadCoord24 (sizebuf_t *msg_read)
 {
-	if (LegacyProtocol())
-		return MSG_ReadShort(msg_read) * (1.0/8);
-	else
-		return MSG_ReadCoord24(msg_read);
+	int tmp;
+	byte trans1;
+	unsigned short trans2;
+
+	trans1 = MSG_ReadByte(msg_read);
+	trans2 = MSG_ReadShort(msg_read);
+
+	tmp = trans1 << 16;	// bits 16-23
+	tmp += trans2;		// bits 0-15
+
+	// Sign bit 23 means it's negative, so fill upper
+	// 8 bits with 1s for 2's complement negative.
+	if (tmp & BIT_23)	
+		tmp |= UPRBITS;
+
+	return tmp * (1.0/8);	// restore 1/8 granulation
 }
 
-#else // LARGE_MAP_SIZE
-
-float MSG_ReadCoord (sizebuf_t *msg_read)
+float MSG_ReadCoord16 (sizebuf_t *msg_read)
 {
 	return MSG_ReadShort(msg_read) * (1.0/8);
 }
 
+#ifdef LARGE_MAP_SIZE
+
+float MSG_ReadCoord (sizebuf_t *msg_read)
+{
+	if ( LegacyProtocol() )
+		return MSG_ReadCoord16 (msg_read);
+	else
+		return MSG_ReadCoord24 (msg_read);
+}
+
+#else // LARGE_MAP_SIZE
+
+float MSG_ReadCoord (sizebuf_t *msg_read)
+{
+	return MSG_ReadCoord16 (msg_read);
+}
+
 #endif // LARGE_MAP_SIZE
 
+void MSG_ReadPos24 (sizebuf_t *msg_read, vec3_t pos)
+{
+	pos[0] = MSG_ReadCoord24 (msg_read);
+	pos[1] = MSG_ReadCoord24 (msg_read);
+	pos[2] = MSG_ReadCoord24 (msg_read);
+}
+
+void MSG_ReadPos16 (sizebuf_t *msg_read, vec3_t pos)
+{
+	pos[0] = MSG_ReadCoord16 (msg_read);
+	pos[1] = MSG_ReadCoord16 (msg_read);
+	pos[2] = MSG_ReadCoord16 (msg_read);
+}
 
 #ifdef LARGE_MAP_SIZE
 
 void MSG_ReadPos (sizebuf_t *msg_read, vec3_t pos)
 {
-	if (LegacyProtocol())
-	{
-		pos[0] = MSG_ReadShort(msg_read) * (1.0/8);
-		pos[1] = MSG_ReadShort(msg_read) * (1.0/8);
-		pos[2] = MSG_ReadShort(msg_read) * (1.0/8);
-	}
+	if ( LegacyProtocol() )
+		MSG_ReadPos16 (msg_read, pos);
 	else
-	{
-		pos[0] = MSG_ReadCoord24(msg_read);
-		pos[1] = MSG_ReadCoord24(msg_read);
-		pos[2] = MSG_ReadCoord24(msg_read);
-	}
+		MSG_ReadPos24 (msg_read, pos);
 }
 
 #else // LARGE_MAP_SIZE
 
 void MSG_ReadPos (sizebuf_t *msg_read, vec3_t pos)
 {
-	pos[0] = MSG_ReadShort(msg_read) * (1.0/8);
-	pos[1] = MSG_ReadShort(msg_read) * (1.0/8);
-	pos[2] = MSG_ReadShort(msg_read) * (1.0/8);
+	MSG_ReadPos16 (msg_read, pos);
 }
 
 #endif // LARGE_MAP_SIZE
 
 
-float MSG_ReadAngle (sizebuf_t *msg_read)
+float MSG_ReadAngle8 (sizebuf_t *msg_read)
 {
 	return MSG_ReadChar(msg_read) * (360.0/256);
 }

@@ -297,11 +297,11 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 			to->origin[2] = MSG_ReadCoord (&net_message);
 			
 		if (bits & U_ANGLE1)
-			to->angles[0] = MSG_ReadAngle(&net_message);
+			to->angles[0] = MSG_ReadAngle8 (&net_message);
 		if (bits & U_ANGLE2)
-			to->angles[1] = MSG_ReadAngle(&net_message);
+			to->angles[1] = MSG_ReadAngle8 (&net_message);
 		if (bits & U_ANGLE3)
-			to->angles[2] = MSG_ReadAngle(&net_message);
+			to->angles[2] = MSG_ReadAngle8 (&net_message);
 
 		if (bits & U_OLDORIGIN)
 			MSG_ReadPos (&net_message, to->old_origin);
@@ -379,11 +379,11 @@ void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bi
 			to->origin[2] = MSG_ReadCoord (&net_message);
 			
 		if (bits & U_ANGLE1)
-			to->angles[0] = MSG_ReadAngle(&net_message);
+			to->angles[0] = MSG_ReadAngle8 (&net_message);
 		if (bits & U_ANGLE2)
-			to->angles[1] = MSG_ReadAngle(&net_message);
+			to->angles[1] = MSG_ReadAngle8 (&net_message);
 		if (bits & U_ANGLE3)
-			to->angles[2] = MSG_ReadAngle(&net_message);
+			to->angles[2] = MSG_ReadAngle8 (&net_message);
 
 		if (bits & U_OLDORIGIN)
 			MSG_ReadPos (&net_message, to->old_origin);
@@ -454,6 +454,7 @@ void CL_DeltaEntity (frame_t *frame, int newnum, entity_state_t *old, int bits)
 		|| abs(state->origin[2] - ent->current.origin[2]) > 512
 		|| state->event == EV_PLAYER_TELEPORT
 		|| state->event == EV_OTHER_TELEPORT
+		|| state->event == EV_PLAYER_TELEPORT2	// Knightmare added
 		)
 	{
 		ent->serverframe = -99;
@@ -653,7 +654,7 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 		if (flags & PS_M_TYPE)
 			state->pmove.pm_type = MSG_ReadByte (&net_message);
 
-		if (flags & PS_M_ORIGIN) // FIXME- map size
+		if (flags & PS_M_ORIGIN)
 		{
 			state->pmove.origin[0] = MSG_ReadShort (&net_message);
 			state->pmove.origin[1] = MSG_ReadShort (&net_message);
@@ -759,15 +760,9 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 
 		if (flags & PS_M_ORIGIN)
 		{
-#ifdef LARGE_MAP_SIZE
-			state->pmove.origin[0] = MSG_ReadPMCoord24 (&net_message);
-			state->pmove.origin[1] = MSG_ReadPMCoord24 (&net_message);
-			state->pmove.origin[2] = MSG_ReadPMCoord24 (&net_message);
-#else
-			state->pmove.origin[0] = MSG_ReadShort (&net_message);
-			state->pmove.origin[1] = MSG_ReadShort (&net_message);
-			state->pmove.origin[2] = MSG_ReadShort (&net_message);
-#endif
+			state->pmove.origin[0] = MSG_ReadPMCoord (&net_message);
+			state->pmove.origin[1] = MSG_ReadPMCoord (&net_message);
+			state->pmove.origin[2] = MSG_ReadPMCoord (&net_message);
 		}
 
 		if (flags & PS_M_VELOCITY)

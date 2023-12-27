@@ -259,8 +259,9 @@ void MSG_WriteFloat (sizebuf_t *sb, float f);
 void MSG_WriteString (sizebuf_t *sb, char *s);
 void MSG_WriteCoord (sizebuf_t *sb, float f);
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
-void MSG_WriteAngle (sizebuf_t *sb, float f);
+void MSG_WriteAngle8 (sizebuf_t *sb, float f);
 void MSG_WriteAngle16 (sizebuf_t *sb, float f);
+void MSG_WriteAngle (sizebuf_t *sb, float f);
 void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
 void MSG_WriteDeltaEntity (struct entity_state_s *from, struct entity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
 void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
@@ -278,7 +279,7 @@ char	*MSG_ReadStringLine (sizebuf_t *sb);
 
 float	MSG_ReadCoord (sizebuf_t *sb);
 void	MSG_ReadPos (sizebuf_t *sb, vec3_t pos);
-float	MSG_ReadAngle (sizebuf_t *sb);
+float	MSG_ReadAngle8 (sizebuf_t *sb);
 float	MSG_ReadAngle16 (sizebuf_t *sb);
 void	MSG_ReadDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
 
@@ -286,10 +287,9 @@ void	MSG_ReadDir (sizebuf_t *sb, vec3_t vector);
 
 void	MSG_ReadData (sizebuf_t *sb, void *buffer, int size);
 
-#ifdef LARGE_MAP_SIZE // 24-bit pmove origin coordinate transmission code
-void	MSG_WritePMCoord24 (sizebuf_t *sb, int in);
-int		MSG_ReadPMCoord24 (sizebuf_t *msg_read);
-#endif
+// 24-bit pmove origin coordinate transmission code
+void	MSG_WritePMCoord (sizebuf_t *sb, int in);
+int		MSG_ReadPMCoord (sizebuf_t *msg_read);
 
 //============================================================================
 

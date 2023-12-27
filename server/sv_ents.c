@@ -349,15 +349,9 @@ void SV_WritePlayerstateToClient (client_frame_t *from, client_frame_t *to, size
 
 	if (pflags & PS_M_ORIGIN) // FIXME- map size
 	{
-#ifdef LARGE_MAP_SIZE
-		MSG_WritePMCoord24 (msg, ps->pmove.origin[0]);
-		MSG_WritePMCoord24 (msg, ps->pmove.origin[1]);
-		MSG_WritePMCoord24 (msg, ps->pmove.origin[2]);
-#else
-		MSG_WriteShort (msg, ps->pmove.origin[0]);
-		MSG_WriteShort (msg, ps->pmove.origin[1]);
-		MSG_WriteShort (msg, ps->pmove.origin[2]);
-#endif
+		MSG_WritePMCoord (msg, ps->pmove.origin[0]);
+		MSG_WritePMCoord (msg, ps->pmove.origin[1]);
+		MSG_WritePMCoord (msg, ps->pmove.origin[2]);
 	}
 
 	if (pflags & PS_M_VELOCITY)
