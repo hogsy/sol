@@ -1163,6 +1163,40 @@ void MSG_ReadData (sizebuf_t *msg_read, void *data, int len)
 		((byte *)data)[i] = MSG_ReadByte (msg_read);
 }
 
+//===========================================================================
+
+int MSG_PackSolid16 (vec3_t bmins, vec3_t bmaxs)
+{
+	int 	i, j, k, packed;
+	
+	// assume that x/y are equal and symetric
+	i = bmaxs[0] / 8;
+	i = min(max(i, 1), 31);
+
+	// z is not symetric
+	j = (-bmins[2]) / 8;
+	j = min(max(j, 1), 31);
+
+	// and z maxs can be negative...
+	k = (bmaxs[2] + 32) / 8;
+	k = min(max(k, 1), 63);
+
+	packed = (k<<10) | (j<<5) | i;
+	
+	return packed;
+}
+
+void MSG_UnpackSolid16 (int packed, vec3_t bmins, vec3_t bmaxs)
+{
+	int		x, zd, zu;
+	
+	x = 8 *(packed & 31);
+	zd = 8 * ((packed >> 5) & 31);
+	zu = 8 * ((packed >> 10) & 63) - 32;
+
+	VectorSet (bmins, -x, -x, -zd);
+	VectorSet (bmaxs, x, x, zu);
+}
 
 //===========================================================================
 

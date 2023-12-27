@@ -291,6 +291,10 @@ void	MSG_ReadData (sizebuf_t *sb, void *buffer, int size);
 void	MSG_WritePMCoord (sizebuf_t *sb, int in);
 int		MSG_ReadPMCoord (sizebuf_t *msg_read);
 
+// packing/unpacking of bboxes for centity_state_t solid field
+int		MSG_PackSolid16 (vec3_t bmins, vec3_t bmaxs);
+void	MSG_UnpackSolid16 (int packed, vec3_t bmins, vec3_t bmaxs);
+
 //============================================================================
 
 extern	qboolean		bigendien;

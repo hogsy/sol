@@ -110,6 +110,8 @@ Changes as of v0.20 update 8:
 - Added upscaling of the scrap image (with optional blending by Skuller from Q2Pro) used to atlas 8-bit HUD pics.
 	Use cvar r_scrap_upscale to enable, value of 1 is pixel copy, value of 2 enables blending.
 	Requires vid_restart for changes to take effect.
+
+- Added drawing of entity collision bounding boxes in renderer.  Use cvar r_showbbox_entity to enable.
 	
 - Added cl_drawhud cvar to toggle HUD drawing.  Set to 0 to hide the HUD, such as when taking screenshots to be used as levelshots.
 

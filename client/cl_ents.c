@@ -1345,6 +1345,15 @@ void CL_AddPacketEntities (frame_t *frame)
 				ent.skin = NULL;
 				ent.model = cl.model_draw[s1->modelindex];
 			}
+
+			// Knightmare- unpack bbox for ent
+			if ( (s1->solid != 0) && (s1->solid != 31) ) {
+				MSG_UnpackSolid16 (s1->solid, ent.mins, ent.maxs);
+			}
+			else {
+				VectorCopy (vec3_origin, ent.mins);
+				VectorCopy (vec3_origin, ent.maxs);
+			}
 		}
 		
 		//**** MODEL / EFFECT SWAPPING ETC *** - per gametype...

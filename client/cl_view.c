@@ -393,6 +393,66 @@ void V_TestLights (void)
 
 /*
 =================
+CL_SetSkyData
+=================
+*/
+void CL_SetSkyData (void)
+{
+	float		rotate, lightningFreq = 0.0f;
+	vec3_t		temp, axis = {0.0f, 0.0f, 1.0f};
+	vec2_t		cloudDir = {1.0f, 0.8f};
+	vec3_t		cloudTile = {8.0f, 2.0f, 1.0f};
+	vec3_t		cloudSpeed = {1.0f, 4.0f, 8.0f};
+	vec3_t		cloudAlpha = {0.9f, 0.6f, 0.0f};
+
+	rotate = atof (cl.configstrings[CS_SKYROTATE]);
+//	sscanf (cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]);
+	if (sscanf (cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]) == EOF) {
+		Com_Printf (S_COLOR_YELLOW"CL_PrepRefresh: invalid string '%s' for CS_SKYAXIS.\n", cl.configstrings[CS_SKYAXIS]);
+	}
+//	R_SetSky (cl.configstrings[CS_SKY], rotate, axis);
+
+	// DK-style clouds support
+	temp[0] = atof (cl.configstrings[CS_CLOUDLIGHTFREQ]);
+	lightningFreq = (temp[0] >= 0.0f) ? temp[0] :  lightningFreq;
+	if (sscanf (cl.configstrings[CS_CLOUDDIR], "%f %f", &temp[0], &temp[1]) == EOF) {
+		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDDIR.\n", cl.configstrings[CS_CLOUDDIR]);
+	}
+	else {
+		cloudDir[0] = (temp[0] >= 0.0f) ? temp[0] : cloudDir[0];
+		cloudDir[1] = (temp[1] >= 0.0f) ? temp[1] : cloudDir[1];
+	}
+	if (sscanf (cl.configstrings[CS_CLOUDTILE], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
+		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDTILE.\n", cl.configstrings[CS_CLOUDTILE]);
+	}
+	else {
+		cloudTile[0] = (temp[0] >= 0.0f) ? temp[0] : cloudTile[0];
+		cloudTile[1] = (temp[1] >= 0.0f) ? temp[1] : cloudTile[1];
+		cloudTile[2] = (temp[2] >= 0.0f) ? temp[2] : cloudTile[2];
+	}
+	if (sscanf (cl.configstrings[CS_CLOUDSPEED], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
+		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDSPEED.\n", cl.configstrings[CS_CLOUDSPEED]);
+	}
+	else {
+		cloudSpeed[0] = (temp[0] >= 0.0f) ? temp[0] : cloudSpeed[0];
+		cloudSpeed[1] = (temp[1] >= 0.0f) ? temp[1] : cloudSpeed[1];
+		cloudSpeed[2] = (temp[2] >= 0.0f) ? temp[2] : cloudSpeed[2];
+	}
+	if (sscanf (cl.configstrings[CS_CLOUDALPHA], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
+		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDALPHA.\n", cl.configstrings[CS_CLOUDALPHA]);
+	}
+	else {
+		cloudAlpha[0] = (temp[0] >= 0.0f) ? temp[0] : cloudAlpha[0];
+		cloudAlpha[1] = (temp[1] >= 0.0f) ? temp[1] : cloudAlpha[1];
+		cloudAlpha[2] = (temp[2] >= 0.0f) ? temp[2] : cloudAlpha[2];
+	}
+	R_SetSky (cl.configstrings[CS_SKY], cl.configstrings[CS_CLOUDNAME], rotate, axis, lightningFreq, cloudDir, cloudTile, cloudSpeed, cloudAlpha);
+	// end DK-style clouds support
+}
+
+
+/*
+=================
 CL_PrepRefresh
 
 Call before entering a new level, or after changing dlls
@@ -402,15 +462,8 @@ void CL_PrepRefresh (void)
 {
 	int			i, max;
 	int			cs_images, max_images, cs_playerskins;
-	float		rotate;
 	char		mapname[64];
 	char		pname[MAX_QPATH];
-	vec3_t		temp, axis = {0.0f, 0.0f, 1.0f};
-	float		lightningFreq = 0.0f;
-	vec2_t		cloudDir = {1.0f, 0.8f};
-	vec3_t		cloudTile = {8.0f, 2.0f, 1.0f};
-	vec3_t		cloudSpeed = {1.0f, 4.0f, 8.0f};
-	vec3_t		cloudAlpha = {0.9f, 0.6f, 0.0f};
 	qboolean	newPlaque = SCR_NeedLoadingPlaque();
 
 	if (!cl.configstrings[CS_MODELS+1][0])
@@ -576,49 +629,7 @@ void CL_PrepRefresh (void)
 	// set sky textures and speed
 	Com_Printf ("sky\r", i); 
 	SCR_UpdateScreen ();
-	rotate = atof (cl.configstrings[CS_SKYROTATE]);
-//	sscanf (cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]);
-	if (sscanf (cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]) == EOF) {
-		Com_Error (ERR_DROP, "CL_PrepRefresh: invalid string '%s' for CS_SKYAXIS.\n", cl.configstrings[CS_SKYAXIS]);
-	}
-//	R_SetSky (cl.configstrings[CS_SKY], rotate, axis);
-
-	// DK-style clouds support
-	temp[0] = atof (cl.configstrings[CS_CLOUDLIGHTFREQ]);
-	lightningFreq = (temp[0] >= 0.0f) ? temp[0] :  lightningFreq;
-	if (sscanf (cl.configstrings[CS_CLOUDDIR], "%f %f", &temp[0], &temp[1]) == EOF) {
-		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDDIR.\n", cl.configstrings[CS_CLOUDDIR]);
-	}
-	else {
-		cloudDir[0] = (temp[0] >= 0.0f) ? temp[0] : cloudDir[0];
-		cloudDir[1] = (temp[1] >= 0.0f) ? temp[1] : cloudDir[1];
-	}
-	if (sscanf (cl.configstrings[CS_CLOUDTILE], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
-		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDTILE.\n", cl.configstrings[CS_CLOUDTILE]);
-	}
-	else {
-		cloudTile[0] = (temp[0] >= 0.0f) ? temp[0] : cloudTile[0];
-		cloudTile[1] = (temp[1] >= 0.0f) ? temp[1] : cloudTile[1];
-		cloudTile[2] = (temp[2] >= 0.0f) ? temp[2] : cloudTile[2];
-	}
-	if (sscanf (cl.configstrings[CS_CLOUDSPEED], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
-		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDSPEED.\n", cl.configstrings[CS_CLOUDSPEED]);
-	}
-	else {
-		cloudSpeed[0] = (temp[0] >= 0.0f) ? temp[0] : cloudSpeed[0];
-		cloudSpeed[1] = (temp[1] >= 0.0f) ? temp[1] : cloudSpeed[1];
-		cloudSpeed[2] = (temp[2] >= 0.0f) ? temp[2] : cloudSpeed[2];
-	}
-	if (sscanf (cl.configstrings[CS_CLOUDALPHA], "%f %f %f", &temp[0], &temp[1], &temp[2]) == EOF) {
-		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDALPHA.\n", cl.configstrings[CS_CLOUDALPHA]);
-	}
-	else {
-		cloudAlpha[0] = (temp[0] >= 0.0f) ? temp[0] : cloudAlpha[0];
-		cloudAlpha[1] = (temp[1] >= 0.0f) ? temp[1] : cloudAlpha[1];
-		cloudAlpha[2] = (temp[2] >= 0.0f) ? temp[2] : cloudAlpha[2];
-	}
-	R_SetSky (cl.configstrings[CS_SKY], cl.configstrings[CS_CLOUDNAME], rotate, axis, lightningFreq, cloudDir, cloudTile, cloudSpeed, cloudAlpha);
-	// end DK-style clouds support
+	CL_SetSkyData ();
 
 	Com_Printf ("                                     \r");
 

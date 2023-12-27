@@ -43,6 +43,8 @@ int			model_dlights_num;
 
 float		shellFlowH, shellFlowV;
 
+//============================================================
+
 /*
 =================
 mirrorValue
@@ -311,6 +313,7 @@ void R_SetShellBlend (qboolean toggle)
 	}
 }
 
+
 /*
 =================
 R_FlipModel
@@ -344,6 +347,7 @@ void R_FlipModel (qboolean on, qboolean cullOnly)
 	}
 }
 
+
 /*
 =================
 R_SetBlendModeOn
@@ -375,6 +379,7 @@ void R_SetBlendModeOn (image_t *skin)
 	}
 }
 
+
 /*
 =================
 R_SetBlendModeOff
@@ -389,6 +394,7 @@ void R_SetBlendModeOff (void)
 		GL_BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 }
+
 
 /*
 =================
@@ -554,6 +560,7 @@ void R_SetShadeLight (void)
 	shadedots = r_avertexnormal_dots[((int)(currententity->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 }
 
+
 /*
 =================
 R_DrawAliasModelBBox
@@ -626,6 +633,88 @@ void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, 
 
 	GL_EnableTexture (0);
 	qglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	qglEnableClientState (GL_COLOR_ARRAY);
+	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+	GL_Enable (GL_CULL_FACE);
+}
+
+
+/*
+=================
+R_DrawEntityBBox
+=================
+*/
+void R_DrawEntityBBox (entity_t *e, float red, float green, float blue, float alpha)
+{
+	int		i;
+	vec3_t	tmp, bbox[8];
+
+	if ( !r_showbbox_entity->integer )
+		return;
+
+	if ( (e->flags & RF_WEAPONMODEL) || (e->flags & RF_VIEWERMODEL) ||
+		(e->flags & RF_BEAM) || (e->flags & RF_FLARE) || (e->renderfx & RF_CAMERAMODEL) )
+		return;
+
+	if ( VectorCompare(e->mins, vec3_origin) && VectorCompare(e->maxs, vec3_origin) )
+		return;
+
+	for (i = 0; i < 8; i++) {
+		tmp[0] = ((i & 1) ? e->mins[0] : e->maxs[0]);
+		tmp[1] = ((i & 2) ? e->mins[1] : e->maxs[1]);
+		tmp[2] = ((i & 4) ? e->mins[2] : e->maxs[2]);
+		VectorCopy (tmp, bbox[i]);
+	}
+
+	GL_Disable (GL_CULL_FACE);
+	qglPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+	qglDisableClientState (GL_COLOR_ARRAY);
+	qglColor4f (red, green, blue, alpha);
+	GL_DisableTexture (0);
+	qglPushMatrix ();
+	qglTranslatef (e->origin[0], e->origin[1], e->origin[2]);
+
+	rb_vertex = rb_index = 0;
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+3;
+
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+5; 
+	indexArray[rb_index++] = rb_vertex+4;
+
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+0;
+	indexArray[rb_index++] = rb_vertex+4;
+	indexArray[rb_index++] = rb_vertex+6;
+
+	indexArray[rb_index++] = rb_vertex+3;
+	indexArray[rb_index++] = rb_vertex+2;
+	indexArray[rb_index++] = rb_vertex+6;
+	indexArray[rb_index++] = rb_vertex+7;
+
+	indexArray[rb_index++] = rb_vertex+1;
+	indexArray[rb_index++] = rb_vertex+3;
+	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+5;
+
+	indexArray[rb_index++] = rb_vertex+4;
+	indexArray[rb_index++] = rb_vertex+5;
+	indexArray[rb_index++] = rb_vertex+7;
+	indexArray[rb_index++] = rb_vertex+6;
+
+	for (i=0; i<8; i++) {
+		VA_SetElem3v (vertexArray[rb_vertex], bbox[i]);
+		rb_vertex++;
+	}
+	RB_DrawPrimitiveArrays (GL_QUADS);
+	rb_vertex = rb_index = 0;
+
+	qglPopMatrix ();
+	GL_EnableTexture (0);
+	qglColor4f (1.0f, 1.0f, 1.0f, 1.0f);
 	qglEnableClientState (GL_COLOR_ARRAY);
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	GL_Enable (GL_CULL_FACE);

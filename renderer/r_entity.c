@@ -375,11 +375,9 @@ void ParseRenderEntity (entity_t *ent)
 			R_DrawAliasMD2Model (currententity);
 			break;
 #endif // MD2_AS_MD3
-		//Harven MD3 ++
 		case mod_alias:
 			R_DrawAliasModel (currententity);
 			break;
-		//Harven MD3 --
 		case mod_brush:
 			R_DrawBrushModel (currententity);
 			break;
@@ -388,9 +386,13 @@ void ParseRenderEntity (entity_t *ent)
 			break;
 		default:
 			VID_Printf(PRINT_ALL, S_COLOR_YELLOW"Warning: ParseRenderEntity: %s: Bad modeltype (%i)\n", currentmodel->name, currentmodel->type);
-			//VID_Error (ERR_DROP, "Bad modeltype");
+		//	VID_Error (ERR_DROP, "Bad modeltype");
 			break;
 		}
+
+		// draw entity bbox
+		if (currentmodel->type != mod_brush)
+			R_DrawEntityBBox (currententity, 0.0f, 1.0f, 0.0f, 1.0f); 
 	}
 }
 

@@ -108,6 +108,10 @@ typedef struct entity_s
 	float			oldorigin[3];	// also used as RF_BEAM's "to"
 	int				oldframe;
 
+	// bounding box (decoded from entity_state_t solid)
+	vec3_t			mins;
+	vec3_t			maxs;
+
 	// misc
 	float			backlerp;		// 0.0 = current, 1.0 = old
 	int				skinnum;		// also used as RF_BEAM's palette index

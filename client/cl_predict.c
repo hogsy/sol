@@ -77,7 +77,7 @@ CL_ClipMoveToEntities
 */
 void CL_ClipMoveToEntities (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, trace_t *tr)
 {
-	int			i, x, zd, zu;
+	int			i;	// x, zd, zu
 	trace_t		trace;
 	int			headnode;
 	float		*angles;
@@ -106,15 +106,16 @@ void CL_ClipMoveToEntities (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, 
 			angles = ent->angles;
 		}
 		else
-		{	// encoded bbox
-			x = 8*(ent->solid & 31);
+		{	// use encoded bbox
+		/*	x = 8*(ent->solid & 31);
 			zd = 8*((ent->solid>>5) & 31);
 			zu = 8*((ent->solid>>10) & 63) - 32;
 
 			bmins[0] = bmins[1] = -x;
 			bmaxs[0] = bmaxs[1] = x;
 			bmins[2] = -zd;
-			bmaxs[2] = zu;
+			bmaxs[2] = zu; */
+			MSG_UnpackSolid16 (ent->solid, bmins, bmaxs);
 
 			headnode = CM_HeadnodeForBox (bmins, bmaxs);
 			angles = vec3_origin;	// boxes don't rotate

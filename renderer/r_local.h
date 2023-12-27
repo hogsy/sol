@@ -353,7 +353,8 @@ extern	cvar_t	*r_picmip;
 extern	cvar_t	*r_skymip;
 //extern	cvar_t	*r_playermip;	// unused
 extern	cvar_t	*r_showtris;
-extern	cvar_t	*r_showbbox;	// Knightmare- show model bounding box
+extern	cvar_t	*r_showbbox;		// show model culling bounding box
+extern	cvar_t	*r_showbbox_entity;	// show solid entity bounding box
 extern	cvar_t	*r_finish;
 extern	cvar_t	*r_ztrick;
 extern	cvar_t	*r_cull;
@@ -615,7 +616,8 @@ void	R_FlipModel (qboolean on, qboolean cullOnly);
 void	R_SetBlendModeOn (image_t *skin);
 void	R_SetBlendModeOff (void);
 void	R_SetShadeLight (void);
-void R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, float blue, float alpha);
+void	R_DrawAliasModelBBox (vec3_t bbox[8], entity_t *e, float red, float green, float blue, float alpha);
+void	R_DrawEntityBBox (entity_t *e, float red, float green, float blue, float alpha);
 
 
 //

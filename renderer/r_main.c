@@ -193,7 +193,8 @@ cvar_t	*r_picmip;
 cvar_t	*r_skymip;
 //cvar_t	*r_playermip;	// unused
 cvar_t	*r_showtris;
-cvar_t	*r_showbbox;	// show model bounding box
+cvar_t	*r_showbbox;		// show model culling bounding box
+cvar_t	*r_showbbox_entity;	// show solid entity bounding box
 cvar_t	*r_ztrick;
 cvar_t	*r_finish;
 cvar_t	*r_cull;
@@ -1076,8 +1077,10 @@ void R_Register (void)
 	Cvar_SetDescription ("r_skymip", "Enables scaling down of skybox textures by a factor of 2.");
 	r_showtris = Cvar_Get ("r_showtris", "0", CVAR_CHEAT);
 	Cvar_SetDescription ("r_showtris", "Enables drawing of triangle outlines.  0 = disabled, 1 = no depth testing, 2 = depth testing enabled.");
-	r_showbbox = Cvar_Get ("r_showbbox", "0", CVAR_CHEAT); // show model bounding box
-	Cvar_SetDescription ("r_showbbox", "Enables drawing of entity culling bounding boxes.");
+	r_showbbox = Cvar_Get ("r_showbbox", "0", CVAR_CHEAT);
+	Cvar_SetDescription ("r_showbbox", "Enables drawing of model culling bounding boxes.");
+	r_showbbox_entity = Cvar_Get ("r_showbbox_entity", "0", CVAR_CHEAT);
+	Cvar_SetDescription ("r_showbbox_entity", "Enables drawing of solid entity bounding boxes.");
 	r_ztrick = Cvar_Get ("r_ztrick", "0", 0);
 	Cvar_SetDescription ("r_ztrick", "Enables the skipping of clearing the depth buffer before each render frame.");
 	r_finish = Cvar_Get ("r_finish", "0", CVAR_ARCHIVE);
