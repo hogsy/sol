@@ -385,7 +385,7 @@ void ParseRenderEntity (entity_t *ent)
 			R_DrawSpriteModel (currententity);
 			break;
 		default:
-			VID_Printf(PRINT_ALL, S_COLOR_YELLOW"Warning: ParseRenderEntity: %s: Bad modeltype (%i)\n", currentmodel->name, currentmodel->type);
+			VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Warning: ParseRenderEntity: %s: Bad modeltype (%i)\n", currentmodel->name, currentmodel->type);
 		//	VID_Error (ERR_DROP, "Bad modeltype");
 			break;
 		}

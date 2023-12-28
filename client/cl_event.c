@@ -119,7 +119,7 @@ Since this is a replacement for plain Jane EV_FOOTSTEP, we already know
 the player is definitely on the ground when this is called.
 ===============
 */
-void CL_FootSteps (entity_state_t *ent, qboolean loud, qboolean recursed)
+void CL_FootSteps (centity_state_t *ent, qboolean loud, qboolean recursed)
 {
 	trace_t	tr;
 	vec3_t	end;
@@ -225,7 +225,7 @@ the female events are there for backwards compatability
 ==============
 */
 
-void CL_EntityEvent (entity_state_t *ent)
+void CL_EntityEvent (centity_state_t *ent)
 {
 	switch (ent->event)
 	{

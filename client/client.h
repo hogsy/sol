@@ -79,9 +79,9 @@ typedef struct
 
 typedef struct
 {
-	entity_state_t	baseline;		// delta from this if not from a previous frame
-	entity_state_t	current;
-	entity_state_t	prev;			// will always be valid, but might just be a copy of current
+	centity_state_t	baseline;		// delta from this if not from a previous frame
+	centity_state_t	current;
+	centity_state_t	prev;			// will always be valid, but might just be a copy of current
 
 	int			serverframe;		// if not current, this ent isn't in the frame
 
@@ -539,7 +539,7 @@ extern	cdlight_t	cl_dlights[MAX_DLIGHTS];
 #define	MAX_PARSE_ENTITIES	4096 //was 16384
 //#define	MAX_PARSE_ENTITIES	1024
 
-extern	entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
+extern	centity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
 
 //=============================================================================
 
@@ -587,7 +587,7 @@ typedef struct cl_sustain
 #define MAX_SUSTAINS		32
 void CL_ParticleSteamEffect2(cl_sustain_t *self);
 
-void CL_TeleporterParticles (entity_state_t *ent);
+void CL_TeleporterParticles (centity_state_t *ent);
 void CL_ParticleEffect (vec3_t org, vec3_t dir, int color, int count);
 void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color, int count);
 // RAFAEL
@@ -675,8 +675,8 @@ void CL_ClearTEnts (void);
 
 //=================================================
 
-int CL_ParseEntityBits (unsigned *bits);
-void CL_ParseDelta (entity_state_t *from, entity_state_t *to, int number, int bits);
+int CL_ParseEntityBits (unsigned *bits, unsigned *bits2);
+void CL_ParseDelta (centity_state_t *from, centity_state_t *to, int number, int bits, int bits2);
 void CL_ParseFrame (void);
 
 void CL_ParseTEnt (void);
@@ -1094,7 +1094,7 @@ void CL_RocketTrail (vec3_t start, vec3_t end, centity_t *old);
 void CL_DiminishingTrail (vec3_t start, vec3_t end, centity_t *old, int flags);
 void CL_FlyEffect (centity_t *ent, vec3_t origin);
 void CL_BfgParticles (entity_t *ent);
-void CL_EntityEvent (entity_state_t *ent);
+void CL_EntityEvent (centity_state_t *ent);
 void CL_TrapParticles (entity_t *ent);	// RAFAEL
 void CL_BlasterTrail (vec3_t start, vec3_t end, int red, int green, int blue,
 									int reddelta, int greendelta, int bluedelta);

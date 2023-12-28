@@ -77,14 +77,14 @@ CL_ClipMoveToEntities
 */
 void CL_ClipMoveToEntities (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, trace_t *tr)
 {
-	int			i;	// x, zd, zu
-	trace_t		trace;
-	int			headnode;
-	float		*angles;
-	entity_state_t	*ent;
-	int			num;
+	int				i;
+	trace_t			trace;
+	int				headnode;
+	float			*angles;
+	centity_state_t	*ent;
+	int				num;
 	cmodel_t		*cmodel;
-	vec3_t		bmins, bmaxs;
+	vec3_t			bmins, bmaxs;
 
 	for (i=0 ; i<cl.frame.num_entities ; i++)
 	{
@@ -106,16 +106,16 @@ void CL_ClipMoveToEntities (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, 
 			angles = ent->angles;
 		}
 		else
-		{	// use encoded bbox
-		/*	x = 8*(ent->solid & 31);
-			zd = 8*((ent->solid>>5) & 31);
-			zu = 8*((ent->solid>>10) & 63) - 32;
-
-			bmins[0] = bmins[1] = -x;
-			bmaxs[0] = bmaxs[1] = x;
-			bmins[2] = -zd;
-			bmaxs[2] = zu; */
-			MSG_UnpackSolid16 (ent->solid, bmins, bmaxs);
+		{	
+			if (ent->iflags & IF_REAL_BBOX) {
+				// use ent mins/maxs if set
+				VectorCopy (ent->mins, bmins);
+				VectorCopy (ent->maxs, bmaxs);
+			}
+			else {
+				// use encoded bbox
+				MSG_UnpackSolid16 (ent->solid, bmins, bmaxs);
+			}
 
 			headnode = CM_HeadnodeForBox (bmins, bmaxs);
 			angles = vec3_origin;	// boxes don't rotate
@@ -153,14 +153,14 @@ Similar to above, but uses entnum as reference.
 */
 void CL_ClipMoveToEntities2 (int entnum, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, trace_t *tr)
 {
-	int			i, x, zd, zu;
-	trace_t		trace;
-	int			headnode;
-	float		*angles;
-	entity_state_t	*ent;
-	int			num;
+	int				i;
+	trace_t			trace;
+	int				headnode;
+	float			*angles;
+	centity_state_t	*ent;
+	int				num;
 	cmodel_t		*cmodel;
-	vec3_t		bmins, bmaxs;
+	vec3_t			bmins, bmaxs;
 
 	for (i=0 ; i<cl.frame.num_entities ; i++)
 	{
@@ -183,15 +183,16 @@ void CL_ClipMoveToEntities2 (int entnum, vec3_t start, vec3_t mins, vec3_t maxs,
 			angles = ent->angles;
 		}
 		else
-		{	// encoded bbox
-			x = 8*(ent->solid & 31);
-			zd = 8*((ent->solid>>5) & 31);
-			zu = 8*((ent->solid>>10) & 63) - 32;
-
-			bmins[0] = bmins[1] = -x;
-			bmaxs[0] = bmaxs[1] = x;
-			bmins[2] = -zd;
-			bmaxs[2] = zu;
+		{
+			if (ent->iflags & IF_REAL_BBOX) {
+				// use ent mins/maxs if set
+				VectorCopy (ent->mins, bmins);
+				VectorCopy (ent->maxs, bmaxs);
+			}
+			else {
+				// use encoded bbox
+				MSG_UnpackSolid16 (ent->solid, bmins, bmaxs);
+			}
 
 			headnode = CM_HeadnodeForBox (bmins, bmaxs);
 			angles = vec3_origin;	// boxes don't rotate
@@ -228,14 +229,14 @@ Similar to CL_ClipMoveToEntities,
 but only checks against brush models.
 ====================
 */
-void CL_ClipMoveToBrushEntities ( vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, trace_t *tr )
+void CL_ClipMoveToBrushEntities (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, trace_t *tr)
 {
-	int			i;
-	trace_t		trace;
-	int			headnode;
-	float		*angles;
-	entity_state_t	*ent;
-	int			num;
+	int				i;
+	trace_t			trace;
+	int				headnode;
+	float			*angles;
+	centity_state_t	*ent;
+	int				num;
 	cmodel_t		*cmodel;
 
 	for (i=0 ; i<cl.frame.num_entities ; i++)
@@ -344,7 +345,7 @@ trace_t CL_PMTrace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end)
 	return t;
 }
 
-//Knightmare added- this can check using masks, good for checking surface flags
+// Knightmare added- this can check using masks, good for checking surface flags
 //	also checks for bmodels
 /*
 ================
@@ -373,11 +374,11 @@ trace_t CL_PMSurfaceTrace (int playernum, vec3_t start, vec3_t mins, vec3_t maxs
 
 int CL_PMpointcontents (vec3_t point)
 {
-	int			i;
-	entity_state_t	*ent;
-	int			num;
+	int				i;
+	centity_state_t	*ent;
+	int				num;
 	cmodel_t		*cmodel;
-	int			contents;
+	int				contents;
 
 	contents = CM_PointContents (point, 0);
 
@@ -404,11 +405,11 @@ int CL_PMpointcontents (vec3_t point)
 typedef struct model_s model_t;
 int CL_PMpointcontents2 (vec3_t point, model_t *ignore)
 {
-	int			i;
-	entity_state_t	*ent;
-	int			num;
+	int				i;
+	centity_state_t	*ent;
+	int				num;
 	cmodel_t		*cmodel;
-	int			contents;
+	int				contents;
 
 	contents = CM_PointContents (point, 0);
 

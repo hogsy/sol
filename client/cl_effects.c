@@ -1490,7 +1490,7 @@ void CL_ParticleAcidDecal (vec3_t org, vec3_t dir, float size, int red, int gree
 CL_TeleporterParticles
 ===============
 */
-void CL_TeleporterParticles (entity_state_t *ent)
+void CL_TeleporterParticles (centity_state_t *ent)
 {
 	int			i;
 

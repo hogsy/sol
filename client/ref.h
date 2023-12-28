@@ -108,7 +108,7 @@ typedef struct entity_s
 	float			oldorigin[3];	// also used as RF_BEAM's "to"
 	int				oldframe;
 
-	// bounding box (decoded from entity_state_t solid)
+	// bounding box (decoded from centity_state_t solid)
 	vec3_t			mins;
 	vec3_t			maxs;
 

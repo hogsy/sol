@@ -195,7 +195,7 @@ client_state_t	cl;
 
 centity_t		cl_entities[MAX_EDICTS];
 
-entity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
+centity_state_t	cl_parse_entities[MAX_PARSE_ENTITIES];
 
 qboolean		local_initialized = false;
 
@@ -263,8 +263,8 @@ void CL_Record_f (void)
 	sizebuf_t	buf;
 	int		i;
 	int		len;
-	entity_state_t	*ent;
-	entity_state_t	nullstate;
+	centity_state_t	*ent;
+	centity_state_t	nullstate;
 
 	if (Cmd_Argc() != 2)
 	{

@@ -635,7 +635,7 @@ void S_IssuePlaysound (playsound_t *ps)
 	S_FreePlaysound (ps);
 }
 
-struct sfx_s *S_RegisterSexedSound (entity_state_t *ent, char *base)
+struct sfx_s *S_RegisterSexedSound (centity_state_t *ent, char *base)
 {
 	int				n;
 	char			*p;
@@ -893,7 +893,7 @@ void S_AddLoopSounds (void)
 	int			num;
 	float		dist_mult;
 	vec3_t		origin_v;	// Knightmare added
-	entity_state_t	*ent;
+	centity_state_t	*ent;
 
 	if (cl_paused->value)
 		return;

@@ -376,6 +376,21 @@ void MSG_WriteFloat (sizebuf_t *sb, float f)
 	SZ_Write (sb, &dat.l, 4);
 }
 
+// Knightmare added- for sending floats as nearest-integer shorts by rounding to nearest int first
+void MSG_WriteFloatAsShort (sizebuf_t *sb, float f)
+{
+	// DG: float -> int always rounds down (3.99999f => 3), let's round up if > x.5
+	// by adding almost 0.5 (analog for negative numbers) => x.5 becomes x, x.51 becomes (x+1)
+	float	rounding = 0.4999f;
+	short	asShort;
+
+	if (f < 0.0f)
+		rounding = -rounding;
+	asShort = f + rounding;
+
+	MSG_WriteShort (sb, asShort);
+}
+
 void MSG_WriteString (sizebuf_t *sb, char *s)
 {
 	if (!s)
@@ -645,9 +660,9 @@ Writes part of a packetentities message.
 Can delta from either a baseline or a previous packet_entity
 ==================
 */
-void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qboolean force, qboolean newentity)
+void MSG_WriteDeltaEntity (centity_state_t *from, centity_state_t *to, sizebuf_t *msg, qboolean force, qboolean newentity)
 {
-	int		bits;
+	unsigned int	bits, bits2;
 
 	if (!to->number)
 		Com_Error (ERR_FATAL, "Unset entity number");
@@ -655,7 +670,7 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		Com_Error (ERR_FATAL, "Entity number >= MAX_EDICTS");
 
 // send an update
-	bits = 0;
+	bits = bits2 = 0;
 
 	if (to->number >= 256)
 		bits |= U_NUMBER16;		// number8 is implicit otherwise
@@ -711,9 +726,33 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		else
 			bits |= U_RENDERFX8|U_RENDERFX16;
 	}
+
+	// Knightmare- added alpha
+#ifdef NEW_ENTITY_STATE_MEMBERS
+	// cap new value to correct range
+	if (to->alpha < 0.0)
+		to->alpha = 0.0;
+	if (to->alpha > 1.0)
+		to->alpha = 1.0;
+	// Since the floating point value is never quite the same,
+	// compare the new and the old as what they will be sent as
+	if ((int)(to->alpha*255) != (int)(from->alpha*255))
+		bits |= U_ALPHA;
+#endif
 	
 	if ( to->solid != from->solid )
 		bits |= U_SOLID;
+
+	if ( (to->iflags & (IF_REAL_BBOX|IF_REAL_BBOX_16|IF_REAL_BBOX_8)) &&
+		( !VectorCompare(to->mins, from->mins) || !VectorCompare(to->maxs, from->maxs) ) )
+	{
+		if (to->iflags & IF_REAL_BBOX)
+			bits |= U_MINSMAXS_8|U_MINSMAXS_16;
+		else if (to->iflags & IF_REAL_BBOX_16)
+			bits |= U_MINSMAXS_16;
+		else if (to->iflags & IF_REAL_BBOX_8)
+			bits |= U_MINSMAXS_8;
+	}
 
 	// event is not delta compressed, just 0 compressed
 	if ( to->event  )
@@ -729,11 +768,11 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		bits |= U_MODEL4;
 
 #ifdef NEW_ENTITY_STATE_MEMBERS
-	// 1/18/2002- extra model indices	
+	// Knightmare- extra model indices	
 	if ( to->modelindex5 != from->modelindex5 )
-		bits |= U_MODEL5;
+		bits2 |= U2_MODEL5;
 	if ( to->modelindex6 != from->modelindex6 )
-		bits |= U_MODEL6;
+		bits2 |= U2_MODEL6;
 #endif
 
 	if ( to->sound != from->sound )
@@ -747,36 +786,39 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 	if (newentity || (to->renderfx & RF_BEAM))
 		bits |= U_OLDORIGIN;
 
-	// Knightmare 5/11/2002- added alpha
-#ifdef NEW_ENTITY_STATE_MEMBERS
-	// cap new value to correct range
-	if (to->alpha < 0.0)
-		to->alpha = 0.0;
-	if (to->alpha > 1.0)
-		to->alpha = 1.0;
-	// Since the floating point value is never quite the same,
-	// compare the new and the old as what they will be sent as
-	if ((int)(to->alpha*255) != (int)(from->alpha*255))
-		bits |= U_ALPHA;
-#endif
+	// alpha was here
 
 	//
 	// write the message
 	//
-	if (!bits && !force)
+	if (!bits && !bits2 && !force)
 		return;		// nothing to send!
 
 	//----------
 
-	if (bits & 0xff000000)
-		bits |= U_MOREBITS3 | U_MOREBITS2 | U_MOREBITS1;
-	else if (bits & 0x00ff0000)
-		bits |= U_MOREBITS2 | U_MOREBITS1;
-	else if (bits & 0x0000ff00)
-		bits |= U_MOREBITS1;
+	// Knightmare- handle 2nd dword of bits
+	if (bits2 != 0)
+	{
+		bits |= U_MOREBITS4 | U_MOREBITS3 | U_MOREBITS2 | U_MOREBITS1;
+		if (bits2 & 0xff000000)
+			bits2 |= U2_MOREBITS7 | U2_MOREBITS6 | U2_MOREBITS5;
+		else if (bits2 & 0x00ff0000)
+			bits2 |= U2_MOREBITS6 | U2_MOREBITS5;
+		else if (bits2 & 0x0000ff00)
+			bits2 |= U2_MOREBITS5;
+	}
+	else
+	{
+		if (bits & 0xff000000)
+			bits |= U_MOREBITS3 | U_MOREBITS2 | U_MOREBITS1;
+		else if (bits & 0x00ff0000)
+			bits |= U_MOREBITS2 | U_MOREBITS1;
+		else if (bits & 0x0000ff00)
+			bits |= U_MOREBITS1;
+	}
 
+	// send first dword of bits
 	MSG_WriteByte (msg,	bits&255 );
-
 	if (bits & 0xff000000)
 	{
 		MSG_WriteByte (msg,	(bits>>8)&255 );
@@ -793,6 +835,27 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		MSG_WriteByte (msg,	(bits>>8)&255 );
 	}
 
+	if (bits2 != 0)
+	{
+		// send second dword of bits
+		MSG_WriteByte (msg,	bits2 & 255);
+		if (bits2 & 0xff000000)
+		{
+			MSG_WriteByte (msg,	(bits2 >> 8) & 255);
+			MSG_WriteByte (msg,	(bits2 >> 16) & 255);
+			MSG_WriteByte (msg,	(bits2 >> 24) & 255);
+		}
+		else if (bits2 & 0x00ff0000)
+		{
+			MSG_WriteByte (msg,	(bits2 >> 8) & 255);
+			MSG_WriteByte (msg,	(bits2 >> 16) & 255);
+		}
+		else if (bits2 & 0x0000ff00)
+		{
+			MSG_WriteByte (msg,	(bits2 >> 8) & 255);
+		}
+	}
+
 	//----------
 
 	if (bits & U_NUMBER16)
@@ -800,8 +863,7 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 	else
 		MSG_WriteByte (msg,	to->number);
 
-	//Knightmare- 12/23/2001
-	//changed these to shorts
+	// Knightmare- changed these to shorts
 	if (bits & U_MODEL)
 		MSG_WriteShort (msg, to->modelindex);
 	if (bits & U_MODEL2)
@@ -812,10 +874,10 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		MSG_WriteShort (msg, to->modelindex4);
 
 #ifdef NEW_ENTITY_STATE_MEMBERS
-	// 1/18/2002- extra model indices
-	if (bits & U_MODEL5)
+	// Knightmare- extra model indices	
+	if (bits2 & U2_MODEL5)
 		MSG_WriteShort (msg, to->modelindex5);
-	if (bits & U_MODEL6)
+	if (bits2 & U2_MODEL6)
 		MSG_WriteShort (msg, to->modelindex6);
 #endif
 
@@ -846,6 +908,15 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 	else if (bits & U_RENDERFX16)
 		MSG_WriteShort (msg, to->renderfx);
 
+	// Knightmare- added alpha
+#ifdef NEW_ENTITY_STATE_MEMBERS
+	if (bits & U_ALPHA)
+	{
+	//	Com_Printf ("Sending alpha of %.2f for entity %i\n", to->alpha, to->number);
+		MSG_WriteByte (msg, (byte)(to->alpha*255));
+	}
+#endif
+
 	if (bits & U_ORIGIN1)
 		MSG_WriteCoord (msg, to->origin[0]);		
 	if (bits & U_ORIGIN2)
@@ -853,12 +924,13 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 	if (bits & U_ORIGIN3)
 		MSG_WriteCoord (msg, to->origin[2]);
 
+	// Knightmare- switched to 16-bit angles
 	if (bits & U_ANGLE1)
-		MSG_WriteAngle(msg, to->angles[0]);
+		MSG_WriteAngle16 (msg, to->angles[0]);
 	if (bits & U_ANGLE2)
-		MSG_WriteAngle(msg, to->angles[1]);
+		MSG_WriteAngle16 (msg, to->angles[1]);
 	if (bits & U_ANGLE3)
-		MSG_WriteAngle(msg, to->angles[2]);
+		MSG_WriteAngle16 (msg, to->angles[2]);
 
 	if (bits & U_OLDORIGIN)
 	{
@@ -867,17 +939,9 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		MSG_WriteCoord (msg, to->old_origin[2]);
 	}
 
-#ifdef NEW_ENTITY_STATE_MEMBERS
-	//Knightmare 5/11/2002- added alpha
-	if (bits & U_ALPHA)
-	{
-	//	Com_Printf("Entity alpha: %f\n", to->alpha);
-		MSG_WriteByte (msg, (byte)(to->alpha*255));
-	}
-#endif
+	// alpha was here
 
-	//Knightmare- 12/23/2001
-	//changed this to short
+	// Knightmare- changed this to short
 	if (bits & U_SOUND)
 		MSG_WriteShort (msg, to->sound);
 
@@ -890,8 +954,24 @@ void MSG_WriteDeltaEntity (entity_state_t *from, entity_state_t *to, sizebuf_t *
 		MSG_WriteByte (msg, to->event);
 	if (bits & U_SOLID)
 		MSG_WriteShort (msg, to->solid);
-}
 
+	if ( (bits & (U_MINSMAXS_8|U_MINSMAXS_16)) == (U_MINSMAXS_8|U_MINSMAXS_16) ) {
+		MSG_WritePos (msg, to->mins);
+		MSG_WritePos (msg, to->maxs);
+	/*	Com_Printf ("Sending world-coord bbox for entity %i (%.2f %.2f %.2f)->(%.2f %.2f %.2f)\n",
+					to->number, to->mins[0], to->mins[1], to->mins[2], to->maxs[0], to->maxs[1], to->maxs[2]); */
+	}
+	else if (bits & U_MINSMAXS_8) {
+		MSG_WriteBBox8 (msg, to->mins, to->maxs);
+	/*	Com_Printf ("Sending 8-bit bbox for entity %i (%.2f %.2f %.2f)->(%.2f %.2f %.2f)\n",
+					to->number, to->mins[0], to->mins[1], to->mins[2], to->maxs[0], to->maxs[1], to->maxs[2]); */
+	}
+	else if (bits & U_MINSMAXS_16) {
+		MSG_WriteBBox16 (msg, to->mins, to->maxs);
+	/*	Com_Printf ("Sending 16-bit bbox for entity %i (%.2f %.2f %.2f)->(%.2f %.2f %.2f)\n",
+					to->number, to->mins[0], to->mins[1], to->mins[2], to->maxs[0], to->maxs[1], to->maxs[2]); */
+	}
+}
 
 //============================================================
 
@@ -986,6 +1066,13 @@ float MSG_ReadFloat (sizebuf_t *msg_read)
 	dat.l = LittleLong (dat.l);
 
 	return dat.f;	
+}
+
+// Knightmare added- for reading floats sent as shorts
+float MSG_ReadFloatAsShort (sizebuf_t *msg_read)
+{
+	int n = MSG_ReadShort (msg_read);
+	return (float)n;
 }
 
 char *MSG_ReadString (sizebuf_t *msg_read)
@@ -1196,6 +1283,46 @@ void MSG_UnpackSolid16 (int packed, vec3_t bmins, vec3_t bmaxs)
 
 	VectorSet (bmins, -x, -x, -zd);
 	VectorSet (bmaxs, x, x, zu);
+}
+
+void MSG_WriteBBox8 (sizebuf_t *sb, vec3_t bmins, vec3_t bmaxs)
+{
+	MSG_WriteByte (sb, (int)(-bmins[0]) & 255);
+	MSG_WriteByte (sb, (int)(-bmins[1]) & 255);
+	MSG_WriteByte (sb, (int)(-bmins[2]) & 255);
+	MSG_WriteByte (sb, (int)bmaxs[0] & 255);
+	MSG_WriteByte (sb, (int)bmaxs[1] & 255);
+	MSG_WriteByte (sb, (int)(bmaxs[2] + 32.0f) & 255);	// z maxs can go to -32
+}
+
+void MSG_WriteBBox16 (sizebuf_t *sb, vec3_t bmins, vec3_t bmaxs)
+{
+	MSG_WriteFloatAsShort (sb, bmins[0]);
+	MSG_WriteFloatAsShort (sb, bmins[1]);
+	MSG_WriteFloatAsShort (sb, bmins[2]);
+	MSG_WriteFloatAsShort (sb, bmaxs[0]);
+	MSG_WriteFloatAsShort (sb, bmaxs[1]);
+	MSG_WriteFloatAsShort (sb, bmaxs[2]);
+}
+
+void MSG_ReadBBox8 (sizebuf_t *msg_read, vec3_t bmins, vec3_t bmaxs)
+{
+	bmins[0] = -1.0f * (float)MSG_ReadByte (msg_read);
+	bmins[1] = -1.0f * (float)MSG_ReadByte (msg_read);
+	bmins[2] = -1.0f * (float)MSG_ReadByte (msg_read);
+	bmaxs[0] = (float)MSG_ReadByte (msg_read);
+	bmaxs[1] = (float)MSG_ReadByte (msg_read);
+	bmaxs[2] = (float)MSG_ReadByte (msg_read) - 32.0f;
+}
+
+void MSG_ReadBBox16 (sizebuf_t *msg_read, vec3_t bmins, vec3_t bmaxs)
+{
+	bmins[0] = MSG_ReadFloatAsShort (msg_read);
+	bmins[1] = MSG_ReadFloatAsShort (msg_read);
+	bmins[2] = MSG_ReadFloatAsShort (msg_read);
+	bmaxs[0] = MSG_ReadFloatAsShort (msg_read);
+	bmaxs[1] = MSG_ReadFloatAsShort (msg_read);
+	bmaxs[2] = MSG_ReadFloatAsShort (msg_read);
 }
 
 //===========================================================================

@@ -256,6 +256,7 @@ void MSG_WriteByte (sizebuf_t *sb, int c);
 void MSG_WriteShort (sizebuf_t *sb, int c);
 void MSG_WriteLong (sizebuf_t *sb, int c);
 void MSG_WriteFloat (sizebuf_t *sb, float f);
+void MSG_WriteFloatAsShort (sizebuf_t *sb, float f);	// Knightmare added
 void MSG_WriteString (sizebuf_t *sb, char *s);
 void MSG_WriteCoord (sizebuf_t *sb, float f);
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
@@ -263,7 +264,7 @@ void MSG_WriteAngle8 (sizebuf_t *sb, float f);
 void MSG_WriteAngle16 (sizebuf_t *sb, float f);
 void MSG_WriteAngle (sizebuf_t *sb, float f);
 void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercmd_s *cmd);
-void MSG_WriteDeltaEntity (struct entity_state_s *from, struct entity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
+void MSG_WriteDeltaEntity (struct centity_state_s *from, struct centity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
 void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
 
 
@@ -274,6 +275,7 @@ int		MSG_ReadByte (sizebuf_t *sb);
 int		MSG_ReadShort (sizebuf_t *sb);
 int		MSG_ReadLong (sizebuf_t *sb);
 float	MSG_ReadFloat (sizebuf_t *sb);
+float	MSG_ReadFloatAsShort (sizebuf_t *msg_read);	// Knightmare added
 char	*MSG_ReadString (sizebuf_t *sb);
 char	*MSG_ReadStringLine (sizebuf_t *sb);
 
@@ -294,6 +296,12 @@ int		MSG_ReadPMCoord (sizebuf_t *msg_read);
 // packing/unpacking of bboxes for centity_state_t solid field
 int		MSG_PackSolid16 (vec3_t bmins, vec3_t bmaxs);
 void	MSG_UnpackSolid16 (int packed, vec3_t bmins, vec3_t bmaxs);
+
+// transmission of real entity bboxes
+void MSG_WriteBBox8 (sizebuf_t *sb, vec3_t bmins, vec3_t bmaxs);
+void MSG_WriteBBox16 (sizebuf_t *sb, vec3_t bmins, vec3_t bmaxs);
+void MSG_ReadBBox8 (sizebuf_t *msg_read, vec3_t bmins, vec3_t bmaxs);
+void MSG_ReadBBox16 (sizebuf_t *msg_read, vec3_t bmins, vec3_t bmaxs);
 
 //============================================================================
 
@@ -364,7 +372,7 @@ PROTOCOL
 #define	PORT_SERVER	27910
 
 //=========================================
-#define	UPDATE_BACKUP	16	// copies of entity_state_t to keep buffered
+#define	UPDATE_BACKUP	16	// copies of centity_state_t to keep buffered
 							// must be power of two
 //#define	UPDATE_BACKUP	64
 
@@ -493,49 +501,63 @@ enum clc_ops_e
 
 //==============================================
 
-// entity_state_t communication
+// centity_state_t communication
 
 // try to pack the common update flags into the first byte
-#define	U_ORIGIN1	(1<<0)
-#define	U_ORIGIN2	(1<<1)
-#define	U_ANGLE2	(1<<2)
-#define	U_ANGLE3	(1<<3)
-#define	U_FRAME8	(1<<4)		// frame is a byte
-#define	U_EVENT		(1<<5)
-#define	U_REMOVE	(1<<6)		// REMOVE this entity, don't add it
-#define	U_MOREBITS1	(1<<7)		// read one additional byte
+#define	U_ORIGIN1		(1<<0)
+#define	U_ORIGIN2		(1<<1)
+#define	U_ANGLE2		(1<<2)
+#define	U_ANGLE3		(1<<3)
+#define	U_FRAME8		(1<<4)		// frame is a byte
+#define	U_EVENT			(1<<5)
+#define	U_REMOVE		(1<<6)		// REMOVE this entity, don't add it
+#define	U_MOREBITS1		(1<<7)		// read one additional byte
 
 // second byte
-#define	U_NUMBER16	(1<<8)		// NUMBER8 is implicit if not set
-#define	U_ORIGIN3	(1<<9)
-#define	U_ANGLE1	(1<<10)
-#define	U_MODEL		(1<<11)
-#define U_RENDERFX8	(1<<12)		// fullbright, etc
-#define	U_EFFECTS8	(1<<14)		// autorotate, trails, etc
-#define	U_MOREBITS2	(1<<15)		// read one additional byte
+#define	U_NUMBER16		(1<<8)		// NUMBER8 is implicit if not set
+#define	U_ORIGIN3		(1<<9)
+#define	U_ANGLE1		(1<<10)
+#define	U_MODEL			(1<<11)
+#define U_RENDERFX8		(1<<12)		// fullbright, etc
+#define U_ALPHA			(1<<13)		// translucency
+#define	U_EFFECTS8		(1<<14)		// autorotate, trails, etc
+#define	U_MOREBITS2		(1<<15)		// read one additional byte
 
 // third byte
-#define	U_SKIN8		(1<<16)
-#define	U_FRAME16	(1<<17)		// frame is a short
-#define	U_RENDERFX16 (1<<18)	// 8 + 16 = 32
-#define	U_EFFECTS16	(1<<19)		// 8 + 16 = 32
-#define	U_MODEL2	(1<<20)		// weapons, flags, etc
-#define	U_MODEL3	(1<<21)
-#define	U_MODEL4	(1<<22)
-#define	U_MOREBITS3	(1<<23)		// read one additional byte
+#define	U_SKIN8			(1<<16)
+#define	U_FRAME16		(1<<17)		// frame is a short
+#define	U_RENDERFX16	(1<<18)		// 8 + 16 = 32
+#define	U_EFFECTS16		(1<<19)		// 8 + 16 = 32
+#define	U_MODEL2		(1<<20)		// weapons, flags, etc
+#define	U_MODEL3		(1<<21)
+#define	U_MODEL4		(1<<22)
+#define	U_MOREBITS3		(1<<23)		// read one additional byte
 
 // fourth byte
-#define	U_OLDORIGIN	(1<<24)		// FIXME: get rid of this
-#define	U_SKIN16	(1<<25)
-#define	U_SOUND		(1<<26)
-#define	U_SOLID		(1<<27)
-
+#define	U_OLDORIGIN		(1<<24)		// FIXME: get rid of this
+#define	U_SKIN16		(1<<25)
+#define	U_SOUND			(1<<26)
+#define	U_SOLID			(1<<27)
 // Knightmare- 1/18/2002- bits for extra model indices
-#define	U_VELOCITY	(1<<28)	// for R1Q2 protocol
-#define	U_MODEL5	(1<<28)		
-#define	U_MODEL6	(1<<29)
-#define	U_ATTENUAT	(1<<30)	// sound attenuation
-#define	U_ALPHA		(1<<31)	// transparency
+#define	U_MINSMAXS_8	(1<<28)		// byte mins/maxs for accurate bbox clipping in client prediction
+#define	U_MINSMAXS_16	(1<<29)		// short mins/maxs for when bytes aren't enough, 8 + 16 = 24
+#define	U_ATTENUAT		(1<<30)		// sound attenuation
+#define	U_MOREBITS4		(1<<31)		// read one additional byte
+
+// second dword, these fields should be the least often sent
+// fifth byte
+#define	U2_MODEL5		(1<<0)		// fifth model
+#define	U2_MODEL6		(1<<1)		// sixth model
+#define	U2_MOREBITS5	(1<<7)		// read one additional byte
+
+// sixth byte
+#define	U2_MOREBITS6	(1<<15)		// read one additional byte
+
+// seventh byte
+#define	U2_MOREBITS7	(1<<23)		// read one additional byte
+
+// eighth byte
+#define	U2_MOREBITS8	(1<<31)		// read one additional byte
 // end Knightmare
 
 /*

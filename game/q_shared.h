@@ -1647,6 +1647,50 @@ typedef struct entity_state_s
 							// are automatically cleared each frame
 } entity_state_t;
 
+
+#define	IF_REAL_BBOX	0x00000001
+#define	IF_REAL_BBOX_16	0x00000002
+#define	IF_REAL_BBOX_8	0x00000004
+
+// centity_state_t is an extended copy of entity_state_t
+// with additional fields sent by the server but not shared with
+// the game library
+// KEEP THIS SYNCED WITH entity_state_t!!!
+typedef struct centity_state_s
+{
+	int		number;			// edict index
+
+	vec3_t	origin;
+	vec3_t	angles;
+	vec3_t	old_origin;		// for lerping
+	int		modelindex;
+	int		modelindex2, modelindex3, modelindex4;	// weapons, CTF flags, etc
+#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- Privater wanted this
+	int		modelindex5, modelindex6; 	// more attached models
+#endif
+	int		frame;
+	int		skinnum;
+#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
+	float	alpha;				// entity transparency
+#endif
+	unsigned int		effects;		// PGM - we're filling it, so it needs to be unsigned
+	int		renderfx;
+	int		solid;			// for client side prediction, 8*(bits 0-4) is x/y radius
+							// 8*(bits 5-9) is z down distance, 8(bits10-15) is z up
+							// gi.linkentity sets this properly
+	int		sound;			// for looping sounds, to guarantee shutoff
+#ifdef NEW_ENTITY_STATE_MEMBERS // Knightmare- allow the server to set this
+	float	loop_attenuation;
+#endif
+	int		event;			// impulse events -- muzzle flashes, footsteps, etc
+							// events only go out for a single frame, they
+							// are automatically cleared each frame
+
+	// SERVER/CLIENT-ONLY FIELDS BELOW
+	vec3_t			mins, maxs;		// for particle volumes or prediction against real entity bboxes
+	unsigned int	iflags;			// added for sending real bbox info
+} centity_state_t;
+
 //==============================================
 
 

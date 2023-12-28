@@ -119,7 +119,14 @@ void SV_CreateBaseline (void)
 		// take current state as baseline
 		//
 		VectorCopy (svent->s.origin, svent->s.old_origin);
-		sv.baselines[entnum] = svent->s;
+	//	sv.baselines[entnum] = svent->s;
+		// Knightmare- do manual copy instead of implicit memcpy
+		memset (&sv.baselines[entnum], 0, sizeof(centity_state_t));
+		memcpy (&sv.baselines[entnum], &svent->s, sizeof(entity_state_t));
+
+		// set centity_state_t added fields- bbox, Q3 model player frames, etc
+		SV_SetEntStateAddedFields (svent, &sv.baselines[entnum]);
+		// end Knightmare
 	}
 }
 
@@ -397,7 +404,7 @@ void SV_InitGame (void)
 	svs.clients = Z_Malloc (sizeof(client_t) * maxclients->integer);
 //	svs.num_client_entities = maxclients->value * UPDATE_BACKUP * MAX_PACKET_ENTITIES;		// was UPDATE_BACKUP * 64
 	svs.num_client_entities = maxclients->integer * UPDATE_BACKUP * MAX_PACKET_ENTITIES;	// was UPDATE_BACKUP * 64
-	svs.client_entities = Z_Malloc (sizeof(entity_state_t) * svs.num_client_entities);
+	svs.client_entities = Z_Malloc (sizeof(centity_state_t) * svs.num_client_entities);
 
 	// init network stuff
 //	NET_Config ( (maxclients->value > 1) );
