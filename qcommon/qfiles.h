@@ -99,19 +99,19 @@ typedef enum { MDL_SINGLE = 0, MDL_GROUP } mdl_frametype_t;
 typedef enum { MDL_SKIN_SINGLE = 0, MDL_SKIN_GROUP } mdl_skintype_t;
 
 typedef struct {
-	int		onSeam;
-	int		s;
-	int		t;
+	int				onSeam;
+	int				s;
+	int				t;
 } dmdl_stvert_t;
 
 typedef struct {
-	byte	v[3];
-	byte	lightnormalindex;
+	byte			v[3];
+	byte			lightnormalindex;
 } dmdl_trivertx_t;
 
 typedef struct dtriangle_s {
-	int		facesFront;
-	int		vertIndex[3];
+	int				facesFront;
+	int				vertIndex[3];
 } dmdl_triangle_t;
 
 typedef struct {
@@ -121,7 +121,7 @@ typedef struct {
 typedef struct {
 	dmdl_trivertx_t	bbox_min;	// lightnormal isn't used
 	dmdl_trivertx_t	bbox_max;	// lightnormal isn't used
-	char			name[16];		// frame name from grabbing
+	char			name[16];	// frame name from grabbing
 } dmdl_frame_t;
 
 typedef struct {
@@ -131,7 +131,7 @@ typedef struct {
 } dmdl_group_t;
 
 typedef struct {
-	float	interval;
+	float			interval;
 } dmdl_interval_t;
 
 typedef struct {
@@ -139,11 +139,11 @@ typedef struct {
 } dmdl_skintype_t;
 
 typedef struct {
-	int			num_skins;
+	int				num_skins;
 } dmdl_skingroup_t;
 
 typedef struct {
-	float	interval;
+	float			interval;
 } dmdl_skininterval_t;
 
 typedef struct {
@@ -174,7 +174,7 @@ typedef struct {
 ========================================================================
 */
 
-#define IDMD2HEADER		(('2'<<24)+('P'<<16)+('D'<<8)+'I')
+#define IDMD2HEADER			(('2'<<24)+('P'<<16)+('D'<<8)+'I')
 #define MD2_ALIAS_VERSION	8
 
 #define	MD2_MAX_TRIANGLES	4096
@@ -185,20 +185,20 @@ typedef struct {
 
 typedef struct
 {
-	short	s;
-	short	t;
+	short			s;
+	short			t;
 } dmd2coord_t;
 
-typedef struct 
+typedef struct
 {
-	short	index_xyz[3];
-	short	index_st[3];
+	short			index_xyz[3];
+	short			index_st[3];
 } dmd2triangle_t;
 
 typedef struct
 {
-	byte	v[3];			// scaled byte to fit in frame mins/maxs
-	byte	lightnormalindex;
+	byte			v[3];			// scaled byte to fit in frame mins/maxs
+	byte			lightnormalindex;
 } dmd2vertex_t;
 
 #define DTRIVERTX_V0   0

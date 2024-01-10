@@ -2369,7 +2369,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 
 	numSkinsInitial = LittleLong(pinModel->num_skins);
 	if ( (numSkinsInitial > MDL_MAX_SKINS) || (numSkinsInitial < 0) )
-		Com_Error(ERR_DROP, "model %s has invalid number of initial skins (%i)", mod->name, numSkinsInitial);
+		VID_Error (ERR_DROP, "model %s has invalid number of initial skins (%i)", mod->name, numSkinsInitial);
 
 	// MDL has no ofs in header, so each segment is read in linear order
 
@@ -2404,7 +2404,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 
 	poutMesh->num_skins = mdlTotalSkins;
 	if ( (poutMesh->num_skins > MD2_MAX_SKINS) || (poutMesh->num_skins < 0) )
-		Com_Error(ERR_DROP, "model %s has invalid number of total skins (%i)", mod->name, poutMesh->num_skins);
+		VID_Error (ERR_DROP, "model %s has invalid number of total skins (%i)", mod->name, poutMesh->num_skins);
 
 	//
 	// load all skins
@@ -2823,7 +2823,7 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 
 	poutMesh->num_skins = LittleLong(pinModel->num_skins);
 	if ( (poutMesh->num_skins > MD2_MAX_SKINS) || (poutMesh->num_skins < 0) )
-		Com_Error(ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutMesh->num_skins);
+		VID_Error (ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutMesh->num_skins);
 
 	pinTri = (dmd2triangle_t *)((byte *)pinModel + LittleLong(pinModel->ofs_tris));
 

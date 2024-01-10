@@ -1121,8 +1121,8 @@ float MSG_ReadCoord24 (sizebuf_t *msg_read)
 	byte trans1;
 	unsigned short trans2;
 
-	trans1 = MSG_ReadByte(msg_read);
-	trans2 = MSG_ReadShort(msg_read);
+	trans1 = MSG_ReadByte (msg_read);
+	trans2 = MSG_ReadShort (msg_read);
 
 	tmp = trans1 << 16;	// bits 16-23
 	tmp += trans2;		// bits 0-15
