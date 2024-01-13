@@ -1913,6 +1913,40 @@ static char *Sys_ParseSteamLibraryFolders (const char *fileContents, size_t cont
 }
 
 
+#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// These macros and RegGetValueA() are not defined under VC6
+#define LSTATUS				long
+#define RRF_RT_REG_SZ		0x00000002  // restrict type to REG_SZ
+
+long RegGetValueA ( HKEY hkey, LPCSTR lpSubKey, LPCSTR lpValue, DWORD dwFlags, LPDWORD pdwType, PVOID pvData, LPDWORD pcbData)
+{
+	HKEY	hKeyId;
+	long	lres, lType;
+	DWORD	bufSize;
+
+	if ( !lpSubKey || !lpValue || !pvData || !pcbData )
+		return ERROR_INVALID_FUNCTION;
+
+	bufSize = *pcbData;
+
+	lres = RegOpenKeyEx(hkey, lpSubKey, 0, KEY_READ, &hKeyId);
+
+	if (lres != ERROR_SUCCESS) {
+		return ERROR_INVALID_FUNCTION;
+	}
+
+	lres = RegQueryValueEx(hKeyId, lpValue, NULL, (unsigned long *)&lType, (unsigned char *)pvData, pcbData);
+
+	if (lres != ERROR_SUCCESS) {
+		return ERROR_INVALID_FUNCTION;
+	}
+
+	RegCloseKey(hKeyId);
+
+	return ERROR_SUCCESS;
+}
+#endif	// defined (_MSC_VER) && (_MSC_VER <= 1200)
+
+
 /*
 ==================
 Sys_GetSteamInstallPath
