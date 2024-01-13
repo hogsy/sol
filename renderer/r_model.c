@@ -2354,8 +2354,8 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	//
 	// load mesh info
 	//
-//	poutMesh = poutModel->meshes = Hunk_Alloc(sizeof(maliasmesh_t));
-	poutMesh = poutModel->meshes = ModChunk_Alloc(sizeof(maliasmesh_t));
+//	poutMesh = poutModel->meshes = Hunk_Alloc (sizeof(maliasmesh_t));
+	poutMesh = poutModel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t));
 
 	Com_sprintf (poutMesh->name, sizeof(poutMesh->name), "mdlmesh");	// mesh name in script must match this
 
@@ -2474,8 +2474,8 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	numIndices = poutMesh->num_tris * 3;
 	numVertices = 0;
 
-//	poutIndex = poutMesh->indexes = Hunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
-	poutIndex = poutMesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
+//	poutIndex = poutMesh->indexes = Hunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3 );
+	poutIndex = poutMesh->indexes = ModChunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3 );
 
 //	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeMDL() is removed!
 /*	memset(mdlIndRemap, -1, MDL_MAX_TRIANGLES * 3 * sizeof(int));
@@ -2584,7 +2584,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	poutVert = poutMesh->vertexes = ModChunk_Alloc (poutModel->num_frames * sizeof(maliasvertex_t) * poutMesh->num_verts);
 
 	mod->radius = 0;
-	ClearBounds(mod->mins, mod->maxs);
+	ClearBounds (mod->mins, mod->maxs);
 
 	nCurFrame = 0;
 	for (i = 0; i < numFramesInitial; i++)
@@ -2635,9 +2635,9 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	//	outFramePtr->radius = RadiusFromBounds(outFramePtr->mins, outFramePtr->maxs);
 		outFramePtr->radius = LittleFloat(pinModel->bounding_radius);
 
-		mod->radius = max ( mod->radius, outFramePtr->radius );
-		AddPointToBounds(outFramePtr->mins, mod->mins, mod->maxs);
-		AddPointToBounds(outFramePtr->maxs, mod->mins, mod->maxs);
+		mod->radius = max (mod->radius, outFramePtr->radius);
+		AddPointToBounds (outFramePtr->mins, mod->mins, mod->maxs);
+		AddPointToBounds (outFramePtr->maxs, mod->mins, mod->maxs);
 
 		//
 		// load the vertexes and normals
@@ -2808,8 +2808,8 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	//
 	// load mesh info
 	//
-//	poutMesh = poutModel->meshes = Hunk_Alloc(sizeof(maliasmesh_t));
-	poutMesh = poutModel->meshes = ModChunk_Alloc(sizeof(maliasmesh_t));
+//	poutMesh = poutModel->meshes = Hunk_Alloc (sizeof(maliasmesh_t));
+	poutMesh = poutModel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t));
 
 	Com_sprintf (poutMesh->name, sizeof(poutMesh->name), "md2mesh");	// mesh name in script must match this
 
@@ -2845,8 +2845,8 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	numIndices = poutMesh->num_tris * 3;
 	numVertices = 0;
 
-//	poutIndex = poutMesh->indexes = Hunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
-	poutIndex = poutMesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3 );
+//	poutIndex = poutMesh->indexes = Hunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3 );
+	poutIndex = poutMesh->indexes = ModChunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3 );
 
 //	DO NOT DELETE!!!  Needed if Mod_GetAllocSizeMD2() is removed!
 /*	memset(md2IndRemap, -1, MD2_MAX_TRIANGLES * 3 * sizeof(int));
@@ -2905,7 +2905,7 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	poutVert = poutMesh->vertexes = ModChunk_Alloc (poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
 
 	mod->radius = 0;
-	ClearBounds(mod->mins, mod->maxs);
+	ClearBounds (mod->mins, mod->maxs);
 
 	for (i=0; i < poutModel->num_frames; i++, pinFrame++, poutFrame++, poutVert += numVertices)
 	{
@@ -2924,9 +2924,9 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 
 		poutFrame->radius = RadiusFromBounds(poutFrame->mins, poutFrame->maxs);
 
-		mod->radius = max ( mod->radius, poutFrame->radius );
-		AddPointToBounds(poutFrame->mins, mod->mins, mod->maxs);
-		AddPointToBounds(poutFrame->maxs, mod->mins, mod->maxs);
+		mod->radius = max (mod->radius, poutFrame->radius);
+		AddPointToBounds (poutFrame->mins, mod->mins, mod->maxs);
+		AddPointToBounds (poutFrame->maxs, mod->mins, mod->maxs);
 
 		//
 		// load the vertexes and normals
@@ -3122,17 +3122,17 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 
 		poutFrame->radius = LittleFloat ( pinFrame->radius );
 
-		mod->radius = max ( mod->radius, poutFrame->radius );
-		AddPointToBounds ( poutFrame->mins, mod->mins, mod->maxs );
-		AddPointToBounds ( poutFrame->maxs, mod->mins, mod->maxs );
+		mod->radius = max (mod->radius, poutFrame->radius);
+		AddPointToBounds (poutFrame->mins, mod->mins, mod->maxs);
+		AddPointToBounds (poutFrame->maxs, mod->mins, mod->maxs);
 	}
 
 	//
 	// load the tags
 	//
 	pinTag = (dmd3tag_t *)((byte *)pinModel + LittleLong (pinModel->ofs_tags));
-//	poutTag = poutModel->tags = Hunk_Alloc(sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
-	poutTag = poutModel->tags = ModChunk_Alloc(sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
+//	poutTag = poutModel->tags = Hunk_Alloc (sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
+	poutTag = poutModel->tags = ModChunk_Alloc (sizeof(maliastag_t) * poutModel->num_frames * poutModel->num_tags);
 
 	for ( i = 0; i < poutModel->num_frames; i++ )
 	{
@@ -3194,8 +3194,8 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 		// register all skins
 		//
 		pinSkin = (dmd3skin_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_skins));
-	//	poutSkin = poutMesh->skins = Hunk_Alloc(sizeof(maliasskin_t) * poutMesh->num_skins);
-		poutSkin = poutMesh->skins = ModChunk_Alloc(sizeof(maliasskin_t) * poutMesh->num_skins);
+	//	poutSkin = poutMesh->skins = Hunk_Alloc (sizeof(maliasskin_t) * poutMesh->num_skins);
+		poutSkin = poutMesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * poutMesh->num_skins);
 
 		for ( j = 0; j < poutMesh->num_skins; j++, pinSkin++, poutSkin++ )
 		{
@@ -3213,8 +3213,8 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 		// load the indexes
 		//
 		pinIndex = (index_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_tris));
-	//	poutIndex = poutMesh->indexes = Hunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3);
-		poutIndex = poutMesh->indexes = ModChunk_Alloc(sizeof(index_t) * poutMesh->num_tris * 3);
+	//	poutIndex = poutMesh->indexes = Hunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3);
+		poutIndex = poutMesh->indexes = ModChunk_Alloc (sizeof(index_t) * poutMesh->num_tris * 3);
 
 		for ( j = 0; j < poutMesh->num_tris; j++, pinIndex += 3, poutIndex += 3 )
 		{
@@ -3227,8 +3227,8 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 		// load the texture coordinates
 		//
 		pinCoord = (dmd3coord_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_tcs));
-	//	poutCoord = poutMesh->stcoords = Hunk_Alloc(sizeof(maliascoord_t) * poutMesh->num_verts);
-		poutCoord = poutMesh->stcoords = ModChunk_Alloc(sizeof(maliascoord_t) * poutMesh->num_verts);
+	//	poutCoord = poutMesh->stcoords = Hunk_Alloc (sizeof(maliascoord_t) * poutMesh->num_verts);
+		poutCoord = poutMesh->stcoords = ModChunk_Alloc (sizeof(maliascoord_t) * poutMesh->num_verts);
 
 		for ( j = 0; j < poutMesh->num_verts; j++, pinCoord++, poutCoord++ )
 		{
@@ -3240,8 +3240,8 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 		// load the vertexes and normals
 		//
 		pinVert = (dmd3vertex_t *)((byte *)pinMesh + LittleLong (pinMesh->ofs_verts));
-	//	poutVert = poutMesh->vertexes = Hunk_Alloc(poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
-		poutVert = poutMesh->vertexes = ModChunk_Alloc(poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
+	//	poutVert = poutMesh->vertexes = Hunk_Alloc (poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
+		poutVert = poutMesh->vertexes = ModChunk_Alloc (poutModel->num_frames * poutMesh->num_verts * sizeof(maliasvertex_t));
 
 		for ( l = 0; l < poutModel->num_frames; l++ )
 		{
@@ -3322,7 +3322,7 @@ size_t Mod_GetAllocSizeSPR (model_t *mod, void *buffer)
 	int					version;
 	int					numFramesInitial, numFrames;
 	dspr1_t				*pinSprite;
-	dspr1_frame_t		*pinFrame, **pinFrameList = NULL;
+	dspr1_frame_t		*pinFrame;
 	dspr1_frametype_t	*pinFrameType, *inFrameTypePtr;
 	dspr1_group_t		*pinFrameGroup;
 	dspr1_interval_t	*pinFrameInterval;
@@ -3387,7 +3387,7 @@ void Mod_LoadSPRModel (model_t *mod, void *buffer)
 	int					version;
 	int					numFramesInitial, numFrames;
 	dspr1_t				*pinSprite;
-	dspr1_frame_t		*pinFrame, **pinFrameList = NULL;
+	dspr1_frame_t		*pinFrame;
 	dspr1_frametype_t	*pinFrameType, *inFrameTypePtr;
 	dspr1_group_t		*pinFrameGroup;
 	dspr1_interval_t	*pinFrameInterval;

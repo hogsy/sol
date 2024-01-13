@@ -1933,7 +1933,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	r_saveShot.width = r_saveShot.height = 0;
 
 	Draw_GetPalette ();
-	R_Register();
+	R_Register ();
 
 	// place default error
 	memcpy (reason, "Unknown failure on intialization!\0", 34);

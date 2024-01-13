@@ -1951,7 +1951,7 @@ void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibr
 	Q_strncatz (folderPath, sizeof(folderPath), "\\steamapps\\libraryfolders.vdf");
 	libraryFoldersFile = fopen(folderPath, "rb");
 
-	if (!libraryFoldersFile)
+	if ( !libraryFoldersFile )
 		return;
 
 	fseek (libraryFoldersFile, 0L, SEEK_END);
