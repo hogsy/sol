@@ -514,6 +514,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\g_patchmonstermodels.c"
+				>
+			</File>
+			<File
 				RelativePath="g_patchplayermodels.c"
 				>
 			</File>

@@ -159,6 +159,7 @@ field_t fields[] = {
 	{"phase", STOFS(phase), F_FLOAT, FFL_SPAWNTEMP},
 	{"shift", STOFS(shift), F_FLOAT, FFL_SPAWNTEMP},
 	// Knightmare added
+	{"q1sounds", STOFS(q1sounds), F_INT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
 	{"cloudname", STOFS(cloudname), F_LSTRING, FFL_SPAWNTEMP},
 	{"lightningfreq", STOFS(lightningfreq), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
 	{"cloudxdir", STOFS(cloudxdir), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},

@@ -2,13 +2,14 @@
 
 //void plat_CalcMove (edict_t *ent, vec3_t dest, void(*func)(edict_t*));
 
-void fd_secret_move1(edict_t *self);
-void fd_secret_move2(edict_t *self);
-void fd_secret_move3(edict_t *self);
-void fd_secret_move4(edict_t *self);
-void fd_secret_move5(edict_t *self);
-void fd_secret_move6(edict_t *self);
-void fd_secret_done(edict_t *self);
+void fd_secret_begin (edict_t *self);
+void fd_secret_move1 (edict_t *self);
+void fd_secret_move2 (edict_t *self);
+void fd_secret_move3 (edict_t *self);
+void fd_secret_move4 (edict_t *self);
+void fd_secret_move5 (edict_t *self);
+void fd_secret_move6 (edict_t *self);
+void fd_secret_done (edict_t *self);
 
 /*
 =============================================================================
@@ -34,11 +35,25 @@ SECRET DOORS
 
 void fd_secret_use (edict_t *self, edict_t *other, edict_t *activator)
 {
-	edict_t *ent;
-
-//	gi.dprintf("fd_secret_use\n");
+//	gi.dprintf ("fd_secret_use\n");
 	if (self->flags & FL_TEAMSLAVE)
 		return;
+
+	// Knightmare- wait a bit if we have a special start sound
+	if (self->noise_index != 0) {
+		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->noise_index, 1, self->attenuation, 0); // was ATTN_STATIC
+		self->think = fd_secret_begin;
+		self->nextthink = level.time + FRAMETIME;
+	}
+	else {
+		fd_secret_begin (self);
+	}
+}
+
+// Knightmare added
+void fd_secret_begin (edict_t *self) 
+{
+	edict_t *ent;
 
 	// added sound
 	if (self->moveinfo.sound_start)
@@ -271,20 +286,44 @@ void SP_func_door_secret2 (edict_t *ent)
 
 	ent->class_id = ENTITY_FUNC_DOOR_SECRET2;
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  (va("doors/dr%02i_strt.wav", ent->sounds));
-		ent->moveinfo.sound_middle = gi.soundindex  (va("doors/dr%02i_mid.wav", ent->sounds));
-		ent->moveinfo.sound_end = gi.soundindex  (va("doors/dr%02i_end.wav", ent->sounds));
+		ent->noise_index = gi.soundindex ("q1doors/latch2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/winch2.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/drclos4.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->noise_index = gi.soundindex ("q1doors/airdoor2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/airdoor1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/airdoor2.wav");
+	}
+	else if (st.q1sounds == 3)
+	{
+		ent->noise_index = gi.soundindex ("q1doors/basesec2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/basesec1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/basesec2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->noise_index = 0;
+		ent->moveinfo.sound_start = gi.soundindex (va("doors/dr%02i_strt.wav", ent->sounds));
+		ent->moveinfo.sound_middle = gi.soundindex (va("doors/dr%02i_mid.wav", ent->sounds));
+		ent->moveinfo.sound_end = gi.soundindex (va("doors/dr%02i_end.wav", ent->sounds));
 	}
 	else if (ent->sounds != 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-		ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-		ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+		ent->noise_index = 0;
+		ent->moveinfo.sound_start = gi.soundindex ("doors/dr1_strt.wav");
+		ent->moveinfo.sound_middle = gi.soundindex ("doors/dr1_mid.wav");
+		ent->moveinfo.sound_end = gi.soundindex ("doors/dr1_end.wav");
 	}
 	else
 	{
+		ent->noise_index = 0;
 		ent->moveinfo.sound_start = 0;
 		ent->moveinfo.sound_middle = 0;
 		ent->moveinfo.sound_end = 0;

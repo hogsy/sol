@@ -1085,13 +1085,25 @@ void SP_func_plat (edict_t *ent)
 	VectorCopy (ent->s.angles, ent->moveinfo.start_angles);
 	VectorCopy (ent->pos2, ent->moveinfo.end_origin);
 	VectorCopy (ent->s.angles, ent->moveinfo.end_angles);
-	ent->moveinfo.distance = ent->pos1[2] - ent->pos2[2]; //Knightmare- store distance
+	ent->moveinfo.distance = ent->pos1[2] - ent->pos2[2]; // Knightmare- store distance
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  (va("plats/pt%02i_strt.wav", ent->sounds));
-		ent->moveinfo.sound_middle = gi.soundindex  (va("plats/pt%02i_mid.wav", ent->sounds));
-		ent->moveinfo.sound_end = gi.soundindex  (va("plats/pt%02i_end.wav", ent->sounds));
+		ent->moveinfo.sound_start = gi.soundindex ("q1plats/plat1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1plats/plat2.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1plats/medplat1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1plats/medplat2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->moveinfo.sound_start = gi.soundindex (va("plats/pt%02i_strt.wav", ent->sounds));
+		ent->moveinfo.sound_middle = gi.soundindex (va("plats/pt%02i_mid.wav", ent->sounds));
+		ent->moveinfo.sound_end = gi.soundindex (va("plats/pt%02i_end.wav", ent->sounds));
 	}
 	else
 	{
@@ -1544,11 +1556,23 @@ void SP_func_plat2 (edict_t *ent)
 	VectorCopy (ent->s.angles, ent->moveinfo.end_angles);
 	ent->moveinfo.distance = ent->pos1[2] - ent->pos2[2]; // Knightmare- store distance
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  (va("plats/pt%02i_strt.wav", ent->sounds));
-		ent->moveinfo.sound_middle = gi.soundindex  (va("plats/pt%02i_mid.wav", ent->sounds));
-		ent->moveinfo.sound_end = gi.soundindex  (va("plats/pt%02i_end.wav", ent->sounds));
+		ent->moveinfo.sound_start = gi.soundindex ("q1plats/plat1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1plats/plat2.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1plats/medplat1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1plats/medplat2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->moveinfo.sound_start = gi.soundindex (va("plats/pt%02i_strt.wav", ent->sounds));
+		ent->moveinfo.sound_middle = gi.soundindex (va("plats/pt%02i_mid.wav", ent->sounds));
+		ent->moveinfo.sound_end = gi.soundindex (va("plats/pt%02i_end.wav", ent->sounds));
 	}
 	else
 	{
@@ -1894,8 +1918,16 @@ void SP_func_button (edict_t *ent)
 	ent->solid = SOLID_BSP;
 	gi.setmodel (ent, ent->model);
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
-		ent->moveinfo.sound_start = gi.soundindex  (va("switches/butn%02i.wav", ent->sounds));
+	if (st.q1sounds == 0)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/airbut1.wav");
+	else if (st.q1sounds == 1)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch21.wav");
+	else if (st.q1sounds == 2)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch02.wav");
+	else if (st.q1sounds == 3)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch04.wav");
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+		ent->moveinfo.sound_start = gi.soundindex (va("switches/butn%02i.wav", ent->sounds));
 	else if (ent->sounds != 1)
 		ent->moveinfo.sound_start = gi.soundindex ("switches/butn2.wav");
 
@@ -2030,9 +2062,9 @@ void trainbutton_killed (edict_t *self, edict_t *inflictor, edict_t *attacker, i
 
 void SP_func_trainbutton (edict_t *ent)
 {
-	if (!ent->movewith)
+	if ( !ent->movewith )
 	{
-		SP_func_button(ent);
+		SP_func_button (ent);
 		return;
 	}
 	ent->class_id = ENTITY_FUNC_TRAINBUTTON;
@@ -2042,7 +2074,15 @@ void SP_func_trainbutton (edict_t *ent)
 	ent->solid = SOLID_BSP;
 	gi.setmodel (ent, ent->model);
 
-	if ( (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/airbut1.wav");
+	else if (st.q1sounds == 2)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch21.wav");
+	else if (st.q1sounds == 3)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch02.wav");
+	else if (st.q1sounds == 4)
+		ent->moveinfo.sound_start = gi.soundindex ("q1buttons/switch04.wav");
+	else if ( (ent->sounds > 1) && (ent->sounds < 100) ) // custom sounds
 		ent->moveinfo.sound_start = gi.soundindex  (va("switches/butn%02i.wav", ent->sounds));
 	else if (ent->sounds != 1)
 		ent->moveinfo.sound_start = gi.soundindex ("switches/butn2.wav");
@@ -2695,17 +2735,41 @@ void SP_func_door (edict_t *ent)
 
 	ent->class_id = ENTITY_FUNC_DOOR;
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  (va("doors/dr%02i_strt.wav", ent->sounds));
-		ent->moveinfo.sound_middle = gi.soundindex  (va("doors/dr%02i_mid.wav", ent->sounds));
-		ent->moveinfo.sound_end = gi.soundindex  (va("doors/dr%02i_end.wav", ent->sounds));
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/doormv1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/drclos4.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/hydro1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/hydro2.wav");
+	}
+	else if (st.q1sounds == 3)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/stndr1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/stndr2.wav");
+	}
+	else if (st.q1sounds == 4)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/ddoor1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/ddoor2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->moveinfo.sound_start = gi.soundindex (va("doors/dr%02i_strt.wav", ent->sounds));
+		ent->moveinfo.sound_middle = gi.soundindex (va("doors/dr%02i_mid.wav", ent->sounds));
+		ent->moveinfo.sound_end = gi.soundindex (va("doors/dr%02i_end.wav", ent->sounds));
 	}
 	else if (ent->sounds != 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-		ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-		ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("doors/dr1_strt.wav");
+		ent->moveinfo.sound_middle = gi.soundindex ("doors/dr1_mid.wav");
+		ent->moveinfo.sound_end = gi.soundindex ("doors/dr1_end.wav");
 	}
 	else
 	{
@@ -2977,17 +3041,41 @@ void SP_func_door_rotating (edict_t *ent)
 	if (!ent->dmg)
 		ent->dmg = 2;
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  (va("doors/dr%02i_strt.wav", ent->sounds));
-		ent->moveinfo.sound_middle = gi.soundindex  (va("doors/dr%02i_mid.wav", ent->sounds));
-		ent->moveinfo.sound_end = gi.soundindex  (va("doors/dr%02i_end.wav", ent->sounds));
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/doormv1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/drclos4.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/hydro1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/hydro2.wav");
+	}
+	else if (st.q1sounds == 3)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/stndr1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/stndr2.wav");
+	}
+	else if (st.q1sounds == 4)
+	{
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/ddoor1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/ddoor2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->moveinfo.sound_start = gi.soundindex (va("doors/dr%02i_strt.wav", ent->sounds));
+		ent->moveinfo.sound_middle = gi.soundindex (va("doors/dr%02i_mid.wav", ent->sounds));
+		ent->moveinfo.sound_end = gi.soundindex (va("doors/dr%02i_end.wav", ent->sounds));
 	}
 	else if (ent->sounds != 1)
 	{
-		ent->moveinfo.sound_start = gi.soundindex  ("doors/dr1_strt.wav");
-		ent->moveinfo.sound_middle = gi.soundindex  ("doors/dr1_mid.wav");
-		ent->moveinfo.sound_end = gi.soundindex  ("doors/dr1_end.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("doors/dr1_strt.wav");
+		ent->moveinfo.sound_middle = gi.soundindex ("doors/dr1_mid.wav");
+		ent->moveinfo.sound_end = gi.soundindex ("doors/dr1_end.wav");
 	}
 	else
 	{
@@ -3087,7 +3175,9 @@ void func_door_rot_dh_init (edict_t *ent)
 void SP_func_door_rot_dh (edict_t *ent)
 {
 	SP_func_door_rotating (ent);
-	if (!ent->pathtarget) return;
+
+	if ( !ent->pathtarget )
+		return;
 
 	// Wait a few frames so that we're sure pathtarget has been parsed.
 	ent->think = func_door_rot_dh_init;
@@ -4068,7 +4158,7 @@ void train_wait (edict_t *self)
 			self->nextthink = 0;
 		}
 
-		if (!(self->flags & FL_TEAMSLAVE))
+		if ( !(self->flags & FL_TEAMSLAVE) )
 		{
 			if (self->moveinfo.sound_end)
 				gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_end, 1, self->attenuation, 0); // was ATTN_STATIC
@@ -4810,31 +4900,38 @@ void SP_func_train (edict_t *self)
 	if (self->attenuation <= 0)
 		self->attenuation = ATTN_IDLE;
 
-	if (st.noise)
+	if ( st.noise || (st.q1sounds == 1) )
 	{	// create a speaker entity at center of bmodel
 		edict_t *speaker;
 
-		self->noise_index = gi.soundindex  (st.noise);
-		speaker = G_Spawn();
-		speaker->classname = "moving_speaker";
-		speaker->s.sound     = 0;
-		speaker->volume = 1;
-		speaker->attenuation = self->attenuation; // was 3
-		speaker->owner = self;
-		speaker->think       = moving_speaker_think;
-		speaker->nextthink   = level.time + 2*FRAMETIME;
-		speaker->spawnflags = 7; //looped on
-		self->speaker = speaker;
+		if (st.q1sounds == 1)
+			self->noise_index	= gi.soundindex ("q1plats/train1.wav");
+		else
+			self->noise_index	= gi.soundindex (st.noise);
+		speaker					= G_Spawn();
+		speaker->classname		= "moving_speaker";
+		speaker->s.sound		= 0;
+		speaker->volume			= 1;
+		speaker->attenuation	= self->attenuation; // was 3
+		speaker->owner			= self;
+		speaker->think			= moving_speaker_think;
+		speaker->nextthink		= level.time + 2*FRAMETIME;
+		speaker->spawnflags		= 7; // looped on
+		self->speaker			= speaker;
 	//	VectorAdd (self->s.origin, self->origin_offset, speaker->s.origin);
 		if (VectorLength(self->s.origin))
 			VectorCopy (self->s.origin, speaker->s.origin);
 		else
 		{
-			VectorAdd (self->absmin,self->absmax, speaker->s.origin);
+			VectorAdd (self->absmin, self->absmax, speaker->s.origin);
 			VectorScale (speaker->s.origin, 0.5, speaker->s.origin);
 		}
 		VectorSubtract (speaker->s.origin, self->s.origin, speaker->offset);
 	//	gi.dprintf ("moving_speaker offset %s from func_train\n", vtos(speaker->offset));
+	}
+
+	if (st.q1sounds == 1) {
+		self->moveinfo.sound_end = gi.soundindex ("q1plats/train2.wav");
 	}
 
 	if (!self->speed)
@@ -4860,7 +4957,7 @@ void SP_func_train (edict_t *self)
 
 	self->use = train_use;
 
-	if (self->health && self->health > 0) //Knightmare- detect health
+	if (self->health && self->health > 0) // Knightmare- detect health
 	{
 		//the func_explosive is handled exactly the same way. (look in g_misc.c)
 		self->die = func_explosive_die;	//what to call when we die (in g_misc.c)
@@ -5129,6 +5226,7 @@ always_shoot	door is shootable even if targeted
 #define SECRET_1ST_LEFT		2
 #define SECRET_1ST_DOWN		4
 
+void door_secret_begin (edict_t *self);
 void door_secret_move1 (edict_t *self);
 void door_secret_move2 (edict_t *self);
 void door_secret_move3 (edict_t *self);
@@ -5143,6 +5241,20 @@ void door_secret_use (edict_t *self, edict_t *other, edict_t *activator)
 	if ((self->moveinfo.state != STATE_LOWEST) && (self->moveinfo.state != STATE_TOP))
 		return;
 
+	// Knightmare- wait a bit if we have a special start sound
+	if (self->noise_index != 0) {
+		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->noise_index, 1, self->attenuation, 0); // was ATTN_STATIC
+		self->think = door_secret_begin;
+		self->nextthink = level.time + FRAMETIME;
+	}
+	else {
+		door_secret_begin (self);
+	}
+}
+
+// Knightmare added
+void door_secret_begin (edict_t *self)
+{
 	// added sound
 	if (self->moveinfo.sound_start)
 		gi.sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self->moveinfo.sound_start, 1, self->attenuation, 0); // was ATTN_STATIC
@@ -5314,20 +5426,44 @@ void SP_func_door_secret (edict_t *ent)
 
 	ent->class_id = ENTITY_FUNC_DOOR_SECRET;
 
-	if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	if (st.q1sounds == 1)
 	{
+		ent->noise_index = gi.soundindex ("q1doors/latch2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/winch2.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/drclos4.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		ent->noise_index = gi.soundindex ("q1doors/airdoor2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/airdoor1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/airdoor2.wav");
+	}
+	else if (st.q1sounds == 3)
+	{
+		ent->noise_index = gi.soundindex ("q1doors/basesec2.wav");
+		ent->moveinfo.sound_start = gi.soundindex ("q1doors/basesec1.wav");
+		ent->moveinfo.sound_middle = 0;
+		ent->moveinfo.sound_end = gi.soundindex ("q1doors/basesec2.wav");
+	}
+	else if ( (level.maptype == MAPTYPE_CUSTOM) && (ent->sounds > 4) && (ent->sounds < 100) ) // custom sounds
+	{
+		ent->noise_index = 0;
 		ent->moveinfo.sound_start = gi.soundindex (va("doors/dr%02i_strt.wav", ent->sounds));
 		ent->moveinfo.sound_middle = gi.soundindex (va("doors/dr%02i_mid.wav", ent->sounds));
 		ent->moveinfo.sound_end = gi.soundindex (va("doors/dr%02i_end.wav", ent->sounds));
 	}
 	else if (ent->sounds != 1)
 	{
+		ent->noise_index = 0;
 		ent->moveinfo.sound_start = gi.soundindex ("doors/dr1_strt.wav");
 		ent->moveinfo.sound_middle = gi.soundindex ("doors/dr1_mid.wav");
 		ent->moveinfo.sound_end = gi.soundindex ("doors/dr1_end.wav");
 	}
 	else
 	{
+		ent->noise_index = 0;
 		ent->moveinfo.sound_start = 0;
 		ent->moveinfo.sound_middle = 0;
 		ent->moveinfo.sound_end = 0;
@@ -6136,9 +6272,9 @@ void SP_func_door_swinging (edict_t *self)
 		self->spawnflags &= ~DOOR_REVERSE;
 		self->flags |= FL_REVOLVING;
 	}
-	if (!self->followtarget)
+	if ( !self->followtarget )
 	{
-		gi.dprintf("func_door_swinging with no followtarget at %s\n", vtos(self->s.origin));
+		gi.dprintf ("func_door_swinging with no followtarget at %s\n", vtos(self->s.origin));
 		G_FreeEdict (self);
 		return;
 	}
@@ -6158,7 +6294,7 @@ void SP_func_door_swinging (edict_t *self)
 	// Wait a few frames so that we're sure pathtarget has been parsed.
 	self->think = func_door_swinging_init;
 	self->nextthink = level.time + 2*FRAMETIME;
-	gi.linkentity(self);
+	gi.linkentity (self);
 }
 
 

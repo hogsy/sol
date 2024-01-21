@@ -489,7 +489,7 @@ void infantry_fire_prep (edict_t *self)
 {
 	int n;
 	n = (rand() & 15) + 3 + 1;
-	self->monsterinfo.pausetime = level.time + n*FRAMETIME;
+	self->monsterinfo.pausetime = level.time + n * FRAMETIME;
 }
 
 // pmm

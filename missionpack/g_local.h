@@ -620,6 +620,9 @@ typedef struct
 
 	float		shift;
 
+	// Knightmare- added for Q1-style doors/plats/buttons
+	int			q1sounds;
+
 	// Knightmare- added for DK-style clouds
 	char		*cloudname;
 	float		lightningfreq;
@@ -1466,7 +1469,6 @@ void monster_done_dodge (edict_t *self);
 
 void InitiallyDead (edict_t *self);
 qboolean M_SetDeath(edict_t *self, mmove_t **deathmoves);
-int PatchMonsterModel (char *modelname);
 
 
 //
@@ -1862,6 +1864,11 @@ float PlayersRangeFromSpot (edict_t *spot);
 
 // ROGUE PROTOTYPES
 //====================
+
+//
+// g_patchmonstermodels.c
+//
+int PatchMonsterModel (char *modelname);
 
 //
 // g_patchplayermodels.c

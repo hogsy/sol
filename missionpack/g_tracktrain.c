@@ -363,7 +363,19 @@ void SP_func_trackchange (edict_t *self)
 	else
 		self->moveinfo.state = STATE_TOP;
 
-	if (self->sounds > 1 && self->sounds < 100) // custom sounds
+	if (st.q1sounds == 1)
+	{
+		self->moveinfo.sound_start = gi.soundindex ("q1plats/plat1.wav");
+		self->moveinfo.sound_middle = 0;
+		self->moveinfo.sound_end = gi.soundindex ("q1plats/plat2.wav");
+	}
+	else if (st.q1sounds == 2)
+	{
+		self->moveinfo.sound_start = gi.soundindex ("q1plats/medplat1.wav");
+		self->moveinfo.sound_middle = 0;
+		self->moveinfo.sound_end = gi.soundindex ("q1plats/medplat2.wav");
+	}
+	else if (self->sounds > 1 && self->sounds < 100) // custom sounds
 	{
 		self->moveinfo.sound_start = gi.soundindex  (va("plats/pt%02i_strt.wav", self->sounds));
 		self->moveinfo.sound_middle = gi.soundindex  (va("plats/pt%02i_mid.wav", self->sounds));

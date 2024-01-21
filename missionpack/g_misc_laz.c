@@ -723,14 +723,14 @@ int PatchDeadSoldier (void)
 		FILE			*fpak;
 		int				k, numitems;
 
-		fpak = fopen("baseq2/pak0.pak","rb");
+		fpak = fopen ("baseq2/pak0.pak","rb");
 		if (!fpak)
 		{
 			cvar_t	*cddir;
 			char	pakfile[MAX_OSPATH];
 
 			cddir = gi.cvar("cddir", "", 0);
-			Com_sprintf(pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak",cddir->string);
+			Com_sprintf(pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
 			fpak = fopen(pakfile,"rb");
 			if (!fpak)
 			{
@@ -738,28 +738,28 @@ int PatchDeadSoldier (void)
 				return 0;
 			}
 		}
-		fread(&pakheader,1,sizeof(pak_header_t),fpak);
-		numitems = pakheader.dsize/sizeof(pak_item_t);
-		fseek(fpak,pakheader.dstart,SEEK_SET);
+		fread (&pakheader, 1, sizeof(pak_header_t), fpak);
+		numitems = pakheader.dsize / sizeof(pak_item_t);
+		fseek (fpak,pakheader.dstart, SEEK_SET);
 		data = NULL;
 		for (k=0; k<numitems && !data; k++)
 		{
-			fread(&pakitem,1,sizeof(pak_item_t),fpak);
-			if (!Q_stricmp(pakitem.name,DEADSOLDIER_MODEL))
+			fread (&pakitem,1,sizeof(pak_item_t),fpak);
+			if ( !Q_stricmp(pakitem.name, DEADSOLDIER_MODEL) )
 			{
-				fseek(fpak,pakitem.start,SEEK_SET);
-				fread(&model, sizeof(dmdl_t), 1, fpak);
+				fseek (fpak, pakitem.start, SEEK_SET);
+				fread (&model, sizeof(dmdl_t), 1, fpak);
 				datasize = model.ofs_end - model.ofs_skins;
 				if ( !(data = malloc (datasize)) )	// make sure freed locally
 				{
-					fclose(fpak);
+					fclose (fpak);
 					gi.dprintf ("PatchDeadSoldier: Could not allocate memory for model\n");
 					return 0;
 				}
 				fread (data, sizeof (byte), datasize, fpak);
 			}
 		}
-		fclose(fpak);
+		fclose (fpak);
 		if (!data)
 		{
 			gi.dprintf("PatchDeadSoldier: Could not find %s in baseq2/pak0.pak\n",DEADSOLDIER_MODEL);

@@ -205,6 +205,10 @@ SOURCE=.\g_monster.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\g_patchmonstermodels.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\g_patchplayermodels.c
 # End Source File
 # Begin Source File
