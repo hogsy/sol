@@ -320,6 +320,7 @@ typedef struct
 	qboolean		scrollEnabled;
 	int				scrollMin;
 	int				scrollMax;
+	int				scrollNumVisible;
 	int				scrollPos;
 	float			scrollTopLeft[2];	// for mouse pointer detection
 	float			scrollBotRight[2];	// for mouse pointer detection
@@ -924,6 +925,7 @@ void UI_Draw_Cursor (void);
 #define UI_TEXTBOX_PIC				"/gfx/ui/widgets/textbox.pcx"
 #define UI_SLIDER_PIC				"/gfx/ui/widgets/slider.pcx"
 #define UI_ARROWS_PIC				"/gfx/ui/widgets/arrows.pcx"
+#define UI_SCROLLKNOB_PIC			"/gfx/ui/widgets/scroll_knobs.pcx"
 
 #define UI_DEFAULTS_MESSAGE			"Reset all menu settings to defaults?"
 #define UI_APPLYCHANGES_MESSAGE		"This will apply changes for this menu."

@@ -4,7 +4,7 @@ KMQuake2 v0.20 with update 8 Test Build
 Readme.txt
 ------------------------------
 Enhanced Quake2 OpenGL-only engine with integrated Lazarus support
-(kmquake2.exe & kmq2gamex86.dll & kmq2_pak00.pk3 & kmq2_pak01.pk3)
+(kmquake2.exe, kmquake2_x64.exe, kmq2gamex86.dll, kmq2gamex64.dll, kmq2_pak00.pk3 & kmq2_pak01.pk3)
 
 	By Knightmare (knightmare66@yahoo.com)
 
@@ -118,12 +118,12 @@ System Requirements
 ------------------------------
 How To Run
 ------------------------------
-	Unzip into your Quake2 directory (where quake2.exe is) and make a shortcut with path
+	Unzip into your Quake2 folder (where quake2.exe is) and make a shortcut with path
 
 	x\quake2\kmquake2.exe +set game gamedir (for singleplayer, LAN games, and net client use)
 
 	where X is your Quake2 dir's parent dir (for example, C: or D:\games), and gamedir
-	is the game subdirectory (if any) where the mod you want to run is.  NOTE: for the
+	is the game subfolder (if any) where the mod you want to run is.  NOTE: for the
 	mod's code to run, it must be compiled into a kmq2gamex86.dll (see end of file for
 	instructions).
 

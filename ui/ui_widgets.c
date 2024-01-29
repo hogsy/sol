@@ -33,6 +33,18 @@ vec4_t		stCoord_arrow_up = {0.5, 0.0, 0.75, 0.25};
 vec4_t		stCoord_arrow_down = {0.75, 0.0, 1, 0.25};
 vec4_t		stCoord_scrollKnob_h = {0.0, 0.75, 0.25, 1.0};
 vec4_t		stCoord_scrollKnob_v = {0.25, 0.75, 0.5, 1.0};
+
+vec4_t		stCoord_scrollKnob_h_left = {0.0, 0.0, 0.125, 0.25};
+vec4_t		stCoord_scrollKnob_h_seg = {0.125, 0.0, 0.25, 0.25};
+vec4_t		stCoord_scrollKnob_h_center = {0.25, 0.0, 0.375, 0.25};
+vec4_t		stCoord_scrollKnob_h_center_dbl = {0.625, 0.0, 0.875, 0.25};
+vec4_t		stCoord_scrollKnob_h_right = {0.375, 0.0, 0.5, 0.25};
+vec4_t		stCoord_scrollKnob_v_top = {0.0, 0.5, 0.25, 0.625};
+vec4_t		stCoord_scrollKnob_v_seg = {0.0, 0.625, 0.25, 0.75};
+vec4_t		stCoord_scrollKnob_v_center = {0.0, 0.75, 0.25, 0.875};
+vec4_t		stCoord_scrollKnob_v_center_dbl = {0.5, 0.625, 0.75, 0.875};
+vec4_t		stCoord_scrollKnob_v_bottom = {0.0, 0.875, 0.25, 1.0};
+
 vec4_t		stCoord_checkbox_off = {0.0, 0.0, 0.5, 1.0};
 vec4_t		stCoord_checkbox_on = {0.5, 0.0, 1.0, 1.0};
 vec4_t		stCoord_field_left = {0.0, 0.0, 0.25, 1.0};
@@ -246,17 +258,19 @@ void UI_ClickItemScrollBar (menuCommon_s *item)
 void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_x, int box_y, int boxWidth, int boxHeight)
 {
 	int			button_size = LIST_SCROLLBAR_CONTROL_SIZE;
-	int			i, barWidth, barHeight, sliderPos, red, green, blue, hoverAlpha;
-	float		t_ofs[2];
+	int			sk_segment_size = LIST_SCROLLBAR_CONTROL_SIZE / 2;
+	int			i, barWidth, barHeight, sliderPos,red, green, blue, hoverAlpha;
+	int			knob_x, knob_y, segmentPos;
+	int			scrollTotal, knobWidth, knobHeight,  sliderPos2, numKnobSegments, centerKnobSegment;
+	float		scroll_proportion, t_ofs[2];
 	color_t		arrowColor;
-	vec4_t		arrowTemp[2];
-	qboolean	mouseClick, mouseOverArrow1, mouseOverArrow2, arrow1_pulse, arrow2_pulse;
+	vec4_t		arrowTemp[2], sbknobTemp[5];
+	qboolean	mouseClick, mouseOverArrow1, mouseOverArrow2, arrow1_pulse, arrow2_pulse, knobPulse, useDblKnobCenter;
 
 	if (!scroll)	return;
 
 	hoverAlpha = UI_MouseOverAlpha(ui_mousecursor.menuitem);
 	mouseClick = ( ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1] );
-//	UI_TextColor (alt_text_color->value, true, &red, &green, &blue);
 	UI_TextColor (alt_text_color->integer, true, &red, &green, &blue);
 
 	if (scroll->scrollEnabled) {
@@ -280,15 +294,21 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrow2_pulse = scroll->scrollEnabled && mouseOverArrow2 && !mouseClick;
 		if (scroll->scrollEnabled && mouseOverArrow2 && mouseClick)
 			t_ofs[1] = 0.5;
+		// scroll knob pulse
+		knobPulse = UI_MouseOverScrollKnob(item);
 
 		Vector4Copy (stCoord_arrow_left, arrowTemp[0]);
 		Vector4Copy (stCoord_arrow_right, arrowTemp[1]);
+		Vector4Copy (stCoord_scrollKnob_h_left, sbknobTemp[0]);
+		Vector4Copy (stCoord_scrollKnob_h_seg, sbknobTemp[1]);
+		Vector4Copy (stCoord_scrollKnob_h_center, sbknobTemp[2]);
+		Vector4Copy (stCoord_scrollKnob_h_center_dbl, sbknobTemp[3]);
+		Vector4Copy (stCoord_scrollKnob_h_right, sbknobTemp[4]);
 		for (i=0; i<2; i++) {
 			arrowTemp[i][1] += t_ofs[i];
 			arrowTemp[i][3] += t_ofs[i];
 		}
-		barWidth = boxWidth - (2*button_size);
-		sliderPos = (barWidth-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+		barWidth = boxWidth - (2 * button_size);
 
 		// scrolling area
 		UI_DrawFill (box_x, box_y+boxHeight-LIST_SCROLLBAR_SIZE,
@@ -303,12 +323,63 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrowColor[3] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		arrowColor[3] = 255;
+		arrowColor[3] = knobPulse ? hoverAlpha : 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
-			UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
-						stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		{
+			sliderPos = (barWidth-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+			scrollTotal = scroll->scrollNumVisible + (scroll->scrollMax - scroll->scrollMin);
+			scroll_proportion = (float)scroll->scrollNumVisible / (float)scrollTotal;
+			knobWidth = (int)(scroll_proportion * (float)barWidth);
+			knobWidth -= knobWidth % sk_segment_size;
+
+			if (knobWidth <= button_size) {
+				UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
+							stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+			}
+			else
+			{
+				sliderPos2 = (barWidth-knobWidth) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+				numKnobSegments = knobWidth / sk_segment_size;
+				centerKnobSegment = (numKnobSegments / 2);
+				useDblKnobCenter = (numKnobSegments % 2 == 0);
+				if (useDblKnobCenter)
+					centerKnobSegment -= 1;
+				knob_x = box_x + button_size + sliderPos2;
+				knob_y = box_y + boxHeight - button_size;
+			//	Com_Printf ("scroll_prop: %f barWidth: %i knobWidth: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
+			//				scroll_proportion, barWidth, knobWidth, numKnobSegments, centerKnobSegment, sliderPos2);
+			//	UI_DrawFill (knob_x, knob_y, knobWidth, button_size, ALIGN_CENTER, false, arrowColor[0], arrowColor[1], arrowColor[2], 127);
+				// left
+				UI_DrawPicST (knob_x, knob_y, sk_segment_size, button_size,
+							stCoord_scrollKnob_h_left, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				// center segments
+				for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+				{
+					if (i == centerKnobSegment)
+					{
+						if (useDblKnobCenter) {
+							UI_DrawPicST (knob_x+segmentPos, knob_y, button_size, button_size,
+										stCoord_scrollKnob_h_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							i++;
+							segmentPos += sk_segment_size;
+						}
+						else {
+							UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+										stCoord_scrollKnob_h_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						}
+					}
+					else {
+						UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+									stCoord_scrollKnob_h_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+					}
+				}
+				// right
+				UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+							stCoord_scrollKnob_h_right, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			}
+		}
 	}
 	else // SCROLL_Y
 	{
@@ -322,15 +393,21 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrow2_pulse = scroll->scrollEnabled && mouseOverArrow2 && !mouseClick;
 		if (scroll->scrollEnabled && mouseOverArrow2 && mouseClick)
 			t_ofs[1] = 0.5;
+		// scroll knob pulse
+		knobPulse = UI_MouseOverScrollKnob(item);
 
 		Vector4Copy (stCoord_arrow_up, arrowTemp[0]);
 		Vector4Copy (stCoord_arrow_down, arrowTemp[1]);
+		Vector4Copy (stCoord_scrollKnob_v_top, sbknobTemp[0]);
+		Vector4Copy (stCoord_scrollKnob_v_seg, sbknobTemp[1]);
+		Vector4Copy (stCoord_scrollKnob_v_center, sbknobTemp[2]);
+		Vector4Copy (stCoord_scrollKnob_v_center_dbl, sbknobTemp[3]);
+		Vector4Copy (stCoord_scrollKnob_v_bottom, sbknobTemp[4]);
 		for (i=0; i<2; i++) {
 			arrowTemp[i][1] += t_ofs[i];
 			arrowTemp[i][3] += t_ofs[i];
 		}
-		barHeight = boxHeight - (2*button_size);
-		sliderPos = (barHeight-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+		barHeight = boxHeight - (2 * button_size);
 
 		// scrolling area
 		UI_DrawFill (box_x+boxWidth-LIST_SCROLLBAR_SIZE, box_y,
@@ -345,12 +422,63 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 		arrowColor[3] = arrow2_pulse ? hoverAlpha : 255;
 		UI_DrawPicST (box_x+boxWidth-button_size, box_y+boxHeight-button_size, button_size, button_size,
 					arrowTemp[1], item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
-		arrowColor[3] = 255;
+		arrowColor[3] = knobPulse ? hoverAlpha : 255;
 
 		// scroll knob
 		if (scroll->scrollEnabled)
-			UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
-						stCoord_scrollKnob_v, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+		{
+			sliderPos = (barHeight-button_size) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+			scrollTotal = scroll->scrollNumVisible + (scroll->scrollMax - scroll->scrollMin);
+			scroll_proportion = (float)scroll->scrollNumVisible / (float)scrollTotal;
+			knobHeight = (int)(scroll_proportion * (float)barHeight);
+			knobHeight -= knobHeight % sk_segment_size;
+
+			if (knobHeight <= button_size) {
+				UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
+							stCoord_scrollKnob_v, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
+			}
+			else
+			{
+				sliderPos2 = (barHeight - knobHeight) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
+				numKnobSegments = knobHeight / sk_segment_size;
+				centerKnobSegment = (numKnobSegments / 2);
+				useDblKnobCenter = (numKnobSegments % 2 == 0);
+				if (useDblKnobCenter)
+					centerKnobSegment -= 1;
+				knob_x = box_x + boxWidth - button_size;
+				knob_y = box_y + button_size + sliderPos2;
+			//	Com_Printf ("scroll_prop: %f barHeight: %i knobHeight: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
+			//				scroll_proportion, barHeight, knobHeight, numKnobSegments, centerKnobSegment, sliderPos2);
+			//	UI_DrawFill (knob_x, knob_y, button_size, knobHeight, ALIGN_CENTER, false, arrowColor[0], arrowColor[1], arrowColor[2], 127);
+				// top
+				UI_DrawPicST (knob_x, knob_y, button_size, sk_segment_size,
+							stCoord_scrollKnob_v_top, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				// center segments
+				for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+				{
+					if (i == centerKnobSegment)
+					{
+						if (useDblKnobCenter) {
+							UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, button_size,
+										stCoord_scrollKnob_v_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							i++;
+							segmentPos += sk_segment_size;
+						}
+						else {
+							UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+										stCoord_scrollKnob_v_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						}
+					}
+					else {
+						UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+									stCoord_scrollKnob_v_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+					}
+				}
+				// bottom
+				UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+							stCoord_scrollKnob_v_bottom, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			}
+		}
 	}
 
 	if (ui_debug_itembounds->integer)
@@ -871,6 +999,7 @@ void UI_MenuKeyBindList_Setup (menuKeyBindList_s *k)
 	k->scrollState.scrollEnabled = (k->numItems > k->items_y);
 	k->scrollState.scrollMin = 0;
 	k->scrollState.scrollMax = max((k->numItems - k->items_y), 0);
+	k->scrollState.scrollNumVisible = k->items_y;
 	k->scrollState.scrollTopLeft[0] = k->generic.topLeft[0] + boxWidth - LIST_SCROLLBAR_SIZE;
 	k->scrollState.scrollTopLeft[1] = k->generic.topLeft[1];
 	k->scrollState.scrollBotRight[0] = k->generic.botRight[0];
@@ -2415,6 +2544,7 @@ void UI_MenuListBox_Setup (menuListBox_s *l)
 	l->scrollState.scrollEnabled = (l->numItems > l->items_y);
 	l->scrollState.scrollMin = 0;
 	l->scrollState.scrollMax = max((l->numItems - l->items_y), 0);
+	l->scrollState.scrollNumVisible = l->items_y;
 	l->scrollState.scrollTopLeft[0] = l->generic.topLeft[0] + boxWidth - LIST_SCROLLBAR_SIZE;
 	l->scrollState.scrollTopLeft[1] = l->generic.topLeft[1];
 	l->scrollState.scrollBotRight[0] = l->generic.botRight[0];
@@ -2748,6 +2878,7 @@ void UI_MenuComboBox_Setup (menuComboBox_s *c)
 	c->scrollState.scrollEnabled = (c->numItems > c->items_y);
 	c->scrollState.scrollMin = 0;
 	c->scrollState.scrollMax = max((c->numItems - c->items_y), 0);
+	c->scrollState.scrollNumVisible = c->items_y;
 	c->scrollState.scrollTopLeft[0] = c->generic.topLeft[0] + fieldWidth - LIST_SCROLLBAR_SIZE;
 	c->scrollState.scrollTopLeft[1] = c->generic.botRight[1] + c->border;
 	c->scrollState.scrollBotRight[0] = c->generic.botRight[0];
@@ -3077,6 +3208,7 @@ void UI_MenuListView_Setup (menuListView_s *l)
 	l->scrollState.scrollEnabled = (l->scrollState.scrollType == SCROLL_X) ? (scrollUnits > l->items_x) : (scrollUnits > l->items_y);
 	l->scrollState.scrollMin = 0;
 	l->scrollState.scrollMax = max( ((l->scrollState.scrollType == SCROLL_X) ? (scrollUnits - l->items_x) : (scrollUnits - l->items_y)), 0);
+	l->scrollState.scrollNumVisible = (l->scrollState.scrollType == SCROLL_X) ? l->items_x : l->items_y;
 
 	if (l->scrollState.scrollType == SCROLL_X)
 		UI_MenuScrollBar_SetPos (&l->scrollState, l->items_x, scrollUnits, l->curValue/l->items_y);

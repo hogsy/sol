@@ -1044,16 +1044,16 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 ==================
 R_WriteTGA
 
-Writes a raw image to TGA for debugging
+Writes a raw image to a TGA file
 ==================
 */
-void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean checkIfExists)
+void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean relativePath, qboolean checkIfExists)
 {
 	int		i, temp, nBits;
 	size_t	imageSize, c;
 	char	checkname[MAX_OSPATH];
 	byte	*buffer;
-	FILE	*f = NULL;
+	FILE	*file = NULL;
 	
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
 	//	VID_Printf (PRINT_ALL, "R_WriteTGA: bad parms\n", checkname);
@@ -1063,12 +1063,15 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 	imageSize = width * height * nBytes;
 	nBits = (nBytes == 4) ? 32 : 24;
 
-	Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+	if (relativePath)
+		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+	else
+		Q_strncpyz (checkname, sizeof(checkname), filename);
 	FS_CreatePath (checkname);
 	if (checkIfExists) {
-		f = fopen (checkname, "rb");
+		file = fopen (checkname, "rb");
 	}
-	if ( !f )
+	if ( !file )
 	{
 		buffer = malloc(imageSize + 18);
 		memset (buffer, 0, 18);
@@ -1082,17 +1085,17 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 
 		// swap rgb to bgr
 		c = imageSize + 18;
-		for (i=18; i<c; i+=4)
+		for (i = 18; i < c; i += nBytes)
 		{
 			temp = buffer[i];
 			buffer[i] = buffer[i+2];
 			buffer[i+2] = temp;
 		}
 
-		f = fopen (checkname, "wb");
-		if (f != NULL) {
-			fwrite (buffer, 1, c, f);
-			fclose (f);
+		file = fopen (checkname, "wb");
+		if (file != NULL) {
+			fwrite (buffer, 1, c, file);
+			fclose (file);
 		}
 		else
 			VID_Printf (PRINT_ALL, "R_WriteTGA: couldn't open %s for writing\n", checkname);
@@ -1100,7 +1103,7 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 		free (buffer);
 	}
 	else {
-		fclose (f);
+		fclose (file);
 		VID_Printf (PRINT_ALL, "R_WriteTGA: %s already exists\n", checkname);
 	}
 }
@@ -1340,6 +1343,96 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	R_DestroyPNG (true);
 	FS_FreeFile ((void *)raw);
 }
+
+
+/*
+==================
+R_WritePNG
+
+Writes a raw image to a PNG file
+==================
+*/
+void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean relativePath, qboolean checkIfExists)
+{
+	int			i, colorType;
+	size_t		imageSize;
+	char		checkname[MAX_OSPATH];
+	FILE		*file = NULL;
+	png_structp	png_sptr;
+	png_infop	png_infoptr;
+	void		*lineptr;
+
+	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
+	//	VID_Printf (PRINT_ALL, "R_WritePNG: bad parms\n", checkname);
+		return;
+	}
+	
+	imageSize = width * height * nBytes;
+
+	if (relativePath)
+		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+	else
+		Q_strncpyz (checkname, sizeof(checkname), filename);
+	FS_CreatePath (checkname);
+	if (checkIfExists) {
+		file = fopen (checkname, "rb");
+	}
+	if ( !file )
+	{
+		png_sptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+		if ( !png_sptr ) {
+			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n"); 
+			return;
+		}
+
+		png_infoptr = png_create_info_struct (png_sptr);
+		if ( !png_infoptr ) {
+			png_destroy_write_struct (&png_sptr, 0);
+			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n"); 
+			return;
+		}
+
+		if ( setjmp(png_jmpbuf(png_sptr)) ) {
+			png_destroy_info_struct (png_sptr, &png_infoptr);
+			png_destroy_write_struct (&png_sptr, 0);
+			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: bad data\n"); 
+			return;
+		}
+
+		// open png file
+		file = fopen(checkname, "wb");
+		if ( !file ) {
+			png_destroy_info_struct (png_sptr, &png_infoptr);
+			png_destroy_write_struct (&png_sptr, 0);
+			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't open %s for writing\n", checkname); 
+			return;
+ 		}
+
+		// encode and output
+		colorType = (nBytes == 4) ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB;
+		png_init_io (png_sptr, file);
+		png_set_IHDR (png_sptr, png_infoptr, width, height, 8, colorType,
+					PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+		png_write_info (png_sptr, png_infoptr);
+		for (i = (vid.height-1); i >= 0; i--) {
+			lineptr = rawImage + i * width * nBytes;
+			png_write_row (png_sptr, lineptr);
+		}
+		png_write_end (png_sptr, png_infoptr);
+
+		// clean up
+		fclose (file);
+		png_destroy_info_struct (png_sptr, &png_infoptr);
+		png_destroy_write_struct (&png_sptr, 0);
+
+		// close File
+		fclose (file);
+	}
+	else {
+		fclose (file);
+		VID_Printf (PRINT_ALL, "R_WritePNG: %s already exists\n", checkname);
+	}
+}
 #endif	// PNG_SUPPORT
 
 /*
@@ -1504,6 +1597,85 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	*pic = rgbadata;
 }
 
+
+/*
+==================
+R_WriteJPG
+
+Writes a raw image to a JPG file
+Based on code by Robert 'Heffo' Heffernan
+==================
+*/
+void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *filename, int quality, qboolean relativePath, qboolean checkIfExists)
+{
+	size_t						imageSize;
+	char						checkname[MAX_OSPATH];
+	FILE						*file = NULL;
+	int							offset;
+	struct jpeg_compress_struct	cinfo;
+	struct jpeg_error_mgr		jerr;
+	JSAMPROW					s[1];
+	
+	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 3) ) {
+	//	VID_Printf (PRINT_ALL, "R_WriteJPG: bad parms\n", checkname);
+		return;
+	}
+	
+	imageSize = width * height * nBytes;
+
+	if (relativePath)
+		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+	else
+		Q_strncpyz (checkname, sizeof(checkname), filename);
+	FS_CreatePath (checkname);
+	if (checkIfExists) {
+		file = fopen (checkname, "rb");
+	}
+	if ( !file )
+	{
+		file = fopen (checkname, "wb");
+		if ( !file ) {
+			VID_Printf (PRINT_ALL, "R_WriteJPG: couldn't open %s for writing\n", checkname);
+			return;
+		}
+
+		// Initialise the JPEG compression object
+		cinfo.err = jpeg_std_error (&jerr);
+		jpeg_create_compress (&cinfo);
+		jpeg_stdio_dest (&cinfo, file);
+
+		// Setup JPEG Parameters
+		cinfo.image_width = width;
+		cinfo.image_height = height;
+		cinfo.in_color_space = JCS_RGB;
+		cinfo.input_components = 3;
+		jpeg_set_defaults (&cinfo);
+		jpeg_set_quality (&cinfo, quality, TRUE);
+
+		// Start Compression
+		jpeg_start_compress (&cinfo, true);
+
+		// Feed Scanline data
+		offset = (cinfo.image_width * cinfo.image_height * 3) - (cinfo.image_width * 3);
+		while (cinfo.next_scanline < cinfo.image_height) {
+			s[0] = &rawImage[offset - (cinfo.next_scanline * (cinfo.image_width * 3))];
+			jpeg_write_scanlines (&cinfo, s, 1);
+		}
+
+		// Finish Compression
+		jpeg_finish_compress (&cinfo);
+
+		// Destroy JPEG object
+		jpeg_destroy_compress (&cinfo);
+
+		// Close File
+		fclose (file);
+	}
+	else {
+		fclose (file);
+		VID_Printf (PRINT_ALL, "R_WriteJPG: %s already exists\n", checkname);
+	}
+}
 
 /*
 ====================================================================

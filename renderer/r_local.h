@@ -564,6 +564,8 @@ void R_CreateDisplayLists (void);
 void R_ClearDisplayLists (void);
 void R_InitMedia (void);
 void R_ShutdownMedia (void);
+void R_GrabScreen (void);					// screenshots for savegames
+void R_ScaledScreenshot (const char *name);	//  screenshots for savegames
 void R_ScreenShot_f (void);
 void R_ScreenShot_Silent_f (void);
 void R_ScreenShot_TGA_f (void);
@@ -833,9 +835,11 @@ struct image_s *R_RegisterSkin (char *name);
 
 void R_LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int *height);
 void R_LoadTGA (const char *filename, byte **pic, int *width, int *height);
-void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean checkIfExists);
+void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean relativePath, qboolean checkIfExists);
 void R_LoadPNG (const char *filename, byte **pic, int *width, int *height);
+void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *filename, qboolean relativePath, qboolean checkIfExists);
 void R_LoadJPG (const char *filename, byte **pic, int *width, int *height);
+void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *filename, int quality, qboolean relativePath, qboolean checkIfExists);
 
 image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 image_t *R_LoadQuakePic (const char *name, byte *pic, int width, int height, imagetype_t type, int bits);

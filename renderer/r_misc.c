@@ -76,7 +76,7 @@ image_t * R_CreateNullTexture (void)
 	}
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&null_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/null_texture.tga", false);
+		R_WriteTGA (&null_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/null_texture.tga", true, false);
 
 	return R_LoadPic ("*notexture", (byte *)null_tex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 }
@@ -94,7 +94,7 @@ image_t *R_CreateWhiteTexture (void)
 	memset (white_tex, 255, sizeof(white_tex));
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&white_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/white_texture.tga", false);
+		R_WriteTGA (&white_tex[0][0][0], NULLTEX_SIZE, NULLTEX_SIZE, 4, "debug_tex/white_texture.tga", true, false);
 
 	return R_LoadPic ("*whitetexture", (byte *)white_tex, NULLTEX_SIZE, NULLTEX_SIZE, it_wall, 32);
 }
@@ -132,7 +132,7 @@ image_t *R_CreateDistTextureARB (void)
 	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&dist_tex[0][0][0], DIST_SIZE, DIST_SIZE, 4, "debug_tex/dist_texture_arb.tga", false);
+		R_WriteTGA (&dist_tex[0][0][0], DIST_SIZE, DIST_SIZE, 4, "debug_tex/dist_texture_arb.tga", true, false);
 
 	return image;
 }
@@ -210,7 +210,7 @@ image_t *R_CreateCelShadeTexture (void)
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (r_debug_media->integer)
-		R_WriteTGA (&cel_tex[0][0][0], CEL_SHADE_SIZE, CEL_SHADE_SIZE, 4, "debug_tex/celshade_texture.tga", false);
+		R_WriteTGA (&cel_tex[0][0][0], CEL_SHADE_SIZE, CEL_SHADE_SIZE, 4, "debug_tex/celshade_texture.tga", true, false);
 
 	return image;
 }
@@ -559,8 +559,8 @@ void R_ResampleShot (void *indata, int inwidth, int inheight, void *outdata, int
 			row1 -= outwidth*3; 
 		} 
 	} 
-	free(row1); 
-	free(row2); 
+	free (row1); 
+	free (row2); 
 } 
 
 
@@ -572,15 +572,11 @@ by Knightmare
 */
 saveShot_t	r_saveShot;
 
-void R_ScaledScreenshot (char *name)
+void R_ScaledScreenshot (const char *name)
 {
-	struct jpeg_compress_struct		cinfo;
-	struct jpeg_error_mgr			jerr;
-	JSAMPROW						s[1];
-	FILE							*file;
-	char							shotname[MAX_OSPATH];
-	int								saveshotWidth, saveshotHeight, offset;
-	byte							*jpgdata;
+	char		shotname[MAX_OSPATH];
+	int			saveshotWidth, saveshotHeight;
+	byte		*rgbdata;
 
 	if (!r_saveShot.buffer)
 		return;
@@ -601,57 +597,19 @@ void R_ScaledScreenshot (char *name)
 		saveshotHeight = 512;
 
 	// Allocate room for reduced screenshot
-	jpgdata = malloc(saveshotWidth * saveshotHeight * 3);
-	if (!jpgdata)
+	rgbdata = malloc(saveshotWidth * saveshotHeight * 3);
+	if ( !rgbdata ) {
 		return;
-
-	// Resize grabbed screen
-	R_ResampleShot (r_saveShot.buffer, r_saveShot.width, r_saveShot.height, jpgdata, saveshotWidth, saveshotHeight);
-
-	// Open the file for Binary Output
-	Com_sprintf (shotname, sizeof(shotname), "%s", name);
-	file = fopen(shotname, "wb");
-	if (!file)
-	{
-		VID_Printf (PRINT_ALL, "Menu_ScreenShot: Couldn't create %s\n", name); 
-		return;
- 	}
-
-	// Initialise the JPEG compression object
-	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress (&cinfo);
-	jpeg_stdio_dest (&cinfo, file);
-
-	// Setup JPEG Parameters
-	cinfo.image_width = saveshotWidth; //256;
-	cinfo.image_height = saveshotHeight; //256;
-	cinfo.in_color_space = JCS_RGB;
-	cinfo.input_components = 3;
-	jpeg_set_defaults (&cinfo);
-	jpeg_set_quality (&cinfo, 85, TRUE); // was 100
-
-	// Start Compression
-	jpeg_start_compress (&cinfo, true);
-
-	// Feed Scanline data
-	offset = (cinfo.image_width * cinfo.image_height * 3) - (cinfo.image_width * 3);
-	while (cinfo.next_scanline < cinfo.image_height)
-	{
-		s[0] = &jpgdata[offset - (cinfo.next_scanline * (cinfo.image_width * 3))];
-		jpeg_write_scanlines (&cinfo, s, 1);
 	}
 
-	// Finish Compression
-	jpeg_finish_compress (&cinfo);
+	// Resize grabbed screen
+	R_ResampleShot (r_saveShot.buffer, r_saveShot.width, r_saveShot.height, rgbdata, saveshotWidth, saveshotHeight);
 
-	// Destroy JPEG object
-	jpeg_destroy_compress (&cinfo);
+	Com_sprintf (shotname, sizeof(shotname), "%s", name);
+	R_WriteJPG (rgbdata, saveshotWidth, saveshotHeight, 3, shotname, 85, false, false);	// was 100
 
-	// Close File
-	fclose (file);
-
-	// Free Reduced screenshot
-	free (jpgdata);
+	// Free reduced screenshot
+	free (rgbdata);
 }
 
 
@@ -686,7 +644,7 @@ void R_GrabScreen (void)
 
 	// Allocate room for a copy of the framebuffer
 	r_saveShot.buffer = Z_Malloc(grab_width * vid.height * 3);
-	if (!r_saveShot.buffer)	return;
+	if ( !r_saveShot.buffer )	return;
 
 	// Read the framebuffer into our storage and store dimensions
 	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, r_saveShot.buffer);
@@ -698,18 +656,14 @@ void R_GrabScreen (void)
 /* 
 ================== 
 R_ScreenShot_JPG
-By Robert 'Heffo' Heffernan
 ================== 
 */
 void R_ScreenShot_JPG (qboolean silent)
 {
-	byte							*rgbdata;
-	FILE							*file;
-	char							picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
-	int								i, offset, grab_width, grab_x;
-	struct jpeg_compress_struct		cinfo;
-	struct jpeg_error_mgr			jerr;
-	JSAMPROW						s[1];
+	byte		*rgbdata;
+	FILE		*file = NULL;
+	char		picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
+	int			i, grab_width, grab_x;
 
 	// Create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
@@ -720,7 +674,7 @@ void R_ScreenShot_JPG (qboolean silent)
 
 	// Find a file name to save it to 
 	// Knightmare- changed screenshot filenames, up to 10000 screenies
-	for (i=0; i<=9999; i++) 
+	for (i = 0; i <= 9999; i++) 
 	{ 
 		int one, ten, hundred, thousand;
 
@@ -740,17 +694,8 @@ void R_ScreenShot_JPG (qboolean silent)
 			break;	// file doesn't exist
 		fclose (file);
 	} 
-	if (i == 10000) 
-	{
+	if (i == 10000) {
 		VID_Printf (PRINT_ALL, "R_ScreenShot_JPG: Screenshots directory is full!\n"); 
-		return;
- 	}
-
-	// Open the file for Binary Output
-	file = fopen(checkname, "wb");
-	if (!file)
-	{
-		VID_Printf (PRINT_ALL, "R_ScreenShot_JPG: Couldn't create a file\n"); 
 		return;
  	}
 
@@ -760,9 +705,7 @@ void R_ScreenShot_JPG (qboolean silent)
 
 	// Allocate room for a copy of the framebuffer
 	rgbdata = malloc(grab_width * vid.height * 3);
-	if (!rgbdata)
-	{
-		fclose(file);
+	if ( !rgbdata ) {
 		return;
 	}
 
@@ -770,47 +713,17 @@ void R_ScreenShot_JPG (qboolean silent)
 //	qglReadPixels(grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, rgbdata);
 	R_ScreenShot_Read_Buffer (grab_x, grab_width, rgbdata);
 
-	// Initialise the JPEG compression object
-	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_compress (&cinfo);
-	jpeg_stdio_dest (&cinfo, file);
-
-	// Setup JPEG Parameters
-	cinfo.image_width = grab_width;
-	cinfo.image_height = vid.height;
-	cinfo.in_color_space = JCS_RGB;
-	cinfo.input_components = 3;
-	jpeg_set_defaults (&cinfo);
-	if ((r_screenshot_jpeg_quality->integer >= 101) || (r_screenshot_jpeg_quality->integer <= 0))
+	if ( (r_screenshot_jpeg_quality->integer >= 101) || (r_screenshot_jpeg_quality->integer <= 0) )
 		Cvar_Set ("r_screenshot_jpeg_quality", "85");
-	jpeg_set_quality (&cinfo, r_screenshot_jpeg_quality->integer, TRUE);
 
-	// Start Compression
-	jpeg_start_compress (&cinfo, true);
+	R_WriteJPG (rgbdata, grab_width, vid.height, 3, checkname, r_screenshot_jpeg_quality->integer, false, false);
 
-	// Feed Scanline data
-	offset = (cinfo.image_width * cinfo.image_height * 3) - (cinfo.image_width * 3);
-	while (cinfo.next_scanline < cinfo.image_height)
-	{
-		s[0] = &rgbdata[offset - (cinfo.next_scanline * (cinfo.image_width * 3))];
-		jpeg_write_scanlines (&cinfo, s, 1);
-	}
-
-	// Finish Compression
-	jpeg_finish_compress (&cinfo);
-
-	// Destroy JPEG object
-	jpeg_destroy_compress (&cinfo);
-
-	// Close File
-	fclose (file);
-
-	// Free Temp Framebuffer
+	// Free temp framebuffer
 	free (rgbdata);
 
 	// Done!
 	if (!silent)
-		VID_Printf (PRINT_ALL, "Wrote %s\n", picname);
+		VID_Printf (PRINT_ALL, "Wrote %s (at %i%% quality)\n", picname, r_screenshot_jpeg_quality->integer);
 }
 
 
@@ -832,10 +745,7 @@ void R_ScreenShot_PNG (qboolean silent)
 	char		picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
 	int			i, grab_width, grab_x;
 	byte		*rgbdata;
-	FILE		*file;
-	png_structp	png_sptr;
-	png_infop	png_infoptr;
-	void		*lineptr;
+	FILE		*file = NULL;
 
 	// create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
@@ -846,7 +756,7 @@ void R_ScreenShot_PNG (qboolean silent)
 
 	// Find a file name to save it to 
 	// Knightmare- changed screenshot filenames, up to 10000 screenies
-	for (i=0; i<=9999; i++) 
+	for (i = 0; i <= 9999; i++) 
 	{ 
 		int one, ten, hundred, thousand;
 
@@ -866,8 +776,7 @@ void R_ScreenShot_PNG (qboolean silent)
 			break;	// file doesn't exist
 		fclose (file);
 	} 
-	if (i == 10000) 
-	{
+	if (i == 10000) {
 		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Screenshots directory is full!\n"); 
 		return;
  	}
@@ -878,8 +787,7 @@ void R_ScreenShot_PNG (qboolean silent)
 
 	// Allocate room for a copy of the framebuffer
 	rgbdata = malloc(grab_width * vid.height * 3);
-	if (!rgbdata)
-	{
+	if ( !rgbdata ) {
 		return;
 	}
 
@@ -887,60 +795,9 @@ void R_ScreenShot_PNG (qboolean silent)
 //	qglReadPixels(grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, rgbdata);
 	R_ScreenShot_Read_Buffer (grab_x, grab_width, rgbdata);
 
-	png_sptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (!png_sptr)
-	{
-		free(rgbdata);
-		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n"); 
-		return;
-	}
+	R_WritePNG (rgbdata, grab_width, vid.height, 3, checkname, false, false);
 
-	png_infoptr = png_create_info_struct(png_sptr);
-	if (!png_infoptr)
-	{
-		png_destroy_write_struct(&png_sptr, 0);
-		free(rgbdata);
-		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n"); 
-		return;
-	}
-
-//	if ( setjmp(png_sptr->jmpbuf) )
-	if ( setjmp(png_jmpbuf(png_sptr)) )
-	{
-		png_destroy_info_struct (png_sptr, &png_infoptr);
-		png_destroy_write_struct (&png_sptr, 0);
-		free (rgbdata);
-		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: bad data\n"); 
-		return;
-	}
-
-	// open png file
-	file = fopen(checkname, "wb");
-	if (!file)
-	{
-		png_destroy_info_struct (png_sptr, &png_infoptr);
-		png_destroy_write_struct (&png_sptr, 0);
-		free (rgbdata);
-		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create a file\n"); 
-		return;
- 	}
-
-	// encode and output
-	png_init_io (png_sptr, file);
-	png_set_IHDR(png_sptr, png_infoptr, grab_width, vid.height, 8,
-		PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-	png_write_info (png_sptr, png_infoptr);
-	for (i=vid.height-1; i>=0; i--)
-	{
-		lineptr = rgbdata + i*grab_width*3;
-		png_write_row (png_sptr, lineptr);
-	}
-	png_write_end (png_sptr, png_infoptr);
-
-	// clean up
-	fclose (file);
-	png_destroy_info_struct (png_sptr, &png_infoptr);
-	png_destroy_write_struct (&png_sptr, 0);
+	// Free temp framebuffer
 	free (rgbdata);
 
 	if (!silent)
@@ -949,17 +806,18 @@ void R_ScreenShot_PNG (qboolean silent)
 #endif	// PNG_SUPPORT
 
 
-/* 
+//#define	USE_WRITETGA
+/*
 ================== 
 R_ScreenShot_TGA
 ================== 
-*/  
+*/
 void R_ScreenShot_TGA (qboolean silent) 
 {
 	byte		*buffer;
 	char		picname[80], mapname[MAX_QPATH], checkname[MAX_OSPATH];
 	int			i, c, temp, grab_width, grab_x;
-	FILE		*f;
+	FILE		*file = NULL;
 
 	// create the screenshots directory if it doesn't exist
 	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
@@ -970,7 +828,7 @@ void R_ScreenShot_TGA (qboolean silent)
 
 	// Find a file name to save it to 
 	// Knightmare- changed screenshot filenames, up to 10000 screenies
-	for (i=0; i<=9999; i++) 
+	for (i = 0; i <= 9999; i++) 
 	{ 
 		int one, ten, hundred, thousand;
 
@@ -985,13 +843,12 @@ void R_ScreenShot_TGA (qboolean silent)
 		else
 			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
 		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
-		f = fopen (checkname, "rb");
-		if (!f)
+		file = fopen (checkname, "rb");
+		if (!file)
 			break;	// file doesn't exist
-		fclose (f);
+		fclose (file);
 	} 
-	if (i == 10000) 
-	{
+	if (i == 10000) {
 		VID_Printf (PRINT_ALL, "R_ScreenShot_TGA: Screenshots directory is full!\n"); 
 		return;
  	}
@@ -1000,41 +857,54 @@ void R_ScreenShot_TGA (qboolean silent)
 	grab_width = vid.width & ~3;
 	grab_x = (vid.width - grab_width) / 2;
 
-	buffer = malloc(grab_width*vid.height*3 + 18);
+#ifdef USE_WRITETGA
+	buffer = malloc(grab_width * vid.height * 3);
+	if ( !buffer ) {
+		return;
+	}
+	// Read the framebuffer into our storage
+//	qglReadPixels (0, 0, vid.width, vid.height, GL_RGBA, GL_UNSIGNED_BYTE, buffer); 
+	R_ScreenShot_Read_Buffer (grab_x, grab_width, buffer);
+
+	R_WriteTGA (buffer, grab_width, vid.height, 3, checkname, false, false);
+
+	free (buffer);
+#else	// USE_WRITETGA
+	buffer = malloc(grab_width * vid.height * 3 + 18);
 	memset (buffer, 0, 18);
 	buffer[2] = 2;		// uncompressed type
-	buffer[12] = grab_width&255;
-	buffer[13] = grab_width>>8;
-	buffer[14] = vid.height&255;
-	buffer[15] = vid.height>>8;
+	buffer[12] = grab_width & 255;
+	buffer[13] = grab_width >> 8;
+	buffer[14] = vid.height & 255;
+	buffer[15] = vid.height >> 8;
 	buffer[16] = 24;	// pixel size
 
-//	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
-	R_ScreenShot_Read_Buffer(grab_x, grab_width, buffer+18);
+//	qglReadPixels (grab_x, 0, grab_width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18); 
+	R_ScreenShot_Read_Buffer (grab_x, grab_width, buffer+18);
 
 	// swap rgb to bgr
 	c = 18+grab_width*vid.height*3;
-	for (i = 18; i < c; i += 3)
-	{
+	for (i = 18; i < c; i += 3) {
 		temp = buffer[i];
 		buffer[i] = buffer[i+2];
 		buffer[i+2] = temp;
 	}
 
-	f = fopen (checkname, "wb");
-	if (!f) {
+	file = fopen (checkname, "wb");
+	if (!file) {
 		free (buffer);
 		VID_Printf (PRINT_ALL, "R_ScreenShot_TGA: Couldn't create a file\n"); 
 		return;
  	}
-	fwrite (buffer, 1, c, f);
-	fclose (f);
+	fwrite (buffer, 1, c, file);
+	fclose (file);
 
 	free (buffer);
+#endif	// USE_WRITETGA
 
 	if (!silent)
 		VID_Printf (PRINT_ALL, "Wrote %s\n", picname);
-} 
+}
 
 
 /* 

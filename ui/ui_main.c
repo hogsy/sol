@@ -248,6 +248,7 @@ void UI_Precache (void)
 	R_DrawFindPic (UI_TEXTBOX_PIC);
 	R_DrawFindPic (UI_SLIDER_PIC);
 	R_DrawFindPic (UI_ARROWS_PIC);
+	R_DrawFindPic (UI_SCROLLKNOB_PIC);
 }
 
 
