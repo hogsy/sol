@@ -1056,7 +1056,7 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 	FILE	*file = NULL;
 	
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
-	//	VID_Printf (PRINT_ALL, "R_WriteTGA: bad parms\n", checkname);
+	//	VID_Printf (PRINT_ALL, "R_WriteTGA: bad parms\n");
 		return;
 	}
 	
@@ -1363,7 +1363,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	void		*lineptr;
 
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
-	//	VID_Printf (PRINT_ALL, "R_WritePNG: bad parms\n", checkname);
+	//	VID_Printf (PRINT_ALL, "R_WritePNG: bad parms\n");
 		return;
 	}
 	
@@ -1617,7 +1617,7 @@ void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *
 	JSAMPROW					s[1];
 	
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 3) ) {
-	//	VID_Printf (PRINT_ALL, "R_WriteJPG: bad parms\n", checkname);
+	//	VID_Printf (PRINT_ALL, "R_WriteJPG: bad parms\n");
 		return;
 	}
 	
