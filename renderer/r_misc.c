@@ -24,22 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "r_local.h"
 
-#ifdef _WIN32
-
-#include "../libraries/jpeg/jpeglib.h"
-#ifdef PNG_SUPPORT
-#include "../libraries/png/png.h"
-#endif	// PNG_SUPPORT
-
-#else	// _WIN32
-
-#include <jpeglib.h>
-#ifdef PNG_SUPPORT
-#include <png.h>
-#endif	// PNG_SUPPORT
-
-#endif	// _WIN32
-
 /*
 ==================
 R_CreateNullTexture
