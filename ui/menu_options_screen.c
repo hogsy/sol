@@ -81,6 +81,13 @@ static void CrosshairButtonMouse2Func (void *unused)
 }
 #endif	// USE_LISTVIEW
 
+static void M_UpdateCrosshairColorFunc (void *unused)
+{
+	UI_UpdateCrosshairColors (Cvar_VariableInteger("crosshair_red"),
+							Cvar_VariableInteger("crosshair_green"),
+							Cvar_VariableInteger("crosshair_blue"));
+}
+
 static void M_ScriptedHudFunc (void *unused)
 {
 	CL_SetHud ( UI_GetMenuItemValue(&s_options_screen_scripted_hud_box) );
@@ -102,6 +109,10 @@ static void M_ScreenResetDefaults (void)
 	Cvar_SetToDefault ("scr_hudalpha");
 	Cvar_SetToDefault ("scr_hudsqueezedigits");
 	Cvar_SetToDefault ("cl_drawfps");
+
+	UI_UpdateCrosshairColors (Cvar_VariableInteger("crosshair_red"),
+							Cvar_VariableInteger("crosshair_green"),
+							Cvar_VariableInteger("crosshair_blue"));
 }
 
 //=======================================================================
@@ -195,6 +206,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_box.itemNames				= ui_crosshair_names;
 	s_options_screen_crosshair_box.itemValues				= ui_crosshair_values;
 	s_options_screen_crosshair_box.imageNames				= ui_crosshair_display_names;
+	s_options_screen_crosshair_box.imageColors				= ui_crosshair_display_colors;
 	s_options_screen_crosshair_box.curValue					= UI_GetIndexForStringValue(s_options_screen_crosshair_box.itemValues, Cvar_VariableString("crosshair"));
 	s_options_screen_crosshair_box.generic.cvar				= "crosshair";
 	s_options_screen_crosshair_box.generic.cvarClamp		= true;
@@ -273,12 +285,13 @@ void Menu_Options_Screen_Init (void)
 
 	s_options_screen_crosshaircolor_slider[0].generic.type		= MTYPE_SLIDER;
 	s_options_screen_crosshaircolor_slider[0].generic.x			= x;
-	s_options_screen_crosshaircolor_slider[0].generic.y			= y += 1.2*MENU_LINE_SIZE;
+	s_options_screen_crosshaircolor_slider[0].generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_options_screen_crosshaircolor_slider[0].generic.name		= "crosshair red";
 	s_options_screen_crosshaircolor_slider[0].maxPos			= 64;
 	s_options_screen_crosshaircolor_slider[0].baseValue			= 0.0f;
 	s_options_screen_crosshaircolor_slider[0].increment			= 4.0f;
 	s_options_screen_crosshaircolor_slider[0].displayAsPercent	= false;
+	s_options_screen_crosshaircolor_slider[0].generic.callback	= M_UpdateCrosshairColorFunc;
 	s_options_screen_crosshaircolor_slider[0].generic.cvar		= "crosshair_red";
 	s_options_screen_crosshaircolor_slider[0].generic.cvarClamp	= true;
 	s_options_screen_crosshaircolor_slider[0].generic.cvarMin	= 0;
@@ -287,12 +300,13 @@ void Menu_Options_Screen_Init (void)
 
 	s_options_screen_crosshaircolor_slider[1].generic.type		= MTYPE_SLIDER;
 	s_options_screen_crosshaircolor_slider[1].generic.x			= x;
-	s_options_screen_crosshaircolor_slider[1].generic.y			= y += 1.2*MENU_LINE_SIZE;
+	s_options_screen_crosshaircolor_slider[1].generic.y			= y += MENU_LINE_SIZE;
 	s_options_screen_crosshaircolor_slider[1].generic.name		= "crosshair green";
 	s_options_screen_crosshaircolor_slider[1].maxPos			= 64;
 	s_options_screen_crosshaircolor_slider[1].baseValue			= 0.0f;
 	s_options_screen_crosshaircolor_slider[1].increment			= 4.0f;
 	s_options_screen_crosshaircolor_slider[1].displayAsPercent	= false;
+	s_options_screen_crosshaircolor_slider[1].generic.callback	= M_UpdateCrosshairColorFunc;
 	s_options_screen_crosshaircolor_slider[1].generic.cvar		= "crosshair_green";
 	s_options_screen_crosshaircolor_slider[1].generic.cvarClamp	= true;
 	s_options_screen_crosshaircolor_slider[1].generic.cvarMin	= 0;
@@ -301,12 +315,13 @@ void Menu_Options_Screen_Init (void)
 
 	s_options_screen_crosshaircolor_slider[2].generic.type		= MTYPE_SLIDER;
 	s_options_screen_crosshaircolor_slider[2].generic.x			= x;
-	s_options_screen_crosshaircolor_slider[2].generic.y			= y += 1.2*MENU_LINE_SIZE;
+	s_options_screen_crosshaircolor_slider[2].generic.y			= y += MENU_LINE_SIZE;
 	s_options_screen_crosshaircolor_slider[2].generic.name		= "crosshair blue";
 	s_options_screen_crosshaircolor_slider[2].maxPos			= 64;
 	s_options_screen_crosshaircolor_slider[2].baseValue			= 0.0f;
 	s_options_screen_crosshaircolor_slider[2].increment			= 4.0f;
 	s_options_screen_crosshaircolor_slider[2].displayAsPercent	= false;
+	s_options_screen_crosshaircolor_slider[2].generic.callback	= M_UpdateCrosshairColorFunc;
 	s_options_screen_crosshaircolor_slider[2].generic.cvar		= "crosshair_blue";
 	s_options_screen_crosshaircolor_slider[2].generic.cvarClamp	= true;
 	s_options_screen_crosshaircolor_slider[2].generic.cvarMin	= 0;
@@ -316,7 +331,7 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshairalpha_slider.generic.type			= MTYPE_SLIDER;
 	s_options_screen_crosshairalpha_slider.generic.textSize		= MENU_FONT_SIZE;
 	s_options_screen_crosshairalpha_slider.generic.x			= x;
-	s_options_screen_crosshairalpha_slider.generic.y			= y += MENU_LINE_SIZE;
+	s_options_screen_crosshairalpha_slider.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_options_screen_crosshairalpha_slider.generic.name			= "crosshair alpha";
 	s_options_screen_crosshairalpha_slider.maxPos				= 19;
 	s_options_screen_crosshairalpha_slider.baseValue			= 0.05f;

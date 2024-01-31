@@ -1138,6 +1138,7 @@ void UI_FreeHudNames (void)
 #define UI_MAX_CROSSHAIRS 101	// none + ch1-ch100
 char **ui_crosshair_names = NULL;
 char **ui_crosshair_display_names = NULL;
+color_t *ui_crosshair_display_colors = NULL;
 char **ui_crosshair_values = NULL;
 int	ui_numcrosshairs = 0;
 
@@ -1221,6 +1222,27 @@ qboolean UI_IsValidCrosshairName (char *name)
 
 /*
 ==========================
+UI_UpdateCrosshairColors
+==========================
+*/
+void UI_UpdateCrosshairColors (int inRed, int inGreen, int inBlue)
+{
+	int		i, red, green, blue;
+
+	red = min(max(inRed, 0), 255);
+	green = min(max(inGreen, 0), 255);
+	blue = min(max(inBlue, 0), 255);
+
+	for (i = 0; i < ui_numcrosshairs; i++) {
+		ui_crosshair_display_colors[i][0] = red;
+		ui_crosshair_display_colors[i][1] = green;
+		ui_crosshair_display_colors[i][2] = blue;
+	}
+}
+
+
+/*
+==========================
 UI_LoadCrosshairs
 ==========================
 */
@@ -1234,6 +1256,12 @@ void UI_LoadCrosshairs (void)
 	ui_crosshair_display_names = UI_Malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 	memcpy (ui_crosshair_display_names, ui_crosshair_names, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 	ui_crosshair_display_names[0] = UI_CopyString("chnone");
+
+	ui_crosshair_display_colors = UI_Malloc(sizeof(color_t) * (UI_MAX_CROSSHAIRS+1));
+	memset (ui_crosshair_display_colors, 255, sizeof(color_t) * (UI_MAX_CROSSHAIRS+1));
+	UI_UpdateCrosshairColors (Cvar_VariableInteger("crosshair_red"),
+							Cvar_VariableInteger("crosshair_green"),
+							Cvar_VariableInteger("crosshair_blue"));
 
 	ui_crosshair_values = UI_Malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 //	memset (ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
@@ -1260,10 +1288,12 @@ void UI_FreeCrosshairs (void)
 			}
 			UI_Free (ui_crosshair_display_names);
 		}
+		UI_Free (ui_crosshair_display_colors);
 		UI_FreeAssetList (ui_crosshair_values, ui_numcrosshairs);
 	}
 	ui_crosshair_names = NULL;
 	ui_crosshair_display_names = NULL;
+	ui_crosshair_display_colors = NULL;
 	ui_crosshair_values = NULL;
 	ui_numcrosshairs = 0;
 }

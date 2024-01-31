@@ -585,6 +585,7 @@ extern int	ui_numhuds;
 
 extern char **ui_crosshair_names;
 extern char **ui_crosshair_display_names;
+extern color_t *ui_crosshair_display_colors;
 extern char **ui_crosshair_values;
 extern int	ui_numcrosshairs;
 
@@ -745,6 +746,7 @@ void UI_LoadHudNames (void);
 void UI_FreeHudNames (void);
 
 void UI_SortCrosshairs (char **list, int len);
+void UI_UpdateCrosshairColors (int inRed, int inGreen, int inBlue);
 void UI_LoadCrosshairs (void);
 void UI_FreeCrosshairs (void);
 
