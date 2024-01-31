@@ -136,6 +136,11 @@ void Menu_Options_Screen_Init (void)
 	};
 	int		x, y;
 
+	// update colors for crosshair display
+	UI_UpdateCrosshairColors (Cvar_VariableInteger("crosshair_red"),
+							Cvar_VariableInteger("crosshair_green"),
+							Cvar_VariableInteger("crosshair_blue"));
+
 	// menu.x = 320, menu.y = 162
 	x = SCREEN_WIDTH*0.5;
 	y = SCREEN_HEIGHT*0.5 - 78;

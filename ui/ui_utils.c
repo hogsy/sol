@@ -1259,9 +1259,6 @@ void UI_LoadCrosshairs (void)
 
 	ui_crosshair_display_colors = UI_Malloc(sizeof(color_t) * (UI_MAX_CROSSHAIRS+1));
 	memset (ui_crosshair_display_colors, 255, sizeof(color_t) * (UI_MAX_CROSSHAIRS+1));
-	UI_UpdateCrosshairColors (Cvar_VariableInteger("crosshair_red"),
-							Cvar_VariableInteger("crosshair_green"),
-							Cvar_VariableInteger("crosshair_blue"));
 
 	ui_crosshair_values = UI_Malloc(sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
 //	memset (ui_crosshair_values, 0, sizeof(char *) * (UI_MAX_CROSSHAIRS+1));
