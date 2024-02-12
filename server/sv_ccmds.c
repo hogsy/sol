@@ -152,10 +152,10 @@ SAVEGAME FILES
 
 ===============================================================================
 */
-void	R_GrabScreen (void);				// Knightmare- screenshots for savegames
-void	R_ScaledScreenshot (char *name);	// Knightmare- screenshots for savegames
-void	R_FreePic (char *name);				// Knightmare- unregisters an image
-float	UI_GetScreenAspect (void);			// Knightmare- saveshot aspect ratio for savegames
+void	R_GrabScreen (void);					// screenshots for savegames
+void	R_ScaledScreenshot (const char *name);	// screenshots for savegames
+void	R_FreePic (char *name);					// Knightmare- unregisters an image
+float	UI_GetScreenAspect (void);				// Knightmare- saveshot aspect ratio for savegames
 
 /*
 =====================
@@ -440,7 +440,7 @@ void SV_WriteScreenshot (void)
 //	Com_sprintf (name, sizeof(name), "%s/save/current/shot.jpg", FS_Savegamedir());	// was FS_Gamedir()
 	Com_sprintf (name, sizeof(name), "%s/%s/current/shot.jpg", FS_Savegamedir(), ARCH_SAVEDIR);	// was FS_Gamedir()
 
-	R_ScaledScreenshot(name);
+	R_ScaledScreenshot (name);
 }
 
 

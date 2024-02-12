@@ -565,7 +565,7 @@ void R_ClearDisplayLists (void);
 void R_InitMedia (void);
 void R_ShutdownMedia (void);
 void R_GrabScreen (void);					// screenshots for savegames
-void R_ScaledScreenshot (const char *name);	//  screenshots for savegames
+void R_ScaledScreenshot (const char *name);	// screenshots for savegames
 void R_ScreenShot_f (void);
 void R_ScreenShot_Silent_f (void);
 void R_ScreenShot_TGA_f (void);

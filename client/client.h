@@ -753,9 +753,9 @@ void	R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 
 void	R_RenderFrame (refdef_t *fd);
 
-void	R_SetParticleImg (int num, char *name); // Knightmare added
-void	R_GrabScreen (void); // screenshots for savegames
-void	R_ScaledScreenshot (char *name); //  screenshots for savegames
+void	R_SetParticleImg (int num, char *name);	// Knightmare added
+void	R_GrabScreen (void);					// screenshots for savegames
+void	R_ScaledScreenshot (const char *name);	// screenshots for savegames
 
 float	R_CharMapScale (void);
 void	R_DrawChar (float x, float y, int c, fontslot_t font, float scale,
