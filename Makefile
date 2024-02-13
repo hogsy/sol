@@ -70,6 +70,9 @@ LDFLAGS+=-lvorbisfile
 #C runtime, zlib
 LDFLAGS+=-lm -lz
 
+#C runtime, dlopen()/dlclose()
+LDFLAGS+=-ldl
+
 #LOCALBASE?=/usr
 LOCALBASE?=/usr/local
 PREFIX?=$(LOCALBASE)
