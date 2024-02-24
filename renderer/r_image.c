@@ -421,8 +421,9 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 		|| pcx->version != 5
 		|| pcx->encoding != 1
 		|| pcx->bits_per_pixel != 8
-		|| pcx->xmax >= 640
-		|| pcx->ymax >= 480)
+	// Knightmare- increased max supported size to 4096x4096
+		|| pcx->xmax >= 4096	// was 640
+		|| pcx->ymax >= 4096)	// was 480
 	{
 		VID_Printf (PRINT_ALL, "Bad pcx file %s\n", filename);
 		return;
