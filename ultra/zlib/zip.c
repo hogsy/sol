@@ -1412,7 +1412,11 @@ extern int ZEXPORT zipWriteInFileInZip(zipFile file, const void* buf, unsigned i
     else
 #endif
     {
+#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// Knightmare- uintptr_t not recognized by MSVC6
+      zi->ci.stream.next_in = (Bytef*)buf;
+#else
       zi->ci.stream.next_in = (Bytef*)(uintptr_t)buf;
+#endif	// end Knightmare
       zi->ci.stream.avail_in = len;
 
       while ((err==ZIP_OK) && (zi->ci.stream.avail_in>0))

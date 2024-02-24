@@ -1726,7 +1726,11 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
             uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
             /* Detect overflow, because z_stream.total_out is uLong (32 bits) */
             if (uTotalOutAfter<uTotalOutBefore)
+#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// Knightmare- LL suffix not recognized by MSVC6
+                uTotalOutAfter += 1L << 32; /* Add maximum value of uLong + 1 */
+#else
                 uTotalOutAfter += 1LL << 32; /* Add maximum value of uLong + 1 */
+#endif	// end Knightmare
             uOutThis = uTotalOutAfter-uTotalOutBefore;
 
             pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
