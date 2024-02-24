@@ -467,6 +467,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
+							WarningLevel="3"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1216,78 +1217,6 @@
 				</File>
 				<File
 					RelativePath="g_map_mod.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="g_unzip.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="g_zip.c"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -2785,26 +2714,6 @@
 				</File>
 				<File
 					RelativePath="g_map_mod.h"
-					>
-				</File>
-				<File
-					RelativePath="g_unzip.h"
-					>
-				</File>
-				<File
-					RelativePath="g_zip.h"
-					>
-				</File>
-				<File
-					RelativePath="z_api.h"
-					>
-				</File>
-				<File
-					RelativePath="z_unzip.h"
-					>
-				</File>
-				<File
-					RelativePath="z_zip.h"
 					>
 				</File>
 			</Filter>

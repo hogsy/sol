@@ -1246,15 +1246,6 @@ int G_FWrite (const void *buffer, int size, fileHandle_t f);
 int G_CompressFile (const char *fileName, const char *zipName, const char *internalName, qboolean appendToZip);
 int G_DecompressFile (const char *fileName, const char *zipName, const char *internalName);
 
-//
-// Zip tools
-//
-
-#ifdef WIN32
-int G_UnzipFile(char *zipfile, char *extract_dir);
-int G_ZipFile(char *zipfile, char *filename);
-#endif
-
 //============================================================================
 
 // client_t->anim_priority

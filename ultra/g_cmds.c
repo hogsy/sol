@@ -2180,12 +2180,11 @@ void ClientCommand (edict_t *ent)
 
 			// turn off the models
 			{
-				edict_t *trav;
+				edict_t *trav = NULL;
 
 				// show lines between alternate routes
-			//	trav = NULL;
-				trav = G_Find(trav, FOFS(classname), "flag_path_src");
 			//	while (trav = G_Find(trav, FOFS(classname), "flag_path_src"))
+				trav = G_Find(trav, FOFS(classname), "flag_path_src");
 				while (trav)
 				{
 					trav->s.modelindex = 0;

@@ -70,8 +70,6 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 #define NEW_ENTITY_STATE_MEMBERS	// Leave this disabled until p_trail.c replacement is ready!!!
 #endif
 
-#define	TRAIL_USE_ZLIB				// Knightmare- enable to use internal zlib-based compression instead of old InfoZip DLLs
-
 // angle indexes
 #define	PITCH				0		// up / down
 #define	YAW					1		// left / right

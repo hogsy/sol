@@ -5,10 +5,8 @@
 
 //-------------------------------------------------------------------------
 
-#ifdef TRAIL_USE_ZLIB
 #define TRAIL_DIRECT_ZIP_READ	// whether to use direct reads to zipped route files
 #define TRAIL_DIRECT_ZIP_WRITE	// whether to use direct writes to zipped route files
-#endif
 
 #ifdef TRAIL_DIRECT_ZIP_READ
 #define TR_FRead(d, s, c, f)	G_FRead(d, s, f)
@@ -49,11 +47,7 @@ char *player_jump_classname = "player_jump";
 
 #ifdef _WIN32
 #include <direct.h>
-#ifdef TRAIL_USE_ZLIB
 #define PATH_SEP "/"
-#else	// TRAIL_USE_ZLIB
-#define PATH_SEP "\\"
-#endif	// TRAIL_USE_ZLIB
 #define mkdir(n, m) _mkdir(n)
 #define chdir _chdir
 #else
@@ -900,14 +894,10 @@ edict_t *WriteTrailNode (FILE *trFile, edict_t *node)
 void WriteTrail (void)
 {
 	int			i, end_marker;
-#ifdef TRAIL_USE_ZLIB
 	char		fileName[MAX_QPATH] = { 0 };
 	char		filePath[MAX_OSPATH] = { 0 };
 	char		zipName[MAX_OSPATH] = { 0 };
 	char		intName[MAX_QPATH] = { 0 };
-#else	// TRAIL_USE_ZLIB
-	char		Destination[MAX_OSPATH] = { 0 };
-#endif	// TRAIL_USE_ZLIB
 	char		dst[MAX_OSPATH] = { 0 };
 	size_t		v2;
 	edict_t		*from = NULL;
@@ -924,7 +914,6 @@ void WriteTrail (void)
 	if ( !(((bot_calc_nodes && bot_calc_nodes->value) || dropped_trail) && (trail_head > 30)) )
 		return;
 
-#ifdef TRAIL_USE_ZLIB
 	Com_sprintf (fileName, sizeof(fileName), "%s/%s%s", routes_dir_no_sep, level.mapname, route_ext);
 	Com_sprintf (filePath, sizeof(filePath), "%s%s/%s%s", SavegameDir(), routes_dir, level.mapname, route_ext);
 	Com_sprintf (zipName, sizeof(zipName), "%s/%s%s", routes_dir_no_sep, level.mapname, route_ext_zipped);
@@ -947,36 +936,6 @@ void WriteTrail (void)
 	if (!trFile)
 		gi.error ("Couldn't open %s", filePath);
 #endif	// TRAIL_DIRECT_ZIP_WRITE
-#else	// TRAIL_USE_ZLIB
-	chdir (basedir->string);
-
-	Com_strcpy (Destination, sizeof(Destination), relative_dir);
-	Com_strcat (Destination, sizeof(Destination), game->string);
-	Com_strcat (Destination, sizeof(Destination), routes_dir);
-
-	if (chdir (Destination) == -1)
-	{
-		if (mkdir(Destination, 0x1FF))
-		{
-			gi.dprintf ("ERROR: Unable to create route-table directory\nRoute-table not saved.\n");
-			return;
-		}
-	}
-	else
-	{
-		chdir (up_dir);
-		chdir (up_dir);
-	}
-
-	Com_strcat (Destination, sizeof(Destination), dir_sep);
-	Com_strcat (Destination, sizeof(Destination), level.mapname);
-	Com_strcat (Destination, sizeof(Destination), route_ext);
-
-	trFile = fopen(Destination, "wb");
-
-	if (!trFile)
-		gi.error ("Couldn't open %s", Destination);
-#endif	// TRAIL_USE_ZLIB
 
 	TR_FWrite (&TRAIL_VERSION, sizeof(int), 1u, trFile);
 
@@ -1070,7 +1029,6 @@ void WriteTrail (void)
 		}
 	}
 	
-#ifdef TRAIL_USE_ZLIB
 #ifdef TRAIL_DIRECT_ZIP_WRITE
 	G_CloseFile (trFile);
 #else	// TRAIL_DIRECT_ZIP_WRITE
@@ -1089,37 +1047,6 @@ void WriteTrail (void)
 	else
 		gi.dprintf ("\nError creating ZIP file.\nUnable to compress node-table.\n\n");
 #endif	// TRAIL_DIRECT_ZIP_WRITE
-#else	// TRAIL_USE_ZLIB
-	fclose (trFile);
-
-#ifdef _WIN32
-	Com_strcpy (Destination, sizeof(Destination), relative_dir);
-	Com_strcat (Destination, sizeof(Destination), game->string);
-	chdir (Destination);
-
-	Com_strcpy (Destination, sizeof(Destination), relative_routes_dir_sep);
-	Com_strcat (Destination, sizeof(Destination), level.mapname);
-	Com_strcat (Destination, sizeof(Destination), route_ext);
-
-	Com_strcpy (dst, sizeof(dst), relative_routes_dir_sep);
-	Com_strcat (dst, sizeof(dst), level.mapname);
-	Com_strcat (dst, sizeof(dst), route_ext_zipped);
-
-	if ( G_ZipFile(dst, Destination) )
-	{
-		remove (Destination);
-		dst[strlen(dst) - 4] = 0;
-		Com_strcat (dst, sizeof(dst), route_ext_zipped_old);
-		remove (dst);
-		dst[strlen(dst) - 3] = 0;
-		remove (dst);
-	}
-	else
-		gi.dprintf ("\nError creating ZIP file.\nUnable to compress node-table.\n\n");
-#endif	// _WIN32
-
-	chdir (up_dir);
-#endif	// TRAIL_USE_ZLIB
 
 	gi.dprintf ("Route-table saved.\n");
 }
@@ -1388,7 +1315,6 @@ FILE *ReadTrailNode (FILE *trFile, edict_t *node)
 void ReadTrail (void)
 {
 	int				nodes_loaded, ignore_time;
-#ifdef TRAIL_USE_ZLIB
 	char		fileName[MAX_QPATH] = { 0 };
 	char		filePath[MAX_OSPATH] = { 0 };
 	char		zipName[MAX_OSPATH] = { 0 };
@@ -1396,11 +1322,6 @@ void ReadTrail (void)
 	char		deletePath[MAX_OSPATH] = { 0 };
 	char		intName[MAX_QPATH] = { 0 };
 	qboolean	using_old_zip_path = false;
-#else	// TRAIL_USE_ZLIB
-	char		Dir[MAX_OSPATH] = { 0 };
-	char		FileName[MAX_OSPATH] = { 0 };
-	char		dst[MAX_OSPATH] = { 0 };
-#endif	// TRAIL_USE_ZLIB
 	edict_t		*from = NULL;
 	qboolean	isZipped = false;
 	qboolean	unknown_flag = true;
@@ -1414,7 +1335,6 @@ void ReadTrail (void)
 	cvar_t *game = gi.cvar("game", "", 0);
 	cvar_t *basedir = gi.cvar("basedir", "", 0);
 
-#ifdef TRAIL_USE_ZLIB
 	Com_sprintf (fileName, sizeof(fileName), "%s/%s%s", routes_dir_no_sep, level.mapname, route_ext);
 	Com_sprintf (filePath, sizeof(filePath), "%s%s/%s%s", SavegameDir(), routes_dir, level.mapname, route_ext);
 	Com_sprintf (zipName, sizeof(zipName), "%s/%s%s", routes_dir_no_sep, level.mapname, route_ext_zipped);
@@ -1451,46 +1371,6 @@ void ReadTrail (void)
 
 	trFile = fopen(filePath, "rb");
 #endif	// TRAIL_DIRECT_ZIP_READ
-#else	// TRAIL_USE_ZLIB
-	chdir (basedir->string);
-
-	Com_strcpy (Dir, sizeof(Dir), relative_dir);
-	Com_strcat (Dir, sizeof(Dir), game->string);
-	chdir (Dir);
-	
-#ifdef _WIN32
-	Com_strcpy (FileName, sizeof(FileName), relative_routes_dir_sep);
-	Com_strcat (FileName, sizeof(FileName), level.mapname);
-	Com_strcat (FileName, sizeof(FileName), route_ext_zipped);
-
-	trFile = fopen(FileName, "rb");
-
-	if (!trFile)
-	{
-		Com_strcpy (FileName, sizeof(FileName), relative_routes_dir_sep);
-		Com_strcat (FileName, sizeof(FileName), level.mapname);
-		Com_strcat (FileName, sizeof(FileName), route_ext_zipped_old);
-		trFile = fopen(FileName, "rb");
-	}
-
-	if (trFile)
-	{
-		fclose (trFile);
-
-		if ( G_UnzipFile(FileName, relative_routes_dir) )
-			isZipped = true;
-	}
-#endif	// _WIN32
-
-	chdir (up_dir);
-
-	Com_strcpy (dst, sizeof(dst), Dir);
-	Com_strcat (dst, sizeof(dst), routes_dir_sep);
-	Com_strcat (dst, sizeof(dst), level.mapname);
-	Com_strcat (dst, sizeof(dst), route_ext);
-
-	trFile = fopen(dst, "rb");
-#endif	// TRAIL_USE_ZLIB
 
 #ifdef TRAIL_DIRECT_ZIP_READ
 	if (fileSize == -1)
@@ -1519,17 +1399,11 @@ void ReadTrail (void)
 		fclose (trFile);
 #endif	// TRAIL_DIRECT_ZIP_READ
 
-#ifdef TRAIL_USE_ZLIB
 #ifndef TRAIL_DIRECT_ZIP_READ
 		if (isZipped)
 			remove (filePath);
 #endif	// TRAIL_DIRECT_ZIP_READ
-#else	// TRAIL_USE_ZLIB
-#ifdef _WIN32
-		if (isZipped)
-			remove (dst);
-#endif	// _WIN32
-#endif	// TRAIL_USE_ZLIB
+
 		return;
 	}
 
@@ -1717,7 +1591,6 @@ void ReadTrail (void)
 		if ( !trFile )
 #endif	// TRAIL_DIRECT_ZIP_READ
 		{
-#ifdef TRAIL_USE_ZLIB
 #ifndef TRAIL_DIRECT_ZIP_READ
 			remove (filePath);
 #endif	// TRAIL_DIRECT_ZIP_READ
@@ -1736,20 +1609,6 @@ void ReadTrail (void)
 					remove (deletePath);
 				}
 			}
-#else	// TRAIL_USE_ZLIB
-			remove (dst);
-#ifdef _WIN32
-			if (isZipped)
-			{
-				Com_strcpy (FileName, sizeof(FileName), Dir);
-				Com_strcat (FileName, sizeof(FileName), routes_dir_sep);
-				Com_strcat (FileName, sizeof(FileName), level.mapname);
-			//	Com_strcat (FileName, sizeof(FileName), zip_ext);		// Knightmare- shouldn't this be route_ext_zipped?
-				Com_strcat (FileName, sizeof(FileName), route_ext_zipped);
-				remove (FileName);
-			}
-#endif	// _WIN32
-#endif	// TRAIL_USE_ZLIB
 
 			gi.error ("End of paths flag not found.\nRoute-table is corrupt, deleting.\n");
 			return;
@@ -1805,17 +1664,10 @@ void ReadTrail (void)
 	fclose (trFile);
 #endif	// TRAIL_DIRECT_ZIP_READ
 
-#ifdef TRAIL_USE_ZLIB
 #ifndef TRAIL_DIRECT_ZIP_READ
 	if (isZipped)
 		remove (filePath);
 #endif	// TRAIL_DIRECT_ZIP_READ
-#else	// TRAIL_USE_ZLIB
-#ifdef _WIN32
-	if (isZipped)
-		remove (dst);
-#endif	// _WIN32
-#endif	// TRAIL_USE_ZLIB
 
 	last_head = nodes_loaded - 1;
 	trail_head = nodes_loaded;

@@ -197,14 +197,6 @@ SOURCE=.\g_map_mod.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\g_unzip.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_zip.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\p_trail.c
 # End Source File
 # End Group
@@ -514,26 +506,6 @@ SOURCE=.\camclient.h
 # Begin Source File
 
 SOURCE=.\g_map_mod.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_unzip.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\g_zip.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\z_api.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\z_unzip.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\z_zip.h
 # End Source File
 # End Group
 # Begin Group "Misc (h)"

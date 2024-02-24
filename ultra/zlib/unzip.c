@@ -117,7 +117,7 @@
 const char unz_copyright[] =
    " unzip 1.01 Copyright 1998-2004 Gilles Vollant - http://www.winimage.com/zLibDll";
 
-/* unz_file_info_interntal contain internal info about a file in zipfile*/
+/* unz_file_info64_internal contain internal info about a file in zipfile*/
 typedef struct unz_file_info64_internal_s
 {
     ZPOS64_T offset_curfile;/* relative offset of local header 8 bytes */
@@ -450,7 +450,7 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
     if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
         return CENTRALDIRINVALID;
 
-    /* number of the disk with the start of the zip64 end of  central directory */
+    /* number of the disk with the start of the zip64 end of central directory */
     if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
         return CENTRALDIRINVALID;
     if (uL != 0)
@@ -497,9 +497,9 @@ local unzFile unzOpenInternal(const void *path,
     ZPOS64_T central_pos;
     uLong   uL;
 
-    uLong number_disk;          /* number of the current dist, used for
+    uLong number_disk;          /* number of the current disk, used for
                                    spanning ZIP, unsupported, always 0*/
-    uLong number_disk_with_CD;  /* number the the disk with central dir, used
+    uLong number_disk_with_CD;  /* number the disk with central dir, used
                                    for spanning ZIP, unsupported, always 0*/
     ZPOS64_T number_entry_CD;      /* total number of entries in
                                    the central dir
@@ -1726,11 +1726,7 @@ extern int ZEXPORT unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
             uTotalOutAfter = pfile_in_zip_read_info->stream.total_out;
             /* Detect overflow, because z_stream.total_out is uLong (32 bits) */
             if (uTotalOutAfter<uTotalOutBefore)
-#if defined (_MSC_VER) && (_MSC_VER <= 1200)	// Knightmare- LL suffix not recognized by MSVC6
-                uTotalOutAfter += 1L << 32; /* Add maximum value of uLong + 1 */
-#else
                 uTotalOutAfter += 1LL << 32; /* Add maximum value of uLong + 1 */
-#endif	// end Knightmare
             uOutThis = uTotalOutAfter-uTotalOutBefore;
 
             pfile_in_zip_read_info->total_out_64 = pfile_in_zip_read_info->total_out_64 + uOutThis;
