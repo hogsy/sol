@@ -40,7 +40,7 @@ pmenu_t ultra_creditsmenu[] = {
 	{ "MapMod: Jeremy Mappus",	PMENU_ALIGN_LEFT, NULL, NULL },
 	{ "Chase Cam: Paul Jordan",	PMENU_ALIGN_LEFT, NULL, NULL },
 	{ "Client Emul: SABIN Team",PMENU_ALIGN_LEFT, NULL, NULL },
-	{ "ZIP routines: Info-Zip",	PMENU_ALIGN_LEFT, NULL, NULL },
+	{ "File compression: Zlib",	PMENU_ALIGN_LEFT, NULL, NULL },
 	{ NULL,					PMENU_ALIGN_LEFT, NULL, NULL },
 	{ "Quake2: ID Software",PMENU_ALIGN_LEFT, NULL, NULL },
 	{ "CTF: ThreeWave",		PMENU_ALIGN_LEFT, NULL, NULL },
