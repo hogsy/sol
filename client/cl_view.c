@@ -398,7 +398,7 @@ CL_SetSkyData
 */
 void CL_SetSkyData (void)
 {
-	float		rotate, lightningFreq = 0.0f;
+	float		rotate, distance, lightningFreq = 0.0f;
 	vec3_t		temp, axis = {0.0f, 0.0f, 1.0f};
 	vec2_t		cloudDir = {1.0f, 0.8f};
 	vec3_t		cloudTile = {8.0f, 2.0f, 1.0f};
@@ -410,11 +410,12 @@ void CL_SetSkyData (void)
 	if (sscanf (cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]) == EOF) {
 		Com_Printf (S_COLOR_YELLOW"CL_PrepRefresh: invalid string '%s' for CS_SKYAXIS.\n", cl.configstrings[CS_SKYAXIS]);
 	}
-//	R_SetSky (cl.configstrings[CS_SKY], rotate, axis);
+	distance = atof (cl.configstrings[CS_SKYDISTANCE]);
+//	R_SetSky (cl.configstrings[CS_SKY], rotate, axis, distance);
 
 	// DK-style clouds support
 	temp[0] = atof (cl.configstrings[CS_CLOUDLIGHTFREQ]);
-	lightningFreq = (temp[0] >= 0.0f) ? temp[0] :  lightningFreq;
+	lightningFreq = (temp[0] >= 0.0f) ? temp[0] : lightningFreq;
 	if (sscanf (cl.configstrings[CS_CLOUDDIR], "%f %f", &temp[0], &temp[1]) == EOF) {
 		Com_DPrintf ("CL_PrepRefresh: invalid string '%s' for CS_CLOUDDIR.\n", cl.configstrings[CS_CLOUDDIR]);
 	}
@@ -446,7 +447,7 @@ void CL_SetSkyData (void)
 		cloudAlpha[1] = (temp[1] >= 0.0f) ? temp[1] : cloudAlpha[1];
 		cloudAlpha[2] = (temp[2] >= 0.0f) ? temp[2] : cloudAlpha[2];
 	}
-	R_SetSky (cl.configstrings[CS_SKY], cl.configstrings[CS_CLOUDNAME], rotate, axis, lightningFreq, cloudDir, cloudTile, cloudSpeed, cloudAlpha);
+	R_SetSky (cl.configstrings[CS_SKY], cl.configstrings[CS_CLOUDNAME], rotate, axis, distance, lightningFreq, cloudDir, cloudTile, cloudSpeed, cloudAlpha);
 	// end DK-style clouds support
 }
 

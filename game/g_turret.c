@@ -1233,18 +1233,18 @@ good_enemy:
 void turret_breach_finish_init (edict_t *self)
 {
 	// get and save info for muzzle location
-	if (!self->target)
+	if ( !self->target )
 	{
 		gi.dprintf("%s at %s needs a target\n", self->classname, vtos(self->s.origin));
 	}
 	else
 	{
 		self->target_ent = G_PickTarget (self->target);
-		if (!self->target_ent)
+		if ( !self->target_ent )
 		{
-			gi.dprintf("%s at %s, target %s does not exist\n",
+			gi.dprintf ("%s at %s, target %s does not exist\n",
 				self->classname, vtos(self->s.origin), self->target);
-			G_FreeEdict(self);
+			G_FreeEdict (self);
 			return;
 		}
 		VectorSubtract (self->target_ent->s.origin, self->s.origin, self->move_origin);
@@ -1253,34 +1253,34 @@ void turret_breach_finish_init (edict_t *self)
 		if (VectorLength(self->offset) != 0.0f)
 			VectorAdd (self->move_origin, self->offset, self->move_origin);
 
-		G_FreeEdict(self->target_ent);
+		G_FreeEdict (self->target_ent);
 
 //CW++	Double-barrelled turrets.
 
 		self->target_ent = NULL;
-		self->target_ent = G_PickTarget(self->combattarget);
+		self->target_ent = G_PickTarget (self->combattarget);
 		if (self->target_ent)
 		{
-			VectorSubtract(self->target_ent->s.origin, self->s.origin, self->muzzle2);
+			VectorSubtract (self->target_ent->s.origin, self->s.origin, self->muzzle2);
 			// Knightmare- if we've been moved by a func_train before initializing,
 			// shift firing point by the distance moved
-			if (VectorLength(self->offset))
+			if (VectorLength(self->offset) != 0.0f)
 				VectorAdd (self->muzzle2, self->offset, self->muzzle2);
 
 			self->moreflags |= FL2_TURRET_DOUBLE;
 			if (self->style > 0)
 				self->moreflags |= FL2_TURRET_DOUBLE_ALT;
 
-			G_FreeEdict(self->target_ent);
+			G_FreeEdict (self->target_ent);
 		}
 //CW--
 	}
 
-	if (!self->team)
+	if ( !self->team )
 		self->teammaster = self;
 	self->teammaster->dmg = self->dmg;
 
-	if (!(self->spawnflags & (SF_TURRET_TRIGGER_SPAWN | SF_TURRET_GOODGUY | SF_TURRET_INACTIVE) )) {
+	if ( !(self->spawnflags & (SF_TURRET_TRIGGER_SPAWN | SF_TURRET_GOODGUY | SF_TURRET_INACTIVE) ) ) {
 		self->think = turret_breach_think;
 		self->think (self);
 	}

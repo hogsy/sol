@@ -42,6 +42,7 @@ Support for mapper-specified Ogg Vorbis music.  Use the key "musictrack" in the 
 Support for mapper-specified skyboxes with clouds.  Skyboxes must be made with an alpha channel to define
 	the foreground and horizon line that is drawn in front of the clouds.
 	The following keys can be set in worldpsawn and target_sky:
+	"skydistance"	draw distance of skybox in world units
 	"cloudname"		clouds image name (in folder <gamedir>/env)
 	"lightningfreq"	time between lighting flashes (default 0.0)
 	"cloudxdir"		movement direction of clouds on X axis (default 1.0)

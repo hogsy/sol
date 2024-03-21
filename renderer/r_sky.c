@@ -275,6 +275,23 @@ void R_AddSkySurface (msurface_t *surf)
 
 /*
 ==============
+R_GetSkyDistance
+==============
+*/
+float R_GetSkyDistance (void)
+{
+	if (r_skyInfo.skyDistance > 0.0f)
+		return max(r_skyInfo.skyDistance, MIN_SKYDIST);
+
+	if (r_skydistance != NULL)
+		return max(r_skydistance->value, MIN_SKYDIST);
+
+	return DEFAULT_SKYDIST;
+}
+
+
+/*
+==============
 R_CalcSkyCloudVerts
 ==============
 */
@@ -285,9 +302,8 @@ void R_CalcSkyCloudVerts (void)
 	float	xScalar, yScalar;
 	vec3_t	minVert, vertOfs;
 
-	r_skydistance = Cvar_Get("r_skydistance", "24000", CVAR_ARCHIVE);
-
-	skyDomeSize = (r_skydistance != NULL) ? r_skydistance->value : 24000.0f;
+//	skyDomeSize = (r_skydistance != NULL) ? r_skydistance->value : DEFAULT_SKYDIST;
+	skyDomeSize = R_GetSkyDistance();
 	gridIncrement = 2 * skyDomeSize / (SKY_GRID_NUMVERTS - 1);
 	radStride = ((float)M_PI / (float)(SKY_GRID_NUMVERTS - 1));
 	VectorSet (minVert, -skyDomeSize, -skyDomeSize, 0.0f);
@@ -583,13 +599,18 @@ R_MakeSkyVec
 */
 void R_MakeSkyVec (float s, float t, int axis, float distScale)
 {
+	float		skyBoxSize;
 	vec3_t		v, b;
 	int			j, k;
 
 	// Knightmare- 12/26/2001- variable back clipping plane distance
-	b[0] = s * r_skydistance->value * distScale;
-	b[1] = t * r_skydistance->value * distScale;
-	b[2] = r_skydistance->value * distScale;
+//	b[0] = s * r_skydistance->value * distScale;
+//	b[1] = t * r_skydistance->value * distScale;
+//	b[2] = r_skydistance->value * distScale;
+	skyBoxSize = R_GetSkyDistance();
+	b[0] = s * skyBoxSize * distScale;
+	b[1] = t * skyBoxSize * distScale;
+	b[2] = skyBoxSize * distScale;
 
 	for (j = 0; j < 3; j++)
 	{
@@ -781,7 +802,7 @@ R_SetSky
 */
 // 3dstudio environment map names
 char	*suf[6] = {"rt", "bk", "lf", "ft", "up", "dn"};
-void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis,
+void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis, float distance,
 			   float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha)
 {
 	int		i;
@@ -791,6 +812,7 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 	Q_strncpyz (r_skyInfo.skyBoxName, sizeof(r_skyInfo.skyBoxName), skyName);
 	r_skyInfo.skyRotate = rotate;
 	VectorCopy (axis, r_skyInfo.skyAxis);
+	r_skyInfo.skyDistance = distance;
 
 	for (i = 0; i < 6; i++)
 	{
@@ -801,11 +823,6 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 
 		Com_sprintf (pathname, sizeof(pathname), "env/%s%s.tga", r_skyInfo.skyBoxName, suf[i]);
 		r_skyInfo.sky_images[i] = R_FindImage (pathname, it_sky);
-		// Knightmare- support .jpg skies
-	/*	if ( !r_skyInfo.sky_images[i] ) {
-			Com_sprintf (pathname, sizeof(pathname), "env/%s%s.jpg", r_skyInfo.skyBoxName, suf[i]);
-			r_skyInfo.sky_images[i] = R_FindImage (pathname, it_sky);
-		} */
 		if ( !r_skyInfo.sky_images[i] )
 			r_skyInfo.sky_images[i] = glMedia.noTexture;
 
@@ -846,8 +863,11 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 	VectorCopy (cloudSpeed, r_skyInfo.cloudSpeed);
 	VectorCopy (cloudAlpha, r_skyInfo.cloudAlpha);
 
-	VID_Printf (PRINT_DEVELOPER, "R_SetSky: skyName '%s' cloudName '%s' rotate %.2f axis (%.2f %.2f %.2f)\n", 
-				skyName, cloudName, rotate, axis[0], axis[1], axis[2]);
+	// set r_farZ
+	R_SetFarZ ( R_GetSkyDistance() );
+
+	VID_Printf (PRINT_DEVELOPER, "R_SetSky: skyName '%s' cloudName '%s' rotate %.2f axis (%.2f %.2f %.2f) distance %.0f\n", 
+				skyName, cloudName, rotate, axis[0], axis[1], axis[2], distance);
 	VID_Printf (PRINT_DEVELOPER, "  lightningFreq %.2f cloudDir (%.2f %.2f) cloudTile (%.2f %.2f %.2f)\n",
 				lightningFreq, cloudDir[0], cloudDir[1], cloudTile[0], cloudTile[1], cloudTile[2]);
 	VID_Printf (PRINT_DEVELOPER, "  cloudSpeed (%.2f %.2f %.2f) cloudAlpha (%.2f %.2f %.2f)\n",

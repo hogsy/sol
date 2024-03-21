@@ -4347,13 +4347,14 @@ void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
 		gi.configstring (CS_SKYAXIS, va("%f %f %f",
 						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+		gi.configstring (CS_SKYDISTANCE, va("%f", self->radius) );
 		gi.configstring (CS_CLOUDLIGHTFREQ, va("%f", self->duration) );
 		gi.configstring (CS_CLOUDDIR, va("%f %f", self->offset[0], self->offset[1]) );
 		gi.configstring (CS_CLOUDTILE, va("%f %f %f", self->size[0], self->size[1], self->size[2]) );
 		gi.configstring (CS_CLOUDSPEED, va("%f %f %f", self->velocity[0], self->velocity[1], self->velocity[2]) );
 		gi.configstring (CS_CLOUDALPHA, va("%f %f %f", self->color[0], self->color[1], self->color[2]) );
-		Com_sprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
-					self->pathtarget, self->followtarget, self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2],
+		Com_sprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+					self->pathtarget, self->followtarget, self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2], self->radius,
 					self->duration, self->offset[0], self->offset[1], self->size[0], self->size[1], self->size[2],
 					self->velocity[0], self->velocity[1], self->velocity[2], self->color[0], self->color[1], self->color[2]);
 	}
@@ -4363,11 +4364,16 @@ void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 		gi.configstring (CS_SKYROTATE, va("%f", self->speed) );
 		gi.configstring (CS_SKYAXIS, va("%f %f %f",
 						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
+#ifdef KMQUAKE2_ENGINE_MOD
+		gi.configstring (CS_SKYDISTANCE, va("%f", self->radius) );
+		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f %.2f\n", self->pathtarget,
+					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2], self->radius);
+	}
+#else
 		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f\n", self->pathtarget,
 					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2]);
-#ifdef KMQUAKE2_ENGINE_MOD
-	}
 #endif	// KMQUAKE2_ENGINE_MOD
+
 	for (i = 0; i < game.maxclients; i++)
 		stuffcmd (&g_edicts[i + 1], string);
 	// end Knightmare
@@ -4397,6 +4403,7 @@ void SP_target_sky (edict_t *self)
 	Q_strncpyz (self->pathtarget, pathSize, st.sky);
 	self->speed = st.skyrotate;
 	VectorCopy (st.skyaxis, self->avelocity);
+	self->radius = st.skydistance;
 
 	// Knightmare- added cloudname support
 	if ( st.cloudname && (st.cloudname[0] != 0) )

@@ -1100,14 +1100,14 @@ int PatchMonsterModel (char *modelname)
 	byte		*data = NULL;		// model data
 	int			datasize = 0;		// model data size (bytes)
 	int			newoffset = 0;		// model data offset (after skins)
-	qboolean	is_tank=false;
-	qboolean	is_soldier=false;
+	qboolean	is_tank = false;
+	qboolean	is_soldier = false;
 
-	qboolean	gamedirpakfile=false;
+	qboolean	gamedirpakfile = false;
 
 	// get game (moddir) name
 	gamedir = gi.cvar("game", "", 0);
-	if (!*gamedir->string)
+	if ( !*gamedir->string )
 		return 0;	// we're in baseq2
 
 //	Com_sprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, modelname);
@@ -1273,48 +1273,49 @@ int PatchMonsterModel (char *modelname)
 		int				i, k, numitems;
 		char			pakfile[MAX_OSPATH];
 
-		// Knightmare- look in all pak files in baseq2
-		for (i=0; i<10; i++)
+		// Knightmare- look in pak0-99.pak in baseq2
+		for (i = 0; i < 100; i++)
 		{
 			Com_sprintf (pakfile, sizeof(pakfile), "baseq2/pak%i.pak", i);
-		//	fpak = fopen("baseq2/pak0.pak","rb");
-			fpak = fopen(pakfile, "rb");
-			if (!fpak)
+			fpak = fopen (pakfile, "rb");
+			if ( !fpak && (i == 0) ) // if pak0.pak isn't on hard disk, try CD
 			{
 				cvar_t	*cddir;
 				char	pakfile[MAX_OSPATH];
 
 				cddir = gi.cvar("cddir", "", 0);
-				Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak",cddir->string);
-				fpak = fopen(pakfile,"rb");
+				Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
+				fpak = fopen (pakfile, "rb");
 				if (!fpak)
 				{
 					gi.dprintf("PatchMonsterModel: Cannot find pak0.pak\n");
 					return 0;
 				}
 			}
-			fread(&pakheader,1,sizeof(pak_header_t),fpak);
-			numitems = pakheader.dsize/sizeof(pak_item_t);
-			fseek(fpak,pakheader.dstart,SEEK_SET);
+			else if (!fpak) // this pak not found, go on to next
+				continue;
+			fread (&pakheader, 1, sizeof(pak_header_t), fpak);
+			numitems = pakheader.dsize / sizeof(pak_item_t);
+			fseek (fpak, pakheader.dstart, SEEK_SET);
 			data = NULL;
-			for (k=0; k<numitems && !data; k++)
+			for (k = 0; k < numitems && !data; k++)
 			{
-				fread(&pakitem,1,sizeof(pak_item_t),fpak);
-				if (!Q_stricmp(pakitem.name,modelname))
+				fread (&pakitem, 1, sizeof(pak_item_t), fpak);
+				if ( !Q_stricmp(pakitem.name, modelname) )
 				{
-					fseek(fpak,pakitem.start,SEEK_SET);
-					fread(&model, sizeof(dmdl_t), 1, fpak);
+					fseek (fpak, pakitem.start, SEEK_SET);
+					fread (&model, sizeof(dmdl_t), 1, fpak);
 					datasize = model.ofs_end - model.ofs_skins;
 					if ( !(data = malloc (datasize)) )	// make sure freed locally
 					{
-						fclose(fpak);
+						fclose (fpak);
 						gi.dprintf ("PatchMonsterModel: Could not allocate memory for model\n");
 						return 0;
 					}
 					fread (data, sizeof (byte), datasize, fpak);
 				}
 			}
-			fclose(fpak);
+			fclose (fpak);
 			if (data) // we found it, so stop searching
 				break;
 		}
@@ -1322,36 +1323,36 @@ int PatchMonsterModel (char *modelname)
 		{
 			char		pakname[MAX_OSPATH];
 
-			// check all pakfiles in current gamedir
-			for (i=0; i<10; i++)
+			// look in pak0-pak9.pak in current gamedir
+			for (i = 0; i < 10; i++)
 			{
 				Com_sprintf (pakname, sizeof(pakname), "pak%i.pak", i);
 				GameDirRelativePath (pakname, pakfile, sizeof(pakfile));
-				fpak = fopen(pakfile,"rb");
+				fpak = fopen (pakfile, "rb");
 				if (!fpak) // this pak not found, go on to next
 					continue;
-				fread(&pakheader,1,sizeof(pak_header_t),fpak);
-				numitems = pakheader.dsize/sizeof(pak_item_t);
-				fseek(fpak,pakheader.dstart,SEEK_SET);
+				fread (&pakheader, 1, sizeof(pak_header_t), fpak);
+				numitems = pakheader.dsize / sizeof(pak_item_t);
+				fseek (fpak, pakheader.dstart, SEEK_SET);
 				data = NULL;
-				for (k=0; k<numitems && !data; k++)
+				for (k = 0; k < numitems && !data; k++)
 				{
-					fread(&pakitem,1,sizeof(pak_item_t),fpak);
-					if (!Q_stricmp(pakitem.name,modelname))
+					fread (&pakitem, 1, sizeof(pak_item_t), fpak);
+					if ( !Q_stricmp(pakitem.name, modelname) )
 					{
-						fseek(fpak,pakitem.start,SEEK_SET);
-						fread(&model, sizeof(dmdl_t), 1, fpak);
+						fseek (fpak,pakitem.start, SEEK_SET);
+						fread (&model, sizeof(dmdl_t), 1, fpak);
 						datasize = model.ofs_end - model.ofs_skins;
 						if ( !(data = malloc (datasize)) )	// make sure freed locally
 						{
-							fclose(fpak);
+							fclose (fpak);
 							gi.dprintf ("PatchMonsterModel: Could not allocate memory for model\n");
 							return 0;
 						}
 						fread (data, sizeof (byte), datasize, fpak);
 					}
 				}
-				fclose(fpak);
+				fclose (fpak);
 				if (data) // we found it, so stop searching
 				{
 					gamedirpakfile = true;
@@ -1361,7 +1362,7 @@ int PatchMonsterModel (char *modelname)
 		}
 		if (!data)
 		{
-			gi.dprintf("PatchMonsterModel: Could not find %s in baseq2/pak0.pak\n",modelname);
+			gi.dprintf ("PatchMonsterModel: Could not find %s in baseq2/pak0.pak\n",modelname);
 			return 0;
 		}
 	}

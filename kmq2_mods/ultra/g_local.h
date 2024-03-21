@@ -459,6 +459,8 @@ typedef struct
 
 	float		shift;
 
+	// Knightmare- added for sky distance
+	float		skydistance;
 	// Knightmare- added for DK-style clouds
 	char		*cloudname;
 	float		lightningfreq;

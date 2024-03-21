@@ -748,8 +748,8 @@ qboolean R_RegistrationIsActive (void);
 qboolean R_ModelIsValid (struct model_s *model);
 
 void	R_FreePic (char *name); // Knightmare added
-void	R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis,
-					 float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha);
+void	R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis, float distance,
+				float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha);
 
 void	R_RenderFrame (refdef_t *fd);
 

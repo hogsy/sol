@@ -555,6 +555,7 @@ void R_RenderView (refdef_t *fd);
 void R_BeginFrame (float camera_separation);
 void R_SwapBuffers (int);
 void R_SetPalette (const unsigned char *palette);
+void R_SetFarZ (float skyDistance);
 
 
 //
@@ -709,7 +710,9 @@ void R_DrawWarpSurface (msurface_t *surf, float alpha, qboolean render);
 //
 // r_sky.c
 //
-#define OLD_Q2_SKYDIST		2300
+#define	OLD_Q2_SKYDIST		2300
+#define DEFAULT_SKYDIST		18400
+#define	MIN_SKYDIST			256
 #define	SKY_GRID_NUMVERTS	24
 #define	SKY_DOME_MULT		1.5f
 
@@ -730,6 +733,7 @@ typedef struct {
 
 	float		skyRotate;
 	vec3_t		skyAxis;
+	float		skyDistance;
 
 	image_t		*sky_images[6];
 	image_t		*cloud_image;
@@ -756,10 +760,11 @@ typedef struct {
 extern skyInfo_t	r_skyInfo;
 
 void R_AddSkySurface (msurface_t *surf);
+float R_GetSkyDistance (void);
 void R_InitSkyBoxInfo (void);
 void R_ClearSkyBox (void);
 void R_DrawSkyBox (void);
-void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis,
+void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t axis, float distance,
 			   float lightningFreq, vec2_t cloudDir, vec3_t cloudTile, vec3_t cloudSpeed, vec3_t cloudAlpha);
 
 

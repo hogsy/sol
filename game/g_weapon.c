@@ -109,7 +109,7 @@ qboolean fire_hit (edict_t *self, vec3_t aim, int damage, int kick)
 			tr.ent = self->enemy;
 	}
 
-	AngleVectors(self->s.angles, forward, right, up);
+	AngleVectors (self->s.angles, forward, right, up);
 	VectorMA (self->s.origin, range, forward, point);
 	VectorMA (point, aim[1], right, point);
 	VectorMA (point, aim[2], up, point);
@@ -938,7 +938,7 @@ void homing_think (edict_t *self)
 				VectorScale(dir, 1.0, dir);  // 0=no correction, 1=turn on a dime
 			VectorAdd(dir, self->movedir, dir);
 			VectorNormalize(dir);
-			VectorCopy(dir, self->movedir);
+			VectorCopy (dir, self->movedir);
 			vectoangles(dir, self->s.angles);
 			speed = VectorLength(self->velocity);
 			VectorScale(dir, speed, self->velocity);
@@ -983,7 +983,7 @@ void Rocket_Evade (edict_t *rocket, vec3_t	dir, float speed)
 	// Find out what rocket will hit, assuming everything remains static
 	VectorMA(rocket->s.origin, WORLD_SIZE, dir, rocket_vec);	// was 8192
 	tr = gi.trace(rocket->s.origin,rocket->mins,rocket->maxs,rocket_vec,rocket,MASK_SHOT);
-	VectorCopy(tr.endpos,hitpoint);
+	VectorCopy (tr.endpos,hitpoint);
 	VectorSubtract(hitpoint,rocket->s.origin,vec);
 	dist = VectorLength(vec);
 	time = dist / speed;
@@ -1031,13 +1031,13 @@ void Rocket_Evade (edict_t *rocket, vec3_t	dir, float speed)
 					continue;
 				best_r = r;
 				best_yaw = yaw;
-				VectorCopy(tr.endpos,best_pos);
+				VectorCopy (tr.endpos,best_pos);
 			}
 		}
 		if (best_r < 9000)
 		{
 			edict_t	*thing = SpawnThing();
-			VectorCopy(best_pos,thing->s.origin);
+			VectorCopy (best_pos,thing->s.origin);
 			thing->touch_debounce_time = level.time + time;
 			thing->target_ent = ent;
 			ED_CallSpawn(thing);
@@ -1165,8 +1165,8 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 		vec3_t	right, up;
 		vec3_t	lateral_speed;
 
-		AngleVectors(self->s.angles,NULL,right,up);
-		VectorCopy(self->velocity,lateral_speed);
+		AngleVectors (self->s.angles,NULL,right,up);
+		VectorCopy (self->velocity,lateral_speed);
 		lateral_speed[0] *= fabs(right[0]);
 		lateral_speed[1] *= fabs(right[1]);
 		lateral_speed[2] *= fabs(up[2]);
@@ -1208,19 +1208,19 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	if ( home_target || homing )
 	{
 		// homers are shootable
-		VectorSet(rocket->mins, -10, -3, 0);
-		VectorSet(rocket->maxs,  10,  3, 6);
+		VectorSet (rocket->mins, -10, -3, 0);
+		VectorSet (rocket->maxs,  10,  3, 6);
 		rocket->mass = 10;
 		rocket->health = 5;
 		rocket->die = rocket_die;
 		rocket->takedamage = DAMAGE_YES;
 		rocket->monsterinfo.aiflags = AI_NOSTEP;
 
-		rocket->enemy     = home_target;
-		rocket->nextthink = level.time + FRAMETIME;
-		rocket->think = homing_think;
-		rocket->starttime = level.time + 0.3; // play homing sound on 3rd frame
-		rocket->endtime   = level.time + 8000.0f/speed;
+		rocket->enemy		= home_target;
+		rocket->nextthink	= level.time + FRAMETIME;
+		rocket->think		= homing_think;
+		rocket->starttime	= level.time + 0.3;	// play homing sound on 3rd frame
+		rocket->endtime		= level.time + 8000.0f / speed;
 
 		if (self->client)
 		{

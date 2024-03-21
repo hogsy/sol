@@ -174,10 +174,10 @@ void R_SetFogVars (qboolean enable, int model, int density,
 				   int start, int end, int red, int green, int blue)
 {
 	int		temp;
-	float	maxFogFar, skyRatio;
+	float	maxFogFar, skyDistance, skyRatio;
 
-	//VID_Printf( PRINT_ALL, "Setting fog variables: model %i density %i near %i far %i red %i green %i blue %i\n",
-	//	model, density, start, end, red, green, blue );
+//	VID_Printf( PRINT_ALL, "Setting fog variables: model %i density %i near %i far %i red %i green %i blue %i\n",
+//		model, density, start, end, red, green, blue );
 
 	// Skip this if QGL subsystem is already down
 	if (!qglDisable)	return;
@@ -196,10 +196,12 @@ void R_SetFogVars (qboolean enable, int model, int density,
 		maxFogFar = 10000.0f;
 	maxFogFar = max(maxFogFar, 1024.0f);
 
-	if ( r_fog_skyratio && r_skydistance && r_skydistance->value )
+	skyDistance = R_GetSkyDistance();
+
+	if ( r_fog_skyratio )
 	{
 		if (r_fog_skyratio->integer < 0)	// -1 is auto distance based on old Q2 sky distance of 2300
-			skyRatio = (r_skydistance->value / OLD_Q2_SKYDIST);
+			skyRatio = (skyDistance / OLD_Q2_SKYDIST);
 		else if (r_fog_skyratio->value >= 1.0f)
 			skyRatio = r_fog_skyratio->value;
 		else
@@ -207,8 +209,8 @@ void R_SetFogVars (qboolean enable, int model, int density,
 	}
 	else
 		skyRatio = 10.0f;
-	skyRatio = max (skyRatio, 1.0f);
-	skyRatio = min (skyRatio, 100.0f);
+	skyRatio = max (skyRatio, 0.1f);
+	skyRatio = min (skyRatio, 1000.0f);
 
 	r_fogmodel = FogModels[temp];
 	r_fogdensity = (float)density;

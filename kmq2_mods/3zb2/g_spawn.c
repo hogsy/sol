@@ -1663,6 +1663,8 @@ void SP_worldspawn (edict_t *ent)
 
 	// Knightmare- configstrings added for DK-style clouds support
 #ifdef KMQUAKE2_ENGINE_MOD
+	gi.configstring (CS_SKYDISTANCE, va("%f", st.skydistance) );
+
 	if (st.cloudname && st.cloudname[0])
 		gi.configstring (CS_CLOUDNAME, st.cloudname);
 	else

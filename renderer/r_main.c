@@ -441,6 +441,36 @@ void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 
 /*
 =============
+R_SetFarZ
+
+Calcs farz falue from skybox size
+=============
+*/
+void R_SetFarZ (float skyDistance)
+{
+	GLdouble boxsize, farZ;	// variable sky range
+
+	boxsize = max(skyDistance, MIN_SKYDIST) * SKY_DOME_MULT;
+//	boxsize -= 252 * ceil (boxsize / 2300);
+	farZ = 1.0;
+	while (farZ < boxsize)		// make this a power of 2
+	{
+		farZ *= 2.0;
+		if (farZ >= (GLdouble)(WORLD_SIZE*4))	// don't make it larger than this, was 65536
+			break;
+	}
+	farZ *= 2.0;	// double since boxsize is distance from camera to edge of skybox
+					// not total size of skybox
+	r_farZ = farZ;	// save to global var
+
+	VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farZ);
+
+	R_InitSkyBoxInfo ();		// reset skybox data
+}
+
+
+/*
+=============
 R_SetupGL
 =============
 */
@@ -449,8 +479,6 @@ void R_SetupGL (void)
 	float	screenaspect;
 //	float	yfov;
 	int		x, x2, y2, y, w, h;
-//	static	GLdouble farz;	// variable sky range
-//	GLdouble boxsize;
 
 	// Knightmare- update r_modulate in real time
     if ( r_modulate->modified && (r_worldmodel) ) //Don't do this if no map is loaded
@@ -485,24 +513,11 @@ void R_SetupGL (void)
 	// calc farz falue from skybox size
 	if (r_skydistance->modified)
 	{
-		GLdouble boxsize, farZ;	// variable sky range
-
-		boxsize = r_skydistance->value * SKY_DOME_MULT;
-	//	boxsize -= 252 * ceil (boxsize / 2300);
-		farZ = 1.0;
-		while (farZ < boxsize) // make this a power of 2
-		{
-			farZ *= 2.0;
-			if (farZ >= (GLdouble)(WORLD_SIZE*4)) // don't make it larger than this, was 65536
-				break;
+		// only set r_farZ here if mapper-specified skyDistance is unset
+		if (r_skyInfo.skyDistance <= 0.0f) {
+			R_SetFarZ (r_skydistance->value);
 		}
-		farZ *= 2.0;	// double since boxsize is distance from camera to edge of skybox
-						// not total size of skybox
-		VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farZ);
-		r_farZ = farZ;	// save to global var
-
 		r_skydistance->modified = false;
-		R_InitSkyBoxInfo ();		// reset skybox data
 	}
 	// end Knightmare
 
@@ -1257,9 +1272,9 @@ void R_Register (void)
 	r_celshading_width = Cvar_Get( "r_celshading_width", "4", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_celshading_width", "Sets width in pixels of cel shading outlines.");
 
-	r_skydistance = Cvar_Get("r_skydistance", "24000", CVAR_ARCHIVE); // variable sky range
+	r_skydistance = Cvar_Get("r_skydistance", "18400", CVAR_ARCHIVE); // variable sky range
 	Cvar_SetDescription ("r_skydistance", "Sets render distance of skybox.  Larger values mean a longer visible distance areas with the skybox visible.");
-	r_fog_skyratio = Cvar_Get("r_fog_skyratio", "10", CVAR_ARCHIVE);	// variable sky fog ratio
+	r_fog_skyratio = Cvar_Get("r_fog_skyratio", "-1", CVAR_ARCHIVE);	// variable sky fog ratio
 	Cvar_SetDescription ("r_fog_skyratio", "Sets ratio of fog far distance for skyboxes versus standard world surfaces.  -1 = auto.");
 	r_subdivide_size = Cvar_Get("r_subdivide_size", "64", CVAR_ARCHIVE);	// chop size for warp surfaces
 	Cvar_SetDescription ("r_subdivide_size", "Sets subdivision size of warp surfaces.  Requires vid_restart for changes to take effect.");
