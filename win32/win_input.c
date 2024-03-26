@@ -264,7 +264,6 @@ void IN_ActivateMouse (void)
 
 	mouseactive = true;
 
-//	if (m_noaccel->value) 
 	if (m_noaccel->integer) 
 		newmouseparms[2] = 0;	// sul XP fix?
 	else 
@@ -552,7 +551,7 @@ void IN_Init (void)
 	// mouse variables
 	in_autosensitivity		= Cvar_Get ("in_autosensitivity",			"1",		CVAR_ARCHIVE);
 	Cvar_SetDescription ("in_autosensitivity", "Enables scaling of mouse and joystick sensitivty when zoomed in.");
-	m_noaccel				= Cvar_Get ("m_noaccel",				"0",		CVAR_ARCHIVE);		// sul  enables mouse acceleration XP fix?
+	m_noaccel				= Cvar_Get ("m_noaccel",				"1",		CVAR_ARCHIVE);		// sul  enables mouse acceleration XP fix?
 	Cvar_SetDescription ("m_noaccel", "Disables mouse acceleration when set to 1.");
 	m_filter				= Cvar_Get ("m_filter",					"0",		0);
 	Cvar_SetDescription ("m_filter", "Enables mouse input filtering.");
