@@ -79,11 +79,11 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "\0"
-            VALUE "CompanyName", "\0"
+            VALUE "CompanyName", "Vipersoft\0"
             VALUE "FileDescription", VER_FILEDESCRIPTION_STR
             VALUE "FileVersion", "5.001\0"
             VALUE "InternalName", VER_ORIGINALFILENAME_STR
-            VALUE "LegalCopyright", "\0"
+            VALUE "LegalCopyright", "(C) 2002 Vipersoft\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
             VALUE "PrivateBuild", "\0"
