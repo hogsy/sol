@@ -193,10 +193,6 @@ SOURCE=.\g_weapon.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\game.def
-# End Source File
-# Begin Source File
-
 SOURCE=.\km_cvar.c
 # End Source File
 # Begin Source File
@@ -259,6 +255,14 @@ SOURCE=.\q_shared.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\3zb2.rc
+# End Source File
+# Begin Source File
+
+SOURCE=.\game.def
+# End Source File
 # End Group
 # End Target
 # End Project

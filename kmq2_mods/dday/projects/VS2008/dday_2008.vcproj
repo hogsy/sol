@@ -2088,14 +2088,6 @@
 				Name="usa"
 				>
 				<File
-					RelativePath="..\..\Usa\usa_classes.h"
-					>
-				</File>
-				<File
-					RelativePath=".\..\..\Usa\usa_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Usa\usa_guninfo.c"
 					>
 				</File>
@@ -2105,10 +2097,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Usa\Usa_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Usa\Usa_main.h"
 					>
 				</File>
 				<File
@@ -2124,14 +2112,6 @@
 				Name="grm"
 				>
 				<File
-					RelativePath="..\..\Grm\grm_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Grm\grm_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Grm\grm_guninfo.c"
 					>
 				</File>
@@ -2141,10 +2121,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Grm\Grm_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Grm\Grm_main.h"
 					>
 				</File>
 				<File
@@ -2160,14 +2136,6 @@
 				Name="rus"
 				>
 				<File
-					RelativePath="..\..\Rus\rus_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Rus\rus_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Rus\rus_guninfo.c"
 					>
 				</File>
@@ -2177,10 +2145,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Rus\Rus_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Rus\Rus_main.h"
 					>
 				</File>
 				<File
@@ -2196,14 +2160,6 @@
 				Name="gbr"
 				>
 				<File
-					RelativePath="..\..\Gbr\gbr_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Gbr\gbr_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Gbr\gbr_guninfo.c"
 					>
 				</File>
@@ -2213,10 +2169,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Gbr\Gbr_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Gbr\Gbr_main.h"
 					>
 				</File>
 				<File
@@ -2232,14 +2184,6 @@
 				Name="pol"
 				>
 				<File
-					RelativePath="..\..\Pol\pol_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Pol\pol_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Pol\pol_guninfo.c"
 					>
 				</File>
@@ -2249,10 +2193,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Pol\Pol_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Pol\Pol_main.h"
 					>
 				</File>
 				<File
@@ -2268,14 +2208,6 @@
 				Name="ita"
 				>
 				<File
-					RelativePath="..\..\Ita\ita_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Ita\ita_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Ita\ita_guninfo.c"
 					>
 				</File>
@@ -2285,10 +2217,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Ita\Ita_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Ita\Ita_main.h"
 					>
 				</File>
 				<File
@@ -2304,14 +2232,6 @@
 				Name="jpn"
 				>
 				<File
-					RelativePath="..\..\Jpn\jpn_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Jpn\jpn_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Jpn\jpn_guninfo.c"
 					>
 				</File>
@@ -2321,10 +2241,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Jpn\Jpn_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Jpn\Jpn_main.h"
 					>
 				</File>
 				<File
@@ -2340,14 +2256,6 @@
 				Name="usm"
 				>
 				<File
-					RelativePath="..\..\Usm\usm_classes.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Usm\usm_defines.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Usm\usm_guninfo.c"
 					>
 				</File>
@@ -2357,10 +2265,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Usm\Usm_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Usm\Usm_main.h"
 					>
 				</File>
 				<File
@@ -2376,10 +2280,6 @@
 				Name="ai"
 				>
 				<File
-					RelativePath="..\..\ai\ai.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\ai\ai_class_dmbot.c"
 					>
 				</File>
@@ -2393,10 +2293,6 @@
 				</File>
 				<File
 					RelativePath="..\..\ai\ai_links.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\ai\ai_local.h"
 					>
 				</File>
 				<File
@@ -2416,14 +2312,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\ai\ai_nodes_local.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\ai\ai_nodes_shared.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\ai\ai_tools.c"
 					>
 				</File>
@@ -2432,15 +2320,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\ai\ai_weapons.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\ai\AStar.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\ai\AStar.h"
 					>
 				</File>
 				<File
@@ -2517,18 +2397,166 @@
 				RelativePath="..\..\x_fire.h"
 				>
 			</File>
+			<Filter
+				Name="ai (h)"
+				>
+				<File
+					RelativePath="..\..\ai\ai.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ai\ai_local.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ai\ai_nodes_local.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ai\ai_nodes_shared.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ai\ai_weapons.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ai\AStar.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="gbr (h)"
+				>
+				<File
+					RelativePath="..\..\Gbr\gbr_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Gbr\gbr_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Gbr\Gbr_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="grm (h)"
+				>
+				<File
+					RelativePath="..\..\Grm\grm_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Grm\grm_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Grm\Grm_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ita (h)"
+				>
+				<File
+					RelativePath="..\..\Ita\ita_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Ita\ita_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Ita\Ita_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="jpn (h)"
+				>
+				<File
+					RelativePath="..\..\Jpn\jpn_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Jpn\jpn_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Jpn\Jpn_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="pol (h)"
+				>
+				<File
+					RelativePath="..\..\Pol\pol_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Pol\pol_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Pol\Pol_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="rus (h)"
+				>
+				<File
+					RelativePath="..\..\Rus\rus_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Rus\rus_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Rus\Rus_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="usa (h)"
+				>
+				<File
+					RelativePath="..\..\Usa\usa_classes.h"
+					>
+				</File>
+				<File
+					RelativePath=".\..\..\Usa\usa_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Usa\Usa_main.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="usm (h)"
+				>
+				<File
+					RelativePath="..\..\Usm\usm_classes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Usm\usm_defines.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Usm\Usm_main.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Misc"
 			>
-			<File
-				RelativePath="..\..\docs\ChangeLog"
-				>
-			</File>
-			<File
-				RelativePath="..\..\game.def"
-				>
-			</File>
 			<File
 				RelativePath="..\..\docs\gnu.txt"
 				>
@@ -2565,6 +2593,42 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Resorce Files"
+			>
+			<File
+				RelativePath=".\dday_2008.rc"
+				>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_DEBUG;_WIN64"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="NDEBUG"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="NDEBUG;_WIN64"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\game.def"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -2741,10 +2741,6 @@
 					>
 				</File>
 				<File
-					RelativePath="lmctf.h"
-					>
-				</File>
-				<File
 					RelativePath="m_player.h"
 					>
 				</File>
@@ -2785,6 +2781,34 @@
 			<File
 				RelativePath="game.def"
 				>
+			</File>
+			<File
+				RelativePath=".\ultra_2008.rc"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="NDEBUG"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="NDEBUG;_WIN64"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions="_DEBUG;_WIN64"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<File

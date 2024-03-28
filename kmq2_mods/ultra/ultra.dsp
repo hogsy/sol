@@ -533,10 +533,6 @@ SOURCE=.\game.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lmctf.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\m_player.h
 # End Source File
 # Begin Source File
@@ -575,6 +571,10 @@ SOURCE=.\zlib\zip.h
 # Begin Source File
 
 SOURCE=.\game.def
+# End Source File
+# Begin Source File
+
+SOURCE=.\ultra.rc
 # End Source File
 # End Group
 # Begin Source File
