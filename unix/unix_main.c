@@ -366,24 +366,25 @@ void *Sys_GetGameAPI (void *parms)
 #error Unknown arch
 #endif
 
-	setreuid(getuid(), getuid());
-	setegid(getgid());
+	setreuid (getuid(), getuid());
+	setegid (getgid());
 
 	if (game_library)
 		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
 
-	getcwd(curpath, sizeof(curpath));
+	getcwd (curpath, sizeof(curpath));
 
-	Com_Printf("------- Loading %s -------\n", gamename);
+	Com_Printf ("------- Loading %s -------\n", gamename);
 
 	// now run through the search paths
 	path = NULL;
 	while (1)
 	{
-		path = FS_NextPath (path);
-		if (!path)
+	//	path = FS_NextPath (path);
+		path = FS_NextGamePath (path);
+		if ( !path )
 			return NULL;		// couldn't find one anywhere
-//		Com_sprintf (name, sizeof(name), "%s/%s/%s", curpath, path, gamename);
+	//	Com_sprintf (name, sizeof(name), "%s/%s/%s", curpath, path, gamename);
 		if (path[0] == '/') {
 			// Path is rooted, override curpath
 			Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
@@ -394,13 +395,13 @@ void *Sys_GetGameAPI (void *parms)
 		game_library = SDL_LoadObject (name);
 		if (game_library)
 		{
-			Com_Printf ("LoadLibrary (%s)\n",name);
+			Com_Printf ("LoadLibrary (%s)\n", name);
 			break;
 		}
 	}
 
 	GetGameAPI = (void *)SDL_LoadFunction (game_library, "GetGameAPI");
-	if (!GetGameAPI)
+	if ( !GetGameAPI )
 	{
 		Sys_UnloadGame ();		
 		return NULL;

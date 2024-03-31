@@ -338,6 +338,10 @@ const char *MakePrintable (const void *subject, size_t numchars);
 
 //============================================================================
 
+char *Com_ParseSteamLibraryFolders (const char *fileContents, size_t contentsLen, const char *relPath, const char *appID);
+
+//============================================================================
+
 void Info_Print (char *s);
 
 

@@ -1662,13 +1662,13 @@ void *Sys_GetGameAPI (void *parms)
 			{
 			//	path = FS_NextPath (path);
 				path = FS_NextGamePath (path);
-				if (!path)
+				if ( !path )
 					return NULL;		// couldn't find one anywhere
 				Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
 				game_library = LoadLibrary (name);
 				if (game_library)
 				{
-					Com_DPrintf ("LoadLibrary (%s)\n",name);
+					Com_DPrintf ("LoadLibrary (%s)\n", name);
 					break;
 				}
 			}
@@ -1809,109 +1809,6 @@ static void ReplaceBackSlashes (char *path)
 #define REGISTRY_GOG_Q1RR_INSTALL_PATH_X86 "SOFTWARE\\GOG.com\\Games\\?"
 #define REGISTRY_GOG_Q2RR_INSTALL_PATH_X86 "SOFTWARE\\GOG.com\\Games\\1947927225"
 
-/*
-==================
-Sys_ParseSteamLibraryFolders
-==================
-*/
-static char *Sys_ParseSteamLibraryFolders (const char *fileContents, size_t contentsLen, const char *relPath, const char *appID)
-{
-	int			libraryNum = 0;
-	char		*s = NULL, *token = NULL;
-	char		*key = NULL, *value = NULL;
-	char		keySave[128];
-	static char	libraryPath[MAX_OSPATH];
-	static char	gamePath[MAX_OSPATH];
-	qboolean	foundPath = false;
-
-	if ( !fileContents || (fileContents[0] == 0) || !relPath || (relPath[0] == 0) || !appID || (appID[0] == 0) )
-		return NULL;
-
-	gamePath[0] = 0;
-	s = (char *)fileContents;
-
-	if (strcmp(COM_ParseExt(&s, true), "libraryfolders") != 0)
-		return NULL;
-	if (strcmp(COM_ParseExt(&s, true), "{") != 0)
-		return NULL;
-
-	while (s < (fileContents + contentsLen))
-	{
-		// get library number, check if at end of file
-		token = COM_ParseExt(&s, true);
-		if ( !token || (token[0] == 0) || !strcmp(token, "}") )
-			break;
-		libraryNum = atoi(token);
-
-		// get opening brace for this library section
-		token = COM_ParseExt(&s, true);
-		if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
-			break;
-
-	//	Com_Printf ("Sys_ParseSteamLibraryFolders: Parsing library VDF (%i)...\n", libraryNum);
-
-		// parse key/value pairs for this library
-		while (s < (fileContents + contentsLen))
-		{
-			key = COM_ParseExt(&s, true);
-			if ( !key || (key[0] == 0) || !strcmp(key, "}") ) {
-				break;
-			}
-			else if ( !strcmp(key, "path") ) {
-				value = COM_ParseExt(&s, true);
-				Q_strncpyz (libraryPath, sizeof(libraryPath), value);
-			//	Com_Printf ("Sys_ParseSteamLibraryFolders: found library path of %s\n", libraryPath);
-			}
-			else if ( !strcmp(key, "apps") )
-			{
-			//	Com_Printf ("Sys_ParseSteamLibraryFolders: Parsing apps list for library path %s...\n", libraryPath);
-				// get opening brace for this apps section
-				token = COM_ParseExt(&s, true);
-				if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
-					break;
-
-				// parse key/value pairs for this apps section
-				while (s < (fileContents + contentsLen))
-				{
-					key = COM_ParseExt(&s, true);
-					if ( !key || (key[0] == 0) || !strcmp(key, "}") )
-						break;
-
-					Q_strncpyz (keySave, sizeof(keySave), key);
-					value = COM_ParseExt(&s, true);
-
-					if ( !strcmp(keySave, appID) ) {
-						Q_strncpyz (gamePath, sizeof(gamePath), libraryPath);
-						Q_strncatz (gamePath, sizeof(gamePath), relPath);
-						foundPath = true;
-					//	Com_Printf ("Sys_ParseSteamLibraryFolders: found matching appID\n");
-					}
-
-					if ( foundPath && (gamePath[0] != 0) )
-						break;
-				}
-			}
-			else {
-				// just grab the value for this key pair
-				value = COM_ParseExt(&s, true);
-			}
-
-			if ( foundPath && (gamePath[0] != 0) )
-				break;
-		}
-
-		if ( foundPath && (gamePath[0] != 0) ) {
-		//	Com_Printf ("Sys_ParseSteamLibraryFolders: Found game path %s...\n", gamePath);
-			break;
-		}
-	}
-
-	if (gamePath[0] != 0)
-		return gamePath;
-	else
-		return NULL;
-}
-
 
 #if defined (_MSC_VER) && (_MSC_VER <= 1200)	// These macros and RegGetValueA() are not defined under VC6
 #define LSTATUS				long
@@ -2005,7 +1902,7 @@ void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibr
 	}
 
 //	Com_Printf ("Sys_GetSteamInstallPath: Parsing %s (size %i)...\n", folderPath, fileSize);
-	gameInstallPath = Sys_ParseSteamLibraryFolders (fileContents, readLen, steamLibraryPath, steamAppID);
+	gameInstallPath = Com_ParseSteamLibraryFolders (fileContents, readLen, steamLibraryPath, steamAppID);
 
 	if ( gameInstallPath && (gameInstallPath[0] != 0) ) {	// copy off install path
 		Q_strncpyz (path, pathSize, gameInstallPath);

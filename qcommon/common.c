@@ -1385,9 +1385,7 @@ void SZ_Print (sizebuf_t *buf, char *data)
 		memcpy ((byte *)SZ_GetSpace(buf, len),data,len);
 }
 
-
 //============================================================================
-
 
 /*
 ================
@@ -1534,7 +1532,6 @@ void Info_Print (char *s)
 	}
 }
 
-
 /*
 ==============================================================================
 
@@ -1648,9 +1645,7 @@ void *Z_Malloc (size_t size)
 	return Z_TagMalloc (size, 0);
 }
 
-
 //============================================================================
-
 
 /*
 ====================
@@ -1663,7 +1658,7 @@ For proxy protecting
 
 ====================
 */
-byte	COM_BlockSequenceCheckByte (byte *base, int length, int sequence, int challenge)
+byte COM_BlockSequenceCheckByte (byte *base, int length, int sequence, int challenge)
 {
 	Sys_Error("COM_BlockSequenceCheckByte called\n");
 
@@ -1781,7 +1776,7 @@ COM_BlockSequenceCRCByte
 For proxy protecting
 ====================
 */
-byte	COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
+byte COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
 {
 	int		n;
 	byte	*p;
@@ -2133,6 +2128,112 @@ void Qcommon_Shutdown (void)
 	FS_Shutdown ();
 }
 
+//============================================================================
+
+/*
+==================
+Com_ParseSteamLibraryFolders
+==================
+*/
+char *Com_ParseSteamLibraryFolders (const char *fileContents, size_t contentsLen, const char *relPath, const char *appID)
+{
+	int			libraryNum = 0;
+	char		*s = NULL, *token = NULL;
+	char		*key = NULL, *value = NULL;
+	char		keySave[128];
+	static char	libraryPath[MAX_OSPATH];
+	static char	gamePath[MAX_OSPATH];
+	qboolean	foundPath = false;
+
+	if ( !fileContents || (fileContents[0] == 0) || !relPath || (relPath[0] == 0) || !appID || (appID[0] == 0) )
+		return NULL;
+
+	gamePath[0] = 0;
+	s = (char *)fileContents;
+
+	if (strcmp(COM_ParseExt(&s, true), "libraryfolders") != 0)
+		return NULL;
+	if (strcmp(COM_ParseExt(&s, true), "{") != 0)
+		return NULL;
+
+	while (s < (fileContents + contentsLen))
+	{
+		// get library number, check if at end of file
+		token = COM_ParseExt(&s, true);
+		if ( !token || (token[0] == 0) || !strcmp(token, "}") )
+			break;
+		libraryNum = atoi(token);
+
+		// get opening brace for this library section
+		token = COM_ParseExt(&s, true);
+		if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
+			break;
+
+	//	Com_Printf ("Com_ParseSteamLibraryFolders: Parsing library VDF (%i)...\n", libraryNum);
+
+		// parse key/value pairs for this library
+		while (s < (fileContents + contentsLen))
+		{
+			key = COM_ParseExt(&s, true);
+			if ( !key || (key[0] == 0) || !strcmp(key, "}") ) {
+				break;
+			}
+			else if ( !strcmp(key, "path") ) {
+				value = COM_ParseExt(&s, true);
+				Q_strncpyz (libraryPath, sizeof(libraryPath), value);
+			//	Com_Printf ("Com_ParseSteamLibraryFolders: found library path of %s\n", libraryPath);
+			}
+			else if ( !strcmp(key, "apps") )
+			{
+			//	Com_Printf ("Com_ParseSteamLibraryFolders: Parsing apps list for library path %s...\n", libraryPath);
+				// get opening brace for this apps section
+				token = COM_ParseExt(&s, true);
+				if ( !token || (token[0] == 0) || (strcmp(token, "{") != 0) )
+					break;
+
+				// parse key/value pairs for this apps section
+				while (s < (fileContents + contentsLen))
+				{
+					key = COM_ParseExt(&s, true);
+					if ( !key || (key[0] == 0) || !strcmp(key, "}") )
+						break;
+
+					Q_strncpyz (keySave, sizeof(keySave), key);
+					value = COM_ParseExt(&s, true);
+
+					if ( !strcmp(keySave, appID) ) {
+						Q_strncpyz (gamePath, sizeof(gamePath), libraryPath);
+						Q_strncatz (gamePath, sizeof(gamePath), relPath);
+						foundPath = true;
+					//	Com_Printf ("Com_ParseSteamLibraryFolders: found matching appID\n");
+					}
+
+					if ( foundPath && (gamePath[0] != 0) )
+						break;
+				}
+			}
+			else {
+				// just grab the value for this key pair
+				value = COM_ParseExt(&s, true);
+			}
+
+			if ( foundPath && (gamePath[0] != 0) )
+				break;
+		}
+
+		if ( foundPath && (gamePath[0] != 0) ) {
+		//	Com_Printf ("Com_ParseSteamLibraryFolders: Found game path %s...\n", gamePath);
+			break;
+		}
+	}
+
+	if (gamePath[0] != 0)
+		return gamePath;
+	else
+		return NULL;
+}
+
+//============================================================================
 
 /*
 =================
