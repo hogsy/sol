@@ -330,11 +330,11 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 
 			lightmap += 3*(dt * ((surf->extents[0]>>4)+1) + ds);
 
-			for (maps=0; maps < MAXLIGHTMAPS && surf->styles[maps]!=255; maps++)
+			for (maps = 0; maps < MAXLIGHTMAPS && surf->styles[maps] != 255; maps++)
 			{
-				if (!r_newrefdef.lightstyles || !surf->styles)
+				if ( !r_newrefdef.lightstyles || !surf->styles )
 					break;
-				for (i=0; i<3; i++)
+				for (i = 0; i < 3; i++)
 					scale[i] = r_modulate->value*r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 				pointcolor[0] += lightmap[0] * scale[0] * (1.0/255);
@@ -877,7 +877,7 @@ static void LM_InitBlock (void)
 
 #ifdef BATCH_LM_UPDATES
 	// alloc lightmap update buffer if needed
-	if (!gl_lms.lightmap_update[gl_lms.current_lightmap_texture]) {
+	if ( !gl_lms.lightmap_update[gl_lms.current_lightmap_texture] ) {
 		gl_lms.lightmap_update[gl_lms.current_lightmap_texture] = Z_Malloc (LM_BLOCK_WIDTH*LM_BLOCK_HEIGHT*LIGHTMAP_BYTES);
 	}
 #endif	// BATCH_LM_UPDATES
@@ -961,8 +961,7 @@ void R_SetCacheState (msurface_t *surf)
 {
 	int maps;
 
-	for (maps = 0 ; maps < MAXLIGHTMAPS && surf->styles[maps] != 255 ;
-		 maps++)
+	for (maps = 0; maps < MAXLIGHTMAPS && surf->styles[maps] != 255; maps++)
 	{
 		surf->cached_light[maps] = r_newrefdef.lightstyles[surf->styles[maps]].white;
 	}
@@ -1023,8 +1022,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	}
 
 	// count the # of maps
-	for ( nummaps = 0 ; nummaps < MAXLIGHTMAPS && surf->styles[nummaps] != 255 ;
-		 nummaps++)
+	for ( nummaps = 0; nummaps < MAXLIGHTMAPS && surf->styles[nummaps] != 255; nummaps++)
 		;
 
 	lightmap = surf->samples;
@@ -1034,19 +1032,18 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 	{
 		int maps;
 
-		for (maps = 0 ; maps < MAXLIGHTMAPS && surf->styles[maps] != 255 ;
-			 maps++)
+		for (maps = 0; maps < MAXLIGHTMAPS && surf->styles[maps] != 255; maps++)
 		{
 			bl = s_blocklights;
 
-			for (i=0 ; i<3 ; i++)
+			for (i = 0; i < 3; i++)
 				scale[i] = r_modulate->value*r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 			if ( scale[0] == 1.0F &&
 				 scale[1] == 1.0F &&
 				 scale[2] == 1.0F )
 			{
-				for (i=0 ; i<size ; i++, bl+=3)
+				for (i = 0; i < size; i++, bl+=3)
 				{
 					bl[0] = lightmap[i*3+0];
 					bl[1] = lightmap[i*3+1];
@@ -1055,7 +1052,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 			}
 			else
 			{
-				for (i=0 ; i<size ; i++, bl+=3)
+				for (i = 0; i < size; i++, bl+=3)
 				{
 					bl[0] = lightmap[i*3+0] * scale[0];
 					bl[1] = lightmap[i*3+1] * scale[1];
@@ -1071,19 +1068,18 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 
 		memset( s_blocklights, 0, sizeof( s_blocklights[0] ) * size * 3 );
 
-		for (maps = 0 ; maps < MAXLIGHTMAPS && surf->styles[maps] != 255 ;
-			 maps++)
+		for (maps = 0; maps < MAXLIGHTMAPS && surf->styles[maps] != 255; maps++)
 		{
 			bl = s_blocklights;
 
-			for (i=0 ; i<3 ; i++)
+			for (i = 0; i < 3; i++)
 				scale[i] = r_modulate->value*r_newrefdef.lightstyles[surf->styles[maps]].rgb[i];
 
 			if ( scale[0] == 1.0F &&
 				 scale[1] == 1.0F &&
 				 scale[2] == 1.0F )
 			{
-				for (i=0 ; i<size ; i++, bl+=3 )
+				for (i = 0; i < size; i++, bl+=3 )
 				{
 					bl[0] += lightmap[i*3+0];
 					bl[1] += lightmap[i*3+1];
@@ -1092,7 +1088,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 			}
 			else
 			{
-				for (i=0 ; i<size ; i++, bl+=3)
+				for (i = 0; i < size; i++, bl+=3)
 				{
 					bl[0] += lightmap[i*3+0] * scale[0];
 					bl[1] += lightmap[i*3+1] * scale[1];
@@ -1116,9 +1112,9 @@ store:
 
 	if ( monolightmap == '0' )
 	{
-		for (i=0 ; i<tmax ; i++, dest += stride)
+		for (i = 0; i < tmax; i++, dest += stride)
 		{
-			for (j=0 ; j<smax ; j++)
+			for (j = 0; j < smax; j++)
 			{
 				
 				r = Q_ftol( bl[0] );
@@ -1187,9 +1183,9 @@ store:
 	}
 	else
 	{
-		for (i=0 ; i<tmax ; i++, dest += stride)
+		for (i = 0; i < tmax; i++, dest += stride)
 		{
-			for (j=0 ; j<smax ; j++)
+			for (j = 0; j < smax; j++)
 			{
 				
 				r = Q_ftol( bl[0] );
@@ -1358,14 +1354,14 @@ void R_BeginBuildingLightmaps (model_t *m)
 	int				i;
 	unsigned		dummy[LM_BLOCK_WIDTH*LM_BLOCK_HEIGHT];	// 128*128
 
-	memset( gl_lms.allocated, 0, sizeof(gl_lms.allocated) );
+	memset (gl_lms.allocated, 0, sizeof(gl_lms.allocated));
 
 #ifdef BATCH_LM_UPDATES
 	// free lightmap update buffers
-	for (i=0; i<MAX_LIGHTMAPS; i++)
+	for (i = 0; i < MAX_LIGHTMAPS; i++)
 	{
 		if (gl_lms.lightmap_update[i])
-			Z_Free(gl_lms.lightmap_update[i]);
+			Z_Free (gl_lms.lightmap_update[i]);
 		gl_lms.lightmap_update[i] = NULL;
 		gl_lms.modified[i] = false;
 		gl_lms.lightrect[i].left = LM_BLOCK_WIDTH;
@@ -1378,11 +1374,11 @@ void R_BeginBuildingLightmaps (model_t *m)
 	r_framecount = 1;		// no dlightcache
 
 	GL_EnableMultitexture (true);
-	GL_SelectTexture(1);
+	GL_SelectTexture (1);
 
 	// setup the base lightstyles so the lightmaps won't have to be regenerated
 	// the first time they're seen
-	for (i=0 ; i<MAX_LIGHTSTYLES ; i++)
+	for (i = 0; i < MAX_LIGHTSTYLES; i++)
 	{
 		lightstyles[i].rgb[0] = 1;
 		lightstyles[i].rgb[1] = 1;
@@ -1391,7 +1387,7 @@ void R_BeginBuildingLightmaps (model_t *m)
 	}
 	r_newrefdef.lightstyles = lightstyles;
 
-	if (!glState.lightmap_textures)
+	if ( !glState.lightmap_textures )
 	{
 		glState.lightmap_textures	= TEXNUM_LIGHTMAPS;
 	//	glState.lightmap_textures	= glState.texture_extension_number;
@@ -1402,7 +1398,7 @@ void R_BeginBuildingLightmaps (model_t *m)
 
 #ifdef BATCH_LM_UPDATES
 	// alloc lightmap update buffer if needed
-	if (!gl_lms.lightmap_update[gl_lms.current_lightmap_texture]) {
+	if ( !gl_lms.lightmap_update[gl_lms.current_lightmap_texture] ) {
 		gl_lms.lightmap_update[gl_lms.current_lightmap_texture] = Z_Malloc (LM_BLOCK_WIDTH*LM_BLOCK_HEIGHT*LIGHTMAP_BYTES);
 	}
 #endif	// BATCH_LM_UPDATES

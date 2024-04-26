@@ -283,7 +283,8 @@ qboolean R_SurfIsDynamic (msurface_t *surf, int *mapNum)
 	int			map;
 	qboolean	is_dynamic = false;
 
-	if (!surf)	return false;
+	if ( !surf )
+		return false;
 	if (r_fullbright->integer != 0)
 		return false;
 
@@ -301,7 +302,7 @@ qboolean R_SurfIsDynamic (msurface_t *surf, int *mapNum)
 	{
 dynamic:
 #ifdef BATCH_LM_UPDATES
-		if (r_dynamic->integer || surf->cached_dlight) {
+		if ( r_dynamic->integer || surf->cached_dlight ) {
 #else
 		if (r_dynamic->integer) {
 #endif	// BATCH_LM_UPDATES
@@ -420,7 +421,7 @@ qboolean R_SurfsAreBatchable (msurface_t *s1, msurface_t *s2)
 		if (s1->lightmaptexturenum != s2->lightmaptexturenum)	// lightmap image must be same
 			return false;
 #ifndef BATCH_LM_UPDATES
-		if (R_SurfIsDynamic(s1, NULL) || R_SurfIsDynamic(s2, NULL)) // can't be dynamically list
+		if (R_SurfIsDynamic(s1, NULL) || R_SurfIsDynamic(s2, NULL)) // can't be dynamically lit
 			return false;
 #endif	// BATCH_LM_UPDATES
 		if ((s1->texinfo->flags & SURF_ALPHATEST) != (s2->texinfo->flags & SURF_ALPHATEST))
@@ -682,7 +683,7 @@ void R_UpdateSurfaceLightmap (msurface_t *surf)
 #endif	// WARP_LIGHTMAPS
 		return;
 
-	if (R_SurfIsDynamic (surf, &map))
+	if ( R_SurfIsDynamic (surf, &map) )
 	{
 		unsigned	*base = gl_lms.lightmap_update[surf->lightmaptexturenum];
 		rect_t		*rect = &gl_lms.lightrect[surf->lightmaptexturenum];
@@ -718,7 +719,7 @@ void R_RebuildLightmaps (void)
 
 	for (i=1; i<gl_lms.current_lightmap_texture; i++)
 	{
-		if (!gl_lms.modified[i])
+		if ( !gl_lms.modified[i] )
 			continue;
 
 		if ( !glConfig.newLMFormat )

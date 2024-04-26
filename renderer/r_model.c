@@ -315,7 +315,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		break;
 	
 	case IDBSPHEADER:
-		loadmodel->extradata = Hunk_Begin (0x2000000); // was 0x1000000
+		loadmodel->extradata = Hunk_Begin (0x4000000); // was 0x1000000
 		Mod_Load_Q2_BrushModel (mod, buf);
 		mod->bspVersion = Q2_BSPVERSION;
 		loadmodel->extradatasize = Hunk_End ();
