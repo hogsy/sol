@@ -111,6 +111,7 @@ char *type_extensions[] =
 	"ogg",
 	"pcx",
 	"wal",
+	"wal_json",
 	"tga",
 	"jpg",
 	"png",

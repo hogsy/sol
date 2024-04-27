@@ -325,6 +325,7 @@
     <ClCompile Include="..\..\qcommon\md4.c" />
     <ClCompile Include="..\..\qcommon\net_chan.c" />
     <ClCompile Include="..\..\qcommon\pmove.c" />
+    <ClCompile Include="..\..\qcommon\wal_json.c" />
     <ClCompile Include="..\..\qcommon\wildcard.c" />
     <ClCompile Include="..\..\renderer\r_alias.c" />
     <ClCompile Include="..\..\renderer\r_alias_md2.c" />

@@ -515,6 +515,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\qcommon\wal_json.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\qcommon\wildcard.c"
 					>
 				</File>

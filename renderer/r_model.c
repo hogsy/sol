@@ -685,6 +685,12 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 {
 	char			path[MAX_QPATH];
 	miptex_t		*mt;
+	miptex_t		json_mt = {0};
+//	color_t			json_color = {0};
+	int				size;
+	byte			*data;
+	char			*jsonStr = NULL;
+	qboolean		json_parsed = false;
 	
 	Com_sprintf (path, sizeof(path), "textures/%s.wal", name);
 
@@ -692,17 +698,39 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 		return;
 
 	FS_LoadFile (path, (void **)&mt); // load .wal file 
-	if (!mt)
-	{	// set null value to tell us to get actual size of texture
-		*width = *height = -1;
-		Mod_AddToWalSizeList(name, *width, *height); // add to list
-		return;
-	}
-	*width = LittleLong (mt->width); // grab size from wal
-	*height = LittleLong (mt->height);
-	FS_FreeFile ((void *)mt); // free the wal
+	if (mt != NULL)
+	{
+		*width = LittleLong (mt->width); // grab size from wal
+		*height = LittleLong (mt->height);
+		FS_FreeFile ((void *)mt); // free the wal
 
-	Mod_AddToWalSizeList(name, *width, *height); // add to list
+		Mod_AddToWalSizeList(name, *width, *height); // add to list
+	}
+	else
+	{	// Try loading .wal_json if .wal fails
+		Com_sprintf (path, sizeof(path), "textures/%s.wal_json", name);
+		size = FS_LoadFile (path, &data);
+		jsonStr = (char *)data;
+		if (jsonStr)
+		{
+			mt = &json_mt;
+			json_parsed = Com_ParseWalJSON (path, jsonStr, size, mt, /*&json_color,*/ false);
+			if (json_parsed) {
+				*width = mt->width;
+				*height = mt->height;
+				Mod_AddToWalSizeList (name, *width, *height); // add to list
+			}
+			FS_FreeFile (data);
+			data = NULL;
+			jsonStr = NULL;
+		}
+
+		if ( !json_parsed ) {
+			// set null value to tell us to get actual size of texture
+			*width = *height = -1;
+			Mod_AddToWalSizeList (name, *width, *height); // add to list
+		}
+	}
 }
 
 

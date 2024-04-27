@@ -60,7 +60,8 @@ Changes as of v0.20 update 8:
 - Added support for BSPs compiled with lightmaps on warp surfaces.  Set cvar r_load_warp_lightmaps to 1 to enable loading of warp lightmaps.
 	Set cvar r_warp_lighting to 2 to enable drawing of warp lightmaps.
 	
-- Added support for Kex flares (misc_flare).  Uses cvar r_drawflares to disable drawing, and cvar r_occlusion_test to toggle use of occlusion queries.
+- Added support for Kex flares (misc_flare).  Uses cvar r_drawflares to disable drawing, and cvar r_occlusion_test to toggle use of
+	occlusion queries.
 
 - Added support for mapper-controlled skybox draw distance.  See kmquake2_lazarus.txt for details.
 
@@ -143,6 +144,8 @@ Changes as of v0.20 update 8:
 - Changed screenshot filenames to kmquake2_####, now supporting up to 10,000 screenshots.
 
 - Removed size limit of 512x256 for .wal textures.  This fixes the "GL_Upload8: too large" error with 512x512 or larger .wal textures.
+
+- Added support for using .wal_json scripts as texture size references instead of .wal textures.
 
 - Increased map texinfo limit from 8192 to 65536.
 
