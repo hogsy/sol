@@ -47,6 +47,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qgl.h"
 
+// define REF_INCLUDE so that the right print/utility function calls
+// are used in shared code
+//#define REF_INCLUDE
+
 // up / down
 #define	PITCH	0
 // left / right
@@ -888,6 +892,12 @@ void R_SetFogVars (qboolean enable, int model, int density,
 // r_fragment.c
 //
 int R_MarkFragments (const vec3_t origin, const vec3_t axis[3], float radius, int maxPoints, vec3_t *points, int maxFragments, markFragment_t *fragments);
+
+
+//
+// wal_json.c
+//
+qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, /*color_t *color,*/ qboolean verbose);
 
 
 /*

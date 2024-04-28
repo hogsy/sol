@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // wal_json.c
 
-#include "qcommon.h"
+#include "../renderer/r_local.h"
 #include "../libraries/jsmn/jsmn.h"
 
 /*
@@ -136,8 +136,8 @@ static unsigned int contentflags_from_string (const char *flagName)
 
 static void jsonprintf (qboolean verbose, char *format, ...)
 {
-	va_list argptr;
-	char	buf[1024];
+	va_list		argptr;
+	char		buf[1024];
 
 	if ( !verbose )
 		return;
@@ -146,7 +146,11 @@ static void jsonprintf (qboolean verbose, char *format, ...)
 	Q_vsnprintf (buf, sizeof(buf), format, argptr);
 	va_end (argptr);
 
-	Com_DPrintf (buf);
+//#ifdef REF_INCLUDE
+	VID_Printf (PRINT_DEVELOPER, "%s", buf);
+/*#else
+	Com_DPrintf ("%s", buf);
+#endif */
 }
 
 static int jsoneq (const char *json, jsmntok_t *tok, const char *s)

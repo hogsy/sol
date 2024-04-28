@@ -1066,21 +1066,10 @@ qboolean	FS_RoguePath (void);
 /*
 ==============================================================
 
-WAL_JSON PARSING
-
-==============================================================
-*/
-
-qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, /*color_t *color,*/ qboolean verbose);
-
-/*
-==============================================================
-
 MISC
 
 ==============================================================
 */
-
 
 #define	ERR_FATAL	0		// exit the entire game with a popup window
 #define	ERR_DROP	1		// print to console and disconnect from game

@@ -1669,7 +1669,7 @@ qboolean R_CheckGLExtensions (char *reason)
 	//		VID_Printf (PRINT_ALL, "...ignoring GL_EXT_stencil_two_side\n");
 	}
 	else
-		Com_Printf("...GL_EXT_stencil_two_side not found\n");
+		VID_Printf (PRINT_ALL, "...GL_EXT_stencil_two_side not found\n");
 
 	// GL_ARB_fragment_program
 	glConfig.arb_fragment_program = false;
@@ -2131,10 +2131,10 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 		return false;
 
 /*
-	Com_Printf( "Size of dlights: %i\n", sizeof (dlight_t)*MAX_DLIGHTS );
-	Com_Printf( "Size of entities: %i\n", sizeof (entity_t)*MAX_ENTITIES );
-	Com_Printf( "Size of particles: %i\n", sizeof (particle_t)*MAX_PARTICLES );
-	Com_Printf( "Size of decals: %i\n", sizeof (particle_t)*MAX_DECAL_FRAGS );
+	VID_Printf (PRINT_ALL, "Size of dlights: %i\n", sizeof (dlight_t)*MAX_DLIGHTS);
+	VID_Printf (PRINT_ALL, "Size of entities: %i\n", sizeof (entity_t)*MAX_ENTITIES);
+	VID_Printf (PRINT_ALL, "Size of particles: %i\n", sizeof (particle_t)*MAX_PARTICLES);
+	VID_Printf (PRINT_ALL, "Size of decals: %i\n", sizeof (particle_t)*MAX_DECAL_FRAGS);
 */
 
 	// set r_clearColor

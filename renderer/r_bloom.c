@@ -239,7 +239,7 @@ void R_Bloom_InitTextures (void)
 		screen_texture_height > glConfig.maxTextureSize ) {
 		screen_texture_width = screen_texture_height = 0;
 		Cvar_SetValue ("r_bloom", 0);
-		Com_Printf( "WARNING: 'R_InitBloomScreenTexture' too high resolution for Light Bloom. Effect disabled\n" );
+		VID_Printf (PRINT_ALL, "WARNING: 'R_InitBloomScreenTexture' too high resolution for Light Bloom. Effect disabled\n");
 		return;
 	}*/
 
