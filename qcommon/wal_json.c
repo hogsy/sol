@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // wal_json.c
 
-#include "../renderer/r_local.h"
+#include "qcommon.h"
 #include "../libraries/jsmn/jsmn.h"
 
 /*
@@ -146,11 +146,7 @@ static void jsonprintf (qboolean verbose, char *format, ...)
 	Q_vsnprintf (buf, sizeof(buf), format, argptr);
 	va_end (argptr);
 
-//#ifdef REF_INCLUDE
-	VID_Printf (PRINT_DEVELOPER, "%s", buf);
-/*#else
 	Com_DPrintf ("%s", buf);
-#endif */
 }
 
 static int jsoneq (const char *json, jsmntok_t *tok, const char *s)
@@ -162,7 +158,7 @@ static int jsoneq (const char *json, jsmntok_t *tok, const char *s)
 	return -1;
 }
 
-qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, /*color_t *color,*/ qboolean verbose)
+qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, color_t *color, qboolean verbose)
 {
 	jsmn_parser		p;
 	jsmntok_t		tok[1024];	//, *tok2;
@@ -171,7 +167,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 	char			keyStr[1024];
 	char			valStr[1024];
 
-	if ( !jsonStr || !mt /*|| !color*/ ) {
+	if ( !jsonStr || !mt || !color ) {
 		jsonprintf (verbose, "ParseWalJSON (%s): called with NULL pointer(s)\n", fileName);
 		return false;
 	}
@@ -202,6 +198,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 	// We're only grabbing the width and height here, so zero everything else
 	mt->value = mt->flags = mt->contents = 0;
 	mt->animname[0] = 0;
+	(*color)[0] = (*color)[1] = (*color)[2] = 0;
 
 	// Parse all keys of JSON root object
 	for (i = 1; i < nElements; i++)

@@ -686,7 +686,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 	char			path[MAX_QPATH];
 	miptex_t		*mt;
 	miptex_t		json_mt = {0};
-//	color_t			json_color = {0};
+	color_t			json_color = {0};
 	int				size;
 	byte			*data;
 	char			*jsonStr = NULL;
@@ -714,7 +714,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 		if (jsonStr)
 		{
 			mt = &json_mt;
-			json_parsed = Com_ParseWalJSON (path, jsonStr, size, mt, /*&json_color,*/ false);
+			json_parsed = Com_ParseWalJSON (path, jsonStr, size, mt, &json_color, false);
 			if (json_parsed) {
 				*width = mt->width;
 				*height = mt->height;

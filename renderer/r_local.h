@@ -894,12 +894,6 @@ void R_SetFogVars (qboolean enable, int model, int density,
 int R_MarkFragments (const vec3_t origin, const vec3_t axis[3], float radius, int maxPoints, vec3_t *points, int maxFragments, markFragment_t *fragments);
 
 
-//
-// wal_json.c
-//
-qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, /*color_t *color,*/ qboolean verbose);
-
-
 /*
 ** GL config stuff
 */

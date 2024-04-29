@@ -1066,6 +1066,16 @@ qboolean	FS_RoguePath (void);
 /*
 ==============================================================
 
+WAL_JSON PARSING
+
+==============================================================
+*/
+
+qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, color_t *color, qboolean verbose);
+
+/*
+==============================================================
+
 MISC
 
 ==============================================================

@@ -273,6 +273,10 @@ SOURCE=..\..\game\q_shared.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\qcommon\wal_json.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\qcommon\wildcard.c
 # End Source File
 # End Group
@@ -450,10 +454,6 @@ SOURCE=..\..\renderer\r_vlights.c
 # Begin Source File
 
 SOURCE=..\..\renderer\r_warp.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\qcommon\wal_json.c
 # End Source File
 # Begin Source File
 
