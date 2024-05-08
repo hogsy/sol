@@ -249,6 +249,12 @@ void UI_Precache (void)
 	R_DrawFindPic (UI_SLIDER_PIC);
 	R_DrawFindPic (UI_ARROWS_PIC);
 	R_DrawFindPic (UI_SCROLLKNOB_PIC);
+
+	// Playerconfig menu elements
+//	R_DrawFindPic (UI_CUSTOMCOLOR_PIC);
+//	R_DrawFindPic (UI_SOLIDWHITE_PIC);
+	R_DrawFindPic (UI_RAILCORE_PIC);
+	R_DrawFindPic (UI_RAILSPIRAL_PIC);
 }
 
 
