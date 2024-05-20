@@ -293,11 +293,11 @@ typedef struct
 
 typedef struct
 {
-    vec3_t			mins;
+	vec3_t			mins;
 	vec3_t			maxs;
-    vec3_t			translate;
-    float			radius;
-    char			creator[16];
+	vec3_t			translate;
+	float			radius;
+	char			creator[16];
 } dmd3frame_t;
 
 typedef struct 
@@ -321,43 +321,43 @@ typedef struct
 
 typedef struct
 {
-    char			id[4];
+	int				id;
 
-    char			name[MD3_MAX_PATH];
+	char			name[MD3_MAX_PATH];
 
 	int				flags;
 
-    int				num_frames;
-    int				num_skins;
-    int				num_verts;
-    int				num_tris;
+	int				num_frames;
+	int				num_skins;
+	int				num_verts;
+	int				num_tris;
 
-    int				ofs_tris;
-    int				ofs_skins;
-    int				ofs_tcs;
-    int				ofs_verts;
+	int				ofs_tris;
+	int				ofs_skins;
+	int				ofs_tcs;
+	int				ofs_verts;
 
-    int				meshsize;
+	int				meshsize;
 } dmd3mesh_t;
 
 typedef struct
 {
-    int				id;
-    int				version;
+	int				id;
+	int				version;
 
-    char			filename[MD3_MAX_PATH];
+	char			filename[MD3_MAX_PATH];
 
 	int				flags;
 
-    int				num_frames;
-    int				num_tags;
-    int				num_meshes;
-    int				num_skins;
+	int				num_frames;
+	int				num_tags;
+	int				num_meshes;
+	int				num_skins;
 
-    int				ofs_frames;
-    int				ofs_tags;
-    int				ofs_meshes;
-    int				ofs_end;
+	int				ofs_frames;
+	int				ofs_tags;
+	int				ofs_meshes;
+	int				ofs_end;
 } dmd3_t;
 
 /*

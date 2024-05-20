@@ -204,6 +204,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	model_t			*mod;
 	unsigned int	*buf;
 	int				i, modHeader;
+//	size_t			predictedSize = 0;
 	
 	if (!name[0])
 		VID_Error (ERR_DROP, "Mod_ForName: NULL name");
@@ -268,7 +269,6 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	// call the apropriate loader
 	
 	modHeader = LittleLong(*(unsigned int *)buf);
-//	switch (LittleLong(*(unsigned int *)buf))
 	switch (modHeader)
 	{
 	case IDMDLHEADER:
@@ -281,10 +281,12 @@ model_t *Mod_ForName (char *name, qboolean crash)
 
 	case IDMD2HEADER:
 #ifdef MD2_AS_MD3
+	//	predictedSize = Mod_GetAllocSizeMD2 (mod, buf);
 	//	loadmodel->extradata = Hunk_Begin (0x800000); // was 0x500000
 		loadmodel->extradata = ModChunk_Begin (Mod_GetAllocSizeMD2New (mod, buf));
 		Mod_LoadAliasMD2ModelNew (mod, buf);
 #else	// MD2_AS_MD3
+	//	predictedSize = Mod_GetAllocSizeMD2Old (mod, buf);
 	//	loadmodel->extradata = Hunk_Begin (0x200000);
 		loadmodel->extradata = ModChunk_Begin (Mod_GetAllocSizeMD2Old (mod, buf));
 		Mod_LoadAliasMD2ModelOld (mod, buf);
@@ -293,6 +295,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		break;
 
 	case IDMD3HEADER:
+	//	predictedSize = Mod_GetAllocSizeMD3 (mod, buf);
 	//	loadmodel->extradata = Hunk_Begin (0x800000);
 		loadmodel->extradata = ModChunk_Begin (Mod_GetAllocSizeMD3 (mod, buf));
 		Mod_LoadAliasMD3Model (mod, buf);
@@ -308,6 +311,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		break;
 
 	case IDSP2HEADER:
+	//	predictedSize = Mod_GetAllocSizeSP2 (mod, buf);
 	//	loadmodel->extradata = Hunk_Begin (0x10000);
 		loadmodel->extradata = ModChunk_Begin (Mod_GetAllocSizeSP2 (mod, buf));
 		Mod_LoadSP2Model (mod, buf);
@@ -327,6 +331,16 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	}
 
 //	loadmodel->extradatasize = Hunk_End ();
+
+	// Knightmare- test our predicted alloc size
+/*	if (modHeader != IDBSPHEADER)
+//	if ( (modHeader == IDMDLHEADER) || (modHeader == IDSPRHEADER) )
+	{
+		if (predictedSize != loadmodel->extradatasize)
+			ri.Con_Printf (PRINT_DEVELOPER, "Mod_ForName: predicted alloc size mismatch for model %s, %i != %i\n", mod->name, predictedSize, loadmodel->extradatasize);
+		else
+			ri.Con_Printf (PRINT_DEVELOPER, "Mod_ForName: predicted alloc size match for model %s, %i == %i\n",  mod->name, predictedSize, loadmodel->extradatasize);
+	} */
 
 	FS_FreeFile (buf);
 
@@ -3193,8 +3207,7 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 	{
 		memcpy (poutMesh->name, pinMesh->name, MD3_MAX_PATH);
 
-		if ( strncmp ((const char *)pinMesh->id, "IDP3", 4))
-		{
+		if (LittleLong((int)pinMesh->id) != IDMD3HEADER) {
 			VID_Error ( ERR_DROP, "mesh %s in model %s has wrong id (%i should be %i)",
 					 poutMesh->name, mod->name, LittleLong((int)pinMesh->id), IDMD3HEADER );
 		}
