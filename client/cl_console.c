@@ -976,8 +976,8 @@ void Con_DrawConsole (float frac, qboolean trans)
 		R_DrawFill ((int)picLeft + (int)picWidth, 0, (int)pboxWidth, lines-(int)barheight, 0, 0, 0, (int)(alpha*255.0f));
 	}
 
-	// changed to "KMQuake2 vx.xx"
-	Com_sprintf (version, sizeof(version), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT"KMQuake2 v%4.2fu%d", VERSION, VERSION_UPDATE);
+	// changed to "KMQuake2 vx.xx cpuarch"
+	Com_sprintf (version, sizeof(version), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT"KMQuake2 v%4.2fu%d %s", VERSION, VERSION_UPDATE, CPUSTRING);
 
 	Con_DrawString ((int)(conLeft+conWidth)-FONT_SIZE*(stringLen((const char *)&version))-3, y-(int)(1.25*FONT_SIZE), version, FONT_CONSOLE, 255);
 
