@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-/*QUAKED misc_flare (1.0 1.0 0.0) (-32 -32 -32) (32 32 32) RED GREEN BLUE LOCK_ANGLE
+/*QUAKED misc_flare (1.0 1.0 0.0) (-8 -8 -8) (8 8 8) RED GREEN BLUE LOCK_ANGLE
 Creates a flare as seen in the N64 Q2 version.
 RED					specifies a red outer rim
 GREEN				specifies a green outer rim
