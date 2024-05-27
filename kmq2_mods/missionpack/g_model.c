@@ -279,10 +279,8 @@ void SP_model_spawn (edict_t *ent)
 	}
 
 	// Knightmare- support for angled sprites
-#ifdef KMQUAKE2_ENGINE_MOD
 	if (st.spritetype == 1)
 		ent->s.renderfx |= RF_SPRITE_ORIENTED;
-#endif
 
 	if (st.noise)
 		ent->noise_index = gi.soundindex  (st.noise);
