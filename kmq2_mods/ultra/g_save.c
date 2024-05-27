@@ -99,13 +99,13 @@ field_t fields[] = {
 	{"cloud3tile", STOFS(cloud3tile), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
 	{"cloud3speed", STOFS(cloud3speed), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
 	{"cloud3alpha", STOFS(cloud3alpha), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	// Knightmare- added for misc_flare
 	{"radius", STOFS(radius), F_FLOAT, FFL_SPAWNTEMP},
 	{"alpha", STOFS(alpha), F_FLOAT, FFL_SPAWNTEMP},
 	{"fade_start_dist", STOFS(fade_start_dist), F_INT, FFL_SPAWNTEMP},
 	{"fade_end_dist", STOFS(fade_end_dist), F_INT, FFL_SPAWNTEMP},
 	{"image", STOFS(image), F_LSTRING, FFL_SPAWNTEMP},
 	{"rgba", STOFS(rgba), F_LSTRING, FFL_SPAWNTEMP},
+	{"spritetype", STOFS(spritetype), F_INT, FFL_SPAWNTEMP},
 
 	// temp spawn vars -- only valid when the spawn function is called
 	{"lip", STOFS(lip), F_INT, FFL_SPAWNTEMP},

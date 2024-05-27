@@ -415,6 +415,9 @@ typedef struct
 	int			fade_end_dist;
 	char		*image;
 	char		*rgba;
+
+	// Knightmare- added for angled sprites
+	int			spritetype;
 } spawn_temp_t;
 
 

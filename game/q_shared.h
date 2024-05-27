@@ -946,6 +946,9 @@ typedef struct
 #define RF_FLARE_LOCK_ANGLE	RF_MINLIGHT
 // end Kex additions
 
+// Knightmare- denotes a sprite that is angled vertically
+#define	RF_SPRITE_ORIENTED	RF_MINLIGHT
+
 #define RF_MASK_SHELL		(RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE|RF_SHELL_DOUBLE|RF_SHELL_HALF_DAM)
 
 // player_state_t->refdef flags

@@ -42,10 +42,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //	NO_MODEL		Don't use a model. Usefull for placeing particle effects and
 //				dynamic lights on their own
 //
-//  "delay"      = Combine with TOGGLE spawnflag to start off
+//	"delay"      = Combine with TOGGLE spawnflag to start off
 //	"usermodel"  = The model to load (models/ is already coded)
 //	"startframe" = The starting frame : default 0
-//	"userframes" = The number of frames you want to display after startframe
+//	"framenumbers" = The number of frames you want to display after startframe
+//	"spritetype"   = Set this to 1 to make sprites render as angled and vertical
 //	"solidstate" = 1 : SOLID_NOT - not solid at all
 //			       2 : SOLID_BBOX - solid and affected by gravity
 //			       3 : NO DROP - solid but not affected by gravity
@@ -231,7 +232,7 @@ void SP_model_spawn (edict_t *ent)
 		}
 		else
 		{
-			if (strstr(ent->usermodel,".sp2")) {
+			if (strstr(ent->usermodel, ".sp2")) {
 				// Knightmare- check for "sprites/" already in path
 				if ( !strncmp(ent->usermodel, "sprites/", 8) )
 					Com_sprintf (modelname, sizeof(modelname), "%s", ent->usermodel);
@@ -250,6 +251,12 @@ void SP_model_spawn (edict_t *ent)
 		ent->s.frame = ent->startframe;
 	}
 
+	// Knightmare- support for angled sprites
+#ifdef KMQUAKE2_ENGINE_MOD
+	if (st.spritetype == 1)
+		ent->s.renderfx |= RF_SPRITE_ORIENTED;
+#endif
+
 	if (st.noise)
 		ent->noise_index = gi.soundindex (st.noise);
 	ent->s.sound = ent->noise_index;
@@ -257,7 +264,7 @@ void SP_model_spawn (edict_t *ent)
 	ent->s.loop_attenuation = ent->attenuation;
 #endif
 
-	if (ent->skinnum) // Knightmare- selectable skin
+	if (ent->skinnum)		// Knightmare- selectable skin
 		ent->s.skinnum = ent->skinnum;
 
 	if (ent->spawnflags & ANIM_ONCE) {

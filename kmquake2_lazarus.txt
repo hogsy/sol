@@ -38,7 +38,7 @@ Support for custom sounds for doors, plats, func_trackchanges, and buttons.  To 
 Support for mapper-specified Ogg Vorbis music.  Use the key "musictrack" in the worldspawn to specify
 	the name of the track, e.g. a musictrack key "foo" will play "gamedir/music/foo.ogg".  This key
 	also works with target_cd.  Tracks are not yet supported inside pak or pk3 files.
-
+	
 Support for mapper-specified skyboxes with clouds.  Skyboxes must be made with an alpha channel to define
 	the foreground and horizon line that is drawn in front of the clouds.
 	The following keys can be set in worldpsawn and target_sky:
@@ -56,6 +56,9 @@ Support for mapper-specified skyboxes with clouds.  Skyboxes must be made with a
 	"cloud1alpha"	translucency of first cloud layer (default 0.9)
 	"cloud2alpha"	translucency of second cloud layer (default 0.6)
 	"cloud3alpha"	translucency of third cloud layer (default 0.0)
+	
+Support for mapper-specified angled sprites using the model_spawn entity.  When the "spritetype" key is set to 1,
+	model_spawn entities using sprites will be drawn vertically, in an X-shaped form.
 
 Support for double-barreled turrets.  Code by Musashi.
 	Set the turret_breach's combattarget to the targetname of the second info_notnull.

@@ -49,11 +49,11 @@ R_DrawSpriteModel
 void R_DrawSpriteModel (entity_t *e)
 {
 	float			alpha = 1.0f;
-	vec3_t			point[4];
+	vec3_t			point[8], v_forward, v_right, v_up;
 	mspritemodel_t	*pSprite;
 	mspriteframe_t	*pFrame;
 	float			*up, *right, scale = 1.0f;
-	int				i, framenum;
+	int				i, nVerts = 4, framenum;
 
 	// don't even bother culling, because it's just a single
 	// polygon without a surface cache
@@ -66,11 +66,21 @@ void R_DrawSpriteModel (entity_t *e)
 
 	if ( !pFrame ) return;
 
-	c_alias_polys += 2;
+	if (e->flags & RF_SPRITE_ORIENTED)
+	{	// angle-locked sprite
+		c_alias_polys += 4;
+		AngleVectors (e->angles, v_forward, v_right, v_up);
+		up = v_up;
+		right = v_right;
 
-	// normal sprite
-	up = vup;
-	right = vright;
+		GL_Disable (GL_CULL_FACE);
+	}
+	else {
+		// normal sprite
+		c_alias_polys += 2;
+		up = vup;
+		right = vright;
+	}
 
 	if (e->scale > 0.0f)
 		scale = e->scale;
@@ -129,8 +139,33 @@ void R_DrawSpriteModel (entity_t *e)
 	indexArray[rb_index++] = rb_vertex+0;
 	indexArray[rb_index++] = rb_vertex+2;
 	indexArray[rb_index++] = rb_vertex+3;
-	for (i=0; i<4; i++) {
-		VA_SetElem2v(texCoordArray[0][rb_vertex], r_spriteTexCoord[i]);
+
+	if (e->flags & RF_SPRITE_ORIENTED)
+	{
+		nVerts = 8;
+
+		VectorMA (e->origin, -(pFrame->origin_y) * scale, up, point[4]);
+		VectorMA (point[4], -(pFrame->origin_x) * scale, v_forward, point[4]);
+
+		VectorMA (e->origin, (pFrame->height - pFrame->origin_y) * scale, up, point[5]);
+		VectorMA (point[5], -(pFrame->origin_x) * scale, v_forward, point[5]);
+
+		VectorMA (e->origin, (pFrame->height - pFrame->origin_y) * scale, up, point[6]);
+		VectorMA (point[6], (pFrame->width - pFrame->origin_x) * scale, v_forward, point[6]);
+
+		VectorMA (e->origin, -(pFrame->origin_y) * scale, up, point[7]);
+		VectorMA (point[7], (pFrame->width - pFrame->origin_x) * scale, v_forward, point[7]);
+
+		indexArray[rb_index++] = rb_vertex+4;
+		indexArray[rb_index++] = rb_vertex+5;
+		indexArray[rb_index++] = rb_vertex+6;
+		indexArray[rb_index++] = rb_vertex+4;
+		indexArray[rb_index++] = rb_vertex+6;
+		indexArray[rb_index++] = rb_vertex+7;
+	}
+
+	for (i = 0; i < nVerts; i++) {
+		VA_SetElem2v(texCoordArray[0][rb_vertex], r_spriteTexCoord[i%4]);
 		VA_SetElem3v(vertexArray[rb_vertex], point[i]);
 		VA_SetElem4(colorArray[rb_vertex], 1.0f, 1.0f, 1.0f, alpha);
 		rb_vertex++;
@@ -146,6 +181,11 @@ void R_DrawSpriteModel (entity_t *e)
 	R_SetVertexRGBScale (false);
 
 	RB_DrawMeshTris ();
+
+	if (e->flags & RF_SPRITE_ORIENTED) {
+		GL_Enable (GL_CULL_FACE);
+	}
+
 	rb_vertex = rb_index = 0;
 }
 

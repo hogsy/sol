@@ -42,7 +42,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //	"usermodel" = The model to load (models/ is already coded)
 //	"startframe" = The starting frame : default 0
-//	"userframes" = The number of frames you want to display after startframe
+//	"framenumbers" = The number of frames you want to display after startframe
+//	"spritetype"   = Set this to 1 to make sprites render as angled and vertical
 //	"solidstate" = 1 : SOLID_NOT - not solid at all
 //			       2 : SOLID_BBOX - solid and affected by gravity
 //			       3 : NO DROP - solid but not affected by gravity
@@ -242,6 +243,12 @@ void SP_model_spawn (edict_t *ent)
 		}
 		ent->s.frame = ent->startframe;
 	}
+
+	// Knightmare- support for angled sprites
+#ifdef KMQUAKE2_ENGINE_MOD
+	if (st.spritetype == 1)
+		ent->s.renderfx |= RF_SPRITE_ORIENTED;
+#endif
 
 	if (st.noise)
 		ent->noise_index = gi.soundindex  (st.noise);

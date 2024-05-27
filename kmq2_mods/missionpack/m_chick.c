@@ -977,7 +977,7 @@ void monster_chick_soundcache (edict_t *self)
 }
 
 
-/*QUAKED monster_chick (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight Blind NoGib HomingRockets
+/*QUAKED monster_chick (1 .5 0) (-16 -16 -8) (16 16 48) Ambush Trigger_Spawn Sight Blind NoGib HomingRockets
 Blind - monster will just stand there until triggered
 */
 void SP_monster_chick (edict_t *self)

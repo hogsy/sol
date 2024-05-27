@@ -35,6 +35,7 @@ Note: The animation flags override startframe and framenumbers settings you may 
 "usermodel"		The model to load (models/ is already coded)
 "startframe"	The starting frame : default 0
 "framenumbers"  The number of frames you want to display after startframe
+"spritetype"	Set this to 1 to make sprites render as angled and vertical
 "skinnum"		The skin number to use, default 0
 "health"		If non-zero and solidstate is 3 or 4 (solid), the entity will be shootable. When destroyed, it blows up with a no-damage explosion. 
 "solidstate" 
@@ -276,6 +277,12 @@ void SP_model_spawn (edict_t *ent)
 		}
 		ent->s.frame = ent->startframe;
 	}
+
+	// Knightmare- support for angled sprites
+#ifdef KMQUAKE2_ENGINE_MOD
+	if (st.spritetype == 1)
+		ent->s.renderfx |= RF_SPRITE_ORIENTED;
+#endif
 
 	if (st.noise)
 		ent->noise_index = gi.soundindex  (st.noise);
