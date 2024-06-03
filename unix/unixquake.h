@@ -26,5 +26,5 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define WINDOWNAME "KMQuake2"
 #endif
 #ifndef SAVENAME
-#define SAVENAME "quake2"
+#define SAVENAME "kmquake2"
 #endif

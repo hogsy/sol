@@ -63,7 +63,7 @@ static char	download_dir[MAX_OSPATH];
 // General routines
 // =======================================================================
 
-void Sys_ConsoleOutput (char *string)
+void Sys_ConsoleOutput (const char *string)
 {
 	if (nostdout && nostdout->value)
 		return;

@@ -32,7 +32,7 @@ BUILD_LIBDIR=NO                 # Use LIBDIR to read data and renderers (indepen
 ######################################
 
 WINDOWNAME=KMQuake2
-SAVENAME=quake2
+SAVENAME=kmquake2
 VERSION=0.20
 MOUNT_DIR=.
 BUILD_DEBUG_DIR=build_debug
@@ -58,7 +58,7 @@ endif
 CLIENT_DIR=$(MOUNT_DIR)/client
 UI_DIR=$(MOUNT_DIR)/ui
 SERVER_DIR=$(MOUNT_DIR)/server
-REF_GL_DIR=$(MOUNT_DIR)/renderer
+REND_GL1_DIR=$(MOUNT_DIR)/renderer
 COMMON_DIR=$(MOUNT_DIR)/qcommon
 UNIX_DIR=$(MOUNT_DIR)/unix
 GAME_DIR=$(MOUNT_DIR)/game
@@ -70,9 +70,6 @@ LDFLAGS+=-lvorbisfile
 #C runtime, zlib
 LDFLAGS+=-lm -lz
 
-#C runtime, dlopen()/dlclose()
-LDFLAGS+=-ldl
-
 #LOCALBASE?=/usr
 LOCALBASE?=/usr/local
 PREFIX?=$(LOCALBASE)
@@ -82,7 +79,7 @@ LIBDIR?=$(LOCALBASE)/lib/kmquake2
 
 SDL_CONFIG?=sdl2-config
 SDLCFLAGS=$(shell $(SDL_CONFIG) --cflags)
-SDLLDFLAGS=$(shell $(SDL_CONFIG) --libs) -lpng -ljpeg -lcurl
+SDLLDFLAGS=$(shell $(SDL_CONFIG) --libs) -lpng -ljpeg
 SDLGLCFLAGS=$(SDLCFLAGS) -DOPENGL
 SDLGLLDFLAGS=$(SDLLDFLAGS)
 
@@ -134,11 +131,11 @@ DO_SHLIB_AS=$(CC) $(CFLAGS) $(SHLIBCFLAGS) -DELF -x assembler-with-cpp -o $@ -c 
 
 
 ifeq ($(strip $(BUILD_KMQUAKE2)),YES)
-  TARGETS+=$(BINDIR)/kmquake2
+  TARGETS+=$(BINDIR)/kmquake2_$(LIBARCHNAME)
 endif
 
 ifeq ($(strip $(BUILD_KMQUAKE2_DEDICATED)),YES)
- TARGETS += $(BINDIR)/kmquake2_netserver
+ TARGETS += $(BINDIR)/kmquake2_netserver_$(LIBARCHNAME)
 endif
 
 ifeq ($(strip $(BUILD_GAME)),YES)
@@ -167,7 +164,7 @@ debug:
 		$(BINDIR)/baseq2 \
 		$(BUILD_DEBUG_DIR)/client \
 		$(BUILD_DEBUG_DIR)/ded \
-		$(BUILD_DEBUG_DIR)/ref_gl \
+		$(BUILD_DEBUG_DIR)/rend_gl1 \
 		$(BUILD_DEBUG_DIR)/game
 		
 	$(MAKE) targets BUILDDIR=$(BUILD_DEBUG_DIR) CFLAGS+="$(DEBUG_CFLAGS) -DKMQUAKE2_VERSION='\"$(VERSION) Debug\"' -DWINDOWNAME='\"$(WINDOWNAME)\"' -DSAVENAME='\"$(SAVENAME)\"'"
@@ -177,7 +174,7 @@ release:
 		$(BINDIR)/baseq2 \
 		$(BUILD_RELEASE_DIR)/client \
 		$(BUILD_RELEASE_DIR)/ded \
-		$(BUILD_RELEASE_DIR)/ref_gl \
+		$(BUILD_RELEASE_DIR)/rend_gl1 \
 		$(BUILD_RELEASE_DIR)/game
 
 	$(MAKE) targets BUILDDIR=$(BUILD_RELEASE_DIR) CFLAGS+="$(RELEASE_CFLAGS) -DKMQUAKE2_VERSION='\"$(VERSION)\"' -DWINDOWNAME='\"$(WINDOWNAME)\"' -DSAVENAME='\"$(SAVENAME)\"'"
@@ -197,9 +194,9 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/cl_ents.o \
 	$(BUILDDIR)/client/cl_event.o \
 	$(BUILDDIR)/client/cl_http.o \
-	$(BUILDDIR)/client/cl_input.o \
 	$(BUILDDIR)/client/cl_hud.o \
 	$(BUILDDIR)/client/cl_hud_script.o \
+	$(BUILDDIR)/client/cl_input.o \
 	$(BUILDDIR)/client/cl_keys.o \
 	$(BUILDDIR)/client/cl_lights.o \
 	$(BUILDDIR)/client/cl_loc.o \
@@ -259,6 +256,7 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/filesystem.o \
 	$(BUILDDIR)/client/md4.o \
 	$(BUILDDIR)/client/net_chan.o \
+	$(BUILDDIR)/client/wal_json.o \
 	$(BUILDDIR)/client/wildcard.o \
 	$(BUILDDIR)/client/zip.o \
 	$(BUILDDIR)/client/unzip.o \
@@ -283,34 +281,34 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/q_shared.o \
 	$(BUILDDIR)/client/pmove.o \
 	\
-	$(BUILDDIR)/ref_gl/r_alias.o \
-	$(BUILDDIR)/ref_gl/r_alias_md2.o \
-	$(BUILDDIR)/ref_gl/r_alias_misc.o \
-	$(BUILDDIR)/ref_gl/r_arb_program.o \
-	$(BUILDDIR)/ref_gl/r_backend.o \
-	$(BUILDDIR)/ref_gl/r_beam.o \
-	$(BUILDDIR)/ref_gl/r_bloom.o \
-	$(BUILDDIR)/ref_gl/r_draw.o \
-	$(BUILDDIR)/ref_gl/r_entity.o \
-	$(BUILDDIR)/ref_gl/r_fog.o \
-	$(BUILDDIR)/ref_gl/r_fragment.o \
-	$(BUILDDIR)/ref_gl/r_glstate.o \
-	$(BUILDDIR)/ref_gl/r_image.o \
-	$(BUILDDIR)/ref_gl/r_light.o \
-	$(BUILDDIR)/ref_gl/r_main.o \
-	$(BUILDDIR)/ref_gl/r_misc.o \
-	$(BUILDDIR)/ref_gl/r_model.o \
-	$(BUILDDIR)/ref_gl/r_particle.o \
-	$(BUILDDIR)/ref_gl/r_sky.o \
-	$(BUILDDIR)/ref_gl/r_sprite.o \
-	$(BUILDDIR)/ref_gl/r_surface.o \
-	$(BUILDDIR)/ref_gl/r_upscale.o \
-	$(BUILDDIR)/ref_gl/r_utils.o \
-	$(BUILDDIR)/ref_gl/r_vlights.o \
-	$(BUILDDIR)/ref_gl/r_warp.o \
-	$(BUILDDIR)/ref_gl/sdl_gl.o \
+	$(BUILDDIR)/rend_gl1/r_alias.o \
+	$(BUILDDIR)/rend_gl1/r_alias_md2.o \
+	$(BUILDDIR)/rend_gl1/r_alias_misc.o \
+	$(BUILDDIR)/rend_gl1/r_arb_program.o \
+	$(BUILDDIR)/rend_gl1/r_backend.o \
+	$(BUILDDIR)/rend_gl1/r_beam.o \
+	$(BUILDDIR)/rend_gl1/r_bloom.o \
+	$(BUILDDIR)/rend_gl1/r_draw.o \
+	$(BUILDDIR)/rend_gl1/r_entity.o \
+	$(BUILDDIR)/rend_gl1/r_fog.o \
+	$(BUILDDIR)/rend_gl1/r_fragment.o \
+	$(BUILDDIR)/rend_gl1/r_glstate.o \
+	$(BUILDDIR)/rend_gl1/r_image.o \
+	$(BUILDDIR)/rend_gl1/r_light.o \
+	$(BUILDDIR)/rend_gl1/r_main.o \
+	$(BUILDDIR)/rend_gl1/r_misc.o \
+	$(BUILDDIR)/rend_gl1/r_model.o \
+	$(BUILDDIR)/rend_gl1/r_particle.o \
+	$(BUILDDIR)/rend_gl1/r_sky.o \
+	$(BUILDDIR)/rend_gl1/r_sprite.o \
+	$(BUILDDIR)/rend_gl1/r_surface.o \
+	$(BUILDDIR)/rend_gl1/r_upscale.o \
+	$(BUILDDIR)/rend_gl1/r_utils.o \
+	$(BUILDDIR)/rend_gl1/r_vlights.o \
+	$(BUILDDIR)/rend_gl1/r_warp.o \
+	$(BUILDDIR)/rend_gl1/sdl_gl.o \
 	\
-	$(BUILDDIR)/ref_gl/unix_qgl.o \
+	$(BUILDDIR)/rend_gl1/unix_qgl.o \
 	$(BUILDDIR)/client/sdl_snd.o
 
 	ifeq ($(OSTYPE),Darwin)
@@ -322,7 +320,7 @@ endif
 QUAKE2_AS_OBJS = \
 	$(BUILDDIR)/client/snd_mixa.o
 
-$(BINDIR)/kmquake2 : $(QUAKE2_OBJS) $(QUAKE2_AS_OBJS) $(QUAKE2_LNX_OBJS)
+$(BINDIR)/kmquake2_$(LIBARCHNAME) : $(QUAKE2_OBJS) $(QUAKE2_AS_OBJS) $(QUAKE2_LNX_OBJS)
 	@echo
 	@echo "==================== Linking $@ ===================="
 	@echo
@@ -352,13 +350,13 @@ $(BUILDDIR)/client/cl_event.o :    	$(CLIENT_DIR)/cl_event.c
 $(BUILDDIR)/client/cl_http.o :      	$(CLIENT_DIR)/cl_http.c
 	$(DO_CC)
 
-$(BUILDDIR)/client/cl_input.o :   	$(CLIENT_DIR)/cl_input.c
-	$(DO_CC)
-
 $(BUILDDIR)/client/cl_hud.o :     	$(CLIENT_DIR)/cl_hud.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/cl_hud_script.o :     	$(CLIENT_DIR)/cl_hud_script.c
+	$(DO_CC)
+
+$(BUILDDIR)/client/cl_input.o :   	$(CLIENT_DIR)/cl_input.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/cl_keys.o :       	$(CLIENT_DIR)/cl_keys.c
@@ -532,6 +530,9 @@ $(BUILDDIR)/client/md4.o :        	$(COMMON_DIR)/md4.c
 $(BUILDDIR)/client/net_chan.o :   	$(COMMON_DIR)/net_chan.c
 	$(DO_CC)
 
+$(BUILDDIR)/client/wal_json.o :   	$(COMMON_DIR)/wal_json.c
+	$(DO_CC)
+
 $(BUILDDIR)/client/wildcard.o :   	$(COMMON_DIR)/wildcard.c
 	$(DO_CC)
 
@@ -607,85 +608,85 @@ $(BUILDDIR)/client/unzip.o :		$(UNIX_DIR)/zip/unzip.c
 $(BUILDDIR)/client/ioapi.o :		$(UNIX_DIR)/zip/ioapi.c
 	$(DO_CC)
 	
-$(BUILDDIR)/ref_gl/r_alias.o :       	$(REF_GL_DIR)/r_alias.c
+$(BUILDDIR)/rend_gl1/r_alias.o :       	$(REND_GL1_DIR)/r_alias.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_alias_md2.o :        	$(REF_GL_DIR)/r_alias_md2.c
+$(BUILDDIR)/rend_gl1/r_alias_md2.o :        	$(REND_GL1_DIR)/r_alias_md2.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_alias_misc.o :        	$(REF_GL_DIR)/r_alias_misc.c
+$(BUILDDIR)/rend_gl1/r_alias_misc.o :        	$(REND_GL1_DIR)/r_alias_misc.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_arb_program.o :        	$(REF_GL_DIR)/r_arb_program.c
+$(BUILDDIR)/rend_gl1/r_arb_program.o :        	$(REND_GL1_DIR)/r_arb_program.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_backend.o :        	$(REF_GL_DIR)/r_backend.c
+$(BUILDDIR)/rend_gl1/r_backend.o :        	$(REND_GL1_DIR)/r_backend.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_beam.o :        	$(REF_GL_DIR)/r_beam.c
+$(BUILDDIR)/rend_gl1/r_beam.o :        	$(REND_GL1_DIR)/r_beam.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_bloom.o :        	$(REF_GL_DIR)/r_bloom.c
+$(BUILDDIR)/rend_gl1/r_bloom.o :        	$(REND_GL1_DIR)/r_bloom.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_draw.o :        	$(REF_GL_DIR)/r_draw.c
+$(BUILDDIR)/rend_gl1/r_draw.o :        	$(REND_GL1_DIR)/r_draw.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_entity.o :        	$(REF_GL_DIR)/r_entity.c
+$(BUILDDIR)/rend_gl1/r_entity.o :        	$(REND_GL1_DIR)/r_entity.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_fog.o :        	$(REF_GL_DIR)/r_fog.c
+$(BUILDDIR)/rend_gl1/r_fog.o :        	$(REND_GL1_DIR)/r_fog.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_fragment.o :       $(REF_GL_DIR)/r_fragment.c
+$(BUILDDIR)/rend_gl1/r_fragment.o :       $(REND_GL1_DIR)/r_fragment.c
 	$(DO_GL_SHLIB_CC)
 	
-$(BUILDDIR)/ref_gl/r_glstate.o :       $(REF_GL_DIR)/r_glstate.c
+$(BUILDDIR)/rend_gl1/r_glstate.o :       $(REND_GL1_DIR)/r_glstate.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_image.o :       	$(REF_GL_DIR)/r_image.c
+$(BUILDDIR)/rend_gl1/r_image.o :       	$(REND_GL1_DIR)/r_image.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_light.o :       	$(REF_GL_DIR)/r_light.c
+$(BUILDDIR)/rend_gl1/r_light.o :       	$(REND_GL1_DIR)/r_light.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_main.o :       	$(REF_GL_DIR)/r_main.c
+$(BUILDDIR)/rend_gl1/r_main.o :       	$(REND_GL1_DIR)/r_main.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_misc.o :       	$(REF_GL_DIR)/r_misc.c
+$(BUILDDIR)/rend_gl1/r_misc.o :       	$(REND_GL1_DIR)/r_misc.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_model.o :       	$(REF_GL_DIR)/r_model.c
+$(BUILDDIR)/rend_gl1/r_model.o :       	$(REND_GL1_DIR)/r_model.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_particle.o :       $(REF_GL_DIR)/r_particle.c
+$(BUILDDIR)/rend_gl1/r_particle.o :       $(REND_GL1_DIR)/r_particle.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_sky.o :       	$(REF_GL_DIR)/r_sky.c
+$(BUILDDIR)/rend_gl1/r_sky.o :       	$(REND_GL1_DIR)/r_sky.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_sprite.o :       	$(REF_GL_DIR)/r_sprite.c
+$(BUILDDIR)/rend_gl1/r_sprite.o :       	$(REND_GL1_DIR)/r_sprite.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_surface.o :       	$(REF_GL_DIR)/r_surface.c
+$(BUILDDIR)/rend_gl1/r_surface.o :       	$(REND_GL1_DIR)/r_surface.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_upscale.o :       	$(REF_GL_DIR)/r_upscale.c
+$(BUILDDIR)/rend_gl1/r_upscale.o :       	$(REND_GL1_DIR)/r_upscale.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_utils.o :       	$(REF_GL_DIR)/r_utils.c
+$(BUILDDIR)/rend_gl1/r_utils.o :       	$(REND_GL1_DIR)/r_utils.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_vlights.o :       	$(REF_GL_DIR)/r_vlights.c
+$(BUILDDIR)/rend_gl1/r_vlights.o :       	$(REND_GL1_DIR)/r_vlights.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/r_warp.o :        	$(REF_GL_DIR)/r_warp.c
+$(BUILDDIR)/rend_gl1/r_warp.o :        	$(REND_GL1_DIR)/r_warp.c
 	$(DO_GL_SHLIB_CC)
 
-$(BUILDDIR)/ref_gl/sdl_gl.o :      	$(UNIX_DIR)/sdl_gl.c
+$(BUILDDIR)/rend_gl1/sdl_gl.o :      	$(UNIX_DIR)/sdl_gl.c
 	$(DO_GL_SHLIB_CC) $(SDLCFLAGS)
 
-$(BUILDDIR)/ref_gl/unix_qgl.o :      	$(UNIX_DIR)/unix_qgl.c
+$(BUILDDIR)/rend_gl1/unix_qgl.o :      	$(UNIX_DIR)/unix_qgl.c
 	$(DO_GL_SHLIB_CC)
 
 #############################################################################
@@ -702,6 +703,7 @@ Q2DED_OBJS = \
 	$(BUILDDIR)/ded/filesystem.o \
 	$(BUILDDIR)/ded/md4.o \
 	$(BUILDDIR)/ded/net_chan.o \
+	$(BUILDDIR)/ded/wal_json.o \
 	$(BUILDDIR)/ded/wildcard.o \
 	$(BUILDDIR)/ded/zip.o \
 	$(BUILDDIR)/ded/unzip.o \
@@ -727,7 +729,7 @@ Q2DED_OBJS = \
 	$(BUILDDIR)/ded/cl_null.o \
 	$(BUILDDIR)/ded/cd_null.o
 
-$(BINDIR)/kmquake2_netserver : $(Q2DED_OBJS)
+$(BINDIR)/kmquake2_netserver_$(LIBARCHNAME) : $(Q2DED_OBJS)
 	$(CC) $(CFLAGS) -o $@ $(Q2DED_OBJS) $(LDFLAGS)
 
 $(BUILDDIR)/ded/cmd.o :        $(COMMON_DIR)/cmd.c
@@ -752,6 +754,9 @@ $(BUILDDIR)/ded/md4.o :        $(COMMON_DIR)/md4.c
 	$(DO_DED_CC)
 
 $(BUILDDIR)/ded/net_chan.o :   $(COMMON_DIR)/net_chan.c
+	$(DO_DED_CC)
+
+$(BUILDDIR)/ded/wal_json.o :   $(COMMON_DIR)/wal_json.c
 	$(DO_DED_CC)
 
 $(BUILDDIR)/ded/wildcard.o :   $(COMMON_DIR)/wildcard.c

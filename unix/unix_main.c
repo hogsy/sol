@@ -65,7 +65,7 @@ static char	download_dir[MAX_OSPATH];
 // General routines
 // =======================================================================
 
-void Sys_ConsoleOutput (char *string)
+void Sys_ConsoleOutput (const char *string)
 {
 	if (nostdout && nostdout->value)
 		return;
@@ -499,7 +499,7 @@ int main (int argc, char **argv)
 
 	printf ("\n");	
 	printf ("========= Initialization =================\n");
-	printf ("KMQuake2 -- Version 0.20u8\n");
+	printf ("KMQuake2 -- Version %4.2fu%d %s %s\n", VERSION, VERSION_UPDATE, CPUSTRING, COMPILETYPE_STRING);
 	printf ("Linux Port by QuDos\n");
 	printf ("SDL2 Port by flibitijibibo\n");
 	printf ("http://qudos.quakedev.com/\n");
