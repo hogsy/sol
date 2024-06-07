@@ -398,6 +398,9 @@ void *Sys_GetGameAPI (void *parms)
 			Com_Printf ("LoadLibrary (%s)\n", name);
 			break;
 		}
+		else {
+			Com_Printf ("%s\n", SDL_GetError());
+		}
 	}
 
 	GetGameAPI = (void *)SDL_LoadFunction (game_library, "GetGameAPI");

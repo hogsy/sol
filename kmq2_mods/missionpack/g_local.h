@@ -1684,15 +1684,15 @@ void actor_salute (edict_t *actor);
 void actor_stand (edict_t *actor);
 void actor_walk (edict_t *actor);
 void actor_walk_back (edict_t *actor);
-mmove_t actor_move_crouch;
-mmove_t actor_move_crouchwalk;
-mmove_t actor_move_crouchwalk_back;
-mmove_t	actor_move_run;
-mmove_t	actor_move_run_back;
-mmove_t	actor_move_run_bad;
-mmove_t actor_move_stand;
-mmove_t actor_move_walk;
-mmove_t	actor_move_walk_back;
+extern mmove_t actor_move_crouch;
+extern mmove_t actor_move_crouchwalk;
+extern mmove_t actor_move_crouchwalk_back;
+extern mmove_t	actor_move_run;
+extern mmove_t	actor_move_run_back;
+extern mmove_t	actor_move_run_bad;
+extern mmove_t actor_move_stand;
+extern mmove_t actor_move_walk;
+extern mmove_t	actor_move_walk_back;
 
 //
 // m_medic.c
