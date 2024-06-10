@@ -1953,8 +1953,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	// place default error
 	memcpy (reason, "Unknown failure on intialization!\0", 34);
 
-//#ifdef _WIN32
-#if defined (_WIN32) || (__APPLE__) || (MACOSX)
+#if defined (_WIN32) || (__APPLE__) || (MACOSX) || (__linux__)
 	// output system info
 	VID_Printf (PRINT_ALL, "OS: %s\n", Cvar_VariableString("sys_osVersion"));
 	VID_Printf (PRINT_ALL, "CPU: %s\n", Cvar_VariableString("sys_cpuString"));

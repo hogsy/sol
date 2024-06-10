@@ -1035,6 +1035,7 @@ void		FS_DeleteFile (const char *path);
 char		*FS_GameDir (void);
 char		*FS_SaveGameDir (void);
 char		*FS_DownloadDir (void);
+char		*FS_RootDataPath (void);
 char		*FS_HomePath (void);
 void		FS_CreatePath (const char *path);
 void		FS_DeletePath (const char *path);

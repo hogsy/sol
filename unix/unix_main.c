@@ -61,6 +61,12 @@ static char exe_dir[MAX_OSPATH];
 static char pref_dir[MAX_OSPATH];
 static char	download_dir[MAX_OSPATH];
 
+// Knightmare- system info cvars
+cvar_t *sys_osVersion;
+cvar_t *sys_cpuString;
+cvar_t *sys_ramMegs;
+cvar_t *sys_ramMegs_perApp;
+
 // =======================================================================
 // General routines
 // =======================================================================
@@ -118,8 +124,301 @@ void Sys_Quit (void)
 	_exit(0);
 }
 
-void Sys_Init(void)
+// Knightmare added
+#ifdef __linux__
+/*
+=================
+Sys_DetectOS
+parses /etc/os-release
+=================
+*/
+static qboolean Sys_DetectOS (char *osString, int osStringSize)
 {
+	char		*line = NULL, *equalsTok = NULL;
+	char		osNameBuf[128] = {0}, osVersionBuf[128] = {0};
+	char		osName[64] = {0}, osVersion[64] = {0};
+	FILE		*osFile = NULL;
+	size_t		lineSize = 128, bufLen, stringLen;
+
+	if ( !osString || (osStringSize <= 0) )
+		return false;
+
+	osFile = fopen("/etc/os-release", "r");
+	if ( !osFile ) {
+		Com_Printf ("couldn't open \"/etc/os-release\"\n");
+		return false;
+	}
+
+	line = malloc (sizeof(char) * lineSize);
+	while ( getdelim(&line, &lineSize, '\n', osFile) != -1 )
+	{
+		if ( !Q_strncasecmp(line, "NAME=", 5) ) {
+			Q_strncpyz (osNameBuf, sizeof(osNameBuf), line);
+			bufLen = strlen(osNameBuf);
+			if (osNameBuf[bufLen-1] == '\n')
+				osNameBuf[bufLen-1] = 0;
+		}
+		if ( !Q_strncasecmp(line, "VERSION=", 8) ) {
+			Q_strncpyz (osVersionBuf, sizeof(osVersionBuf), line);
+			bufLen = strlen(osVersionBuf);
+			if (osVersionBuf[bufLen-1] == '\n')
+				osVersionBuf[bufLen-1] = 0;
+		}
+	}
+	free (line);
+	fclose (osFile);
+
+	// parse OS name
+	equalsTok = strstr(osNameBuf, "=");
+	if (equalsTok != NULL) {
+		Q_strncpyz (osString, osStringSize, equalsTok + 2);
+		stringLen = strlen(osString);
+		if (osString[stringLen-1] == '\"')
+			osString[stringLen-1] = 0;
+	}
+	else {	// no OS name
+	//	Com_Printf ("no OS name found\n");
+		return false;
+	}
+
+	// parse OS version
+	equalsTok = strstr(osVersionBuf, "=");
+	if (equalsTok != NULL) {
+		Q_strncatz (osString, osStringSize, va(" %s", equalsTok + 2));
+		stringLen = strlen(osString);
+		if (osString[stringLen-1] == '\"')
+			osString[stringLen-1] = 0;
+	}
+
+	return true;
+}
+
+/*
+=================
+Sys_DetectCPU
+parses /proc/cpuinfo
+=================
+*/
+static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
+{
+	char		*line = NULL, *colonTok = NULL;
+	char		mdlNameBuf[128] = {0}, mhzBuf[128] = {0}, flagsBuf[2048] = {0};
+	FILE		*cpuFile = NULL;
+	size_t		lineSize = 1024, bufLen;
+	int			numLogicalProcessors =  0;
+	float		speed;
+	qboolean	hasMMX, hasMMXExt, has3DNow, has3DNowExt, hasSSE, hasSSE2, hasSSE3, hasSSE41, hasSSE42, hasSSE4a, hasAVX;
+
+	if ( !cpuString || (cpuStringSize <= 0) )
+		return false;
+
+	cpuFile = fopen("/proc/cpuinfo", "r");
+	if ( !cpuFile ) {
+		Com_Printf ("couldn't open \"/proc/cpuinfo\"\n");
+		return false;
+	}
+
+	line = malloc (sizeof(char) * lineSize);
+	while ( getdelim(&line, &lineSize, '\n', cpuFile) != -1 )
+	{
+		if ( !Q_strncasecmp(line, "model name", 10) ) {
+			Q_strncpyz (mdlNameBuf, sizeof(mdlNameBuf), line);
+			bufLen = strlen(mdlNameBuf);
+			if (mdlNameBuf[bufLen-1] == '\n')
+				mdlNameBuf[bufLen-1] = 0;
+		}
+		if ( !Q_strncasecmp(line, "cpu MHz", 7) ) {
+			Q_strncpyz (mhzBuf, sizeof(mhzBuf), line);
+			bufLen = strlen(mhzBuf);
+			if (mhzBuf[bufLen-1] == '\n')
+				mhzBuf[bufLen-1] = 0;
+		}
+		if ( !Q_strncasecmp(line, "flags", 5) ) {
+			Q_strncpyz (flagsBuf, sizeof(flagsBuf), line);
+			bufLen = strlen(flagsBuf);
+			if (flagsBuf[bufLen-1] == '\n')
+				flagsBuf[bufLen-1] = 0;
+		}
+		if ( !Q_strncasecmp(line, "processor", 9) )
+			numLogicalProcessors++;
+	}
+	free (line);
+	fclose (cpuFile);
+
+	// parse CPU name
+	colonTok = strstr(mdlNameBuf, ": ");
+	if (colonTok != NULL) {
+		Q_strncpyz (cpuString, cpuStringSize, colonTok + 2);
+	}
+	else {	// no model name
+	//	Com_Printf ("no CPU model name found\n");
+		return false;
+	}
+
+	// parse CPU speed
+	colonTok = strstr(mhzBuf, ": ");
+	if (colonTok != NULL) {
+		speed = atof(colonTok + 2);
+		if (speed > 1000)
+			Q_strncatz (cpuString, cpuStringSize, va(" %4.2f GHz", ((float)speed/1000.0f)));
+		else
+			Q_strncatz (cpuString, cpuStringSize, va(" %u MHz", speed));
+	}
+
+	// show num of logical processors
+	if (numLogicalProcessors > 1) {
+		Q_strncatz (cpuString, cpuStringSize, va(" (%u logical CPUs)", numLogicalProcessors));
+	}
+
+	// Get extended instruction sets supported
+	colonTok = strstr(flagsBuf, ": ");
+	if (colonTok != NULL)
+	{
+		hasMMX = Q_StrScanToken(colonTok, "mmx", false);
+		hasMMXExt = Q_StrScanToken(colonTok, "mmxext", false);
+		has3DNow = Q_StrScanToken(colonTok, "3dnow", false);
+		has3DNowExt = Q_StrScanToken(colonTok, "3dnowext", false);
+		hasSSE = Q_StrScanToken(colonTok, "sse", false);
+		hasSSE2 = Q_StrScanToken(colonTok, "sse2", false);
+		hasSSE3 = Q_StrScanToken(colonTok, "sse3", false);
+		hasSSE41 = Q_StrScanToken(colonTok, "sse4_1", false);
+		hasSSE42 = Q_StrScanToken(colonTok, "sse4_2", false);
+		hasSSE4a = Q_StrScanToken(colonTok, "sse4a", false);
+		hasAVX = Q_StrScanToken(colonTok, "avx", false);
+
+		Q_strncatz (cpuString, cpuStringSize, " w/");
+
+		if (hasMMX) {
+			Q_strncatz (cpuString, cpuStringSize, " MMX");
+			if (hasMMXExt)
+				Q_strncatz (cpuString, cpuStringSize, "+");
+		}
+		if (has3DNow) {
+			Q_strncatz (cpuString, cpuStringSize, " 3DNow!");
+			if (has3DNowExt)
+				Q_strncatz (cpuString, cpuStringSize, "+");
+		}
+		if (hasSSE) {
+			Q_strncatz (cpuString, cpuStringSize, " SSE");
+			if (hasSSE42)
+				Q_strncatz (cpuString, cpuStringSize, "4.2");
+			else if (hasSSE41)
+				Q_strncatz (cpuString, cpuStringSize, "4.1");
+			else if (hasSSE3)
+				Q_strncatz (cpuString, cpuStringSize, "3");
+			else if (hasSSE2)
+				Q_strncatz (cpuString, cpuStringSize, "2");
+		}
+		if (hasSSE4a) {
+			Q_strncatz (cpuString, cpuStringSize, " SSE4a");
+		}
+		if (hasAVX) {
+			Q_strncatz (cpuString, cpuStringSize, " AVX");
+		}
+	}
+
+	return true;
+}
+
+
+/*
+=================
+Sys_DetectRAM
+parses /proc/meminfo
+=================
+*/
+static qboolean Sys_DetectRAM (char *memString, int memStringSize, char *memStringAcc, int memStringAccSize)
+{
+	char			*line = NULL;
+	char			memTotalBuf[64] = {0};
+	FILE			*memFile = NULL;
+	size_t			lineSize = 128, bufLen;
+	unsigned int	memTotal_kb, memTotal_mb, memTotalAcc_mb;
+
+	if ( !memString || (memStringSize <= 0) || !memStringAcc  || (memStringAccSize <= 0) )
+		return false;
+
+	memFile = fopen("/proc/meminfo", "r");
+	if ( !memFile ) {
+		Com_Printf ("couldn't open \"/proc/meminfo\"\n");
+		return false;
+	}
+
+	line = malloc (sizeof(char) * lineSize);
+	while ( getdelim(&line, &lineSize, '\n', memFile) != -1 )
+	{
+		if ( !Q_strncasecmp(line, "MemTotal:", 9) ) {
+			Q_strncpyz (memTotalBuf, sizeof(memTotalBuf), line);
+			bufLen = strlen(memTotalBuf);
+			if (memTotalBuf[bufLen-1] == '\n')
+				memTotalBuf[bufLen-1] = 0;
+		}
+	}
+	free (line);
+	fclose (memFile);
+
+	// parse memTotal
+	if (sscanf(memTotalBuf, "MemTotal: %u kB", &memTotal_kb) == 1) {
+		memTotal_mb = (memTotal_kb >> 10);
+#if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__) || defined (__ia64__) || defined (__aarch64__)
+		memTotalAcc_mb = memTotal_mb;
+#else
+		memTotalAcc_mb = min(memTotal_mb, 4095);	// cap at 4095 for 32-bit builds
+#endif
+		Q_strncpyz (memString, memStringSize, va("%u", memTotal_mb));
+		Q_strncpyz (memStringAcc, memStringAccSize, va("%u", memTotalAcc_mb));
+	}
+	else {	// no model name
+	//	Com_Printf ("no memTotal value found\n");
+		return false;
+	}
+
+	return true;
+}
+#endif	// __linux__
+// end Knightmare
+
+void Sys_Init (void)
+{
+// Knightmare- added system info detection
+#ifdef __linux__
+	char		osString[128], cpuString[128];
+	char		memString[128], memStringAcc[128];
+
+	// Detect OS version
+	if ( Sys_DetectOS (osString, sizeof(osString)) ) {
+		Com_Printf ("OS: %s\n", osString);
+		sys_osVersion = Cvar_Get ("sys_osVersion", osString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+	else {
+		Com_Printf ("Couldn't detect OS info\n");
+		sys_osVersion = Cvar_Get ("sys_osVersion", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+
+	// Detect CPU
+	if ( Sys_DetectCPU (cpuString, sizeof(cpuString)) ) {
+		Com_Printf ("CPU: %s\n", cpuString);
+		sys_cpuString = Cvar_Get ("sys_cpuString", cpuString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+	else {
+		Com_Printf ("Unknown CPU found\n");
+		sys_cpuString = Cvar_Get ("sys_cpuString", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+
+	// Detect physical memory
+	if ( Sys_DetectRAM (memString, sizeof(memString), memStringAcc, sizeof(memStringAcc)) ) {
+		Com_Printf ("Memory: %s MB (%s MB accessible)\n", memString, memStringAcc);
+		sys_ramMegs = Cvar_Get ("sys_ramMegs", memString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_ramMegs_perApp = Cvar_Get ("sys_ramMegs_perApp", memStringAcc, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+	else {
+		Com_Printf ("Unknown amount of memory\n");
+		sys_ramMegs = Cvar_Get ("sys_ramMegs", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_ramMegs_perApp = Cvar_Get ("sys_ramMegs_perApp", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+	}
+#endif	// __linux__
+// end system info detection
+
 #if id386
 //	Sys_SetFPCW();
 #endif

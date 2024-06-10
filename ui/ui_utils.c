@@ -1813,7 +1813,7 @@ void UI_BuildModList (void)
 	count++;
 
 	// get a list of directories
-	Com_sprintf (findName, sizeof(findName), "%s/*.*", FS_HomePath());
+	Com_sprintf (findName, sizeof(findName), "%s/*.*", FS_RootDataPath());
 	dirnames = FS_ListFiles (findName, &ndirs, SFF_SUBDIR, 0);
 	if (!dirnames) {
 		ui_num_mods = count;

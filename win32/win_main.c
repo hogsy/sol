@@ -630,13 +630,13 @@ NoExtFunction:
 
 	if (!Q_stricmp(vendor, "AuthenticAMD"))
 	{
-		Q_strncpyz(cpuString, maxSize, "AMD");
+		Q_strncpyz (cpuString, maxSize, "AMD");
 	//	Com_sprintf(cpuString, maxSize, "AMD Family %i ExtFamily %i Model %i ExtModel %i", family, extFamily, model, extModel);
 
 		switch (family)
 		{
 		case 4:
-			Q_strncatz(cpuString, maxSize, " 5x86");
+			Q_strncatz (cpuString, maxSize, " 5x86");
 			break;
 		case 5:
 			switch (model)
@@ -645,14 +645,14 @@ NoExtFunction:
 			case 1:
 			case 2:
 			case 3:
-				Q_strncatz(cpuString, maxSize, " K5");
+				Q_strncatz (cpuString, maxSize, " K5");
 				break;
 			case 6:
 			case 7:
-				Q_strncatz(cpuString, maxSize, " K6");
+				Q_strncatz (cpuString, maxSize, " K6");
 				break;
 			case 8:
-				Q_strncatz(cpuString, maxSize, " K6-2");
+				Q_strncatz (cpuString, maxSize, " K6-2");
 				break;
 			case 9:
 			case 10:
@@ -661,7 +661,7 @@ NoExtFunction:
 			case 13:
 			case 14:
 			case 15:
-				Q_strncatz(cpuString, maxSize, " K6-III");
+				Q_strncatz (cpuString, maxSize, " K6-III");
 				break;
 			}
 			break;
@@ -674,14 +674,14 @@ NoExtFunction:
 			case 6:		// Palomino core
 			case 8:		// Thoroughbred core
 			case 10:	// Barton core
-				Q_strncatz(cpuString, maxSize, " Athlon");
+				Q_strncatz (cpuString, maxSize, " Athlon");
 				break;
 			case 3:		// Spitfire core
 			case 7:		// Morgan core
-				Q_strncatz(cpuString, maxSize, " Duron");
+				Q_strncatz (cpuString, maxSize, " Duron");
 				break;
 			default:
-				Q_strncatz(cpuString, maxSize, " K7");
+				Q_strncatz (cpuString, maxSize, " K7");
 				break;
 			}
 			break;
@@ -696,19 +696,19 @@ NoExtFunction:
 				case 4:		// Clawhammer/Newark
 				case 7:		// San Diego/Newcastle
 				case 12:	// Newcastle/Albany
-					Q_strncatz(cpuString, maxSize, " Athlon 64");
+					Q_strncatz (cpuString, maxSize, " Athlon 64");
 					break;
 				case 3:		// Toledo
 				case 11:	// Manchester/Brisbane
 				case 15:	// Winchester/Venice
-					Q_strncatz(cpuString, maxSize, " Athlon 64 X2");
+					Q_strncatz (cpuString, maxSize, " Athlon 64 X2");
 					break;
 				case 1:
 				case 5:
-					Q_strncatz(cpuString, maxSize, " Athlon 64 FX / Opteron");
+					Q_strncatz (cpuString, maxSize, " Athlon 64 FX / Opteron");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " K8");
+					Q_strncatz (cpuString, maxSize, " K8");
 					break;
 				}
 			}
@@ -718,18 +718,18 @@ NoExtFunction:
 				{
 				case 0: // Barcelona A0-A2
 				case 2: // Barcelona B0-B3
-					Q_strncatz(cpuString, maxSize, " Phenom / Opteron");
+					Q_strncatz (cpuString, maxSize, " Phenom / Opteron");
 					break;
 				case 4: // Deneb / Shanghai
 				case 10: // Thuban
-					Q_strncatz(cpuString, maxSize, " Phenom II / Opteron");
+					Q_strncatz (cpuString, maxSize, " Phenom II / Opteron");
 					break;
 				case 5: // Propus
 				case 6: // Regor
-					Q_strncatz(cpuString, maxSize, " Athlon II");
+					Q_strncatz (cpuString, maxSize, " Athlon II");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " K10");
+					Q_strncatz (cpuString, maxSize, " K10");
 					break;
 				}
 			}
@@ -738,10 +738,10 @@ NoExtFunction:
 				switch (model)
 				{
 				case 1:	// Llano
-					Q_strncatz(cpuString, maxSize, " A8 APU");
+					Q_strncatz (cpuString, maxSize, " A8 APU");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " A series APU");
+					Q_strncatz (cpuString, maxSize, " A series APU");
 					break;
 				}
 			}
@@ -750,10 +750,10 @@ NoExtFunction:
 				switch (model)
 				{
 				case 1:	// Zacate
-					Q_strncatz(cpuString, maxSize, " E-350 APU");
+					Q_strncatz (cpuString, maxSize, " E-350 APU");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " E series APU");
+					Q_strncatz (cpuString, maxSize, " E series APU");
 					break;
 				}
 			}
@@ -763,32 +763,32 @@ NoExtFunction:
 				{
 				case 0:
 					if (extModel == 0x10)	// Trinity
-						Q_strncatz(cpuString, maxSize, " A series APU");
+						Q_strncatz (cpuString, maxSize, " A series APU");
 					else if (extModel == 0x30) // Kaveri
-						Q_strncatz(cpuString, maxSize, " A series APU");
+						Q_strncatz (cpuString, maxSize, " A series APU");
 					else // Zambezi
-						Q_strncatz(cpuString, maxSize, " FX series");
+						Q_strncatz (cpuString, maxSize, " FX series");
 					break;
 				case 1:
 					if (extModel == 1)	// Zambezi
-						Q_strncatz(cpuString, maxSize, " FX series");
+						Q_strncatz (cpuString, maxSize, " FX series");
 					else if (extModel == 0x60)	// Carrizo
-						Q_strncatz(cpuString, maxSize, " A series APU");
+						Q_strncatz (cpuString, maxSize, " A series APU");
 					break;
 				case 2:
 					if (extModel == 2) // Zambezi / Vishera
-						Q_strncatz(cpuString, maxSize, " FX series");
+						Q_strncatz (cpuString, maxSize, " FX series");
 					break;
 				case 3:
 					if (extModel == 0x13)	// Richland
-						Q_strncatz(cpuString, maxSize, " A series APU");
+						Q_strncatz (cpuString, maxSize, " A series APU");
 					break;
 				case 5:
 					if (extModel == 0x65)	// Bristol Ridge
-						Q_strncatz(cpuString, maxSize, " A series APU");
+						Q_strncatz (cpuString, maxSize, " A series APU");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " FX series");
+					Q_strncatz (cpuString, maxSize, " FX series");
 					break;
 				}
 			}
@@ -798,24 +798,24 @@ NoExtFunction:
 				{
 				case 0:
 					if (extModel == 0x60)	// Renoir
-						Q_strncatz(cpuString, maxSize, " Ryzen 7/5/3 4x00G");
+						Q_strncatz (cpuString, maxSize, " Ryzen 7/5/3 4x00G");
 					break;
 				case 1:
 					if (extModel == 1)	// Summit Ridge
-						Q_strncatz(cpuString, maxSize, " Ryzen 7/5/3 1x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 7/5/3 1x00");
 					else if (extModel == 0x11)	// Raven Ridge
-						Q_strncatz(cpuString, maxSize, " Ryzen 5/3 2x00G");
+						Q_strncatz (cpuString, maxSize, " Ryzen 5/3 2x00G");
 					else if (extModel == 0x71)	// Matisse (Zen 2)
-						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 3x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 3x00");
 					break;
 				case 8:
 					if (extModel == 8)	// Pinnacle Ridge
-						Q_strncatz(cpuString, maxSize, " Ryzen 7/5/3 2x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 7/5/3 2x00");
 					else if (extModel == 0x18)	// Picasso
-						Q_strncatz(cpuString, maxSize, " Ryzen 5/3 3x00G");
+						Q_strncatz (cpuString, maxSize, " Ryzen 5/3 3x00G");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " Zen/Zen+/Zen2");
+					Q_strncatz (cpuString, maxSize, " Zen/Zen+/Zen2");
 					break;
 				}
 			}
@@ -825,20 +825,20 @@ NoExtFunction:
 				{
 				case 0:
 					if (extModel == 0x50)	// Cezanne
-						Q_strncatz(cpuString, maxSize, " Ryzen 7/5/3 5x00G");
+						Q_strncatz (cpuString, maxSize, " Ryzen 7/5/3 5x00G");
 					break;
 				case 1:
 					if (extModel == 0x21)	// Vermeer (Zen3)
-						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 5x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 5x00");
 					else if (extModel == 0x61)	// Raphael (Zen4)
-						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 7x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 7x00");
 					break;
 				case 4:
 					if (extModel == 0x44)	// Rembrandt (Zen3+)
-						Q_strncatz(cpuString, maxSize, " Ryzen 9/7/5/3 6x00");
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 6x00");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " Zen3");
+					Q_strncatz (cpuString, maxSize, " Zen3");
 					break;
 				}
 			}
@@ -849,29 +849,29 @@ NoExtFunction:
 	}
 	else if (!Q_stricmp(vendor, "CyrixInstead"))
 	{
-		Q_strncpyz(cpuString, maxSize, "Cyrix");
+		Q_strncpyz (cpuString, maxSize, "Cyrix");
 
 		switch (family)
 		{
 		case 4:
-			Q_strncatz(cpuString, maxSize, " 5x86");
+			Q_strncatz (cpuString, maxSize, " 5x86");
 			break;
 		case 5:
 			switch (model)
 			{
 			case 2:
-				Q_strncatz(cpuString, maxSize, " 6x86");
+				Q_strncatz (cpuString, maxSize, " 6x86");
 				break;
 			case 4:
-				Q_strncatz(cpuString, maxSize, " MediaGX");
+				Q_strncatz (cpuString, maxSize, " MediaGX");
 				break;
 			default:
-				Q_strncatz(cpuString, maxSize, " 6x86 / MediaGX");
+				Q_strncatz (cpuString, maxSize, " 6x86 / MediaGX");
 				break;
 			}
 			break;
 		case 6:
-			Q_strncatz(cpuString, maxSize, " 6x86MX");
+			Q_strncatz (cpuString, maxSize, " 6x86MX");
 			break;
 		default: // unknown family
 			break;
@@ -879,7 +879,7 @@ NoExtFunction:
 	}
 	else if (!Q_stricmp(vendor, "CentaurHauls"))
 	{
-		Q_strncpyz(cpuString, maxSize, "Centaur");
+		Q_strncpyz (cpuString, maxSize, "Centaur");
 
 		switch (family)
 		{
@@ -887,13 +887,13 @@ NoExtFunction:
 			switch (model)
 			{
 			case 4:
-				Q_strncatz(cpuString, maxSize, " C6");
+				Q_strncatz (cpuString, maxSize, " C6");
 				break;
 			case 8:
-				Q_strncatz(cpuString, maxSize, " C2");
+				Q_strncatz (cpuString, maxSize, " C2");
 				break;
 			case 9:
-				Q_strncatz(cpuString, maxSize, " C3");
+				Q_strncatz (cpuString, maxSize, " C3");
 				break;
 			default: // unknown model
 				break;
@@ -905,7 +905,7 @@ NoExtFunction:
 	}
 	else if (!Q_stricmp(vendor, "NexGenDriven"))
 	{
-		Q_strncpyz(cpuString, maxSize, "NexGen");
+		Q_strncpyz (cpuString, maxSize, "NexGen");
 
 		switch (family)
 		{
@@ -913,7 +913,7 @@ NoExtFunction:
 			switch (model)
 			{
 			case 0:
-				Q_strncatz(cpuString, maxSize, " Nx586 / Nx586FPU");
+				Q_strncatz (cpuString, maxSize, " Nx586 / Nx586FPU");
 				break;
 			default: // unknown model
 				break;
@@ -925,7 +925,7 @@ NoExtFunction:
 	}
 	else if (!Q_stricmp(vendor, "GenuineIntel"))
 	{
-		Q_strncpyz(cpuString, maxSize, "Intel");
+		Q_strncpyz (cpuString, maxSize, "Intel");
 	//	Com_sprintf(cpuString, maxSize, "Intel Family %i ExtFamily %i Model %i ExtModel %i", family, extFamily, model, extModel);
 
 		switch (family)
@@ -941,7 +941,7 @@ NoExtFunction:
 			case 7:
 			case 8:
 			default:
-				Q_strncatz(cpuString, maxSize, " Pentium");
+				Q_strncatz (cpuString, maxSize, " Pentium");
 				break;
 			}
 			break;
@@ -952,38 +952,38 @@ NoExtFunction:
 				{
 				case 0:
 				case 1:
-					Q_strncatz(cpuString, maxSize, " Pentium Pro");
+					Q_strncatz (cpuString, maxSize, " Pentium Pro");
 					break;
 				// Actual differentiation depends on cache settings
 				case 3:		// Klamath
 				case 5:		// Deschutes
-					Q_strncatz(cpuString, maxSize, " Pentium II");
+					Q_strncatz (cpuString, maxSize, " Pentium II");
 					break;
 				case 6:
-					Q_strncatz(cpuString, maxSize, " Celeron");
+					Q_strncatz (cpuString, maxSize, " Celeron");
 					break;
 				// Actual differentiation depends on cache settings
 				case 7:		// Katmai
 				case 8:		// Coppermine
 				case 10:	// Coppermine
 				case 11:	// Tualatin
-					Q_strncatz(cpuString, maxSize, " Pentium III");
+					Q_strncatz (cpuString, maxSize, " Pentium III");
 					break;
 				case 12:	// Silverthorne
-					Q_strncatz(cpuString, maxSize, " Atom");
+					Q_strncatz (cpuString, maxSize, " Atom");
 					break;
 				case 9:		// Banias
 				case 13:	// Dothan
-					Q_strncatz(cpuString, maxSize, " Pentium M");
+					Q_strncatz (cpuString, maxSize, " Pentium M");
 					break;
 				case 14:	// Yonah
-					Q_strncatz(cpuString, maxSize, " Core");
+					Q_strncatz (cpuString, maxSize, " Core");
 					break;
 				case 15:	// Conroe / Kentsfield
-					Q_strncatz(cpuString, maxSize, " Core 2");
+					Q_strncatz (cpuString, maxSize, " Core 2");
 					break;
 				default:
-					Q_strncatz(cpuString, maxSize, " P6");
+					Q_strncatz (cpuString, maxSize, " P6");
 					break;
 				}
 			}
@@ -993,83 +993,83 @@ NoExtFunction:
 				{
 				case 5:
 					if (extModel == 0x25)		// Clarkdale / Arrandale
-						Q_strncatz(cpuString, maxSize, " Core i5/i3 6xx / Core i3 5xx");
+						Q_strncatz (cpuString, maxSize, " Core i5/i3 6xx / Core i3 5xx");
 					else if (extModel == 0x45)	// Haswell ULT
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 4xxxU");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 4xxxU");
 					else if (extModel == 0x55) {
 						if (stepping == 0x4)		// Skylake-X, stepping = 4
-							Q_strncatz(cpuString, maxSize, " Core i9/i7 79xx/78xx or 99xx/98xx");
+							Q_strncatz (cpuString, maxSize, " Core i9/i7 79xx/78xx or 99xx/98xx");
 						else if (stepping == 0x7)	// Cascade Lake-X, stepping = 7
-							Q_strncatz(cpuString, maxSize, " Core i9 10xxx");
+							Q_strncatz (cpuString, maxSize, " Core i9 10xxx");
 					}
 					else if (extModel == 0xA5)	// Comet Lake
-						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 10xxx");
+						Q_strncatz (cpuString, maxSize, " Core i9/i7/i5/i3 10xxx");
 					break;
 				case 7:		
 					if (extModel == 0x17)		// Wolfdale / Yorkfield (Penryn)
-						Q_strncatz(cpuString, maxSize, " Core 2");
+						Q_strncatz (cpuString, maxSize, " Core 2");
 					else if (extModel == 0x47)	// Broadwell
-						Q_strncatz(cpuString, maxSize, " Core i7/i5 5xxx");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5 5xxx");
 					else if (extModel == 0x97)	// Alder Lake
-						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 12xxx");
+						Q_strncatz (cpuString, maxSize, " Core i9/i7/i5/i3 12xxx");
 					else if (extModel == 0xA7)	// Rocket Lake
-						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 11xxx");
+						Q_strncatz (cpuString, maxSize, " Core i9/i7/i5/i3 11xxx");
 					else if (extModel == 0xB7)	// Raptor Lake
-						Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 13xxx");
+						Q_strncatz (cpuString, maxSize, " Core i9/i7/i5/i3 13xxx");
 					break;
 				case 10:	
 					if (extModel == 0x2A)		// Sandy Bridge
-						Q_strncatz(cpuString, maxSize, "  Core i7/i5/i3 2xxx");
+						Q_strncatz (cpuString, maxSize, "  Core i7/i5/i3 2xxx");
 					else if (extModel == 0x3A)	// Ivy Bridge
-						Q_strncatz(cpuString, maxSize, "  Core i7/i5/i3 3xxx");
+						Q_strncatz (cpuString, maxSize, "  Core i7/i5/i3 3xxx");
 					else if (extModel == 0x1A)	// Bloomfield
-						Q_strncatz(cpuString, maxSize, " Core i7 9xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 9xx");
 					else if (extModel == 0x7A)	// Gemini Lake
-						Q_strncatz(cpuString, maxSize, " Pentium J4xxx");
+						Q_strncatz (cpuString, maxSize, " Pentium J4xxx");
 					break;
 				case 12:
 					if (extModel == 0x2C)		// Gulftown
-						Q_strncatz(cpuString, maxSize, " Core i7 9xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 9xx");
 					else if (extModel == 0x3C)	// Haswell
-						Q_strncatz(cpuString, maxSize, "  Core i7/i5/i3 4xxx");
+						Q_strncatz (cpuString, maxSize, "  Core i7/i5/i3 4xxx");
 					else if (extModel == 0x8C)	// Tiger Lake
-						Q_strncatz(cpuString, maxSize, "  Core i7/i5/i3 11xxG7");
+						Q_strncatz (cpuString, maxSize, "  Core i7/i5/i3 11xxG7");
 					else						// Silverthorne
-						Q_strncatz(cpuString, maxSize, " Atom");
+						Q_strncatz (cpuString, maxSize, " Atom");
 					break;
 				case 13:	
 					if (extModel == 0x2D)		// Sandy Bridge-E
-						Q_strncatz(cpuString, maxSize, " Core i7 39xx / 38xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 39xx / 38xx");
 					break;
 				case 14:
 					if (extModel == 0x1E)		// Lynnfield
-						Q_strncatz(cpuString, maxSize, " Core i7 8xx / Core i5 7xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 8xx / Core i5 7xx");
 					else if (extModel == 0x3E)	// Ivy Bridge-E
-						Q_strncatz(cpuString, maxSize, " Core i7 49xx / 48xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 49xx / 48xx");
 					else if (extModel == 0x4E)	// Skylake U/Y
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 6xxxU");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 6xxxU");
 					else if (extModel == 0x5E)	// Skylake
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 6xxx");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 6xxx");
 					else if (extModel == 0x7E)	// Ice lake
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 10xxG7");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 10xxG7");
 					else if (extModel == 0x8E)	// Kaby Lake U/Y
-						Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 7xxxU");
+						Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 7xxxU");
 					else if (extModel == 0x9E) {
 						if (stepping == 0x9)		// Kaby Lake, stepping = 9
-							Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 7xxx");
+							Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 7xxx");
 						else if (stepping == 0xA)	// Coffee Lake, stepping = 10
-							Q_strncatz(cpuString, maxSize, " Core i7/i5/i3 8xxx");
+							Q_strncatz (cpuString, maxSize, " Core i7/i5/i3 8xxx");
 						else if (stepping == 0xC)	// Coffee Lake refresh, stepping = 12
-							Q_strncatz(cpuString, maxSize, " Core i9/i7/i5/i3 9xxx");
+							Q_strncatz (cpuString, maxSize, " Core i9/i7/i5/i3 9xxx");
 					}
 					break;
 				case 15:	
 					if (extModel == 0x0F)		// Conroe / Kentsfield (Merom)
-						Q_strncatz(cpuString, maxSize, " Core 2");
+						Q_strncatz (cpuString, maxSize, " Core 2");
 					else if (extModel == 0x3F)	// Haswell-E
-						Q_strncatz(cpuString, maxSize, " Core i7 59xx / 58xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 59xx / 58xx");
 					else if (extModel == 0x4F)	// Broadwell-E
-						Q_strncatz(cpuString, maxSize, " Core i7 69xx / 68xx");
+						Q_strncatz (cpuString, maxSize, " Core i7 69xx / 68xx");
 					break;
 				default:
 					break;
@@ -1080,7 +1080,7 @@ NoExtFunction:
 			switch (model)
 			{
 			default:
-				Q_strncatz(cpuString, maxSize, " Itanium");
+				Q_strncatz (cpuString, maxSize, " Itanium");
 				break;
 			}
 			break;
@@ -1095,14 +1095,14 @@ NoExtFunction:
 				case 3:		// Prescott
 				case 4:		// Smithfield
 				case 6:		// Cedar Mill / Presler
-					Q_strncatz(cpuString, maxSize, " Pentium 4");
+					Q_strncatz (cpuString, maxSize, " Pentium 4");
 					break;
 			//	case 4:		// Smithfield
 			//	case 6:		// Cedar Mill / Presler
-			//		Q_strncatz(cpuString, " Pentium D", maxSize);
+			//		Q_strncatz (cpuString, " Pentium D", maxSize);
 			//		break;
 				default:
-					Q_strncatz(cpuString, maxSize, " NetBurst");
+					Q_strncatz (cpuString, maxSize, " NetBurst");
 					break;
 				}
 			}
@@ -1111,7 +1111,7 @@ NoExtFunction:
 				switch (model)
 				{
 				default:
-					Q_strncatz(cpuString, maxSize, " Itanium 2");
+					Q_strncatz (cpuString, maxSize, " Itanium 2");
 					break;
 				}
 			}
@@ -1127,7 +1127,7 @@ NoExtFunction:
 	if ((features >> 4) & 1)
 	{
 		// Measure CPU speed
-		QueryPerformanceFrequency((LARGE_INTEGER *)&frequency);
+		QueryPerformanceFrequency ((LARGE_INTEGER *)&frequency);
 
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
 		start = __rdtsc();
@@ -1139,11 +1139,11 @@ NoExtFunction:
 		}
 #endif
 
-		QueryPerformanceCounter((LARGE_INTEGER *)&stop);
+		QueryPerformanceCounter ((LARGE_INTEGER *)&stop);
 		stop += frequency;
 
 		do {
-			QueryPerformanceCounter((LARGE_INTEGER *)&counter);
+			QueryPerformanceCounter ((LARGE_INTEGER *)&counter);
 		} while (counter < stop);
 
 #if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
@@ -1159,22 +1159,22 @@ NoExtFunction:
 		speed = (unsigned)((end - start) / 1000000);
 
 		if (speed > 1000)
-			Q_strncatz(cpuString, maxSize, va(" %4.2f GHz", ((float)speed/1000.0f)));
+			Q_strncatz (cpuString, maxSize, va(" %4.2f GHz", ((float)speed/1000.0f)));
 		else
-			Q_strncatz(cpuString, maxSize, va(" %u MHz", speed));
+			Q_strncatz (cpuString, maxSize, va(" %u MHz", speed));
 	}
 
 	// get number of logical processors
-	GetSystemInfo(&sysInfo);
+	GetSystemInfo (&sysInfo);
 	if (sysInfo.dwNumberOfProcessors > 1)
-		Q_strncatz(cpuString, maxSize, va(" (%u logical CPUs)", sysInfo.dwNumberOfProcessors));
+		Q_strncatz (cpuString, maxSize, va(" (%u logical CPUs)", sysInfo.dwNumberOfProcessors));
 /*
 	if (numLogicalCores >= 2 || numCores >= 2)
 	{
 		if (numLogicalCores > numCores)	// Hyperthreading or SMT
-			Q_strncatz(cpuString, maxSize, va(" (%u cores, %u threads)", numCores, numLogicalCores));
+			Q_strncatz (cpuString, maxSize, va(" (%u cores, %u threads)", numCores, numLogicalCores));
 		else
-			Q_strncatz(cpuString, maxSize, va(" (%u cores)", numCores));
+			Q_strncatz (cpuString, maxSize, va(" (%u cores)", numCores));
 	}
 */
 
@@ -1193,34 +1193,34 @@ NoExtFunction:
 
 	if (hasMMX || has3DNow || hasSSE)
 	{
-		Q_strncatz(cpuString, maxSize, " w/");
+		Q_strncatz (cpuString, maxSize, " w/");
 
 		if (hasMMX){
-			Q_strncatz(cpuString, maxSize, " MMX");
+			Q_strncatz (cpuString, maxSize, " MMX");
 			if (hasMMXExt)
-				Q_strncatz(cpuString, maxSize, "+");
+				Q_strncatz (cpuString, maxSize, "+");
 		}
 		if (has3DNow){
-			Q_strncatz(cpuString, maxSize, " 3DNow!");
+			Q_strncatz (cpuString, maxSize, " 3DNow!");
 			if (has3DNowExt)
-				Q_strncatz(cpuString, maxSize, "+");
+				Q_strncatz (cpuString, maxSize, "+");
 		}
 		if (hasSSE){
-			Q_strncatz(cpuString, maxSize, " SSE");
+			Q_strncatz (cpuString, maxSize, " SSE");
 			if (hasSSE42)
-				Q_strncatz(cpuString, maxSize, "4.2");
+				Q_strncatz (cpuString, maxSize, "4.2");
 			else if (hasSSE41)
-				Q_strncatz(cpuString, maxSize, "4.1");
+				Q_strncatz (cpuString, maxSize, "4.1");
 			else if (hasSSE3)
-				Q_strncatz(cpuString, maxSize, "3");
+				Q_strncatz (cpuString, maxSize, "3");
 			else if (hasSSE2)
-				Q_strncatz(cpuString, maxSize, "2");
+				Q_strncatz (cpuString, maxSize, "2");
 		}
 		if (hasSSE4a){
-			Q_strncatz(cpuString, maxSize, " SSE4a");
+			Q_strncatz (cpuString, maxSize, " SSE4a");
 		}
 		if (hasAVX){
-			Q_strncatz(cpuString, maxSize, " AVX");
+			Q_strncatz (cpuString, maxSize, " AVX");
 		}
 	}
 
@@ -1228,8 +1228,8 @@ NoExtFunction:
 
 #else
 
-//	Q_strncpyz(cpuString, maxSize, "Alpha AXP");
-	Q_strncpyz(cpuString, maxSize, CPUSTRING); // [Slipyx] mingw support
+//	Q_strncpyz (cpuString, maxSize, "Alpha AXP");
+	Q_strncpyz (cpuString, maxSize, CPUSTRING); // [Slipyx] mingw support
 	return true;
 #endif
 }

@@ -317,9 +317,22 @@ char *FS_DownloadDir (void)
 
 /*
 =================
-FS_HomePath
+FS_RootDataPath
 
 Called to find game root path
+=================
+*/
+char *FS_RootDataPath (void)
+{
+	return fs_basedir->string;
+}
+
+
+/*
+=================
+FS_HomePath
+
+Called to find home path
 =================
 */
 char *FS_HomePath (void)
