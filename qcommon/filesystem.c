@@ -3792,6 +3792,9 @@ char **FS_ListFiles (const char *findname, int *numfiles, unsigned musthave, uns
 	}
 	Sys_FindClose ();
 
+	// sort the list
+	qsort(list, nfiles, sizeof(char *), Q_SortStrcmp);
+
 	return list;
 }
 

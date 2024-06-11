@@ -1195,17 +1195,17 @@ NoExtFunction:
 	{
 		Q_strncatz (cpuString, maxSize, " w/");
 
-		if (hasMMX){
+		if (hasMMX) {
 			Q_strncatz (cpuString, maxSize, " MMX");
 			if (hasMMXExt)
 				Q_strncatz (cpuString, maxSize, "+");
 		}
-		if (has3DNow){
+		if (has3DNow) {
 			Q_strncatz (cpuString, maxSize, " 3DNow!");
 			if (has3DNowExt)
 				Q_strncatz (cpuString, maxSize, "+");
 		}
-		if (hasSSE){
+		if (hasSSE) {
 			Q_strncatz (cpuString, maxSize, " SSE");
 			if (hasSSE42)
 				Q_strncatz (cpuString, maxSize, "4.2");
@@ -1216,10 +1216,10 @@ NoExtFunction:
 			else if (hasSSE2)
 				Q_strncatz (cpuString, maxSize, "2");
 		}
-		if (hasSSE4a){
+		if (hasSSE4a) {
 			Q_strncatz (cpuString, maxSize, " SSE4a");
 		}
-		if (hasAVX){
+		if (hasAVX) {
 			Q_strncatz (cpuString, maxSize, " AVX");
 		}
 	}

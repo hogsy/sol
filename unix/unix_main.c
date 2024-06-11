@@ -104,8 +104,8 @@ void Sys_Printf (char *fmt, ...)
 	if (strlen(text) > sizeof(text))
 		Sys_Error("memory overwrite in Sys_Printf");
 
-    if (nostdout && nostdout->value)
-        return;
+	if (nostdout && nostdout->value)
+		return;
 
 	for (p = (unsigned char *)text; *p; p++) {
 		*p &= 0x7f;
@@ -120,8 +120,8 @@ void Sys_Quit (void)
 {
 	CL_Shutdown ();
 	Qcommon_Shutdown ();
-    fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
-	_exit(0);
+	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
+	_exit (0);
 }
 
 // Knightmare added
@@ -206,7 +206,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 	FILE		*cpuFile = NULL;
 	size_t		lineSize = 1024, bufLen;
 	int			numLogicalProcessors =  0;
-	float		speed;
+	float		speed = 0.0f, speedTmp;
 	qboolean	hasMMX, hasMMXExt, has3DNow, has3DNowExt, hasSSE, hasSSE2, hasSSE3, hasSSE41, hasSSE42, hasSSE4a, hasAVX;
 
 	if ( !cpuString || (cpuStringSize <= 0) )
@@ -241,6 +241,15 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 		}
 		if ( !Q_strncasecmp(line, "processor", 9) )
 			numLogicalProcessors++;
+
+		// parse CPU speed for each logical processor
+		// this prevents reporting the speed of an idle core
+		colonTok = strstr(mhzBuf, ": ");
+		if (colonTok != NULL) {
+			speedTmp = atof(colonTok + 2);
+			if (speedTmp > speed)
+				speed = speedTmp;
+		}
 	}
 	free (line);
 	fclose (cpuFile);
@@ -255,10 +264,8 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 		return false;
 	}
 
-	// parse CPU speed
-	colonTok = strstr(mhzBuf, ": ");
-	if (colonTok != NULL) {
-		speed = atof(colonTok + 2);
+	// show CPU speed
+	if (speed > 0.0f) {
 		if (speed > 1000)
 			Q_strncatz (cpuString, cpuStringSize, va(" %4.2f GHz", ((float)speed/1000.0f)));
 		else
@@ -426,8 +433,8 @@ void Sys_Init (void)
 
 void Sys_Error (const char *error, ...)
 { 
-	va_list     argptr;
-	char        string[1024];
+	va_list	 	argptr;
+	char		string[1024];
 
 // change stdin to non blocking
 	fcntl (0, F_SETFL, fcntl (0, F_GETFL, 0) & ~FNDELAY);
@@ -446,8 +453,8 @@ void Sys_Error (const char *error, ...)
 
 void Sys_Warn (char *warning, ...)
 { 
-	va_list     argptr;
-	char        string[1024];
+	va_list	 	argptr;
+	char		string[1024];
 
 	va_start (argptr, warning);
 //	vsprintf (string, warning, argptr);
@@ -481,10 +488,10 @@ void floating_point_exception_handler(int whatever)
 
 char *Sys_ConsoleInput(void)
 {
-    static char text[256];
-    int     len;
+	static char text[256];
+	int	 	len;
 	fd_set	fdset;
-    struct timeval timeout;
+	struct	timeval timeout;
 
 	if (!dedicated || !dedicated->value)
 		return NULL;
@@ -507,7 +514,7 @@ char *Sys_ConsoleInput(void)
 
 	if (len < 1)
 		return NULL;
-	text[len-1] = 0;    // rip off the /n and terminate
+	text[len-1] = 0;	// rip off the /n and terminate
 
 	return text;
 }
@@ -590,21 +597,21 @@ From Yamagi Q2
 */
 void *Sys_GetProcAddress (void *libHandle, const char *initFuncName)
 {
-    if (libHandle == NULL)
-    {
+	if (libHandle == NULL)
+	{
 #ifdef RTLD_DEFAULT
-        return dlsym(RTLD_DEFAULT, initFuncName);
+		return dlsym(RTLD_DEFAULT, initFuncName);
 #else
-        /* POSIX suggests that this is a portable equivalent */
-        static void *global_namespace = NULL;
+		/* POSIX suggests that this is a portable equivalent */
+		static void *global_namespace = NULL;
 
-        if (global_namespace == NULL)
-            global_namespace = dlopen(NULL, RTLD_GLOBAL|RTLD_LAZY);
+		if (global_namespace == NULL)
+			global_namespace = dlopen(NULL, RTLD_GLOBAL|RTLD_LAZY);
 
-        return dlsym (global_namespace, initFuncName);
+		return dlsym (global_namespace, initFuncName);
 #endif
-    }
-    return dlsym (libHandle, initFuncName);
+	}
+	return dlsym (libHandle, initFuncName);
 }
 
 /*****************************************************************************/
@@ -846,16 +853,16 @@ int main (int argc, char **argv)
 	//	printf ("Linux Quake II -- Version %0.3f\n", KMQUAKE2_VERSION);
 	}
 
-    oldtime = Sys_Milliseconds ();
-    while (1)
-    {
+	oldtime = Sys_Milliseconds ();
+	while (1)
+	{
 		// find time spent rendering last frame
 		do {
 			newtime = Sys_Milliseconds ();
 			time = newtime - oldtime;
 		} while (time < 1);
-        Qcommon_Frame (time);
+		Qcommon_Frame (time);
 		oldtime = newtime;
-    }
+	}
 
 }
