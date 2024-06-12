@@ -125,7 +125,7 @@ void Sys_Quit (void)
 }
 
 // Knightmare added
-#ifdef __linux__
+#if defined (__linux__)
 /*
 =================
 Sys_DetectOS
@@ -382,13 +382,13 @@ static qboolean Sys_DetectRAM (char *memString, int memStringSize, char *memStri
 
 	return true;
 }
-#endif	// __linux__
+#endif	// defined (__linux__)
 // end Knightmare
 
 void Sys_Init (void)
 {
 // Knightmare- added system info detection
-#ifdef __linux__
+#if defined (__linux__)
 	char		osString[128], cpuString[128];
 	char		memString[128], memStringAcc[128];
 
@@ -423,7 +423,7 @@ void Sys_Init (void)
 		sys_ramMegs = Cvar_Get ("sys_ramMegs", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
 		sys_ramMegs_perApp = Cvar_Get ("sys_ramMegs_perApp", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
 	}
-#endif	// __linux__
+#endif	// defined (__linux__)
 // end system info detection
 
 #if id386
@@ -735,6 +735,169 @@ void Sys_SendKeyEvents (void)
 	// grab frame time 
 	sys_frame_time = Sys_Milliseconds();
 }
+
+/*****************************************************************************/
+
+#if defined (__linux__)
+static char Q1_install_path[MAX_OSPATH];
+static char Q1RR_install_path[MAX_OSPATH];
+static char Q2RR_install_path[MAX_OSPATH];
+
+#define QUAKE1_STEAM_APP_ID "2310"
+#define QUAKE1_STEAM_LIBRARY_PATH "/steamapps/common/Quake"
+#define QUAKE1RR_STEAM_LIBRARY_PATH "/steamapps/common/Quake/rerelease"
+#define QUAKE2_STEAM_APP_ID "2320"
+#define QUAKE2RR_STEAM_LIBRARY_PATH "/steamapps/common/Quake 2/rerelease"
+
+/*
+==================
+Sys_GetSteamInstallPath
+==================
+*/
+void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibraryPath, const char *steamAppID)
+{
+	char		folderPath[MAX_OSPATH];
+	size_t		readLen;
+	size_t		fileSize;
+	char		*fileContents = NULL;
+	char		*gameInstallPath = NULL;
+	FILE		*libraryFoldersFile = NULL;
+
+	if ( !path || (pathSize < 1) || !steamLibraryPath || (steamLibraryPath[0] == 0) || !steamAppID || (steamAppID[0] == 0) )
+		return;
+
+	path[0] = 0;
+
+	Q_strncpyz (folderPath, sizeof(folderPath), va("%s/.steam/steam/steamapps/libraryfolders.vdf", getenv("HOME")));
+	libraryFoldersFile = fopen(folderPath, "rb");
+
+	if ( !libraryFoldersFile ) {
+		Com_Printf ("Couldn't find Steam library folders path %s, trying next path...\n", folderPath);
+		Q_strncpyz (folderPath, sizeof(folderPath), va("%s/.local/share/Steam/SteamApps/libraryfolders.vdf", getenv("HOME")));
+		libraryFoldersFile = fopen(folderPath, "rb");
+	}
+
+	if ( !libraryFoldersFile ) {
+		Com_Printf ("Couldn't find Steam library folders path %s\n", folderPath);
+		return;
+	}
+
+	Com_Printf ("Found Steam library folders path of %s\n", folderPath);
+
+	fseek (libraryFoldersFile, 0L, SEEK_END);
+	fileSize = ftell(libraryFoldersFile);
+	fseek (libraryFoldersFile, 0L, SEEK_SET);
+
+	fileContents = Z_Malloc(fileSize + 1);
+
+	readLen = fread (fileContents, 1, fileSize, libraryFoldersFile);
+	fclose (libraryFoldersFile);
+	libraryFoldersFile = NULL;
+
+	if (readLen != fileSize) {
+		Com_Printf ("Error %lu reading libraryfolders.vdf\n", errno);
+		Z_Free (fileContents);
+		return;
+	}
+
+//	Com_Printf ("Sys_GetSteamInstallPath: Parsing %s (size %i)...\n", folderPath, fileSize);
+	gameInstallPath = Com_ParseSteamLibraryFolders (fileContents, readLen, steamLibraryPath, steamAppID);
+
+	if ( gameInstallPath && (gameInstallPath[0] != 0) ) {	// copy off install path
+		Q_strncpyz (path, pathSize, gameInstallPath);
+	//	Com_Printf ("Sys_GetSteamInstallPath: Found Steam install path of %s\n", path);
+	}
+
+	Z_Free (fileContents);
+}
+
+
+/*
+==================
+Sys_InitQ1SteamInstallDir
+==================
+*/
+void Sys_InitQ1SteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q1_install_path, sizeof(Q1_install_path), QUAKE1_STEAM_LIBRARY_PATH, QUAKE1_STEAM_APP_ID);
+
+	if (Q1_install_path[0] != 0)
+		Com_Printf ("Found Q1 Steam install path of %s\n", Q1_install_path);
+	else
+		Com_Printf ("Couldn't found Q1 Steam install path of %s\n", Q1_install_path);
+
+	// TODO: if above fails, check for GOG Q1 intstall path (if available)
+}
+
+
+/*
+==================
+Sys_InitQ1RRSteamInstallDir
+==================
+*/
+void Sys_InitQ1RRSteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q1RR_install_path, sizeof(Q1RR_install_path), QUAKE1RR_STEAM_LIBRARY_PATH, QUAKE1_STEAM_APP_ID);
+
+	if (Q1RR_install_path[0] != 0)
+		Com_Printf ("Found Q1RR Steam install path of %s\n", Q1RR_install_path);
+	else
+		Com_Printf ("Couldn't found Q1RR Steam install path of %s\n", Q1RR_install_path);
+
+	// TODO: if above fails, check for GOG Q1RR intstall path (if available)
+}
+
+
+/*
+==================
+Sys_InitQ2RRSteamInstallDir
+==================
+*/
+void Sys_InitQ2RRSteamInstallDir (void)
+{
+	Sys_GetSteamInstallPath (Q2RR_install_path, sizeof(Q2RR_install_path), QUAKE2RR_STEAM_LIBRARY_PATH, QUAKE2_STEAM_APP_ID);
+
+	if (Q2RR_install_path[0] != 0)
+		Com_Printf ("Found Q2RR Steam install path of %s\n", Q2RR_install_path);
+	else
+		Com_Printf ("Couldn't found Q2RR Steam install path of %s\n", Q2RR_install_path);
+
+	// TODO: if above fails, check for GOG Q2RR intstall path (if available)
+}
+
+
+/*
+==================
+Sys_Q1SteamInstallDir
+==================
+*/
+const char *Sys_Q1SteamInstallDir (void)
+{
+	return Q1_install_path;
+}
+
+
+/*
+==================
+Sys_Q1RRSteamInstallDir
+==================
+*/
+const char *Sys_Q1RRSteamInstallDir (void)
+{
+	return Q1RR_install_path;
+}
+
+
+/*
+==================
+Sys_Q2RRSteamInstallDir
+==================
+*/
+const char *Sys_Q2RRSteamInstallDir (void)
+{
+	return Q2RR_install_path;
+}
+#endif	// defined (__linux__)
 
 /*****************************************************************************/
 

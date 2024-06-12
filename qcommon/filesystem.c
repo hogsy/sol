@@ -3430,7 +3430,7 @@ void FS_AddQuakeImportGame (const char *dir)
 	qboolean	quake2rrgame1_loaded = false, quake2rrgame2_loaded = false, quake2rrgame3_loaded = false;
 
 	// set QuakeImportPath if quakeimportpath_auto or quakerrimportpath_auto is enabled
-#ifdef _WIN32
+#if defined (_WIN32) || (__linux__)
 	if (fs_quakerrimportpath_auto->integer) {
 		Sys_InitQ1RRSteamInstallDir ();	// auto-detect Q1 Steam install dir
 		Q_strncpyz (tempPath, sizeof(tempPath), Sys_Q1RRSteamInstallDir());
@@ -3479,7 +3479,7 @@ void FS_AddQuakeImportGame (const char *dir)
 
 #ifdef USE_Q2RR_IMPORT_PATH
 	// set Quake2RRImportPath if quake2rrimportpath_auto is enabled
-#ifdef _WIN32
+#if defined (_WIN32) || (__linux__)
 	if (fs_quake2rrimportpath_auto->integer) {
 		Sys_InitQ2RRSteamInstallDir ();	// auto-detect Q1 Steam install dir
 		Q_strncpyz (tempPath, sizeof(tempPath), Sys_Q2RRSteamInstallDir());
