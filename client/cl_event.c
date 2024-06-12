@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "client.h"
 
-void CL_ItemRespawnParticles (vec3_t org);
-void CL_TeleportParticles (vec3_t org);
 
 #define MAX_TEX_SURF 2048 // was 256
 struct texsurf_s
@@ -241,7 +239,7 @@ void CL_EntityEvent (centity_state_t *ent)
 		break;
 	case EV_PLAYER_TELEPORT2:
 		S_StartSound (NULL, ent->number, CHAN_WEAPON, clMedia.sfx_player_teleport2[rand()%5], 1, ATTN_IDLE, 0);
-		CL_TeleportParticles (ent->origin);
+		CL_TeleportParticles_Q1 (ent->origin);
 		break;
 	case EV_FOOTSTEP:
 	//	if (cl_footsteps->value)

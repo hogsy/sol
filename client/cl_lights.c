@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "client.h"
 
-void CL_LogoutEffect (vec3_t org, int type);
 void CL_GunSmokeEffect (vec3_t org, vec3_t dir);
 
 /*

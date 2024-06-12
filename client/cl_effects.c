@@ -672,6 +672,7 @@ void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type)
 	}
 }
 
+
 /*
 =====================
 
@@ -994,6 +995,7 @@ void CL_GreenBloodHit (vec3_t org, vec3_t dir)
 
 }
 
+
 /*
 ===============
 CL_ParticleEffect
@@ -1026,12 +1028,12 @@ void CL_ParticleEffect (vec3_t org, vec3_t dir, int color8, int count)
 	}
 }
 
+
 /*
 ===============
 CL_ParticleEffect2
 ===============
 */
-
 #define colorAdd 25
 void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color8, int count)
 {
@@ -1058,13 +1060,13 @@ void CL_ParticleEffect2 (vec3_t org, vec3_t dir, int color8, int count)
 	}
 }
 
+
 // RAFAEL
 /*
 ===============
 CL_ParticleEffect3
 ===============
 */
-
 void CL_ParticleEffect3 (vec3_t org, vec3_t dir, int color8, int count)
 {
 	int			i;
@@ -1121,6 +1123,7 @@ void CL_ParticleSplashThink (cparticle_t *p, vec3_t org, vec3_t angle, float *al
 
 	p->thinknext = true;
 }
+
 
 /*
 ===============
@@ -1520,24 +1523,24 @@ CL_LogoutEffect
 */
 void CL_LogoutEffect (vec3_t org, int type)
 {
-	int			i;
+	int		i;
 	vec3_t	color;
 
 	for (i=0 ; i<500 ; i++)
 	{
-		if (type == MZ_LOGIN)// green
+		if (type == MZ_LOGIN)	// green
 		{
 			color[0] = 20;
 			color[1] = 200;
 			color[2] = 20;
 		}
-		else if (type == MZ_LOGOUT)// red
+		else if (type == MZ_LOGOUT)	// red
 		{
 			color[0] = 200;
 			color[1] = 20;
 			color[2] = 20;
 		}
-		else// yellow
+		else	// yellow
 		{
 			color[0] = 200;
 			color[1] = 200;
@@ -2791,16 +2794,14 @@ CL_TrapParticles
 */
 void CL_TrapParticles (entity_t *ent)
 {
-	vec3_t		move;
-	vec3_t		vec;
-	vec3_t		start, end;
-	float		len;
-	int			dec;
+	int			i, j, k, dec;
+	float		len, vel;
+	vec3_t		move, vec, start, end, dir, org;
 
-	ent->origin[2]-=14;
+	ent->origin[2] -= 14;
 	VectorCopy (ent->origin, start);
 	VectorCopy (ent->origin, end);
-	end[2]+=64;
+	end[2] += 64;
 
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
@@ -2831,22 +2832,13 @@ void CL_TrapParticles (entity_t *ent)
 		VectorAdd (move, vec, move);
 	}
 
-	{
-	int			i, j, k;
-	float		vel;
-	vec3_t		dir;
-	vec3_t		org;
-
-	
 	ent->origin[2]+=14;
 	VectorCopy (ent->origin, org);
 
-
-	for (i=-2 ; i<=2 ; i+=4)
-		for (j=-2 ; j<=2 ; j+=4)
-			for (k=-2 ; k<=4 ; k+=4)
+	for (i = -2; i <= 2; i += 4)
+		for (j = -2; j <= 2; j += 4)
+			for (k = -2; k <= 4; k += 4)
 			{
-
 				dir[0] = j * 8;
 				dir[1] = i * 8;
 				dir[2] = k * 8;
@@ -2867,9 +2859,7 @@ void CL_TrapParticles (entity_t *ent)
 					particle_generic,
 					PART_GRAVITY,
 					NULL, false);
-
 			}
-	}
 }
 
 
@@ -2909,27 +2899,73 @@ CL_TeleportParticles
 */
 void CL_TeleportParticles (vec3_t org)
 {
-	int			i, j, k;
+	int			i, j, k;	// palIdx
 	float		vel;
-	vec3_t		dir;
+	vec3_t		dir;	// color
 
-	for (i=-16 ; i<=16 ; i+=4)
-		for (j=-16 ; j<=16 ; j+=4)
-			for (k=-16 ; k<=32 ; k+=4)
+	for (i = -16; i <= 16; i += 4)
+		for (j = -16; j <= 16;  j+= 4)
+			for (k = -16; k <= 32; k += 4)
 			{
 				dir[0] = j*16;
 				dir[1] = i*16;
 				dir[2] = k*16;
 
 				VectorNormalize (dir);						
-				vel = 150 + (rand()&63);
+				vel = 150 + (rand() & 63);
+
+			//	palIdx = 7 + (rand() & 7);
+			//	VectorSet (color, Q2PalColorRed(palIdx), Q2PalColorGreen(palIdx), Q2PalColorBlue(palIdx));
 
 				CL_SetupParticle (
 					0,	0,	0,
 					org[0]+i+(rand()&3), org[1]+j+(rand()&3),	org[2]+k+(rand()&3),
 					dir[0]*vel,	dir[1]*vel,	dir[2]*vel,
 					0,		0,		0,
-					200 + 55*rand(),	200 + 55*rand(),	200 + 55*rand(),
+					200 + (rand()%56),	200 + (rand()%56),	200 + (rand()%56),
+			//		color[0],			color[1],			color[2],
+					0,		0,		0,
+					1,		-1.0 / (0.3 + (rand()&7) * 0.02),
+					GL_SRC_ALPHA, GL_ONE,
+					1,			3,			
+					particle_generic,
+					PART_GRAVITY,
+					NULL, false);
+			}
+}
+
+
+/*
+===============
+CL_TeleportParticles_Q1
+===============
+*/
+void CL_TeleportParticles_Q1 (vec3_t org)
+{
+	int			i, j, k, palIdx;
+	float		vel;
+	vec3_t		dir, color;
+
+	for (i = -16; i <= 16; i += 4)
+		for (j = -16; j <= 16;  j+= 4)
+			for (k = -16; k <= 32; k += 4)
+			{
+				dir[0] = j*16;
+				dir[1] = i*16;
+				dir[2] = k*16;
+
+				VectorNormalize (dir);						
+				vel = 150 + (rand() & 63);
+
+				palIdx = 7 + (rand() & 7);
+				VectorSet (color, Q1PalColorRed(palIdx), Q1PalColorGreen(palIdx), Q1PalColorBlue(palIdx));
+
+				CL_SetupParticle (
+					0,	0,	0,
+					org[0]+i+(rand()&3), org[1]+j+(rand()&3),	org[2]+k+(rand()&3),
+					dir[0]*vel,	dir[1]*vel,	dir[2]*vel,
+					0,		0,		0,
+					color[0],			color[1],			color[2],
 					0,		0,		0,
 					1,		-1.0 / (0.3 + (rand()&7) * 0.02),
 					GL_SRC_ALPHA, GL_ONE,
@@ -3229,10 +3265,10 @@ void CL_ParticleSteamEffect (vec3_t org, vec3_t dir, int red, int green, int blu
 	cparticle_t	*p;
 	float		d;
 	vec3_t		r, u;
-	//vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
+//	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
-	//vectoangles2 (dir, angle_dir);
-	//AngleVectors (angle_dir, f, r, u);
+//	vectoangles2 (dir, angle_dir);
+//	AngleVectors (angle_dir, f, r, u);
 
 	MakeNormalVectors (dir, r, u);
 
@@ -3282,8 +3318,8 @@ void CL_ParticleSteamEffect2 (cl_sustain_t *self)
 	int			color8 = self->color + (rand()&7);
 	vec3_t color = { Q2PalColorRed(color8), Q2PalColorGreen(color8), Q2PalColorBlue(color8) };
 
-	//vectoangles2 (dir, angle_dir);
-	//AngleVectors (angle_dir, f, r, u);
+//	vectoangles2 (dir, angle_dir);
+//	AngleVectors (angle_dir, f, r, u);
 
 	VectorCopy (self->dir, dir);
 	MakeNormalVectors (dir, r, u);

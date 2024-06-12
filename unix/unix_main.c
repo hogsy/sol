@@ -824,7 +824,7 @@ void Sys_InitQ1SteamInstallDir (void)
 	if (Q1_install_path[0] != 0)
 		Com_Printf ("Found Q1 Steam install path of %s\n", Q1_install_path);
 	else
-		Com_Printf ("Couldn't found Q1 Steam install path of %s\n", Q1_install_path);
+		Com_Printf ("Couldn't find Q1 Steam install path of %s\n", Q1_install_path);
 
 	// TODO: if above fails, check for GOG Q1 intstall path (if available)
 }
@@ -842,7 +842,7 @@ void Sys_InitQ1RRSteamInstallDir (void)
 	if (Q1RR_install_path[0] != 0)
 		Com_Printf ("Found Q1RR Steam install path of %s\n", Q1RR_install_path);
 	else
-		Com_Printf ("Couldn't found Q1RR Steam install path of %s\n", Q1RR_install_path);
+		Com_Printf ("Couldn't find Q1RR Steam install path of %s\n", Q1RR_install_path);
 
 	// TODO: if above fails, check for GOG Q1RR intstall path (if available)
 }
@@ -860,7 +860,7 @@ void Sys_InitQ2RRSteamInstallDir (void)
 	if (Q2RR_install_path[0] != 0)
 		Com_Printf ("Found Q2RR Steam install path of %s\n", Q2RR_install_path);
 	else
-		Com_Printf ("Couldn't found Q2RR Steam install path of %s\n", Q2RR_install_path);
+		Com_Printf ("Couldn't find Q2RR Steam install path of %s\n", Q2RR_install_path);
 
 	// TODO: if above fails, check for GOG Q2RR intstall path (if available)
 }

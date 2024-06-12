@@ -1071,6 +1071,12 @@ void CL_ReclipDecals (void);
 //
 // cl_effects.c
 //
+void CL_LightningBeam (vec3_t start, vec3_t end, int srcEnt, int dstEnt, float size);
+void CL_TeleportParticles (vec3_t org);
+void CL_TeleportParticles_Q1 (vec3_t org);
+void CL_LogoutEffect (vec3_t org, int type);
+void CL_ItemRespawnParticles (vec3_t org);
+void CL_BigTeleportParticles (vec3_t org);
 void CL_Explosion_Decal (vec3_t org, float size, int decalnum);
 void CL_Explosion_Particle (vec3_t org, float scale, qboolean rocket);
 void CL_Explosion_FlashParticle (vec3_t org, float size, qboolean large);
@@ -1089,7 +1095,6 @@ void CL_Lavasplash_Q1 (vec3_t org, int size);
 void CL_TracerTrail_Q1 (vec3_t start, vec3_t end, centity_t *old, int type);
 void CL_BFGExplosionParticles (vec3_t org);
 void CL_TeleportParticles (vec3_t org);
-void CL_BigTeleportParticles (vec3_t org);
 void CL_RocketTrail (vec3_t start, vec3_t end, centity_t *old);
 void CL_DiminishingTrail (vec3_t start, vec3_t end, centity_t *old, int flags);
 void CL_FlyEffect (centity_t *ent, vec3_t origin);
