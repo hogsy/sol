@@ -44,14 +44,16 @@ extern cursor_t ui_mousecursor;
 void UI_RefreshCursorMenu (void);
 void UI_RefreshCursorLink (void);
 
-void IN_MLookDown (void) { 
+void IN_MLookDown (void)
+{ 
 	mlooking = true; 
 }
 
-void IN_MLookUp (void) { 
+void IN_MLookUp (void)
+{ 
 	mlooking = false;
-	if (!freelook->value && lookspring->value)
-	IN_CenterView ();
+	if ( !freelook->value && lookspring->value )
+	    IN_CenterView ();
 }
 
 void Force_CenterView_f (void)
@@ -91,16 +93,16 @@ void IN_Init (void)
 		mouse_avail = false;
 
 	// Knightmare- added Psychospaz's menu mouse support
-	UI_RefreshCursorMenu();
-	UI_RefreshCursorLink();
+	UI_RefreshCursorMenu ();
+	UI_RefreshCursorLink ();
 }
 
 void IN_Shutdown (void)
 {
-	if (!mouse_avail)
+	if ( !mouse_avail )
 		return;
 
-	IN_Activate(false);
+	IN_Activate (false);
 
 	mouse_avail = false;
 
@@ -117,10 +119,10 @@ void IN_Move (usercmd_t *cmd)
 {
 	float speed, aspeed;
 
-	if (!mouse_avail)
+	if ( !mouse_avail )
 		return;
 
-	if (!in_autosensitivity)
+	if ( !in_autosensitivity )
 		in_autosensitivity = Cvar_Get ("in_autosensitivity", "1", CVAR_ARCHIVE);
 
 	if (m_filter->value)
@@ -152,34 +154,36 @@ void IN_Move (usercmd_t *cmd)
 		if (!cls.consoleActive)
 			UI_MouseCursor_Think ();
 	}
-
-	// psychospaz - zooming in preserves sensitivity
-	if (in_autosensitivity->integer && cl.base_fov < 90)
-	{
-		mx *= sensitivity->value * (cl.base_fov/90.0);
-		my *= sensitivity->value * (cl.base_fov/90.0);
-	}
 	else
 	{
-		mx *= sensitivity->value;
-		my *= sensitivity->value;
+		// psychospaz - zooming in preserves sensitivity
+		if (in_autosensitivity->integer && cl.base_fov < 90)
+		{
+			mx *= sensitivity->value * (cl.base_fov/90.0);
+			my *= sensitivity->value * (cl.base_fov/90.0);
+		}
+		else
+		{
+			mx *= sensitivity->value;
+			my *= sensitivity->value;
+		}
+
+		// add mouse X/Y movement to cmd
+		if ((in_strafe.state & 1) || (lookstrafe->value && mlooking))
+			cmd->sidemove += m_side->value * mx;
+		else
+			cl.viewangles[YAW] -= m_yaw->value * mx;
+
+		if ( (mlooking || freelook->value) && !(in_strafe.state & 1))
+			cl.viewangles[PITCH] += m_pitch->value * my;
+		else
+			cmd->forwardmove -= m_forward->value * my;
 	}
-
-	// add mouse X/Y movement to cmd
-	if ((in_strafe.state & 1) || (lookstrafe->value && mlooking))
-		cmd->sidemove += m_side->value * mx;
-	else
-		cl.viewangles[YAW] -= m_yaw->value * mx;
-
-	if ( (mlooking || freelook->value) && !(in_strafe.state & 1))
-		cl.viewangles[PITCH] += m_pitch->value * my;
-	else
-		cmd->forwardmove -= m_forward->value * my;
 
 	mx = my = 0;
 
 	// flibitijibibo added
-	if (!in_joystick->value)
+	if ( !in_joystick->value )
 	{
 		return;
 	}
@@ -209,7 +213,7 @@ void IN_Move (usercmd_t *cmd)
 
 void IN_Frame (void)
 {
-	if (!mouse_avail)
+	if ( !mouse_avail )
 		return;
 
 	if ( !cl.refresh_prepped || cls.key_dest == key_console || cls.key_dest == key_menu)
