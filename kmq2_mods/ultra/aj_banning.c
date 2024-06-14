@@ -70,9 +70,10 @@ void read_banlist (void)
 	FILE	*f;
 	int		i, ips=0;
 	char	filename[256];
-	cvar_t	*game_dir;
 	char	strbuf[256];
 	int		newline;
+	size_t	len;
+/*	cvar_t	*game_dir;
 
 	game_dir = gi.cvar ("game", "", 0);
 
@@ -91,29 +92,32 @@ void read_banlist (void)
 	Com_strcat (filename, sizeof(filename), game_dir->string);
 	Com_strcat (filename, sizeof(filename), "/");
 	Com_strcat (filename, sizeof(filename), banlist->string);
-#endif
+#endif */
+	// Knightmare- use GameDir() for all platforms
+	Com_strcpy (filename, sizeof(filename), va("%s/", GameDir()));
+	Com_strcat (filename, sizeof(filename), banlist->string);
 
 	f = fopen (filename, "r");
-	if (!f)
+	if ( !f )
 	{
-//		gi.error("Unable to read the replace file.\n");
+	//	gi.error("Unable to read the replace file.\n");
 		return;
 	}
 
-	clear_banlist();
+	clear_banlist ();
 
-	gi.dprintf("\nReading banlist..\n");
+	gi.dprintf ("\nReading %s...\n", banlist->string);
 
-	fscanf(f, "%c", &strbuf[0]);
+	fscanf (f, "%c", &strbuf[0]);
 
-	do 
+	do
 	{
 		if (feof(f))
 			break;
 
 		if (strbuf[0] == '#')		// commented line
 		{
-			do { 
+			do {
 				fscanf(f, "%c", &strbuf[0]);
 			} while (!feof(f) && (strbuf[0] != '\n') /*&& !feof(f)*/);
 		}
@@ -126,42 +130,57 @@ void read_banlist (void)
 		else // start of some data
 		{
 			i=0;
-			do 
+			do
 			{
 				i++;
 				fscanf(f, "%c", &strbuf[i]);
 			} while ((strbuf[i] != ' ') && (strbuf[i] != '\t') && (strbuf[i] != '\n') && (i < 255) && !feof(f));
-			
-			if (strbuf[i]!='\n')
-				newline=1;
-			else newline=0;
-			strbuf[i]='\0';
 
-			add_ip(strbuf);
+			if (strbuf[i] != '\n')
+				newline = 1;
+			else
+				newline = 0;
+			strbuf[i] = '\0';
+
+			// Knightmare- zero out carriage returns on Linux
+#ifndef _WIN32
+			if ( (i > 2) && (strbuf[i-1] == '\r') ) {
+				strbuf[i-1] = '\0';
+			}
+#endif // _WIN32
+
+			len = strlen(strbuf);
+			if (len > 1)	// Knightmare- don't add 0 or 1-length ips
+			{
+			//	gi.dprintf ("Adding %s to banned ips\n", strbuf);
+
+				add_ip (strbuf);
+
+				ips++;
+			}
 
 			if (!newline)
-				do {	
+				do {
 					fscanf(f, "%c", &strbuf[0]);
 				} while (((strbuf[0] == ' ') || (strbuf[i] == '\t')) && !feof(f));
-			
-			ips++;
-		}
-		
-	}
-	while (!feof(f));
 
-	Com_sprintf (strbuf, sizeof(strbuf), "Read %d banned IP's\n", ips);
-	gi.dprintf(strbuf);
+		//	ips++;
+		}
+
+	}
+	while ( !feof(f) );
+
+	gi.dprintf ("Read %i banned IPs.\n", ips);
 
 	fclose (f);
 }
 
 // returns 0 if not in the list, 1 if they are banned
-int check_ip(char *player_ip)
+int check_ip (char *player_ip)
 {
-	int allowed=0, colonchar;
-	banlist_node *current;
-	char	strbuf[256];
+	int				allowed = 0, colonchar;
+	banlist_node	*current;
+	char			strbuf[256];
 
 	for (colonchar=0; (player_ip[colonchar] != ':' && player_ip[colonchar] != '\0'); colonchar++)
 		;

@@ -150,13 +150,13 @@ void SP_target_secret (edict_t *ent)
 	}
 
 	ent->use = use_target_secret;
-	if (!st.noise)
+	if ( !st.noise )
 		st.noise = "misc/secret.wav";
 	ent->noise_index = gi.soundindex (st.noise);
 	ent->svflags = SVF_NOCLIENT;
 	level.total_secrets++;
 	// map bug hack
-	if (!stricmp(level.mapname, "mine3") && ent->s.origin[0] == 280 && ent->s.origin[1] == -2048 && ent->s.origin[2] == -624)
+	if ( !Q_stricmp(level.mapname, "mine3") && (ent->s.origin[0] == 280) && (ent->s.origin[1] == -2048) && (ent->s.origin[2] == -624) )
 		ent->message = "You have found a secret area.";
 }
 
@@ -272,7 +272,7 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 	}
 
 	// if going to a new unit, clear cross triggers
-	if (strstr(self->map, "*"))	
+	if (strstr(self->map, "*"))
 		game.serverflags &= ~(SFL_CROSS_TRIGGER_MASK);
 
 	BeginIntermission (self);
@@ -288,7 +288,7 @@ void SP_target_changelevel (edict_t *ent)
 	}
 
 	// ugly hack because *SOMEBODY* screwed up their map
-   if((stricmp(level.mapname, "fact1") == 0) && (stricmp(ent->map, "fact3") == 0))
+   if( (Q_stricmp(level.mapname, "fact1") == 0) && (Q_stricmp(ent->map, "fact3") == 0) )
 	   ent->map = "fact3$secret1";
 
 	ent->use = use_target_changelevel;
@@ -709,7 +709,7 @@ void SP_target_mal_laser (edict_t *self)
 		self->s.skinnum = 0xe0e1e2e3;
 
 	G_SetMovedir (self->s.angles, self->movedir);
-	
+
 	if (!self->delay)
 		self->delay = 0.1;
 
@@ -721,7 +721,7 @@ void SP_target_mal_laser (edict_t *self)
 
 	VectorSet (self->mins, -8, -8, -8);
 	VectorSet (self->maxs, 8, 8, 8);
-	
+
 	self->nextthink = level.time + self->delay;
 	self->think = mal_laser_think;
 
@@ -1056,10 +1056,10 @@ Broadcasts to all in Potentially Visible Set from vector (origin)
   TE_GREENBLOOD       26 Spurt of green (actually kinda yellow) blood
   TE_BLUEHYPERBLASTER 27 NOT IMPLEMENTED
   TE_BLASTER2         30 Green/white sparks with a yellow/white flash
-  TE_MOREBLOOD        42 
+  TE_MOREBLOOD        42
   TE_HEATBEAM_SPARKS  43
   TE_HEATBEAM_STEAM   44
-  TE_CHAINFIST_SMOKE  45 
+  TE_CHAINFIST_SMOKE  45
   TE_ELECTRIC_SPARKS  46
   TE_FLECHETTE        55
 */
@@ -1069,7 +1069,7 @@ void target_effect_sparks (edict_t *self, edict_t *activator)
 	gi.WriteByte(svc_temp_entity);
 	gi.WriteByte(self->style);
 	gi.WritePosition(self->s.origin);
-	if (self->style != TE_CHAINFIST_SMOKE) 
+	if (self->style != TE_CHAINFIST_SMOKE)
 		gi.WriteDir(self->movedir);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
 
@@ -1090,13 +1090,13 @@ Potentially Hearable set from vector (origin)
   TE_GRENADE_EXPLOSION_WATER 18 underwater grenade explosion
   TE_BFG_EXPLOSION           20 BFG explosion sprite
   TE_BFG_BIGEXPLOSION        21 BFG particle explosion
-  TE_BOSSTPORT               22 
+  TE_BOSSTPORT               22
   TE_PLASMA_EXPLOSION        28
   TE_PLAIN_EXPLOSION         35
   TE_TRACKER_EXPLOSION       47
   TE_TELEPORT_EFFECT	     48
   TE_DBALL_GOAL              49 Identical to TE_TELEPORT_EFFECT?
-  TE_NUKEBLAST               51 
+  TE_NUKEBLAST               51
   TE_WIDOWSPLASH             52
   TE_EXPLOSION1_BIG          53  Works, but requires Rogue models/objects/r_explode2
   TE_EXPLOSION1_NP           54
@@ -1113,7 +1113,7 @@ void target_effect_explosion (edict_t *self, edict_t *activator)
 //		ReflectExplosion (self->style, self->s.origin);
 }
 //===============================================================================
-/*  TE_TUNNEL_SPARKS    29 
+/*  TE_TUNNEL_SPARKS    29
     Similar to other splash effects, but Xatrix does some funky things with
 	the origin so we'll do the same */
 

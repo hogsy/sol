@@ -20,6 +20,9 @@ int	sm_meat_index;
 int	snd_fry;
 int meansOfDeath;
 
+// Knightmare- moved this var here to fix GCC compile
+qboolean paused;			// fake a paused game during deathmatch
+
 edict_t		*g_edicts;
 
 cvar_t	*deathmatch;
@@ -497,11 +500,7 @@ qboolean PlayerNameExists(char *name)
 			}
 		}
 
-#ifdef _WIN32
-		if (!_stricmp(testname, name))
-#else
-		if (!strcasecmp(testname, name))
-#endif
+		if ( !Q_stricmp(testname, name) )
 			return true;
 	}
 
@@ -516,8 +515,8 @@ extern int	force_team;
 // if one human enters the games then one bot times ctf_special_teams is added.
 // normally you would set ctf_special_teams = 1. However, if ctf_special_teams = 2
 // then 2 bots for every 1 human is added until the connections are used up.
-// If on the otherhand a human enters the other team then the teams are 
-// automatically evened up. However, if ctf_humanonly_teams is set to 1 then we 
+// If on the otherhand a human enters the other team then the teams are
+// automatically evened up. However, if ctf_humanonly_teams is set to 1 then we
 // only allow humans in one team and no bots. Human in this case may start in
 // any team. But any other human that tries to enter into the game on  the
 // other team will be forced to join other team.
@@ -599,7 +598,7 @@ static qboolean enforce_ctf_special_teams (void)
 				}
 // end AJ
 			}
-			
+
 			// Range check special to 1+
 			if ( dSpecialTeams < 1 )
 				dSpecialTeams = 1;
@@ -626,9 +625,9 @@ static qboolean enforce_ctf_special_teams (void)
 									CTFJoinTeam( players[i], CTF_TEAM3 );
 								else if (force_team == CTF_TEAM2)
 									CTFJoinTeam( players[i], CTF_TEAM1 );
-								else 
+								else
 									CTFJoinTeam( players[i], CTF_TEAM1 );
-						
+
 								return TRUE; // we need to restart the count again
 							}
 				}
@@ -701,7 +700,7 @@ static qboolean enforce_ctf_special_teams (void)
 				pNewBot = NULL;
 				if (iTeam1Count > iTeam1NeedCount )
 				{
-					if (pDropBotTeam1) 
+					if (pDropBotTeam1)
 						botDisconnect(pDropBotTeam1);  // drop it
 				}
 				else
@@ -798,7 +797,7 @@ void G_RunFrame (void)
 	if (level.time < last_bot_spawn)
 		last_bot_spawn = 0;
 
-	if (level.time > 8) 
+	if (level.time > 8)
 	{	// give the clients some time to reconnect
 		if (!respawn_init)
 		{
@@ -978,11 +977,7 @@ void G_RunFrame (void)
 				if (!bot_teams[i])
 					break;
 
-#ifdef _WIN32
-				if (!_stricmp(bot_teams[i]->teamname, addteam->string) || !_stricmp(bot_teams[i]->abbrev, addteam->string))
-#else
-				if (!strcasecmp(bot_teams[i]->teamname, addteam->string) || !strcasecmp(bot_teams[i]->abbrev, addteam->string))
-#endif
+				if ( !Q_stricmp(bot_teams[i]->teamname, addteam->string) || !Q_stricmp(bot_teams[i]->abbrev, addteam->string) )
 				{	// found the team, so add the bots
 					bot_teams[i]->ingame = true;	// bots will be added automatically (below)
 					break;
@@ -1174,11 +1169,7 @@ void G_RunFrame (void)
 			if (!trav->bot_client)
 				continue;
 
-#ifdef _WIN32
-			if (!_stricmp(trav->client->pers.netname, bot_drop->string))
-#else
-			if (!strcasecmp(trav->client->pers.netname, bot_drop->string))
-#endif
+			if ( !Q_stricmp(trav->client->pers.netname, bot_drop->string) )
 			{
 				botDisconnect(trav);
 			}
@@ -1223,7 +1214,7 @@ no_spawnbots:
 		return;
 	}
 
-//ScarFace- check number of runes to see if any more need to be spawned 
+//ScarFace- check number of runes to see if any more need to be spawned
 //I couldn't think of anywhere else to put this
 	if (use_runes->value)
 		CheckNumRunes ();
@@ -1274,7 +1265,7 @@ no_spawnbots:
 
 	if (dedicated->value)
 		OptimizeRouteCache();
-	
+
 
 }
 

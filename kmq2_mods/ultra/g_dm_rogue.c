@@ -19,10 +19,10 @@ void InitGameRules (void)
 	// clear out the game rule structure before we start
 	memset(&DMGame, 0, sizeof(dm_game_rt));
 
-	if(gamerules && gamerules->value)
+	if (gamerules && gamerules->value)
 	{
 		gameNum = gamerules->value;
-		switch(gameNum)
+		switch (gameNum)
 		{
 			case RDM_TAG:
 				DMGame.GameInit = Tag_GameInit;
@@ -53,7 +53,7 @@ void InitGameRules (void)
 	}
 
 	// if we're set up to play, initialize the game as needed.
-	if(DMGame.GameInit)
+	if (DMGame.GameInit)
 		DMGame.GameInit();
 }
 
@@ -100,7 +100,7 @@ char *FindSubstituteItem (edict_t *ent)
 			return "item_health_mega";
 	}
 	// armor is also special case
-	else if(ent->item->pickup == Pickup_Armor)
+	else if (ent->item->pickup == Pickup_Armor)
 	{
 		// armor shards stay armor shards
 		if (ent->item->tag == ARMOR_SHARD)
@@ -128,7 +128,7 @@ char *FindSubstituteItem (edict_t *ent)
 	for (i=0 ; i<game.num_items ; i++, it++)
 	{
 		itflags = it->flags;
-		
+
 		if (!itflags || (itflags & IT_NOT_GIVEABLE))
 			continue;
 
@@ -150,7 +150,7 @@ char *FindSubstituteItem (edict_t *ent)
 		if ( ((int)dmflags->value & DF_NO_NUKES || sk_no_nukes->value) && !strcmp(ent->classname, "ammo_nuke") )
 			continue;
 
-		if ( ((int)dmflags->value & DF_NO_MINES || sk_no_mines->value) && 
+		if ( ((int)dmflags->value & DF_NO_MINES || sk_no_mines->value) &&
 				(!strcmp(ent->classname, "ammo_prox")
 				|| !strcmp(ent->classname, "ammo_tesla")
 				|| !strcmp(ent->classname, "weapon_proxlauncher") ))
@@ -160,7 +160,7 @@ char *FindSubstituteItem (edict_t *ent)
 			count++;
 	}
 
-	if(!count)
+	if (!count)
 		return NULL;
 
 	pick = ceil(random() * count);
@@ -171,7 +171,7 @@ char *FindSubstituteItem (edict_t *ent)
 	for (i=0 ; i<game.num_items ; i++, it++)
 	{
 		itflags = it->flags;
-		
+
 		if (!itflags || (itflags & IT_NOT_GIVEABLE))
 			continue;
 
@@ -182,7 +182,7 @@ char *FindSubstituteItem (edict_t *ent)
 		if ( ((int)dmflags->value & DF_NO_NUKES || sk_no_nukes->value) && !strcmp(ent->classname, "ammo_nuke") )
 			continue;
 
-		if ( ((int)dmflags->value & DF_NO_MINES || sk_no_mines->value) && 
+		if ( ((int)dmflags->value & DF_NO_MINES || sk_no_mines->value) &&
 				(!strcmp(ent->classname, "ammo_prox")
 				|| !strcmp(ent->classname, "ammo_tesla")
 				|| !strcmp(ent->classname, "weapon_proxlauncher") ))
@@ -205,7 +205,7 @@ edict_t *DoRandomRespawn (edict_t *ent)
 {
 	edict_t *newEnt;
 	char	*classname;
-	
+
 	classname = FindSubstituteItem (ent);
 	if (classname == NULL)
 		return NULL;
@@ -218,7 +218,7 @@ edict_t *DoRandomRespawn (edict_t *ent)
 	VectorCopy (ent->s.old_origin, newEnt->s.old_origin);
 	VectorCopy (ent->mins, newEnt->mins);
 	VectorCopy (ent->maxs, newEnt->maxs);
-	
+
 	VectorSet (newEnt->gravityVector, 0, 0, -1);
 
 	ED_CallSpawn (newEnt);
@@ -240,7 +240,7 @@ void PrecacheForRandomRespawn (void)
 	for (i=0 ; i<game.num_items ; i++, it++)
 	{
 		itflags = it->flags;
-		
+
 		if (!itflags || (itflags & IT_NOT_GIVEABLE))
 			continue;
 
@@ -263,12 +263,12 @@ void doppleganger_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int
 	float	dist;
 	vec3_t	dir;
 
-	if((self->enemy) && (self->enemy != self->teammaster))
+	if ((self->enemy) && (self->enemy != self->teammaster))
 	{
 		VectorSubtract(self->enemy->s.origin, self->s.origin, dir);
 		dist = VectorLength(dir);
 
-		if(dist > 768)
+		if( dist > 768)
 		{
 			sphere = Sphere_Spawn (self, SPHERE_HUNTER | SPHERE_DOPPLEGANGER);
 			sphere->pain(sphere, attacker, 0, 0);
@@ -284,9 +284,9 @@ void doppleganger_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int
 //		}
 	}
 
-	if(self->teamchain)
-		BecomeExplosion1(self->teamchain);
-	BecomeExplosion1(self);
+	if (self->teamchain)
+		BecomeExplosion1 (self->teamchain);
+	BecomeExplosion1 (self);
 }
 
 void doppleganger_pain (edict_t *self, edict_t *other, float kick, int damage)
@@ -307,12 +307,12 @@ void body_think (edict_t *self)
 {
 	float r;
 
-	if(abs(self->ideal_yaw - anglemod(self->s.angles[YAW])) < 2)
+	if (abs(self->ideal_yaw - anglemod(self->s.angles[YAW])) < 2)
 	{
-		if(self->timestamp < level.time)
+		if (self->timestamp < level.time)
 		{
 			r = random();
-			if(r < 0.10)
+			if (r < 0.10)
 			{
 				self->ideal_yaw = random() * 350.0;
 				self->timestamp = level.time + 1;
@@ -386,4 +386,3 @@ void fire_doppleganger (edict_t *ent, vec3_t start, vec3_t aimdir)
 	base->teamchain = body;
 	body->teammaster = base;
 }
-

@@ -14,9 +14,9 @@
 	information regarding those files belonging to Id Software, Inc.
 
 	..............................................................
-	
+
 	Should you decide to release a modified version of Eraser, you MUST
-	include the following text (minus the BEGIN and END lines) in the 
+	include the following text (minus the BEGIN and END lines) in the
 	documentation for your modification.
 
 	--- BEGIN ---
@@ -27,7 +27,7 @@
 	This program is a modification of the Eraser Bot, and is therefore
 	in NO WAY supported by Ryan Feltrin.
 
-	This program MUST NOT be sold in ANY form. If you have paid for 
+	This program MUST NOT be sold in ANY form. If you have paid for
 	this product, you should contact Ryan Feltrin immediately, via
 	the Eraser Bot homepage.
 
@@ -36,7 +36,7 @@
 	..............................................................
 
 	You will find p_trail.c has not been included with the Eraser
-	source code release. This is NOT an error. I am unable to 
+	source code release. This is NOT an error. I am unable to
 	distribute this file because it contains code that is bound by
 	legal documents, and signed by myself, never to be released
 	to the public. Sorry guys, but law is law.
@@ -79,14 +79,14 @@
 #include <sys/timeb.h>
 
 #include "aj_weaponbalancing.h"	// AJ
-#include "aj_statusbars.h" // AJ 
-byte P_DamageModifier(edict_t *ent);
+#include "aj_statusbars.h" // AJ
+byte P_DamageModifier (edict_t *ent);
 
 int	aborted_fire;
 
-int	is_quad;
-int	is_double;
-int is_quadfire;
+int	bot_is_quad;
+int	bot_is_double;
+int bot_is_quadfire;
 
 void bot_FireWeapon(edict_t	*self)
 {
@@ -94,10 +94,10 @@ void bot_FireWeapon(edict_t	*self)
 		return;
 
 	// set Quad/double flag
-	P_DamageModifier(self);	
-	is_quad = (self->client->quad_framenum > level.framenum);
-	is_double = (self->client->double_framenum > level.framenum);
-	is_quadfire = (self->client->quadfire_framenum > level.framenum);
+	P_DamageModifier(self);
+	bot_is_quad = (self->client->quad_framenum > level.framenum);
+	bot_is_double = (self->client->double_framenum > level.framenum);
+	bot_is_quadfire = (self->client->quadfire_framenum > level.framenum);
 
 	aborted_fire = false;
 	self->bot_fire(self);
@@ -106,11 +106,11 @@ void bot_FireWeapon(edict_t	*self)
 	{
 		if (!CTFApplyStrengthSound(self))
 		{
-			if (is_quad)
+			if (bot_is_quad)
 				gi.sound(self, CHAN_ITEM, gi.soundindex("items/damage3.wav"), 1, ATTN_NORM, 0);
-			if (is_double)
+			if (bot_is_double)
 				gi.sound(self, CHAN_ITEM, gi.soundindex("items/ddamage3.wav"), 1, ATTN_NORM, 0);
-			if (is_quadfire)
+			if (bot_is_quadfire)
 				gi.sound(self, CHAN_ITEM, gi.soundindex("items/quadfire3.wav"), 1, ATTN_NORM, 0);
 		}
 
@@ -311,7 +311,7 @@ nojump:
 
 		if (self->groundentity && (strafe_speed > 0))
 		{
-			if (!M_walkmove(self, 
+			if (!M_walkmove(self,
 							self->s.angles[YAW] + (90 * ((self->strafe_dir * 2) - 1)),
 							strafe_speed * bot_frametime ))
 			{
@@ -421,9 +421,9 @@ void botBlaster (edict_t *self)
 
 // AJ changed constant (15) to cvar
 	damage = sk_bot_blaster_damage->value;
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	// ScarFace
+	if (bot_is_double)	// ScarFace
 		damage *= 2;
 
 	// Knightmare- blaster colors
@@ -533,9 +533,9 @@ void botMachineGun (edict_t *self)
 
 // AJ changed constant (3) to cvar
 	damage = sk_bot_machinegun_damage->value;
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 // AJ changed constants to cvars (hspread, vspread)
 	//ScarFace- changed to player muzzle flash
@@ -617,9 +617,9 @@ void botShotgun (edict_t *self)
 
 // AJ changed constant (3) to cvar
 	damage = sk_bot_shotgun_damage->value;
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 // AJ changed constants to cvar's (hspread, vspread, count)
@@ -699,9 +699,9 @@ void botSuperShotgun (edict_t *self)
 
 // AJ changed constant (3*2) to cvar
 	damage = sk_bot_sshotgun_damage->value; // OPTIMIZE: increase damage, decrease number of bullets
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 	vectoangles(forward, angles);
@@ -818,13 +818,13 @@ void botChaingun (edict_t *self)
 
 	// optimize, simulate more shots by increasing the damage, but still only firing one shot
 	// chaingun is responsible for a LOT of cpu usage
-// AJ changed constant (3) to cvar 
+// AJ changed constant (3) to cvar
 	damage = sk_bot_chaingun_damage->value * shots;
 	kick = 2;
 
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 //	for (i=0 ; i<shots ; i++)
@@ -959,9 +959,9 @@ void botRailgun (edict_t *self)
 	damage	= sk_bot_railgun_damage->value;
 	kick	= 200;
 
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 //	fire_rail (self, start, forward, damage, kick, false, 0, 0, 0);
@@ -1137,9 +1137,9 @@ void botRocketLauncher (edict_t *self)
 		return;
 	}
 
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 // AJ changed constant 650 for cvar sk_bot_rocket_speed->value
@@ -1232,9 +1232,9 @@ void botGrenadeLauncher (edict_t *self)
 //		AngleVectors (self->s.angles, forward, NULL, NULL);
 	}
 
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 	vectoangles(forward, angles);
@@ -1272,9 +1272,9 @@ void botHyperblaster (edict_t *self)
 
 // AJ - changed damage constant from 15 to a cvar
 	damage = sk_bot_hyperblaster_damage->value;
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 	AngleVectors (self->s.angles, forward, right, NULL);
@@ -1387,7 +1387,7 @@ void botHyperblaster (edict_t *self)
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (self-g_edicts);
-	gi.WriteByte (muzzleflash);	
+	gi.WriteByte (muzzleflash);
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 }
@@ -1404,9 +1404,9 @@ void botBFG (edict_t *self)
 	damage = sk_bot_bfg_damage->value;
 // AJ changed constant (1000) to cvar
 	damage_radius = sk_bot_bfg_radius->value;
-	if (is_quad)
+	if (bot_is_quad)
 		damage *= 4;
-	if (is_double)	//ScarFace
+	if (bot_is_double)	//ScarFace
 		damage *= 2;
 
 	AngleVectors (self->s.angles, forward, right, NULL);
@@ -1823,7 +1823,7 @@ botDebugPrint("%s picked up favourite weapon\n", self->client->pers.netname);
 found:
 
 	if (oldweapon != client->pers.weapon)
-		ShowGun(self);		
+		ShowGun(self);
 
 };
 
@@ -1847,7 +1847,7 @@ int botHasWeaponForAmmo (gclient_t *client, gitem_t *item)
 			return (client->pers.inventory[ITEM_INDEX(item_hyperblaster)] ||
 					client->pers.inventory[ITEM_INDEX(item_bfg10k)]);
 		}
-		
+
 		case (AMMO_BULLETS) :
 		{
 			return (client->pers.inventory[ITEM_INDEX(item_chaingun)] ||
@@ -1879,15 +1879,15 @@ int botHasWeaponForAmmo (gclient_t *client, gitem_t *item)
 		case (AMMO_TRAP):
 		{
 			return (client->pers.inventory[ITEM_INDEX(item_trap)]);
-		} 
+		}
 		case (AMMO_PROX):
 		{
 			return (client->pers.inventory[ITEM_INDEX(item_trap)]);
-		} 
+		}
 		case (AMMO_DISRUPTOR):
 		{
 			return (client->pers.inventory[ITEM_INDEX(item_trap)]);
-		} 
+		}
 		default :
 		{
 			gi.dprintf("botHasWeaponForAmmo: unkown ammo type - %i\n", item->ammo);

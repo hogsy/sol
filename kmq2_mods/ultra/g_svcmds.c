@@ -3,12 +3,12 @@
 #include "bot_procs.h"
 #include "aj_replacelist.h" // AJ
 
-void	Svcmd_Test_f (void)
+void Svcmd_Test_f (void)
 {
 	gi.cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
 }
 
-void	Svcmd_Bots_f (void)
+void Svcmd_Bots_f (void)
 {
 	int		i=2, j, len;
 	char	name[128];
@@ -29,7 +29,7 @@ void	Svcmd_Bots_f (void)
 	}
 }
 
-void	Svcmd_Teams_f (void)
+void Svcmd_Teams_f (void)
 {
 	int		arg=2, i;
 	char	team[128];
@@ -44,11 +44,7 @@ void	Svcmd_Teams_f (void)
 			if (!bot_teams[i])
 				break;
 
-#ifdef _WIN32
-			if (!_stricmp(bot_teams[i]->teamname, team) || !_stricmp(bot_teams[i]->abbrev, team))
-#else
-			if (!strcasecmp(bot_teams[i]->teamname, team) || !strcasecmp(bot_teams[i]->abbrev, team))
-#endif
+			if ( !Q_stricmp(bot_teams[i]->teamname, team) || !Q_stricmp(bot_teams[i]->abbrev, team) )
 			{	// found the team, so add the bots
 				bot_teams[i]->ingame = true;	// bots will be added automatically (below)
 				break;
@@ -63,7 +59,7 @@ void	Svcmd_Teams_f (void)
 
 int	force_team = CTF_NOTEAM;
 
-void	Svcmd_Blueteam_f (void)
+void Svcmd_Blueteam_f (void)
 {
 	int i=2;
 
@@ -84,7 +80,7 @@ void	Svcmd_Blueteam_f (void)
 	force_team = CTF_NOTEAM;
 }
 
-void	Svcmd_Redteam_f (void)
+void Svcmd_Redteam_f (void)
 {
 	int i=2;
 
@@ -105,10 +101,10 @@ void	Svcmd_Redteam_f (void)
 }
 
 // AJ
-void	Svcmd_Greenteam_f (void)
+void Svcmd_Greenteam_f (void)
 {
 	int i=2;
-	
+
 	if (!ttctf->value) //ScarFace- only allow this command when in 3tctf mode
 	{
 		gi.dprintf ("Commmand only available in 3TCTF mode\n");
@@ -135,7 +131,7 @@ The game can issue gi.argc() / gi.argv() commands to get the rest
 of the parameters
 =================
 */
-void	ServerCommand (void)
+void ServerCommand (void)
 {
 	char	*cmd;
 

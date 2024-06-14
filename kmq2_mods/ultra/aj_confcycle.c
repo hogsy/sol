@@ -66,16 +66,15 @@ void add_config(char *config)
 }
 
 
-
-
-void read_configlist(void)
+void read_configlist (void)
 {
 	FILE	*f;
-	int		i, configs=0;
+	int		i, configs = 0;
 	char	filename[256];
-	cvar_t	*game_dir;
 	char	strbuf[256];
 	int		newline;
+	size_t	len;
+/*	cvar_t	*game_dir;
 
 	game_dir = gi.cvar ("game", "", 0);
 
@@ -94,74 +93,93 @@ void read_configlist(void)
 	Com_strcat (filename, sizeof(filename), game_dir->string);
 	Com_strcat (filename, sizeof(filename), "/");
 	Com_strcat (filename, sizeof(filename), config_file->string);
-#endif
+#endif */
+	// Knightmare- use GameDir() for all platforms
+	Com_strcpy (filename, sizeof(filename), va("%s/", GameDir()));
+	Com_strcat (filename, sizeof(filename), config_file->string);
 
 	f = fopen (filename, "r");
-	if (!f)
+	if ( !f )
 	{
-//		gi.error("Unable to read the replace file.\n");
+	//	gi.error("Unable to read the replace file.\n");
 		return;
 	}
 
-	clear_configlist();
+	clear_configlist ();
 
 	// initialise the teams
 	for (i=0; i<MAX_TEAMS; i++)
 		bot_teams[i] = NULL;
 
-	gi.dprintf("\nReading config list..\n");
+	gi.dprintf ("\nReading %s...\n", config_file->string);
 
-	fscanf(f, "%c", &strbuf[0]);
+	fscanf (f, "%c", &strbuf[0]);
 
-	do 
+	do
 	{
-		if (feof(f))
+		if ( feof(f) )
 			break;
 
 		if (strbuf[0] == '#')		// commented line
 		{
-			do { 
-				fscanf(f, "%c", &strbuf[0]);
+			do {
+				fscanf (f, "%c", &strbuf[0]);
 			}
 			while (!feof(f) && (strbuf[0] != '\n') /*&& !feof(f)*/);
 		}
 		else if (strbuf[0] == '\n' || strbuf[0] == ' ' || strbuf[0] == '\t')		// blank line
 		{
 			do {
-				fscanf(f, "%c", &strbuf[0]);
+				fscanf (f, "%c", &strbuf[0]);
 			}
-			while (!feof(f) && (strbuf[0] == '\n' || strbuf[0] == ' ' || strbuf[0] == '\t'));
+			while ( !feof(f) && (strbuf[0] == '\n' || strbuf[0] == ' ' || strbuf[0] == '\t') );
 		}
 		else // start of some data
 		{
 			i=0;
-			do 
+			do
 			{
 				i++;
-				fscanf(f, "%c", &strbuf[i]);
-			} while ((strbuf[i] != ' ') && (strbuf[i] != '\t') && (strbuf[i] != '\n') && (i < 255) && !feof(f));
-			
-			if (strbuf[i]!='\n')
-				newline=1;
-			else newline=0;
-			strbuf[i]='\0';
+				fscanf (f, "%c", &strbuf[i]);
+			} while ( (strbuf[i] != ' ') && (strbuf[i] != '\t') && (strbuf[i] != '\n') && (i < 255) && !feof(f) );
 
-			add_config(strbuf);
+			if (strbuf[i] != '\n')
+				newline = 1;
+			else
+                newline = 0;
+			strbuf[i] = '\0';
 
-			if (!newline)
-				do {	
-					fscanf(f, "%c", &strbuf[0]);
+			// Knightmare- zero out carriage returns on Linux
+#ifndef _WIN32
+			if ( (i > 2) && (strbuf[i-1] == '\r') ) {
+				strbuf[i-1] = '\0';
+			}
+#endif // _WIN32
+
+			len = strlen(strbuf);
+			if (len > 1)	// Knightmare- don't add 0 or 1-length config names
+			{
+			//	gi.dprintf ("Adding %s to config list\n", strbuf);
+
+				add_config (strbuf);
+
+				configs++;
+			}
+
+			if ( !newline ) {
+				do {
+					fscanf (f, "%c", &strbuf[0]);
 				}
-				while (((strbuf[0] == ' ') || (strbuf[i] == '\t')) && !feof(f));
-			
-			configs++;
-		}
-		
-	}
-	while (!feof(f));
+				while ( ( (strbuf[0] == ' ') || (strbuf[i] == '\t') ) && !feof(f) );
+			}
 
-	Com_sprintf (strbuf, sizeof(strbuf), "Read %d configs\n", configs);
-	gi.dprintf(strbuf);
+		//	configs++;
+		}
+
+	}
+	while ( !feof(f) );
+
+	gi.dprintf ("Read %i configs.\n", configs);
 
 	fclose (f);
 

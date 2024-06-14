@@ -14,9 +14,9 @@
 	information regarding those files belonging to Id Software, Inc.
 
 	..............................................................
-	
+
 	Should you decide to release a modified version of Eraser, you MUST
-	include the following text (minus the BEGIN and END lines) in the 
+	include the following text (minus the BEGIN and END lines) in the
 	documentation for your modification.
 
 	--- BEGIN ---
@@ -27,7 +27,7 @@
 	This program is a modification of the Eraser Bot, and is therefore
 	in NO WAY supported by Ryan Feltrin.
 
-	This program MUST NOT be sold in ANY form. If you have paid for 
+	This program MUST NOT be sold in ANY form. If you have paid for
 	this product, you should contact Ryan Feltrin immediately, via
 	the Eraser Bot homepage.
 
@@ -36,7 +36,7 @@
 	..............................................................
 
 	You will find p_trail.c has not been included with the Eraser
-	source code release. This is NOT an error. I am unable to 
+	source code release. This is NOT an error. I am unable to
 	distribute this file because it contains code that is bound by
 	legal documents, and signed by myself, never to be released
 	to the public. Sorry guys, but law is law.
@@ -85,10 +85,11 @@
 mmove_t bot_move_attack;
 
 float	last_roam_time;
-edict_t		*tag_owner;
+// Knightmare- made this var extern to fix GCC compile
+extern  edict_t	*tag_owner;
 
-void CTFDropFlagTouch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
-void CTFFlagThink(edict_t *ent);
+void CTFDropFlagTouch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
+void CTFFlagThink (edict_t *ent);
 void CTFGrappleFire (edict_t *ent, vec3_t g_offset, int damage, int effect);
 
 /*
@@ -162,18 +163,18 @@ void bot_roam (edict_t *self, int no_paths)
 
 					// we can see this person, is it worth attacking them?
 // AJ ignore players who are in safety mode
-//				&& (!search->client->safety_mode) 
-// end AJ				
-				&&	(!(search->client->invincible_framenum > level.framenum)) 
+//				&& (!search->client->safety_mode)
+// end AJ
+				&&	(!(search->client->invincible_framenum > level.framenum))
 
 				&&	(	((self->client->quad_framenum > level.framenum) || self->client->invincible_framenum > level.framenum)
 					 || (ctf->value && (carrying_flag = CarryingFlag(search)))
-					 || (gamerules->value == 2 && tag_owner && search == tag_owner) //ScarFace- DM tag support
-					 || !self->enemy 
-					 || (self->enemy->health > search->health) 
+					 || (gamerules->value == 2 && tag_owner && search == tag_owner) // ScarFace- DM tag support
+					 || !self->enemy
+					 || (self->enemy->health > search->health)
 					 || (search->client->pers.weapon == item_blaster)))	// if Quad, or enemy is weaker than self
 			{
-				if (( (carrying_flag) || (gamerules->value == 2 && tag_owner && search == tag_owner) //ScarFace- DM tag support
+				if (( (carrying_flag) || (gamerules->value == 2 && tag_owner && search == tag_owner) // ScarFace- DM tag support
 					|| ((this_dist = entdist(self, search)) < closest_dist)) && visible(self, search) && CanSee(self, search))
 				{	// go for em!
 					botDebugPrint("Attacking %s", search->client->pers.netname);
@@ -217,7 +218,7 @@ void bot_roam (edict_t *self, int no_paths)
 		{
 //			gi.dprintf("Found doppleganger\n");
 			dopple_dist = entdist(self, mapent);
-			if ( (dopple_dist < closest_dist) 
+			if ( (dopple_dist < closest_dist)
 			//	&& (mapent->light_level > 5)
 				&& visible(self, mapent)
 				&& CanSee(self, mapent)
@@ -436,7 +437,7 @@ roam_no_node:
 
 	// nothing to do, if we've been lost for long enough, suicide
 //	self->enemy = self->goalentity = self->movetarget = NULL;
-	
+
 	self->bored_suicide_time = save_suicide_time;
 }
 
@@ -576,12 +577,12 @@ dist = 0;
 
 		// so we don't fire immediately after switching from grapple
 		self->last_fire = level.time + BOT_CHANGEWEAPON_DELAY;
-	
+
 		VectorCopy(self->s.origin, oldorg);
 
 		CTFGrapplePull(self->client->ctf_grapple);
 
-		ShowGun(self);		
+		ShowGun(self);
 
 		if (self->client->ctf_grapple)	// it could have been killed in CTFGrapplePull()
 		{
@@ -691,7 +692,7 @@ dist = 0;
 	// END GRAPPLE
 
 // AJ abandon hope hook code
-	if ( (sk_hook_style->value == 1) && self->client->hook_on && self->client->hook) 
+	if ( (sk_hook_style->value == 1) && self->client->hook_on && self->client->hook)
 	{
 		if (self->goalentity)
 		{
@@ -710,13 +711,13 @@ dist = 0;
 			{
 			//	gi.dprintf("Grapple disagrees with bot, reset\n");
 				abandon_hook_reset(self->client->hook);
-				
+
 
 			} else if (((fabs(self->client->hook->s.origin[2] - (self->s.origin[2])) < 40) && (entdist(self->client->hook, self) < (44*(((!self->goalentity) || (self->goalentity->node_type != NODE_LANDING)) + 1)))))
 			{
 			//	gi.dprintf("Reached destination, resetting hook\n");
 				abandon_hook_reset(self->client->hook);
-			} else	
+			} else
 			{
 				self->groundentity = NULL;
 				abandon_hook_service(self->client->hook);
@@ -724,7 +725,7 @@ dist = 0;
 			}
 		} else abandon_hook_reset(self->client->hook);
 
-	} 
+	}
 // end AJ
 
 	// are these still required??
@@ -749,7 +750,7 @@ dist = 0;
 
 		if (	(self->movetarget->solid != SOLID_TRIGGER) // can't get it anymore
 				// if this item is REALLY desirable, hover around it, waiting for it to respawn
-			&&	(	(self->movetarget_want < WANT_SHITYEAH) 
+			&&	(	(self->movetarget_want < WANT_SHITYEAH)
 				 ||	(	(self->movetarget->nextthink > (level.time + 4))
 					 &&	(	(self->movetarget->item->pickup != CTFPickup_Flag)
 						 ||	!CarryingFlag(self)))))
@@ -796,7 +797,7 @@ dist = 0;
 /*
 			// if no-ones around, give em the finger
 			for (plyr=0; (!in_range && plyr<num_players); plyr++)
-				if ((players[plyr]->health > 0) 
+				if ((players[plyr]->health > 0)
 					&& !SameTeam(players[plyr], self)
 					&& (entdist(self, players[plyr]) < 256))
 				{
@@ -1062,7 +1063,7 @@ void	bot_MoveAI(edict_t *self, int dist)
 //	gi.dprintf("%s moving (%i)\n", self->map, (int) entdist(self, the_client));
 
 	// check platform riding
-	if (self->groundentity && 
+	if (self->groundentity &&
 		(self->goalentity) && (self->goalentity->node_type == NODE_PLAT))
 	{
 		if (self->groundentity->use == Use_Plat)
@@ -1295,7 +1296,7 @@ botDebugPrint("MoveToGoal: random jump\n");
 	}
 
 	// HACK, make sure we head for home if we have the flag!
-	if (ctf->value && CarryingFlag(self))// && 
+	if (ctf->value && CarryingFlag(self))// &&
 //		(!self->movetarget || !self->movetarget->item || (self->movetarget->item->pickup != CTFPickup_Flag)))
 	{
 		edict_t			*flag = NULL, *plyr = NULL;
@@ -1318,7 +1319,7 @@ botDebugPrint("MoveToGoal: random jump\n");
 
 				if (plyr->client->resp.ctf_team != self->client->resp.ctf_team)
 				{
-					if (	(plyr->enemy != self) 
+					if (	(plyr->enemy != self)
 //						&&	(!plyr->target_ent || (plyr->target_ent->think != CTFFlagThink) || (entdist(plyr, plyr->target_ent) > 1000))
 						&&	(entdist(plyr, self) < 2000))
 					{	// send this enemy to us
@@ -1399,7 +1400,7 @@ botDebugPrint("MoveToGoal: random jump\n");
 				goto got_goal;
 			}
 		}
-		else if (self->movetarget && self->movetarget->item && 
+		else if (self->movetarget && self->movetarget->item &&
 				 (self->movetarget->item->pickup == CTFPickup_Flag))	// do something else?
 		{
 			self->movetarget = NULL;
@@ -1443,12 +1444,12 @@ botDebugPrint("MoveToGoal: random jump\n");
 				 && (	(self->movetarget_want >= WANT_SHITYEAH)
 					 || (self->bot_fire == botBlaster)
 					 || (self->bot_fire == botShotgun)
-					 || ((goal_dist = entdist(self->movetarget, self)) < 512) 
+					 || ((goal_dist = entdist(self->movetarget, self)) < 512)
 					 || (self->enemy->health > self->health)
 					 ||	(goal_dist < entdist(self, self->enemy))
 					)
 				)
-			 ||	(	ctf->value 
+			 ||	(	ctf->value
 				 && (HomeFlagDist(self) < 1500))	// defend base!
 			)
 		{	// enemy is best goal
@@ -1460,7 +1461,7 @@ botDebugPrint("MoveToGoal: random jump\n");
 	// check for team goal
 	if (	(self->target_ent && !CarryingFlag(self))
 		&&	(!self->enemy || !CarryingFlag(self->enemy))
-		&&	(	!goal 
+		&&	(	!goal
 			 ||	(self->target_ent->client)
 			 ||	(	(goal == self->movetarget)
 				 &&	((entdist(goal, self->target_ent) / self->movetarget_want) > BOT_GUARDING_RANGE))))
@@ -1530,7 +1531,7 @@ got_goal:
 	// ------------------------------------------------------------
 
 	// check for a node jump
-	if (goal && self->goalentity && self->goalentity->routes && self->goalentity->goalentity) 
+	if (goal && self->goalentity && self->goalentity->routes && self->goalentity->goalentity)
 	if (entdist(self->goalentity, self) < 32)
 	if (CanJump(self))
 	{
@@ -1583,7 +1584,7 @@ got_goal:
 			{	// the velocity of the jump node is good enough
 				VectorCopy(self->goalentity->velocity, dir);
 			}
-			else 
+			else
 			{	// just jump in the direction we're going
 /*
 				// if jumping up, look for a ledge infont, and use it's normal for our velocity
@@ -1766,7 +1767,7 @@ gotvel:
 
 		// Squadron following
 		if (goal == self->target_ent)
-		{	
+		{
 /* This is controlled within CTFFlagThink() now
 			// if our flag isn't at home base, no point defending something, SEARCH AND DESTROY!!
 			if (!self->target_ent->client &&
@@ -1848,7 +1849,7 @@ gotvel:
 	// *********************************************************
 	//
 	// This is the MAIN movement AI
-	// 
+	//
 	// If we have a goalentity, walk towards it, when we reach it,
 	// find the next goal for the next frame
 
@@ -2171,7 +2172,7 @@ int		bot_move(edict_t *self, float dist)
 			{
 				VectorCopy(self->avoid_dir, dir);
 				got_dir = true;
-			}	
+			}
 			// find a direction away from danger
 			else if (!(ret = botJumpAvoidEnt(self, self->avoid_ent)))
 			{
@@ -2320,12 +2321,12 @@ int		bot_move(edict_t *self, float dist)
 			VectorSubtract(self->s.origin, tv(0,0,drop_dist), dropdest);
 			VectorMA(dropdest, 0.3 * (drop_dist/400), self->velocity, dropdest);
 			trace = gi.trace(self->s.origin, VEC_ORIGIN, VEC_ORIGIN, dropdest, self, MASK_SOLID | MASK_WATER);
-			
+
 			VectorCopy(trace.endpos, dest);
 			dest[2] += 1;
 
-			if (	(	(	(trace.fraction == 1) 
-						 ||	(self->goalentity && (self->goalentity->s.origin[2]-64 > trace.endpos[2]))) 
+			if (	(	(	(trace.fraction == 1)
+						 ||	(self->goalentity && (self->goalentity->s.origin[2]-64 > trace.endpos[2])))
 					 &&	(!self->enemy || (self->enemy->s.origin[2] < self->s.origin[2]))) // don't follow a player too far down
 				|| (trace.contents) & (CONTENTS_LAVA | CONTENTS_SLIME))	// falling into lava
 			//	|| (self->goalentity && (trace.fraction > 0.4) && (fabs(self->s.origin[2] - self->goalentity->s.origin[2]) < 8)) )	// we shouldn't be falling here
@@ -2472,11 +2473,11 @@ int		bot_move(edict_t *self, float dist)
 				if ((((int)(level.time)) % 6) < 3)
 					dir = -1;
 
-				if (!M_walkmove(self, 
+				if (!M_walkmove(self,
 								self->s.angles[YAW] - 110 * dir,
 								BOT_STRAFE_SPEED * FRAMETIME * 0.5))
 				{	// try the other way
-					M_walkmove(	self, 
+					M_walkmove(	self,
 								self->s.angles[YAW] + 110 * dir,
 								BOT_STRAFE_SPEED * FRAMETIME * 0.5);
 				}
@@ -2491,7 +2492,7 @@ int		bot_move(edict_t *self, float dist)
 			if ((((int)(level.time)) % 6) < 3)
 				dir = -1;
 
-			M_walkmove(	self, 
+			M_walkmove(	self,
 						self->s.angles[YAW] - 110 * dir,
 						BOT_STRAFE_SPEED * FRAMETIME );
 
@@ -2726,7 +2727,7 @@ int		CanReach(edict_t *self, edict_t *targ)
 
 	// special water case (since tracing for WATER doesn't work
 	if (	(self->waterlevel && targ->waterlevel)
-		||	(	(targ->waterlevel && (!targ->groundentity || (targ->waterlevel > 2))) 
+		||	(	(targ->waterlevel && (!targ->groundentity || (targ->waterlevel > 2)))
 			 &&	((self->s.origin[2]+16) > targ->s.origin[2])))
 		return true;
 

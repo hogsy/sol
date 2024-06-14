@@ -9,7 +9,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -41,12 +41,12 @@ void model_train_animator(edict_t *animator)
 	edict_t	*train;
 
 	train = animator->owner;
-	if (!train || !train->inuse)
+	if ( !train || !train->inuse )
 	{
 		G_FreeEdict(animator);
 		return;
 	}
-	if (Q_stricmp(train->classname,"model_train"))
+	if (Q_stricmp(train->classname,"model_train") != 0)
 	{
 		G_FreeEdict(animator);
 		return;

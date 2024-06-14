@@ -14,9 +14,9 @@
 	information regarding those files belonging to Id Software, Inc.
 
 	..............................................................
-	
+
 	Should you decide to release a modified version of Eraser, you MUST
-	include the following text (minus the BEGIN and END lines) in the 
+	include the following text (minus the BEGIN and END lines) in the
 	documentation for your modification.
 
 	--- BEGIN ---
@@ -27,7 +27,7 @@
 	This program is a modification of the Eraser Bot, and is therefore
 	in NO WAY supported by Ryan Feltrin.
 
-	This program MUST NOT be sold in ANY form. If you have paid for 
+	This program MUST NOT be sold in ANY form. If you have paid for
 	this product, you should contact Ryan Feltrin immediately, via
 	the Eraser Bot homepage.
 
@@ -36,7 +36,7 @@
 	..............................................................
 
 	You will find p_trail.c has not been included with the Eraser
-	source code release. This is NOT an error. I am unable to 
+	source code release. This is NOT an error. I am unable to
 	distribute this file because it contains code that is bound by
 	legal documents, and signed by myself, never to be released
 	to the public. Sorry guys, but law is law.
@@ -74,9 +74,9 @@
 #include "g_local.h"
 #include "m_player.h"
 #include "bot_procs.h"
-///Q2 Camera Begin
+// Q2 Camera Begin
 #include "camclient.h"
-///Q2 Camera End
+// Q2 Camera End
 #include "aj_startmax.h"	// AJ
 #include "aj_statusbars.h"
 
@@ -134,7 +134,7 @@ void respawn_bot (edict_t *self)
 		self->bot_fire = botBFG;
 		self->fire_interval = FIRE_INTERVAL_BFG;
 	}
-	else if ( client->pers.inventory[ITEM_INDEX(item_railgun)] 
+	else if ( client->pers.inventory[ITEM_INDEX(item_railgun)]
 		&& client->pers.inventory[ITEM_INDEX(item_slugs)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 9)) )
 	{
@@ -142,7 +142,7 @@ void respawn_bot (edict_t *self)
 		self->bot_fire = botRailgun;
 		self->fire_interval = FIRE_INTERVAL_RAILGUN;
 	}
-	else if ( client->pers.inventory[ITEM_INDEX(item_hyperblaster)] 
+	else if ( client->pers.inventory[ITEM_INDEX(item_hyperblaster)]
 		&&  client->pers.inventory[ITEM_INDEX(item_cells)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 8)) )
 	{
@@ -150,7 +150,7 @@ void respawn_bot (edict_t *self)
 		self->bot_fire = botHyperblaster;
 		self->fire_interval = FIRE_INTERVAL_HYPERBLASTER;
 	}
-	else if ( client->pers.inventory[ITEM_INDEX(item_rocketlauncher)] 
+	else if ( client->pers.inventory[ITEM_INDEX(item_rocketlauncher)]
 		&& client->pers.inventory[ITEM_INDEX(item_rockets)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 7)) )
 	{
@@ -159,7 +159,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_ROCKETLAUNCHER;
 	}
 	else if ( client->pers.inventory[ITEM_INDEX(item_grenadelauncher)]
-		&& client->pers.inventory[ITEM_INDEX(item_grenades)] 
+		&& client->pers.inventory[ITEM_INDEX(item_grenades)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 6)) )
 	{
 		client->newweapon = item_grenadelauncher;
@@ -167,7 +167,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_GRENADELAUNCHER;
 	}
 	else if ( client->pers.inventory[ITEM_INDEX(item_chaingun)]
-		&& client->pers.inventory[ITEM_INDEX(item_bullets)] 
+		&& client->pers.inventory[ITEM_INDEX(item_bullets)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 5)) )
 	{
 		client->newweapon = item_chaingun;
@@ -175,7 +175,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_CHAINGUN;
 	}
 	else if ( client->pers.inventory[ITEM_INDEX(item_machinegun)]
-		&&  client->pers.inventory[ITEM_INDEX(item_bullets)] 
+		&&  client->pers.inventory[ITEM_INDEX(item_bullets)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 4)) )
 	{
 		client->newweapon = item_machinegun;
@@ -183,7 +183,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_MACHINEGUN;
 	}
 	else if ( client->pers.inventory[ITEM_INDEX(item_supershotgun)]
-		&&  client->pers.inventory[ITEM_INDEX(item_shells)] 
+		&&  client->pers.inventory[ITEM_INDEX(item_shells)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 3)) )
 	{
 		client->newweapon = item_supershotgun;
@@ -191,7 +191,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_SSHOTGUN;
 	}
 	else if ( client->pers.inventory[ITEM_INDEX(item_shotgun)]
-		&&  client->pers.inventory[ITEM_INDEX(item_shells)] 
+		&&  client->pers.inventory[ITEM_INDEX(item_shells)]
 		&& ((sk_start_weapon->value == 0) || (sk_start_weapon->value == 2)) )
 	{
 		client->newweapon = item_shotgun;
@@ -206,7 +206,7 @@ void respawn_bot (edict_t *self)
 		self->fire_interval = FIRE_INTERVAL_BLASTER;
 	}
 
-	
+
 	client->pers.weapon = client->newweapon;
 	client->pers.lastweapon = client->newweapon;
 //	botPickBestWeapon(self);
@@ -230,7 +230,7 @@ void respawn_bot (edict_t *self)
 		self->client->ps.stats[STAT_LITHIUM_MODE] = CS_SAFETY;
 	}
 // end AJ
-	
+
 	// go for it
 	walkmonster_start(self);
 }
@@ -239,7 +239,7 @@ void respawn_bot (edict_t *self)
 edict_t *G_SpawnBot ()
 {
 	edict_t		*bot;
-	
+
 	if (!deathmatch->value)
 	{
 		return NULL;
@@ -298,7 +298,7 @@ edict_t *G_SpawnBot ()
 	bot->last_fire = level.time + 0.2;
 	bot->fire_interval = FIRE_INTERVAL_BLASTER;
 	bot->bot_fire = botBlaster;
-	
+
 	bot->bored_suicide_time = -1;
 	bot->checkstuck_time = level.time;
 
@@ -427,7 +427,7 @@ edict_t *spawn_bot (char *botname)
 		bot->bot_fire = botBFG;
 		bot->fire_interval = FIRE_INTERVAL_BFG;
 	}
-	else if (bot->client->pers.inventory[ITEM_INDEX(item_railgun)] 
+	else if (bot->client->pers.inventory[ITEM_INDEX(item_railgun)]
 		&& bot->client->pers.inventory[ITEM_INDEX(item_slugs)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==9))
 	{
@@ -435,7 +435,7 @@ edict_t *spawn_bot (char *botname)
 		bot->bot_fire = botRailgun;
 		bot->fire_interval = FIRE_INTERVAL_RAILGUN;
 	}
-	else if ( bot->client->pers.inventory[ITEM_INDEX(item_hyperblaster)] 
+	else if ( bot->client->pers.inventory[ITEM_INDEX(item_hyperblaster)]
 		&&  bot->client->pers.inventory[ITEM_INDEX(item_cells)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==8))
 	{
@@ -443,7 +443,7 @@ edict_t *spawn_bot (char *botname)
 		bot->bot_fire = botHyperblaster;
 		bot->fire_interval = FIRE_INTERVAL_HYPERBLASTER;
 	}
-	else if ( bot->client->pers.inventory[ITEM_INDEX(item_rocketlauncher)] 
+	else if ( bot->client->pers.inventory[ITEM_INDEX(item_rocketlauncher)]
 		&& bot->client->pers.inventory[ITEM_INDEX(item_rockets)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==7))
 	{
@@ -452,7 +452,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_ROCKETLAUNCHER;
 	}
 	else if ( bot->client->pers.inventory[ITEM_INDEX(item_grenadelauncher)]
-		&& bot->client->pers.inventory[ITEM_INDEX(item_grenades)] 
+		&& bot->client->pers.inventory[ITEM_INDEX(item_grenades)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==6))
 	{
 		bot->client->newweapon = item_grenadelauncher;
@@ -460,7 +460,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_GRENADELAUNCHER;
 	}
 	else if (bot->client->pers.inventory[ITEM_INDEX(item_chaingun)]
-		&& bot->client->pers.inventory[ITEM_INDEX(item_bullets)] 
+		&& bot->client->pers.inventory[ITEM_INDEX(item_bullets)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==5))
 	{
 		bot->client->newweapon = item_chaingun;
@@ -468,7 +468,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_CHAINGUN;
 	}
 	else if ( bot->client->pers.inventory[ITEM_INDEX(item_machinegun)]
-		&&  bot->client->pers.inventory[ITEM_INDEX(item_bullets)] 
+		&&  bot->client->pers.inventory[ITEM_INDEX(item_bullets)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==4))
 	{
 		bot->client->newweapon = item_machinegun;
@@ -476,7 +476,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_MACHINEGUN;
 	}
 	else if ( bot->client->pers.inventory[ITEM_INDEX(item_supershotgun)]
-		&&  bot->client->pers.inventory[ITEM_INDEX(item_shells)] 
+		&&  bot->client->pers.inventory[ITEM_INDEX(item_shells)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==3))
 	{
 		bot->client->newweapon = item_supershotgun;
@@ -484,7 +484,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_SSHOTGUN;
 	}
 	else if ( bot->client->pers.inventory[ITEM_INDEX(item_shotgun)]
-		&&  bot->client->pers.inventory[ITEM_INDEX(item_shells)] 
+		&&  bot->client->pers.inventory[ITEM_INDEX(item_shells)]
 		&& (sk_start_weapon->value==0 || sk_start_weapon->value==2))
 	{
 		bot->client->newweapon = item_shotgun;
@@ -499,7 +499,7 @@ edict_t *spawn_bot (char *botname)
 		bot->fire_interval = FIRE_INTERVAL_BLASTER;
 	}
 
-	
+
 	bot->client->pers.weapon = bot->client->newweapon;
 	bot->client->pers.lastweapon = bot->client->newweapon;
 //	botPickBestWeapon(self);

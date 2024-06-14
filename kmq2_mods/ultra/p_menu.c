@@ -1,6 +1,6 @@
 #include "g_local.h"
 
-void PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num)
+void PMenu_Open (edict_t *ent, pmenu_t *entries, int cur, int num)
 {
 	pmenuhnd_t *hnd;
 	pmenu_t *p;
@@ -40,7 +40,7 @@ void PMenu_Open(edict_t *ent, pmenu_t *entries, int cur, int num)
 	gi.unicast (ent, true);
 }
 
-void PMenu_Close(edict_t *ent)
+void PMenu_Close (edict_t *ent)
 {
 	if (!ent->client->menu)
 		return;
@@ -51,7 +51,7 @@ void PMenu_Close(edict_t *ent)
 	ent->client->showscores = false;
 }
 
-void PMenu_Update(edict_t *ent)
+void PMenu_Update (edict_t *ent)
 {
 	char		string[1400];
 	int			i;
@@ -117,7 +117,7 @@ void PMenu_Update(edict_t *ent)
 	gi.WriteString (string);
 }
 
-void PMenu_Next(edict_t *ent)
+void PMenu_Next (edict_t *ent)
 {
 	pmenuhnd_t *hnd;
 	int i;
@@ -149,7 +149,7 @@ void PMenu_Next(edict_t *ent)
 	gi.unicast (ent, true);
 }
 
-void PMenu_Prev(edict_t *ent)
+void PMenu_Prev (edict_t *ent)
 {
 	pmenuhnd_t *hnd;
 	int i;
@@ -183,7 +183,7 @@ void PMenu_Prev(edict_t *ent)
 	gi.unicast (ent, true);
 }
 
-void PMenu_Select(edict_t *ent)
+void PMenu_Select (edict_t *ent)
 {
 	pmenuhnd_t *hnd;
 	pmenu_t *p;

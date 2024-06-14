@@ -1,15 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Map Mod 
+// Map Mod
 // by Jeremy Mappus - Jerm a.k.a. DarkTheties
 //
-// This mod will load a file called maps.txt in the game directory. It will 
-// take any names separated by white spaces and list them as seperate name 
-// entries into the map_mod_names_ table. It also provides a function for 
-// checking the change level. 
+// This mod will load a file called maps.txt in the game directory. It will
+// take any names separated by white spaces and list them as seperate name
+// entries into the map_mod_names_ table. It also provides a function for
+// checking the change level.
 //
-// NIQ changes by Mike Fox (a.k.a. Artful Dodger) 
+// NIQ changes by Mike Fox (a.k.a. Artful Dodger)
 // 	Skip rest of line after any '#'.
-//  Support for using all maps  before starting over if in random mode and 
+//  Support for using all maps  before starting over if in random mode and
 // 	niq_allmaps=1.
 
 #include "g_local.h"
@@ -33,14 +33,14 @@ cvar_t *mapmod_random;
 
 /////////////////////////////////////////////////////////////////////////////
 
-void map_mod_set_up()
+void map_mod_set_up (void)
 {
 	FILE	*file;
 	char	file_name[256];
 	cvar_t	*game_dir, *basedir;
-	
+
 	mapmod_random = gi.cvar ("mapmod_random", "0", CVAR_ARCHIVE);
-	
+
 	game_dir = gi.cvar ("game", "", 0);
 	basedir = gi.cvar("basedir", ".", 0);
 
@@ -67,24 +67,24 @@ void map_mod_set_up()
 		file_size = 0;
 		while (!feof(file))
 		{
-		  fgetc(file);
-		  file_size++;
+			fgetc(file);
+			file_size++;
 		}
-		rewind(file);
+		rewind (file);
 
 		p_buffer = malloc(file_size);
-		memset(p_buffer,0,file_size);
+		memset (p_buffer,0,file_size);
 
-		fread((void *)p_buffer, sizeof(char), file_size, file);
+		fread ((void *)p_buffer, sizeof(char), file_size, file);
 
 		gi.dprintf ("\n==== Map Mod v1.01 set up ====\n");
-		gi.dprintf("Adding maps to cycle: ");
+		gi.dprintf ("Adding maps to cycle: ");
 
 		p_name = p_buffer;
 		do
 		{
 			// niq: skip rest of line after a '#' (works with Unix?)
-			if(*p_name == '#')
+			if (*p_name == '#')
 			{
 				while ((*p_name != '\n') && (*p_name != '\r') && counter < file_size)
 					{
@@ -116,7 +116,7 @@ void map_mod_set_up()
 
 				if (map_mod_n_levels_ >= MAPMOD_MAXLEVELS)
 				{
-					gi.dprintf("\nMAPMOD_MAXLEVELS exceeded\nUnable to add more levels.\n");
+					gi.dprintf ("\nMAPMOD_MAXLEVELS exceeded\nUnable to add more levels.\n");
 					break;
 				}
 
@@ -141,10 +141,10 @@ void map_mod_set_up()
 
 		} while (counter < file_size);
 
-		gi.dprintf("\n\n");
+		gi.dprintf ("\n\n");
 
-		free(p_buffer);
-		fclose(file);
+		free (p_buffer);
+		fclose (file);
 
 		if (map_mod_n_levels_)
 		{
@@ -162,7 +162,7 @@ void map_mod_set_up()
 
 /////////////////////////////////////////////////////////////////////////////
 
-char* map_mod_next_map()
+char* map_mod_next_map (void)
 {
 	int i;
 
@@ -171,63 +171,63 @@ char* map_mod_next_map()
 		if (mapmod_random->value)
 		{
 			// NIQ hack start
-			if(map_mod_n_levels_ >= 2)
+			if (map_mod_n_levels_ >= 2)
 			{
 				// niq: hack to mapmode code to make sure we try all maps
 				// before starting over.
 				int map;
 				int skipped;
 
-				if(!unused_maps)
-					{
-					// reset random maps 
-					for(map=0; map<map_mod_n_levels_; map++)
+				if (!unused_maps)
+				{
+					// reset random maps
+					for (map=0; map<map_mod_n_levels_; map++)
 						map_used[map] = false;
 
-					if(map_mod_current_level_ == -1 && level.mapname)
-						{
+					if (map_mod_current_level_ == -1 && level.mapname)
+					{
 						// no current MapMod map:
 						// if there is a current map make sure we don't
 						// pick it again right away if it is in the list
 						for (i=0; (i<map_mod_n_levels_ && map_mod_current_level_== -1); i++)
-							if (!Q_stricmp(level.mapname, map_mod_names_[i]))
+							if ( !Q_stricmp(level.mapname, map_mod_names_[i]) )
 								map_mod_current_level_ = i;
 
-						}
+					}
 
-					if(map_mod_current_level_ != -1)
-						{
+					if (map_mod_current_level_ != -1)
+					{
 						// zap the map
 						map_used[map_mod_current_level_] = true;
 
 						// one less unused map to choose from
-						unused_maps = map_mod_n_levels_ - 1; 
-						}
-					else
-						{
-						// can choose any map in list
-						unused_maps = map_mod_n_levels_; 
-						}
+						unused_maps = map_mod_n_levels_ - 1;
 					}
+					else
+					{
+						// can choose any map in list
+						unused_maps = map_mod_n_levels_;
+					}
+				}
 
 				// pick number of unsued maps to skip (less clustering likely)
 				i = (int) floor(random() * ((float)(unused_maps)));
 
 				// skip to first unused map (has to find one)
 				map	= 0;
-				while(map_used[map])
+				while (map_used[map])
 					map++;
 
 				// skip over i unused maps (has to find them)
 				skipped	= 0;
-				while(skipped<i)
-					{
-					if(!map_used[map++])
+				while (skipped<i)
+				{
+					if (!map_used[map++])
 						skipped++;
-					}
+				}
 
 				// skip to unused map if necessary (e.g. if last skip skipped to used one)
-				while(map_used[map])
+				while (map_used[map])
 					map++;
 
 				map_mod_current_level_ = map;
@@ -236,25 +236,25 @@ char* map_mod_next_map()
 			}
 			// NIQ hack end
 		else
+		{
+			map_mod_current_level_ = -1;
+
+			i = (int) floor(random() * ((float)(map_mod_n_levels_)));
+
+			if ( !Q_stricmp(level.mapname, map_mod_names_[i]) )
 			{
-				map_mod_current_level_ = -1;
-
-				i = (int) floor(random() * ((float)(map_mod_n_levels_)));
-
-				if (!Q_stricmp(level.mapname, map_mod_names_[i]))
-				{
-					if (++i >= map_mod_n_levels_)
-						i=0;
-				}
-				map_mod_current_level_ = i;
+				if (++i >= map_mod_n_levels_)
+					i = 0;
 			}
+			map_mod_current_level_ = i;
+		}
 		}
 		else
 		{
 			map_mod_current_level_ = -1;
-	
+
 			for (i=0; i < map_mod_n_levels_; i++)
-				if (!Q_stricmp(level.mapname, map_mod_names_[i]))
+				if ( !Q_stricmp(level.mapname, map_mod_names_[i]) )
 					map_mod_current_level_ = i+1;
 		}
 

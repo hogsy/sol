@@ -482,8 +482,8 @@ void ED_CallSpawn (edict_t *ent)
 		}
 	}
 /*
-	if (!((ent->classname[0] == 'm') && 
-		  (ent->classname[1] == 'o') && 
+	if (!((ent->classname[0] == 'm') &&
+		  (ent->classname[1] == 'o') &&
 		  (ent->classname[2] != 'n')))
 	{
 		gi.dprintf ("%s doesn't have a spawn function\n", ent->classname);
@@ -500,7 +500,7 @@ char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
 	int		i, l;
-	
+
 	l = (int)strlen(string) + 1;
 
 	newb = gi.TagMalloc (l, TAG_LEVEL);
@@ -520,7 +520,7 @@ char *ED_NewString (char *string)
 		else
 			*new_p++ = string[i];
 	}
-	
+
 	return newb;
 }
 
@@ -544,7 +544,7 @@ void ED_ParseField (char *key, char *value, edict_t *ent)
 
 	for (f=fields ; f->name ; f++)
 	{
-		if (!Q_stricmp(f->name, key))
+		if ( !Q_stricmp(f->name, key) )
 		{	// found it
 			if (f->flags & FFL_SPAWNTEMP)
 				b = (byte *)&st;
@@ -599,7 +599,7 @@ void ED_SetDefaultFields (edict_t *ent)
 {
 	field_t	*f;
 	byte	*b;
-	
+
 	for (f=fields ; f->name ; f++)
 	{
 		if (f->flags & FFL_DEFAULT_NEG)
@@ -608,7 +608,7 @@ void ED_SetDefaultFields (edict_t *ent)
 				b = (byte *)&st;
 			else
 				b = (byte *)ent;
-				
+
 			if (f->type == F_LSTRING)
 				*(char **)(b+f->ofs) = ED_NewString ("-1");
 			else if ( (f->type == F_VECTOR) || (f->type == F_ANGLEHACK) ) {
@@ -732,7 +732,7 @@ qboolean LoadAliasFile (char *name)
 						for (k=0; k<numitems && !in_pak; k++)
 						{
 							fread(&pakitem, 1, sizeof(pak_item_t), fpak);
-							if (!Q_stricmp(pakitem.name,textname))
+							if ( !Q_stricmp(pakitem.name, textname) )
 							{
 								in_pak = true;
 								fseek(fpak, pakitem.start, SEEK_SET);
@@ -834,7 +834,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 		if (!strcmp(search_token, "classname"))
 			classname_found = true;
 
-		// parse value	
+		// parse value
 		search_token = COM_Parse (&search_data);
 		if (!search_data)
 			gi.error ("ED_ParseEntityAlias: end of entity data without closing brace");
@@ -885,7 +885,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 			}
 			// go through all the dictionary pairs
 			while (search_data < (alias_data + alias_data_size))
-			{	
+			{
 			// parse key
 				search_token = COM_Parse (&search_data);
 				if (!search_data) {
@@ -895,8 +895,8 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 				if (search_token[0] == '}')
 					break;
 				Com_strcpy (keyname, sizeof(keyname), search_token);
-				
-			// parse value	
+
+			// parse value
 				search_token = COM_Parse (&search_data);
 				if (!search_data) {
 					gi.dprintf ("ED_ParseEntityAlias: EOF without closing brace\n");
@@ -947,7 +947,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 // go through all the dictionary pairs
 	while (1)
-	{	
+	{
 	// parse key
 		com_token = COM_Parse (&data);
 		if (com_token[0] == '}')
@@ -956,8 +956,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
 		strncpy (keyname, com_token, sizeof(keyname)-1);
-		
-	// parse value	
+
+	// parse value
 		com_token = COM_Parse (&data);
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
@@ -965,7 +965,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (com_token[0] == '}')
 			gi.error ("ED_ParseEntity: closing brace without data");
 
-		init = true;	
+		init = true;
 
 	// keynames with a leading underscore are used for utility comments,
 	// and are immediately discarded by quake
@@ -1182,7 +1182,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -1197,18 +1197,18 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		else
 			ent = G_Spawn ();
 		entities = ED_ParseEdict (entities, ent);
-		
+
 		// yet another map hack
-		if (!stricmp(level.mapname, "command") && !stricmp(ent->classname, "trigger_once") && !stricmp(ent->model, "*27"))
+		if ( !Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27") )
 			ent->spawnflags &= ~SPAWNFLAG_NOT_HARD;
 
 		// ROGUE
-		//ahh, the joys of map hacks .. 
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_door_rotating") && ent->targetname && !Q_stricmp(ent->targetname, "t265"))
+		//ahh, the joys of map hacks ..
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_door_rotating") && ent->targetname && !Q_stricmp(ent->targetname, "t265") )
 			ent->spawnflags &= ~SPAWNFLAG_NOT_COOP;
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "trigger_always") && ent->target && !Q_stricmp(ent->target, "t265"))
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "trigger_always") && ent->target && !Q_stricmp(ent->target, "t265") )
 			ent->spawnflags |= SPAWNFLAG_NOT_COOP;
-		if (!Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_wall") && !Q_stricmp(ent->model, "*15"))
+		if ( !Q_stricmp(level.mapname, "rhangar2") && !Q_stricmp(ent->classname, "func_wall") && !Q_stricmp(ent->model, "*15") )
 			ent->spawnflags |= SPAWNFLAG_NOT_COOP;
 		// rogue
 
@@ -1223,7 +1223,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					{}
 					else
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -1237,7 +1237,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					(((skill->value == 2) || (skill->value == 3)) && (ent->spawnflags & SPAWNFLAG_NOT_HARD))
 					)
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -1260,7 +1260,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		ED_CallSpawn (ent);
 
 		ent->s.renderfx |= RF_IR_VISIBLE;		//PGM
-	}	
+	}
 
 	// we might read in a CTF flag
 	PlayerTrail_Init ();
@@ -1313,7 +1313,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			gi.imageindex("i_ctf2t");
 			gi.imageindex("i_ctfj");
 		}
-	*/	
+	*/
 // AJ detect TTCTF
 	if (!G_Find(NULL, FOFS(classname), "item_flag_team3"))
 		gi.cvar_forceset("ttctf", "0");
@@ -1324,7 +1324,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	CTFPrecache ();
 	}
 // AJ TEMP CHANGE
-//	aj_choosebar(); 
+//	aj_choosebar();
 // end AJ
 //ZOID
 	CTFSetupTechSpawn();
@@ -1383,7 +1383,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 #endif
 
-char *single_statusbar = 
+char *single_statusbar =
 "yb	-24 "
 
 // health
@@ -1434,7 +1434,7 @@ char *single_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -1492,7 +1492,7 @@ char *dm_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -1658,9 +1658,9 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*death3.wav");
 	gi.soundindex ("*death4.wav");
 	gi.soundindex ("*fall1.wav");
-	gi.soundindex ("*fall2.wav");	
+	gi.soundindex ("*fall2.wav");
 	gi.soundindex ("*gurp1.wav");		// drowning damage
-	gi.soundindex ("*gurp2.wav");	
+	gi.soundindex ("*gurp2.wav");
 	gi.soundindex ("*jump1.wav");		// player jump
 	gi.soundindex ("*pain25_1.wav");
 	gi.soundindex ("*pain25_2.wav");
@@ -1679,10 +1679,10 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/female/death4.wav");
 
 	gi.soundindex ("player/female/fall1.wav");
-	gi.soundindex ("player/female/fall2.wav");	
+	gi.soundindex ("player/female/fall2.wav");
 
 	gi.soundindex ("player/female/gurp1.wav");		// drowning damage
-	gi.soundindex ("player/female/gurp2.wav");	
+	gi.soundindex ("player/female/gurp2.wav");
 
 	gi.soundindex ("player/female/jump1.wav");		// player jump
 
@@ -1704,7 +1704,7 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/watr_out.wav");	// feet leaving water
 
 	gi.soundindex ("player/watr_un.wav");	// head going underwater
-	
+
 	gi.soundindex ("player/u_breath1.wav");
 	gi.soundindex ("player/u_breath2.wav");
 
@@ -1826,40 +1826,40 @@ void SP_worldspawn (edict_t *ent)
 
 	// 0 normal
 	gi.configstring(CS_LIGHTS+0, "m");
-	
+
 	// 1 FLICKER (first variety)
 	gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
-	
+
 	// 2 SLOW STRONG PULSE
 	gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
+
 	// 3 CANDLE (first variety)
 	gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
+
 	// 4 FAST STROBE
 	gi.configstring(CS_LIGHTS+4, "mamamamamama");
-	
+
 	// 5 GENTLE PULSE 1
 	gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
+
 	// 6 FLICKER (second variety)
 	gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
-	
+
 	// 7 CANDLE (second variety)
 	gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
+
 	// 8 CANDLE (third variety)
 	gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
+
 	// 9 SLOW STROBE (fourth variety)
 	gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
-	
+
 	// 10 FLUORESCENT FLICKER
 	gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
 
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-	
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing
@@ -1899,7 +1899,7 @@ qboolean FindSpawnPoint (vec3_t startpoint, vec3_t mins, vec3_t maxs, vec3_t spa
 		gi.WriteByte (TE_DEBUGTRAIL);
 		gi.WritePosition (top);
 		gi.WritePosition (startpoint);
-		gi.multicast (startpoint, MULTICAST_ALL);	
+		gi.multicast (startpoint, MULTICAST_ALL);
 */
 		tr = gi.trace (top, mins, maxs, startpoint, NULL, MASK_MONSTERSOLID);
 		if (tr.startsolid || tr.allsolid)
@@ -1911,7 +1911,7 @@ qboolean FindSpawnPoint (vec3_t startpoint, vec3_t mins, vec3_t maxs, vec3_t spa
 //					gi.dprintf("FindSpawnPoint: failed to find a point\n");
 
 			return false;
-		} 
+		}
 		else
 		{
 //			if ((g_showlogic) && (g_showlogic->value))
@@ -1958,7 +1958,7 @@ qboolean CheckSpawnPoint (vec3_t origin, vec3_t mins, vec3_t maxs)
 //		if ((g_showlogic) && (g_showlogic->value))
 //			gi.dprintf("createmonster in entity %s\n", tr.ent->classname);
 		return false;
-	}	
+	}
 	return true;
 }
 
@@ -1978,7 +1978,7 @@ qboolean CheckGroundSpawnPoint (vec3_t origin, vec3_t entMins, vec3_t entMaxs, f
 	vec3_t		start, stop;
 //	int			failure = 0;
 	vec3_t		mins, maxs;
-	int			x, y;	
+	int			x, y;
 	float		mid, bottom;
 
 	if (!CheckSpawnPoint (origin, entMins, entMaxs))
@@ -2076,13 +2076,13 @@ realcheck:
 			{
 				start[0] = stop[0] = x ? maxs[0] : mins[0];
 				start[1] = stop[1] = y ? maxs[1] : mins[1];
-				
+
 				/*
 				gi.WriteByte (svc_temp_entity);
 				gi.WriteByte (TE_DEBUGTRAIL);
 				gi.WritePosition (start);
 				gi.WritePosition (stop);
-				gi.multicast (start, MULTICAST_ALL);	
+				gi.multicast (start, MULTICAST_ALL);
 				*/
 				tr = gi.trace (start, vec3_origin, vec3_origin, stop, NULL, MASK_MONSTERSOLID);
 
@@ -2150,9 +2150,9 @@ void DetermineBBox (char *classname, vec3_t mins, vec3_t maxs)
 	VectorCopy(vec3_origin, newEnt->s.angles);
 	newEnt->classname = ED_NewString (classname);
 	newEnt->monsterinfo.aiflags |= AI_DO_NOT_COUNT;
-	
+
 	ED_CallSpawn(newEnt);
-	
+
 	VectorCopy (newEnt->mins, mins);
 	VectorCopy (newEnt->maxs, maxs);
 

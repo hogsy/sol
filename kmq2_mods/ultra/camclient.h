@@ -4,8 +4,8 @@
 #define TRUE 1
 #define FALSE 0
 
-void CameraThink(edict_t *ent, usercmd_t *ucmd);
-void PlayerDied(edict_t *ent);
+void CameraThink (edict_t *ent, usercmd_t *ucmd);
+void PlayerDied (edict_t *ent);
 
 typedef struct sPlayerList_s
 {
@@ -13,14 +13,14 @@ typedef struct sPlayerList_s
     struct sPlayerList_s *pNext;
 } sPlayerList;
 
-int CameraCmd();
-void EntityListRemove(edict_t *pEntity);
-void EntityListAdd(edict_t *pEntity);
-unsigned long EntityListNumber();
-void PrintEntityList();
-void EnitityListClean();
-sPlayerList *EntityListHead();
-sPlayerList *EntityListNext(sPlayerList *pCurrent);
-sPlayerList *pTempFind;
+int CameraCmd (edict_t *ent);
+void EntityListRemove( edict_t *pEntity);
+void EntityListAdd (edict_t *pEntity);
+unsigned long EntityListNumber ();
+void PrintEntityList (void);
+void EnitityListClean (void);
 
-
+// Knightmare- made these vars extern to fix GCC compile
+extern  sPlayerList *EntityListHead();
+extern  sPlayerList *EntityListNext(sPlayerList *pCurrent);
+extern  sPlayerList *pTempFind;

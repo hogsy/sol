@@ -85,7 +85,7 @@ void lithium_init (void)
 	char	*c=none;
 	char	dir[256];
 //	int		i;
-	cvar_t	*game_dir;
+//	cvar_t	*game_dir;
 
 	while (*c)
 	{
@@ -111,7 +111,7 @@ void lithium_init (void)
 	if (use_onegun->value)
 		aj_onegun((int)use_onegun->value);
 
-	game_dir = gi.cvar ("game", "", 0);
+/*	game_dir = gi.cvar ("game", "", 0);
 
 #ifdef  _WIN32
 //	i =  sprintf(dir, ".\\");
@@ -121,15 +121,24 @@ void lithium_init (void)
 	Com_strcpy (dir, sizeof(dir), ".\\");
 	Com_strcat (dir, sizeof(dir), game_dir->string);
 	Com_strcat (dir, sizeof(dir), "\\routes");
-	mkdir(dir);
+	mkdir (dir);
 #else
 	Com_strcpy (dir, sizeof(dir), "./");
 	Com_strcat (dir, sizeof(dir), game_dir->string);
 	Com_strcat (dir, sizeof(dir), "/routes");
-	mkdir(dir, 755);
+	mkdir (dir, 755);
+#endif */
+
+	// Knightmare- use SavegameDir() for all platforms
+	Com_strcpy (dir, sizeof(dir), SavegameDir());
+	Com_strcat (dir, sizeof(dir), "/routes");
+#ifdef  _WIN32
+	mkdir (dir);
+#else
+	mkdir (dir, 755);
 #endif
 
-	aj_choosebar();
+	aj_choosebar ();
 }
 
 
@@ -198,8 +207,8 @@ void lithium_initclient (gclient_t *client)
 		client->ps.stats[STAT_LITHIUM_RUNE] = CS_TECH6;
 		break;
 	}
-	
-	client->pers.health			= sk_start_health->value; 
+
+	client->pers.health			= sk_start_health->value;
 
 // set the max_* values
 	client->pers.max_health		= sk_max_health->value;
@@ -241,14 +250,14 @@ void lithium_choosestartweap(edict_t *ent)
 		client->newweapon = item_shotgun;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_supershotgun)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_supershotgun)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_shells)] && (sk_start_weapon->value == 0))
 		|| (sk_start_weapon->value == 3)) )
 	{
 		client->newweapon = item_supershotgun;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_machinegun)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_machinegun)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_bullets)] && (sk_start_weapon->value == 0))
 		|| (sk_start_weapon->value == 4)) )
 	{
@@ -262,7 +271,7 @@ void lithium_choosestartweap(edict_t *ent)
 		client->newweapon = item_chaingun;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_grenadelauncher)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_grenadelauncher)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_grenades)] && (sk_start_weapon->value == 0))
 		|| (sk_start_weapon->value == 6)) )
 	{
@@ -276,21 +285,21 @@ void lithium_choosestartweap(edict_t *ent)
 		client->newweapon = item_rocketlauncher;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_hyperblaster)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_hyperblaster)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_cells)] && (sk_start_weapon->value == 0 ))
 		|| (sk_start_weapon->value == 8)) )
 	{
 		client->newweapon = item_hyperblaster;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_railgun)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_railgun)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_slugs)] && (sk_start_weapon->value == 0))
 		|| (sk_start_weapon->value == 9)) )
 	{
 		client->newweapon = item_railgun;
 	}
 
-	if ( client->pers.inventory[ITEM_INDEX(item_bfg10k)] && 
+	if ( client->pers.inventory[ITEM_INDEX(item_bfg10k)] &&
 		( (client->pers.inventory[ITEM_INDEX(item_cells)] && (sk_start_weapon->value == 0))
 		|| (sk_start_weapon->value == 10)) )
 	{
@@ -342,19 +351,21 @@ int lithium_weaponbanning(edict_t *ent)
 
 void lithium_motd (edict_t *ent)
 {
-	FILE	*fh=NULL;
+	FILE	*fh = NULL;
 	char	output[1024], line[257];
-	int		line_count=0, i=0;
+	int		line_count = 0, i = 0, j;
 	char	filename[256];
-	cvar_t	*game_dir;
+	size_t  len;
+//	cvar_t	*game_dir;
 
-	if (!motd->string)
+	if ( !motd->string )
 	{
-		gi.centerprintf(ent, "\n\n=====================================\nEraser Ultra v%1.3f BETA\nby Anthony Jacques\nBased upon Eraser %1.3f by Ryan Feltrin\n\nNo MOTD defined.\n\nwww.users.zetnet.co.uk/jacquesa/q2/\n\n",ULTRA_VERSION , ERASER_VERSION);
+		gi.centerprintf (ent, "\n\n=====================================\nEraser Ultra v%1.3f BETA\nby Anthony Jacques\nBased upon Eraser %1.3f by Ryan Feltrin\n\nNo MOTD defined.\n\nwww.users.zetnet.co.uk/jacquesa/q2/\n\n",
+						ULTRA_VERSION , ERASER_VERSION);
 		return;
 	}
-	
-	game_dir = gi.cvar ("game", "", 0);
+
+/*	game_dir = gi.cvar ("game", "", 0);
 
 #ifdef	_WIN32
 	// Knightmare- use safe string functions
@@ -367,18 +378,33 @@ void lithium_motd (edict_t *ent)
 	Com_strcat (filename, sizeof(filename), game_dir->string);
 	Com_strcat (filename, sizeof(filename), "/");
 	Com_strcat (filename, sizeof(filename), motd->string);
-#endif
+#endif */
+	// Knightmare- use GameDir() for all platforms
+	Com_strcpy (filename, sizeof(filename), va("%s/", GameDir()));
+	Com_strcat (filename, sizeof(filename), motd->string);
 
 	fh = fopen(filename, "r");
 	if (fh == NULL)
 	{
-		gi.centerprintf(ent, "\n\n=====================================\nEraser Ultra v%1.3f BETA\nby Anthony Jacques\nBased upon Eraser %1.3f by Ryan Feltrin\n\nMOTD file not found.\n\nwww.users.zetnet.co.uk/jacquesa/q2/\n\n",ULTRA_VERSION , ERASER_VERSION);
+		gi.centerprintf (ent, "\n\n=====================================\nEraser Ultra v%1.3f BETA\nby Anthony Jacques\nBased upon Eraser %1.3f by Ryan Feltrin\n\nMOTD file not found.\n\nwww.users.zetnet.co.uk/jacquesa/q2/\n\n",
+                        ULTRA_VERSION , ERASER_VERSION);
 		return;
 	}
 
-	output[0]=0;
-	while (fgets(line, 256, fh) && i<1024)
+//	gi.dprintf ("reading %s\n", filename);
+
+	output[0] = 0;
+	while ( fgets(line, 256, fh) && (i < 1024) )
 	{
+		// Knightmare- replace carriage returns on Linux
+#ifndef _WIN32
+		len = strlen(line);
+		for (j = 0; j < len; j++) {
+			if (line[j] == '\r')
+				line[j] = ' ';
+		}
+#endif // _WIN32
+
 		Com_strcat (output, sizeof(output), line);
 		i += (int)strlen(line);
 	}
@@ -386,9 +412,9 @@ void lithium_motd (edict_t *ent)
 	if (i > 0)
 		output[i] = '\0';
 
-	fclose(fh);
+	fclose (fh);
 
-	gi.centerprintf(ent, output);
+	gi.centerprintf (ent, output);
 }
 
 

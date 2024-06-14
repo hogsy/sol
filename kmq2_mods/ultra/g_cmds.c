@@ -11,7 +11,7 @@
 #include "aj_menu.h"
 #include "aj_lmctf.h"
 
-void botRemovePlayer(edict_t *self);
+void botRemovePlayer (edict_t *self);
 
 // AJ funhook
 void Cmd_FunHook_f (edict_t *ent);
@@ -463,7 +463,7 @@ void Cmd_Use_f (edict_t *ent)
 				return;
 			}
 		}
-		else 
+		else
 		{
 			gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
 			return;
@@ -550,7 +550,7 @@ void Cmd_Drop_f (edict_t *ent)
 				return;
 			}
 		}
-		else 
+		else
 		{
 			gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
 			return;
@@ -983,11 +983,7 @@ void Cmd_Join_f(edict_t *ent, char *teamname)
 		if (!bot_teams[i]->ingame && dedicated->value)
 			continue;		// only allow joining a team that has been created on the server
 
-#ifdef _WIN32
-		if (!_stricmp(bot_teams[i]->teamname, teamname) || !_stricmp(bot_teams[i]->abbrev, teamname))
-#else
-		if (!strcasecmp(bot_teams[i]->teamname, teamname) || !strcasecmp(bot_teams[i]->abbrev, teamname))
-#endif
+		if ( !Q_stricmp(bot_teams[i]->teamname, teamname) || !Q_stricmp(bot_teams[i]->abbrev, teamname) )
 		{	// match found
 
 			// check team isn't already full
@@ -1104,7 +1100,7 @@ void Cmd_BotCommands_f	(edict_t	*ent)
 }
 
 void Cmd_Tips_f (edict_t *ent)
-{	
+{
 	gi.cprintf(ent, PRINT_HIGH, "\nERASER TIPS:\n\n * Set \"skill 0-3\" to vary the difficulty of your opponents (1 is default)\n\n * You can create your own bots by editing the file BOTS.CFG in the Eraser directory\n\n * Set \"maxclients 32\" to allow play against more bots\n\n");
 }
 
@@ -2076,7 +2072,7 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp (cmd, "botpause") == 0)
 	{
 		paused = !paused;
-		
+
 		if (!paused)
 		{	// just resumed play
 			int i;
@@ -2092,7 +2088,7 @@ void ClientCommand (edict_t *ent)
 			safe_bprintf(PRINT_HIGH, "%s unpaused the game\n", ent->client->pers.netname);
 		}
 	} // AJ added greenflag to line below
-	else if ((Q_stricmp (cmd, "redflag") == 0) || (Q_stricmp (cmd, "blueflag") == 0) || (Q_stricmp (cmd, "greenflag") == 0))
+	else if ( (Q_stricmp (cmd, "redflag") == 0) || (Q_stricmp (cmd, "blueflag") == 0) || (Q_stricmp (cmd, "greenflag") == 0) )
 	{	// spawn a red flag, which gets saved as node data to make DM levels into CTF levels
 		edict_t *flag;
 		size_t	cmdLen = strlen(cmd) + 1;
@@ -2269,16 +2265,16 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp(cmd, "!zbot") == 0)
 	{
         ent->client->resp.bot_end = 0; // not a bot.
-		gi.dprintf ("[ZKick]: client#%d (%s) @ %s is ok\n", 
+		gi.dprintf ("[ZKick]: client#%d (%s) @ %s is ok\n",
 					(ent-g_edicts)-1, ent->client->pers.netname, Info_ValueForKey (ent->client->pers.userinfo,"ip"));
 	}
 // end AJ
 	// from Yamagi Q2
-	else if (!Q_stricmp(cmd, "cycleweap"))
+	else if ( !Q_stricmp(cmd, "cycleweap") )
 	{
 		Cmd_CycleWeap_f (ent);
 	}
-	else if (!Q_stricmp(cmd, "prefweap"))
+	else if ( !Q_stricmp(cmd, "prefweap") )
 	{
 		Cmd_PrefWeap_f (ent);
 	}

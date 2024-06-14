@@ -70,7 +70,7 @@ field_t fields[] = {
 	{"turn_rider", FOFS(turn_rider), F_INT},
 	{"origin_offset", FOFS(origin_offset), F_VECTOR},
 	// Knightmare- these are needed to update func_door_secret's positions
-	{"width", FOFS(width), F_FLOAT},	
+	{"width", FOFS(width), F_FLOAT},
 	{"length", FOFS(length), F_FLOAT},
 	{"side", FOFS(side), F_FLOAT},
 	// gib fields
@@ -201,11 +201,11 @@ qboolean default_exec = false;
 void InitGame (void)
 {
 
-	gi.dprintf ("==== InitGame ====\n");
+	gi.dprintf ("==== InitGame (Eraser ULTRA) ====\n");
 
 // AJ
-	lithium_defaults();
-	read_configlist();
+	lithium_defaults ();
+	read_configlist ();
 // end AJ
 
 	gun_x = gi.cvar ("gun_x", "0", 0);
@@ -348,7 +348,7 @@ void InitGame (void)
 //ROGUE
 	if (gamerules)
 	{
-		InitGameRules();	// if there are game rules to set up, do so now.
+		InitGameRules ();	// if there are game rules to set up, do so now.
 	}
 //ROGUE
 //======
@@ -528,7 +528,7 @@ void WriteClient (FILE *f, gclient_t *client)
 {
 	field_t		*field;
 	gclient_t	temp;
-	
+
 	// all of the ints, floats, and vectors stay as they are
 	temp = *client;
 

@@ -8,13 +8,13 @@
 
 extern int	map_mod_;							// 1 if maps.txt was found and loaded 0 if not
 
-void		map_mod_set_up();					// Attempts to find and load maps.txt
-char		*map_mod_next_map();				// Retrieves name of next level in the list
+void		map_mod_set_up (void);				// Attempts to find and load maps.txt
+char		*map_mod_next_map (void);			// Retrieves name of next level in the list
 
 #endif
 
 
-/* 
+/*
 *** NOTE: You will have to #include "g_map_mod.h" at the top of g_save.c
 
 This code goes at the end of the InitGame function in g_save.c
@@ -48,4 +48,4 @@ This code goes in the EndDMLevel function in g_main.c at the top of the function
 	Enjoy,
 		Jerm...
 */
-  
+

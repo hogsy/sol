@@ -47,7 +47,7 @@ byte P_DamageModifier(edict_t *ent)
 			is_double = 1;
 		}
 	}
-	
+
 	return damage_multiplier;
 }
 //ROGUE
@@ -242,7 +242,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	index = ITEM_INDEX(ent->item);
 
-	if ( (((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
+	if ( (((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value)
 		 && other->client->pers.inventory[index])
 	{
 		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)) )
@@ -278,7 +278,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	if (client->pers.weapon != ent->item && 
+	if (client->pers.weapon != ent->item &&
 		(other->client->pers.inventory[index] == 1) &&
 		( !deathmatch->value || client->pers.weapon == FindItem("blaster") ) )
 		client->newweapon = ent->item;
@@ -300,7 +300,7 @@ qboolean ViewWeaponSupported(char *model)
 
 	for (i=0; i<num_view_weapons; i++)
 	{
-		if (!Q_stricmp(model, view_weapon_models[i]))
+		if ( !Q_stricmp(model, view_weapon_models[i]) )
 			return true;
 	}
 
@@ -312,7 +312,7 @@ qboolean ViewWeaponSupported(char *model)
 void ShowGun (edict_t *ent)
 {
 #ifdef USE_ITEMTABLE_VWEP
-	if (ent->s.modelindex == (MAX_MODELS-1)) // was 255 
+	if (ent->s.modelindex == (MAX_MODELS-1)) // was 255
 	{
 		int i=0;
 
@@ -404,7 +404,7 @@ void ShowGun(edict_t *ent)
 		return;
 	}
 
-	if (!ent->client->pers.weapon)	
+	if (!ent->client->pers.weapon)
 	{
 		ent->s.modelindex2 = 0;
 		return;
@@ -550,7 +550,7 @@ void ChangeWeapon (edict_t *ent)
 		color = (int)sk_blaster_color->value;
 		// blaster_color could be any other value, so clamp it
 		if ( ((int)sk_blaster_color->value < 1) || ((int)sk_blaster_color->value > 4) )
-			color = BLASTER_ORANGE; 
+			color = BLASTER_ORANGE;
 		// CTF color override
 		if ( (int)ctf->value && (int)ctf_blastercolors->value && ent->client )
 			color = (5 - ent->client->resp.ctf_team);
@@ -579,10 +579,10 @@ void ChangeWeapon (edict_t *ent)
 	else
 	{
 		ent->s.frame = FRAME_pain301;
-		ent->client->anim_end = FRAME_pain304;	
+		ent->client->anim_end = FRAME_pain304;
 	}
-	// ### Hentai ### BEGIN	
-	ShowGun (ent);		
+	// ### Hentai ### BEGIN
+	ShowGun (ent);
 	// ### Hentai ### END
 }
 
@@ -617,20 +617,20 @@ void NoAmmoWeaponChange (edict_t *ent)
 	if ( ent->client->pers.inventory[ITEM_INDEX (FindItem ("mag slug"))]
 		&& ent->client->pers.inventory[ITEM_INDEX (FindItem ("phalanx"))])
 	{
-		ent->client->newweapon = FindItem ("phalanx");	
+		ent->client->newweapon = FindItem ("phalanx");
 		return;
 	}
 	// RAFAEL
 	if ( ent->client->pers.inventory[ITEM_INDEX (FindItem ("cells"))] >= 2
 		&& ent->client->pers.inventory[ITEM_INDEX (FindItem ("ionripper"))])
 	{
-		ent->client->newweapon = FindItem ("ionripper");	
+		ent->client->newweapon = FindItem ("ionripper");
 		return;
 	}
 /*	if ( ent->client->pers.inventory[ITEM_INDEX (FindItem ("cells"))] >= 2
 		&& ent->client->pers.inventory[ITEM_INDEX (FindItem ("plasma beam"))])
 	{
-		ent->client->newweapon = FindItem ("plasma beam");	
+		ent->client->newweapon = FindItem ("plasma beam");
 		return;
 	}*/
 	if ( client->pers.inventory[ITEM_INDEX(FindItem("cells"))]
@@ -690,7 +690,7 @@ void Think_Weapon (edict_t *ent)
 	// call active weapon think routine
 	if (ent->client->pers.weapon && ent->client->pers.weapon->weaponthink)
 	{
-		P_DamageModifier(ent);	
+		P_DamageModifier(ent);
 	//	is_quad = (ent->client->quad_framenum > level.framenum);
 		// RAFAEL
 		is_quadfire = (ent->client->quadfire_framenum > level.framenum);
@@ -732,7 +732,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 			return;
 		}
 		// Knightmare- fire mode selection for LMCTF Plasma rifle
-		else if (current_weapon_index == pr_index)	
+		else if (current_weapon_index == pr_index)
 		{
 			ent->client->pers.plasma_mode = (!ent->client->pers.plasma_mode);
 			if (ent->client->pers.plasma_mode)
@@ -788,7 +788,7 @@ void Use_Weapon2 (edict_t *ent, gitem_t *item)
 			}
 		}
 	}
-	
+
 	else if (strcmp (item->pickup_name, "Railgun") == 0)
   	{
 		ammo_item = FindItem(item->ammo);
@@ -817,14 +817,14 @@ void Use_Weapon2 (edict_t *ent, gitem_t *item)
 				item = FindItem ("Railgun");
 			}
 		}
-				
+
 	}
 
-	
+
 	// see if we're already using it
 	if (item == ent->client->pers.weapon)
 		return;
-	
+
 	if (item->ammo)
 	{
 		ammo_item = FindItem(item->ammo);
@@ -838,7 +838,7 @@ void Use_Weapon2 (edict_t *ent, gitem_t *item)
 
 	// change to this weapon when down
 	ent->client->newweapon = item;
-	
+
 }
 // END 14-APR-98
 
@@ -968,7 +968,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTONS_ATTACK) )
 		{
 			ent->client->latched_buttons &= ~BUTTONS_ATTACK;
-			if ((!ent->client->ammo_index) || 
+			if ((!ent->client->ammo_index) ||
 				( ent->client->pers.inventory[ent->client->ammo_index] >= ent->client->pers.weapon->quantity))
 			{
 				ent->client->ps.gunframe = FRAME_FIRE_FIRST;
@@ -1131,21 +1131,21 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 {
 	int oldstate = ent->client->weaponstate;
 
-	Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST, 
-		FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames, 
+	Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST,
+		FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames,
 		fire_frames, fire);
 
 	// run the weapon frame again if hasted
-	if (stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0 &&
-		ent->client->weaponstate == WEAPON_FIRING)
+	if ( (Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0) &&
+		(ent->client->weaponstate == WEAPON_FIRING) )
 		return;
 
-	if ((CTFApplyHaste(ent) ||
-		(Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0 &&
-		ent->client->weaponstate != WEAPON_FIRING))
-		&& oldstate == ent->client->weaponstate) {
-		Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST, 
-			FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames, 
+	if ( (CTFApplyHaste(ent) ||
+		( (Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0) &&
+		ent->client->weaponstate != WEAPON_FIRING) )
+		&& (oldstate == ent->client->weaponstate) ) {
+		Weapon_Generic2 (ent, FRAME_ACTIVATE_LAST, FRAME_FIRE_LAST,
+			FRAME_IDLE_LAST, FRAME_DEACTIVATE_LAST, pause_frames,
 			fire_frames, fire);
 	}
 }
@@ -1483,7 +1483,7 @@ void Throw_Generic (edict_t *ent, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int 
 }
 
 //void Throw_Generic (edict_t *ent, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_THROW_SOUND,
-//						int FRAME_THROW_HOLD, int FRAME_THROW_FIRE, int *pause_frames, 
+//						int FRAME_THROW_HOLD, int FRAME_THROW_FIRE, int *pause_frames,
 //						int EXPLOSION_TIME, void (*fire)(edict_t *ent))
 
 void Weapon_Grenade (edict_t *ent)
@@ -1794,7 +1794,7 @@ void Weapon_Blaster_Fire (edict_t *ent, qboolean altfire)
 	color = (int)sk_blaster_color->value;
 	// blaster_color could be any other value, so clamp it
 	if ( ((int)sk_blaster_color->value < 1) || ((int)sk_blaster_color->value > 4) )
-		color = BLASTER_ORANGE; 
+		color = BLASTER_ORANGE;
 	// CTF color override
 	if ( (int)ctf->value && (int)ctf_blastercolors->value && ent->client )
 		color = (5 - ent->client->resp.ctf_team);
@@ -2264,7 +2264,7 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 
 	// from Yamagi Q2
 	if (g_aimfix->value)
-	{	
+	{
 		AngleVectors (v, forward, right, NULL);
 
 		VectorScale (forward, -2, ent->client->kick_origin);
@@ -2276,7 +2276,7 @@ void weapon_supershotgun_fire (edict_t *ent, qboolean altfire)
 
 	// from Yamagi Q2
 	if (g_aimfix->value)
-	{	
+	{
 		AngleVectors (v, forward, right, NULL);
 
 		VectorScale (forward, -2, ent->client->kick_origin);
@@ -2533,7 +2533,7 @@ void weapon_ionripper_fire (edict_t *ent, qboolean altfire)
 		damage = 50;
 		kick = 60;
 	}
-	
+
 	if (is_quad)
 	{
 		damage *= 4;
@@ -2549,7 +2549,7 @@ void weapon_ionripper_fire (edict_t *ent, qboolean altfire)
 	tempang[YAW] += crandom();
 
 	AngleVectors (tempang, forward, right, NULL);
-	
+
 	VectorScale (forward, -3, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -3;
 
@@ -2571,7 +2571,7 @@ void weapon_ionripper_fire (edict_t *ent, qboolean altfire)
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
-	
+
 	if (ent->client->pers.inventory[ent->client->ammo_index] < 0)
 		ent->client->pers.inventory[ent->client->ammo_index] = 0;
 }
@@ -2589,7 +2589,7 @@ void Weapon_Ionripper (edict_t *ent)
 }
 
 
-// 
+//
 //	Phalanx
 //
 
@@ -2607,7 +2607,7 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 	damage = sk_phalanx_damage->value + (int)(random() * sk_phalanx_damage2->value);
 	radius_damage = sk_phalanx_radius_damage->value;
 	damage_radius = sk_phalanx_radius->value;
-	
+
 	if (is_quad)
 	{
 		damage *= 4;
@@ -2632,7 +2632,7 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 		v[PITCH] = ent->client->v_angle[PITCH];
 		v[YAW]   = ent->client->v_angle[YAW] - 1.5;
 		v[ROLL]  = ent->client->v_angle[ROLL];
-		AngleVectors (v, forward, right, up);	
+		AngleVectors (v, forward, right, up);
 
 		// from Yamagi Q2
 		if (g_aimfix->value)
@@ -2675,12 +2675,12 @@ void weapon_phalanx_fire (edict_t *ent, qboolean altfire)
 		gi.WriteShort (ent-g_edicts);
 		gi.WriteByte (MZ_PHALANX | is_silenced);
 		gi.multicast (ent->s.origin, MULTICAST_PVS);
-		
+
 		PlayerNoise(ent, start, PNOISE_WEAPON);
 	}
-	
+
 	ent->client->ps.gunframe++;
-	
+
 }
 
 void Weapon_Phalanx (edict_t *ent)
@@ -2692,7 +2692,7 @@ void Weapon_Phalanx (edict_t *ent)
 
 	if (is_quadfire)
 		Weapon_Generic (ent, 5, 20, 58, 63, pause_frames, fire_frames, weapon_phalanx_fire);
-	
+
 }
 
 /*
@@ -2731,7 +2731,7 @@ void weapon_trap_fire (edict_t *ent, qboolean held)
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
 	// fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
 	fire_trap (ent, start, forward, damage, speed, timer, radius, held);
-	
+
 // you don't get infinite traps!  ZOID
 //	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 
@@ -2927,7 +2927,7 @@ void Weapon_ChainFist (edict_t *ent)
 //	static int	attack_index;
 	float		chance;
 	int			last_sequence;
-	
+
 	last_sequence = 0;
 
 	// load chainsaw sounds and store the indexes for later use.
@@ -2960,7 +2960,7 @@ void Weapon_ChainFist (edict_t *ent)
 		if ((ent->client->pers.hand != CENTER_HANDED) && random() < 0.4)
 			chainfist_smoke(ent);
 //		ent->client->ps.gunframe = 49;
-	}	
+	}
 
 	// set the appropriate weapon sound.
 	if (ent->client->weaponstate == WEAPON_FIRING)
@@ -3045,7 +3045,7 @@ void weapon_tracker_fire (edict_t *self, qboolean altfire)
 	// FIXME - can we shorten this? do we need to?
 	VectorMA (start, WORLD_SIZE, forward, end);	// was 8192
 	enemy = NULL;
-	//PMM - doing two traces .. one point and one box.  
+	//PMM - doing two traces .. one point and one box.
 	tr = gi.trace (start, vec3_origin, vec3_origin, end, self, MASK_SHOT);
 	if (tr.ent != world)
 	{
@@ -3177,7 +3177,7 @@ void weapon_etf_rifle_fire (edict_t *ent, qboolean altfire)
 //		gi.dprintf("left\n");
 		VectorSet (offset, 15, 6, -8);
 	}
-	
+
 	VectorCopy (ent->s.origin, tempPt);
 	tempPt[2] += ent->viewheight;
 	P_ProjectSource2 (ent, tempPt, offset, forward, right, up, start);	// Knightmare- changed parms for aimfix
@@ -3243,7 +3243,7 @@ void Weapon_ETF_Rifle (edict_t *ent)
 }
 
 // pgm - this now uses ent->client->pers.weapon->quantity like all the other weapons
-//#define HEATBEAM_AMMO_USE		2		
+//#define HEATBEAM_AMMO_USE		2
 #define	HEATBEAM_DM_DMG			15
 #define HEATBEAM_SP_DMG			15
 
@@ -3294,7 +3294,7 @@ void Heatbeam_Fire (edict_t *ent, qboolean altfire)
 	AngleVectors (ent->client->v_angle, forward, right, up);
 
 // This offset is the "view" offset for the beam start (used by trace)
-	
+
 	VectorSet (offset, 7, 2, ent->viewheight-3);
 	P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix
 
@@ -3341,7 +3341,7 @@ void Weapon_Heatbeam (edict_t *ent)
 //	if ((g_showlogic) && (g_showlogic->value)) {
 //		gi.dprintf ("Frame %d, skin %d\n", ent->client->ps.gunframe, ent->client->ps.gunskin);
 //	}
-	
+
 //	if (!attack_index)
 //	{
 //		attack_index = gi.soundindex ("weapons/bfg__l1a.wav");
@@ -3532,7 +3532,7 @@ void weapon_plasma_rifle_fire (edict_t *ent, qboolean altfire)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex(PLASMA_SOUND_EMPTY), 1, ATTN_NORM, 0);
 			ent->pain_debounce_time = level.time + 1;
 		}
-		
+
 		NoAmmoWeaponChange (ent);
 		return;
 	}
@@ -3541,7 +3541,7 @@ void weapon_plasma_rifle_fire (edict_t *ent, qboolean altfire)
 	{
 		AngleVectors (ent->client->v_angle, forward, right, NULL);
 		VectorScale (forward, -2, ent->client->kick_origin);
-		
+
 		// fire weapon
 		VectorSet (offset, 8, 8, ent->viewheight-8);
 		P_ProjectSource (ent, ent->s.origin, offset, forward, right, start);	// Knightmare- changed parms for aimfix

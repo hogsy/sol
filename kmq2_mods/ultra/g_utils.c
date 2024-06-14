@@ -1,8 +1,10 @@
 // g_utils.c -- misc utility functions for game module
 
 #include "g_local.h"
-#include <direct.h>	// Knightmare added
 
+#ifdef _WIN32
+#include <direct.h>	// Knightmare added
+#endif
 
 void G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
 {
@@ -27,7 +29,7 @@ edict_t *G_Find (edict_t *from, size_t fieldofs, char *match)	// Knightmare- cha
 {
 	char	*s;
 
-	if (!from)
+	if ( !from )
 		from = g_edicts;
 	else
 		from++;
@@ -37,9 +39,9 @@ edict_t *G_Find (edict_t *from, size_t fieldofs, char *match)	// Knightmare- cha
 		if (!from->inuse)
 			continue;
 		s = *(char **) ((byte *)from + fieldofs);
-		if (!s)
+		if ( !s )
 			continue;
-		if (!Q_stricmp (s, match))
+		if ( !Q_stricmp (s, match) )
 			return from;
 	}
 
@@ -175,8 +177,8 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 		t->killtarget = ent->killtarget;
 		return;
 	}
-	
-	
+
+
 //
 // print the message
 //
@@ -199,7 +201,7 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 		while ((t = G_Find (t, FOFS(targetname), ent->killtarget)))
 		{
 			// PMM - if this entity is part of a train, cleanly remove it
-			if((Q_stricmp(level.mapname, "biggun") == 0) || (Q_stricmp(level.mapname, "city2") == 0))
+			if ( (Q_stricmp(level.mapname, "biggun") == 0) || (Q_stricmp(level.mapname, "city2") == 0) )
 			{}
 			else if (t->flags & FL_TEAMSLAVE)
 			{
@@ -249,8 +251,8 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 		while ((t = G_Find (t, FOFS(targetname), ent->target)))
 		{
 			// doors fire area portals in a specific way
-			if (!Q_stricmp(t->classname, "func_areaportal") &&
-				(!Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating")))
+			if ( !Q_stricmp(t->classname, "func_areaportal") &&
+				( !Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating") ) )
 				continue;
 
 			if (t == ent)
@@ -350,7 +352,7 @@ void G_SetMovedir (vec3_t angles, vec3_t movedir)
 float vectoyaw (vec3_t vec)
 {
 	float	yaw;
-	
+
 	if (vec[YAW] == 0 && vec[PITCH] == 0)
 		yaw = 0;
 	else
@@ -368,7 +370,7 @@ void vectoangles (vec3_t value1, vec3_t angles)
 {
 	float	forward;
 	float	yaw, pitch;
-	
+
 	if (value1[1] == 0 && value1[0] == 0)
 	{
 		yaw = 0;
@@ -398,7 +400,7 @@ char *G_CopyString (char *in)
 {
 	char	*out;
 	size_t	outSize;
-	
+
 //	out = gi.TagMalloc (strlen(in)+1, TAG_LEVEL);
 	outSize = strlen(in)+1;
 	out = gi.TagMalloc (outSize, TAG_LEVEL);
@@ -447,10 +449,10 @@ edict_t *G_Spawn (void)
 			return e;
 		}
 	}
-	
+
 	if (i == game.maxentities)
 		gi.error ("ED_Alloc: no free edicts");
-		
+
 	globals.num_edicts++;
 	G_InitEdict (e);
 	return e;
@@ -719,7 +721,7 @@ void AddModelSkin (char *modelfile, char *skinname)
 	{
 		fwrite(&(skinname[i]), 1, 1, out);
 	}
-	
+
 	buffer = '\0';
 	fwrite(&buffer, 1, 1, out);
 	buffer = 'x';
@@ -871,7 +873,7 @@ void G_ProjectSource2 (vec3_t point, vec3_t distance, vec3_t forward, vec3_t rig
 float vectoyaw2 (vec3_t vec)
 {
 	float	yaw;
-	
+
 	// PMM - fixed to correct for pitch of 0
 	if (/*vec[YAW] == 0 &&*/ vec[PITCH] == 0)
 		if (vec[YAW] == 0)
@@ -894,7 +896,7 @@ void vectoangles2 (vec3_t value1, vec3_t angles)
 {
 	float	forward;
 	float	yaw, pitch;
-	
+
 	if (value1[1] == 0 && value1[0] == 0)
 	{
 		yaw = 0;
@@ -932,7 +934,7 @@ void vectoangles2 (vec3_t value1, vec3_t angles)
 float realrange (edict_t *self, edict_t *other)
 {
 	vec3_t dir;
-	
+
 	VectorSubtract (self->s.origin, other->s.origin, dir);
 
 	return VectorLength(dir);

@@ -209,14 +209,14 @@ cvar_t	*sk_shockwave_effect_radius;
 // starting values
 cvar_t	*sk_start_weapon;
 
-cvar_t	*sk_start_health;		
+cvar_t	*sk_start_health;
 cvar_t	*sk_start_armor;	// what sort of armor????
-cvar_t	*sk_start_bullets;	
-cvar_t	*sk_start_shells;	
-cvar_t	*sk_start_rockets;	
+cvar_t	*sk_start_bullets;
+cvar_t	*sk_start_shells;
+cvar_t	*sk_start_rockets;
 cvar_t	*sk_start_grenades;
 cvar_t	*sk_start_cells;
-cvar_t	*sk_start_slugs;	
+cvar_t	*sk_start_slugs;
 cvar_t	*sk_start_magslugs;
 cvar_t	*sk_start_traps;
 cvar_t	*sk_start_rounds;
@@ -294,12 +294,12 @@ cvar_t	*sk_quad_fire_time;
 
 // maximum values
 cvar_t	*sk_max_health;
-cvar_t	*sk_max_armor;	
-cvar_t	*sk_max_bullets;	
-cvar_t	*sk_max_shells;	
-cvar_t	*sk_max_rockets;	
-cvar_t	*sk_max_grenades;	
-cvar_t	*sk_max_cells;		
+cvar_t	*sk_max_armor;
+cvar_t	*sk_max_bullets;
+cvar_t	*sk_max_shells;
+cvar_t	*sk_max_rockets;
+cvar_t	*sk_max_grenades;
+cvar_t	*sk_max_cells;
 cvar_t	*sk_max_slugs;
 cvar_t	*sk_max_magslugs;
 cvar_t	*sk_max_traps;
@@ -507,7 +507,7 @@ cvar_t	*use_rogueplats;
 cvar_t	*grapple_mdl;
 cvar_t	*grapple_spin;
 
-cvar_t	*strong_mines;
+//cvar_t	*strong_mines;
 
 cvar_t	*invisible_dmstarts;
 
@@ -530,7 +530,7 @@ void lithium_defaults (void)
 	player_gib_health = gi.cvar("player_gib_health", "-40", 0);
 	showbotping = gi.cvar("showbotping", "0", 0);
 
-	intermission_time = gi.cvar("intermission_time", "8.5", 0); 
+	intermission_time = gi.cvar("intermission_time", "8.5", 0);
 	intermission_sound = gi.cvar("intermission_sound", "world/xian1.wav", 0);
 
 	sk_fall_damagemod = gi.cvar("sk_fall_damagemod", "1.0", 0);
@@ -552,7 +552,7 @@ void lithium_defaults (void)
 	fast_respawn = gi.cvar("fast_respawn", "0.75", 0);
 	fast_pbound = gi.cvar("rast_pbound", "16", 0);
 
-	rune_spawn_dmstart = gi.cvar("rune_spawn_dmstart", "0", 0); // new 
+	rune_spawn_dmstart = gi.cvar("rune_spawn_dmstart", "0", 0); // new
 
 	rune_flags = gi.cvar("rune_flags", "31", 0);
 	rune_spawn = gi.cvar("rune_spawn", "0.10", 0);
@@ -658,7 +658,7 @@ void lithium_defaults (void)
 	sk_ir_time = gi.cvar("sk_ir_time", "30", 0);
 	sk_double_time = gi.cvar("sk_double_time", "30", 0);
 	sk_quad_fire_time = gi.cvar("sk_quad_fire_time", "30", 0);
-// end ScarFace	
+// end ScarFace
 	sk_pack_health = gi.cvar("sk_pack_health", "120", 0);
 	sk_pack_armor = gi.cvar("sk_pack_armor", "250", 0);
 	sk_pack_bullets = gi.cvar("sk_pack_bullets", "360", 0);
@@ -946,7 +946,7 @@ void lithium_defaults (void)
 	grapple_spin = gi.cvar("grapple_spin", "0", 0);
 
 // rogue
-	strong_mines = gi.cvar ("strong_mines", "0", 0);
+//	strong_mines = gi.cvar ("strong_mines", "0", 0);
 
 	invisible_dmstarts = gi.cvar("invisible_dmstarts","0", CVAR_LATCH);
 }

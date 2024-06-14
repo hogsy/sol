@@ -103,9 +103,9 @@ typedef enum
 	DAMAGE_AIM			// auto targeting recognizes this
 } damage_t;
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING
@@ -183,7 +183,7 @@ typedef enum
 #define	AI_SPAWNED_MEDIC_C		0x01000000	// both do_not_count and spawned are set for spawned monsters
 #define	AI_SPAWNED_WIDOW		0x02000000	// both do_not_count and spawned are set for spawned monsters
 #define AI_SPAWNED_MASK			0x03800000	// mask to catch all three flavors of spawned
-#define	AI_BLOCKED				0x04000000	// used by blocked_checkattack: set to say I'm attacking while blocked 
+#define	AI_BLOCKED				0x04000000	// used by blocked_checkattack: set to say I'm attacking while blocked
 											// (prevents run-attacks)
 //ROGUE
 
@@ -284,15 +284,15 @@ typedef struct
 // ROGUE
 
 // gitem_t->weapmodel for weapons indicates model index
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_SUPERSHOTGUN		3 
-#define WEAP_MACHINEGUN			4 
-#define WEAP_CHAINGUN			5 
-#define WEAP_GRENADES			6 
-#define WEAP_GRENADELAUNCHER	7 
-#define WEAP_ROCKETLAUNCHER		8 
-#define WEAP_HYPERBLASTER		9 
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_SUPERSHOTGUN		3
+#define WEAP_MACHINEGUN			4
+#define WEAP_CHAINGUN			5
+#define WEAP_GRENADES			6
+#define WEAP_GRENADELAUNCHER	7
+#define WEAP_ROCKETLAUNCHER		8
+#define WEAP_HYPERBLASTER		9
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
 #define WEAP_GRAPPLE			12
@@ -700,7 +700,7 @@ extern	cvar_t	*spectator_password;
 extern	cvar_t	*g_select_empty;
 extern	cvar_t	*dedicated;
 
-// AJ - funhook 
+// AJ - funhook
 extern  cvar_t  *sk_hook_is_homing;
 extern  cvar_t  *sk_hook_homing_radius;
 extern  cvar_t  *sk_hook_homing_factor;
@@ -805,7 +805,7 @@ extern	cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 #define FFL_DEFAULT_NEG		4	// Knightmare- spawntemp that defaults to -1
 
 typedef enum {
-	F_INT, 
+	F_INT,
 	F_FLOAT,
 	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
@@ -1071,10 +1071,10 @@ void fire_plasma_rifle (edict_t *ent, vec3_t start, vec3_t dir, int damage, int 
 //extern float nuke_framenum;
 
 void fire_flechette (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
-//void fire_prox (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);		
+//void fire_prox (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
 void fire_prox (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int damage_multiplier, int speed, int health, float timer, float damage_radius);
 void Cmd_DetProx_f (edict_t *ent);
-void fire_nuke (edict_t *self, vec3_t start, vec3_t aimdir, int speed);		
+void fire_nuke (edict_t *self, vec3_t start, vec3_t aimdir, int speed);
 void fire_flame (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
 void fire_burst (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed);
 void fire_maintain (edict_t *, edict_t *, vec3_t start, vec3_t aimdir, int damage, int speed);
@@ -1127,7 +1127,7 @@ edict_t *SelectFarthestDeathmatchSpawnPoint (void);
 
 
 //
-// g_ptrail.c
+// p_trail.c
 //
 void PlayerTrail_Init (void);
 void PlayerTrail_Add (edict_t *self, vec3_t spot, edict_t *goalent, int nocheck, int calc_routes, int node_type);
@@ -1141,14 +1141,15 @@ edict_t *PlayerTrail_VisibleTrailInRange(edict_t *ent1, edict_t *ent2, float ran
 edict_t *bot_PickBestTrail (edict_t *self, edict_t *target, int recurse_depth);
 edict_t *bot_TouchedTrail(edict_t *ent, edict_t *targ);
 
-qboolean nodes_done;		// used to determine whether or not to enable node calculation
-edict_t	*check_nodes_done;	// after 20 mins of play, this ent checks if we should turn off node calc. at set intervals
+// Knightmare- made these vars extern to fix GCC compile
+extern	qboolean nodes_done;		// used to determine whether or not to enable node calculation
+extern	edict_t	*check_nodes_done;	// after 20 mins of play, this ent checks if we should turn off node calc. at set intervals
 
-//edict_t *last_trail_dropped;
-qboolean	loaded_trail_flag;
+//extern	edict_t *last_trail_dropped;
+extern	qboolean	loaded_trail_flag;
 
 #define		TRAIL_LENGTH			750
-edict_t		*trail[TRAIL_LENGTH];			// the actual trail!
+extern	edict_t		*trail[TRAIL_LENGTH];			// the actual trail!
 
 #define		TRAIL_TELEPORT_SOURCE	1
 
@@ -1164,7 +1165,8 @@ void InitClientResp (gclient_t *client);
 void InitBodyQue (void);
 void ClientBeginServerFrame (edict_t *ent);
 
-float	last_trail_time;
+// Knightmare- made this extern to fix GCC compile
+extern	float	last_trail_time;
 
 //
 // g_player.c
@@ -1220,22 +1222,25 @@ void SaveClientData (void);
 void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
 
+
 //#define	BOT_FRAMETIME	0.1
-double	bot_frametime;
+// Knightmare- made this extern to fix GCC compile
+extern	double	bot_frametime;
 
 //
 // g_chase.c
 //
-void UpdateChaseCam(edict_t *ent);
-void ChaseNext(edict_t *ent);
-void ChasePrev(edict_t *ent);
-void GetChaseTarget(edict_t *ent);
+void UpdateChaseCam (edict_t *ent);
+void ChaseNext (edict_t *ent);
+void ChasePrev (edict_t *ent);
+void GetChaseTarget (edict_t *ent);
 
-int max_bots;
-float	last_bot_spawn;
-int bot_male_names_used;
-int bot_female_names_used;
-int bot_count;
+// Knightmare- made these extern to fix GCC compile
+extern	int 	max_bots;
+extern	float	last_bot_spawn;
+extern	int		bot_male_names_used;
+extern	int 	bot_female_names_used;
+extern	int 	bot_count;
 
 #define	MAX_BOT_FEMALE_NAMES		10
 #define	MAX_BOT_MALE_NAMES			15
@@ -1412,8 +1417,9 @@ struct bot_team_s
 
 typedef struct bot_team_s bot_team_t;
 
-bot_team_t	*bot_teams[MAX_TEAMS];
-int			total_teams;
+// Knightmare- made these extern to fix GCC compile
+extern	bot_team_t	*bot_teams[MAX_TEAMS];
+extern	int			total_teams;
 // END Teamplay structure
 //========================================================================================
 
@@ -1514,7 +1520,7 @@ struct gclient_s
 	///Q2 Camera Begin
     qboolean    bIsCamera;
     int         iMode;
-    edict_t     *pTarget;  
+    edict_t     *pTarget;
     qboolean    bWatchingTheDead;
     vec3_t      vDeadOrigin;
     double       fXYLag;
@@ -1550,9 +1556,9 @@ struct gclient_s
 	edict_t		*hook_touch;		// Edict that hook has touched
 	qboolean	on_hook;			// Shows if player is being moved by hook
 	qboolean	oh_hook_button;		// Shows if player is being moved by hook
-	
-	// The hook needs to be sure not to fire right after teleporting, 
-	// since there are some timing issues involved that mess up the 
+
+	// The hook needs to be sure not to fire right after teleporting,
+	// since there are some timing issues involved that mess up the
 	// firing angle. client->ps.pmove.teleport_time is set by events other
 	// than teleported, so hook_frame is needed as a second timer.
 	int			hook_frame;			// Time to fire hook
@@ -1595,7 +1601,8 @@ typedef struct
 } routes_t;
 
 #define MAX_PATHS	24			// each node cannot see more than MAX_PATHS nodes
-edict_t	*the_client;			// points to the first client to enter the game (used for debugging)
+// Knighmare- made this extern to fix GCC compile
+extern	edict_t	*the_client;			// points to the first client to enter the game (used for debugging)
 
 struct edict_s
 {
@@ -1610,7 +1617,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1635,7 +1642,7 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
 	//
@@ -1840,7 +1847,7 @@ struct edict_s
 // 	DO NOT MODIFY ANYTHING ABOVE THIS !!
 //	ERASER NEEDS THE FIELDS IN THIS ORDER (since P_TRAIL.C is precompiled)
 //
-//	You may safely add fields below this point 
+//	You may safely add fields below this point
 
 	char		*musictrack;	// Knightmare- for specifying OGG or CD track
 
@@ -1901,24 +1908,25 @@ struct edict_s
 	void		(*postthink) (edict_t *ent);		// Knightmare added
 };
 
-int	num_players;
-edict_t *players[MAX_CLIENTS];		// pointers to all players in the game
-edict_t	*weapons_head;				// pointers to all weapons in the game (use node_target and last_goal to traverse forward/back)
-edict_t	*health_head;
-edict_t	*bonus_head;				// armour, Quad, etc
-edict_t	*ammo_head;
+// Knightmare- made these extern to fix GCC compile
+extern	int	num_players;
+extern	edict_t *players[MAX_CLIENTS];		// pointers to all players in the game
+extern	edict_t	*weapons_head;				// pointers to all weapons in the game (use node_target and last_goal to traverse forward/back)
+extern	edict_t	*health_head;
+extern	edict_t	*bonus_head;				// armour, Quad, etc
+extern	edict_t	*ammo_head;
 
 // the following are just faster ways of accessing FindItem("item_name"), set in Worldspawn
-gitem_t	*item_shells, *item_cells, *item_rockets, *item_grenades, *item_slugs, *item_bullets;
-gitem_t	*item_shotgun, *item_hyperblaster, *item_supershotgun, *item_grenadelauncher, *item_chaingun, *item_railgun, *item_machinegun, *item_bfg10k, *item_rocketlauncher, *item_blaster;
-gitem_t *item_proxlauncher, *item_disruptor, *item_etfrifle, *item_chainfist, *item_plasmabeam, *item_rounds, *item_flechettes, *item_tesla, *item_prox, *item_plasmarifle, *item_shockwave;
+extern	gitem_t	*item_shells, *item_cells, *item_rockets, *item_grenades, *item_slugs, *item_bullets;
+extern	gitem_t	*item_shotgun, *item_hyperblaster, *item_supershotgun, *item_grenadelauncher, *item_chaingun, *item_railgun, *item_machinegun, *item_bfg10k, *item_rocketlauncher, *item_blaster;
+extern	gitem_t *item_proxlauncher, *item_disruptor, *item_etfrifle, *item_chainfist, *item_plasmabeam, *item_rounds, *item_flechettes, *item_tesla, *item_prox, *item_plasmarifle, *item_shockwave;
 
-bot_info_t	*botinfo_list;
-int			total_bots;		// number of bots read in from bots.cfg
+extern	bot_info_t	*botinfo_list;
+extern	int			total_bots;		// number of bots read in from bots.cfg
 
-bot_info_t	*teambot_list;	// bots that were generated solely for teamplay
+extern	bot_info_t	*teambot_list;	// bots that were generated solely for teamplay
 
-qboolean paused;			// fake a paused game during deathmatch
+extern	qboolean paused;			// fake a paused game during deathmatch
 
 //ZOID
 #include "g_ctf.h"

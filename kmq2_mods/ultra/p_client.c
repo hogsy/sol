@@ -51,7 +51,7 @@ static void SP_FixCoopSpots (edict_t *self)
 		VectorSubtract(self->s.origin, spot->s.origin, d);
 		if (VectorLength(d) < 384)
 		{
-			if ((!self->targetname) || stricmp(self->targetname, spot->targetname) != 0)
+			if ( (!self->targetname) || (Q_stricmp(self->targetname, spot->targetname) != 0) )
 			{
 //				gi.dprintf("FixCoopSpots changed %s at %s targetname from %s to %s\n", self->classname, vtos(self->s.origin), self->targetname, spot->targetname);
 				self->targetname = spot->targetname;
@@ -69,7 +69,7 @@ static void SP_CreateCoopSpots (edict_t *self)
 {
 	edict_t	*spot;
 
-	if(stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp(level.mapname, "security") == 0)
 	{
 		spot = G_Spawn();
 		spot->classname = "info_player_coop";
@@ -108,7 +108,7 @@ void SP_info_player_start(edict_t *self)
 {
 	if (!coop->value)
 		return;
-	if(stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp(level.mapname, "security") == 0)
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_CreateCoopSpots;
@@ -150,20 +150,20 @@ void SP_info_player_coop(edict_t *self)
 		return;
 	}
 
-	if((stricmp(level.mapname, "jail2") == 0)   ||
-	   (stricmp(level.mapname, "jail4") == 0)   ||
-	   (stricmp(level.mapname, "mine1") == 0)   ||
-	   (stricmp(level.mapname, "mine2") == 0)   ||
-	   (stricmp(level.mapname, "mine3") == 0)   ||
-	   (stricmp(level.mapname, "mine4") == 0)   ||
-	   (stricmp(level.mapname, "lab") == 0)     ||
-	   (stricmp(level.mapname, "boss1") == 0)   ||
-	   (stricmp(level.mapname, "fact3") == 0)   ||
-	   (stricmp(level.mapname, "biggun") == 0)  ||
-	   (stricmp(level.mapname, "space") == 0)   ||
-	   (stricmp(level.mapname, "command") == 0) ||
-	   (stricmp(level.mapname, "power2") == 0) ||
-	   (stricmp(level.mapname, "strike") == 0))
+	if ( (Q_stricmp(level.mapname, "jail2") == 0)   ||
+	   (Q_stricmp(level.mapname, "jail4") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine1") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine2") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine3") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine4") == 0)   ||
+	   (Q_stricmp(level.mapname, "lab") == 0)     ||
+	   (Q_stricmp(level.mapname, "boss1") == 0)   ||
+	   (Q_stricmp(level.mapname, "fact3") == 0)   ||
+	   (Q_stricmp(level.mapname, "biggun") == 0)  ||
+	   (Q_stricmp(level.mapname, "space") == 0)   ||
+	   (Q_stricmp(level.mapname, "command") == 0) ||
+	   (Q_stricmp(level.mapname, "power2") == 0) ||
+	   (Q_stricmp(level.mapname, "strike") == 0) )
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_FixCoopSpots;
@@ -564,7 +564,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				{
 					if(DMGame.Score)
 					{
-						if(ff)		
+						if(ff)
 							DMGame.Score(attacker, self, -1);
 						else
 							DMGame.Score(attacker, self, 1);
@@ -584,7 +584,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					//elimate scoring for telefragging in CTF
 					else if ((ttctf->value) && (mod == MOD_TELEFRAG))
 						return;
-					else 
+					else
 					{
 						attacker->client->resp.score++;
 						if (attacker->client->team)
@@ -837,7 +837,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	{
 		RemoveAttackingPainDaemons (self);
 	}
-	
+
 	// if we got obliterated by the nuke, don't gib
 	if ((self->health < -80) && (meansOfDeath == MOD_NUKE))
 		self->flags |= FL_NOGIB;
@@ -977,7 +977,7 @@ void InitClientPersistant (gclient_t *client)
 // start AJ
 	lithium_initclient(client);
 // end AJ
-	
+
 	client->pers.connected = true;
 
 	// Knightmare- custom client colors
@@ -1009,7 +1009,7 @@ void InitClientResp (gclient_t *client)
 ==================
 SaveClientData
 
-Some information that should be persistant, like health, 
+Some information that should be persistant, like health,
 is still stored in the edict structure, so it needs to
 be mirrored out to the client structure before all the
 edicts are wiped.
@@ -1697,7 +1697,7 @@ void PutClientInServer (edict_t *ent)
 =====================
 ClientBeginDeathmatch
 
-A client has just connected to the server in 
+A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
@@ -1711,7 +1711,7 @@ void ClientBeginDeathmatch (edict_t *ent)
 	InitClientResp (ent->client);
 
 	//PGM
-	if(gamerules && gamerules->value && DMGame.ClientBegin)	
+	if(gamerules && gamerules->value && DMGame.ClientBegin)
 	{
 		DMGame.ClientBegin (ent);
 	}
@@ -1727,14 +1727,14 @@ void ClientBeginDeathmatch (edict_t *ent)
 
 	if ( (int)def_hud->value >= 3 )	// set up ammo HUD
 	{
-		ent->client->ps.stats[STAT_CTF_JOINED_TEAM2_PIC] = ent->client->pers.inventory[ITEM_INDEX(item_shells)];  
-		ent->client->ps.stats[STAT_CTF_TEAM1_HEADER] = ent->client->pers.inventory[ITEM_INDEX(item_bullets)];  
-		ent->client->ps.stats[STAT_CTF_TEAM2_HEADER] = ent->client->pers.inventory[ITEM_INDEX(item_grenades)];  
+		ent->client->ps.stats[STAT_CTF_JOINED_TEAM2_PIC] = ent->client->pers.inventory[ITEM_INDEX(item_shells)];
+		ent->client->ps.stats[STAT_CTF_TEAM1_HEADER] = ent->client->pers.inventory[ITEM_INDEX(item_bullets)];
+		ent->client->ps.stats[STAT_CTF_TEAM2_HEADER] = ent->client->pers.inventory[ITEM_INDEX(item_grenades)];
 		ent->client->ps.stats[STAT_CTF_TECH] = ent->client->pers.inventory[ITEM_INDEX(item_rockets)];
 		ent->client->ps.stats[STAT_LITHIUM_PLAYERS] = ent->client->pers.inventory[ITEM_INDEX(item_cells)];
 		ent->client->ps.stats[STAT_LITHIUM_PLACE] = ent->client->pers.inventory[ITEM_INDEX(item_slugs)];
 	}
-// end AJ	
+// end AJ
 // AJ zbot stuff
 	ent->client->resp.bot_start = level.time + 5 + (rand() % 5);  // between 5 and 9 seconds later.
 	ent->client->resp.bot_retry = (int) zk_retry->value;
@@ -2023,7 +2023,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		gi.dprintf ("%s connected\n", ent->client->pers.netname);
 
 	ent->client->pers.connected = true;
-	
+
 	return true;
 }
 
@@ -2151,7 +2151,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (ucmd->impulse) // this is a bot!
 	{
 		if (zk_logonly->value)
-			gi.dprintf ("[ZKick]: client#%d (%s) @ %s is a bot (impulse=%d)\n", 
+			gi.dprintf ("[ZKick]: client#%d (%s) @ %s is a bot (impulse=%d)\n",
 						(ent-g_edicts)-1, ent->client->pers.netname, Info_ValueForKey (ent->client->pers.userinfo,"ip"), ucmd->impulse);
 		else
 		{
@@ -2181,7 +2181,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 		// can exit intermission after five seconds
 // AJ replaced constant 5.0 with intermission_time->value
-		if (level.time > level.intermissiontime + intermission_time->value 
+		if (level.time > level.intermissiontime + intermission_time->value
 			&& (ucmd->buttons & BUTTON_ANY) )
 			level.exitintermission = true;
 		return;
@@ -2461,7 +2461,7 @@ done_all_bots:
 	for (i=0; i<num_players; i++)
 	{
 		if (	(players[i]->bot_client)
-			&&	(players[i]->dmg) 
+			&&	(players[i]->dmg)
 //			&&	(	(timebuffer.millitm < players[i]->lastattack_time.millitm)
 //				 ||	((timebuffer.millitm - players[i]->lastattack_time.millitm) >= 50)
 //				)
@@ -2481,9 +2481,9 @@ done_all_bots:
 	// Expert Hook : Grapple command code
 	// Expert Pogo : Pogo command code
 	// Check to see if player pressing the "use" key
-	if (sk_hook_offhand->value && //|| expflags & EXPERT_POGO) && 
+	if (sk_hook_offhand->value && //|| expflags & EXPERT_POGO) &&
 		ent->client->buttons & BUTTON_USE &&
-	    !ent->deadflag && 
+	    !ent->deadflag &&
 	    client->hook_frame <= level.framenum
 		&& !ent->client->observer_mode)			// AJ added clause so observers cannot grapple
 	{
@@ -2509,7 +2509,7 @@ done_all_bots:
 				VectorCopy((*ent->client->lag_angles)[i], ent->client->v_angle);
 				gi.linkentity(ent);
 			}
-		
+
 			Throw_Grapple (ent);
 
 			if (ent->client->latency > 0)
@@ -2522,9 +2522,9 @@ done_all_bots:
 
 		}
 	}
-  
+
 	// Expert: Check to see if the grapple key was released
-	if (sk_hook_offhand->value && Ended_Grappling (client) && 
+	if (sk_hook_offhand->value && Ended_Grappling (client) &&
 		!ent->deadflag && client->hook)
 	{
 		if (sk_hook_style->value == 1)
@@ -2572,7 +2572,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		ent->client->respawn_time = level.time;
 		ent->client->ps.stats[STAT_LITHIUM_MODE] = 0;
 //		ent->s.effects &= 0xF7FFFFFF; // clear the yellow shell
-//		ent->s.effects &= ~EF_COLOR_SHELL; 
+//		ent->s.effects &= ~EF_COLOR_SHELL;
 //		ent->s.renderfx &= ~RF_SHELL_GREEN;
 		ent->s.effects &= EF_HALF_DAMAGE; //ScarFace- clear green shell
 	}
@@ -2594,7 +2594,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	{
 // reset the players time to time they actually join
 // however, cannot do this as if they hop into observer mode and then exit it resets their join time
-//		ent->client->resp.enterframe = level.framenum; 
+//		ent->client->resp.enterframe = level.framenum;
 		ent->client->observer_mode = FALSE;
 		ent->client->ps.stats[STAT_LITHIUM_MODE] = 0;
 		PutClientInServer (ent);
@@ -2624,11 +2624,11 @@ void ClientBeginServerFrame (edict_t *ent)
 		{
 			ent->client->resp.bot_end = 0;
 			if (zk_logonly->value)
-				gi.dprintf ("[ZKick]: client#%d (%s) @ %s is a bot\n", (ent-g_edicts)-1, ent->client->pers.netname, 
+				gi.dprintf ("[ZKick]: client#%d (%s) @ %s is a bot\n", (ent-g_edicts)-1, ent->client->pers.netname,
 							Info_ValueForKey (ent->client->pers.userinfo,"ip"));
 			else
 			{
-				gi.dprintf ("[ZKick]: client#%d (%s) @ %s was kicked\n", (ent-g_edicts)-1, ent->client->pers.netname, 
+				gi.dprintf ("[ZKick]: client#%d (%s) @ %s was kicked\n", (ent-g_edicts)-1, ent->client->pers.netname,
 							Info_ValueForKey (ent->client->pers.userinfo,"ip"));
 				stuffcmd (ent, "disconnect\n");
 			}
@@ -2725,7 +2725,7 @@ void ClientBeginServerFrame (edict_t *ent)
 //gi.dprintf("%i\n", ent->waterlevel);
 
 	// HACK, send bots to us if we have the flag, and also summon some helper bots
-	if (ctf->value && CarryingFlag(ent))// && 
+	if (ctf->value && CarryingFlag(ent))// &&
 //		(!ent->movetarget || !ent->movetarget->item || (ent->movetarget->item->pickup != CTFPickup_Flag)))
 	{
 		edict_t *flag, *enemy_flag, *enemy_flag2, *plyr, *self;
@@ -2763,7 +2763,7 @@ void ClientBeginServerFrame (edict_t *ent)
 
 				if (plyr->client->resp.ctf_team != self->client->resp.ctf_team)
 				{
-					if (	(plyr->enemy != self) 
+					if (	(plyr->enemy != self)
 						&&	(!plyr->target_ent || (plyr->target_ent->think != CTFFlagThink) || (entdist(plyr, plyr->target_ent) > 1000))
 						&&	(entdist(plyr, self) < 2000))
 					{	// send this enemy to us

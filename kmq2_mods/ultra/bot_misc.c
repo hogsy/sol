@@ -14,9 +14,9 @@
 	information regarding those files belonging to Id Software, Inc.
 
 	..............................................................
-	
+
 	Should you decide to release a modified version of Eraser, you MUST
-	include the following text (minus the BEGIN and END lines) in the 
+	include the following text (minus the BEGIN and END lines) in the
 	documentation for your modification.
 
 	--- BEGIN ---
@@ -27,7 +27,7 @@
 	This program is a modification of the Eraser Bot, and is therefore
 	in NO WAY supported by Ryan Feltrin.
 
-	This program MUST NOT be sold in ANY form. If you have paid for 
+	This program MUST NOT be sold in ANY form. If you have paid for
 	this product, you should contact Ryan Feltrin immediately, via
 	the Eraser Bot homepage.
 
@@ -36,7 +36,7 @@
 	..............................................................
 
 	You will find p_trail.c has not been included with the Eraser
-	source code release. This is NOT an error. I am unable to 
+	source code release. This is NOT an error. I am unable to
 	distribute this file because it contains code that is bound by
 	legal documents, and signed by myself, never to be released
 	to the public. Sorry guys, but law is law.
@@ -74,6 +74,50 @@
 #include "g_local.h"
 #include "bot_procs.h"
 #include "m_player.h"
+
+// Knightmare- moved these vars here to fix GCC compile
+bot_team_t	*bot_teams[MAX_TEAMS];
+int			total_teams;
+
+int	    num_players;
+edict_t *players[MAX_CLIENTS];		// pointers to all players in the game
+edict_t	*weapons_head;				// pointers to all weapons in the game (use node_target and last_goal to traverse forward/back)
+edict_t	*health_head;
+edict_t	*bonus_head;				// armour, Quad, etc
+edict_t	*ammo_head;
+
+// the following are just faster ways of accessing FindItem("item_name"), set in Worldspawn
+gitem_t	*item_shells, *item_cells, *item_rockets, *item_grenades, *item_slugs, *item_bullets;
+gitem_t	*item_shotgun, *item_hyperblaster, *item_supershotgun, *item_grenadelauncher, *item_chaingun, *item_railgun, *item_machinegun, *item_bfg10k, *item_rocketlauncher, *item_blaster;
+gitem_t *item_proxlauncher, *item_disruptor, *item_etfrifle, *item_chainfist, *item_plasmabeam, *item_rounds, *item_flechettes, *item_tesla, *item_prox, *item_plasmarifle, *item_shockwave;
+
+bot_info_t	*botinfo_list;
+int			total_bots;		// number of bots read in from bots.cfg
+
+bot_info_t	*teambot_list;	// bots that were generated solely for teamplay
+
+int	 spawn_bots;
+int	 roam_calls_this_frame;
+int	 bestdirection_callsthisframe;
+
+char	*bot_chat_text[NUM_CHAT_SECTIONS][MAX_CHAT_PER_SECTION];
+int		bot_chat_count[NUM_CHAT_SECTIONS];
+float	last_bot_chat[NUM_CHAT_SECTIONS];
+
+int		num_view_weapons;
+char	view_weapon_models[64][64];
+
+int     botdebug;
+
+int     max_bots;
+float	last_bot_spawn;
+int     bot_male_names_used;
+int     bot_female_names_used;
+int     bot_count;
+
+double	bot_frametime;
+
+// end Knightmare
 
 void CopyToBodyQue (edict_t *ent);
 
@@ -247,29 +291,31 @@ void bot_AnimateFrames (edict_t *self)
 
 void botDebugPrint (char *msg, ...)
 {
-	if (!bot_debug->value)
+	if ( !bot_debug->value )
 		return;
 	else
 	{
-		char	bigbuffer[0x10000];
-		int		len;
+		char	    bigbuffer[0x10000];
+		int		    len;
 		va_list		argptr;
 
-		va_start (argptr,msg);
+		va_start (argptr, msg);
 	//	len = vsprintf (bigbuffer,msg,argptr);
 		len = Q_vsnprintf (bigbuffer, sizeof(bigbuffer), msg, argptr);
 		va_end (argptr);
-		gi.dprintf(bigbuffer);
+		gi.dprintf (bigbuffer);
 	}
 }
 
-void	ReadBotChat (void)
+void ReadBotChat (void)
 {
 	FILE	*f;
-	int		section_index, line_count = 0, i;
+	int		section_index, line_count = 0, total_lines = 0;
+	int		i, j;
 	char	filename[256];
 	char	buffer;
-	cvar_t	*game_dir;
+	size_t	len;
+/*	cvar_t	*game_dir;
 
 	game_dir = gi.cvar ("game", "", 0);
 
@@ -285,34 +331,44 @@ void	ReadBotChat (void)
 	Com_strcpy (filename, sizeof(filename), "./");
 	Com_strcat (filename, sizeof(filename), game_dir->string);
 	Com_strcat (filename, sizeof(filename), "/chat.txt");
-#endif
+#endif */
+	// Knightmare- use GameDir() for all platforms
+	Com_strcpy (filename, sizeof(filename), GameDir());
+	Com_strcat (filename, sizeof(filename), "/chat.txt");
 
 	f = fopen (filename, "r");
-	if (!f)
+	if ( !f )
 	{
-		gi.error("\nUnable to read chat.txt\nChat functions not available.\n\n");
+		gi.error ("\nUnable to read chat.txt\nChat functions not available.\n\n");
 		return;
 	}
 
-	memset(bot_chat_text, 0, sizeof(bot_chat_text));
+	memset (bot_chat_text, 0, sizeof(bot_chat_text));
 
 	section_index = -1;
 
-	while (!feof(f))
+	gi.dprintf ("\nReading chat.txt...\n");
+
+	while ( !feof(f) )
 	{
-		fscanf(f, "%c", &buffer);
+		fscanf (f, "%c", &buffer);
 
 		if (buffer == '#')
 		{	// read to the end of the line
-			while (!feof(f) && (buffer != '\n'))
+			while ( !feof(f) && (buffer != '\n') )
 				fscanf(f, "%c", &buffer);
 		}
 		else if (buffer == '-')
 		{	// new section
-
 			// set the number of lines for the current section
-//			if (section_index >= 0)
-//				bot_chat_count[section_index] = line_count;
+		//	if (section_index >= 0)
+        //		bot_chat_count[section_index] = line_count;
+
+			// Knightmare- add to total of chat lines
+			if ( (section_index >= 0) && (line_count >= 0) ) {
+				total_lines += (line_count + 1);
+			//	gi.dprintf ("%i chat lines read in section %i.\n", line_count + 1, section_index);
+			}
 
 			// increment section
 			section_index++;
@@ -321,29 +377,38 @@ void	ReadBotChat (void)
 			while (!feof(f) && (buffer != '\n'))
 				fscanf(f, "%c", &buffer);
 		}
-		else if (((buffer >= 'a') && (buffer <= 'z')) ||
+		else if ( ((buffer >= 'a') && (buffer <= 'z')) ||
 				 ((buffer >= 'A') && (buffer <= 'Z')) ||
-				 (buffer == '%'))
+				 (buffer == '%') )
 		{	// read this entire line
 			i = 0;
 			line_count++;
 
 			// allocate memory for new string
 			bot_chat_text[section_index][line_count] = gi.TagMalloc(256, TAG_GAME);
-			memset(bot_chat_text[section_index][line_count], 0, 256);
+			memset (bot_chat_text[section_index][line_count], 0, 256);
 
-			while (!feof(f) && (buffer != '\n'))
+			while ( !feof(f) && (buffer != '\n') )
 			{
 				bot_chat_text[section_index][line_count][i++] = buffer;
 
-				fscanf(f, "%c", &buffer);
+				fscanf (f, "%c", &buffer);
 			}
+
+			// Knightmare- replace carriage returns on Linux
+#ifndef _WIN32
+			len = strlen(bot_chat_text[section_index][line_count]);
+			for (j = 0; j < len; j++) {
+				if (bot_chat_text[section_index][line_count][j] == '\r')
+					bot_chat_text[section_index][line_count][j] = ' ';
+			}
+#endif // _WIN32
 
 			if (i > 0)
 			{
 				bot_chat_text[section_index][line_count][i] = '\0';
-//gi.dprintf(bot_chat_text[section_index][line_count]);
-//gi.dprintf("\n");
+            //  gi.dprintf (bot_chat_text[section_index][line_count]);
+            //  gi.dprintf ("\n");
 			}
 
 			// update the count now
@@ -351,7 +416,17 @@ void	ReadBotChat (void)
 		}
 	}
 
-	fclose(f);
+	// Knightmare- add to total of chat lines
+	if ( (section_index >= 0) && (line_count >= 0) ) {
+		total_lines += (line_count + 1);
+	//	gi.dprintf ("%i chat lines read in section %i.\n", line_count + 1, section_index);
+	}
+
+	// Knightmare- added output of total lines
+	gi.dprintf ("%i total chat lines read.\n", total_lines);
+	gi.dprintf ("\n");
+
+	fclose (f);
 }
 
 gitem_t	*GetWeaponForNumber (int i)
@@ -553,7 +628,7 @@ bot_team_t	*ReadTeamData (FILE **f)
 		strcat(bot_team->bots[numbots]->name, "[");
 		strcat(bot_team->bots[numbots]->name, bot_team->abbrev);
 		strcat(bot_team->bots[numbots]->name, "]");
-	*/		
+	*/
 		numbots++;
 
 		if (next_nonspace(f) == ']')
@@ -587,15 +662,15 @@ bot_info_t	*ReadBotData (FILE **f)
 
 	// Knightmare- Rail color
 	botdata->color1 = gi.TagMalloc (botdata_stringSize, TAG_GAME);
-	Com_strcpy(botdata->color1, botdata_stringSize, defaultColor1);
+	Com_strcpy (botdata->color1, botdata_stringSize, defaultColor1);
 
 	// name
 	i = 0;
-	fscanf(*f, "%c", &strbuf[i]);
+	fscanf (*f, "%c", &strbuf[i]);
 	while ((strbuf[i] != '\"') && (i < 255))
 	{
 		i++;
-		fscanf(*f, "%c", &strbuf[i]);
+		fscanf (*f, "%c", &strbuf[i]);
 
 		if (strbuf[i] == '\n')
 			return NULL;
@@ -603,27 +678,27 @@ bot_info_t	*ReadBotData (FILE **f)
 	strbuf[i] = '\0';	// strip the trailing "
 
 //	botdata->name = gi.TagMalloc (128, TAG_GAME);
-//	strcpy(botdata->name, strbuf);
+//	strcpy (botdata->name, strbuf);
 	botdata->name = gi.TagMalloc (botdata_stringSize, TAG_GAME);
-	Com_strcpy(botdata->name, botdata_stringSize, strbuf);
+	Com_strcpy (botdata->name, botdata_stringSize, strbuf);
 
-	while (!feof(*f) && (buffer != '"'))
+	while ( !feof(*f) && (buffer != '"') )
 	{
-		fscanf(*f, "%c", &buffer);
+		fscanf (*f, "%c", &buffer);
 		if (buffer == '\n')
 			return NULL;
 	}
 
 	// skin
 	i = 0;
-	fscanf(*f, "%c", &strbuf[i]);
+	fscanf (*f, "%c", &strbuf[i]);
 	if (strbuf[i] == '\n')
 		return NULL;
 
-	while ((strbuf[i] != '\"') && (i < 255))
+	while ( (strbuf[i] != '\"') && (i < 255) )
 	{
 		i++;
-		fscanf(*f, "%c", &strbuf[i]);
+		fscanf (*f, "%c", &strbuf[i]);
 
 		if (strbuf[i] == '\n')
 			return NULL;
@@ -631,9 +706,9 @@ bot_info_t	*ReadBotData (FILE **f)
 	strbuf[i] = '\0';	// strip the trailing "
 
 //	botdata->skin = gi.TagMalloc (128, TAG_GAME);
-//	strcpy(botdata->skin, strbuf);
+//	strcpy (botdata->skin, strbuf);
 	botdata->skin = gi.TagMalloc (botdata_stringSize, TAG_GAME);
-	Com_strcpy(botdata->skin, botdata_stringSize, strbuf);
+	Com_strcpy (botdata->skin, botdata_stringSize, strbuf);
 
 	fscanf(*f, "%c", &buffer);
 
@@ -641,42 +716,42 @@ bot_info_t	*ReadBotData (FILE **f)
 		return NULL;
 
 	// stats
-	fscanf(*f, "%i", &i);
+	fscanf (*f, "%i", &i);
 	botdata->bot_stats.accuracy = (float) i;
-	fscanf(*f, "%i", &i);
+	fscanf (*f, "%i", &i);
 	botdata->bot_stats.aggr = (float) i;
-	fscanf(*f, "%i", &i);
+	fscanf (*f, "%i", &i);
 	botdata->bot_stats.combat = (float) i;
-	fscanf(*f, "%i", &i);
+	fscanf (*f, "%i", &i);
 
 	if (i == 1)	// overwrite blaster with RL
 		i = 7;
 
 	botdata->bot_stats.fav_weapon = GetWeaponForNumber(i);
 
-	fscanf(*f, "%i", &(botdata->bot_stats.quad_freak));
-	fscanf(*f, "%i", &(botdata->bot_stats.camper));
-	fscanf(*f, "%i", &(botdata->bot_stats.avg_ping));
+	fscanf (*f, "%i", &(botdata->bot_stats.quad_freak));
+	fscanf (*f, "%i", &(botdata->bot_stats.camper));
+	fscanf (*f, "%i", &(botdata->bot_stats.avg_ping));
 
 /*	gi.dprintf ("Read stats %3f %3f %3f %i %i %i %i for bot %s.\n",
 				botdata->bot_stats.accuracy, botdata->bot_stats.aggr, botdata->bot_stats.combat,
 				i, botdata->bot_stats.quad_freak, botdata->bot_stats.camper, botdata->bot_stats.avg_ping, botdata->name);
 */
 	// Knightmare added
-	while (!feof(*f) && (buffer != '"'))
+	while ( !feof(*f) && (buffer != '"') )
 	{
-		fscanf(*f, "%c", &buffer);
+		fscanf (*f, "%c", &buffer);
 		if (buffer == '\n')
 			return botdata;
 	}
 
 	// Rail color (optional)
 	i = 0;
-	fscanf(*f, "%c", &strbuf[i]);
+	fscanf (*f, "%c", &strbuf[i]);
 	if (strbuf[i] == '\n')
 		return botdata;
 
-	while ((strbuf[i] != '\"') && (i < 255))
+	while ( (strbuf[i] != '\"') && (i < 255) )
 	{
 		i++;
 		fscanf(*f, "%c", &strbuf[i]);
@@ -686,7 +761,7 @@ bot_info_t	*ReadBotData (FILE **f)
 	}
 	strbuf[i] = '\0';	// strip the trailing "
 
-	Com_strcpy(botdata->color1, botdata_stringSize, strbuf);
+	Com_strcpy (botdata->color1, botdata_stringSize, strbuf);
 //	gi.dprintf ("Read color %s for bot %s.\n", strbuf, botdata->name);
 	// end Knightmare
 
@@ -716,19 +791,19 @@ void ReadViewWeaponModel (FILE **f)
 qboolean	read_bot_cfg = false;
 
 // Reads data from bots.cfg (called from worldspawn)
-void	ReadBotConfig (void)
+void ReadBotConfig (void)
 {
 	FILE	*f;
 	int		i, mode=0;		// mode 0 for reading bots, 1 for teams
 	char	filename[256];
 	char	buffer;
 	bot_info_t	*botdata=NULL, *last_botdata=NULL;
-	cvar_t	*game_dir;
+//	cvar_t	*game_dir;
 
 	if (read_bot_cfg)	// must have already read in the config
 		return;
 
-	game_dir = gi.cvar ("game", "", 0);
+/*	game_dir = gi.cvar ("game", "", 0);
 
 #ifdef	_WIN32
 //	i =  sprintf(filename, ".\\");
@@ -742,12 +817,15 @@ void	ReadBotConfig (void)
 	Com_strcpy (filename, sizeof(filename), "./");
 	Com_strcat (filename, sizeof(filename), game_dir->string);
 	Com_strcat (filename, sizeof(filename), "/bots.cfg");
-#endif
+#endif */
+	// Knightmare- use GameDir() for all platforms
+	Com_strcpy (filename, sizeof(filename), GameDir());
+	Com_strcat (filename, sizeof(filename), "/bots.cfg");
 
 	f = fopen (filename, "r");
-	if (!f)
+	if ( !f )
 	{
-		gi.error("Unable to read bots.cfg. Cannot continue.\n");
+		gi.error ("Unable to read bots.cfg. Cannot continue.\n");
 		return;
 	}
 
@@ -755,20 +833,20 @@ void	ReadBotConfig (void)
 	for (i=0; i<MAX_TEAMS; i++)
 		bot_teams[i] = NULL;
 
-	gi.dprintf("\nReading bots.cfg..\n");
+	gi.dprintf ("\nReading bots.cfg...\n");
 
 	// Add Eraser, the hard-coded bot
 	botinfo_list = gi.TagMalloc (sizeof(bot_info_t), TAG_GAME);
-	botinfo_list->ingame_count = 0;
-	botinfo_list->name = "Eraser";
-	botinfo_list->skin = "male\razor.pcx";
-	botinfo_list->color1 = "1430B0";	// Knightmare added
+	botinfo_list->ingame_count			= 0;
+	botinfo_list->name					= "Eraser";
+	botinfo_list->skin					= "male\razor.pcx";
+	botinfo_list->color1				= "1430B0";			// Knightmare added
 
-	botinfo_list->bot_stats.accuracy = 5;
-	botinfo_list->bot_stats.aggr	 = 0;
-	botinfo_list->bot_stats.combat	 = 5;
-	botinfo_list->bot_stats.fav_weapon = GetWeaponForNumber(8);
-	botinfo_list->bot_stats.quad_freak = 1;
+	botinfo_list->bot_stats.accuracy	= 5;
+	botinfo_list->bot_stats.aggr		= 0;
+	botinfo_list->bot_stats.combat		= 5;
+	botinfo_list->bot_stats.fav_weapon	= GetWeaponForNumber(8);
+	botinfo_list->bot_stats.quad_freak	= 1;
 	botinfo_list->bot_stats.camper		= 0;
 	botinfo_list->bot_stats.avg_ping	= 50;
 	// done.
@@ -779,23 +857,23 @@ void	ReadBotConfig (void)
 	total_teams = 0;
 	teambot_list = NULL;
 	num_view_weapons = 0;
-	memset(view_weapon_models, 0, sizeof(view_weapon_models));
+	memset (view_weapon_models, 0, sizeof(view_weapon_models));
 
-	while (!feof(f))
+	while ( !feof(f) )
 	{
-		fscanf(f, "%c", &buffer);
-		
-		if (feof(f))
+		fscanf (f, "%c", &buffer);
+
+		if ( feof(f) )
 			break;
 
 		if (buffer == '#')		// commented line
 		{
-			while (!feof(f) && (buffer != '\n'))
-				fscanf(f, "%c", &buffer);
+			while ( !feof(f) && (buffer != '\n') )
+				fscanf (f, "%c", &buffer);
 		}
 		else if (buffer == '[')	// mode specifier (bots/teams)
 		{
-			fscanf(f, "%c", &buffer);
+			fscanf (f, "%c", &buffer);
 
 			if (buffer == 'b')
 				mode = 0;
@@ -807,35 +885,33 @@ void	ReadBotConfig (void)
 			}
 			else if (buffer == 'v')
 			{
-				if (!view_weapons->value)
+				if ( !view_weapons->value )
 					break;
 				mode = 2;
 			}
 
-			fscanf(f, "\n");
+			fscanf (f, "\n");
 		}
 		else if (buffer == '"')	// start of some data
 		{
 			if (mode == 0)
 			{
 				last_botdata = botdata;
-				if (!(botdata = ReadBotData(&f)))
+				if ( !(botdata = ReadBotData(&f)) )
 				{
-					gi.error("\nError in BOTS.CFG: Invalid BOT (#%i)\nEither re-install Eraser, or check your bots.cfg file for errors\n\n", total_bots);
+					gi.error ("\nError in BOTS.CFG: Invalid BOT (#%i)\nEither re-install Eraser, or check your bots.cfg file for errors\n\n", total_bots);
 					break;
 				}
 
-#ifdef _WIN32
-				if (!_stricmp(botdata->name, "Eraser"))
-#else
-				if (!strcasecmp(botdata->name, "Eraser"))
-#endif
+				if ( !Q_stricmp(botdata->name, "Eraser") )
 				{	// ignore this bot
-					gi.TagFree(botdata);
+					gi.TagFree (botdata);
 					botdata = last_botdata;
 				}
 				else
 				{
+				//	gi.dprintf ("read bot (%i): %s\n", total_bots, botdata->name);
+
 					total_bots++;
 
 					if (last_botdata)
@@ -848,9 +924,9 @@ void	ReadBotConfig (void)
 			}
 			else if (mode == 1)	// teamplay data
 			{
-				if (!(bot_teams[total_teams] = ReadTeamData(&f)))
+				if ( !(bot_teams[total_teams] = ReadTeamData(&f)) )
 				{
-					gi.error("\nError in BOTS.CFG: Invalid TEAM (#%i)\nEither re-install Eraser, or check your bots.cfg file for errors\n\n", total_teams);
+					gi.error ("\nError in BOTS.CFG: Invalid TEAM (#%i)\nEither re-install Eraser, or check your bots.cfg file for errors\n\n", total_teams);
 					break;
 				}
 
@@ -858,27 +934,29 @@ void	ReadBotConfig (void)
 
 				if (total_teams == MAX_TEAMS)
 				{
-					gi.dprintf("Warning: MAX_TEAMS reached, unable to process all teams\n");
+					gi.dprintf ("Warning: MAX_TEAMS reached, unable to process all teams\n");
 					break;
 				}
 			}
 			else if (mode == 2)	// view weapon models
 			{
-				ReadViewWeaponModel(&f);
+				ReadViewWeaponModel (&f);
 			}
 		}
-		
+
 	}
 
-	gi.dprintf("%i bots read.\n", total_bots);
+	// Knightmare- total bots from file is (total_bots - 1) because the first bot "Eraser" is skipped
+	gi.dprintf ("%i bots read.\n", total_bots - 1);
+
 	if (teamplay->value)
 		gi.dprintf("%i teams read.\n", total_teams);
 
-	gi.dprintf("\n");
+//	gi.dprintf ("\n");
 
 	fclose (f);
 
-	ReadBotChat();
+	ReadBotChat ();
 
 	read_bot_cfg = true;	// don't load again
 }
@@ -1013,15 +1091,9 @@ bot_info_t	*GetBotData (char *botname)
 		if (name[i] == '[')
 			name[i] = 0;
 
-#ifdef _WIN32
-		while (trav && _stricmp(checkname, name))	// not case-sensitive
+		while ( trav && Q_stricmp(checkname, name) )	// not case-sensitive
 		{
 			trav = trav->next;
-#else
-		while (trav && strcasecmp(checkname, name))	// not case-sensitive
-		{
-			trav = trav->next;
-#endif
 			if (trav)
 			{
 				// remove the team abbrev.
@@ -1053,15 +1125,9 @@ bot_info_t	*GetBotData (char *botname)
 					name[i] = 0;
 			}
 
-#ifdef _WIN32
-			while (trav && _stricmp(checkname, name))	// not case-sensitive
+			while ( trav && Q_stricmp(checkname, name) )	// not case-sensitive
 			{
 				trav = trav->next;
-#else
-			while (trav && strcasecmp(checkname, name))	// not case-sensitive
-			{
-				trav = trav->next;
-#endif
 				if (trav)
 				{
 					// remove the team abbrev.

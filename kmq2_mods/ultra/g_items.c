@@ -214,9 +214,9 @@ gitem_t	*FindItemByClassname (char *classname)
 	it = itemlist;
 	for (i=0 ; i<game.num_items ; i++, it++)
 	{
-		if (!it->classname)
+		if ( !it->classname )
 			continue;
-		if (!Q_stricmp(it->classname, classname))
+		if ( !Q_stricmp(it->classname, classname) )
 			return it;
 	}
 
@@ -237,9 +237,9 @@ gitem_t	*FindItem (char *pickup_name)
 	it = itemlist;
 	for (i=0 ; i<game.num_items ; i++, it++)
 	{
-		if (!it->pickup_name)
+		if ( !it->pickup_name )
 			continue;
-		if (!Q_stricmp(it->pickup_name, pickup_name))
+		if ( !Q_stricmp(it->pickup_name, pickup_name) )
 			return it;
 	}
 
@@ -1352,7 +1352,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 
 		}
 	}
-	
+
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
 		SetRespawn (ent, 20);
 
@@ -1449,7 +1449,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 		if	(!(	 (ent->item->pickup == Pickup_Weapon)
 			  || (ent->item->pickup == Pickup_Health)
 			  || (ent->item->pickup == Pickup_Ammo)
-// added AJ 
+// added AJ
 			  || (ent->item->pickup == Pickup_Adrenaline)
 			  || (ent->item->pickup == Pickup_AncientHead)
 			  || (ent->item->pickup == Pickup_PowerArmor)
@@ -1492,7 +1492,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (taken)
 	{
 		// flash the screen
-		other->client->bonus_alpha = 0.25;	
+		other->client->bonus_alpha = 0.25;
 
 		// show icon and name on status bar
 		other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
@@ -1594,7 +1594,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	VectorSet (dropped->maxs, 15, 15, 15);
 	gi.setmodel (dropped, dropped->item->world_model);
 	dropped->solid = SOLID_TRIGGER;
-	dropped->movetype = MOVETYPE_TOSS;  
+	dropped->movetype = MOVETYPE_TOSS;
 	dropped->touch = drop_temp_touch;
 	dropped->owner = ent;
 
@@ -1673,7 +1673,7 @@ void droptofloor (edict_t *ent)
 	if (ent->spawnflags & ITEM_NO_DROPTOFLOOR)	// Knightmare- added no_droptofloor
 		ent->movetype = MOVETYPE_NONE;
 	else
-		ent->movetype = MOVETYPE_TOSS;  
+		ent->movetype = MOVETYPE_TOSS;
 	ent->touch = Touch_Item;
 
 	if (!(ent->spawnflags & ITEM_NO_DROPTOFLOOR))	// Knightmare- allow marked items to spawn in solids
@@ -1913,7 +1913,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 //ROGUE
 		if ( (int)dmflags->value & DF_NO_MINES || sk_no_mines->value)
 		{
-			if ( !strcmp(ent->classname, "ammo_prox") || 
+			if ( !strcmp(ent->classname, "ammo_prox") ||
 				 !strcmp(ent->classname, "ammo_tesla") ||
 				 !strcmp(ent->classname, "weapon_proxlauncher") )
 			{
@@ -1939,7 +1939,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		}
 //ROGUE
 //==========
-	
+
 	}
 
 // AJ no_* item banning
@@ -1947,10 +1947,10 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		return;
 // end AJ
 
-//PGM 
-	PrecacheItem (item);		
 //PGM
-	
+	PrecacheItem (item);
+//PGM
+
 	if (coop->value && (strcmp(ent->classname, "key_power_cube") == 0))
 	{
 		ent->spawnflags |= (1 << (8 + level.power_cubes));
@@ -1997,7 +1997,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-gitem_t	itemlist[] = 
+gitem_t	itemlist[] =
 {
 	{
 		NULL
@@ -2010,7 +2010,7 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_body (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_body", 
+		"item_armor_body",
 		Pickup_Armor,
 		NULL,
 		NULL,
@@ -2033,7 +2033,7 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_combat", 
+		"item_armor_combat",
 		Pickup_Armor,
 		NULL,
 		NULL,
@@ -2056,7 +2056,7 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_jacket", 
+		"item_armor_jacket",
 		Pickup_Armor,
 		NULL,
 		NULL,
@@ -2079,7 +2079,7 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_shard", 
+		"item_armor_shard",
 		Pickup_Armor,
 		NULL,
 		NULL,
@@ -2107,7 +2107,7 @@ gitem_t	itemlist[] =
 /*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_power_screen", 
+		"item_power_screen",
 		Pickup_PowerArmor,
 		Use_PowerArmor,
 		Drop_PowerArmor,
@@ -2152,14 +2152,14 @@ gitem_t	itemlist[] =
 
 
 	//
-	// WEAPONS 
+	// WEAPONS
 	//
 
 /* weapon_grapple (.3 .3 1) (-16 -16 -16) (16 16 16)
 always owned, never in the world
 */
 	{
-		"weapon_grapple", 
+		"weapon_grapple",
 		NULL,
 		Use_Weapon,
 		NULL,
@@ -2183,7 +2183,7 @@ always owned, never in the world
 always owned, never in the world
 */
 	{
-		"weapon_blaster", 
+		"weapon_blaster",
 		NULL,
 		Use_Weapon,
 		NULL,
@@ -2206,7 +2206,7 @@ always owned, never in the world
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_shotgun", 
+		"weapon_shotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2229,7 +2229,7 @@ always owned, never in the world
 /*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_supershotgun", 
+		"weapon_supershotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2252,7 +2252,7 @@ always owned, never in the world
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_machinegun", 
+		"weapon_machinegun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2275,7 +2275,7 @@ always owned, never in the world
 /*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_chaingun", 
+		"weapon_chaingun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2308,10 +2308,10 @@ always owned, never in the world
 		"models/weapons/g_etf_rifle/tris.md2", EF_ROTATE,		// world model, world model flags
 		"models/weapons/v_etf_rifle/tris.md2",					// view model
 		"w_etf_rifle",										// icon
-		"ETF Rifle",										// name printed when picked up 
+		"ETF Rifle",										// name printed when picked up
 		0,													// number of digits for statusbar
 		1,													// amount used / contained
-		"Flechettes",										// ammo type used 
+		"Flechettes",										// ammo type used
 		IT_WEAPON|IT_STAY_COOP|IT_ROGUE,					// inventory flags
 		WEAP_ETFRIFLE,										// visible weapon
 		NULL,												// info (void *)
@@ -2414,7 +2414,7 @@ always owned, never in the world
 /*QUAKED weapon_hyperblaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_hyperblaster", 
+		"weapon_hyperblaster",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2431,11 +2431,11 @@ always owned, never in the world
 		WEAP_HYPERBLASTER,
 		NULL,
 		0,
-/* precache */ "weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav"	// removed weapons/hyprbu1a.wav 
+/* precache */ "weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav"	// removed weapons/hyprbu1a.wav
 	},
 
 /*QUAKED weapon_plasmabeam (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/ 
+*/
 	{
 		"weapon_plasmabeam",								// classname
 		Pickup_Weapon,										// pickup function
@@ -2446,11 +2446,11 @@ always owned, never in the world
 		"models/weapons/g_beamer/tris.md2", EF_ROTATE,		// world model, world model flags
 		"models/weapons/v_beamer/tris.md2",					// view model
 		"w_heatbeam",											// icon
-		"Plasma Beam",											// name printed when picked up 
+		"Plasma Beam",											// name printed when picked up
 		0,													// number of digits for statusbar
 		// FIXME - if this changes, change it in NoAmmoWeaponChange as well
 		2,													// amount used / contained
-		"Cells",											// ammo type used 
+		"Cells",											// ammo type used
 		IT_WEAPON|IT_STAY_COOP|IT_ROGUE,					// inventory flags
 		WEAP_PLASMA,										// visible weapon
 		NULL,												// info (void *)
@@ -2513,7 +2513,7 @@ always owned, never in the world
 /*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_railgun", 
+		"weapon_railgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2595,10 +2595,10 @@ always owned, never in the world
 		"models/weapons/g_dist/tris.md2", EF_ROTATE,		// world model, world model flags
 		"models/weapons/v_dist/tris.md2",					// view model
 		"w_disintegrator",									// icon
-		"Disruptor",										// name printed when picked up 
+		"Disruptor",										// name printed when picked up
 		0,													// number of digits for statusbar
 		1,													// amount used / contained
-		"Rounds",											// ammo type used 
+		"Rounds",											// ammo type used
 #ifdef KILL_DISRUPTOR
 		IT_NOT_GIVEABLE,
 #else
@@ -2622,10 +2622,10 @@ always owned, never in the world
 		"models/weapons/g_chainf/tris.md2", EF_ROTATE,		// world model, world model flags
 		"models/weapons/v_chainf/tris.md2",					// view model
 		"w_chainfist",										// icon
-		"Chainfist",										// name printed when picked up 
+		"Chainfist",										// name printed when picked up
 		0,													// number of digits for statusbar
 		0,													// amount used / contained
-		NULL,												// ammo type used 
+		NULL,												// ammo type used
 		IT_WEAPON|IT_MELEE|IT_STAY_COOP|IT_ROGUE,			// inventory flags
 		WEAP_CHAINFIST,										// visible weapon
 		NULL,												// info (void *)
@@ -2636,7 +2636,7 @@ always owned, never in the world
 /*QUAKED weapon_shockwave (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_shockwave", 
+		"weapon_shockwave",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2644,7 +2644,7 @@ always owned, never in the world
 		"misc/w_pkup.wav",
 		"models/weapons/g_chain/tris.md2", EF_ROTATE,
 		"models/weapons/v_chain/tris.md2",
-		"w_chaingun", // icon 
+		"w_chaingun", // icon
 		"Shockwave", // pickup
 		0,
 		5,
@@ -2871,7 +2871,7 @@ always owned, never in the world
 		AMMO_TESLA,									// tag
 		"models/weapons/v_tesla2/tris.md2 weapons/teslaopen.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav models/weapons/g_tesla/tris.md2"			// precache
 	},
-	
+
 /*QUAKED ammo_disruptor (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
 */
 	{
@@ -2884,7 +2884,7 @@ always owned, never in the world
 		"models/ammo/am_disr/tris.md2", 0,
 		NULL,
 		"a_disruptor",	//icon
-		"Rounds",		//pickup 
+		"Rounds",		//pickup
 		3,				//width
 		15,
 		NULL,
@@ -2900,7 +2900,7 @@ always owned, never in the world
 #else
 		AMMO_DISRUPTOR,
 #endif
-/* precache */ ""		
+/* precache */ ""
 	},
 
 /*QUAKED ammo_trap (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -2943,7 +2943,7 @@ always owned, never in the world
 /* width */		3,
 		300, /* quantity (used for respawn time) */
 		"A-M Bomb",
-		IT_POWERUP|IT_ROGUE,	
+		IT_POWERUP|IT_ROGUE,
 		0,
 		NULL,
 		0,
@@ -2956,7 +2956,7 @@ always owned, never in the world
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_quad", 
+		"item_quad",
 		Pickup_Powerup,
 		Use_Quad,
 		Drop_General,
@@ -2977,9 +2977,9 @@ always owned, never in the world
 	},
 
 /*QUAKED item_double (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/  
+*/
 	{
-		"item_double", 
+		"item_double",
 		Pickup_Powerup,
 		Use_Double,
 		Drop_General,
@@ -3002,7 +3002,7 @@ always owned, never in the world
 /*QUAKED item_quadfire (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_quadfire", 
+		"item_quadfire",
 		Pickup_Powerup,
 		Use_QuadFire,
 		Drop_General,
@@ -3117,7 +3117,7 @@ always owned, never in the world
 
 /*QUAKED item_ir_goggles (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
 gives +1 to maximum health
-*/ 
+*/
 	{
 		"item_ir_goggles",
 		Pickup_Powerup,
@@ -3738,9 +3738,9 @@ tank commander's head
 // PGM
 
 /*QUAKED item_sphere_vengeance (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/  
+*/
 	{
-		"item_sphere_vengeance", 
+		"item_sphere_vengeance",
 		Pickup_Sphere,
 		Use_Vengeance,
 		NULL,
@@ -3761,9 +3761,9 @@ tank commander's head
 	},
 
 /*QUAKED item_sphere_hunter (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/ 
+*/
 	{
-		"item_sphere_hunter", 
+		"item_sphere_hunter",
 		Pickup_Sphere,
 		Use_Hunter,
 		NULL,
@@ -3784,9 +3784,9 @@ tank commander's head
 	},
 
 /*QUAKED item_sphere_defender (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/  
+*/
 	{
-		"item_sphere_defender", 
+		"item_sphere_defender",
 		Pickup_Sphere,
 		Use_Defender,
 		NULL,
@@ -3807,7 +3807,7 @@ tank commander's head
 	},
 
 /*QUAKED item_doppleganger (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
-*/ 
+*/
 	{
 		"item_doppleganger",								// classname
 		Pickup_Doppleganger,								// pickup function
@@ -3819,10 +3819,10 @@ tank commander's head
 		EF_ROTATE,											// world model flags
 		NULL,												// view model
 		"p_doppleganger",									// icon
-		"Doppleganger",										// name printed when picked up 
+		"Doppleganger",										// name printed when picked up
 		0,													// number of digits for statusbar
 		90,													// respawn time
-		NULL,												// ammo type used 
+		NULL,												// ammo type used
 		IT_POWERUP|IT_ROGUE,								// inventory flags
 		0,
 		NULL,												// info (void *)
@@ -3842,10 +3842,10 @@ tank commander's head
 		EF_ROTATE | EF_TAGTRAIL,							// world model flags
 		NULL,												// view model
 		"i_tagtoken",										// icon
-		"Tag Token",										// name printed when picked up 
+		"Tag Token",										// name printed when picked up
 		0,													// number of digits for statusbar
 		0,													// amount used / contained
-		NULL,												// ammo type used 
+		NULL,												// ammo type used
 		IT_POWERUP|IT_NOT_GIVEABLE|IT_ROGUE,				// inventory flags
 		0,
 		NULL,												// info (void *)

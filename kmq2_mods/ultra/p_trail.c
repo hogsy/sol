@@ -66,11 +66,9 @@ const char *routes_dir_no_sep = "routes";
 const char *routes_dir_sep = PATH_SEP "routes" PATH_SEP;
 
 const char *route_ext = ".rt3";
-#ifdef _WIN32
 const char *route_ext_zipped = ".rtz";
 const char *route_ext_zipped_old = "_rt.zipped";
 const char *zip_ext = ".zip";
-#endif
 
 //char *note_grapple_enabled = "............................\nMap contains grapple nodes..\nGrapple-Hook has been ENABLED\n............................\n";
 char *debug_no_path_fmt = "Debug_ShowPathToGoal: no path to %s\n";
@@ -89,15 +87,45 @@ int			recursion_count;
 int			trail_portals[TRAIL_PORTAL_SUBDIVISION+1][TRAIL_PORTAL_SUBDIVISION+1][MAX_TRAILS_PER_PORTAL];
 int			num_trail_portals[TRAIL_PORTAL_SUBDIVISION+1][TRAIL_PORTAL_SUBDIVISION+1];
 
+// Knightmare- moved these vars here to fix GCC compile
+edict_t	*the_client;			// points to the first client to enter the game (used for debugging)
+float	last_trail_time;
+
+qboolean nodes_done;		// used to determine whether or not to enable node calculation
+edict_t	*check_nodes_done;	// after 20 mins of play, this ent checks if we should turn off node calc. at set intervals
+
+//edict_t *last_trail_dropped;
+qboolean	loaded_trail_flag;
+
+edict_t		*trail[TRAIL_LENGTH];			// the actual trail!
+
+edict_t	*PathToEnt_Node;		// self's goal node, to get to target, from last PathToEnt() call
+edict_t	*PathToEnt_TargetNode;	// target's goal node, to get FROM self, from last PathToEnt() call
+
+int		trail_head, last_head;
+
+int		dropped_trail;
+float	last_optimize;
+int		optimize_marker;
+
+int		trail_portals[TRAIL_PORTAL_SUBDIVISION+1][TRAIL_PORTAL_SUBDIVISION+1][MAX_TRAILS_PER_PORTAL];
+
+int		num_trail_portals[TRAIL_PORTAL_SUBDIVISION+1][TRAIL_PORTAL_SUBDIVISION+1];
+
+ctf_item_t	*ctf_item_head;
+
+// end Knightmare
+
+
 // These are the vars assumed to be available globally.
 extern float last_optimize;
 extern edict_t *weapons_head;
 extern qboolean nodes_done;
 extern qboolean loaded_trail_flag;
-extern edict_t *the_client;
+//extern edict_t *the_client;
 extern edict_t *health_head;
 extern edict_t *PathToEnt_Node;
-extern float last_trail_time;
+//extern float last_trail_time;
 extern ctf_item_t *ctf_item_head;
 extern int last_head;
 extern int num_players;
@@ -861,9 +889,9 @@ edict_t *WriteTrailNode (FILE *trFile, edict_t *node)
 
 	b = -2;
 	TR_FWrite (&b, sizeof(b), 1u, trFile);
-	
+
 //	char path_id;
-	
+
 	for (node_id = 0; node_id < TRAIL_LENGTH && trail[node_id]->timestamp != 0.0; ++node_id)
 	{
 		if (node->routes->route_path[node_id] >= 0)
@@ -1028,7 +1056,7 @@ void WriteTrail (void)
 			WriteTrailNode (trFile, from);
 		}
 	}
-	
+
 #ifdef TRAIL_DIRECT_ZIP_WRITE
 	G_CloseFile (trFile);
 #else	// TRAIL_DIRECT_ZIP_WRITE
@@ -1143,7 +1171,7 @@ FILE *ReadTrailNode (FILE *trFile, edict_t *node)
 	trace_t	tr;
 
 	TR_FRead (&goal, sizeof(goal), 1u, trFile);
-	
+
 	if (goal > -1)
 		node->goalentity = trail[goal];
 
@@ -1971,7 +1999,7 @@ nocheck:
 			ent->jump_ent->closest_trail_time = 0.0;
 			ent->jump_ent->closest_trail = 0;
 		}
-		
+
 		VectorCopy (ent->velocity, ent->jump_ent->velocity);
 		VectorCopy (ent->s.old_origin, ent->jump_ent->s.origin);
 		ent->jump_ent->waterlevel = ent->waterlevel;
