@@ -520,10 +520,10 @@ void SVCmd_SaveChain_f (void)
 	else
 		Com_sprintf(name, sizeof(name), "%s/botroutes/%s.chn", game->string, level.mapname); */
 	// Knightmare- use SavegameDir() instead
-	CreatePath (name);
 	Com_sprintf(name, sizeof(name), "%s/botroutes/%s.chn", SavegameDir(), level.mapname);
 //CW--
 
+	CreatePath (name);
 	fpout = fopen(name, "wb");
 	if (fpout == NULL)
 		gi.cprintf(NULL, PRINT_HIGH, "Can't open %s\n", name);
