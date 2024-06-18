@@ -1904,7 +1904,7 @@ void UI_BuildModList (void)
 		else if ( !Q_strcasecmp(modDir, "zaero") )
 			modName = "Zaero Mission Pack";
 		else if ( !Q_strcasecmp(modDir, "3zb2") )
-			modName = "3rd Zigrock Bot II";
+			modName = "3rd-Zigock Bot II";
 		else if ( !Q_strcasecmp(modDir, "awaken2") )
 			modName = "Awakening II: The Resurrection";
 		else if ( !Q_strcasecmp(modDir, "ra2") )

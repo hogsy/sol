@@ -33,6 +33,8 @@ CL_StringSetParams
 */
 qboolean CL_StringSetParams (char modifier, int *red, int *green, int *blue, int *bold, int *shadow, int *italic, int *reset)
 {
+    char    colorBuf[4] = {0};
+
 	// sanity check
 	if (!red || !green || !blue || !bold || !shadow || !italic || !reset)
 		return false;
@@ -77,11 +79,11 @@ qboolean CL_StringSetParams (char modifier, int *red, int *green, int *blue, int
 		case COLOR_BLACK:
 		case COLOR_ORANGE:
 		case COLOR_GRAY:
-			CL_TextColor (atoi(&modifier), red, green, blue);
+			colorBuf[0] = modifier;
+			CL_TextColor (atoi(&colorBuf[0]), red, green, blue);
 			return true;
 		case 'A':	// alt text color
 		case 'a':
-		//	CL_TextColor ((int)alt_text_color->value, red, green, blue);
 			CL_TextColor (alt_text_color->integer, red, green, blue);
 			return true;
 	}
