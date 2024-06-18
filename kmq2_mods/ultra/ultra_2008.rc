@@ -62,8 +62,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,4,8,0
- PRODUCTVERSION 0,4,8,0
+ FILEVERSION 0,4,8,1
+ PRODUCTVERSION 0,4,8,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x29L
@@ -81,14 +81,14 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", VER_FILEDESCRIPTION_STR
-            VALUE "FileVersion", "0.480\0"
+            VALUE "FileVersion", "0.481\0"
             VALUE "InternalName", VER_ORIGINALFILENAME_STR
             VALUE "LegalCopyright", "\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "Eraser ULTRA\0"
-            VALUE "ProductVersion", "0.480\0"
+            VALUE "ProductVersion", "0.481\0"
             VALUE "SpecialBuild", "\0"
         END
     END

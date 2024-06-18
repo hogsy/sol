@@ -353,9 +353,12 @@ void lithium_motd (edict_t *ent)
 {
 	FILE	*fh = NULL;
 	char	output[1024], line[257];
-	int		line_count = 0, i = 0, j;
 	char	filename[256];
+	int		/*line_count = 0,*/ i = 0;
+#ifndef _WIN32
+	int		j;
 	size_t  len;
+#endif // _WIN32
 //	cvar_t	*game_dir;
 
 	if ( !motd->string )
