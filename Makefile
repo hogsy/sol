@@ -853,6 +853,7 @@ GAME_OBJS = \
 	$(BUILDDIR)/game/g_monster.o \
 	$(BUILDDIR)/game/g_moreai.o \
 	$(BUILDDIR)/game/g_mtrain.o \
+	$(BUILDDIR)/game/g_patchmonstermodels.o \
 	$(BUILDDIR)/game/g_patchplayermodels.o \
 	$(BUILDDIR)/game/g_pendulum.o \
 	$(BUILDDIR)/game/g_phys.o \
@@ -989,6 +990,9 @@ $(BUILDDIR)/game/g_moreai.o :      	$(GAME_DIR)/g_moreai.c
 	$(DO_SHLIB_CC)
 
 $(BUILDDIR)/game/g_mtrain.o :      	$(GAME_DIR)/g_mtrain.c
+	$(DO_SHLIB_CC)
+
+$(BUILDDIR)/game/g_patchmonstermodels.o : $(GAME_DIR)/g_patchmonstermodels.c
 	$(DO_SHLIB_CC)
 
 $(BUILDDIR)/game/g_patchplayermodels.o : $(GAME_DIR)/g_patchplayermodels.c
