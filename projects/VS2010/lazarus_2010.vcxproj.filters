@@ -255,6 +255,9 @@
     <ClCompile Include="..\..\game\g_misc_laz.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\g_patchmonstermodels.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\game\g_ctf.h">

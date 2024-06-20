@@ -199,7 +199,6 @@ void convertToVector(char *vecStr, vec3_t *size)
 }
 
 
-
 void InitTestWeapon (void)
 {
 	FILE *wCfgFile;
@@ -211,8 +210,10 @@ void InitTestWeapon (void)
 		return;
 	}
 
-	Com_strcpy (fname, sizeof(fname), gamedir->string);
-	Com_strcat (fname, sizeof(fname), "/testweapon.cfg");
+//	Com_strcpy (fname, sizeof(fname), gamedir->string);
+//	Com_strcat (fname, sizeof(fname), "/testweapon.cfg");
+	// Knightmare- use SavegameDir() instead
+	Com_sprintf (fname, sizeof(fname), "%s/testweapon.cfg", SavegameDir());
 
 	wCfgFile = fopen(fname, "rt");
 	if (!wCfgFile)
@@ -411,7 +412,7 @@ void Cmd_TestItem (edict_t *ent)
 }
 
 
-void InitTestItem(void)
+void InitTestItem (void)
 {
 	FILE *wCfgFile;
 	char fname[256];
@@ -422,8 +423,10 @@ void InitTestItem(void)
 		return;
 	}
 
-	Com_strcpy (fname, sizeof(fname), gamedir->string);
-	Com_strcat (fname, sizeof(fname), "/testitem.cfg");
+//	Com_strcpy (fname, sizeof(fname), gamedir->string);
+//	Com_strcat (fname, sizeof(fname), "/testitem.cfg");
+	// Knightmare- use SavegameDir() instead
+	Com_sprintf (fname, sizeof(fname), "%s/testitem.cfg", SavegameDir());
 
 	wCfgFile = fopen(fname, "rt");
 	if (!wCfgFile)

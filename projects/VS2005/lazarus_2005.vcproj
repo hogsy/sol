@@ -510,6 +510,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\game\g_patchmonstermodels.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\game\g_patchplayermodels.c"
 				>
 			</File>

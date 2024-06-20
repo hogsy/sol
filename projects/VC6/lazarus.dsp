@@ -209,6 +209,10 @@ SOURCE=..\..\game\g_mtrain.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\game\g_patchmonstermodels.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\game\g_patchplayermodels.c
 # End Source File
 # Begin Source File

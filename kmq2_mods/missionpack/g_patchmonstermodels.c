@@ -9,6 +9,7 @@
 
 int PatchMonsterModel (char *modelname)
 {
+	cvar_t		*basedir = NULL;
 	cvar_t		*gamedir = NULL;
 	int			j = 0;
 	int			numskins = 0;		// number of skin entries
@@ -47,6 +48,7 @@ int PatchMonsterModel (char *modelname)
 	qboolean	gamedirpakfile = false;
 
 	// get game (moddir) name
+	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("game", "", 0);
 	if ( !*gamedir->string )
 		return 0;	// we're in baseq2
@@ -672,11 +674,9 @@ int PatchMonsterModel (char *modelname)
 	}
 
 	// load original model from baseq2
-	Com_sprintf (infilename, sizeof(infilename), "baseq2/%s", modelname);
-	// Knightmare- if not in baseq2, look in current gamedir
-	// can't do this- the output file already exists
-	//if ( !(infile = fopen (infilename, "rb")) )
-	//	GameDirRelativePath (modelname, infilename, sizeof(infilename));
+//	Com_sprintf (infilename, sizeof(infilename), "baseq2/%s", modelname);
+	// Knightmare- use basedir for compatibility on all platforms
+	Com_sprintf (infilename, sizeof(infilename), "%s/baseq2/%s", basedir->string, modelname);
 
 	// If file doesn't exist on user's hard disk, it must be in 
 	// a pak file
@@ -684,14 +684,16 @@ int PatchMonsterModel (char *modelname)
 	{
 		pak_header_t	pakheader;
 		pak_item_t		pakitem;
+		char			pakfile[MAX_OSPATH];
 		FILE			*fpak;
 		int				i, k, numitems;
-		char			pakfile[MAX_OSPATH];
 
 		// Knightmare- look in pak0-99.pak in baseq2
 		for (i = 0; i < 100; i++)
 		{
-			Com_sprintf (pakfile, sizeof(pakfile), "baseq2/pak%i.pak", i);
+		//	Com_sprintf (pakfile, sizeof(pakfile), "baseq2/pak%i.pak", i);
+			// Knightmare- use basedir for compatibility on all platforms
+			Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak%i.pak", basedir->string, i);
 			fpak = fopen (pakfile, "rb");
 			if ( !fpak && (i == 0) ) // if pak0.pak isn't on hard disk, try CD
 			{

@@ -160,7 +160,7 @@ void ACEAI_Think (edict_t *self)
 // its way. This is a good time waster, so use it sparingly. 
 // Do not call it for every think cycle.
 //=====================================================================
-void ACEAI_PickLongRangeGoal(edict_t *self)
+void ACEAI_PickLongRangeGoal (edict_t *self)
 {
 
 	int		i = 0;
@@ -300,7 +300,7 @@ void ACEAI_PickLongRangeGoal(edict_t *self)
 // overrides the long range goal selection for items that
 // are very close to the bot and are reachable.
 //=====================================================================
-void ACEAI_PickShortRangeGoal(edict_t *self)
+void ACEAI_PickShortRangeGoal (edict_t *self)
 {
 	edict_t *target = NULL;
 	float	weight = 0.0f, best_weight = 0.0f;
@@ -362,7 +362,7 @@ void ACEAI_PickShortRangeGoal(edict_t *self)
 //=====================================================================
 // Scan for enemy (simplifed for now to just pick any visible enemy)
 //=====================================================================
-qboolean ACEAI_FindEnemy(edict_t *self)
+qboolean ACEAI_FindEnemy (edict_t *self)
 {
 	int i;
 	
@@ -390,7 +390,7 @@ qboolean ACEAI_FindEnemy(edict_t *self)
 //=====================================================================
 // Hold fire with RL/BFG?
 //=====================================================================
-qboolean ACEAI_CheckShot(edict_t *self)
+qboolean ACEAI_CheckShot (edict_t *self)
 {
 	trace_t tr;
 
@@ -406,7 +406,7 @@ qboolean ACEAI_CheckShot(edict_t *self)
 //=====================================================================
 // Choose the best weapon for bot (simplified)
 //=====================================================================
-void ACEAI_ChooseWeapon(edict_t *self)
+void ACEAI_ChooseWeapon (edict_t *self)
 {	
 	float range;
 	vec3_t v;

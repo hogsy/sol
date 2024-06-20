@@ -87,7 +87,7 @@ edict_t *players[MAX_CLIENTS];		// pointers to all players in the game
 ///////////////////////////////////////////////////////////////////////
 // Add the player to our list
 ///////////////////////////////////////////////////////////////////////
-void ACEIT_PlayerAdded(edict_t *ent)
+void ACEIT_PlayerAdded (edict_t *ent)
 {
 	players[num_players++] = ent;
 }
@@ -95,7 +95,7 @@ void ACEIT_PlayerAdded(edict_t *ent)
 ///////////////////////////////////////////////////////////////////////
 // Remove player from list
 ///////////////////////////////////////////////////////////////////////
-void ACEIT_PlayerRemoved(edict_t *ent)
+void ACEIT_PlayerRemoved (edict_t *ent)
 {
 	int i = 0, pos = 0;
 
@@ -111,12 +111,12 @@ void ACEIT_PlayerRemoved(edict_t *ent)
 	}
 
 	// Find the player
-	for(i=0; i<num_players; i++)
+	for (i=0; i<num_players; i++)
 		if (ent == players[i])
 			pos = i;
 
 	// decrement
-	for(i=pos; i<num_players-1; i++)
+	for (i=pos; i<num_players-1; i++)
 		players[i] = players[i+1];
 
 	num_players--;
@@ -125,7 +125,7 @@ void ACEIT_PlayerRemoved(edict_t *ent)
 ///////////////////////////////////////////////////////////////////////
 // Can we get there?
 ///////////////////////////////////////////////////////////////////////
-qboolean ACEIT_IsReachable(edict_t *self, vec3_t goal)
+qboolean ACEIT_IsReachable (edict_t *self, vec3_t goal)
 {
 	trace_t trace;
 	vec3_t v;
@@ -146,7 +146,7 @@ qboolean ACEIT_IsReachable(edict_t *self, vec3_t goal)
 ///////////////////////////////////////////////////////////////////////
 // Visiblilty check 
 ///////////////////////////////////////////////////////////////////////
-qboolean ACEIT_IsVisible(edict_t *self, vec3_t goal)
+qboolean ACEIT_IsVisible (edict_t *self, vec3_t goal)
 {
 	trace_t trace;
 	
@@ -252,7 +252,7 @@ qboolean ACEIT_CanUseArmor (gitem_t *item, edict_t *other)
 // Any other logic that needs to be added for custom decision making
 // can be added here. For now it is very simple.
 ///////////////////////////////////////////////////////////////////////
-float ACEIT_ItemNeed(edict_t *self, int item)
+float ACEIT_ItemNeed (edict_t *self, int item)
 {
 	
 	// Make sure item is at least close to being valid
@@ -430,7 +430,7 @@ float ACEIT_ItemNeed(edict_t *self, int item)
 // can lead to some slowdowns I guess, but makes the rest of the code
 // easier to deal with.
 ///////////////////////////////////////////////////////////////////////
-int ACEIT_ClassnameToIndex(char *classname)
+int ACEIT_ClassnameToIndex (char *classname)
 {
 	if (strcmp(classname,"item_armor_body")==0) 
 		return ITEMLIST_BODYARMOR;
@@ -644,14 +644,19 @@ int ACEIT_ClassnameToIndex(char *classname)
 ///////////////////////////////////////////////////////////////////////
 void ACEIT_BuildItemNodeTable (qboolean rebuild)
 {
-	edict_t *items;
-	int i,item_index;
-	vec3_t v,v1,v2;
-	int j;
+	edict_t	*items;
+	int		i, j, item_index;
+	vec3_t	v,v1,v2;
 
 #ifdef DEBUG
-	FILE *pOut; // for testing
-	if ((pOut = fopen("items.txt","wt"))==NULL)
+	char	filename[MAX_OSPATH] = "";
+	FILE	*pOut; // for testing
+//	if ((pOut = fopen("items.txt", "wt")) == NULL)
+	// Knightmare- use SavegameDir()
+	Com_sprintf (filename, sizeof(filename), "%s/items.txt", SavegameDir());
+	pOut = fopen("items.txt", "wt");
+	if (pOut == NULL)
+	// end Knightmare
 		return;
 #endif
 	
@@ -719,7 +724,7 @@ void ACEIT_BuildItemNodeTable (qboolean rebuild)
 		else // Now if rebuilding, just relink ent structures 
 		{
 			// Find stored location
-			for(i=0;i<numnodes;i++)
+			for (i=0;i<numnodes;i++)
 			{
 				if (nodes[i].type == NODE_ITEM ||
 				   nodes[i].type == NODE_PLATFORM ||

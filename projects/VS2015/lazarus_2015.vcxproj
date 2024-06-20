@@ -311,6 +311,7 @@
     <ClCompile Include="..\..\game\g_monster.c" />
     <ClCompile Include="..\..\game\g_moreai.c" />
     <ClCompile Include="..\..\game\g_mtrain.c" />
+    <ClCompile Include="..\..\game\g_patchmonstermodels.c" />
     <ClCompile Include="..\..\game\g_patchplayermodels.c" />
     <ClCompile Include="..\..\game\g_pendulum.c" />
     <ClCompile Include="..\..\game\g_phys.c" />

@@ -479,8 +479,8 @@ void ACEND_InitNodes (void)
 {
 	numnodes = 1;
 	numitemnodes = 1;
-	memset(nodes,0,sizeof(node_t) * MAX_NODES);
-	memset(path_table,INVALID,sizeof(short int)*MAX_NODES*MAX_NODES);
+	memset (nodes,0,sizeof(node_t) * MAX_NODES);
+	memset (path_table,INVALID,sizeof(short int)*MAX_NODES*MAX_NODES);
 			
 }
 
@@ -778,9 +778,9 @@ void ACEND_SaveNodes (void)
 	
 	for (i=0; i<numnodes; i++)
 		for (j=0; j<numnodes; j++)
-			fwrite(&path_table[i][j] ,sizeof(short int), 1, pOut); // write count
+			fwrite(&path_table[i][j], sizeof(short int), 1, pOut); // write count
 		
-	fwrite(item_table,sizeof(item_table_t),num_items,pOut); 		// write out the fact table
+	fwrite (item_table, sizeof(item_table_t), num_items,pOut); 		// write out the fact table
 
 	fclose(pOut);
 	

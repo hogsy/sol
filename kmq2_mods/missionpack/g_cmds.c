@@ -2434,10 +2434,10 @@ void ClientCommand (edict_t *ent)
 			e = LookingAt(ent, 0, NULL, NULL);
 			if (!e) return;
 	
-			SavegameDirRelativePath(parm, filename, sizeof(filename));
+			SavegameDirRelativePath (parm, filename, sizeof(filename));
 		//	strncat(filename, ".txt");
 			Com_strcat (filename, sizeof(filename), ".txt");
-			gi.dprintf("Writing entity properties to %s... ", filename);
+			gi.dprintf ("Writing entity properties to %s... ", filename);
 			f = fopen(filename, "w");
 		//	for (i=0; i<globals.num_edicts; i++)
 		//	{
@@ -2445,10 +2445,10 @@ void ClientCommand (edict_t *ent)
 				SaveEntProps (e, f);
 		//	}
 			fclose(f);
-			gi.dprintf("done!\n");
+			gi.dprintf ("done!\n");
 		}
 		else {
-			gi.dprintf("syntax: properties <filename>\n");
+			gi.dprintf ("syntax: properties <filename>\n");
 		}
 	}
 	else if (!Q_stricmp(cmd, "go"))

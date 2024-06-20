@@ -399,7 +399,7 @@ void SP_target_precipitation (edict_t *ent)
 
 		if (!ent->usermodel)
 		{
-			gi.dprintf("target_precipitation style=user\nwith no usermodel.\n");
+			gi.dprintf ("target_precipitation style=user\nwith no usermodel.\n");
 			G_FreeEdict(ent);
 			return;
 		}
@@ -619,7 +619,7 @@ void SP_target_fountain (edict_t *ent)
 	ent->style = STYLE_WEATHER_USER;
 	if (!ent->usermodel)
 	{
-		gi.dprintf("target_fountain with no usermodel.\n");
+		gi.dprintf ("target_fountain with no usermodel.\n");
 		G_FreeEdict(ent);
 		return;
 	}
@@ -630,9 +630,9 @@ void SP_target_fountain (edict_t *ent)
 		bufSize = strlen(ent->usermodel)+10;
 		buffer = gi.TagMalloc(bufSize, TAG_LEVEL);
 		if (strstr(ent->usermodel,".sp2"))
-			Com_sprintf(buffer, bufSize, "sprites/%s", ent->usermodel);
+			Com_sprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
 		else
-			Com_sprintf(buffer, bufSize, "models/%s", ent->usermodel);
+			Com_sprintf (buffer, bufSize, "models/%s", ent->usermodel);
 		ent->usermodel = buffer;
 	}
 
@@ -682,6 +682,7 @@ MISC_DEADSOLDIER MODEL PATCH
 
 int PatchDeadSoldier (void)
 {
+	cvar_t		*basedir = NULL;
 	cvar_t		*gamedir = NULL;
 	char		skins[NUM_SKINS][MAX_SKINNAME];	// skin entries
 	char		infilename[MAX_OSPATH];
@@ -697,6 +698,7 @@ int PatchDeadSoldier (void)
 	int			newoffset = 0;		// model data offset (after skins)
 
 	// get game (moddir) name
+	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("game", "", 0);
 	if (!*gamedir->string)
 		return 0;	// we're in baseq2
@@ -732,10 +734,10 @@ int PatchDeadSoldier (void)
 	Com_sprintf (skins[14], sizeof(skins[14]), "players/male/sniper.pcx");
 	Com_sprintf (skins[15], sizeof(skins[15]), "players/male/viper.pcx");
 
-
 	// load original model
-//	sprintf (infilename, "baseq2/%s", DEADSOLDIER_MODEL);
-	Com_sprintf (infilename, sizeof(infilename), "baseq2/%s", DEADSOLDIER_MODEL);
+//	Com_sprintf (infilename, sizeof(infilename), "baseq2/%s", DEADSOLDIER_MODEL);
+	// Knightmare- use basedir for compatibility on all platforms
+	Com_sprintf (infilename, sizeof(infilename), "%s/baseq2/%s", basedir->string, DEADSOLDIER_MODEL);
 	if ( !(infile = fopen (infilename, "rb")) )
 	{
 		// If file doesn't exist on user's hard disk, it must be in 
@@ -743,22 +745,25 @@ int PatchDeadSoldier (void)
 
 		pak_header_t	pakheader;
 		pak_item_t		pakitem;
+		char			pakfile[MAX_OSPATH];
 		FILE			*fpak;
 		int				k, numitems;
 
-		fpak = fopen ("baseq2/pak0.pak","rb");
+	//	fpak = fopen ("baseq2/pak0.pak", "rb");
+		// Knightmare- use basedir for compatibility on all platforms
+		Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", basedir->string);
+		fpak = fopen (pakfile, "rb");
 		if (!fpak)
 		{
 			cvar_t	*cddir;
 			char	pakfile[MAX_OSPATH];
 
 			cddir = gi.cvar("cddir", "", 0);
-		//	sprintf(pakfile,"%s/baseq2/pak0.pak",cddir->string);
-			Com_sprintf(pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
-			fpak = fopen (pakfile,"rb");
+			Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
+			fpak = fopen (pakfile, "rb");
 			if (!fpak)
 			{
-				gi.dprintf("PatchDeadSoldier: Cannot find pak0.pak\n");
+				gi.dprintf ("PatchDeadSoldier: Cannot find pak0.pak\n");
 				return 0;
 			}
 		}
@@ -786,7 +791,7 @@ int PatchDeadSoldier (void)
 		fclose (fpak);
 		if (!data)
 		{
-			gi.dprintf("PatchDeadSoldier: Could not find %s in baseq2/pak0.pak\n",DEADSOLDIER_MODEL);
+			gi.dprintf ("PatchDeadSoldier: Could not find %s in baseq2/pak0.pak\n",DEADSOLDIER_MODEL);
 			return 0;
 		}
 	}

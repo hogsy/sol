@@ -1930,20 +1930,20 @@ int trigger_transition_ents (edict_t *changelevel, edict_t *self)
 {
 	char		t_file[MAX_OSPATH];
 	int			i, j;
-	int			total=0;
+	int			total = 0;
 	qboolean	nogo;
 	edict_t		*ent;
 	entlist_t	*p;
 	FILE		*f;
 
 	if (developer->value)
-		gi.dprintf("==== WriteTransitionEnts ====\n");
+		gi.dprintf ("==== WriteTransitionEnts ====\n");
 
 	trans_ent_filename (t_file, sizeof(t_file));
-	f = fopen(t_file,"wb");
-	if (!f)
+	f = fopen(t_file, "wb");
+	if ( !f )
 	{
-		gi.dprintf("Error opening %s for writing\n",t_file);
+		gi.dprintf ("Error opening %s for writing\n",t_file);
 		return 0;
 	}
 	// First scan entities for brush models that SHOULD change levels, e.g. func_tracktrain,

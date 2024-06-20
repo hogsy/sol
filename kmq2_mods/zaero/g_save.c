@@ -405,10 +405,10 @@ void InitGame (void)
 #if defined(_DEBUG) && defined(_Z_TESTMODE)
 
 	gi.dprintf ("==== InitTestWeapon ====\n");
-	InitTestWeapon();
+	InitTestWeapon ();
 
 	gi.dprintf ("==== InitTestItem ====\n");
-	InitTestItem();
+	InitTestItem ();
 
 #endif
 
