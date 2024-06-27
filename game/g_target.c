@@ -1135,7 +1135,7 @@ or a direction.
 #define LASER_SEEK_PLAYER		128
 #define LASER_STOPWINDOW		8192
 #define ROGUE_LASER_STOPWINDOW	128
-#define	ROGUE_LASER_SEEK_PLAYER	8192
+#define ROGUE_LASER_SEEK_PLAYER	8192
 
 // DWH - player-seeking laser stuff
 void target_laser_ps_think (edict_t *self)
