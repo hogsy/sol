@@ -1055,6 +1055,7 @@ extern	cvar_t	*g_aimfix;				// Knightmare- from Yamagi Q2
 extern	cvar_t	*g_aimfix_min_dist;		// Knightmare- minimum range for aimfix
 extern	cvar_t	*g_aimfix_taper_dist;	// Knightmare- transition range for aimfix
 extern	cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
+extern	cvar_t	*g_use_rogue_spawnflags;	// Knightmare- enables use of Rogue spawnflags for target_laser in non-Rogue maps
 
 //ROGUE
 extern	cvar_t	*g_showlogic;
@@ -1253,7 +1254,7 @@ edict_t *findradius (edict_t *from, vec3_t org, float rad);
 edict_t *G_PickTarget (char *targetname);
 void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
-void	G_SetMovedir2 (vec3_t angles, vec3_t movedir);
+void	G_SetMovedir2 (vec3_t angles, vec3_t movedir);	// Knightmare added
 mmove_t	*G_NewCustomAnim (void);	// Knightmare- util func for custom anims
 void	G_InitEdict (edict_t *e);
 edict_t	*G_Spawn (void);

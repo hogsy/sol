@@ -1249,6 +1249,7 @@ edict_t *findradius (edict_t *from, vec3_t org, float rad);
 edict_t *G_PickTarget (char *targetname);
 void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
+void	G_SetMovedir2 (vec3_t angles, vec3_t movedir);	// Knightmare added
 mmove_t	*G_NewCustomAnim (void);	// Knightmare- util func for custom anims
 void	G_InitEdict (edict_t *e);
 edict_t	*G_Spawn (void);

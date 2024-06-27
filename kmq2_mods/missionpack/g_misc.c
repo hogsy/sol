@@ -1204,26 +1204,26 @@ skinnum- Skin number for the gibs to use.
 void train_kill_children (edict_t *self);
 void turret_breach_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
 
-void func_explosive_use(edict_t *self, edict_t *other, edict_t *activator);
-void func_explosive_respawn(edict_t *self)
+void func_explosive_use (edict_t *self, edict_t *other, edict_t *activator);
+void func_explosive_respawn (edict_t *self)
 {
-    KillBox(self);
+    KillBox (self);
     self->solid = SOLID_BSP;
     self->svflags &= ~SVF_NOCLIENT;
     self->health = self->max_health;
     self->takedamage = DAMAGE_YES;
 	self->use = func_explosive_use;
-    gi.linkentity(self);
+    gi.linkentity (self);
 }
 
 void func_explosive_explode (edict_t *self)
 {
-	vec3_t	origin;
-	vec3_t	chunkorigin;
-	vec3_t	size;
-	int		count;
-	int		mass;
-	edict_t	*master;
+	vec3_t		origin;
+	vec3_t		chunkorigin;
+	vec3_t		size;
+	int			count;
+	int			mass;
+	edict_t		*master;
 	qboolean	done = false;
 
 	// Knightmare- kill exploding train's pieces
@@ -1238,15 +1238,15 @@ void func_explosive_explode (edict_t *self)
 					G_FreeEdict(e);
 			}
 		}
-	}*/
+	} */
 
 	// Knightmare- kill turret base's breach
-	if (!strcmp(self->classname, "turret_base"))
+	if ( !strcmp(self->classname, "turret_base") )
 	{
 		if (self->team)
 		{
-			edict_t *e;
-			int i;
+			edict_t	*e;
+			int		i;
 
 			e = g_edicts+1; // skip the worldspawn
 			for (i = 1; i < globals.num_edicts; i++, e++)
@@ -1254,7 +1254,7 @@ void func_explosive_explode (edict_t *self)
 				if (!e->classname)
 					continue;
 				// only destroy the breach
-				if (!strcmp(e->classname, "turret_breach") && !strcmp(e->team, self->team))
+				if ( !strcmp(e->classname, "turret_breach") && !strcmp(e->team, self->team) )
 				{
 					e->health = -1;
 					e->gib_health = 0;
@@ -1266,10 +1266,10 @@ void func_explosive_explode (edict_t *self)
 	}
 
 	// Knightmare- remove train's children if it is destroyed
-	train_kill_children(self); 
+	train_kill_children (self); 
 
 	// Knightmare- don't manipulate origin of rotating train- it already has it in the right place
-	if ( strcmp(self->classname, "func_train") || !self->spawnflags & TRAIN_ROTATE )
+	if ( strcmp(self->classname, "func_train") || !(self->spawnflags & TRAIN_ROTATE) )
 	{ 	// bmodel origins are (0 0 0), we need to adjust that here
 		VectorScale (self->size, 0.5, size);
 		VectorAdd (self->absmin, size, origin);
@@ -1297,14 +1297,14 @@ void func_explosive_explode (edict_t *self)
 	VectorScale (size, 0.5, size);
 
 	mass = self->mass;
-	if (!mass)
+	if ( !mass )
 		mass = 75;
 
-	if ( (self->gib_type > 0) && (self->gib_type < 10))
+	if ( (self->gib_type > 0) && (self->gib_type < 10) )
 	{
 		int	r;
 
-		count = mass/25;
+		count = mass / 25;
 		if (count > 128)
 			count = 128;
 		while (count--)
@@ -1315,23 +1315,23 @@ void func_explosive_explode (edict_t *self)
 			chunkorigin[2] = origin[2] + crandom() * size[2];
 			switch (self->gib_type) {
 			case GIB_METAL:
-				ThrowDebris (self, va("models/objects/metal_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/metal_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_GLASS:
-				ThrowDebris (self, va("models/objects/glass_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->skinnum, EF_SPHERETRANS); break;
+				ThrowDebris (self, va("models/objects/glass_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->skinnum, EF_SPHERETRANS); break;
 			case GIB_BARREL:
-				ThrowDebris (self, va("models/objects/barrel_gibs/gib%i.md2",r),  2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/barrel_gibs/gib%i.md2", r),  2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_CRATE:
-				ThrowDebris (self, va("models/objects/crate_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/crate_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_ROCK:
-				ThrowDebris (self, va("models/objects/rock_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/rock_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_CRYSTAL:
-				ThrowDebris (self, va("models/objects/crystal_gibs/gib%i.md2",r), 2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/crystal_gibs/gib%i.md2", r), 2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_MECH:
-				ThrowDebris (self, va("models/objects/mech_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/mech_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_WOOD:
-				ThrowDebris (self, va("models/objects/wood_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/wood_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->skinnum, 0); break;
 			case GIB_TECH:
-				ThrowDebris (self, va("models/objects/tech_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/tech_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->skinnum, 0); break;
 			}
 		}
 	}
@@ -1365,10 +1365,10 @@ void func_explosive_explode (edict_t *self)
 		}
 	}
 	// PMM - if we're part of a train, clean ourselves out of it
-	if (self->flags & FL_TEAMSLAVE && !self->movewith_set)
+	if ( (self->flags & FL_TEAMSLAVE) && !self->movewith_set )
 	{
-//		if ((g_showlogic) && (g_showlogic->value))
-//			gi.dprintf ("Removing func_explosive from train!\n");
+	//	if ( (g_showlogic) && (g_showlogic->value) )
+	//		gi.dprintf ("Removing func_explosive from train!\n");
 
 		if (self->teammaster)
 		{
@@ -1385,16 +1385,16 @@ void func_explosive_explode (edict_t *self)
 					master = master->teamchain;
 					if (!master)
 					{
-//						if ((g_showlogic) && (g_showlogic->value))
-//							gi.dprintf ("Couldn't find myself in master's chain, ignoring!\n");
+					//	if ( (g_showlogic) && (g_showlogic->value) )
+					//		gi.dprintf ("Couldn't find myself in master's chain, ignoring!\n");
 					}
 				}
 			}
 		}
 		else
 		{
-//			if ((g_showlogic) && (g_showlogic->value))
-//				gi.dprintf ("No master to free myself from, ignoring!\n");
+		//	if ( (g_showlogic) && (g_showlogic->value) )
+		//		gi.dprintf ("No master to free myself from, ignoring!\n");
 		}
 	}
 
@@ -1437,14 +1437,14 @@ void func_explosive_explode (edict_t *self)
         gi.WritePosition (self->s.origin);
         gi.multicast (self->s.origin, MULTICAST_PVS);
     }
-	VectorClear(self->s.origin);
-	VectorClear(self->velocity);
+	VectorClear (self->s.origin);
+	VectorClear (self->velocity);
     self->solid = SOLID_NOT;
     self->svflags |= SVF_NOCLIENT;
     self->think = func_explosive_respawn;
     self->nextthink = level.time + 10; // substitute whatever value you want here
 	self->use = NULL;
-	gi.linkentity(self); */
+	gi.linkentity (self); */
 }
 
 void func_explosive_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
@@ -1452,7 +1452,7 @@ void func_explosive_die (edict_t *self, edict_t *inflictor, edict_t *attacker, i
 	self->enemy = inflictor;
 	self->activator = attacker;
 	if (self->delay > 0)
-	{	//Knightmare- clean up child movement stuff here
+	{	// Knightmare- clean up child movement stuff here
 		// Is this really needed anymore?
 	/*	VectorClear(self->avelocity);
 		self->movewith = "";
@@ -1463,7 +1463,7 @@ void func_explosive_die (edict_t *self, edict_t *inflictor, edict_t *attacker, i
 		self->nextthink = level.time + self->delay;
 	}
 	else
-		func_explosive_explode(self);
+		func_explosive_explode (self);
 }
 
 void func_explosive_use (edict_t *self, edict_t *other, edict_t *activator)
@@ -1474,22 +1474,21 @@ void func_explosive_use (edict_t *self, edict_t *other, edict_t *activator)
 //PGM
 void func_explosive_activate (edict_t *self, edict_t *other, edict_t *activator)
 {
-	int approved;
+	int		approved = 0;
 
-	approved = 0;
 	// PMM - looked like target and targetname were flipped here
-	if (other != NULL && other->target)
+	if ( (other != NULL) && other->target )
 	{
-		if (!strcmp(other->target, self->targetname))
+		if ( !strcmp(other->target, self->targetname) )
 			approved = 1;
 	}
-	if (!approved && activator!=NULL && activator->target)
+	if ( !approved && (activator != NULL) && activator->target )
 	{
-		if (!strcmp(activator->target, self->targetname))
+		if ( !strcmp(activator->target, self->targetname) )
 			approved = 1;
 	}
 
-	if (!approved)
+	if ( !approved )
 	{
 //		gi.dprintf("func_explosive_activate: incorrect activator\n");
 		return;
@@ -1502,7 +1501,7 @@ void func_explosive_activate (edict_t *self, edict_t *other, edict_t *activator)
 //	}
 //	else
 //	{
-		if (!self->health)
+		if ( !self->health )
 			self->health = 100;
 		self->die = func_explosive_die;
 		self->takedamage = DAMAGE_YES;
@@ -1528,25 +1527,30 @@ void func_explosive_touch (edict_t *self, edict_t *other, cplane_t *plane, csurf
 	float	mass;
 	vec3_t	dir, impact_v;
 
-	if (!self->health) return;
-	if (other->mass <= 200) return;
-	if (VectorLength(other->velocity)==0) return;
+	if ( !self->health )
+		return;
+	if (other->mass <= 200)
+		return;
+	if (VectorLength(other->velocity) == 0)
+		return;
+
 	// Check for impact damage
 	if (self->health > 0)
 	{
 		VectorSubtract(other->velocity,self->velocity,impact_v);
 		delta = VectorLength(impact_v);
-		delta = delta*delta*0.0001;
+		delta = delta * delta * 0.0001;
 		mass = self->mass;
-		if (!mass) mass = 200;
-		delta *= (float)(other->mass)/mass;
+		if (!mass)
+			mass = 200;
+		delta *= (float)(other->mass) / mass;
 		if (delta > 30)
 		{
-			damage = (delta-30)/2;
+			damage = (delta - 30) / 2;
 			if (damage > 0)
 			{
-				VectorSubtract(self->s.origin,other->s.origin,dir);
-				VectorNormalize(dir);
+				VectorSubtract (self->s.origin, other->s.origin, dir);
+				VectorNormalize (dir);
 				T_Damage (self, other, other, dir, self->s.origin, vec3_origin, damage, 0, 0, MOD_FALLING);
 			}
 		}
@@ -1602,7 +1606,7 @@ void SP_func_explosive (edict_t *self)
 	if ((self->use != func_explosive_use) && (self->use != func_explosive_activate))
 //PGM
 	{
-		if (!self->health)
+		if ( !self->health )
 			self->health = 100;
 		self->die = func_explosive_die;
 		self->takedamage = DAMAGE_YES;
@@ -1611,7 +1615,7 @@ void SP_func_explosive (edict_t *self)
 	if (st.item) //Knightmare- item support
 	{
 		self->item = FindItemByClassname (st.item);
-		if (!self->item)
+		if ( !self->item )
 			gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
 	}
 
@@ -1636,40 +1640,40 @@ void PrecacheDebris (int type)
 		gi.modelindex ("models/objects/debris3/tris.md2");
 		break;
 	case GIB_METAL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/metal_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/metal_gibs/gib%i.md2", i));
 		break;
 	case GIB_GLASS:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/glass_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/glass_gibs/gib%i.md2", i));
 		break;
 	case GIB_BARREL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/barrel_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/barrel_gibs/gib%i.md2", i));
 		break;
 	case GIB_CRATE:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/crate_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/crate_gibs/gib%i.md2", i));
 		break;
 	case GIB_ROCK:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/rock_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/rock_gibs/gib%i.md2", i));
 		break;
 	case GIB_CRYSTAL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/crystal_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/crystal_gibs/gib%i.md2", i));
 		break;
 	case GIB_MECH:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/mech_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/mech_gibs/gib%i.md2", i));
 		break;
 	case GIB_WOOD:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/wood_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/wood_gibs/gib%i.md2", i));
 		break;
 	case GIB_TECH:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/tech_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/tech_gibs/gib%i.md2", i));
 		break;
 	}
 }

@@ -798,6 +798,7 @@
 {"G_CopyString", (byte *)G_CopyString},
 {"vectoyaw2", (byte *)vectoyaw2},
 {"vectoyaw", (byte *)vectoyaw},
+{"G_SetMovedir2", (byte *)G_SetMovedir2},
 {"G_SetMovedir", (byte *)G_SetMovedir},
 {"vtos", (byte *)vtos},
 {"tv", (byte *)tv},

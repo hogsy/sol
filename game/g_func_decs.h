@@ -798,6 +798,7 @@ extern mmove_t * G_NewCustomAnim ( void ) ;
 extern char * G_CopyString ( char * in ) ;
 extern float vectoyaw2 ( vec3_t vec ) ;
 extern float vectoyaw ( vec3_t vec ) ;
+extern void G_SetMovedir2 ( vec3_t angles , vec3_t movedir ) ;
 extern void G_SetMovedir ( vec3_t angles , vec3_t movedir ) ;
 extern char * vtos ( vec3_t v ) ;
 extern float * tv ( float x , float y , float z ) ;

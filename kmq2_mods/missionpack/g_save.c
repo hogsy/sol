@@ -443,6 +443,7 @@ void InitGame (void)
 	g_aimfix_taper_dist = gi.cvar ("g_aimfix_taper_dist", "128", CVAR_ARCHIVE);		// Knightmare- transition range for aimfix
 
 	g_nm_maphacks = gi.cvar ("g_nm_maphacks", "0", 0);								// Knightmare- enables hacks for Neil Manke's Q2 maps
+	g_use_rogue_spawnflags = gi.cvar ("g_use_rogue_spawnflags", "0", CVAR_LATCH);	// Knightmare- enables use of Rogue spawnflags for target_laser in non-Rogue maps
 
 //ROGUE
 	g_showlogic = gi.cvar ("g_showlogic", "0", 0);

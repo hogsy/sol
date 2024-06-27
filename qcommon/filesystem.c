@@ -3449,7 +3449,7 @@ void FS_AddQuakeImportGame (const char *dir)
 	// check and load QuakeImportPath/id1 and quakegame dirs
 	if ( fs_quakeimportpath->string[0] )
 	{
-		// TODO: load pak remap script for quakebasedirname here
+		// Load pak remap script for fs_quakemaingame
 		FS_LoadPakRemapScript (dir, fs_quakemaingame->string);
 		FS_AddQuakeImportGameDirectory (va("%s/%s", fs_quakeimportpath->string, fs_quakemaingame->string));
 

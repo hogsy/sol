@@ -514,10 +514,10 @@ retry:
 	
 	time_left = time;
 
-	VectorAdd(ent->s.origin,ent->origin_offset,origin);
-	VectorCopy(ent->size,maxs);
-	VectorScale(maxs,0.5,maxs);
-	VectorNegate(maxs,mins);
+	VectorAdd (ent->s.origin, ent->origin_offset, origin);
+	VectorCopy (ent->size, maxs);
+	VectorScale (maxs, 0.5, maxs);
+	VectorNegate (maxs, mins);
 
 	ent->groundentity = NULL;
 
@@ -2298,10 +2298,10 @@ int SV_VehicleMove (edict_t *ent, float time, int mask)
 
 	time_left = time;
 
-	VectorAdd(ent->s.origin,ent->origin_offset,origin);
-	VectorCopy(ent->size,maxs);
-	VectorScale(maxs,0.5,maxs);
-	VectorNegate(maxs,mins);
+	VectorAdd (ent->s.origin, ent->origin_offset, origin);
+	VectorCopy (ent->size, maxs);
+	VectorScale (maxs, 0.5, maxs);
+	VectorNegate (maxs, mins);
 	mins[2] += 1;
 
 	ent->groundentity = NULL;

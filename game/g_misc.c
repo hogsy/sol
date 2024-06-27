@@ -1230,15 +1230,15 @@ SF 8 EXPLOSIVES_ONLY  Func_explosive may ONLY be damaged by explosions
 
 */
 void func_explosive_use(edict_t *self, edict_t *other, edict_t *activator);
-void func_explosive_respawn(edict_t *self)
+void func_explosive_respawn (edict_t *self)
 {
-    KillBox(self);
+    KillBox (self);
     self->solid = SOLID_BSP;
     self->svflags &= ~SVF_NOCLIENT;
     self->health = self->max_health;
     self->takedamage = DAMAGE_YES;
 	self->use = func_explosive_use;
-    gi.linkentity(self);
+    gi.linkentity (self);
 }
 
 void func_explosive_explode (edict_t *self)
@@ -1273,17 +1273,17 @@ void func_explosive_explode (edict_t *self)
 	VectorScale (size, 0.5, size);
 
 	mass = self->mass;
-	if (!mass)
+	if ( !mass )
 		mass = 75;
 
 	// Lazarus: Use traditional debris for gib_type=0, but non-zero gib_type gives equal 
 	// weight to all models.
 
-	if ( (self->gib_type > 0) && (self->gib_type < 10))
+	if ( (self->gib_type > 0) && (self->gib_type < 10) )
 	{
 		int	r;
 
-		count = mass/25;
+		count = mass / 25;
 		if (count > 64)	// Knightmare- was 16
 			count = 64;
 		while (count--)
@@ -1294,23 +1294,23 @@ void func_explosive_explode (edict_t *self)
 			chunkorigin[2] = origin[2] + crandom() * size[2];
 			switch (self->gib_type) {
 			case GIB_METAL:
-				ThrowDebris (self, va("models/objects/metal_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/metal_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_GLASS:
-				ThrowDebris (self, va("models/objects/glass_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->s.skinnum, EF_SPHERETRANS); break;
+				ThrowDebris (self, va("models/objects/glass_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->s.skinnum, EF_SPHERETRANS); break;
 			case GIB_BARREL:
-				ThrowDebris (self, va("models/objects/barrel_gibs/gib%i.md2",r),  2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/barrel_gibs/gib%i.md2", r),  2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_CRATE:
-				ThrowDebris (self, va("models/objects/crate_gibs/gib%i.md2",r),   2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/crate_gibs/gib%i.md2", r),   2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_ROCK:
-				ThrowDebris (self, va("models/objects/rock_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/rock_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_CRYSTAL:
-				ThrowDebris (self, va("models/objects/crystal_gibs/gib%i.md2",r), 2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/crystal_gibs/gib%i.md2", r), 2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_MECH:
-				ThrowDebris (self, va("models/objects/mech_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/mech_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_WOOD:
-				ThrowDebris (self, va("models/objects/wood_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/wood_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
 			case GIB_TECH:
-				ThrowDebris (self, va("models/objects/tech_gibs/gib%i.md2",r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
+				ThrowDebris (self, va("models/objects/tech_gibs/gib%i.md2", r),    2, chunkorigin, 0, self->s.skinnum, 0); break;
 			}
 		}
 	}
@@ -1366,14 +1366,14 @@ void func_explosive_explode (edict_t *self)
         gi.WritePosition (self->s.origin);
         gi.multicast (self->s.origin, MULTICAST_PVS);
     }
-	VectorClear(self->s.origin);
-	VectorClear(self->velocity);
+	VectorClear (self->s.origin);
+	VectorClear (self->velocity);
     self->solid = SOLID_NOT;
     self->svflags |= SVF_NOCLIENT;
     self->think = func_explosive_respawn;
     self->nextthink = level.time + 10; // substitute whatever value you want here
 	self->use = NULL;
-	gi.linkentity(self); */
+	gi.linkentity (self); */
 }
 
 void func_explosive_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
@@ -1386,7 +1386,7 @@ void func_explosive_die (edict_t *self, edict_t *inflictor, edict_t *attacker, i
 		self->nextthink = level.time + self->delay;
 	}
 	else
-		func_explosive_explode(self);
+		func_explosive_explode (self);
 }
 
 void func_explosive_use(edict_t *self, edict_t *other, edict_t *activator)
@@ -1398,22 +1398,23 @@ void func_explosive_use(edict_t *self, edict_t *other, edict_t *activator)
 void func_explosive_makeshootable (edict_t *self, edict_t *other, edict_t *activator)
 {
 	qboolean	ok = false;
+
 	if (other && other->target)
 	{
-		if (!strcmp(other->target, self->targetname))
+		if ( !strcmp(other->target, self->targetname) )
 			ok = true;
 	}
-	if (!ok && activator && activator->target)
+	if ( !ok && activator && activator->target )
 	{
-		if (!strcmp(activator->target, self->targetname))
+		if ( !strcmp(activator->target, self->targetname) )
 			ok = true;
 	}
 
-	if (!ok)
+	if ( !ok )
 		return;
 
 	self->use = func_explosive_use;
-	if (!self->health)
+	if ( !self->health )
 		self->health = 100;
 	self->die = func_explosive_die;
 	self->takedamage = DAMAGE_YES;
@@ -1436,25 +1437,29 @@ void func_explosive_touch (edict_t *self, edict_t *other, cplane_t *plane, csurf
 	float	mass;
 	vec3_t	dir, impact_v;
 
-	if (!self->health) return;
-	if (other->mass <= 200) return;
-	if (VectorLength(other->velocity)==0) return;
+	if ( !self->health )
+		return;
+	if (other->mass <= 200)
+		return;
+	if (VectorLength(other->velocity) == 0)
+		return;
+
 	// Check for impact damage
 	if (self->health > 0)
 	{
 		VectorSubtract(other->velocity,self->velocity,impact_v);
 		delta = VectorLength(impact_v);
-		delta = delta*delta*0.0001;
+		delta = delta * delta * 0.0001;
 		mass = self->mass;
 		if (!mass) mass = 200;
-		delta *= (float)(other->mass)/mass;
+		delta *= (float)(other->mass) / mass;
 		if (delta > 30)
 		{
-			damage = (delta-30)/2;
+			damage = (delta - 30) / 2;
 			if (damage > 0)
 			{
-				VectorSubtract(self->s.origin,other->s.origin,dir);
-				VectorNormalize(dir);
+				VectorSubtract (self->s.origin, other->s.origin, dir);
+				VectorNormalize (dir);
 				T_Damage (self, other, other, dir, self->s.origin, vec3_origin, damage, 0, 0, MOD_FALLING);
 			}
 		}
@@ -1502,9 +1507,9 @@ void SP_func_explosive (edict_t *self)
 	if (self->spawnflags & 4)
 		self->s.effects |= EF_ANIM_ALLFAST;
 
-	if ((self->use != func_explosive_use) && (self->use != func_explosive_makeshootable))
+	if ( (self->use != func_explosive_use) && (self->use != func_explosive_makeshootable) )
 	{
-		if (!self->health)
+		if ( !self->health )
 			self->health = 100;
 		self->die = func_explosive_die;
 		self->takedamage = DAMAGE_YES;
@@ -1513,7 +1518,7 @@ void SP_func_explosive (edict_t *self)
 	if (st.item) // Knightmare- item support
 	{
 		self->item = FindItemByClassname (st.item);
-		if (!self->item)
+		if ( !self->item )
 			gi.dprintf("%s at %s has bad item: %s\n", self->classname, vtos(self->s.origin), st.item);
 	}
 
@@ -1538,40 +1543,40 @@ void PrecacheDebris (int type)
 		gi.modelindex ("models/objects/debris3/tris.md2");
 		break;
 	case GIB_METAL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/metal_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/metal_gibs/gib%i.md2", i));
 		break;
 	case GIB_GLASS:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/glass_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/glass_gibs/gib%i.md2", i));
 		break;
 	case GIB_BARREL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/barrel_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/barrel_gibs/gib%i.md2", i));
 		break;
 	case GIB_CRATE:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/crate_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/crate_gibs/gib%i.md2", i));
 		break;
 	case GIB_ROCK:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/rock_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/rock_gibs/gib%i.md2", i));
 		break;
 	case GIB_CRYSTAL:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/crystal_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/crystal_gibs/gib%i.md2", i));
 		break;
 	case GIB_MECH:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/mech_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/mech_gibs/gib%i.md2", i));
 		break;
 	case GIB_WOOD:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/wood_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/wood_gibs/gib%i.md2", i));
 		break;
 	case GIB_TECH:
-		for (i=1;i<=5;i++)
-			gi.modelindex(va("models/objects/tech_gibs/gib%i.md2",i));
+		for (i=1; i<=5; i++)
+			gi.modelindex(va("models/objects/tech_gibs/gib%i.md2", i));
 		break;
 	}
 }

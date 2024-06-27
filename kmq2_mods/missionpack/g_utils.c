@@ -444,16 +444,16 @@ void G_SetMovedir (vec3_t angles, vec3_t movedir)
 	VectorClear (angles);
 }
 
-//Knightmare- this is almost the same as G_SetMovedir,
-//only it doesn't clear the source vector
-//useful for point entities that use movedir
+// Knightmare- this is almost the same as G_SetMovedir,
+// only it doesn't clear the source vector
+// useful for point entities that use movedir
 void G_SetMovedir2 (vec3_t angles, vec3_t movedir)
 {
-	if (VectorCompare (angles, VEC_UP))
+	if ( VectorCompare (angles, VEC_UP) )
 	{
 		VectorCopy (MOVEDIR_UP, movedir);
 	}
-	else if (VectorCompare (angles, VEC_DOWN))
+	else if ( VectorCompare (angles, VEC_DOWN) )
 	{
 		VectorCopy (MOVEDIR_DOWN, movedir);
 	}
