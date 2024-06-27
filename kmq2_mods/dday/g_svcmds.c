@@ -353,21 +353,22 @@ void Update_Campaign_Info (void)
 			break;
 		}
 	}
-
 }
 
 
-void WriteCampaignTxt(void)
+void WriteCampaignTxt (void)
 {
-	FILE *fp;
+	FILE	*fp;
 	char	campaignfilename[MAX_QPATH] = "";
-	int i;
+	int		i;
 
 	if (!campaign->string || !level.campaign)
 		return;
-	
 
-	Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.campaign", campaign->string);
+//	Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.campaign", campaign->string);
+	// Knightmare- use SavegameDir() instead for compatibility on all platforms
+	Com_sprintf (campaignfilename, sizeof(campaignfilename), "%s/campaigns/%s.campaign", SavegameDir(), campaign->string);
+
 	fp = fopen (campaignfilename, "wb");
 	if (!fp)
 		gi.error ("Couldn't open %s", campaignfilename);
@@ -398,35 +399,50 @@ void WriteCampaignTxt(void)
 //called when first creating campaign, or at map start.  Creates new [campaign].campaign file if needed or loads existing one
 void SetupCampaign (qboolean restart)
 {
-	char	campaignfilename[MAX_QPATH] = "";
-	char	*campinfo;
-	int		i,c;
-	char	*s, *f = NULL;
-	char *bspname = NULL;
-	char *exita = NULL, *exitb = NULL, *exitc = NULL;
-	int  owner = 0;
-	int xpos = 0, ypos = 0;
-	qboolean  alliedstart = false, axisstart = false;
+	char		campaignfilename[MAX_QPATH] = "";
+	char		*campinfo;
+	int			i, c;
+	char		*s, *f = NULL;
+	char		*bspname = NULL;
+	char		*exita = NULL, *exitb = NULL, *exitc = NULL;
+	int			owner = 0;
+	int			xpos = 0, ypos = 0;
+	qboolean	alliedstart = false, axisstart = false;
+	FILE		*check;
 
-	FILE *check;
-
-	if (!*campaign->string)
+	if ( !*campaign->string )
 		return;
 
+//	Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.campaign", campaign->string);
 
-	Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.campaign", campaign->string);
+	// Knightmare- use SavegameDir() / GameDir() instead for compatibility on all platforms
+	Com_sprintf (campaignfilename, sizeof(campaignfilename), "%s/campaigns/%s.campaign", SavegameDir(), campaign->string);
 	
 	// convert string to all lowercase (for Linux)
 	for (i = 0; campaignfilename[i]; i++)
 		campaignfilename[i] = tolower(campaignfilename[i]);
 
-
-	if (restart == true || !(check = fopen(campaignfilename, "r") ))//no current campaign
+	// fall back to GameDir() if not found in SavegameDir()
+	check = fopen(campaignfilename, "r");
+	if ( !check )
 	{
-		Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.cpgntemplate", campaign->string);
+		Com_sprintf (campaignfilename, sizeof(campaignfilename), "%s/campaigns/%s.campaign", GameDir(), campaign->string);
+
+		// convert string to all lowercase (for Linux)
+		for (i = 0; campaignfilename[i]; i++)
+			campaignfilename[i] = tolower(campaignfilename[i]);
 	}
+	else {
+		fclose (check);
+	}
+	// end Knightmare
 
-
+	if ( (restart == true) || !(check = fopen(campaignfilename, "r")) )	// no current campaign
+	{
+	//	Com_sprintf (campaignfilename, sizeof(campaignfilename), "dday/campaigns/%s.cpgntemplate", campaign->string);
+		// Knightmare- use GameDir() instead for compatibility on all platforms
+		Com_sprintf (campaignfilename, sizeof(campaignfilename), "%s/campaigns/%s.cpgntemplate", GameDir(), campaign->string);
+	}
 
 	campinfo = ReadEntFile(campaignfilename);
 
@@ -568,16 +584,12 @@ void	ServerCommand (void)
 {
 	char	*cmd;
 
-
 	// JABot[start]
 	if (BOT_ServerCommand ())
 		return;
 	// [end]
 
-
-
 	cmd = gi.argv(1);
-
 
 	if (Q_stricmp (cmd, "test") == 0)
 		Svcmd_Test_f ();
@@ -589,8 +601,6 @@ void	ServerCommand (void)
 		Svcmd_Teams_f();
 	else if (Q_stricmp (cmd, "switch") ==0)
 		Svcmd_Teamswitch_f();
-	
-
 	else
 		safe_cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
 }

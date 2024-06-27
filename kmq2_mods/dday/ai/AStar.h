@@ -11,7 +11,7 @@ typedef struct astarpath_s
 	int originNode;
 	int goalNode;
 
-}astarpath_t;
+} astarpath_t;
 
 //	A* PROPS
 //===========================================

@@ -78,9 +78,9 @@ static void SP_FixCoopSpots (edict_t *self)
 		VectorSubtract(self->s.origin, spot->s.origin, d);
 		if (VectorLength(d) < 384)
 		{
-			if ((!self->targetname) || stricmp(self->targetname, spot->targetname) != 0)
+			if ( (!self->targetname) || (Q_stricmp(self->targetname, spot->targetname) != 0) )
 			{
-//				gi.dprintf("FixCoopSpots changed %s at %s targetname from %s to %s\n", self->classname, vtos(self->s.origin), self->targetname, spot->targetname);
+			//	gi.dprintf("FixCoopSpots changed %s at %s targetname from %s to %s\n", self->classname, vtos(self->s.origin), self->targetname, spot->targetname);
 				self->targetname = spot->targetname;
 			}
 			return;
@@ -96,7 +96,7 @@ static void SP_CreateCoopSpots (edict_t *self)
 {
 	edict_t	*spot;
 
-	if(stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp(level.mapname, "security") == 0)
 	{
 		spot = G_Spawn();
 		spot->classname = "info_player_coop";
@@ -181,7 +181,7 @@ void SP_info_player_start(edict_t *self)
 
 	if (!coop->value)
 		return;
-	if(stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp(level.mapname, "security") == 0)
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_CreateCoopSpots;
@@ -216,20 +216,20 @@ void SP_info_player_coop(edict_t *self)
 		return;
 	}
 
-	if((stricmp(level.mapname, "jail2") == 0)   ||
-	   (stricmp(level.mapname, "jail4") == 0)   ||
-	   (stricmp(level.mapname, "mine1") == 0)   ||
-	   (stricmp(level.mapname, "mine2") == 0)   ||
-	   (stricmp(level.mapname, "mine3") == 0)   ||
-	   (stricmp(level.mapname, "mine4") == 0)   ||
-	   (stricmp(level.mapname, "lab") == 0)     ||
-	   (stricmp(level.mapname, "boss1") == 0)   ||
-	   (stricmp(level.mapname, "fact3") == 0)   ||
-	   (stricmp(level.mapname, "biggun") == 0)  ||
-	   (stricmp(level.mapname, "space") == 0)   ||
-	   (stricmp(level.mapname, "command") == 0) ||
-	   (stricmp(level.mapname, "power2") == 0) ||
-	   (stricmp(level.mapname, "strike") == 0))
+	if ( (Q_stricmp(level.mapname, "jail2") == 0)   ||
+	   (Q_stricmp(level.mapname, "jail4") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine1") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine2") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine3") == 0)   ||
+	   (Q_stricmp(level.mapname, "mine4") == 0)   ||
+	   (Q_stricmp(level.mapname, "lab") == 0)     ||
+	   (Q_stricmp(level.mapname, "boss1") == 0)   ||
+	   (Q_stricmp(level.mapname, "fact3") == 0)   ||
+	   (Q_stricmp(level.mapname, "biggun") == 0)  ||
+	   (Q_stricmp(level.mapname, "space") == 0)   ||
+	   (Q_stricmp(level.mapname, "command") == 0) ||
+	   (Q_stricmp(level.mapname, "power2") == 0) ||
+	   (Q_stricmp(level.mapname, "strike") == 0) )
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_FixCoopSpots;
@@ -1231,7 +1231,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 
 
 	self->s.modelindex3 = 0;//faf:  ctb code
-	if(self->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
+	if (self->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
 		Drop_Briefcase (self, FindItemByClassname("briefcase"));
 
 
@@ -1354,7 +1354,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 				self->s.frame = FRAME_crdeath1-1;
 				self->client->anim_end = FRAME_crdeath5;
 			}
-			else if(self->stanceflags==STANCE_CRAWL)
+			else if (self->stanceflags==STANCE_CRAWL)
 			{
 				self->s.frame = FRAME_crawldeath01-1;
 				self->client->anim_end = FRAME_crawldeath07;
@@ -2046,11 +2046,11 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles)
 			break;
 	}
 
-	if(!spot)
+	if (!spot)
 	{
 		while( (spot = G_Find (spot, FOFS(classname),"info_reinforcements_start"))!=NULL)
 		{
-			if(spot->obj_owner==ent->client->resp.team_on->index) 
+			if (spot->obj_owner==ent->client->resp.team_on->index) 
 				break;
 		}
 	}
@@ -2872,14 +2872,11 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 			}
 
 			gi.configstring (CS_PLAYERSKINS + playernum, va("%s\\%s", ent->client->pers.netname, skin));
+			
+		//	Info_SetValueForKey (userinfo, "skin", skin);
 
-			
-			
-			
-			//Info_SetValueForKey (userinfo, "skin", skin);
-
-//			if ( Q_stricmp(s, skin) )
-//				stuffcmd(ent, va("skin %s", skin));
+		//	if ( Q_stricmp(s, skin) )
+		//		stuffcmd(ent, va("skin %s", skin));
 
 			// pbowens: grm officer model HACK
 			/*
@@ -2994,7 +2991,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 //	if (strcmp(password->string, value) != 0)
 //		return false;
 
-	if(!Already_Done)
+	if (!Already_Done)
 	{ 
 		//the client connect function gets called a number of times. we need to set
         //this variable up to allow functions to be called only once.
@@ -3068,7 +3065,7 @@ void ClientDisconnect (edict_t *ent)
 
 
 	//faf:  ctb code
-	if(ent->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
+	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
 		Drop_Briefcase (ent, FindItemByClassname("briefcase"));
 
 
@@ -3353,32 +3350,30 @@ void Count_Votes (void)
 	}
 
 	level.changemap = votemaps[highmap];
-
-
 }
+
 
 qboolean Setup_Map_Vote (void)
 {
+	char		*maps;
+	int			i, j, k, c;
+	char		*s, *f = NULL;
+	int			mapcount;
+	int			newmapcount;
+	int			x;
+	int			randnum = 0;
+	int			removed;
+	char		*possible_maps[300];
+	char		*maplisttxt[300];
+	qboolean	gotmap;
+	int			count = 0;
+	qboolean	changefirstmap;
+ 	char		filename[MAX_OSPATH] = "";	// Knightmare added
 
-	char	*maps;
-	int		i,j,k,c;
-	
-	char	*s, *f=NULL;
-
-	int mapcount;
-	int	newmapcount;
-	int x;
-	int randnum = 0;
-	int removed;
-	char *possible_maps[300];
-	char *maplisttxt[300];
-	qboolean gotmap;
-	int count = 0;
-
-	qboolean changefirstmap;
-
-
-	maps = ReadEntFile("dday/votemaps.txt");
+//	maps = ReadEntFile("dday/votemaps.txt");
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/votemaps.txt", GameDir());
+	maps = ReadEntFile(filename);
 
 	mapcount = 0;
 
@@ -4570,10 +4565,7 @@ void ClientBeginServerFrame (edict_t *ent)
 //			MainMenu(ent);
 		
 	}	
-
 }
-
-
 
 
 void Write_Player_Stats (edict_t *ent)
@@ -4581,60 +4573,52 @@ void Write_Player_Stats (edict_t *ent)
 	char	statsfilename[MAX_QPATH] = "";
 	char	*ip;
 	int		c;
-
-	
 	char	*s, *f=NULL;
-
 	char	*statsc;
+	char	*name;
+	int		games = 0;
+	int		ping = 0;
+	int		human_kills = 0;
+	int		human_deaths = 0;
+	int		bot_kills = 0;
+	int		bot_deaths = 0;
+	int		games_won = 0;
+	int		games_lost = 0;
+	int		played_allies = 0;
+	int		played_axis = 0;
+	int		infantry = 0;
+	int		officer = 0;
+	int		lgunner = 0;
+	int		hgunner = 0;
+	int		sniper = 0;
+	int		special = 0;
+	int		engineer = 0;
+	int		medic = 0;
+	int		flamer = 0;
+	int		castrations = 0;
+	int		helmets = 0;
+	int		fists = 0;
+	char	*chat;
+ 	char	filename[MAX_OSPATH] = "";
+	FILE	*fn;
 
-	char *name;
-	int games = 0;
-	int ping = 0;
-	int human_kills = 0;
-	int human_deaths = 0;
-	int bot_kills = 0;
-	int bot_deaths = 0;
-	int games_won = 0;
-	int games_lost = 0;
-	int played_allies = 0;
-	int played_axis = 0;
-	int	infantry = 0;
-	int officer = 0;
-	int lgunner = 0;
-	int hgunner = 0;
-	int sniper = 0;
-	int special = 0;
-	int engineer = 0;
-	int medic = 0;
-	int flamer = 0;
-	int castrations = 0;
-	int helmets = 0;
-	int fists = 0;
-	char *chat;
-
-
- 	char	filename[MAX_QPATH] = "";
-	FILE *fn;
-
-
-	//gi.dprintf("Write_Player_Stats\n");
+//	gi.dprintf ("Write_Player_Stats\n");
 
 	if (ent->ai)
 		return;
 
-
-	//dont count maps that end really fast
+	// dont count maps that end really fast
 //	if (level.time < 60)
 //		return;
-
 
 	ip = ent->client->pers.ip;
 
 	if (!ip)
 		return;
 
-
-	Com_sprintf (statsfilename, sizeof(statsfilename), "dday/stats/%s.stats", ip);
+//	Com_sprintf (statsfilename, sizeof(statsfilename), "dday/stats/%s.stats", ip);
+	// Knightmare- use SavegameDir() instead for compatibility on all platforms
+	Com_sprintf (statsfilename, sizeof(statsfilename), "%s/stats/%s.stats", SavegameDir(), ip);
 
     statsc = ReadEntFile(statsfilename);
 
@@ -4782,7 +4766,7 @@ void Write_Player_Stats (edict_t *ent)
 
 	}
 
-	//if (level.intermissiontime)
+// if (level.intermissiontime)
 	games = games + 1;
 
 	//plus_minus = ent->client->resp.plus_minus;
@@ -4795,8 +4779,7 @@ void Write_Player_Stats (edict_t *ent)
 
 	average = ((average * (games - 1)) + plus_minus)/games;	 */
 
-
-	//gi.dprintf("%i %f\n", deaths, ratio);
+//	gi.dprintf ("%i %f\n", deaths, ratio);
 
 	human_kills = human_kills + ent->client->resp.stat_human_plus;
 	human_deaths = human_deaths + ent->client->resp.stat_human_minus;
@@ -4807,9 +4790,10 @@ void Write_Player_Stats (edict_t *ent)
 	helmets = helmets + ent->client->resp.stat_helmets;
 	fists = fists + ent->client->resp.stat_fists;
 
+//	Com_sprintf (filename, sizeof(filename), "dday/stats/%s.stats", ip);
+	// Knightmare- use SavegameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/stats/%s.stats", SavegameDir(), ip);
 
-
-	Com_sprintf (filename, sizeof(filename), "dday/stats/%s.stats", ip);
 	fn = fopen (filename, "w");
 	if (!fn)
 	{
@@ -4852,40 +4836,36 @@ void Write_Player_Stats (edict_t *ent)
 }
 
 //writes players stat average from .stat file to pers
-void SetPlayerRating(edict_t *ent)
+void SetPlayerRating (edict_t *ent)
 {
 	char	statsfilename[MAX_QPATH] = "";
 	int		c;
-	
-	char	*s, *f=NULL;
-
+	char	*s, *f = NULL;
 	char	*statsc;
-
-	char *name;
-	float ratio = 0.0;
-	int games = 0;
-	int ping = 0;
-	int	human_kills = 0;
-	int human_deaths = 0;
-	int	bot_kills = 0;
-	int bot_deaths = 0;
-	char *chat ="";
-	int i;
+	char	*name;
+	float	ratio = 0.0;
+	int		games = 0;
+	int		ping = 0;
+	int		human_kills = 0;
+	int		human_deaths = 0;
+	int		bot_kills = 0;
+	int		bot_deaths = 0;
+	char	*chat = "";
+	int		i;
 
 	if (!ent->client->pers.ip)
 		return;
 
+//	Com_sprintf (statsfilename, sizeof(statsfilename), "dday/stats/%s.stats", ent->client->pers.ip);
+	// Knightmare- use SavegameDir() instead for compatibility on all platforms
+	Com_sprintf (statsfilename, sizeof(statsfilename), "%s/stats/%s.stats", SavegameDir(), ent->client->pers.ip);
 
-
-	Com_sprintf (statsfilename, sizeof(statsfilename), "dday/stats/%s.stats", ent->client->pers.ip);
-
-	//gi.dprintf("%s   \n",statsfilename);
+//	gi.dprintf ("%s\n", statsfilename);
 
     statsc = ReadEntFile(statsfilename);
 
-	if (!statsc)
+	if ( !statsc )
 		return;
-
 
 	if (stats->value)
 	{

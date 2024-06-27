@@ -1442,14 +1442,23 @@ void MapVote(edict_t *ent)
 
 	for (i=0; i <4; i++)
 	{
-		//check for bot support
-		//gi.dprintf ("x%s\n",mapstring);
+		// check for bot support
+	//	gi.dprintf ("x%s\n",mapstring);
 		if (bots->value)
 		{
-			Com_sprintf (filename, sizeof(filename), "dday/navigation/%s.cmp", votemaps[i]);
+		/*	Com_sprintf (filename, sizeof(filename), "dday/navigation/%s.cmp", votemaps[i]);
+			f = fopen (filename, "rb"); */
+			// Knightmare- use  SavegameDir() / GameDir() instead for compatibility on all platforms
+			Com_sprintf (filename, sizeof(filename), "%s/navigation/%s.cmp", SavegameDir(), votemaps[i]);
+			// fall back to GameDir() if not found in SavegameDir()
 			f = fopen (filename, "rb");
+			if ( !f ) {
+				Com_sprintf (filename, sizeof(filename), "%s/navigation/%s.cmp", GameDir(), votemaps[i]);
+				f = fopen (filename, "rb");
+			}
+			// end Knightmare
 
-			if (f){
+			if (f) {
 				fclose (f);
 				add = "*";
 				botmap = true;

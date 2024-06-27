@@ -745,6 +745,35 @@ qboolean LocalFileExists (const char *path)
 	}
 	return false;
 }
+
+qboolean G_CopyFile (const char *src_filename, const char *dst_filename)
+{
+	int			partSize;
+	FILE		*fp_src, *fp_dst;
+	byte		buf[8192];
+
+	fp_src = fopen (src_filename, "rb");
+	if ( !fp_src ) {
+		return false;
+	}
+
+	fp_dst = fopen (dst_filename, "wb");
+	if ( !fp_dst ) {
+		fclose (fp_src);
+		return false;
+	}
+
+	do {
+		partSize = (int)fread (&buf, 1, sizeof(buf), fp_dst);
+		if (partSize > 0)
+			fwrite (&buf, 1, partSize, fp_dst);
+	} while (partSize > 0);
+
+	fclose (fp_src);
+	fclose (fp_dst);
+
+	return true;
+}
 // end Knightmare
 
 /************************************************************************************

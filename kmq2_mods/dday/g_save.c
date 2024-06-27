@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/g_save.c,v $
  *   $Revision: 1.17 $
  *   $Date: 2002/06/04 19:49:47 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -181,8 +181,8 @@ field_t fields[] = {
 	{"fog",FOFS(teleport_time),F_FLOAT},
 	{"obj_origin", FOFS(obj_origin), F_VECTOR}
 
-	
-	
+
+
 
 };
 
@@ -263,7 +263,7 @@ int			GlobalAliciaModeVariable	= 0;
 
 void InitGame (void)
 {
-	gi.dprintf ("==== InitGame ====\n");
+	gi.dprintf ("==== InitGame (D-Day) ====\n");
 
 #ifdef DEBUG
 	gi.dprintf ("-- DEBUG  BUILD --\n");
@@ -386,13 +386,13 @@ void InitGame (void)
 	chile = gi.cvar ("chile", "0", CVAR_LATCH);
 
 	knifefest = gi.cvar ("knifefest", "0", 0);
-	
+
 	fullbright = gi.cvar ("fullbright", "0", 0);
 
 	stats = gi.cvar ("stats", "0", CVAR_LATCH);
 
 	// pbowens: reduce lag by manipulating userinfo on server basis
-//	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO); 
+//	crosshair	= gi.cvar ("crosshair", "0", CVAR_USERINFO);
 
 	bots = gi.cvar ("bots", "0", CVAR_SERVERINFO);// | CVAR_LATCH);
 	botchat = gi.cvar ("botchat", "1", 0);
@@ -591,7 +591,7 @@ void WriteClient (FILE *f, gclient_t *client)
 {
 	field_t		*field;
 	gclient_t	temp;
-	
+
 	// all of the ints, floats, and vectors stay as they are
 	temp = *client;
 
@@ -879,7 +879,7 @@ void ReadLevel (char *filename)
 		gi.error ("Couldn't open %s", filename);
 
 	qbots = false;
-    
+
 
 	// free any dynamic memory allocated by loading the level
 	// base state

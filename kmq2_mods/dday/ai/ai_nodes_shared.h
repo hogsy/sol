@@ -96,4 +96,3 @@ typedef struct nav_node_s
 	int			area;
 
 } nav_node_t;
-

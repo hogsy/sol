@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -143,7 +143,7 @@ void VelocityForDamage (int damage, vec3_t v)
 
 	if (damage < 50)
 		VectorScale (v, 0.7, v);
-	else 
+	else
 		VectorScale (v, 1.2, v);
 }
 
@@ -190,7 +190,7 @@ void head_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 		speed = 350;
 
 
-	if (self->avelocity[0] + self->avelocity[1] + self->avelocity[2] != 0 && // still bouncing/spinning 
+	if (self->avelocity[0] + self->avelocity[1] + self->avelocity[2] != 0 && // still bouncing/spinning
 		(!other->takedamage || !other->client) && (other != self) ) //GaP prevent stupid sound
 	{
 
@@ -201,7 +201,7 @@ void head_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 			gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/gibs2.wav"), speed/350, ATTN_NORM, 0);
 		self->s.angles[2] = 0;
 
-	
+
 	}
 }
 
@@ -220,7 +220,7 @@ void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	self->count++;
 
 	//gi.dprintf ("%f\n", speed);
-		
+
     if (self->count >3 || (surf && (surf->flags & SURF_SKY)))
 	{
 		level.gib_count--;
@@ -230,7 +230,7 @@ void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	}
 
 
-	if (self->avelocity[0] + self->avelocity[1] + self->avelocity[2] != 0 && // still bouncing/spinning 
+	if (self->avelocity[0] + self->avelocity[1] + self->avelocity[2] != 0 && // still bouncing/spinning
 		(!other->takedamage || !other->client) && (other != self) ) //GaP prevent stupid sound
 	{
 
@@ -241,7 +241,7 @@ void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 			gi.sound (self, CHAN_VOICE, gi.soundindex ("misc/gibs2.wav"), speed/350, ATTN_NORM, 0);
 		self->s.angles[2] = 0;
 
-	
+
 	}
 
 
@@ -268,10 +268,10 @@ void gib_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 void gib_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
 	G_FreeEdict (self);
-	
+
 	//faf
 	level.gib_count--;
-	
+
 	//faf
 	if (level.gib_count < 0)
 		level.gib_count = 0;
@@ -559,7 +559,7 @@ void ThrowDebris2 (int soundtype, vec3_t origin)
 	VectorCopy (origin, chunk->s.origin);
 
 	gi.setmodel (chunk, "models/objects/debris/tris.md2");
-	
+
 	if (soundtype ==  SOUND_CONCRETE)
 		chunk->s.skinnum = (int)(random()*2);
 	else
@@ -625,7 +625,7 @@ void path_corner_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface
 
 	if (other->movetarget != self)
 		return;
-	
+
 	if (other->enemy)
 		return;
 
@@ -1436,7 +1436,7 @@ void misc_blackhole_think (edict_t *self)
 
 	else
 
-	{		
+	{
 
 		self->s.frame = 0;
 
@@ -1492,7 +1492,7 @@ void misc_eastertank_think (edict_t *self)
 
 	else
 
-	{		
+	{
 
 		self->s.frame = 254;
 
@@ -1548,7 +1548,7 @@ void misc_easterchick_think (edict_t *self)
 
 	else
 
-	{		
+	{
 
 		self->s.frame = 208;
 
@@ -1604,7 +1604,7 @@ void misc_easterchick2_think (edict_t *self)
 
 	else
 
-	{		
+	{
 
 		self->s.frame = 248;
 
@@ -1756,7 +1756,7 @@ void SP_misc_banner_x (edict_t *ent)
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 
-	
+
 	ent->s.modelindex = gi.modelindex ("models/objects/bannerx/tris.md2");
 	ent->s.frame = rand() % 16;
 	gi.linkentity (ent);
@@ -1770,7 +1770,7 @@ void SP_misc_banner_1 (edict_t *ent)
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 
-	
+
 	ent->s.modelindex = gi.modelindex ("models/objects/banner1/tris.md2");
 	ent->s.frame = rand() % 16;
 	gi.linkentity (ent);
@@ -1784,7 +1784,7 @@ void SP_misc_banner_2 (edict_t *ent)
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 
-	
+
 	ent->s.modelindex = gi.modelindex ("models/objects/banner2/tris.md2");
 	ent->s.frame = rand() % 16;
 	gi.linkentity (ent);
@@ -1798,7 +1798,7 @@ void SP_misc_banner_3 (edict_t *ent)
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 
-	
+
 	ent->s.modelindex = gi.modelindex ("models/objects/banner3/tris.md2");
 	ent->s.frame = rand() % 16;
 	gi.linkentity (ent);
@@ -1812,7 +1812,7 @@ void SP_misc_banner_4 (edict_t *ent)
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 
-	
+
 	ent->s.modelindex = gi.modelindex ("models/objects/banner4/tris.md2");
 	ent->s.frame = rand() % 16;
 	gi.linkentity (ent);
@@ -1895,9 +1895,22 @@ void misc_md2_use (edict_t *self, edict_t *other, edict_t *activator)
 
 void SP_misc_md2 (edict_t *ent)
 {
+     // Knightmare added
+    char    modelName[MAX_QPATH] = {0};
+    int     i;
+    // end Knightmare
+
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
-	ent->s.modelindex = gi.modelindex (ent->model);
+
+//	ent->s.modelindex = gi.modelindex (ent->model);
+	// Knightmare- convert modelname to all lowercase (for Linux)
+	Q_strncpyz (modelName, sizeof(modelName), ent->model);
+	for (i = 0; modelName[i]; i++)
+		modelName[i] = tolower(modelName[i]);
+	ent->s.modelindex = gi.modelindex (modelName);
+    // end Knightmare
+
 //	ent->s.frame = rand() % 16;
 //	ent->s.frame = 1;
 
@@ -1934,7 +1947,7 @@ void objective_flag_think(edict_t *ent)
 {
 	edict_t  *e;
 	int i;
-   
+
 	if (ent->mass)
 		ent->s.frame = (ent->s.frame + 1) % ent->mass; //faf
 	else
@@ -1958,13 +1971,13 @@ void objective_flag_think(edict_t *ent)
 				continue;
 
 			if (!e->classnameb)
-				continue;		
+				continue;
 			if (e->classnameb != OBJECTIVE_TOUCH)
 				continue;
-		
+
 			if (!e->target)
 				continue;
-		
+
 			if (!strcmp(e->target, ent->targetname))
 			{
 				ent->owner = e;
@@ -1980,7 +1993,7 @@ void objective_flag_think(edict_t *ent)
 		else
 			ent->s.skinnum = 0;
 	}
-	
+
 	ent->nextthink = level.time +.1;
 
 }
@@ -2022,7 +2035,7 @@ void SP_misc_crate (edict_t *ent)
 	else if (ent->count == 1)
 	{
 		ent->s.frame = 1;
-		VectorSet (ent->mins, -24, -24, -10); 
+		VectorSet (ent->mins, -24, -24, -10);
 		VectorSet (ent->maxs, 24, 24, 36);
 	}
 	else if (ent->count == 2)
@@ -2169,7 +2182,7 @@ void SP_misc_viper (edict_t *ent)
 	if (!ent->speed)
 	     ent->speed = 300;
 
-	if (ent->model && 
+	if (ent->model &&
 		!strncmp (ent->model, "models/", 7))
 	{
 		gi.setmodel(ent, ent->model);
@@ -2195,7 +2208,7 @@ void SP_misc_viper (edict_t *ent)
 }
 
 
-/*QUAKED misc_bigviper (1 .5 0) (-176 -120 -24) (176 120 72) 
+/*QUAKED misc_bigviper (1 .5 0) (-176 -120 -24) (176 120 72)
 This is a large stationary viper as seen in Paul's intro
 */
 void SP_misc_bigviper (edict_t *ent)
@@ -2747,7 +2760,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 		return;
 //	dest = G_Find (NULL, FOFS(targetname), self->target);
 
-	
+
 	total = 0;
 	t = NULL;
 	while ((t = G_Find (t, FOFS(targetname), self->target)))
@@ -2756,12 +2769,12 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 			total++;
 	}
 
-	randnum = (int) (random() * total) + 1; 
+	randnum = (int) (random() * total) + 1;
 
 	i = 0;
 
 	t=NULL;
-	
+
 	while ((t = G_Find (t, FOFS(targetname), self->target)))
 	{
 		if (t->inuse)
@@ -2922,7 +2935,7 @@ void SP_misc_teleporter (edict_t *ent)
 
 	gi.linkentity (trig);
 
-	
+
 
 }
 
@@ -3030,7 +3043,7 @@ qboolean strcmpwld (char *give, char *check)
 
 qboolean Surface(char *name, int type)
 {
-	
+
 	switch (type)
 	{
 	case SURF_METAL:
@@ -3075,7 +3088,7 @@ qboolean Surface(char *name, int type)
 		if (strcmpwld (name, "lcvp"))
 			return true;
 		break;
-	
+
 	case SURF_GRASS:
 		if (strcmpwld (name, "grass"))
 			return true;
@@ -3092,7 +3105,7 @@ qboolean Surface(char *name, int type)
 		if (strcmpwld (name, "bush"))
 			return true;
 		break;
-	
+
 	case SURF_WOOD:
 		if (strcmpwld (name, "wood"))
 			return true;
@@ -3134,9 +3147,9 @@ qboolean Surface(char *name, int type)
 			!strcmpwld (name, "dday3/door1"))
 			return true;
 		break;
-	
 
-	
+
+
 	case SURF_SAND:
 		if (strcmpwld (name, "sand"))
 			return true;
@@ -3156,10 +3169,10 @@ qboolean Surface(char *name, int type)
 			return true;
 		if (strcmpwld (name, "leave"))
 			return true;
-		break;	
-	
+		break;
+
 	case SURF_GLASS:
-		if (strcmpwld (name, "window") && 
+		if (strcmpwld (name, "window") &&
 			!(strcmpwld (name, "dday2/window2")))
 			return true;
 		if (strcmpwld (name, "glass"))
@@ -3301,7 +3314,7 @@ int Surface2(char *name)
 
 
 
-	if (strcmpwld (name, "window") && 
+	if (strcmpwld (name, "window") &&
 		!(strcmpwld (name, "dday2/window2")))
 		return SURF_GLASS;
 	if (strcmpwld (name, "glass"))
@@ -3322,7 +3335,7 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
     edict_t *x;
 
 	//gi.dprintf("%s %s\n",activator->classname, other->classname);
-		
+
 	if (self->style == 2 && activator->client)
 	{
 		//bulgef thing: only switch if the activating person's nearest i_r_s belongs to opposite team.
@@ -3337,9 +3350,9 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
 				continue;
 			if (strcmp(e->classname, "info_reinforcements_start"))
 				continue;
-			
+
 			VectorSubtract (e->s.origin, other->s.origin, dist);
-			
+
 			temp_distance = VectorLength(dist);
 			//gi.dprintf("%f\n",temp_distance);
 
@@ -3350,12 +3363,12 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
 			}
 		}
 		if (nearest)
-		{	
+		{
 			if (activator->client->resp.team_on &&
 				nearest->obj_owner == activator->client->resp.team_on->index)
 				return;
 			//gi.dprintf ("%s\n",vtos(nearest->s.origin));
-			
+
 		}
 	}
 
@@ -3364,7 +3377,7 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
     {
        if (!x->inuse)
 		   continue;
-	   
+
 	   if (!x->classname)
 		   continue;
 
@@ -3376,7 +3389,7 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
 					x->obj_owner = -99;
 			}
 	   }
-   	
+
 	   if (!x->targetname)
 		   continue;
 
@@ -3486,7 +3499,7 @@ void Medic_Screen (edict_t *ent)
 		AngleVectors (ent->s.angles, forward, right, NULL);
 		VectorSubtract (a, b, vec);
 		VectorNormalize (vec);
-	
+
 		dot = DotProduct (vec, forward);
 		if (dot > 0.9)
 			qforward = true;
@@ -3525,9 +3538,9 @@ void Medic_Screen (edict_t *ent)
 			break;
 	//	strncpy (string + stringlength, entry);
 		Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
-		stringlength += j;	
+		stringlength += j;
 		y++;
-				
+
 	}
 
 
@@ -3541,10 +3554,10 @@ void Medic_Screen (edict_t *ent)
 		{
 		//	strncpy (string + stringlength, entry);
 			Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
-			stringlength += j;	
+			stringlength += j;
 		}
 
-	}	
+	}
 	if (qback)
 	{
 		Com_sprintf (entry, sizeof(entry),	"xv 160 yb -100 picn i_medic ");
@@ -3553,10 +3566,10 @@ void Medic_Screen (edict_t *ent)
 		{
 		//	strncpy (string + stringlength, entry);
 			Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
-			stringlength += j;	
+			stringlength += j;
 		}
 
-	}	
+	}
 	if (qright)
 	{
 		Com_sprintf (entry, sizeof(entry),	"xr -100 yv 100 picn i_medic ");
@@ -3565,7 +3578,7 @@ void Medic_Screen (edict_t *ent)
 		{
 		//	strncpy (string + stringlength, entry);
 			Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
-			stringlength += j;	
+			stringlength += j;
 		}
 	}
 	if (qleft)
@@ -3576,7 +3589,7 @@ void Medic_Screen (edict_t *ent)
 		{
 		//	strncpy (string + stringlength, entry);
 			Q_strncpyz (string + stringlength, sizeof(string) - stringlength, entry);
-			stringlength += j;	
+			stringlength += j;
 		}
 
 	}

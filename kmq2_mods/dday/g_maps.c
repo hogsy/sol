@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // 2/00 - pbowens (g_maps.c) - overhaul for D-Day: Normandy
 
   
+// Knightmare- moved this var here to fix compile on GCC
+maplist_t maplist; 
 
 // 
 // OpenFile 
@@ -48,13 +50,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Return: file handle of open file stream. 
 //         Returns NULL if file could not be opened. 
 // 
-FILE *DDay_OpenFile(char *filename_ptr) 
+FILE *DDay_OpenFile (char *filename_ptr) 
 { 
 	FILE		*fp = NULL;
 	char		filename[256];
 
-	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/");
-	Q_strncatz (filename, sizeof(filename), filename_ptr);
+//	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/");
+//	Q_strncatz (filename, sizeof(filename), filename_ptr);
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/%s", GameDir(), filename_ptr);
 
 	if ((fp = fopen(filename, "r")) == NULL)       // test to see if file opened 
 	{ 
@@ -80,12 +84,12 @@ FILE *DDay_OpenFile(char *filename_ptr)
 
 void DDay_CloseFile(FILE *fp) 
 { 
-   if (fp)        // if the file is open 
-   { 
-      fclose(fp); 
-   } 
-   else    // no file is opened 
-      gi.dprintf ("ERROR -- DDay_CloseFile() exception.\n"); 
+	if (fp)        // if the file is open 
+	{ 
+		fclose(fp); 
+	} 
+	else    // no file is opened 
+		gi.dprintf ("ERROR -- DDay_CloseFile() exception.\n"); 
 }
 
 
@@ -102,68 +106,68 @@ void DDay_CloseFile(FILE *fp)
 // Return: 0 = normal exit, maplist loaded 
 //         1 = abnormal exit 
 // 
-int LoadMapList(char *filename) 
+int LoadMapList (char *filename) 
 { 
-   FILE *fp; 
-   int  i=0; 
-   char szLineIn[80]; 
+	FILE *fp; 
+	int  i = 0; 
+	char szLineIn[80]; 
 
-   fp = DDay_OpenFile(filename); 
+	fp = DDay_OpenFile(filename); 
 
-   if (fp)  // opened successfully? 
-   { 
-      // scan for [maplist] section 
-      do 
-      { 
-         fscanf(fp, "%s", szLineIn); 
-      } while (!feof(fp) && (Q_stricmp(szLineIn, "[maplist]") != 0)); 
+	if (fp)  // opened successfully? 
+	{ 
+		// scan for [maplist] section 
+		do 
+		{ 
+			fscanf(fp, "%s", szLineIn); 
+		} while (!feof(fp) && (Q_stricmp(szLineIn, "[maplist]") != 0)); 
 
-      if (feof(fp)) 
-      { 
-         // no [maplist] section 
-         gi.dprintf ("-------------------------------------\n"); 
-         gi.dprintf ("ERROR - No [maplist] section in \"%s\".\n", filename); 
-         gi.dprintf ("-------------------------------------\n"); 
-      } 
-      else 
-      { 
-         gi.dprintf ("-------------------------------------\n"); 
-  
-         // read map names into array 
-         while ((!feof(fp)) && (i<MAX_MAPS)) 
-         { 
-            fscanf(fp, "%s", szLineIn); 
+		if (feof(fp)) 
+		{ 
+			// no [maplist] section 
+			gi.dprintf ("-------------------------------------\n"); 
+			gi.dprintf ("ERROR - No [maplist] section in \"%s\".\n", filename); 
+			gi.dprintf ("-------------------------------------\n"); 
+		} 
+		else 
+		{ 
+			gi.dprintf ("-------------------------------------\n"); 
 
-            if (Q_stricmp(szLineIn, "###") == 0)  // terminator is "###" 
-               break; 
+			// read map names into array 
+			while ((!feof(fp)) && (i<MAX_MAPS)) 
+			{ 
+				fscanf(fp, "%s", szLineIn); 
 
-            // TODO: check that maps exist before adding to list 
-            //       (might be difficult to search a .pak file for these) 
+				if (Q_stricmp(szLineIn, "###") == 0)  // terminator is "###" 
+					break; 
 
-            strncpy(maplist.mapnames[i], szLineIn, MAX_MAPNAME_LEN); 
-            gi.dprintf("...%s\n", maplist.mapnames[i]); 
-            i++; 
-         } 
+				// TODO: check that maps exist before adding to list 
+				//       (might be difficult to search a .pak file for these) 
 
-         strncpy(maplist.filename, filename, 20); 
-      } 
+				strncpy(maplist.mapnames[i], szLineIn, MAX_MAPNAME_LEN); 
+				gi.dprintf("...%s\n", maplist.mapnames[i]); 
+				i++; 
+			} 
 
-      DDay_CloseFile(fp); 
+			strncpy(maplist.filename, filename, 20); 
+		} 
 
-      if (i == 0) 
-      { 
-         gi.dprintf ("No maps listed in [maplist] section of %s\n", filename); 
-         gi.dprintf ("-------------------------------------\n"); 
-         return 0;  // abnormal exit -- no maps in file 
-      } 
-  
-      gi.dprintf ("%i map(s) loaded.\n", i); 
-      gi.dprintf ("-------------------------------------\n"); 
-      maplist.nummaps = i; 
-      return 1; // normal exit 
-   } 
-  
-   return 0;  // abnormal exit -- couldn't open file 
+		DDay_CloseFile(fp); 
+
+		if (i == 0) 
+		{ 
+			gi.dprintf ("No maps listed in [maplist] section of %s\n", filename); 
+			gi.dprintf ("-------------------------------------\n"); 
+			return 0;  // abnormal exit -- no maps in file 
+		} 
+
+		gi.dprintf ("%i map(s) loaded.\n", i); 
+		gi.dprintf ("-------------------------------------\n"); 
+		maplist.nummaps = i; 
+		return 1; // normal exit 
+	} 
+
+	return 0;  // abnormal exit -- couldn't open file 
 } 
   
 
@@ -177,11 +181,11 @@ int LoadMapList(char *filename)
 // 
 // Return: (none) 
 // 
-void ClearMapList() 
+void ClearMapList (void) 
 { 
-   maplist.nummaps = 0; 
-   dmflags->value = (int) dmflags->value & ~DF_MAP_LIST; 
-   gi.dprintf ("Maplist cleared/disabled.\n"); 
+	maplist.nummaps = 0; 
+	dmflags->value = (int) dmflags->value & ~DF_MAP_LIST; 
+	gi.dprintf ("Maplist cleared/disabled.\n"); 
 } 
   
 
@@ -197,31 +201,31 @@ void ClearMapList()
 // 
 // Return: (none) 
 // 
-void DisplayMaplistUsage(edict_t *ent) 
+void DisplayMaplistUsage (edict_t *ent) 
 { 
-   safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
-   safe_cprintf (ent, PRINT_HIGH, "usage:\n"); 
+	safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
+	safe_cprintf (ent, PRINT_HIGH, "usage:\n"); 
 
-   if (ent==NULL) 
-   { 
-      safe_cprintf (ent, PRINT_HIGH, "MAPLIST <filename> [<rotate_f>]\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "  <filename> - server ini file\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "  <rotate_f> - 0 = sequential (def)\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "               1 = random\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "MAPLIST START    - go to 1st map\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "MAPLIST NEXT     - go to next map\n"); 
-      safe_cprintf (ent, PRINT_HIGH, "MAPLIST GOTO <n> - go to map #<n>\n"); 
-   } 
-  
-   safe_cprintf (ent, PRINT_HIGH, "MAPLIST          - show current list\n"); 
-   safe_cprintf (ent, PRINT_HIGH, "MAPLIST HELP     - (this screen)\n"); 
+	if (ent == NULL) 
+	{ 
+		safe_cprintf (ent, PRINT_HIGH, "MAPLIST <filename> [<rotate_f>]\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "  <filename> - server ini file\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "  <rotate_f> - 0 = sequential (def)\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "               1 = random\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "MAPLIST START    - go to 1st map\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "MAPLIST NEXT     - go to next map\n"); 
+		safe_cprintf (ent, PRINT_HIGH, "MAPLIST GOTO <n> - go to map #<n>\n"); 
+	} 
 
-   if (ent==NULL) 
-   { 
-      safe_cprintf (ent, PRINT_HIGH, "MAPLIST OFF      - clear/disable\n"); 
-   } 
-  
-   safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
+	safe_cprintf (ent, PRINT_HIGH, "MAPLIST          - show current list\n"); 
+	safe_cprintf (ent, PRINT_HIGH, "MAPLIST HELP     - (this screen)\n"); 
+
+	if (ent == NULL) 
+	{ 
+		safe_cprintf (ent, PRINT_HIGH, "MAPLIST OFF      - clear/disable\n"); 
+	} 
+
+	safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
 } 
   
 
@@ -236,48 +240,48 @@ void DisplayMaplistUsage(edict_t *ent)
 // 
 // Return: (none) 
 // 
-void ShowCurrentMaplist(edict_t *ent) 
+void ShowCurrentMaplist (edict_t *ent) 
 { 
-   int i; 
+	int i; 
 
-   safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
+	safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
 
-   if (ent==NULL)     // only show filename to server 
-      gi.dprintf ("FILENAME: %s\n", maplist.filename); 
+	if (ent==NULL)     // only show filename to server 
+		gi.dprintf ("FILENAME: %s\n", maplist.filename); 
 
-   for (i=0; i<maplist.nummaps; i++) 
-   { 
-      safe_cprintf (ent, PRINT_HIGH, "#%2d \"%s\"\n", i+1, maplist.mapnames[i]); 
-   } 
+	for (i=0; i<maplist.nummaps; i++) 
+	{ 
+		safe_cprintf (ent, PRINT_HIGH, "#%2d \"%s\"\n", i+1, maplist.mapnames[i]); 
+	} 
 
-   safe_cprintf (ent, PRINT_HIGH, "%i map(s) in list.\n", i); 
+	safe_cprintf (ent, PRINT_HIGH, "%i map(s) in list.\n", i); 
 
-   safe_cprintf (ent, PRINT_HIGH, "Rotation flag = %i ", maplist.rotationflag); 
-   switch (maplist.rotationflag) 
-   { 
-   case ML_ROTATE_SEQ: 
-      safe_cprintf (ent, PRINT_HIGH, "\"sequential\"\n"); 
-      break; 
+	safe_cprintf (ent, PRINT_HIGH, "Rotation flag = %i ", maplist.rotationflag); 
+	switch (maplist.rotationflag) 
+	{ 
+	case ML_ROTATE_SEQ: 
+		safe_cprintf (ent, PRINT_HIGH, "\"sequential\"\n"); 
+		break; 
 
-   case ML_ROTATE_RANDOM: 
-      safe_cprintf (ent, PRINT_HIGH, "\"random\"\n"); 
-      break; 
-  
-   default: 
-      safe_cprintf (ent, PRINT_HIGH, "(ERROR)\n"); 
-   } // end switch 
+	case ML_ROTATE_RANDOM: 
+		safe_cprintf (ent, PRINT_HIGH, "\"random\"\n"); 
+		break; 
 
-   if (maplist.currentmap == -1) 
-   { 
-      safe_cprintf (ent, PRINT_HIGH, "Current map = #-1 (not started)\n"); 
-   } 
-   else 
-   { 
-      safe_cprintf (ent, PRINT_HIGH, "Current map = #%i \"%s\"\n", 
-                 maplist.currentmap+1, maplist.mapnames[maplist.currentmap]); 
-   } 
-  
-   safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
+	default: 
+		safe_cprintf (ent, PRINT_HIGH, "(ERROR)\n"); 
+	} // end switch 
+
+	if (maplist.currentmap == -1) 
+	{ 
+		safe_cprintf (ent, PRINT_HIGH, "Current map = #-1 (not started)\n"); 
+	} 
+	else 
+	{ 
+		safe_cprintf (ent, PRINT_HIGH, "Current map = #%i \"%s\"\n", 
+			maplist.currentmap+1, maplist.mapnames[maplist.currentmap]); 
+	} 
+
+	safe_cprintf (ent, PRINT_HIGH, "-------------------------------------\n"); 
 } 
   
 
@@ -299,47 +303,40 @@ void Cmd_Maplist_f (edict_t *ent)
 		safe_cprintf(ent, PRINT_HIGH, "Maplist: %s \n", sv_maplist->string);
 		return;
 	}
-	
-	
+
+
 	switch (gi.argc()) 
-   { 
-   case 1:  // display current maplist 
-      if (maplist.nummaps > 0)  // does a maplist exist? 
-      { 
-         ShowCurrentMaplist(ent); 
-      } 
-      else       // no maplist 
-      { 
-         safe_cprintf (ent, PRINT_HIGH, "*** No MAPLIST active ***\n"); 
-         DisplayMaplistUsage(ent); 
-      } 
+	{ 
+	case 1:  // display current maplist 
+		if (maplist.nummaps > 0)  // does a maplist exist? 
+		{ 
+			ShowCurrentMaplist(ent); 
+		} 
+		else       // no maplist 
+		{ 
+			safe_cprintf (ent, PRINT_HIGH, "*** No MAPLIST active ***\n"); 
+			DisplayMaplistUsage(ent); 
+		} 
 
-      break; 
+		break; 
 
-   case 2: 
-      if (Q_stricmp(gi.argv(1), "HELP") == 0) 
-      { 
-         DisplayMaplistUsage(ent); 
-      } 
-      else // no other parameters allowed for clients 
-      { 
-         safe_cprintf (ent, PRINT_HIGH, "MAPLIST options locked by server.\n"); 
-      } 
+	case 2: 
+		if (Q_stricmp(gi.argv(1), "HELP") == 0) 
+		{ 
+			DisplayMaplistUsage(ent); 
+		} 
+		else // no other parameters allowed for clients 
+		{ 
+			safe_cprintf (ent, PRINT_HIGH, "MAPLIST options locked by server.\n"); 
+		} 
 
-      break; 
+		break; 
 
-   default: 
-      DisplayMaplistUsage(ent); 
-   }  // end switch 
+	default: 
+		DisplayMaplistUsage(ent); 
+	}  // end switch 
 } 
   
-
-
-
-
-
-
-
 
 // 
 // Svcmd_Maplist_f 
@@ -350,130 +347,130 @@ void Cmd_Maplist_f (edict_t *ent)
 // 
 // Return: (none) 
 // 
-void Svcmd_Maplist_f () 
+void Svcmd_Maplist_f (void) 
 { 
-   int  i;    // temp variable 
-   char *filename; 
-   edict_t *ent;           // for map changing, if necessary 
+	int  i;    // temp variable 
+	char *filename; 
+	edict_t *ent;           // for map changing, if necessary 
 
-   switch (gi.argc()) 
-   { 
-   case 3:  // various commands, or enable and assume rotationflag default 
-      if (Q_stricmp(gi.argv(2), "HELP") == 0) 
-      { 
-         DisplayMaplistUsage(NULL); 
-         break; 
-      } 
+	switch (gi.argc()) 
+	{ 
+	case 3:  // various commands, or enable and assume rotationflag default 
+		if (Q_stricmp(gi.argv(2), "HELP") == 0) 
+		{ 
+			DisplayMaplistUsage(NULL); 
+			break; 
+		} 
 
-      if (Q_stricmp(gi.argv(2), "START") == 0) 
-      { 
-         if (maplist.nummaps > 0)  // does a maplist exist? 
-            EndDMLevel(); 
-         else 
-            DisplayMaplistUsage(NULL); 
+		if (Q_stricmp(gi.argv(2), "START") == 0) 
+		{ 
+			if (maplist.nummaps > 0)  // does a maplist exist? 
+				EndDMLevel(); 
+			else 
+				DisplayMaplistUsage(NULL); 
 
-         break; 
-      } 
-      else if (Q_stricmp(gi.argv(2), "NEXT") == 0) 
-      { 
-         if (maplist.nummaps > 0)  // does a maplist exist? 
-            EndDMLevel(); 
-         else 
-            DisplayMaplistUsage(NULL); 
+			break; 
+		} 
+		else if (Q_stricmp(gi.argv(2), "NEXT") == 0) 
+		{ 
+			if (maplist.nummaps > 0)  // does a maplist exist? 
+				EndDMLevel(); 
+			else 
+				DisplayMaplistUsage(NULL); 
 
-         break; 
-      } 
-      else if (Q_stricmp(gi.argv(2), "OFF") == 0) 
-      { 
-         if (maplist.nummaps > 0)  // does a maplist exist? 
-         { 
-            ClearMapList(); 
-         } 
-         else 
-         { 
-            // maplist doesn't exist, so display usage 
-            DisplayMaplistUsage(NULL); 
-         } 
+			break; 
+		} 
+		else if (Q_stricmp(gi.argv(2), "OFF") == 0) 
+		{ 
+			if (maplist.nummaps > 0)  // does a maplist exist? 
+			{ 
+				ClearMapList(); 
+			} 
+			else 
+			{ 
+				// maplist doesn't exist, so display usage 
+				DisplayMaplistUsage(NULL); 
+			} 
 
-         break; 
-      } 
-      else 
-         maplist.rotationflag = 0; 
-  
-      // no break here is intentional;  supposed to fall though to case 3 
+			break; 
+		} 
+		else 
+			maplist.rotationflag = 0; 
 
-   case 4:  // enable maplist - all args explicitly stated on command line 
-      if (gi.argc() == 4)  // this is required, because it can still = 2 
-      { 
-         i = atoi(gi.argv(3)); 
+		// no break here is intentional;  supposed to fall though to case 3 
 
-         if (Q_stricmp(gi.argv(2), "GOTO") == 0) 
-         { 
-            // user trying to goto specified map # in list 
-            if ((i<1) || (i>maplist.nummaps)) 
-            { 
-               gi.dprintf("*** Map# out of range ***\n"); 
-               ShowCurrentMaplist(NULL); 
-            } 
-            else 
-            { 
-               ent = G_Spawn (); 
-               ent->classname = "target_changelevel"; 
-               ent->map = maplist.mapnames[i-1]; 
-               maplist.currentmap = i-1; 
-               BeginIntermission(ent); 
-            } 
+	case 4:  // enable maplist - all args explicitly stated on command line 
+		if (gi.argc() == 4)  // this is required, because it can still = 2 
+		{ 
+			i = atoi(gi.argv(3)); 
 
-            break; 
-         } 
-         else 
-         { 
-            // user trying to specify new maplist 
-            if ((i<0) || (i>=ML_ROTATE_NUM_CHOICES))  // check for valid rotationflag 
-            { 
-               // outside acceptable values for rotationflag 
-               DisplayMaplistUsage(NULL); 
-               break; 
-            } 
-            else 
-            { 
-               maplist.rotationflag = atoi(gi.argv(3)); 
-            } 
-         } 
-      } 
+			if (Q_stricmp(gi.argv(2), "GOTO") == 0) 
+			{ 
+				// user trying to goto specified map # in list 
+				if ((i<1) || (i>maplist.nummaps)) 
+				{ 
+					gi.dprintf("*** Map# out of range ***\n"); 
+					ShowCurrentMaplist(NULL); 
+				} 
+				else 
+				{ 
+					ent = G_Spawn (); 
+					ent->classname = "target_changelevel"; 
+					ent->map = maplist.mapnames[i-1]; 
+					maplist.currentmap = i-1; 
+					BeginIntermission(ent); 
+				} 
 
-      filename = gi.argv(2);   // get filename from command line 
+				break; 
+			} 
+			else 
+			{ 
+				// user trying to specify new maplist 
+				if ((i<0) || (i>=ML_ROTATE_NUM_CHOICES))  // check for valid rotationflag 
+				{ 
+					// outside acceptable values for rotationflag 
+					DisplayMaplistUsage(NULL); 
+					break; 
+				} 
+				else 
+				{ 
+					maplist.rotationflag = atoi(gi.argv(3)); 
+				} 
+			} 
+		} 
 
-      if ((int) dmflags->value & DF_MAP_LIST) 
-      { 
-         // tell user to cancel current maplist before starting new maplist 
-         gi.dprintf ("You must disable current maplist first. (SV MAPLIST OFF)\n"); 
-      } 
-      else 
-      { 
-         // load new maplist 
-         if (LoadMapList(filename))  // return 1 = success 
-         { 
-            dmflags->value = (int) dmflags->value | DF_MAP_LIST; 
-            gi.dprintf ("Maplist created/enabled. You can now use START or NEXT.\n"); 
-            maplist.currentmap = -1; 
-         } 
-      } 
+		filename = gi.argv(2);   // get filename from command line 
 
-      break; 
+		if ((int) dmflags->value & DF_MAP_LIST) 
+		{ 
+			// tell user to cancel current maplist before starting new maplist 
+			gi.dprintf ("You must disable current maplist first. (SV MAPLIST OFF)\n"); 
+		} 
+		else 
+		{ 
+			// load new maplist 
+			if (LoadMapList(filename))  // return 1 = success 
+			{ 
+				dmflags->value = (int) dmflags->value | DF_MAP_LIST; 
+				gi.dprintf ("Maplist created/enabled. You can now use START or NEXT.\n"); 
+				maplist.currentmap = -1; 
+			} 
+		} 
 
-   case 2:  // display current maplist 
-      if (maplist.nummaps > 0)  // does a maplist exist? 
-      { 
-         ShowCurrentMaplist(NULL); 
-      } 
-      else 
-      { 
-         DisplayMaplistUsage(NULL); 
-      } 
-      break; 
+		break; 
 
-   default: 
-      DisplayMaplistUsage(NULL); 
-   }  // end switch 
+	case 2:  // display current maplist 
+		if (maplist.nummaps > 0)  // does a maplist exist? 
+		{ 
+			ShowCurrentMaplist (NULL); 
+		} 
+		else 
+		{ 
+			DisplayMaplistUsage (NULL); 
+		} 
+		break; 
+
+	default: 
+		DisplayMaplistUsage (NULL); 
+	}  // end switch 
 }

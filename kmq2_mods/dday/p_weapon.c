@@ -266,15 +266,15 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		other->client->newweapon = ent->item;
 
 	if (!Q_stricmp(other->client->pers.weapon->pickup_name,"Fists") )
-{
-	if (Q_stricmp(ent->item->pickup_name, "Helmet") )
-		other->client->newweapon = ent->item;
-}
+	{
+		if (Q_stricmp(ent->item->pickup_name, "Helmet") )
+			other->client->newweapon = ent->item;
+	}
 
-	//gi.dprintf("%s\n",other->client->pers.weapon->pickup_name);
+//	gi.dprintf("%s\n",other->client->pers.weapon->pickup_name);
 
 
-//	WeighPlayer(other);
+//	WeighPlayer (other);
 	return true;
 }
 
@@ -530,10 +530,9 @@ void ChangeWeapon (edict_t *ent)
             ent->client->anim_end = FRAME_crawlpain04;
     }
     
-    ShowGun(ent);    
-	WeighPlayer(ent);
+    ShowGun (ent);    
+	WeighPlayer (ent);
 	
-
 	ent->client->pickup_msg_time = level.time + 2.0;
 
 	if (!Q_stricmp(ent->client->pers.weapon->pickup_name,"Fists") )
@@ -1454,11 +1453,11 @@ int Play_Bullet_Hit(edict_t *ent, char *surface, vec3_t endpos, edict_t *impact_
 #define KNIFE_THROW_SPEED 950
 #define HELMET_THROW_SPEED 600
 
-qboolean Surface(char *name, int type);
-void Blade_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+qboolean Surface (char *name, int type);
+void Blade_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	qboolean fistarmed=Q_stricmp(self->classname,"blade");
-	gitem_t *item= FindItem("Knife");
+	qboolean fistarmed = Q_stricmp(self->classname,"blade");
+	gitem_t *item = FindItem("Knife");
 	edict_t         *dropped;
     vec3_t          move_angles;//, origin;
 
@@ -1876,10 +1875,7 @@ void Weapon_Knife (edict_t *ent)
     int				fire_frames[] = {7, 9};
 	qboolean armedfists = Q_stricmp(ent->client->pers.weapon->pickup_name,"Knife");
 
-
 	ent->client->crosshair = false;
-
-
 
 	if (ent->client->turret)
 	{
@@ -1889,16 +1885,11 @@ void Weapon_Knife (edict_t *ent)
 		return;
 	}
 	
-
-
-
-
 	//ent->client->aim=false;
 	//fire_frames[0]=(ent->client->aim)?54:4;
 	ent->client->p_rnd=NULL;
 	
 	//faf
-
 
 	if (!armedfists)
 	{

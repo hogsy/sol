@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/ita/ita_item.c,v $
  *   $Revision: 1.8 $
  *   $Date: 2002/07/23 22:48:29 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -36,7 +36,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t itaguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t itaguninfo[MAX_TEAM_GUNS];
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 		"misc/w_pkup.wav",
 		"models/weapons/ita/g_b34/tris.md2", 0,
 		"models/weapons/ita/v_b34/tris.md2",
-		"w_b34", 
+		"w_b34",
 		"Beretta M1934",
 		0,
 		1,
@@ -75,11 +76,11 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 		"ita",
 		&itaguninfo[B34_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_carcano (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_carcano", 
+		"weapon_carcano",
 		WEAPON_CARCANO,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -110,7 +111,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_b38 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_b38", 
+		"weapon_b38",
 		WEAPON_B38,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -141,7 +142,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_k43", 
+		"weapon_k43",
 		WEAPON_K43,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -173,7 +174,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 	/*QUAKED weapon_b3842 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_3842", 
+		"weapon_3842",
 		WEAPON_3842,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -238,7 +239,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_m98ks (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_m98ks", 
+		"weapon_m98ks",
 		WEAPON_M98KS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -268,7 +269,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 	/*QUAKED weapon_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_breda", 
+		"weapon_breda",
 		WEAPON_BREDA,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -362,7 +363,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 		0,
 		0
 	},
-	
+
 /*QUAKED ammo_carcano (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -488,7 +489,7 @@ gitem_t itaitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_rocketsI (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{

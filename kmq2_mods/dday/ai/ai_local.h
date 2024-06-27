@@ -62,8 +62,9 @@ in NO WAY supported by Steve Yeager.
 
 //acebot_items.c players table
 //----------------------------------------------------------
-int	num_AIEnemies;
-edict_t *AIEnemies[MAX_EDICTS];		// pointers to all players in the game
+// Knightmare- made these vars extern to fix compile on GCC
+extern int	num_AIEnemies;
+extern edict_t *AIEnemies[MAX_EDICTS];		// pointers to all players in the game
 
 
 //Debug & creating and linking nodes
@@ -79,8 +80,9 @@ typedef struct
 	edict_t		*chaseguy;
 
 } ai_devel_t;
-ai_devel_t	AIDevel;
 
+// Knightmare- made this var extern to fix compile on GCC
+extern ai_devel_t	AIDevel;
 
 
 //----------------------------------------------------------

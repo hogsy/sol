@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/jpn/jpn_item.c,v $
  *   $Revision: 1.8 $
  *   $Date: 2002/07/23 22:48:29 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,7 +37,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t jpnguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t jpnguninfo[MAX_TEAM_GUNS];
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +60,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		"misc/w_pkup.wav",
 		"models/weapons/jpn/g_nambu/tris.md2", 0,
 		"models/weapons/jpn/v_nambu/tris.md2",
-		"w_nambu", 
+		"w_nambu",
 		"Nambu Pistol",
 		0,
 		1,
@@ -76,11 +77,11 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		"jpn",
 		&jpnguninfo[NAMBU_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_arisaka (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_arisaka", 
+		"weapon_arisaka",
 		WEAPON_ARISAKA,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -111,7 +112,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_type_100 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_type_100", 
+		"weapon_type_100",
 		WEAPON_TYPE_100,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -142,7 +143,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_type_99 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_type_99", 
+		"weapon_type_99",
 		WEAPON_TYPE_99,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -174,7 +175,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 /* QUAKED weapon_m1carb (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 /*	{
-		"weapon_m1carb", 
+		"weapon_m1carb",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -205,7 +206,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_m98ks (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_arisakas", 
+		"weapon_arisakas",
 		WEAPON_ARISAKAS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -274,17 +275,17 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 
 
 /* Weapon_Katana (sword)
- 
+
 */
 {
-       "weapon_katana", 
+       "weapon_katana",
 	   WEAPON_KATANA,
        Pickup_Weapon,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Katana,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/jpn/g_katana/tris.md2", 0, 
+       "models/weapons/jpn/g_katana/tris.md2", 0,
        "models/weapons/jpn/v_katana/tris.md2",      //The models stuff
        "w_katana",                                    //Icon to be used
        "Katana",                                        //Pickup name
@@ -307,14 +308,14 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 
 
 {
-       "weapon_molotov", 
+       "weapon_molotov",
 	   WEAPON_MOLOTOV,
        Pickup_Ammo,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Molotov,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/jpn/g_molotov/tris.md2", 0, 
+       "models/weapons/jpn/g_molotov/tris.md2", 0,
        "models/weapons/jpn/v_molotov/tris.md2",      //The models stuff
        "w_molotov",                                    //Icon to be used
        "Molotov",                                        //Pickup name
@@ -333,7 +334,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		"jpn",
 		0,
 		0
-	   
+
 
 		},
 
@@ -407,7 +408,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -438,7 +439,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		0,
 		0
 	},
-	
+
 /*QUAKED ammo_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{

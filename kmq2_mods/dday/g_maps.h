@@ -46,12 +46,13 @@ typedef struct
    int  currentmap;       // index to current map 
 } maplist_t; 
   
-maplist_t maplist; 
+// Knightmare- made this var extern to fix compile on GCC
+extern maplist_t maplist; 
   
 
 int  LoadMapList         (char *filename); 
-void ClearMapList        (); 
+void ClearMapList        (void); 
 void Cmd_Maplist_f       (edict_t *ent); 
-void Svcmd_Maplist_f     (); 
+void Svcmd_Maplist_f     (void); 
 void DisplayMaplistUsage (edict_t *ent); 
 void ShowCurrentMaplist  (edict_t *ent);

@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,7 +37,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t usmguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t usmguninfo[MAX_TEAM_GUNS];
 
 
 
@@ -75,11 +76,11 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 		"usa",
 		&usmguninfo[COLT45_FRAME],
 		0
-	},	
+	},
 /* QUAKED weapon_m1 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_m1", 
+		"weapon_m1",
 		WEAPON_M1,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -110,7 +111,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_BAR (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_BAR", 
+		"weapon_BAR",
 		WEAPON_BAR,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -141,7 +142,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 	/*QUAKED weapon_30cal (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_30cal", 
+		"weapon_30cal",
 		WEAPON_30CAL,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -204,7 +205,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_Sniper (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_sniper", 
+		"weapon_sniper",
 		WEAPON_SNIPER,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -265,7 +266,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_shotgun", 
+		"weapon_shotgun",
 		WEAPON_SHOTGUN,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -359,7 +360,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_m1 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -454,7 +455,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_rockets (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -549,7 +550,7 @@ gitem_t usmitems[MAX_TEAM_ITEMS]=
 		0,
 		0
 	},
-	
+
 
 /*QUAKED ammo_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */

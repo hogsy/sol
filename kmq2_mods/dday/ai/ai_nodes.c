@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -63,7 +63,7 @@ qboolean AI_DropNodeOriginToFloor( vec3_t origin, edict_t *passent )
 // AI_FlagsForNode
 // check the world and set up node flags
 //==========================================
-int AI_FlagsForNode( vec3_t origin, edict_t *passent ) 
+int AI_FlagsForNode( vec3_t origin, edict_t *passent )
 {
 	trace_t	trace;
 	int		flagsmask = 0;
@@ -76,13 +76,13 @@ int AI_FlagsForNode( vec3_t origin, edict_t *passent )
 	trace = gi.trace( origin, tv(-15,-15,0), tv(15,15,0), tv(origin[0], origin[1], origin[2] - AI_JUMPABLE_HEIGHT), passent, MASK_NODESOLID );
 	if( trace.fraction < 1.0 )
 		flagsmask &= ~NODEFLAGS_FLOAT;	//ok, it wasn't set, I know...
-	else 
+	else
 		flagsmask |= NODEFLAGS_FLOAT;
 
 	//ladder
 //	trace = gi.trace( origin, tv(-18, -18, -16), tv(18, 18, 16), origin, passent, MASK_ALL );
 //	if( trace.startsolid && trace.contents & CONTENTS_LADDER )
-//		flagsmask |= NODEFLAGS_LADDER;	
+//		flagsmask |= NODEFLAGS_LADDER;
 
 	return flagsmask;
 }
@@ -192,14 +192,14 @@ qboolean AI_PredictJumpadDestity( edict_t *ent, vec3_t out )
 //		G_Printf("JUMPAD LAND: ERROR: trace was in solid.\n"); //started inside solid (target should never be inside solid, this is a mapper error)
 		return false;
 	} else if ( trace.fraction == 1.0 ) {
-		
+
 		//didn't find solid. Extend Down (I have to improve this part)
 		vec3_t	target_origin2, extended_endpoint, extend_dist_vec;
-		
+
 		VectorCopy( floor_target_origin, target_origin2 );
 		for ( i=0 ; i<3 ; i++ )
 			extend_dist_vec[i] = floor_target_origin[i] - target_origin[i];
-		
+
 		VectorMA ( target_origin2, 1, extend_dist_vec, extended_endpoint);
 		//repeat tracing
 //		trap_Trace ( &trace, target_origin2, tv(-15, -15, -8), tv(15, 15, 8), extended_endpoint, NULL, MASK_NODESOLID);
@@ -207,7 +207,7 @@ qboolean AI_PredictJumpadDestity( edict_t *ent, vec3_t out )
 		if ( trace.fraction == 1.0 )
 			return false;//still didn't find solid
 	}
-	
+
 #ifdef SHOW_JUMPAD_GUESS
 	// destiny found
 	AI_JumpadGuess_ShowPoint( trace.endpos, "models/objects/grenade2/tris.md2" );
@@ -231,9 +231,9 @@ int AI_AddNode_JumpPad( edict_t *ent )
 	if (nav.num_nodes + 1 > MAX_NODES)
 		return INVALID;
 
-	if( !AI_PredictJumpadDestity( ent, out )) 
+	if( !AI_PredictJumpadDestity( ent, out ))
 		return INVALID;
-	
+
 	// jumpad node
 	nodes[nav.num_nodes].flags = (NODEFLAGS_JUMPPAD|NODEFLAGS_SERVERLINK|NODEFLAGS_REACHATTOUCH);
 
@@ -245,9 +245,9 @@ int AI_AddNode_JumpPad( edict_t *ent )
 	nodes[nav.num_nodes].origin[2] = ent->maxs[2] + 16;	//raise it up a bit
 
 	nodes[nav.num_nodes].flags |= AI_FlagsForNode( nodes[nav.num_nodes].origin, NULL );
-	
+
 	nav.num_nodes++;
-	
+
 	// Destiny node
 	nodes[nav.num_nodes].flags = (NODEFLAGS_JUMPPAD_LAND|NODEFLAGS_SERVERLINK);
 	nodes[nav.num_nodes].origin[0] = out[0];
@@ -256,7 +256,7 @@ int AI_AddNode_JumpPad( edict_t *ent )
 	AI_DropNodeOriginToFloor( nodes[nav.num_nodes].origin, NULL );
 
 	nodes[nav.num_nodes].flags |= AI_FlagsForNode( nodes[nav.num_nodes].origin, NULL );
-	
+
 	// link jumpad to dest
 	AI_AddLink( nav.num_nodes-1 , nav.num_nodes, LINK_JUMPPAD );
 
@@ -317,7 +317,7 @@ int AI_AddNode_Door( edict_t *ent )
 #endif
 			nav.num_nodes++;
 		}
-		
+
 		//add node 2
 		nodes[nav.num_nodes].flags = 0;
 		VectorMA( door_origin, -32, crossdir, nodes[nav.num_nodes].origin);
@@ -330,12 +330,12 @@ int AI_AddNode_Door( edict_t *ent )
 			//add links in both directions
 			AI_AddLink( nav.num_nodes, nav.num_nodes-1, LINK_MOVE );
 			AI_AddLink( nav.num_nodes-1, nav.num_nodes, LINK_MOVE );
-			
+
 			nav.num_nodes++;
 		}
-		
+
 	}
-	
+
 	//find the crossing angle
 	AngleVectors( ent->s.angles, NULL, crossdir, NULL ); //jabot092(2)
 	VectorNormalize( crossdir );
@@ -364,7 +364,7 @@ int AI_AddNode_Door( edict_t *ent )
 		//add links in both directions
 		AI_AddLink( nav.num_nodes, nav.num_nodes-1, LINK_MOVE );
 		AI_AddLink( nav.num_nodes-1, nav.num_nodes, LINK_MOVE );
-		
+
 		nav.num_nodes++;
 	}
 
@@ -389,7 +389,7 @@ int AI_AddNode_Platform( edict_t *ent )
 
 	plat_dist = ent->pos1[2] - ent->pos2[2]; //jabot092(2)
 
-	// Upper node 
+	// Upper node
 	nodes[nav.num_nodes].flags = (NODEFLAGS_PLATFORM|NODEFLAGS_SERVERLINK|NODEFLAGS_FLOAT);
 	VectorCopy( ent->maxs, v1 );
 	VectorCopy( ent->mins, v2 );
@@ -405,9 +405,9 @@ int AI_AddNode_Platform( edict_t *ent )
 	nav.ents[nav.num_ents].ent = ent;
 	nav.ents[nav.num_ents].node = nav.num_nodes;
 	nav.num_ents++;
-	
+
 	nav.num_nodes++;
-	
+
 	// Lower node
 	nodes[nav.num_nodes].flags = (NODEFLAGS_PLATFORM|NODEFLAGS_SERVERLINK|NODEFLAGS_FLOAT);
 	nodes[nav.num_nodes].origin[0] = nodes[nav.num_nodes-1].origin[0];
@@ -448,10 +448,10 @@ int AI_AddNode_Teleporter( edict_t *ent )
 	dest = G_Find ( NULL, FOFS(targetname), ent->target );
 	if (!dest)
 		return INVALID;
-	
+
 	//NODE_TELEPORTER_IN
 	nodes[nav.num_nodes].flags = (NODEFLAGS_TELEPORTER_IN|NODEFLAGS_SERVERLINK);
-	
+
 	VectorCopy( ent->maxs, v1 );
 	VectorCopy( ent->mins, v2 );
 	nodes[nav.num_nodes].origin[0] = (v1[0] - v2[0]) / 2 + v2[0];
@@ -459,9 +459,9 @@ int AI_AddNode_Teleporter( edict_t *ent )
 	nodes[nav.num_nodes].origin[2] = ent->mins[2]+32;
 
 	nodes[nav.num_nodes].flags |= AI_FlagsForNode( nodes[nav.num_nodes].origin, ent );
-	
+
 	nav.num_nodes++;
-	
+
 	//NODE_TELEPORTER_OUT
 	nodes[nav.num_nodes].flags = (NODEFLAGS_TELEPORTER_OUT|NODEFLAGS_SERVERLINK);
 	VectorCopy( dest->s.origin, nodes[nav.num_nodes].origin );
@@ -471,10 +471,10 @@ int AI_AddNode_Teleporter( edict_t *ent )
 		AI_DropNodeOriginToFloor( nodes[nav.num_nodes].origin, NULL );
 
 	nodes[nav.num_nodes].flags |= AI_FlagsForNode( nodes[nav.num_nodes].origin, ent );
-	
+
 	// link from teleport_in
 	AI_AddLink( nav.num_nodes-1, nav.num_nodes, LINK_TELEPORT );
-	
+
 	nav.num_nodes++;
 	return nav.num_nodes -1;
 }
@@ -503,12 +503,12 @@ int AI_AddNode_BotRoam( edict_t *ent )
 
 	//count into bot_roams table
 	nav.broams[nav.num_broams].node = nav.num_nodes;
-	
+
 	if( ent->count )
 		nav.broams[nav.num_broams].weight = ent->count * 0.01;//count is a int with a value in between 0 and 100
 	else
 		nav.broams[nav.num_broams].weight = 0.3;
-	
+
 	nav.num_broams++;
 	nav.num_nodes++;
 	return nav.num_nodes-1; // return the node added
@@ -556,7 +556,7 @@ void AI_CreateNodesForEntities ( void )
 //	for( ent = game.edicts; ent < &game.edicts[game.numentities]; ent++ )
 	for( ent = g_edicts; ent < &g_edicts[game.maxentities]; ent++ )
 	{
-		if( !ent->classname )		
+		if( !ent->classname )
 			continue;
 
 		// platforms
@@ -605,7 +605,7 @@ void AI_CreateNodesForEntities ( void )
 //	for(ent = game.edicts; ent < &game.edicts[game.numentities]; ent++)
 	for( ent = g_edicts; ent < &g_edicts[game.maxentities]; ent++ )
 	{
-		if( !ent->classname )		
+		if( !ent->classname )
 			continue;
 
 		if( !strcmp( ent->classname,"item_botroam" ) )
@@ -619,7 +619,7 @@ void AI_CreateNodesForEntities ( void )
 				float heightdiff = 0;
 				heightdiff = ent->s.origin[2] - nodes[node].origin[2];
 				if( heightdiff < 0 ) heightdiff = -heightdiff;
-				
+
 				if( heightdiff < AI_STEPSIZE && nav.num_broams < MAX_BOT_ROAMS ) //near enough
 				{
 					nodes[node].flags |= NODEFLAGS_BOTROAM;
@@ -628,7 +628,7 @@ void AI_CreateNodesForEntities ( void )
 						nav.broams[nav.num_broams].weight = ent->count * 0.01;//count is a int with a value in between 0 and 100
 					else
 						nav.broams[nav.num_broams].weight = 0.3; //jalfixme: add cmd to weight (dropped by console cmd, self is player)
-					
+
 					nav.broams[nav.num_broams].node = node;
 					nav.num_broams++;
 					continue;
@@ -651,13 +651,13 @@ void AI_CreateNodesForEntities ( void )
 	{
 		int	item_index;
 
-		if( !ent->classname || !ent->item )		
+		if( !ent->classname || !ent->item )
 			continue;
 
 		item_index = ITEM_INDEX( ent->item );
 		if(item_index == INVALID)
 			continue;
-		
+
 		//if we have a available node close enough to the item, use it
 		node = AI_FindClosestReachableNode( ent->s.origin, NULL, 48, NODE_ALL );
 		if( node != INVALID )
@@ -670,12 +670,12 @@ void AI_CreateNodesForEntities ( void )
 				float heightdiff = 0;
 				heightdiff = ent->s.origin[2] - nodes[node].origin[2];
 				if( heightdiff < 0 ) heightdiff = -heightdiff;
-				
+
 				if( heightdiff > AI_STEPSIZE )	//not near enough
 					node = INVALID;
 			}
 		}
-		
+
 		//drop a new node
 		if( node == INVALID )
 			node = AI_AddNode_ItemNode( ent );
@@ -697,35 +697,45 @@ void AI_CreateNodesForEntities ( void )
 //==========================================
 qboolean AI_LoadPLKFile( char *mapname )
 {
-	FILE *pIn;
+	FILE		*pIn;
 	int			i;
 	char		filename[MAX_OSPATH];
 	int			version;
 
-	Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", AI_MOD_FOLDER, AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION);
-
-	pIn = fopen( filename, "rb" );
-	if( pIn  == NULL )
-		return false; 
-
-	// check version
-	fread( &version, sizeof(int), 1, pIn);
-
-	if( version != NAV_FILE_VERSION )
-	{
-		fclose(pIn);
+//	Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", AI_MOD_FOLDER, AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION);
+//	pIn = fopen( filename, "rb" );
+	// Knightmare- use SavegameDir() / GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", SavegameDir(), AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION);
+	pIn = fopen(filename, "rb");
+	if ( pIn  == NULL ) {
+	//	gi.dprintf ("Couldn't load PLK file %s from SavegameDir, trying GameDir\n", filename);
+		Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", GameDir(), AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION);
+		pIn = fopen(filename, "rb");
+	}
+	// end Knightmare
+	if ( pIn  == NULL ) {
+	//	gi.dprintf ("Couldn't load PLK file %s from Gamedir\n", filename);
 		return false;
 	}
-	
-	fread( &nav.num_nodes, sizeof(int), 1, pIn);
+
+	// check version
+	fread (&version, sizeof(int), 1, pIn);
+
+	if ( version != NAV_FILE_VERSION )
+	{
+		fclose (pIn);
+		return false;
+	}
+
+	fread (&nav.num_nodes, sizeof(int), 1, pIn);
 
 	for (i=0; i<nav.num_nodes; i++)
-		fread( &nodes[i], sizeof(nav_node_t), 1, pIn );
-	
-	for(i=0; i<nav.num_nodes;i++)
-		fread( &pLinks[i], sizeof(nav_plink_t), 1, pIn );
+		fread (&nodes[i], sizeof(nav_node_t), 1, pIn);
 
-	fclose(pIn);
+	for (i=0; i<nav.num_nodes; i++)
+		fread (&pLinks[i], sizeof(nav_plink_t), 1, pIn);
+
+	fclose (pIn);
 
 	return true;
 }
@@ -771,15 +781,15 @@ int AI_IsPlatformLink( int n1, int n2 )
 			return LINK_INVALID;
 
 		} else {
-			
+
 			trace_t	trace;
 			float	heightdiff;
 			//n1 is plat upper: it can link to visibles at same height
 			trace = gi.trace( nodes[n1].origin, vec3_origin, vec3_origin, nodes[n2].origin, n1ent, MASK_NODESOLID );
-			if (trace.fraction == 1.0 && !trace.startsolid) 
+			if (trace.fraction == 1.0 && !trace.startsolid)
 			{
 				heightdiff = nodes[n1].origin[2] - nodes[n2].origin[2];
-				if( heightdiff < 0 ) 
+				if( heightdiff < 0 )
 					heightdiff = -heightdiff;
 
 				if( heightdiff < AI_JUMPABLE_HEIGHT )
@@ -818,10 +828,10 @@ int AI_IsPlatformLink( int n1, int n2 )
 
 			//n2 is plat lower: other's can link to it when visible and good height
 			trace = gi.trace( nodes[n1].origin, vec3_origin, vec3_origin, nodes[n2].origin, n2ent, MASK_NODESOLID );
-			if (trace.fraction == 1.0 && !trace.startsolid) 
+			if (trace.fraction == 1.0 && !trace.startsolid)
 			{
 				heightdiff = nodes[n1].origin[2] - nodes[n2].origin[2];
-				if( heightdiff < 0 ) 
+				if( heightdiff < 0 )
 					heightdiff = -heightdiff;
 
 				if( heightdiff < AI_JUMPABLE_HEIGHT )
@@ -831,7 +841,7 @@ int AI_IsPlatformLink( int n1, int n2 )
 			}
 
 		} else {
-			
+
 			//n2 is plat upper: others can't link to plat upper nodes
 			return LINK_INVALID;
 		}
@@ -883,7 +893,7 @@ int AI_FindServerLinkType( int n1, int n2 )
 	if( nodes[n1].flags & NODEFLAGS_PLATFORM || nodes[n2].flags & NODEFLAGS_PLATFORM )
 	{
 		return AI_IsPlatformLink(n1, n2);
-	} 
+	}
 	else if( nodes[n2].flags & NODEFLAGS_TELEPORTER_IN || nodes[n1].flags & NODEFLAGS_TELEPORTER_OUT )
 	{
 		return AI_IsTeleporterLink(n1, n2);
@@ -913,14 +923,14 @@ int AI_LinkServerNodes( int start )
 	{
 		n2 = 0;
 		n2 = AI_findNodeInRadius ( 0, nodes[n1].origin, pLinkRadius, ignoreHeight);
-		
+
 		while (n2 != -1)
-		{	
+		{
 			if( nodes[n1].flags & NODEFLAGS_SERVERLINK || nodes[n2].flags & NODEFLAGS_SERVERLINK )
 			{
 				if( AI_AddLink( n1, n2, AI_FindServerLinkType(n1, n2) ) )
 					count++;
-				
+
 				if( AI_AddLink( n2, n1, AI_FindServerLinkType(n2, n1) ) )
 					count++;
 			}
@@ -928,11 +938,11 @@ int AI_LinkServerNodes( int start )
 			{
 				if( AI_AddLink( n1, n2, AI_FindLinkType(n1, n2) ) )
 					count++;
-				
+
 				if( AI_AddLink( n2, n1, AI_FindLinkType(n2, n1) ) )
 					count++;
 			}
-			
+
 			n2 = AI_findNodeInRadius ( n2, nodes[n1].origin, pLinkRadius, ignoreHeight);
 		}
 	}
@@ -945,7 +955,7 @@ int AI_LinkCloseNodes_JumpPass( int start );
 // AI_InitNavigationData
 // Setup nodes & links for this map
 //==========================================
-void AI_InitNavigationData(void)
+void AI_InitNavigationData (void)
 {
 	int	i;
 	int newlinks;
@@ -953,12 +963,12 @@ void AI_InitNavigationData(void)
 	int linkscount;
 	int	servernodesstart = 0;
 
-	//Init nodes arrays
+	// Init nodes arrays
 	nav.num_nodes = 0;
-	memset( nodes, 0, sizeof(nav_node_t) * MAX_NODES );
-	memset( pLinks, 0, sizeof(nav_plink_t) * MAX_NODES );
+	memset (nodes, 0, sizeof(nav_node_t) * MAX_NODES);
+	memset (pLinks, 0, sizeof(nav_plink_t) * MAX_NODES);
 
-	//Load nodes from file
+	// Load nodes from file
 
 //	if (level.botfiles)
 //		nav.loaded = AI_LoadPLKFile( level.mapname );
@@ -967,27 +977,27 @@ void AI_InitNavigationData(void)
 
 	if (!nav.loaded)
 	{	nav.loaded = -1;
-	//if( !nav.loaded ) {
-		Com_Printf( "AI: FAILED to load nodes file.\n");
+	//	if( !nav.loaded ) {
+		Com_Printf ("AI: FAILED to load nodes file.\n");
 		return;
 	}
 
 	servernodesstart = nav.num_nodes;
 
-	for( linkscount = 0, i = 0; i< nav.num_nodes; i++ )
+	for (linkscount = 0, i = 0; i< nav.num_nodes; i++)
 		linkscount += pLinks[i].numLinks;
-	
-	//create nodes for map entities
-	AI_CreateNodesForEntities();
+
+	// create nodes for map entities
+	AI_CreateNodesForEntities ();
 	newlinks = AI_LinkServerNodes( servernodesstart );
 	newjumplinks = AI_LinkCloseNodes_JumpPass( servernodesstart );
-	
-	Com_Printf("-------------------------------------\n" );
-	Com_Printf("       : AI: Nodes Initialized.\n" );
-	Com_Printf("       : loaded nodes:%i.\n", servernodesstart );
-	Com_Printf("       : added nodes:%i.\n", nav.num_nodes - servernodesstart );
-	Com_Printf("       : total nodes:%i.\n", nav.num_nodes );
-	Com_Printf("       : loaded links:%i.\n", linkscount );
-	Com_Printf("       : added links:%i.\n", newlinks );
-	Com_Printf("       : added jump links:%i.\n", newjumplinks );
+
+	Com_Printf( "-------------------------------------\n" );
+	Com_Printf ("       : AI: Nodes Initialized.\n" );
+	Com_Printf ("       : loaded nodes: %i.\n", servernodesstart );
+	Com_Printf ("       : added nodes: %i.\n", nav.num_nodes - servernodesstart );
+	Com_Printf ("       : total nodes: %i.\n", nav.num_nodes );
+	Com_Printf ("       : loaded links: %i.\n", linkscount );
+	Com_Printf ("       : added links: %i.\n", newlinks );
+	Com_Printf ("       : added jump links: %i.\n", newjumplinks );
 }

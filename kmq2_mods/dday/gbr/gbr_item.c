@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,7 +37,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t gbrguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t gbrguninfo[MAX_TEAM_GUNS];
 
 
 
@@ -75,11 +76,11 @@ gitem_t gbritems[]=
 		"gbr",
 		&gbrguninfo[Webley_FRAME],
 		0
-	},	
+	},
 /* QUAKED weapon_Enfield (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_enfield", 
+		"weapon_enfield",
 		WEAPON_ENFIELD,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -110,7 +111,7 @@ gitem_t gbritems[]=
 /*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_sten", 
+		"weapon_sten",
 		WEAPON_STEN,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -143,7 +144,7 @@ gitem_t gbritems[]=
 /*QUAKED weapon_Bren (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_Bren", 
+		"weapon_Bren",
 		WEAPON_BREN,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -174,7 +175,7 @@ gitem_t gbritems[]=
 	/*QUAKED weapon_vickers (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_vickers", 
+		"weapon_vickers",
 		WEAPON_VICKERS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -333,7 +334,7 @@ gitem_t gbritems[]=
 0
 	},
 
-	
+
 /*QUAKED ammo_enfield (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -461,7 +462,7 @@ gitem_t gbritems[]=
 	},
 
 
-	
+
 /*QUAKED ammo_piat (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -525,9 +526,9 @@ gitem_t gbritems[]=
 		0
 	},
 
-	
 
-	
+
+
 
 
 {

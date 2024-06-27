@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -21,29 +21,39 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "../g_local.h"
 #include "ai_local.h"
 #include "stddef.h"
-int AI_ClosestNodeToSpotx(vec3_t origin);
-int AI_ClosestNodeToSpot( vec3_t origin, edict_t *passent, qboolean visible);
+
+// Knightmare- moved these vars here to fix compile on GCC
+int	num_AIEnemies;
+edict_t *AIEnemies[MAX_EDICTS];		// pointers to all players in the game
+
+ai_devel_t	AIDevel;
+
+nav_plink_t pLinks[MAX_NODES];		// pLinks array
+nav_node_t nodes[MAX_NODES];		// nodes array
+
+ai_navigation_t	nav;
+
+ai_weapon_t		AIWeapons[WEAP_TOTAL];
+// end Knightmare
+
+int AI_ClosestNodeToSpotx (vec3_t origin);
+int AI_ClosestNodeToSpot (vec3_t origin, edict_t *passent, qboolean visible);
 
 //ACE
 
 
 //set the nearest camp spot to each objective to be used only for objective capping/destroying
-void Set_Up_CampSpots_For_Ents(void)
+void Set_Up_CampSpots_For_Ents (void)
 {
-	edict_t  *e;
-	int team;
+	edict_t		*e;
+	int			i, j, team, obj_camp, tm;
+	float		nearest_distance;
+	vec3_t		distv;
 	qboolean	allset;
-	int	obj_camp;
-	int i,j;
-	vec3_t	distv;
-	float	nearest_distance;
-	int tm;
 
-
-	for (i=0 ; i<globals.num_edicts ; i++)
+	for (i=0; i<globals.num_edicts; i++)
 	{
 		team = -999;
-
 
 		e = &g_edicts[i];
 
@@ -52,10 +62,10 @@ void Set_Up_CampSpots_For_Ents(void)
 
 		if (!e->classnameb)
 			continue;
-		
+
 		if (!(e->classnameb == OBJECTIVE_TOUCH ||
-			e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE || 
-			e->classnameb == OBJECTIVE_VIP || 
+			e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE ||
+			e->classnameb == OBJECTIVE_VIP ||
 			e->classnameb == FUNC_TRAIN))
 			continue;
 
@@ -70,7 +80,7 @@ void Set_Up_CampSpots_For_Ents(void)
 		if (e->obj_owner > -99)
 			team = e->obj_owner;
 
-		
+
 		//set a campspot to CAMP_OBJECTIVE, once for each team (if needed)
 		allset = false;
 		for (tm = 0; tm < 2; tm++)
@@ -89,7 +99,7 @@ void Set_Up_CampSpots_For_Ents(void)
 				{
 					if (camp_spots[j].type == CAMP_OBJECTIVE) //already taken
 						continue;
-					if (e->classnameb == OBJECTIVE_TOUCH && 
+					if (e->classnameb == OBJECTIVE_TOUCH &&
 						camp_spots[j].team == (tm+1)%2) //no axis campspots
 						continue;
 					if (e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE &&
@@ -98,13 +108,13 @@ void Set_Up_CampSpots_For_Ents(void)
 					if (e->classnameb == OBJECTIVE_VIP &&
 						camp_spots[j].team == team)
 						continue;
-					if (e->classnameb == OBJECTIVE_TOUCH && 
+					if (e->classnameb == OBJECTIVE_TOUCH &&
 						e->obj_perm_owner == tm) //can't recap
 						continue;
 
 
 					VectorSubtract (e->obj_origin, camp_spots[j].origin, distv);
-					
+
 					if (VectorLength (distv) < nearest_distance)
 					{
 						nearest_distance = VectorLength (distv);
@@ -131,16 +141,13 @@ void Set_Up_CampSpots_For_Ents(void)
 }
 
 
-
-
-
 //==========================================
 // AI_Init
 // Inits global parameters
 //==========================================
-void AI_Init(void)
+void AI_Init (void)
 {
-	//Init developer mode
+	// Init developer mode
 	AIDevel.debugMode = false;
 	AIDevel.debugChased = false;
 	AIDevel.chaseguy = NULL;
@@ -152,23 +159,23 @@ void AI_Init(void)
 // AI_NewMap
 // Inits Map local parameters
 //==========================================
-void AI_NewMap(void)
+void AI_NewMap (void)
 {
-	//Load nodes
-	AI_InitNavigationData();
+	// Load nodes
+	AI_InitNavigationData ();
+
 	AI_InitAIWeapons ();
 
 	Set_Up_CampSpots_For_Ents ();
-
 }
 
 //==========================================
 // G_FreeAI
 // removes the AI handle from memory
 //==========================================
-void G_FreeAI( edict_t *ent )
+void G_FreeAI (edict_t *ent)
 {
-	if( !ent->ai ) return;
+	if ( !ent->ai ) return;
 
 	gi.TagFree (ent->ai);
 	ent->ai = NULL;
@@ -178,9 +185,9 @@ void G_FreeAI( edict_t *ent )
 // G_SpawnAI
 // allocate ai_handle_t for this entity
 //==========================================
-void G_SpawnAI( edict_t *ent )
+void G_SpawnAI (edict_t *ent)
 {
-	if( !ent->ai )
+	if ( !ent->ai )
 		ent->ai = gi.TagMalloc (sizeof(ai_handle_t), TAG_LEVEL);
 
 	memset( ent->ai, 0, sizeof(ai_handle_t));
@@ -189,15 +196,15 @@ void G_SpawnAI( edict_t *ent )
 //==========================================
 // AI_SetUpMoveWander
 //==========================================
-void AI_SetUpMoveWander( edict_t *ent )
+void AI_SetUpMoveWander (edict_t *ent)
 {
 	ent->ai->state = BOT_STATE_WANDER;
 	ent->ai->wander_timeout = level.time + 1.0;
 	ent->ai->nearest_node_tries = 0;
-	
+
 	ent->ai->next_move_time = level.time;
 	ent->ai->bloqued_timeout = level.time + 15.0;
-	
+
 	ent->ai->goal_node = INVALID;
 	ent->ai->current_node = INVALID;
 	ent->ai->next_node = INVALID;
@@ -208,7 +215,7 @@ void AI_SetUpMoveWander( edict_t *ent )
 // AI_ResetWeights
 // Init bot weights from bot-class weights.
 //==========================================
-void AI_ResetWeights(edict_t *ent)
+void AI_ResetWeights (edict_t *ent)
 {
 	//restore defaults from bot persistant
 //	memset(ent->ai->status.inventoryWeights, 0, sizeof (ent->ai->status.inventoryWeights));
@@ -220,7 +227,7 @@ void AI_ResetWeights(edict_t *ent)
 // AI_ResetNavigation
 // Init bot navigation. Called at first spawn & each respawn
 //==========================================
-void AI_ResetNavigation(edict_t *ent)
+void AI_ResetNavigation (edict_t *ent)
 {
 	int		i;
 
@@ -238,7 +245,7 @@ void AI_ResetNavigation(edict_t *ent)
 	ent->ai->goal_node = INVALID;
 	ent->ai->current_node = INVALID;
 	ent->ai->next_node = INVALID;
-	
+
 	VectorSet( ent->ai->move_vector, 0, 0, 0 );
 
 	//reset bot_roams timeouts
@@ -254,7 +261,7 @@ void AI_ResetNavigation(edict_t *ent)
 //
 // Try assigning a bot roam node as LR Goal
 //==========================================
-qboolean AI_BotRoamForLRGoal(edict_t *self, int current_node)
+qboolean AI_BotRoamForLRGoal (edict_t *self, int current_node)
 {
 	int		i;
 	float	cost;
@@ -268,23 +275,23 @@ qboolean AI_BotRoamForLRGoal(edict_t *self, int current_node)
 
 	for( i=0; i<nav.num_broams; i++)
 	{
-		if( self->ai->status.broam_timeouts[i] > level.time)
+		if ( self->ai->status.broam_timeouts[i] > level.time)
 			continue;
 
 		//limit cost finding by distance
 		dist = AI_Distance( self->s.origin, nodes[nav.broams[i].node].origin );
-		if( dist > 10000 )
+		if ( dist > 10000 )
 			continue;
 
 		//find cost
 		cost = AI_FindCost(current_node, nav.broams[i].node, self->ai->pers.moveTypesMask);
-		if(cost == INVALID || cost < 3) // ignore invalid and very short hops
+		if (cost == INVALID || cost < 3) // ignore invalid and very short hops
 			continue;
 
 		cost *= random(); // Allow random variations for broams
 		weight = nav.broams[i].weight / cost;	// Check against cost of getting there
 
-		if(weight > best_weight)
+		if (weight > best_weight)
 		{
 			best_weight = weight;
 			goal_node = nav.broams[i].node;
@@ -292,26 +299,20 @@ qboolean AI_BotRoamForLRGoal(edict_t *self, int current_node)
 		}
 	}
 
-
-
-
-
-	if(best_weight == 0.0 || goal_node == INVALID)
+	if (best_weight == 0.0 || goal_node == INVALID)
 		return false;
 
 	//set up the goal
 	self->ai->state = BOT_STATE_MOVE;
 	self->ai->tries = 0;	// Reset the count of how many times we tried this goal
 
-//	if(AIDevel.debugChased && bot_showlrgoal->value)
+//	if (AIDevel.debugChased && bot_showlrgoal->value)
 //		G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: selected a bot roam of weight %f at node %d for LR goal.\n",self->ai->pers.netname, nav.broams[best_broam].weight, goal_node);
 
 	AI_SetGoal(self,goal_node);
 
 	return true;
 }
-
-
 
 
 
@@ -322,7 +323,7 @@ int Closest_CMP_to_Ent (edict_t *self, edict_t *obj)
 	vec3_t obj_orig;
 	vec3_t distv;
 	int obj_camp = -1;
-	
+
 
 	nearest_distance = 99999999999;
 	for (j = 0; j<total_camp_spots; j++)
@@ -334,7 +335,7 @@ int Closest_CMP_to_Ent (edict_t *self, edict_t *obj)
 			continue;
 		if (camp_spots[j].owner && obj->classnameb != OBJECTIVE_TOUCH)
 			continue;
-		
+
 		else if (!VectorCompare (obj->obj_origin, vec3_origin))
 			VectorCopy (obj->obj_origin, obj_orig);
 		else //func_train
@@ -342,9 +343,9 @@ int Closest_CMP_to_Ent (edict_t *self, edict_t *obj)
 
 		VectorSubtract (obj_orig, camp_spots[j].origin, distv);
 
-		
+
 		//gi.dprintf("%s    %i VL %f\n", vtos(obj_orig), j, VectorLength(distv));
-		
+
 		if (VectorLength (distv) < nearest_distance)
 		{
 			nearest_distance = VectorLength (distv);
@@ -354,29 +355,21 @@ int Closest_CMP_to_Ent (edict_t *self, edict_t *obj)
 	}
 	return obj_camp;
 
-	
+
 }
-
-
-
-
-
-
-
-
 
 
 //==========================================
 // AI_PickLongRangeGoal
 //
 // Evaluate the best long range goal and send the bot on
-// its way. This is a good time waster, so use it sparingly. 
+// its way. This is a good time waster, so use it sparingly.
 // Do not call it for every think cycle.
 //
 // jal: I don't think there is any problem by calling it,
 // now that we have stored the costs at the nav.costs table (I don't do it anyway)
 //==========================================
-void AI_PickLongRangeGoal(edict_t *self)
+void AI_PickLongRangeGoal (edict_t *self)
 {
 	int		i;
 	int		node;
@@ -384,22 +377,19 @@ void AI_PickLongRangeGoal(edict_t *self)
 	int		current_node, goal_node = INVALID;
 	edict_t *goal_ent = NULL;
 	float	cost;
-	int nearest = -1;
-	float temp_distance, nearest_distance = 9999999,nearest_distanceb = 9999999;
-	vec3_t distb;
+	int		nearest = -1;
+	float	temp_distance, nearest_distance = 9999999,nearest_distanceb = 9999999;
+	vec3_t	distb;
 
-	int j,randseed,k;
+	int		j, randseed, k;
 
 	edict_t *closest = NULL;
 	edict_t *e = NULL;
-
 
 	int obj_camp = -1;
 	edict_t *obj = NULL;
 	int	obj_count = 0;
 	int rand_obj_num;
-
-
 
 	self->ai->objective = NULL;
 	self->ai->reached_obj_time = 0;
@@ -415,13 +405,13 @@ void AI_PickLongRangeGoal(edict_t *self)
 	current_node = AI_FindClosestReachableNode(self->s.origin, self,((10+self->ai->nearest_node_tries)*NODE_DENSITY),NODE_ALL);
 	self->ai->current_node = current_node;
 
-	if(current_node == -1)	//failed. Go wandering :(
+	if (current_node == -1)	//failed. Go wandering :(
 	{
 //		if (AIDevel.debugChased && bot_showlrgoal->value)
 //			G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: LRGOAL: Closest node not found. Tries:%i\n", self->ai->pers.netname, self->ai->nearest_node_tries);
 
 		//gi.dprintf("NO NEARBY NODE\n");
-		if( self->ai->state != BOT_STATE_WANDER )
+		if ( self->ai->state != BOT_STATE_WANDER )
 			AI_SetUpMoveWander( self );
 
 		self->ai->wander_timeout = level.time + 1.0;
@@ -430,25 +420,21 @@ void AI_PickLongRangeGoal(edict_t *self)
 	}
 	self->ai->nearest_node_tries = 0;
 
-
-
-
-
 	// Players: This should be its own function and is for now just finds a player to set as the goal.
 	for( i=0; i<num_AIEnemies; i++ )
 	{
 		//ignore self & spectators
-		if( AIEnemies[i] == self || AIEnemies[i]->svflags & SVF_NOCLIENT)
+		if ( AIEnemies[i] == self || AIEnemies[i]->svflags & SVF_NOCLIENT)
 			continue;
 
 		//ignore zero weighted players
-		if( self->ai->status.playersWeights[i] == 0.0f )
+		if ( self->ai->status.playersWeights[i] == 0.0f )
 			continue;
 
 		node = AI_FindClosestReachableNode( AIEnemies[i]->s.origin, AIEnemies[i], NODE_DENSITY, NODE_ALL);
 		cost = AI_FindCost(current_node, node, self->ai->pers.moveTypesMask);
 
-		if(cost == INVALID || cost < 4) // ignore invalid and very short hops
+		if (cost == INVALID || cost < 4) // ignore invalid and very short hops
 			continue;
 
 		//precomputed player weights
@@ -457,21 +443,20 @@ void AI_PickLongRangeGoal(edict_t *self)
 		//weight *= random(); // Allow random variations
 		weight /= cost; // Check against cost of getting there
 
-		if(weight > best_weight)
-		{		
+		if (weight > best_weight)
+		{
 			best_weight = weight;
 			goal_node = node;
 			goal_ent = AIEnemies[i];
 		}
 	}
 
-
-//look for objectives
+	//look for objectives
 
 	if (!no_objectives_left && self->ai->defend_bot == false)
 	{
 		no_objectives_left = true;
-		//count objectives 
+		//count objectives
 		for (i=0 ; i<game.maxentities ; i++)
 		{
 			e = &g_edicts[i];
@@ -493,7 +478,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 
 			if (e->obj_owner == self->client->resp.team_on->index)
 				continue;
-			
+
 
 			obj_count++;
 		}
@@ -506,7 +491,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 			rand_obj_num = 1 + rand()%obj_count;
 
 			nearest_distance = 999999999;
-			
+
 			obj_count = 1;
 			for (i=0 ; i<game.maxentities ; i++)
 			{
@@ -520,7 +505,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 				//	continue;
 				if (!e->obj_gain && !e->health)
 					continue;
-				
+
 				if (! (e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE ||
 					e->classnameb == FUNC_TRAIN ||
 					e->classnameb == OBJECTIVE_VIP ||
@@ -529,7 +514,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 
 				if (e->obj_owner == self->client->resp.team_on->index)
 					continue;
-				
+
 				if (obj_count != rand_obj_num)
 				{
 					obj_count++;
@@ -542,12 +527,12 @@ void AI_PickLongRangeGoal(edict_t *self)
 
 			//assign closest camping spot to objective to player.
 			if (obj)
-			{	
+			{
 				self->ai->objective = obj;
 				obj_camp = Closest_CMP_to_Ent(self, obj);
 			}
 
-			if (obj_camp > -1) 
+			if (obj_camp > -1)
 			{
 					camp_spots[obj_camp].owner = self;
 					self->ai->camp_targ = obj_camp;
@@ -561,12 +546,8 @@ void AI_PickLongRangeGoal(edict_t *self)
 				self->ai->objective = NULL;
 				self->ai->reached_obj_time = 0;
 			}
-
-		
 		}
-
 	}
-
 
 	// select camping spot
 	if (!self->ai->objective)
@@ -591,17 +572,17 @@ void AI_PickLongRangeGoal(edict_t *self)
 			if (self->client->resp.mos == H_GUNNER &&
 				camp_spots[k].stance == STANCE_STAND)
 				continue;
-			
+
 			if (self->ai->camp_targ == -2 || rand()%2 == 1)
 			{
 				VectorSubtract (camp_spots[k].origin, self->s.origin, distb);
-			
+
 				temp_distance = VectorLength(distb);
 				if (temp_distance < nearest_distance)
 				{
 					nearest_distance = temp_distance;
 					nearest = k;
-				}		
+				}
 			}
 			else
 			{
@@ -615,7 +596,6 @@ void AI_PickLongRangeGoal(edict_t *self)
 			camp_spots[nearest].owner = self;
 			self->ai->camp_targ = nearest;
 			self->ai->start_camp_time = level.time;
-
 		}
 	}
 
@@ -632,7 +612,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 
 
 	// If do not find a goal, go wandering....
-	if(best_weight == 0.0 || goal_node == INVALID)
+	if (best_weight == 0.0 || goal_node == INVALID)
 	{
 		//BOT_ROAMS
 		if (!AI_BotRoamForLRGoal(self, current_node))
@@ -640,7 +620,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 			self->ai->goal_node = INVALID;
 			self->ai->state = BOT_STATE_WANDER;
 			self->ai->wander_timeout = level.time + 1.0;
-//			if(AIDevel.debugChased && bot_showlrgoal->value)
+//			if (AIDevel.debugChased && bot_showlrgoal->value)
 //				G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: did not find a LR goal, wandering.\n",self->ai->pers.netname);
 		}
 		return; // no path?
@@ -650,10 +630,10 @@ void AI_PickLongRangeGoal(edict_t *self)
 	self->ai->state = BOT_STATE_MOVE;
 	self->ai->tries = 0;	// Reset the count of how many times we tried this goal
 
-//	if(goal_ent != NULL && AIDevel.debugChased && bot_showlrgoal->value)
+//	if (goal_ent != NULL && AIDevel.debugChased && bot_showlrgoal->value)
 //		G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: selected a %s at node %d for LR goal.\n",self->ai->pers.netname, goal_ent->classname, goal_node);
 
-	AI_SetGoal(self,goal_node);
+	AI_SetGoal (self, goal_node);
 }
 
 
@@ -663,7 +643,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 // overrides the long range goal selection for items that
 // are very close to the bot and are reachable.
 //==========================================
-void AI_PickShortRangeGoal(edict_t *self)
+void AI_PickShortRangeGoal (edict_t *self)
 {
 	edict_t *target;
 	float	best_weight=0.0;
@@ -675,7 +655,7 @@ void AI_PickShortRangeGoal(edict_t *self)
 	edict_t	*e = NULL, *closest = NULL;
 	int i;
 
-	if( !self->client )
+	if ( !self->client )
 		return;
 
 
@@ -730,7 +710,7 @@ void AI_PickShortRangeGoal(edict_t *self)
 
 		if (closest)// && nearest_distance < 100)
 		{
-			//	VectorSet (ent_orig, 
+			//	VectorSet (ent_orig,
 			//		(closest->absmax[0] + closest->absmin[0])/2,
 			//		(closest->absmax[1] + closest->absmin[1])/2,
 			//		(closest->absmax[2] + closest->absmin[2])/2);
@@ -770,9 +750,9 @@ void AI_PickShortRangeGoal(edict_t *self)
 
 					camp_spots[self->ai->camp_targ].owner = self;
 					self->ai->start_camp_time = level.time;
-					goal_node = AI_ClosestNodeToSpot(camp_spots[self->ai->camp_targ].origin, self, true);	
+					goal_node = AI_ClosestNodeToSpot(camp_spots[self->ai->camp_targ].origin, self, true);
 					self->ai->state = BOT_STATE_MOVE;
-					self->ai->tries = 0;	
+					self->ai->tries = 0;
 					AI_SetGoal(self,goal_node);
 					return;
 				}
@@ -794,7 +774,7 @@ void AI_PickShortRangeGoal(edict_t *self)
 		{
 			VectorSet (ent_orig, -211, -544, 352);
 		}
-			
+
 		if (BOT_DMclass_CheckShot(self, ent_orig) &&
 			objective_hittable(self, self->ai->objective, ent_orig))
 		{
@@ -812,8 +792,6 @@ void AI_PickShortRangeGoal(edict_t *self)
 
 	}
 */
-
-
 
 	if (!self->enemy)
 	{
@@ -867,39 +845,39 @@ void AI_PickShortRangeGoal(edict_t *self)
 
 	while(target)
 	{
-		if(target->classname == NULL)
+		if (target->classname == NULL)
 			return;
-		
+
 		// Missile detection code
-		if(target->classnameb == ROCKET || target->classnameb == HGRENADE)
+		if (target->classnameb == ROCKET || target->classnameb == HGRENADE)
 		{
 			//if player who shoot is a potential enemy
 			if (!OnSameTeam (self,target->owner) && self->ai->status.playersWeights[target->owner->s.number-1])
 			{
-//				if(AIDevel.debugChased && bot_showcombat->value)
+//				if (AIDevel.debugChased && bot_showcombat->value)
 //					G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: ROCKET ALERT!\n", self->ai->pers.netname);
-				
+
 				self->enemy = target->owner;	// set who fired the rocket as enemy
 				return;
 			}
 		}
 
-		
+
 		// next target
-		target = findradius(target, self->s.origin, AI_GOAL_SR_RADIUS);	
+		target = findradius(target, self->s.origin, AI_GOAL_SR_RADIUS);
 	}
-	
+
 
 
 
 
 
 	//jalfixme (what's goalentity doing here?)
-	if(best_weight)
+	if (best_weight)
 	{
 		self->movetarget = best;
 		self->goalentity = best;
-//		if(AIDevel.debugChased && bot_showsrgoal->value && (self->goalentity != self->movetarget))
+//		if (AIDevel.debugChased && bot_showsrgoal->value && (self->goalentity != self->movetarget))
 //			G_PrintMsg (AIDevel.chaseguy, PRINT_HIGH, "%s: selected a %s for SR goal.\n",self->ai->pers.netname, self->movetarget->classname);
 	}
 }
@@ -929,7 +907,6 @@ void AI_CategorizePosition (edict_t *ent)
 }
 
 
-
 void ShowSpot (vec3_t orig, qboolean blah)
 {
 		edict_t	*head;
@@ -955,17 +932,15 @@ void ShowSpot (vec3_t orig, qboolean blah)
 			head->think = G_FreeEdict;
 			head->nextthink = level.time + 2;
 			gi.linkentity (head);
-	
+
 
 }
 
 
 
-
-
 void ParseBotChat (char *text, edict_t *attacker)
 {
-	static unsigned char buf[10240], infobuf[10240];
+	static char buf[10240], infobuf[10240];    // Knightmare- was unsigned
 	char *p,	*pbuf;
 	size_t		bufLen;		// Knightmare added
 
@@ -1006,14 +981,8 @@ void ParseBotChat (char *text, edict_t *attacker)
 }
 
 
-
-
-
-
-
-
 float infrontdegree (edict_t *self, edict_t *other);
-edict_t *FindOverlap(edict_t *ent, edict_t *last_overlap);
+edict_t *FindOverlap (edict_t *ent, edict_t *last_overlap);
 //==========================================
 // AI_Think
 // think funtion for AIs
@@ -1035,13 +1004,13 @@ void AI_Think (edict_t *self)
 	float dist;
 
 
-	if( !self->ai )	//jabot092(2)
+	if ( !self->ai )	//jabot092(2)
 		return;
 
 
 	if (self->ai->chatdelay)
 	{
-		
+
 
 		self->ai->chatdelay--;
 		if (self->ai->chatdelay == 0)
@@ -1073,7 +1042,7 @@ void AI_Think (edict_t *self)
 				safe_cprintf(entR, PRINT_HIGH, "\2%s: ", self->client->pers.netname);
 				safe_cprintf(entR, PRINT_HIGH, "\2%s\n", self->ai->chat);
 				stuffcmd(entR, "play misc/talk1.wav");
-			} 
+			}
 		}
 
 
@@ -1095,7 +1064,7 @@ void AI_Think (edict_t *self)
 		if (self->stanceflags != STANCE_STAND)
 			if (self->oldstance == self->stanceflags)
 				change_stance (self, STANCE_STAND);
-		
+
 		self->ai->ducktime = 0;
 	}
 
@@ -1107,22 +1076,22 @@ void AI_Think (edict_t *self)
 //	if (self->ai->camp_targ)
 //      gi.dprintf ("%s\n", vtos(camp_spots[self->ai->camp_targ].origin));
 //	gi.dprintf ("%i\n\n", self->ai->state);
-	
+
 
 
 
 //prevent telefrag spawn
 	if (self->solid == SOLID_TRIGGER)
-	{       
+	{
 		edict_t *overlap;
 
 
 		if ((overlap = FindOverlap(self, NULL)) == NULL)
 		{
-			self->solid = SOLID_BBOX;	
+			self->solid = SOLID_BBOX;
 			gi.linkentity(self);
 		}
-		else    
+		else
 		{
 			do
 			{
@@ -1153,17 +1122,17 @@ void AI_Think (edict_t *self)
 	}
 
 // don't bunch up with teammates
-	if (level.framenum %30 == 1 && 
+	if (level.framenum %30 == 1 &&
 		//!self->ai->teammatedodge &&
 		//self->ai->teammatedodgetime < level.time - 3 &&
 		self->ai->state != BOT_STATE_CAMP)
 	{
 
 		for (i=0 ; i<game.maxclients ; i++)
-		{	
+		{
 			e = g_edicts + 1 + i;
 
-		
+
 			if (!e->inuse)
 				continue;
 			if (!e->client)
@@ -1193,7 +1162,7 @@ void AI_Think (edict_t *self)
 			VectorSubtract (e->s.origin, self->s.origin, vdist);
 
 			tdist = VectorLength (vdist);
-			if (tdist > 200) 
+			if (tdist > 200)
 				continue;
 
 			if (infront (self,e) && infront (e,self) && e->client)
@@ -1230,7 +1199,7 @@ void AI_Think (edict_t *self)
 		{
 			VectorSubtract (self->ai->teammatedodge->s.origin, nodes[i].origin, vdist);//crashed here once, don't know why
 			checkdist = VectorLength (vdist);
-			
+
 			if (!pointinfront(self, nodes[i].origin))
 				continue;
 
@@ -1245,23 +1214,17 @@ void AI_Think (edict_t *self)
 		{
 			self->ai->dodge_node = nearest;
 			self->ai->state = BOT_STATE_DODGE;
-			//self->ai->camp_targ = -1;
-			//self->ai->objective = NULL;
-
-
+		//	self->ai->camp_targ = -1;
+		//	self->ai->objective = NULL;
         }
 	}
-	
 */
-
-
-
 
 // look for nades & tnt
 	if (level.framenum%5 == 1)
 	{
 		for (i=0 ; i<game.maxentities ; i++)
-		{	
+		{
 			e = &g_edicts[i];
 
 			if (!e->inuse)
@@ -1287,7 +1250,7 @@ void AI_Think (edict_t *self)
 			VectorSubtract (e->s.origin, self->s.origin, vdist);
 
 			//gi.dprintf("%f\n", VectorLength(vdist));
-			
+
 			dist = VectorLength (vdist);
 
 			if (e->classnameb == BOTWARN &&
@@ -1325,17 +1288,14 @@ void AI_Think (edict_t *self)
 
 			if (self->ai->camp_targ > -1)
 				camp_spots[self->ai->camp_targ].owner = NULL;
-			
+
 			self->ai->camp_targ = -1;
 			self->ai->objective = NULL;
-			
+
 			self->ai->teammatedodgetime = -1;
 			self->ai->teammatedodge = NULL;
         }
 	}
-
-	
-	
 
 	//nade blew up
 	if (self->ai->dodge_node > 0 &&
@@ -1358,14 +1318,6 @@ void AI_Think (edict_t *self)
 		AI_PickLongRangeGoal(self);
 		//AI_PickShortRangeGoal(self);
 	}
-
-
-
-
-
-
-
-
 
 //	if (self->ai->objective)
 //		self->ai->state = BOT_STATE_MOVE;
@@ -1393,10 +1345,8 @@ void AI_Think (edict_t *self)
 		}
 	}*/
 
-
-
 	//bot's objective was just destroyed or captured
-	if ( self->ai->objective && 
+	if ( self->ai->objective &&
 		(!self->ai->objective->health ||
 		self->ai->objective->obj_owner == self->client->resp.team_on->index) )
 	{
@@ -1469,7 +1419,7 @@ void AI_Think (edict_t *self)
 		self->client->aim = false;
 	}
 
-	//bot saw action at this camp spot recently, 
+	//bot saw action at this camp spot recently,
 	//maybe it's time to find a different, close by camp spot to keep
 	//the enemy guessing
 	else if (self->ai->state == BOT_STATE_CAMP &&
@@ -1499,10 +1449,6 @@ void AI_Think (edict_t *self)
 			self->ai->actual_camp_start = level.time; //treat camp_spot like new and don't move
 	}
 
-
-
-
-
 //	if (!self->ai->current_node)
 //		self->ai->current_node = AI_FindClosestReachableNode(self->s.origin, self,((1+self->ai->nearest_node_tries)*NODE_DENSITY),NODE_ALL);
 
@@ -1514,8 +1460,6 @@ void AI_Think (edict_t *self)
 			self->solid = SOLID_TRIGGER;
 		}
 	}
-
-
 
 	//SHOUTS
 	if (!level.intermissiontime && self->health > 0 && level.last_bot_shout_time < level.time - 1)
@@ -1545,7 +1489,7 @@ void AI_Think (edict_t *self)
 				}
 				gi.sound (self, CHAN_VOICE, gi.soundindex(soundfile), 1, ATTN_NORM, 0);
 				level.last_bot_shout_time = level.time;
-	
+
 				//sndfixcheck
 				//gi.dprintf("AI_Think respawn_time %s\n",  soundfile);
 
@@ -1586,7 +1530,7 @@ void AI_Think (edict_t *self)
 			self->ai->sniperspot > level.time - 2)
 		{
 			if (rand()%4 == 1)
-			{		
+			{
 				char soundfile2[50];
 
 				Q_strncpyz (soundfile2, sizeof(soundfile2), va("%s/shout/sniper%i.wav", self->client->resp.team_on->teamid,1+(int)rand()%2));
@@ -1621,7 +1565,7 @@ void AI_Think (edict_t *self)
 	AI_CategorizePosition(self);
 
 	//freeze AI when dead
-	if( self->deadflag ) {
+	if ( self->deadflag ) {
 		self->ai->pers.deadFrame(self);
 		return;
 	}
@@ -1639,7 +1583,7 @@ void AI_Think (edict_t *self)
 				self->ai->actual_camp_start = level.time;
 				self->ai->state = BOT_STATE_CAMP;
 
-				if (!self->ai->reached_obj_time)		
+				if (!self->ai->reached_obj_time)
 					self->ai->reached_obj_time = level.time;
 				else if (VectorCompare (self->ai->objective->obj_origin, vec3_origin))
 					VectorCopy (self->ai->objective->obj_origin, obj_orig);
@@ -1661,7 +1605,7 @@ void AI_Think (edict_t *self)
 					AI_PickLongRangeGoal(self);
 					if (self->ai->camp_targ != camp_targ_save)
 						camp_spots[camp_targ_save].owner = NULL;
-	
+
 				}
 			}
 			else
@@ -1678,8 +1622,8 @@ void AI_Think (edict_t *self)
 /*
 	//been moving towards camp spot for a while and can't find/get to it
 	if (//!self->ai->objective &&
-		self->ai->camp_targ > -1 && 
-		self->ai->state == BOT_STATE_CAMP && 
+		self->ai->camp_targ > -1 &&
+		self->ai->state == BOT_STATE_CAMP &&
 		self->client->last_fire_time < level.time - 20 &&
 		self->ai->start_camp_time > 0 && self->ai->start_camp_time < level.time - 30)
 	{
@@ -1688,17 +1632,17 @@ void AI_Think (edict_t *self)
 		AI_PickLongRangeGoal(self);
 		if (self->ai->camp_targ != camp_targ_save)
 			camp_spots[camp_targ_save].owner = NULL;
-		
+
 	}
 
 */
 
 
-if (self->client->limbo_mode)
-	self->ai->bloqued_timeout = level.time + 10.0;
+	if (self->client->limbo_mode)
+		self->ai->bloqued_timeout = level.time + 10.0;
 
 
-	if (self->client->resp.AlreadySpawned && 
+	if (self->client->resp.AlreadySpawned &&
 		!level.intermissiontime &&
 		(self->ai->state != BOT_STATE_CAMP &&
 		!(self->client->resp.mos == H_GUNNER &&	self->stanceflags != STANCE_STAND))  ||
@@ -1708,10 +1652,10 @@ if (self->client->limbo_mode)
 		)
 	{
 		//if completely stuck somewhere
-		if(VectorLength(self->velocity) > 37)
+		if (VectorLength(self->velocity) > 37)
 			self->ai->bloqued_timeout = level.time + 10.0;
 
-		if( self->ai->bloqued_timeout < level.time && self->client->respawn_time < level.time - 5) {
+		if ( self->ai->bloqued_timeout < level.time && self->client->respawn_time < level.time - 5) {
 			self->ai->pers.bloquedTimeout(self);
 			return;
 		}
@@ -1722,9 +1666,9 @@ if (self->client->limbo_mode)
 	self->ai->pers.UpdateStatus(self);
 
 	//update position in path, set up move vector
-	if( self->ai->state == BOT_STATE_MOVE ) {
-		
-		if( !AI_FollowPath(self) )
+	if ( self->ai->state == BOT_STATE_MOVE ) {
+
+		if ( !AI_FollowPath(self) )
 		{
 
 
@@ -1734,15 +1678,15 @@ if (self->client->limbo_mode)
 	}
 
 	//check if something's caused em to go wayward (fall off ramp/ladder etc.) and reset their path to goal if so
-	if( self->ai->state == BOT_STATE_MOVE &&
-		self->ai->next_node ) 
+	if ( self->ai->state == BOT_STATE_MOVE &&
+		self->ai->next_node )
 	{
 		vec3_t v;
 		float	dist;
 
 		VectorSubtract (self->s.origin, nodes[self->ai->next_node].origin, v);
 		dist = VectorLength (v);
-		
+
 		if (self->ai->current_node == self->ai->checknode &&
 			self->ai->last_checknode_distance)
 		{
@@ -1756,18 +1700,8 @@ if (self->client->limbo_mode)
 
 		}
 			self->ai->checknode = self->ai->current_node;
-			self->ai->last_checknode_distance = dist;	
+			self->ai->last_checknode_distance = dist;
 	}
-
-		
-
-
-
-
-
-
-
-
 
 	if (self->ai->unduck_stance && self->ai->ducktime < level.time -3)
 	{
@@ -1776,7 +1710,7 @@ if (self->client->limbo_mode)
 
 		self->ai->unduck_stance = 0;
 	}
-	else if (self->client->aim && self->client->p_rnd && *self->client->p_rnd == 0 && self->ai->last_reload_try < level.time - 5)	
+	else if (self->client->aim && self->client->p_rnd && *self->client->p_rnd == 0 && self->ai->last_reload_try < level.time - 5)
 	{
 		vec3_t	crawlorig,enemyview;
 
@@ -1803,59 +1737,51 @@ if (self->client->limbo_mode)
 					//gi.dprintf("duck!\n");
 				}
 			}
-				
+
 		}
-		
+
 	}
 
-//bolt sniper whenever needed
-if (!self->client->newweapon && self->client->resp.team_on && self->client->pers.weapon && self->client->pers.weapon->position == LOC_SNIPER &&
-	self->client->sniper_loaded[self->client->resp.team_on->index] == false)
-{
-	Cmd_Scope_f(self);
-}
+	//bolt sniper whenever needed
+	if (!self->client->newweapon && self->client->resp.team_on && self->client->pers.weapon && self->client->pers.weapon->position == LOC_SNIPER &&
+		self->client->sniper_loaded[self->client->resp.team_on->index] == false)
+	{
+		Cmd_Scope_f(self);
+	}
 
-
-
-if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_reload_try < level.time - 5)
-{
-	if (self->client->pers.weapon && self->client->p_rnd && *self->client->p_rnd)	{
-		if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
-			self->client->pers.weapon->position == LOC_SUBMACHINEGUN2 ||
-			self->client->pers.weapon->position == LOC_L_MACHINEGUN){
-			if (*self->client->p_rnd < 8)		{
-				Cmd_Reload_f (self);
-				self->ai->last_reload_try = level.time;
+	if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_reload_try < level.time - 5)
+	{
+		if (self->client->pers.weapon && self->client->p_rnd && *self->client->p_rnd)	{
+			if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
+				self->client->pers.weapon->position == LOC_SUBMACHINEGUN2 ||
+				self->client->pers.weapon->position == LOC_L_MACHINEGUN){
+				if (*self->client->p_rnd < 8)		{
+					Cmd_Reload_f (self);
+					self->ai->last_reload_try = level.time;
+				}
 			}
-		}
-		else if (self->client->pers.weapon->position == LOC_RIFLE){
-			if (*self->client->p_rnd < 3){
-				Cmd_Reload_f (self);
-				self->ai->last_reload_try = level.time;
+			else if (self->client->pers.weapon->position == LOC_RIFLE){
+				if (*self->client->p_rnd < 3){
+					Cmd_Reload_f (self);
+					self->ai->last_reload_try = level.time;
+				}
 			}
-		}
-		else if (self->client->pers.weapon->position == LOC_H_MACHINEGUN){
-			if (*self->client->p_rnd < 10){
-				Cmd_Reload_f (self);
-				self->ai->last_reload_try = level.time;
+			else if (self->client->pers.weapon->position == LOC_H_MACHINEGUN){
+				if (*self->client->p_rnd < 10){
+					Cmd_Reload_f (self);
+					self->ai->last_reload_try = level.time;
+				}
 			}
 		}
 	}
-}
-
-
-
-
-
-
 
 	//pick a new long range goal
-	if( self->ai->state == BOT_STATE_WANDER && self->ai->wander_timeout < level.time)
+	if ( self->ai->state == BOT_STATE_WANDER && self->ai->wander_timeout < level.time)
 	{
 		if (self->ai->camp_targ > -1)
 			camp_spots[self->ai->camp_targ].owner = NULL;
 
-		self->ai->camp_targ = -1;	
+		self->ai->camp_targ = -1;
 		AI_PickLongRangeGoal(self);
 	}
 
@@ -1864,9 +1790,6 @@ if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_
 
 	//run class based states machine
 	self->ai->pers.RunFrame(self);
-
-
-
 
 	//if (self->ai->state == BOT_STATE_WANDER && !self->enemy && self->ai->last_enemy_time < level.time - 1)
 	if (self->ai->state == BOT_STATE_CAMP)
@@ -1893,9 +1816,7 @@ if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_
 		}*/
 	}
 
-
-		//self->client->reloadtry = true;
-		
+//	self->client->reloadtry = true;
 
 	if (self->client->weaponstate != WEAPON_RELOADING)
 	{
@@ -1904,7 +1825,7 @@ if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_
 				//self->client->last_fire_time < level.time - .5)
 				//change_stance(self, STANCE_DUCK);
 
-	
+
 			if (self->client->aim && self->ai->state != BOT_STATE_CAMP &&    // && self->ai->aimtime < level.time - 4 && self->client->last_fire_time < level.time - 4)
 				 !self->enemy && self->ai->last_enemy_time < level.time - 2)
 			{
@@ -1927,19 +1848,7 @@ if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_
 //		gi.dprintf("%s\n",self->enemy->classname);
 //	else
 //		gi.dprintf("xx\n");
-
-
-
-
-
-
-
-
-
-
 }
-
-
 
 
 float infrontdegree (edict_t *self, edict_t *other)
@@ -1947,26 +1856,27 @@ float infrontdegree (edict_t *self, edict_t *other)
 	vec3_t	vec;
 	float	dot;
 	vec3_t	forward;
-	
+
 	AngleVectors (self->s.angles, forward, NULL, NULL);
 	VectorSubtract (other->s.origin, self->s.origin, vec);
 	VectorNormalize (vec);
 	dot = DotProduct (vec, forward);
-	
+
 	return dot;
 }
+
 
 qboolean pointinfront (edict_t *self, vec3_t point)
 {
 	vec3_t	vec;
 	float	dot;
 	vec3_t	forward;
-	
+
 	AngleVectors (self->s.angles, forward, NULL, NULL);
 	VectorSubtract (point, self->s.origin, vec);
 	VectorNormalize (vec);
 	dot = DotProduct (vec, forward);
-	
+
 	if (dot > 0.3)
 		return true;
 
@@ -1974,21 +1884,19 @@ qboolean pointinfront (edict_t *self, vec3_t point)
 }
 
 
-
 qboolean toright (edict_t *self, vec3_t point)
 {
 	vec3_t	vec;
 	float	dot;
 	vec3_t	right;
-	
+
 	AngleVectors (self->s.angles, NULL, right, NULL);
 	VectorSubtract (point, self->s.origin, vec);
 	VectorNormalize (vec);
 	dot = DotProduct (vec, right);
-	
+
 	if (dot > 0)
 		return true;
 
 	return false;
 }
-

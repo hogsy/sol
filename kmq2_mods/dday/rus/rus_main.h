@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/rus/rus_main.h,v $
  *   $Revision: 1.6 $
  *   $Date: 2002/06/04 19:49:50 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -30,7 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "rus_defines.h"
 #include "../g_local.h"
 #include "../g_cmds.h"
-int rus_index;
+
+// Knightmare- made this var extern to fix compile on GCC
+extern int rus_index;
 
 void Weapon_Pistol_Fire (edict_t *ent);
 void Weapon_Rifle_Fire (edict_t *ent);

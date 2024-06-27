@@ -54,4 +54,5 @@ typedef struct
 
 } ai_weapon_t;
 
-ai_weapon_t		AIWeapons[WEAP_TOTAL];
+// Knightmare- made this var extern to fix compile on GCC
+extern ai_weapon_t		AIWeapons[WEAP_TOTAL];

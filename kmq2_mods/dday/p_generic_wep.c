@@ -87,7 +87,7 @@ void Weapon_Generic (edict_t *ent,
 		frame_output)
 		gi.dprintf("%i / %i - %s\n", ent->client->weaponstate, ent->client->ps.gunframe, ent->client->pers.weapon->pickup_name);
 
-	if(ent->client->pers.weapon->ammo)
+	if (ent->client->pers.weapon->ammo)
 	{
 		ammo_item = FindItem(ent->client->pers.weapon->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
@@ -144,7 +144,7 @@ void Weapon_Generic (edict_t *ent,
 
 
 	
-	if( ent->client->weaponstate == WEAPON_RELOADING)
+	if ( ent->client->weaponstate == WEAPON_RELOADING)
 	{
 		check_unscope(ent);//faf
 
@@ -229,7 +229,7 @@ void Weapon_Generic (edict_t *ent,
             
 		if (ent->client->aim) 
 		{
-			if(ent->client->ps.gunframe==FRAME_RAISE_FIRST)
+			if (ent->client->ps.gunframe==FRAME_RAISE_FIRST)
 			{
 				ent->client->aim=false;
 				//ent->client->weaponstate=WEAPON_READY;
@@ -247,7 +247,7 @@ void Weapon_Generic (edict_t *ent,
 		if (ent->client->ps.gunframe < FRAME_RELOAD_FIRST || ent->client->ps.gunframe > FRAME_RELOAD_LAST)
 			ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
 
-		else if(ent->client->ps.gunframe < FRAME_RELOAD_LAST)
+		else if (ent->client->ps.gunframe < FRAME_RELOAD_LAST)
 		{ 
 			ent->client->ps.gunframe++;             
 			//Check weapon to find out when to play reload sounds
@@ -292,9 +292,9 @@ void Weapon_Generic (edict_t *ent,
                
 			}
 
-			else if(ent->client->pers.weapon->topoff==2)//for beltfed
+			else if (ent->client->pers.weapon->topoff==2)//for beltfed
 			{
-				if(*ammo_amount)
+				if (*ammo_amount)
 				{
 					if (!(ent->ai && ent->client->pers.inventory[ammo_index] == 1))
 						ent->client->pers.inventory[ammo_index]--;
@@ -304,7 +304,7 @@ void Weapon_Generic (edict_t *ent,
 			
 			else 
 			{
-				if(*ammo_amount) //feeder clips (not topoffable
+				if (*ammo_amount) //feeder clips (not topoffable
 				{
 					if (!(ent->ai && ent->client->pers.inventory[ammo_index] ==1))
 						ent->client->pers.inventory[ammo_index]--;
@@ -316,7 +316,7 @@ void Weapon_Generic (edict_t *ent,
 		} 
 	} 
 //Empty or unloaded weapon
-	if( ent->client->weaponstate == WEAPON_END_MAG)
+	if ( ent->client->weaponstate == WEAPON_END_MAG)
 	{
 
 		//gi.dprintf("%i - %i\n", FRAME_LASTRD_FIRST, FRAME_LASTRD_LAST);
@@ -353,7 +353,7 @@ void Weapon_Generic (edict_t *ent,
 		return;
 	}
  
-	if(ent->s.modelindex != (MAX_MODELS-1)) //pbowens: v_wep
+	if (ent->s.modelindex != (MAX_MODELS-1)) //pbowens: v_wep
         return; // not on client, so VWep animations could do wacky things
 	
 
@@ -366,7 +366,7 @@ void Weapon_Generic (edict_t *ent,
 			ChangeWeapon (ent);
 			return;
 		}		
-        else if((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
+        else if ((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
 				&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
 
         {
@@ -412,9 +412,9 @@ void Weapon_Generic (edict_t *ent,
 
 		if (ent->client->ps.gunframe == FRAME_ACTIVATE_LAST)
 		{
-			if( (ent->client->p_rnd) && (!*ent->client->p_rnd))
+			if ( (ent->client->p_rnd) && (!*ent->client->p_rnd))
 			{
-				if((ent->client->p_fract)&&(*ent->client->p_fract));
+				if ((ent->client->p_fract)&&(*ent->client->p_fract));
 				else
 				{ //load the weapon initially.
 					ammo_item=FindItem(ent->client->pers.weapon->ammo);
@@ -435,15 +435,15 @@ void Weapon_Generic (edict_t *ent,
 			return;
 		}
 
-		if(stricmp(ent->client->pers.weapon->pickup_name, "M1919 Browning") == 0) 
+		if (Q_stricmp(ent->client->pers.weapon->pickup_name, "M1919 Browning") == 0) 
 		{
-			if(ent->client->ps.gunframe==18)
+			if (ent->client->ps.gunframe==18)
 				gi.sound(ent,CHAN_WEAPON,gi.soundindex("weapons/sshotr1b.wav"), 1, ATTN_NORM, 0);
-			else if(ent->client->ps.gunframe==13)
+			else if (ent->client->ps.gunframe==13)
 				gi.sound(ent,CHAN_WEAPON,gi.soundindex("weapons/grenl1b1.wav"), 1, ATTN_NORM, 0);
 		}
 
- 		//if(ent->client->ps.gunframe>FRAME_ACTIVATE_LAST)
+ 		//if (ent->client->ps.gunframe>FRAME_ACTIVATE_LAST)
 		//	ent->client->ps.gunframe=FRAME_ACTIVATE_LAST;
  		//else 
 		//  ent->client->ps.gunframe++;
@@ -459,7 +459,7 @@ void Weapon_Generic (edict_t *ent,
 		ent->client->ps.gunframe = FRAME_DEACTIVATE_FIRST;
 
 		//pbowens: v_wep
-		if((FRAME_DEACTIVATE_LAST - FRAME_DEACTIVATE_FIRST) < 4
+		if ((FRAME_DEACTIVATE_LAST - FRAME_DEACTIVATE_FIRST) < 4
 		&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
 
         {
@@ -801,14 +801,14 @@ skip_anim:
 
 
 
-		if(ent->client->ps.gunframe < FRAME_RAISE_FIRST)
+		if (ent->client->ps.gunframe < FRAME_RAISE_FIRST)
 			ent->client->ps.gunframe = FRAME_RAISE_FIRST;
-		else if(ent->client->ps.gunframe >= FRAME_RAISE_LAST)
+		else if (ent->client->ps.gunframe >= FRAME_RAISE_LAST)
 		{
 			ent->client->aim=true;
 			ent->client->weaponstate = WEAPON_READY;
 
-			if(ent->client->pers.weapon->position==LOC_SNIPER)
+			if (ent->client->pers.weapon->position==LOC_SNIPER)
 			{
 				ent->client->ps.fov = SCOPE_FOV;
 				ent->client->scopetime = level.time;//faf
@@ -820,7 +820,7 @@ skip_anim:
 		
 	}
 
-	if(ent->client->weaponstate==WEAPON_LOWER)
+	if (ent->client->weaponstate==WEAPON_LOWER)
 	{
 		//faf:  moving this from cmd_scope to avoid slowdown on mauser
 		// Nick - Hack to allow a bolt action rifle reload animation to play the entirety.
@@ -859,13 +859,13 @@ skip_anim:
 			check_unscope(ent);//faf
 
 			ent->client->ps.fov = STANDARD_FOV; //nt->client->ps.old_fov;
-			if(ent->client->ps.gunframe==FRAME_RAISE_FIRST)
+			if (ent->client->ps.gunframe==FRAME_RAISE_FIRST)
 			{
 				ent->client->aim=false;
 				WeighPlayer(ent);
 				ent->client->weaponstate=WEAPON_READY;
 			}
-			else if(ent->client->ps.gunframe>FRAME_RAISE_LAST
+			else if (ent->client->ps.gunframe>FRAME_RAISE_LAST
 					|| ent->client->ps.gunframe<FRAME_RAISE_FIRST)
 				ent->client->ps.gunframe=FRAME_RAISE_LAST;
 			else  ent->client->ps.gunframe--;
@@ -885,6 +885,6 @@ skip_anim:
 
 void ifchangewep(edict_t *ent)
 {
-//	if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
+//	if (auto_weapon_change->value) NoAmmoWeaponChange (ent);
 	return;
 }

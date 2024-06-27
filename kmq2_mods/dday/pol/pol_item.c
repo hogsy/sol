@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/pol/pol_item.c,v $
  *   $Revision: 1.8 $
  *   $Date: 2002/07/23 22:48:29 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,7 +37,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t polguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t polguninfo[MAX_TEAM_GUNS];
 
 //////////////////////////////////////////////////////////////////////////////////////
 //                              POL.DLL ITEMS                                       //
@@ -58,7 +59,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 		"misc/w_pkup.wav",
 		"models/weapons/pol/g_vis/tris.md2", 0,
 		"models/weapons/pol/v_vis/tris.md2",
-		"w_vis", 
+		"w_vis",
 		"Vis",
 		0,
 		1,
@@ -75,11 +76,11 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 		"pol",
 		&polguninfo[VIS_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_svt (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_svt", 
+		"weapon_svt",
 		WEAPON_SVT,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -103,9 +104,9 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 		100,
 /* precache */ "pol/svt/fire.wav pol/svt/lastround.wav pol/svt/reload.wav pol/svt/unload.wav",
 		"pol",
-		&polguninfo[SVT_FRAME],	
+		&polguninfo[SVT_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 
@@ -113,7 +114,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 //*QUAKED weapon_RKM (.3 .3 1) (-16 -16 -16) (16 16 16)
 
 	{
-		"weapon_RKM", 
+		"weapon_RKM",
 		WEAPON_RKM,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -145,7 +146,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 	/*QUAKED weapon_mg34 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mg34", 
+		"weapon_mg34",
 		WEAPON_MG34,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -207,7 +208,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mors", 
+		"weapon_mors",
 		WEAPON_MORS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -238,7 +239,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_POL_m98ks (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_POL_m98ks", 
+		"weapon_POL_m98ks",
 		WEAPON_POL_M98KS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -272,17 +273,17 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 
 
 /* Weapon_Sabre (sword)
- 
+
 */
 {
-       "weapon_sabre", 
+       "weapon_sabre",
 	   WEAPON_SABRE,
        Pickup_Weapon,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Sabre,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/pol/g_sabre/tris.md2", 0, 
+       "models/weapons/pol/g_sabre/tris.md2", 0,
        "models/weapons/pol/v_sabre/tris.md2",      //The models stuff
        "w_sabre",                                    //Icon to be used
        "Sabre",                                        //Pickup name
@@ -373,7 +374,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 	0
 	},
 
-	
+
 /*QUAKED ammo_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -404,7 +405,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 		0,
 	0
 	},
-	
+
 /*QUAKED ammo_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -438,7 +439,7 @@ gitem_t politems[MAX_TEAM_ITEMS]=
 
 /*QUAKED ammo_sten (.3 .3 1) (-16 -16 -16) (16 16 16)
 
-  
+
 
 
 

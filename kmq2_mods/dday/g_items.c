@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/g_items.c,v $
  *   $Revision: 1.21 $
  *   $Date: 2002/07/23 22:48:27 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -545,9 +545,9 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 		SetRespawn (ent, 30);
 
 	WeighPlayer(other);
-	
+
 	return true;
-	
+
 }
 
 void Drop_Ammo (edict_t *ent, gitem_t *item)
@@ -614,15 +614,15 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 			other->burnout = 0;
         else
 			other->burnout -= ent->count;
-	} 
+	}
 	other->health += ent->count;
-//	if(heal_wounds->value) 
+//	if(heal_wounds->value)
 //	{
 //		other->wound_location=0;
 //		other->die_time=0;
 //	}
-	
-	
+
+
 	if (ent->count == 2)
 		ent->item->pickup_sound = "items/s_health.wav";
 	else if (ent->count == 10)
@@ -631,8 +631,8 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 		ent->item->pickup_sound = "items/l_health.wav";
 	else // (ent->count == 100)
 			ent->item->pickup_sound = "items/m_health.wav";
-	
-	
+
+
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 	{
 		if (other->health > other->max_health)
@@ -768,13 +768,13 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 
 //				gi.dprintf("%f %f   %f\n", ent->velocity[2], ent->item->weight, vol);
 //				gi.dprintf("%f %f   %f\n", ((1000+(-1 * ent->velocity[2]))/2000), (ent->item->weight+100)/150, vol);
-				
+
 				if (ent->item->flags & IT_AMMO || ent->item->position == LOC_GRENADES || ent->item->position == LOC_KNIFE)
 					gi.sound (ent, CHAN_WEAPON, gi.soundindex("weapons/ammodrop.wav"), vol, ATTN_NORM, 0);
-					//gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/ammodrop.wav"), vol, ATTN_NORM, 0);			
+					//gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/ammodrop.wav"), vol, ATTN_NORM, 0);
 				else if (ent->item->flags & IT_WEAPON)
 					gi.sound (ent, CHAN_WEAPON, gi.soundindex("weapons/gundrop.wav"), vol, ATTN_NORM, 0);
-					//gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/gundrop.wav"), vol, ATTN_NORM, 0);			
+					//gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/gundrop.wav"), vol, ATTN_NORM, 0);
 			}
 			ent->playedsound = true;
 		}
@@ -790,11 +790,11 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	if (other->client && other->client->resp.mos == MEDIC)
 	{
-		if (!( 
+		if (!(
 				(ent->item->tag && ent->item->tag == AMMO_TYPE_PISTOL) ||
 				(ent->item->position && ent->item->position == LOC_PISTOL) ||
-				(ent->item->pickup_name && !Q_stricmp(ent->item->pickup_name,"Knife")) ||
-				(ent->item->pickup_name && !Q_stricmp(ent->item->pickup_name,"Helmet")) 
+				(ent->item->pickup_name && !Q_stricmp(ent->item->pickup_name, "Knife")) ||
+				(ent->item->pickup_name && !Q_stricmp(ent->item->pickup_name, "Helmet"))
 			))
 			return;
 	}
@@ -822,7 +822,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (taken)
 	{
 		// flash the screen
-		//other->client->bonus_alpha = 0.25;	
+		//other->client->bonus_alpha = 0.25;
 
 		// show icon and name on status bar
 		other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
@@ -923,7 +923,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 
 	gi.setmodel (dropped, dropped->item->world_model);
 	dropped->solid = SOLID_TRIGGER;
-	dropped->movetype = MOVETYPE_STEP;//faf MOVETYPE_TOSS;  
+	dropped->movetype = MOVETYPE_STEP;//faf MOVETYPE_TOSS;
 	dropped->touch = drop_temp_touch;
 	dropped->owner = ent;
 
@@ -965,7 +965,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 		dropped->velocity[2] = 200;
 	else
 		dropped->velocity[2] = 300;
-	
+
 
 
 	dropped->think = drop_make_touchable;
@@ -1022,7 +1022,7 @@ void droptofloor (edict_t *ent)
 	else
 		gi.setmodel (ent, ent->item->world_model);
 	ent->solid = SOLID_TRIGGER;
-	ent->movetype = MOVETYPE_TOSS;  
+	ent->movetype = MOVETYPE_TOSS;
 	ent->touch = Touch_Item;
 
 	v = tv(0,0,-128);
@@ -1222,7 +1222,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-gitem_t	itemlist[MAX_ITEMS] = 
+gitem_t	itemlist[MAX_ITEMS] =
 {
 	{
 		NULL
@@ -1234,7 +1234,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 
 	//
-	// WEAPONS 
+	// WEAPONS
 	//
 
 
@@ -1280,17 +1280,17 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 
 /* weapon_knife
- 
+
 */
 {
-       "weapon_knife", 
+       "weapon_knife",
 	   WEAPON_KNIFE,
        Pickup_Weapon,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Knife,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/g_knife/tris.md2", 0, 
+       "models/weapons/g_knife/tris.md2", 0,
        "models/weapons/v_knife/tris.md2",      //The models stuff
        "w_knife",                                    //Icon to be used
        "Knife",                                        //Pickup name
@@ -1311,15 +1311,15 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 		},
 
-{ 
-       "weapon_fists", 
+{
+       "weapon_fists",
 	   WEAPON_FISTS,
        NULL,
        Use_Weapon,                             //How to use
        NULL,
        Weapon_Knife,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/g_helmet/tris.md2", 0, 
+       "models/weapons/g_helmet/tris.md2", 0,
        "models/weapons/v_fists/tris.md2",      //The models stuff
        "w_fists",                                    //Icon to be used
        "Fists",                                        //Pickup name
@@ -1339,15 +1339,15 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 
 	   },
-	   { 
-       "weapon_sandbag", 
+	   {
+       "weapon_sandbag",
 	   WEAPON_SANDBAGS,
        Pickup_Weapon,
        Use_Weapon,                             //How to use
        NULL,
        Weapon_Sandbag,                           //What the function is
        "misc/w_pkup.wav",
-       "models/objects/sandbag/tris.md2", 0, 
+       "models/objects/sandbag/tris.md2", 0,
        "models/weapons/v_sandbag/tris.md2",      //The models stuff
        "w_sandbags",                                    //Icon to be used
        "Sandbags",                                        //Pickup name
@@ -1367,7 +1367,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 
 	   },
-	   
+
 /*QUAKED item_helmet (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -1471,7 +1471,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		NULL,
 		Weapon_Morphine,
 		"items/pkup.wav",
-		NULL,//"models/items/band/tris.md2", 
+		NULL,//"models/items/band/tris.md2",
 		0,
 		"models/weapons/v_morphine/tris.md2",
 /* icon */		"w_morphine",
@@ -1492,7 +1492,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 
 	},
 
-	
+
 /*QUAKED weapon_Flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -1533,7 +1533,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		Drop_Ammo,
 		NULL,
 		"misc/am_pkup.wav",
-		NULL,//"models/items/ammo/cells/medium/tris.md2", 
+		NULL,//"models/items/ammo/cells/medium/tris.md2",
 		0,
 		NULL,
 /* icon */		"a_flame",
@@ -1555,14 +1555,14 @@ gitem_t	itemlist[MAX_ITEMS] =
 	},
 
 {
-       "weapon_sword", 
+       "weapon_sword",
 	   WEAPON_KATANA,
        Pickup_Weapon,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Katana,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/jpn/g_katana/tris.md2", 0, 
+       "models/weapons/jpn/g_katana/tris.md2", 0,
        "models/weapons/jpn/v_katana/tris.md2",      //The models stuff
        "w_katana",                                    //Icon to be used
        "Sword",                                        //Pickup name
@@ -1692,20 +1692,20 @@ void SetItemNames (void)
 //	jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));
 //	combat_armor_index = ITEM_INDEX(FindItem("Combat Armor"));
 //	body_armor_index   = ITEM_INDEX(FindItem("Body Armor"));
-	
+
 }
 
 //added by vjj
 //These are the functions needed to spawn the builtin Quake items.
 //This problem is compounded by the fact that we are trying to build
 //two things at once - one is the general solution to allow us to make
-//things in the general way we want and two, fixes to the code so that 
+//things in the general way we want and two, fixes to the code so that
 //it'll work properly. Of course, we wish to minimize the changes.
 //To simplify our effort, we will place these in the spawns[] list.
 //A developer would have to create these functions for the new items
 //that would be developed and then add tha appropriate entries into
-//both the spawns[] and itemlist[]. We will create an interface to 
-//the spawns[] list and that will be the low level interface since 
+//both the spawns[] and itemlist[]. We will create an interface to
+//the spawns[] list and that will be the low level interface since
 //everything ends up in the spawns[] list from items to monsters
 //to triggers, etc.
 
@@ -1742,7 +1742,7 @@ void SP_item_ammo_grenades(edict_t *self)
     SpawnItem(self,FindItemByClassname("ammo_grenades"));
 }
 
-		
+
 void sandbag_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
 	vec3_t org;
@@ -1764,7 +1764,7 @@ void sandbag_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	org[2] = self->s.origin[2] + crandom() * self->size[2];
 	ThrowDebris (self, "models/objects/debris1/tris.md2", 1, org);
 
-		gi.positioned_sound (self->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/woodbreak.wav"), .7, ATTN_NORM, 0);	
+		gi.positioned_sound (self->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/woodbreak.wav"), .7, ATTN_NORM, 0);
 
 
 		if (self->obj_owner == 0)
@@ -1794,13 +1794,13 @@ void sandbag_think (edict_t *ent)
 		ent->movetype = MOVETYPE_NONE;
 		//ent->think = G_FreeEdict;
 		//ent->nextthink = level.time + 300;
-		
-		gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);	
+
+		gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);
 		return;
 	}*/
 	if (ent->groundentity)
 	{
-		gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);	
+		gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("weapons/tnt/wall.wav"), .7, ATTN_NORM, 0);
 		return;
 	}
 	else if (ent->obj_time < level.time - 5)
@@ -1819,7 +1819,7 @@ void sandbag_think (edict_t *ent)
 
 	ent->nextthink = level.time +.1;
 
-	
+
 }
 
 void Weapon_Sandbag_Fire (edict_t *ent)
@@ -1827,7 +1827,7 @@ void Weapon_Sandbag_Fire (edict_t *ent)
 {
 	edict_t	*sandbag;
 
-    
+
 	ent->client->ps.gunframe++;
 
 	if (ent->client->resp.team_on->index == 0)
@@ -1890,7 +1890,7 @@ void Weapon_Sandbag_Fire (edict_t *ent)
 //		VectorSet (sandbag->maxs, 19, 9, 8);
 
 	VectorCopy (ent->client->sandbag_pos, sandbag->s.origin);
-	
+
 	sandbag->clipmask = MASK_SHOT;
 
 
@@ -1919,8 +1919,8 @@ void Weapon_Sandbag_Fire (edict_t *ent)
 		ent->client->ps.gunframe = 20;
 		Use_Weapon (ent, FindItem("fists"));
 		return;
-	} 
-	
+	}
+
 
 	G_FreeEdict (ent->client->sandbag_preview);
 	ent->client->sandbag_preview = NULL;
@@ -1972,7 +1972,7 @@ void Weapon_Sandbag (edict_t *ent)
 
 	ent->client->crosshair = false;
 
-    
+
 	if (!ent->client->sandbag_preview)
 	{
 		sandbag = G_Spawn();
@@ -2027,7 +2027,7 @@ void Weapon_Sandbag (edict_t *ent)
 			VectorSet (mins, -20, -20, -10);
 			VectorSet (maxs, 20, 20, 10);
 
-    
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
     VectorSet(offset, 0, 0, ent->viewheight);
    VectorAdd (ent->s.origin, offset, start);
@@ -2038,21 +2038,21 @@ void Weapon_Sandbag (edict_t *ent)
 
 	AngleVectors (ent->client->v_angle, forward, NULL, NULL);
 
-    VectorMA (start, 55, forward, end);  	
+    VectorMA (start, 55, forward, end);
 	tr = gi.trace(start, sandbag->mins, sandbag->maxs, end, ent, MASK_SHOT);
-	if (tr.startsolid || tr.fraction < 1)	
+	if (tr.startsolid || tr.fraction < 1)
 	{
 		VectorClear (ent->client->sandbag_pos);
 		sandbag->svflags = SVF_NOCLIENT;
 	}
 	else
 	{
-		//VectorMA (start, 55, forward, end);  
+		//VectorMA (start, 55, forward, end);
 
 
 
 
-			
+
 
 		tr = gi.trace(tr.endpos, sandbag->mins, sandbag->maxs, tr.endpos, ent, MASK_SHOT);
 
@@ -2062,7 +2062,7 @@ void Weapon_Sandbag (edict_t *ent)
 			VectorClear (ent->client->sandbag_pos);
 			sandbag->svflags = SVF_NOCLIENT;
 
-		}	
+		}
 		else
 		{
 
@@ -2083,7 +2083,7 @@ void Weapon_Sandbag (edict_t *ent)
 	//ent->client->aim=false;
 	//fire_frames[0]=(ent->client->aim)?54:4;
 	ent->client->p_rnd=NULL;
-	
+
 	//faf
 		fire_frames[0]=7;
 
@@ -2095,12 +2095,12 @@ void Weapon_Sandbag (edict_t *ent)
 
 
 
-	Weapon_Generic (ent, 
+	Weapon_Generic (ent,
 		4,7,17,
 		17,17,20,
 		20,20,20,
 		pause_frames, fire_frames, Weapon_Sandbag_Fire);
-		
+
 }
 
 

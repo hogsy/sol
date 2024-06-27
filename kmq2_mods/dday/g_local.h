@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -125,9 +125,9 @@ typedef enum
 } damage_t;
 
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING,
@@ -308,8 +308,8 @@ typedef struct
 	int		frame_delay;				//Frametime between each shot
 
 	// SNIPER WEAPON ONLY
-	char	*sniper_bolt_wav;			
-	int		sniper_bolt_frame;	
+	char	*sniper_bolt_wav;
+	int		sniper_bolt_frame;
 
 	// OTHER
 	int	  rnd_count;					//Hack to get the right # of rounds in the clip currently loaded (for dropping/picking up the weapon)
@@ -459,7 +459,7 @@ typedef struct
 
 	qboolean	fullbright;//faf
 	float		fog;
-	
+
 	char		*campaign;
 	float		map_vote_time;
 	float		last_vote_time;
@@ -787,7 +787,7 @@ extern cvar_t  *airstrikes;
 extern cvar_t  *nohud;
 extern cvar_t  *mapvoting;
 extern cvar_t  *constant_play; //for testing
-extern cvar_t  *serverimg; 
+extern cvar_t  *serverimg;
 
 extern cvar_t  *ctc;
 
@@ -815,7 +815,7 @@ extern cvar_t  *campaign;
 
 extern cvar_t *sandbaglimit;
 
-extern cvar_t *afk_time; 
+extern cvar_t *afk_time;
 
 //extern	cvar_t	*crosshair;
 
@@ -843,7 +843,7 @@ extern cvar_t *afk_time;
 #define FFL_DEFAULT_NEG		4	// Knightmare- spawntemp that defaults to -1
 
 typedef enum {
-	F_INT, 
+	F_INT,
 	F_FLOAT,
 	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
 	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
@@ -872,7 +872,8 @@ extern	gitem_t	itemlist[];
 
 #ifndef USER_EXCLUDE_FUNCTIONS
 
-byte		is_silenced;
+// Knightmare- made this var extern to fix compile on GCC
+extern byte		is_silenced;
 
 void Feed_Ammo(edict_t *ent);
 void Fire_Arty(edict_t *battary,edict_t *ent);
@@ -915,7 +916,7 @@ void Think_Arty (edict_t *ent);
 
 //qboolean FindOnTeam(edict_t *ent);
 
-qboolean OnSameTeam(edict_t *self,edict_t *target);
+qboolean OnSameTeam (edict_t *self, edict_t *target);
 
 
 
@@ -965,6 +966,7 @@ void GameDirRelativePath (const char *filename, char *output, size_t outputSize)
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize);
 void CreatePath (const char *path);
 qboolean LocalFileExists (const char *path);
+qboolean G_CopyFile (const char *src_filename, const char *dst_filename);
 // end Knightmare
 
 qboolean WeighPlayer(edict_t *ent);
@@ -1179,10 +1181,10 @@ void SaveClientData (void);
 void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
 
-// 
-// g_maps.c 
-// 
-#include "g_maps.h" 
+//
+// g_maps.c
+//
+#include "g_maps.h"
 
 //
 // p_classes.c
@@ -1218,13 +1220,13 @@ void Give_Class_Ammo(edict_t *ent);
 #define	ANIM_ATTACK		4
 #define	ANIM_DEATH		5
 #define ANIM_CHANGESTANCE   6
-//pbowens: v_wep 
+//pbowens: v_wep
 #define ANIM_REVERSE    -1
 
-//the following is a generic container for mos's on a team. it is used to initialize the 
+//the following is a generic container for mos's on a team. it is used to initialize the
 //player on startup, as well as keep track how many slots are open for each mos.
 
-typedef struct 
+typedef struct
 {
 	char *name;				//mos name
 	char *skinname;			//mos skin (general model defined within user dll)
@@ -1337,7 +1339,6 @@ typedef struct
 } client_persistant_t;
 
 
-
 // client data that stays across deathmatch respawns
 
 typedef struct
@@ -1384,18 +1385,12 @@ typedef struct
 	int			stat_castrations;
 	int			stat_helmets;
 	int			stat_fists;
-
-
-
-
 } client_respawn_t;
-
 
 
 typedef struct
 
 {
-
 	int	pistol_rnd,
 		pistol_fract,
 
@@ -1413,17 +1408,16 @@ typedef struct
 
 		hmg_rnd,
 
-		antitank_rnd,	
-	
+		antitank_rnd,
+
 		shotgun_rnd,
 		shotgun_fract,
-		
+
 		submg2_rnd,
 		submg2_fract
 ;
 
 } mags_t;
-
 
 
 // this structure is cleared on each PutClientInServer(),
@@ -1535,11 +1529,11 @@ struct gclient_s
 
 	int			aim;			// hawkins truesight
 
-//	float		OBTime;					//delay before becoming solid	
+//	float		OBTime;					//delay before becoming solid
 //	qboolean	feedammo;
 	qboolean	limbo_mode;				//when player is dead in the neather regions
 
-	mags_t		mags[MAX_TEAMS];		//structure that contains magazines	
+	mags_t		mags[MAX_TEAMS];		//structure that contains magazines
 	int			*p_rnd,					//pointers for rnds
 				*p_fract;				//and fractional mags
 	int			flame_rnd;				//rounds for flamethrower
@@ -1646,7 +1640,7 @@ struct gclient_s
 
 
 	float		last_menu_time;
- 
+
 	float		last_obj_dmg_time;
 	int			last_obj_health;
 	char		*last_obj_name;
@@ -1683,9 +1677,6 @@ struct gclient_s
 	qboolean	has_briefcase;
 
 	float		throw_grenade_time;
-
-
-
 };
 
 
@@ -1702,7 +1693,7 @@ struct edict_s
 
 // FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1728,10 +1719,10 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
-	//	
+	//
 	char		*message;
 	char		*classname;
 	int			classnameb;
@@ -1845,7 +1836,7 @@ struct edict_s
 	// new var for stance
 	int				stanceflags;
 	int				stance_max,stance_min, stance_view;
-	
+
 	//new var for hit location
 	int				wound_location;
 //faf	int				die_time;
@@ -1886,7 +1877,7 @@ struct edict_s
 	float			nextspawn;	//what order to spawn
 	int				distance;
 //	qboolean		ident;
-	
+
 	float			leave_limbo_time;//faf
 	int				oldstance;//faf
 
@@ -1916,7 +1907,8 @@ typedef struct
 } spawn_t;
 
 
-TeamS_t *team_list[MAX_TEAMS];
+// Knightmare- made this var extern to fix compile on GCC
+extern TeamS_t *team_list[MAX_TEAMS];
 
 void InitMOS_List(TeamS_t *team,SMos_t *mos_list);
 
@@ -1930,26 +1922,23 @@ extern qboolean	frame_output;
 #define	flame_normal 0
 #define flame_gib 1
 
-
-
-typedef struct 
+typedef struct
 {
 	int  limit;
-}mapclasslimits_t;
+} mapclasslimits_t;
 
-mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
+// Knightmare- made this var extern to fix compile on GCC
+extern mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
 
-
-
-
-int usa_index;
-int grm_index;
-int rus_index;
-int gbr_index;
-int pol_index;
-int ita_index;
-int jpn_index;
-int usm_index;
+// Knightmare- made these vars extern to fix compile on GCC
+extern int	usa_index;
+extern int	grm_index;
+extern int	rus_index;
+extern int	gbr_index;
+extern int	pol_index;
+extern int	ita_index;
+extern int	jpn_index;
+extern int	usm_index;
 
 #define SMG_SPREAD 50//faf: raise a hair 40
 #define PISTOL_SPREAD 50
@@ -1957,21 +1946,20 @@ int usm_index;
 #define HMG_SPREAD 100
 
 
-
-
 //JABot[start]
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_MACHINEGUN			3 
-#define WEAP_CHAINGUN			4 
+#define WEAP_NONE			    0
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_MACHINEGUN			3
+#define WEAP_CHAINGUN			4
 #define WEAP_GRENADES			5
-#define WEAP_ROCKETLAUNCHER		6 
-#define WEAP_RIFLE				7 
+#define WEAP_ROCKETLAUNCHER		6
+#define WEAP_RIFLE				7
 #define WEAP_FLAMER				8
 #define WEAP_MELEE				9
+#define WEAP_LAST               9
 
-#define WEAP_NONE			0
-#define WEAP_TOTAL			9
+#define WEAP_TOTAL			    (WEAP_LAST + 1) // Knightmare- this was the wrong size (9)!
 //JABot[end]
 
 
@@ -1980,7 +1968,7 @@ typedef enum
 	CAMP_DISABLED,
 	CAMP_NORMAL,
 	CAMP_OBJECTIVE
-}camp_t;
+} camp_t;
 
 typedef struct
 {
@@ -1992,10 +1980,11 @@ typedef struct
 	edict_t		*owner;
 } camp_spots_t;
 
-camp_spots_t camp_spots[128];
-int  total_camp_spots;
-int	num_clients;
-qboolean qbots;
+// Knightmare- made these vars extern to fix compile on GCC
+extern camp_spots_t	camp_spots[128];
+extern int			total_camp_spots;
+extern int			num_clients;
+extern qboolean		qbots;
 
 typedef struct
 {
@@ -2010,14 +1999,16 @@ typedef struct
 	qboolean	axisstart;
 } campaign_spots_t;
 
-campaign_spots_t campaign_spots[50];
+// Knightmare- made these vars extern to fix compile on GCC
+extern campaign_spots_t campaign_spots[50];
 
-int alliedplatoons;
-int	axisplatoons;
-int	alliedneedspots;
-int	axisneedspots;
+extern int alliedplatoons;
+extern int	axisplatoons;
+extern int	alliedneedspots;
+extern int	axisneedspots;
 
-int campaign_winner;
+extern int campaign_winner;
+
 
 typedef enum
 {
@@ -2034,7 +2025,8 @@ typedef enum
 	SHOW_SERVERIMG
 } display_t;
 
-char	*last_maps_played[20];
+// Knightmare- made this var extern to fix compile on GCC
+extern char	*last_maps_played[20];
 
 
 typedef enum
@@ -2181,17 +2173,18 @@ typedef enum
 	SOUND_CONCRETE
 } soundtype_t;
 
-qboolean no_objectives_left;
 
-qboolean dropnodes;
+// Knightmare- made these vars extern to fix compile on GCC
+extern qboolean no_objectives_left;
 
+extern qboolean dropnodes;
 
-int	allied_sandbags;
-int axis_sandbags;
+extern int		allied_sandbags;
+extern int		axis_sandbags;
 
+extern char		*votemaps[5];
+extern int		mapvotes[5];
 
-char	*votemaps[5];
-int		mapvotes[5];
 
 #define MAX_TEAM_ITEMS 19
 #define NUM_CLASSES 10
@@ -2238,7 +2231,7 @@ int Surface2(char *name);
 void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles);
 void SP_objective_flag (edict_t *self);
 void briefcase_warn (edict_t *ent);//faf;  ctb code
-qboolean Pickup_Briefcase (edict_t *ent, edict_t *other); 
+qboolean Pickup_Briefcase (edict_t *ent, edict_t *other);
 void Drop_Briefcase (edict_t *ent, gitem_t *item);
 void Remove_Nearby_Sandbags(edict_t *ent);
 void ParseBotChat (char *text, edict_t *attacker);
@@ -2252,25 +2245,25 @@ void train_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 int Play_Bullet_Hit(edict_t *ent, char *surface, vec3_t endpos, edict_t *impact_ent);
 
 
-char botchat_taunt[MAX_TEAMS][200][150];
-int  botchat_taunt_count[MAX_TEAMS];
-char botchat_sorry[MAX_TEAMS][200][150];
-int  botchat_sorry_count[MAX_TEAMS];
-char botchat_brag[MAX_TEAMS][200][150];
-int  botchat_brag_count[MAX_TEAMS];
-char botchat_tked[MAX_TEAMS][200][150];
-int  botchat_tked_count[MAX_TEAMS];
-char botchat_insult[MAX_TEAMS][200][150];
-int  botchat_insult_count[MAX_TEAMS];
-char botchat_forgive[MAX_TEAMS][200][150];
-int  botchat_forgive_count[MAX_TEAMS];
-char botchat_random[MAX_TEAMS][200][150];
-int  botchat_random_count[MAX_TEAMS];
-char botchat_killed[MAX_TEAMS][200][150];
-int  botchat_killed_count[MAX_TEAMS];
-char botchat_self[MAX_TEAMS][200][150];
-int  botchat_self_count[MAX_TEAMS];
+// Knightmare- made these vars extern to fix compile on GCC
+extern char botchat_taunt[MAX_TEAMS][200][150];
+extern int  botchat_taunt_count[MAX_TEAMS];
+extern char botchat_sorry[MAX_TEAMS][200][150];
+extern int  botchat_sorry_count[MAX_TEAMS];
+extern char botchat_brag[MAX_TEAMS][200][150];
+extern int  botchat_brag_count[MAX_TEAMS];
+extern char botchat_tked[MAX_TEAMS][200][150];
+extern int  botchat_tked_count[MAX_TEAMS];
+extern char botchat_insult[MAX_TEAMS][200][150];
+extern int  botchat_insult_count[MAX_TEAMS];
+extern char botchat_forgive[MAX_TEAMS][200][150];
+extern int  botchat_forgive_count[MAX_TEAMS];
+extern char botchat_random[MAX_TEAMS][200][150];
+extern int  botchat_random_count[MAX_TEAMS];
+extern char botchat_killed[MAX_TEAMS][200][150];
+extern int  botchat_killed_count[MAX_TEAMS];
+extern char botchat_self[MAX_TEAMS][200][150];
+extern int  botchat_self_count[MAX_TEAMS];
 
-
-char user_shouts[20][100];
-int user_shout_count;
+extern char user_shouts[20][100];
+extern int user_shout_count;

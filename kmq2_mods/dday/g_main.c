@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/g_main.c,v $
  *   $Revision: 1.15 $
  *   $Date: 2002/07/23 21:11:37 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -90,7 +90,7 @@ cvar_t	*level_wait;				// pause time at beginning and end of games
 cvar_t	*invuln_spawn;				// how long player is invulnerable after spawn
 
 cvar_t	*arty_delay;				// seconds for artillary to position
-cvar_t	*arty_time;					// seconds between each volley 
+cvar_t	*arty_time;					// seconds between each volley
 cvar_t  *arty_max;					// number of shots to be fired in each volley
 
 //bcass start - easter_egg cvar, AGAIN
@@ -114,7 +114,7 @@ cvar_t  *objective_protect;
 cvar_t  *ent_files;
 
 cvar_t *mauser_only;  //ddaylife
-cvar_t *sniper_only;  //ddaylife 
+cvar_t *sniper_only;  //ddaylife
 cvar_t *no_nades; //ddaylife
 cvar_t *airstrikes;
 
@@ -153,6 +153,72 @@ cvar_t *sandbaglimit;
 
 cvar_t *afk_time;
 
+// Knightmare- moved these vars here to fix compile on GCC
+byte		is_silenced;
+
+TeamS_t *team_list[MAX_TEAMS];
+
+mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
+
+int	usa_index;
+int	grm_index;
+int	rus_index;
+int	gbr_index;
+int	pol_index;
+int	ita_index;
+int	jpn_index;
+int	usm_index;
+
+camp_spots_t camp_spots[128];
+int  total_camp_spots;
+int	num_clients;
+qboolean qbots;
+
+campaign_spots_t campaign_spots[50];
+
+int alliedplatoons;
+int	axisplatoons;
+int	alliedneedspots;
+int	axisneedspots;
+
+int campaign_winner;
+
+char	*last_maps_played[20];
+
+qboolean no_objectives_left;
+
+qboolean dropnodes;
+
+int	allied_sandbags;
+int axis_sandbags;
+
+char	*votemaps[5];
+int		mapvotes[5];
+
+char botchat_taunt[MAX_TEAMS][200][150];
+int  botchat_taunt_count[MAX_TEAMS];
+char botchat_sorry[MAX_TEAMS][200][150];
+int  botchat_sorry_count[MAX_TEAMS];
+char botchat_brag[MAX_TEAMS][200][150];
+int  botchat_brag_count[MAX_TEAMS];
+char botchat_tked[MAX_TEAMS][200][150];
+int  botchat_tked_count[MAX_TEAMS];
+char botchat_insult[MAX_TEAMS][200][150];
+int  botchat_insult_count[MAX_TEAMS];
+char botchat_forgive[MAX_TEAMS][200][150];
+int  botchat_forgive_count[MAX_TEAMS];
+char botchat_random[MAX_TEAMS][200][150];
+int  botchat_random_count[MAX_TEAMS];
+char botchat_killed[MAX_TEAMS][200][150];
+int  botchat_killed_count[MAX_TEAMS];
+char botchat_self[MAX_TEAMS][200][150];
+int  botchat_self_count[MAX_TEAMS];
+
+
+char user_shouts[20][100];
+int user_shout_count;
+// end Knightmare
+
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -180,7 +246,7 @@ void PBM_KillAllFires (void);
 // So the Server can execute a console command for the Client
 // as if the client typed it into their console themselves.
 //============================================================
-void stuffcmd(edict_t *ent, char *s) 
+void stuffcmd(edict_t *ent, char *s)
 {
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
@@ -335,12 +401,17 @@ edict_t *CreateTargetChangeLevel(char *map)
 
 qboolean MapExists (char *map)
 {
-	FILE *check;
-	char filename[256];
+	FILE	*check;
+	char	filename[256];
+	cvar_t	*basedir;	// Knightmare added
 
-	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/maps/");
+	basedir = gi.cvar("basedir", "", 0);	// Knightmare added
+
+/*	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/maps/");
 	Q_strncatz (filename, sizeof(filename), map);
-	Q_strncatz (filename, sizeof(filename), ".bsp");
+	Q_strncatz (filename, sizeof(filename), ".bsp"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/maps/%s.bsp", GameDir(), map);
 
 	if (check = fopen(filename, "r") )
 	{
@@ -348,21 +419,26 @@ qboolean MapExists (char *map)
 		return true;
 	}
 
-	Q_strncpyz (filename, sizeof(filename), "baseq2/maps/");
+/*	Q_strncpyz (filename, sizeof(filename), "baseq2/maps/");
 	Q_strncatz (filename, sizeof(filename), map);
-	Q_strncatz (filename, sizeof(filename), ".bsp");
+	Q_strncatz (filename, sizeof(filename), ".bsp"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/baseq2/maps/%s.bsp", basedir->string, map);
+
 	if (check = fopen(filename, "r") )
 	{
 		fclose (check);
 		return true;
 	}
 
-	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/maps/");
+/*	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/maps/");
 	Q_strncatz (filename, sizeof(filename), map);
-	Q_strncatz (filename, sizeof(filename), ".bsp.override");
+	Q_strncatz (filename, sizeof(filename), ".bsp.override"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/maps/%s.bsp.override", GameDir(), map);
 
 	if (check = fopen(filename, "r") )
-	{		
+	{
 		fclose (check);
 		return true;
 	}
@@ -372,13 +448,20 @@ qboolean MapExists (char *map)
 }
 
 
-void Write_Last_Maps(void){
-	FILE *fp;
-	int i;
-	
-	fp = fopen ("dday/lastmaps.txt", "w");
-	if (!fp)
-		gi.error ("Couldn't open dday/lastmaps.txt");
+void Write_Last_Maps (void)
+{
+	char	filename[256];
+	FILE	*fp;
+	int		i;
+
+//	fp = fopen ("dday/lastmaps.txt", "w");
+	// Knightmare- use SavegameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/lastmaps.txt", SavegameDir());
+	fp = fopen (filename, "w");
+
+	if ( !fp )
+	//	gi.error ("Couldn't open dday/lastmaps.txt");
+		gi.error ("Couldn't open %s", filename);
 
 	for (i=0; i<20 && last_maps_played[i]; i++)	{
 		fprintf (fp, "%s\n", last_maps_played[i]);
@@ -390,13 +473,28 @@ void Write_Last_Maps(void){
 void Read_Last_Maps (void)
 {
 	int		i,c;
-	char	*s, *f=NULL;
+	char	*s, *f = NULL;
 	char	*lastmaps;
+ 	char	filename[MAX_OSPATH] = "";	// Knightmare added
+	FILE	*check;						// Knightmare added
 
-	lastmaps = ReadEntFile("dday/lastmaps.txt");
+//	lastmaps = ReadEntFile("dday/lastmaps.txt");
+
+	// Knightmare- use  SavegameDir() / GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/lastmaps.txt", SavegameDir());
+
+	// fall back to GameDir() if not found in SavegameDir()
+	check = fopen(filename, "r");
+	if ( !check )
+		Com_sprintf (filename, sizeof(filename), "%s/lastmaps.txt", GameDir());
+	else
+		fclose (check);
+	// end Knightmare
+
+	lastmaps = ReadEntFile(filename);
 
 	if (lastmaps)
-	{  
+	{
 		c = 0;
 	//	f = strdup (lastmaps);
 		f = G_CopyString (lastmaps);	// Knightmare- use G_CopyString instead
@@ -422,16 +520,19 @@ char *Get_Next_MaplistTxt_Map (void)
 	char	*maps;
 	int		i,j,c;
 	char	*s, *f=NULL;
-	int mapcount;
-	int	newmapcount;
-	int x;
-	int randnum;
-	int removed;
-	char *possible_maps[300];
-	char *maplisttxt[300];
+	int		mapcount;
+	int		newmapcount;
+	int		x;
+	int		randnum;
+	int		removed;
+	char	*possible_maps[300];
+	char	*maplisttxt[300];
+ 	char	filename[MAX_OSPATH] = "";	// Knightmare added
 
-
-	maps = ReadEntFile("dday/maplist.txt");
+//	maps = ReadEntFile("dday/maplist.txt");
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/maplist.txt", GameDir());
+	maps = ReadEntFile(filename);
 
 	mapcount = 0;
 
@@ -443,7 +544,7 @@ char *Get_Next_MaplistTxt_Map (void)
 		s = strtok(f, "\n");
 		while (c < 300)
 		{
-			if (s != NULL) 
+			if (s != NULL)
 			{
 				if (MapExists(s))
 				{
@@ -459,7 +560,7 @@ char *Get_Next_MaplistTxt_Map (void)
 				s = strtok (NULL, "\n");
 			}
 			else
-			{maplisttxt[c] = ""; 
+			{maplisttxt[c] = "";
 			c++;}
 
 		}
@@ -483,14 +584,14 @@ char *Get_Next_MaplistTxt_Map (void)
 
 
 			if (!strcmp (last_maps_played[i], maplisttxt[j]))
-			{	
+			{
 				maplisttxt[j]= "";
 				//gi.dprintf("EEEEEEEE Removing %s\n",campaign_spots[checknum].bspname);
 				removed++;
 				break;
 			}
 		}
-	} 
+	}
 
 
 	newmapcount = 0;
@@ -516,7 +617,7 @@ char *Get_Next_MaplistTxt_Map (void)
 		gi.TagFree (f);
 		f = NULL;
 	}
-	
+
 	return possible_maps[randnum];
 }
 
@@ -537,7 +638,7 @@ void EndDMLevel (void)
 	int			i, axiscount=0,alliedcount=0;
 	char		*nextmap;
 	edict_t		*ent = NULL;
-	
+
 	i = 0;
 
 	mapname = level.mapname;
@@ -550,7 +651,7 @@ void EndDMLevel (void)
 			if (!strcmp (level.mapname, campaign_spots[i].bspname))
 			{
 				Update_Campaign_Info();
-				
+
 				if (alliedplatoons == 0)
 				{	campaign_winner = 1;}
 				else if (axisplatoons == 0)
@@ -569,7 +670,7 @@ void EndDMLevel (void)
 					{campaign_winner = 0;}
 					else if (axisneedspots > 0 && axiscount >= axisneedspots)
 					{	campaign_winner = 1;}
-				}			
+				}
 				break;
 			}
 		}
@@ -580,7 +681,7 @@ void EndDMLevel (void)
 
 
 //	if (last_maps_played[0])
-//	gi.dprintf("xxx%s\n",last_maps_played[0]);
+//		gi.dprintf ("xxx%s\n", last_maps_played[0]);
 	for (i=20; i>0; i--)
 	{
 		if (last_maps_played[i-1])
@@ -592,25 +693,25 @@ void EndDMLevel (void)
 	if (level.botfiles)
 		last_maps_played[0] = level.botfiles;
 	else
-		last_maps_played[0]=level.mapname;
+		last_maps_played[0] = level.mapname;
 
 	Read_Last_Maps ();
-	Write_Last_Maps();
+	Write_Last_Maps ();
 
 	if (level.campaign && campaign_winner < 0)
 	{
 		nextmap = Get_Next_Campaign_Map();
 		if (nextmap != NULL)
-		{	
+		{
 			ent = G_Spawn ();
 			ent->classname = "target_changelevel";
 			ent->map = nextmap;
-			safe_bprintf (PRINT_HIGH, "Next map: %s \n", nextmap);		
-			BeginIntermission (ent);	
+			safe_bprintf (PRINT_HIGH, "Next map: %s \n", nextmap);
+			BeginIntermission (ent);
 			return;
 		}
 		else
-		{	//hack job! winning team has no place to go, so pretend the losing team won, get 
+		{	//hack job! winning team has no place to go, so pretend the losing team won, get
 			//next map, then set everything back again
 			Last_Team_Winner = (Last_Team_Winner+1)%2;
 			nextmap = Get_Next_Campaign_Map();
@@ -620,8 +721,8 @@ void EndDMLevel (void)
 				ent = G_Spawn ();
 				ent->classname = "target_changelevel";
 				ent->map = nextmap;
-				safe_bprintf (PRINT_HIGH, "Next map: %s \n", nextmap);		
-				BeginIntermission (ent);	
+				safe_bprintf (PRINT_HIGH, "Next map: %s \n", nextmap);
+				BeginIntermission (ent);
 				return;
 			}
 			else (Last_Team_Winner = (Last_Team_Winner+1)%2);
@@ -629,7 +730,7 @@ void EndDMLevel (void)
 		}
 	}
 
-		
+
 
 
 	// stay on same level flag
@@ -643,7 +744,7 @@ void EndDMLevel (void)
 
 
 	// faf:  maplist code, based on baseq2 version
-	if (*sv_maplist->string) 
+	if (*sv_maplist->string)
 	{
 		if (!strcmp(sv_maplist->string, "txt"))
 		{
@@ -669,20 +770,20 @@ void EndDMLevel (void)
 			s = G_CopyString(sv_maplist->string);	// Knightmare- use G_CopyString instead
 			f = NULL;
 			t = strtok(s, seps);
-			while (t != NULL) 
+			while (t != NULL)
 			{
 				//add campaigns to maplist
 				if (strstr (mapname,t) && strcmp(mapname,t))
-				{	
+				{
 					//gi.dprintf ("rwef %s %s\n",mapname, t);
 					if (team_list[0] && strstr(team_list[0]->nextmap,t))
 					{
 						//if campaign points back to first map, move on in maplist
 						char ck[20];
 						Com_sprintf (ck, sizeof(ck), "%s", t);
-						Q_strncatz (ck, sizeof(ck), "1");	
+						Q_strncatz (ck, sizeof(ck), "1");
 						//gi.dprintf ("crere %s %s\n",ck, t);
-						if ( strcmp(ck, team_list[0]->nextmap) ) 
+						if ( strcmp(ck, team_list[0]->nextmap) )
 						{
 							safe_bprintf (PRINT_HIGH, "Next map: %s \n", team_list[0]->nextmap);
 							BeginIntermission (CreateTargetChangeLevel (team_list[0]->nextmap) );
@@ -713,7 +814,7 @@ void EndDMLevel (void)
 			s = G_CopyString(sv_maplist->string);	// Knightmare- use G_CopyString instead
 			f = NULL;
 			t = strtok(s, seps);
-			while (t != NULL) 
+			while (t != NULL)
 			{
 				if (Q_stricmp(t, mapname) == 0)   //if the running map is on maplist
 				{
@@ -721,7 +822,7 @@ void EndDMLevel (void)
 					// it's in the list, go to the next one
 					t = strtok(NULL, seps);
 					if (t == NULL) // end of list, go to first one
-					{ 
+					{
 						if (f == NULL) // there isn't a first one, same level
 						{
 							if (MapExists(mapname))
@@ -741,7 +842,7 @@ void EndDMLevel (void)
 								BeginIntermission (CreateTargetChangeLevel (f) );
 								return;
 							}
-							else 
+							else
 							{
 							//	mapCheck = t;
 							//	strncat (mapCheck, "1");
@@ -759,7 +860,7 @@ void EndDMLevel (void)
 
 
 						}
-					} 
+					}
 					else
 					{
 						if (MapExists(t))
@@ -768,7 +869,7 @@ void EndDMLevel (void)
 							BeginIntermission (CreateTargetChangeLevel (t) );
 							return;
 						}
-						else 
+						else
 						{
 							// last_maplist_map_played = t;
 							// first_non_maplist_map = NULL;
@@ -808,7 +909,7 @@ void EndDMLevel (void)
 				// if last_maplist_map_played == 0, then start at first maplist map
 				// if it has a value, play the map after that
 				// if it has a value and map after that is null, play first map in maplist
-			
+
 			// t becomes tb
 			// f becomes fb
 			// s becomes sb
@@ -866,30 +967,30 @@ void EndDMLevel (void)
 
 // alternate maplist, not as good
 
-//	else if ((int)dmflags->value & DF_MAP_LIST)  // maplist active? 
+//	else if ((int)dmflags->value & DF_MAP_LIST)  // maplist active?
 	else if ((int)dmflags->value & DF_MAP_LIST  && maplist.nummaps > 0)  // faf: fixes crash
-	{ 
-		switch (maplist.rotationflag)        // choose next map in list 
-		{ 
-		case ML_ROTATE_SEQ:        // sequential rotation 
-			i = (maplist.currentmap + 1) % maplist.nummaps; 
-			break; 
-		
-		case ML_ROTATE_RANDOM:     // random rotation 
-			i = (int) (random() * maplist.nummaps); 
+	{
+		switch (maplist.rotationflag)        // choose next map in list
+		{
+		case ML_ROTATE_SEQ:        // sequential rotation
+			i = (maplist.currentmap + 1) % maplist.nummaps;
 			break;
-		
-		default:       // should never happen, but set to first map if it does 
-			i = 0; 
-		} // end switch 
+
+		case ML_ROTATE_RANDOM:     // random rotation
+			i = (int) (random() * maplist.nummaps);
+			break;
+
+		default:       // should never happen, but set to first map if it does
+			i = 0;
+		} // end switch
 
 
-		maplist.currentmap = i; 
-		
-		ent = G_Spawn (); 
-		ent->classname = "target_changelevel"; 
+		maplist.currentmap = i;
+
+		ent = G_Spawn ();
+		ent->classname = "target_changelevel";
 		if (maplist.mapnames[i] && !level.nextmap[0])
-			ent->map = maplist.mapnames[i]; 
+			ent->map = maplist.mapnames[i];
 		else if (level.nextmap[0])
 			ent->map = level.nextmap;
 		else
@@ -897,8 +998,8 @@ void EndDMLevel (void)
 
 		safe_bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 
-	} 
-	
+	}
+
 	else if (Last_Team_Winner <= 1 && Last_Team_Winner > -1 && team_list[Last_Team_Winner] && team_list[Last_Team_Winner]->nextmap)
 	{
 		ent= G_Spawn();
@@ -969,7 +1070,7 @@ void CheckDMRules (void)
 
 	//faf: ctb code
 	if (level.ctb_time)
-	{	
+	{
 		vec3_t		w;	// faf
 		float		range;	// faf
 		edict_t		*check = NULL;
@@ -1042,7 +1143,7 @@ void CheckDMRules (void)
 
 						}
 					}
-					
+
 				}
 				//see if anyone's carrying a briefcase near the flag
 				for (i=0 ; i < game.maxclients ; i++)
@@ -1070,7 +1171,7 @@ void CheckDMRules (void)
 
 						}
 					}
-				
+
 				}
 			}
 		}
@@ -1078,16 +1179,16 @@ void CheckDMRules (void)
 //faf end
 
 
-	for(i=0; i < MAX_TEAMS;i++) 
+	for(i=0; i < MAX_TEAMS;i++)
 	{
 		if (!team_list[i])
 			break;
-		
-		if (team_list[i]->time_to_win) 
+
+		if (team_list[i]->time_to_win)
 		{
 
 			delay = (team_list[i]->time_to_win - level.time);
-		
+
 		/*	gi.dprintf("time_to_win [%i] = %f\n", i, team_list[i]->time_to_win);
 			gi.dprintf("delay       [%i] = %f\n", i, delay);
 			gi.dprintf("level.time  [%i] = %f\n", i, level.time); */
@@ -1097,7 +1198,7 @@ void CheckDMRules (void)
 				Last_Team_Winner=i;
 				EndDMLevel ();
 				break;
-			} 
+			}
 
 			else if (delay == 30)
 				safe_bprintf ( PRINT_HIGH, "30 seconds left before team %s wins the battle!\n", team_list[i]->teamname);
@@ -1111,19 +1212,19 @@ void CheckDMRules (void)
 	if (team_list[0] && team_list[1])
 	{
 		if (team_list[0]->need_kills > 0 &&
-			team_list[0]->kills >= team_list[0]->need_kills) 
+			team_list[0]->kills >= team_list[0]->need_kills)
 			allies_kills_win++;
 
 		if (team_list[1]->need_kills > 0 &&
-			team_list[1]->kills >= team_list[1]->need_kills) 
+			team_list[1]->kills >= team_list[1]->need_kills)
 			axis_kills_win++;
 
-		if (team_list[0]->need_points > 0 && 
-			team_list[0]->score >= team_list[0]->need_points) 
+		if (team_list[0]->need_points > 0 &&
+			team_list[0]->score >= team_list[0]->need_points)
 			allies_points_win++;
 
-		if (team_list[1]->need_points > 0 && 
-			team_list[1]->score >= team_list[1]->need_points) 
+		if (team_list[1]->need_points > 0 &&
+			team_list[1]->score >= team_list[1]->need_points)
 			axis_points_win++;
 
 		if (team_list[0]->kills_and_points)
@@ -1142,7 +1243,7 @@ void CheckDMRules (void)
 				axis_points_win = 0;
 			}
 		}
-			
+
 		if (allies_kills_win || allies_points_win ||
 			axis_kills_win || axis_points_win)
 		{
@@ -1151,8 +1252,8 @@ void CheckDMRules (void)
 			{
 				if (allies_kills_win)
 				{
-					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n", 
-					team_list[0]->teamname, 
+					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					team_list[0]->teamname,
 					team_list[0]->kills,
 					team_list[0]->need_kills);
 
@@ -1160,10 +1261,10 @@ void CheckDMRules (void)
 					EndDMLevel ();
 					return;
 				}
-				else 
+				else
 				{
-					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n", 
-					team_list[0]->teamname, 
+					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					team_list[0]->teamname,
 					team_list[0]->score,
 					team_list[0]->need_points);
 
@@ -1177,8 +1278,8 @@ void CheckDMRules (void)
 			{
 				if (axis_kills_win)
 				{
-					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n", 
-					team_list[1]->teamname, 
+					safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i kills)!\n",
+					team_list[1]->teamname,
 					team_list[1]->kills,
 					team_list[1]->need_kills);
 
@@ -1186,10 +1287,10 @@ void CheckDMRules (void)
 					EndDMLevel ();
 					return;
 				}
-				else 
+				else
 				{
-				safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n", 
-					team_list[1]->teamname, 
+				safe_bprintf( PRINT_HIGH, "Team %s is victorious (%i / %i points)!\n",
+					team_list[1]->teamname,
 					team_list[1]->score,
 					team_list[1]->need_points);
 
@@ -1210,13 +1311,13 @@ void CheckDMRules (void)
 		}
 	}
 
-		
+
 //faf: this is not used below
 	if(Is_Game_Over)
 	{
 		for(i=0;i<MAX_TEAMS;i++)
 		{
-			if(team_list[i]->score > tempscore) 
+			if(team_list[i]->score > tempscore)
 			{
 				tempscore=team_list[i]->score;
 				Last_Team_Winner=i;
@@ -1290,7 +1391,7 @@ if (campaign_winner>-1)
 
 
 
- 
+
 
 	Com_sprintf (command, sizeof(command), "map \"%s\"\n", level.changemap);
 //	Com_sprintf (command, sizeof(command), "gamemap \"%s\"\n", level.changemap);
@@ -1325,7 +1426,7 @@ int HumanPlayerCount(void)
 	int playercount = 0;
     edict_t *check_ent;
 
-        
+
 	for (i = 1; i <= maxclients->value; i++)
     {
          check_ent = g_edicts + i;
@@ -1341,7 +1442,7 @@ int HumanPlayerCount(void)
 
 	}
 	return playercount;
-                              
+
 }
 
 
@@ -1402,10 +1503,10 @@ void G_RunFrame (void)
 	}*/
 
 	if ((level.framenum%40 == 1 && qbots && bots->value == 0) ||
-		(bots->value && 
+		(bots->value &&
 		//num_clients >= playermaxforbots->value
 		HumanPlayerCount() >= playermaxforbots->value
-		
+
 		))
 	{
 
@@ -1425,12 +1526,12 @@ void G_RunFrame (void)
 	}
 
 	//maintain certain player/bot levels per team according to cvars
-	else if (level.framenum > 40 && bots->value && 
+	else if (level.framenum > 40 && bots->value &&
 		((level.framenum < 300 && level.framenum%10 == 1) ||
 		(level.framenum%40 == 1))) //check every 4 seconds, except in beginning
 	{
-		alliedcount = PlayerCountForTeam(0, true); 
-		axiscount = PlayerCountForTeam(1, true); 
+		alliedcount = PlayerCountForTeam(0, true);
+		axiscount = PlayerCountForTeam(1, true);
 		if (alliedcount > alliedlevel->value)
 		{
 			for (i = 1; i <= maxclients->value; i++)

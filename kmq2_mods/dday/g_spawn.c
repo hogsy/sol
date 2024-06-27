@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,10 +28,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 
 //Ok, since we are modifying this file, we might as well declare the
-//item spawning functions here. These are the functions that actually 
-//cause the item to be spawned. By convention, the actual spawning 
+//item spawning functions here. These are the functions that actually
+//cause the item to be spawned. By convention, the actual spawning
 //function is defined wherever the entity (or item in our case) is
-//defined. 
+//defined.
 //We are actually having to do two things. We need to manage the itemlist[]
 //and we need to manage the spawns[] lists. When a level is brought up, the
 //first thing that is does is run through the list of things in it and spawns
@@ -343,7 +343,7 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"misc_banner_2", SP_misc_banner_2},
 	{"misc_banner_3", SP_misc_banner_3},
 	{"misc_banner_4", SP_misc_banner_4},
-//bcass end - banner thing	
+//bcass end - banner thing
 //bcass start - skeleton model thing
 	{"misc_skeleton", SP_misc_skeleton},
 //bcass end
@@ -376,8 +376,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"monster_soldier_light", SP_monster_soldier_light},
 	{"monster_soldier", SP_monster_soldier},
 	{"monster_soldier_ss", SP_monster_soldier_ss},
-	
-	
+
+
 	{"monster_medic", SP_monster_medic},
 */
 	{"turret_breach", SP_turret_breach},
@@ -385,17 +385,17 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"turret_range", SP_turret_range},
 	{"turret_driver", SP_turret_driver},
 
-	 
 
-    
+
+
     {"ammo_grenades", SP_item_ammo_grenades},
 	{"weapon_flamethrower",SP_item_weapon_flamethrower},
 
 	{"ammo_napalm",SP_item_ammo_napalm},
 
-   
 
-//	{"dday_tank1", SP_tank_Tank1}, 
+
+//	{"dday_tank1", SP_tank_Tank1},
 	{"objective_flag", SP_objective_flag},
 
 	{"objective_VIP", SP_objective_VIP},
@@ -470,7 +470,7 @@ char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
 	int		i, l;
-	
+
 	l = (int)strlen(string) + 1;
 
 	newb = gi.TagMalloc (l, TAG_LEVEL);
@@ -490,7 +490,7 @@ char *ED_NewString (char *string)
 		else
 			*new_p++ = string[i];
 	}
-	
+
 	return newb;
 }
 
@@ -566,7 +566,7 @@ void ED_SetDefaultFields (edict_t *ent)
 {
 	field_t	*f;
 	byte	*b;
-	
+
 	for (f=fields ; f->name ; f++)
 	{
 		if (f->flags & FFL_DEFAULT_NEG)
@@ -575,7 +575,7 @@ void ED_SetDefaultFields (edict_t *ent)
 				b = (byte *)&st;
 			else
 				b = (byte *)ent;
-				
+
 			if (f->type == F_LSTRING)
 				*(char **)(b+f->ofs) = ED_NewString ("-1");
 			else if ( (f->type == F_VECTOR) || (f->type == F_ANGLEHACK) ) {
@@ -615,7 +615,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 // go through all the dictionary pairs
 	while (1)
-	{	
+	{
 	// parse key
 		com_token = COM_Parse (&data);
 		if (com_token[0] == '}')
@@ -624,8 +624,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
 		strncpy (keyname, com_token, sizeof(keyname)-1);
-		
-	// parse value	
+
+	// parse value
 		com_token = COM_Parse (&data);
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
@@ -633,7 +633,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (com_token[0] == '}')
 			gi.error ("ED_ParseEntity: closing brace without data");
 
-		init = true;	
+		init = true;
 
 	// keynames with a leading underscore are used for utility comments,
 	// and are immediately discarded by quake
@@ -747,7 +747,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -771,7 +771,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -784,7 +784,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					(((skill->value == 2) || (skill->value == 3)) && (ent->spawnflags & SPAWNFLAG_NOT_HARD))
 					)
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -794,7 +794,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		}
 
 		ED_CallSpawn (ent);
-	}	
+	}
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
 
@@ -812,23 +812,14 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 	PlayerTrail_Init ();
 
-	//pbowens: this is actually very handy
-	gi.dprintf("server map: %s\n", mapname);
+	// pbowens: this is actually very handy
+	gi.dprintf ("server map: %s\n", mapname);
 
-
-	AI_NewMap();//JABot
-
+	AI_NewMap ();	// JABot
 }
 
 
-
-
-
-
-
-
-
-char *ReadEntFile(char *filename) 
+char *ReadEntFile (char *filename)
 {
 
 	FILE		*fp;
@@ -836,7 +827,7 @@ char *ReadEntFile(char *filename)
 	long int	i = 0;
 	int			ch;
 
-	while (true) 
+	while (true)
 	{
 		fp = fopen(filename, "r");
 		if (!fp) break;
@@ -845,9 +836,10 @@ char *ReadEntFile(char *filename)
 		;
 
 		filestring = gi.TagMalloc(i+1, TAG_LEVEL);
-		if (!filestring) break;
+		if (!filestring)
+			break;
 
-		fseek(fp, 0, SEEK_SET);
+		fseek (fp, 0, SEEK_SET);
 		for (i=0; (ch = fgetc(fp)) != EOF; i++)
 		filestring[i] = ch;
 		filestring[i] = '\0';
@@ -860,61 +852,66 @@ char *ReadEntFile(char *filename)
 	return(filestring);
 }
 
-char *LoadEntFile(char *mapname, char *entities)
+char *LoadEntFile (char *mapname, char *entities)
 {
-	char	entfilename[MAX_QPATH] = "";
+	char	cmpname[MAX_QPATH];				// Knightmare added
+	char	entfilename[MAX_OSPATH] = "";
 	char	*newentities;
 	int		i;
-	
 
 	if (ent_files->value == 0)
-		return(entities);
+		return (entities);
 
+	// hack so civ override files load
+	if ( strstr(entities, "misc_civilian") )
+		return (entities);
 
-	//hack so civ override files load
-	if (strstr(entities, "misc_civilian"))
-		return(entities);
-
-
-	//can put the word "override" in the override ents somewhere so the ent file doesnt load
-	if (strstr(entities, "override"))
-	{
-		return(entities);
+	// can put the word "override" in the override ents somewhere so the ent file doesnt load
+	if ( strstr(entities, "override") ) {
+		return (entities);
 	}
 
-
-	Com_sprintf (entfilename, sizeof(entfilename), "dday/ents/%s.ent", mapname);
+	// Knightmare- use separate buffer for mapname
 	// convert string to all lowercase (for Linux)
-	for (i = 0; entfilename[i]; i++)
-		entfilename[i] = tolower(entfilename[i]);
+	Q_strncpyz (cmpname, sizeof(cmpname), mapname);
+	for (i = 0; cmpname[i]; i++)
+		cmpname[i] = tolower(cmpname[i]);
+
+//	Com_sprintf (entfilename, sizeof(entfilename), "dday/ents/%s.ent", cmpname);
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (entfilename, sizeof(entfilename), "%s/ents/%s.ent", GameDir(), cmpname);
 
 	newentities = ReadEntFile(entfilename);
 
 	if (newentities)
-	{   //leave these dprints active they show up in the server init console section
-		gi.dprintf("%s.ent Loaded\n", mapname);
-		return(newentities);	// reassign the ents
+	{   // leave these dprints active they show up in the server init console section
+		gi.dprintf ("%s.ent Loaded\n", mapname);
+		return (newentities);	// reassign the ents
 	}
 	else
 	{
-		gi.dprintf("No .ent File for %s.bsp\n", mapname);
-		return(entities);
+		gi.dprintf ("No .ent File for %s.bsp\n", mapname);
+		return (entities);
 	}
 }
 
 
-char *LoadCTCFile(char *mapname, char *entities)
+char *LoadCTCFile (char *mapname, char *entities)
 {
-	char	entfilename[MAX_QPATH] = "";
+	char	cmpname[MAX_QPATH];				// Knightmare added
+	char	entfilename[MAX_OSPATH] = "";
 	char	*newentities;
 	int		i;
-	
 
-
-	Com_sprintf (entfilename, sizeof(entfilename), "dday/ents/%s.ctc", mapname);
+	// Knightmare- use separate buffer for mapname
 	// convert string to all lowercase (for Linux)
-	for (i = 0; entfilename[i]; i++)
-		entfilename[i] = tolower(entfilename[i]);
+	Q_strncpyz (cmpname, sizeof(cmpname), mapname);
+	for (i = 0; cmpname[i]; i++)
+		cmpname[i] = tolower(cmpname[i]);
+
+//	Com_sprintf (entfilename, sizeof(entfilename), "dday/ents/%s.ctc", cmpname);
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (entfilename, sizeof(entfilename), "%s/ents/%s.ctc", GameDir(), cmpname);
 
 	newentities = ReadEntFile(entfilename);
 
@@ -933,28 +930,49 @@ char *LoadCTCFile(char *mapname, char *entities)
 
 void LoadCampFile (void)
 {
-	char	cmpfilename[MAX_QPATH] = "";
+	char	cmpname[MAX_QPATH];				// Knightmare added
+	char	cmpfilename[MAX_OSPATH] = "";	// Knightmare- was MAX_QPATH
 	char	*camplocs;
-	int		i,c;
+	int		i, c;
 	char	*s, *f = NULL;
 	vec3_t	loc;
-	int x = 0, y = 0, z = 0;
-	int angle = 0;
-	int team = 0;
-	int	stance;
+	int		x = 0, y = 0, z = 0;
+	int		angle = 0;
+	int		team = 0;
+	int		stance;
+    // Knightmare added
+	FILE	*check;
+#ifndef _WIN32
+	size_t  len;
+#endif // _WIN32
+	// end Knightmare
 
-
-	if (level.botfiles)
-		Com_sprintf (cmpfilename, sizeof(cmpfilename), "dday/navigation/%s.cmp", level.botfiles);
-	else
-		Com_sprintf (cmpfilename, sizeof(cmpfilename), "dday/navigation/%s.cmp", level.mapname);
-
-	//gi.dprintf("sdfl %s\n", cmpfilename);
-
+	// Knightmare- use separate buffer for mapname
+	if (level.botfiles) {
+		Q_strncpyz (cmpname, sizeof(cmpname), level.botfiles);
+	}
+	else {
+		Q_strncpyz (cmpname, sizeof(cmpname), level.mapname);
+	}
 
 	// convert string to all lowercase (for Linux)
-	for (i = 0; cmpfilename[i]; i++)
-		cmpfilename[i] = tolower(cmpfilename[i]);
+	for (i = 0; cmpname[i]; i++)
+		cmpname[i] = tolower(cmpname[i]);
+
+//	Com_sprintf (cmpfilename, sizeof(cmpfilename), "dday/navigation/%s.cmp", cmpname);
+	// Knightmare- use  SavegameDir() / GameDir() instead for compatibility on all platforms
+	Com_sprintf (cmpfilename, sizeof(cmpfilename), "%s/navigation/%s.cmp", SavegameDir(), cmpname);
+
+	// fall back to GameDir() if not found in SavegameDir()
+	check = fopen(cmpfilename, "r");
+	if ( !check )
+		Com_sprintf (cmpfilename, sizeof(cmpfilename), "%s/navigation/%s.cmp", GameDir(), cmpname);
+	else
+		fclose (check);
+	// end Knightmare
+
+//	gi.dprintf("sdfl %s\n", cmpfilename);
+	gi.dprintf ("Reading camp loc file %s\n", cmpfilename);
 
 	camplocs = ReadEntFile(cmpfilename);
 
@@ -965,6 +983,14 @@ void LoadCampFile (void)
 		c = 0;
 	//	f = strdup (camplocs);
 		f = G_CopyString (camplocs);	// Knightmare- use G_CopyString instead
+		// Knightmare- replace carriage returns on Linux
+#ifndef _WIN32
+		len = strlen(f);
+		for (i = 0; i < len; i++) {
+			if (f[i] == '\r')
+				f[i] = ' ';
+		}
+#endif // _WIN32
 		s = strtok(f, "\n");
 		while (s !=NULL)
 		{
@@ -1040,6 +1066,7 @@ void LoadCampFile (void)
 	}
 	else
 	{
+		gi.dprintf ("Couldn't load camp locs from %s\n", cmpfilename);
 		return;
 	}
 
@@ -1087,8 +1114,7 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 	inhibit = 0;
 
 
-
-InitItems ();
+	InitItems ();
 
 
 	if (ctc->value)
@@ -1098,7 +1124,7 @@ InitItems ();
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -1110,7 +1136,7 @@ InitItems ();
 		else
 			ent = G_Spawn ();
 		entities = ED_ParseEdict (entities, ent);
-		
+
 		// yet another map hack
 		if (!Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27"))
 			ent->spawnflags &= ~SPAWNFLAG_NOT_HARD;
@@ -1122,7 +1148,7 @@ InitItems ();
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -1135,7 +1161,7 @@ InitItems ();
 					(((skill->value == 2) || (skill->value == 3)) && (ent->spawnflags & SPAWNFLAG_NOT_HARD))
 					)
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -1145,7 +1171,7 @@ InitItems ();
 		}
 
 		ED_CallSpawn (ent);
-	}	
+	}
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
 
@@ -1161,26 +1187,15 @@ InitItems ();
 
 	G_FindTeams ();
 
-
 	PlayerTrail_Init ();
 
 	//pbowens: this is actually very handy
-	gi.dprintf("server map: %s\n", mapname);
+	gi.dprintf ("server map: %s\n", mapname);
 
-	LoadCampFile();
+	LoadCampFile ();
 
-	AI_NewMap();//JABot
-
+	AI_NewMap ();    // JABot
 }
-
-
-
-
-
-
-
-
-
 
 
 //===================================================================
@@ -1274,7 +1289,7 @@ char *dday_statusbar =
 "endif "
 */
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -1320,9 +1335,9 @@ char *dday_statusbar =
 "endif "
 
 
-// objectives	
+// objectives
 "if 16 "
-"   xl 0 " 
+"   xl 0 "
 "   yt 0 "
 "   pic 16 "
 "endif "
@@ -1404,7 +1419,7 @@ char *dday_statusbar =
 	"xr -85 "
 	"num 3 30 "
 
-	
+
 	"yt 158 "
 	"xr -70 "
 	"pic 31 "
@@ -1639,9 +1654,9 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*death3.wav");
 	gi.soundindex ("*death4.wav");
 //	gi.soundindex ("*fall1.wav");
-//	gi.soundindex ("*fall2.wav");	
+//	gi.soundindex ("*fall2.wav");
 	gi.soundindex ("*gurp1.wav");		// drowning damage
-	gi.soundindex ("*gurp2.wav");	
+	gi.soundindex ("*gurp2.wav");
 	gi.soundindex ("*jump1.wav");		// player jump
 	gi.soundindex ("*pain25_1.wav");
 	gi.soundindex ("*pain25_2.wav");
@@ -1675,7 +1690,7 @@ void SP_worldspawn (edict_t *ent)
 	//     gbr map crashes.
 
 	/*
-	// GRM 
+	// GRM
 	gi.modelindex("#w_p38.md2");
 	gi.modelindex("#w_m98k.md2");
 	gi.modelindex("#w_mp40.md2");
@@ -1726,7 +1741,7 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/watr_out.wav");	// feet leaving water
 
 	gi.soundindex ("player/watr_un.wav");	// head going underwater
-	
+
 //	gi.soundindex ("player/u_breath1.wav");
 //	gi.soundindex ("player/u_breath2.wav");
 
@@ -1788,40 +1803,40 @@ void SP_worldspawn (edict_t *ent)
 
 	// 0 normal
 	gi.configstring(CS_LIGHTS+0, "m");
-	
+
 	// 1 FLICKER (first variety)
 	gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
-	
+
 	// 2 SLOW STRONG PULSE
 	gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
+
 	// 3 CANDLE (first variety)
 	gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
+
 	// 4 FAST STROBE
 	gi.configstring(CS_LIGHTS+4, "mamamamamama");
-	
+
 	// 5 GENTLE PULSE 1
 	gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
+
 	// 6 FLICKER (second variety)
 	gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
-	
+
 	// 7 CANDLE (second variety)
 	gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
+
 	// 8 CANDLE (third variety)
 	gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
+
 	// 9 SLOW STROBE (fourth variety)
 	gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
-	
+
 	// 10 FLUORESCENT FLICKER
 	gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
 
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-	
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing

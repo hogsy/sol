@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/rus/rus_item.c,v $
  *   $Revision: 1.7 $
  *   $Date: 2002/06/04 19:49:50 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -36,7 +36,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t rusguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t rusguninfo[MAX_TEAM_GUNS];
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 		"misc/w_pkup.wav",
 		"models/weapons/rus/g_tt33/tris.md2", 0,
 		"models/weapons/rus/v_tt33/tris.md2",
-		"w_tt33", 
+		"w_tt33",
 		"Tokarev TT33",
 		0,
 		1,
@@ -75,11 +76,11 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 		"rus",
 		&rusguninfo[tt33_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_m9130 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_m9130", 
+		"weapon_m9130",
 		WEAPON_M9130,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -110,7 +111,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_ppsh41 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_ppsh41", 
+		"weapon_ppsh41",
 		WEAPON_PPSH41,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -141,7 +142,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_pps43 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_pps43", 
+		"weapon_pps43",
 		WEAPON_PPS43,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -173,7 +174,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 	/*QUAKED weapon_dpm (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_dpm", 
+		"weapon_dpm",
 		WEAPON_DPM,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -238,7 +239,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 /*QUAKED weapon_m9130s (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_m9130s", 
+		"weapon_m9130s",
 		WEAPON_M9130S,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -332,7 +333,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_m9130 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -458,7 +459,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_rocketsG (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -491,14 +492,14 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 	},
 
 {
-       "weapon_molotov", 
+       "weapon_molotov",
 	   WEAPON_MOLOTOV,
        Pickup_Ammo,
        Use_Weapon,                             //How to use
        Drop_Weapon,
        Weapon_Molotov,                           //What the function is
        "misc/w_pkup.wav",
-       "models/weapons/jpn/g_molotov/tris.md2", 0, 
+       "models/weapons/jpn/g_molotov/tris.md2", 0,
        "models/weapons/jpn/v_molotov/tris.md2",      //The models stuff
        "w_molotov",                                    //Icon to be used
        "Molotov",                                        //Pickup name
@@ -517,7 +518,7 @@ gitem_t rusitems[MAX_TEAM_ITEMS]=
 		"rus",
 		0,
 		0
-	   
+
 
 		},
 {

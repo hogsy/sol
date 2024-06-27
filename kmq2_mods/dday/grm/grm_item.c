@@ -3,7 +3,7 @@
  *   $Source: /usr/local/cvsroot/dday/src/grm/grm_item.c,v $
  *   $Revision: 1.8 $
  *   $Date: 2002/07/23 22:48:29 $
- * 
+ *
  ***********************************
 
 Copyright (C) 2002 Vipersoft
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,7 +38,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other);
 void Drop_Ammo(edict_t * ent , gitem_t * item );
 void Weapon_Grenade (edict_t *ent);
 
-GunInfo_t grmguninfo[MAX_TEAM_GUNS];
+// Knightmare- made this var extern to fix compile on GCC
+extern GunInfo_t grmguninfo[MAX_TEAM_GUNS];
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ gitem_t grmitems[]=
 		"misc/w_pkup.wav",
 		"models/weapons/grm/g_walther/tris.md2", 0,
 		"models/weapons/grm/v_walther/tris.md2",
-		"w_p38", 
+		"w_p38",
 		"Walther P38",
 		0,
 		1,
@@ -77,11 +78,11 @@ gitem_t grmitems[]=
 		"grm",
 		&grmguninfo[P38_FRAME],
 		0
-},	
+},
 /*QUAKED weapon_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mauser98k", 
+		"weapon_mauser98k",
 		WEAPON_MAUSER98K,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -112,7 +113,7 @@ gitem_t grmitems[]=
 /*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mp40", 
+		"weapon_mp40",
 		WEAPON_MP40,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -143,7 +144,7 @@ gitem_t grmitems[]=
 /*QUAKED weapon_mp43 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mp43", 
+		"weapon_mp43",
 		WEAPON_MP43,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -175,7 +176,7 @@ gitem_t grmitems[]=
 	/*QUAKED weapon_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_mg42", 
+		"weapon_mg42",
 		WEAPON_MG42,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -240,7 +241,7 @@ gitem_t grmitems[]=
 /*QUAKED weapon_m98ks (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_m98ks", 
+		"weapon_m98ks",
 		WEAPON_M98KS,
 		Pickup_Weapon,
 		Use_Weapon,
@@ -334,7 +335,7 @@ gitem_t grmitems[]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_mauser98k (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
@@ -460,7 +461,7 @@ gitem_t grmitems[]=
 		0
 	},
 
-	
+
 /*QUAKED ammo_rocketsG (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{

@@ -722,24 +722,26 @@ void SP_func_explosive_objective (edict_t *self)
 	gi.linkentity (self);
 }
 
-void GetMapObjective (void) {
-
+void GetMapObjective (void)
+{
 	FILE	*map_file;
-	char	filename[100];
+	char	filename[256];
 	
-	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/pics/objectives/");		
+/*	Q_strncpyz (filename, sizeof(filename), GAMEVERSION "/pics/objectives/");		
 	Q_strncatz (filename, sizeof(filename), level.mapname);
-	Q_strncatz (filename, sizeof(filename),".pcx");
+	Q_strncatz (filename, sizeof(filename),".pcx"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/pics/objectives/%s.pcx", GameDir(), level.mapname);
 
-	gi.dprintf("Loading map objective pic %s...", filename);
+	gi.dprintf ("Loading map objective pic %s...", filename);
 	if (map_file = fopen(filename, "r")) 
 	{
-		fclose(map_file);
+		fclose (map_file);
 		level.objectivepic = filename;
-		gi.dprintf("done.\n");
+		gi.dprintf ("done.\n");
 	} 
 	else
-		gi.dprintf("error.\n");
+		gi.dprintf ("error.\n");
 }
 
 //faf:  ctb code
@@ -881,7 +883,7 @@ void Create_CTB_Entities (edict_t *self)
 	return;
 
 #if 0	// Knightmare- unreachable code
-	if (!stricmp(level.mapname, "dday3"))  
+	if ( !Q_stricmp(level.mapname, "dday3") )  
 	{
 		spot = G_Spawn();
 		spot->classname = "usa_base";
@@ -906,7 +908,7 @@ void Create_CTB_Entities (edict_t *self)
 //		spot->s.angles[1] = 90;
 		SP_briefcase (spot);
 	}
-	else if (!stricmp(level.mapname, "dday2"))  
+	else if ( !Q_stricmp(level.mapname, "dday2") )  
 	{
 
 		spot = G_Spawn();
@@ -932,7 +934,7 @@ void Create_CTB_Entities (edict_t *self)
 		gi.dprintf("dfjklsdfjklsdfjklsdfjkl\n");
 		
 	}
-	else if (!stricmp(level.mapname, "invade2"))  
+	else if ( !Q_stricmp(level.mapname, "invade2") )  
 	{
 
 		spot = G_Spawn();
@@ -959,7 +961,7 @@ void Create_CTB_Entities (edict_t *self)
 		SP_briefcase (spot);
 		
 	}
-	else if (!stricmp(level.mapname, "mp1dday2"))  
+	else if ( !Q_stricmp(level.mapname, "mp1dday2") )  
 	{
 
 		spot = G_Spawn();
@@ -985,7 +987,7 @@ void Create_CTB_Entities (edict_t *self)
 		SP_briefcase (spot);
 		
 	}
-	else if (!stricmp(level.mapname, "inland4"))  
+	else if ( !Q_stricmp(level.mapname, "inland4") )  
 	{
 
 		spot = G_Spawn();
@@ -1013,7 +1015,7 @@ void Create_CTB_Entities (edict_t *self)
 		SP_briefcase (spot);
 			
 	}
-	else if (!stricmp(level.mapname, "dunkirk"))  
+	else if ( !Q_stricmp(level.mapname, "dunkirk") )  
 	{
 
 		spot = G_Spawn();
@@ -1042,7 +1044,7 @@ void Create_CTB_Entities (edict_t *self)
 		SP_briefcase (spot);
 		
 	}	  
-	else if (!stricmp(level.mapname, "inland1"))  
+	else if ( !Q_stricmp(level.mapname, "inland1") )  
 	{
 		spot = G_Spawn();
 		spot->classname = "usa_base";
@@ -1069,7 +1071,7 @@ void Create_CTB_Entities (edict_t *self)
 		spot->s.angles[1] = 315;
 		SP_briefcase (spot);
 	}	  
-	else if (!stricmp(level.mapname, "inland2"))  
+	else if ( !Q_stricmp(level.mapname, "inland2") )  
 	{
 		spot = G_Spawn();
 		spot->classname = "usa_base";
@@ -1096,7 +1098,7 @@ void Create_CTB_Entities (edict_t *self)
 		spot->s.angles[1] = 10;
 		SP_briefcase (spot);
 	}
-	else if (!stricmp(level.mapname, "invade6"))
+	else if ( !Q_stricmp(level.mapname, "invade6") )
 	{
 		spot = G_Spawn();
 		spot->classname = "usa_base";

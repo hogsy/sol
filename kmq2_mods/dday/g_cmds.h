@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
- 
+
  /*
   g_cmds.h
 
@@ -43,10 +43,10 @@ typedef struct g_cmds_s
 
 
 
-void InsertCmds(g_cmds_t *cmds, int numCmds, char *src);
-void CleanUpCmds();
-g_cmds_t *FindCommand(char *cmd);
-void PrintCmds();
+void InsertCmds (g_cmds_t *cmds, int numCmds, char *src);
+void CleanUpCmds (void);
+g_cmds_t *FindCommand (char *cmd);
+void PrintCmds (void);
 void Cmd_GameVersion_f (edict_t *ent);
 void SelectNextItem (edict_t *ent,int itflags);
 void SelectPrevItem (edict_t *ent,int itflags);
@@ -65,29 +65,30 @@ void Cmd_InvDrop_f (edict_t *ent);
 void Cmd_Kill_f (edict_t *ent);
 void Cmd_PutAway_f (edict_t *ent);
 void ClientCommand (edict_t *ent);
-void Cmd_Stance(edict_t *ent);
+void Cmd_Stance (edict_t *ent);
 //void Cmd_MOS(edict_t *ent);
-//void Cmd_Create_Team(edict_t *ent);
-//void Cmd_Join_team(edict_t *ent);
-void Cmd_List_team(edict_t *ent);
-//void Cmd_Quit_team(edict_t *ent);
-void Cmd_Shout_f(edict_t *ent);
-void Cmd_DDebug_f(edict_t *ent);
-void Cmd_DDHelp_f(edict_t *ent);
+//void Cmd_Create_Team (edict_t *ent);
+//void Cmd_Join_team (edict_t *ent);
+void Cmd_List_team (edict_t *ent);
+//void Cmd_Quit_team (edict_t *ent);
+void Cmd_Shout_f (edict_t *ent);
+void Cmd_DDebug_f (edict_t *ent);
+void Cmd_DDHelp_f (edict_t *ent);
 void Cmd_Maplist_f (edict_t *ent);
 void Cmd_AutoPickUp_f (edict_t *ent);
-void Cmd_Menu_Main_f(edict_t *ent); 
-void Cmd_Menu_Team_f(edict_t *ent); 
-void Cmd_Menu_Class_f(edict_t *ent);
-void Cmd_PlayerID_f(edict_t *ent);
-void Cmd_Medic_Call_f(edict_t *ent);
-void Cmd_MOTD(edict_t *ent);
+void Cmd_Menu_Main_f (edict_t *ent);
+void Cmd_Menu_Team_f (edict_t *ent);
+void Cmd_Menu_Class_f (edict_t *ent);
+void Cmd_PlayerID_f (edict_t *ent);
+void Cmd_Medic_Call_f (edict_t *ent);
+void Cmd_MOTD (edict_t *ent);
 void Cmd_Arty_f (edict_t *ent);
 void Cmd_Objectives_Toggle (edict_t *ent);
 
 
-#define NUM_ID_CMDS     48	
-g_cmds_t id_GameCmds[NUM_ID_CMDS];
+#define NUM_ID_CMDS     48
+// Knightmare- made this var extern to fix compile on GCC
+extern g_cmds_t id_GameCmds[NUM_ID_CMDS];
 
 struct cmd_list_t
 {

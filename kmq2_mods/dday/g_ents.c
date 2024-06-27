@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -41,8 +41,8 @@ int Last_Team_Winner = 99;
 //char map_tree[MAX_TEAMS][MAX_QPATH];
 
 /*********************************************
-** This is for all of the custom entity and 
-** trigger functions for DDay				
+** This is for all of the custom entity and
+** trigger functions for DDay
 *********************************************/
 
 
@@ -73,7 +73,7 @@ void trigger_enough_troops_use (edict_t *self, edict_t *other, edict_t *activato
 		gi.dprintf("TRIGGER return code 2 \n");
 		return;
 	}
-	
+
 
 	if ( (activator->client->resp.team_on->mission != self->health) && (self->health != NO_MISSION) )
 	{
@@ -99,25 +99,25 @@ void trigger_enough_troops_use (edict_t *self, edict_t *other, edict_t *activato
 		if (self->count)
 		{
 			if (! (self->spawnflags & 1))
-			{ 
+			{
 				safe_centerprintf(activator, "%i more to go...", self->count);
-			} 
+			}
 			gi.dprintf("TRIGGER return code 4\n");
 			return;
-		} 
-	
+		}
+
 		else
 		{
 
 			if (! (self->spawnflags & 1))
-			{ 
+			{
 				safe_centerprintf(activator, "Ok, we got 'em all here!");
 			}
 			activator->client->resp.team_on->score=self->dmg;
 			team_list[self->obj_owner]->time_to_win+=self->delay;
-		} 
-				
-		
+		}
+
+
 		gi.dprintf("TRIGGER return code 5\n");
 		self->activator = activator;
 		multi_trigger (self);
@@ -144,7 +144,7 @@ void SP_info_Mission_Results (edict_t *ent)
 
 	if (!ent->classname)
 		strncpy (map_tree[ent->mass], level.mapname);
-	else 
+	else
 		strncpy (map_tree[ent->mass], ent->classname);
 
 	G_FreeEdict(ent); */
@@ -175,7 +175,7 @@ void SP_target_objective(edict_t *ent)
 	ent->wait=-1;
 	ent->use=target_objective_use;
 
-	if (ent->delay && ent->obj_owner != 99) 
+	if (ent->delay && ent->obj_owner != 99)
 		team_list[ent->obj_owner]->time_to_win = (level.time + ent->delay);
 }
 
@@ -191,39 +191,39 @@ void SP_target_objective(edict_t *ent)
 /*
 void reinforcement_think1(edict_t *ent)
 {
-	if (!strcmp(ent->classname, "info_infantry_start"))  
+	if (!strcmp(ent->classname, "info_infantry_start"))
 	{
 		team_list[ent->obj_owner]->mos[INFANTRY]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_officer_start"))  
+	else if (!strcmp(ent->classname, "info_officer_start"))
 	{
 		team_list[ent->obj_owner]->mos[OFFICER]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_lgunner_start"))  
+	else if (!strcmp(ent->classname, "info_lgunner_start"))
 	{
 		team_list[ent->obj_owner]->mos[L_GUNNER]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_hgunner_start"))  
+	else if (!strcmp(ent->classname, "info_hgunner_start"))
 	{
 		team_list[ent->obj_owner]->mos[H_GUNNER]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_sniper_start"))  
+	else if (!strcmp(ent->classname, "info_sniper_start"))
 	{
 		team_list[ent->obj_owner]->mos[SNIPER]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_special_start"))  
+	else if (!strcmp(ent->classname, "info_special_start"))
 	{
 		team_list[ent->obj_owner]->mos[SPECIAL]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_engineer_start"))  
+	else if (!strcmp(ent->classname, "info_engineer_start"))
 	{
 		team_list[ent->obj_owner]->mos[ENGINEER]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_medic_start"))  
+	else if (!strcmp(ent->classname, "info_medic_start"))
 	{
 		team_list[ent->obj_owner]->mos[MEDIC]->max_available = ent->count;
 	}
-	else if (!strcmp(ent->classname, "info_flamer_start"))  
+	else if (!strcmp(ent->classname, "info_flamer_start"))
 	{
 		team_list[ent->obj_owner]->mos[FLAMER]->max_available = ent->count;
 	}
@@ -238,7 +238,7 @@ void SP_info_reinforcement_start(edict_t *ent)
 //	ent->nextthink = level.time+((ent->delay)?ent->delay : RI->value);
 //	ent->nextspawn = ent->nextthink;
 	ent->spawnpoint = true;
-} 
+}
 
 void SP_info_reinforcement_startx(edict_t *ent)
 {
@@ -251,58 +251,59 @@ void SP_info_reinforcement_startx(edict_t *ent)
 /*needs work
 	if (ent->count  && ent->obj_owner)
 	{
-		safe_bprintf (PRINT_HIGH, "%i %i.\n", ent->count, ent->obj_owner); 
+		safe_bprintf (PRINT_HIGH, "%i %i.\n", ent->count, ent->obj_owner);
 //		ent->think = reinforcement_think1;
 //		ent->nextthink = level.time + 1;
 	}
 */
 
-} 
+}
 
 
-gitem_t *InsertItem(gitem_t *it,spawn_t *spawnInfo);
+gitem_t *InsertItem (gitem_t *it, spawn_t *spawnInfo);
 
-gitem_t usaitems[MAX_TEAM_ITEMS];
-spawn_t sp_usa[MAX_TEAM_ITEMS];
-SMos_t USA_MOS_List[NUM_CLASSES];
-void USA_UserPrecache(void);
+// Knightmare- made these vars extern to fix compile on GCC
+extern gitem_t usaitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_usa[MAX_TEAM_ITEMS];
+extern SMos_t USA_MOS_List[NUM_CLASSES];
+void USA_UserPrecache (void);
 
-gitem_t grmitems[MAX_TEAM_ITEMS];
-spawn_t sp_grm[MAX_TEAM_ITEMS];
-SMos_t GRM_MOS_List[NUM_CLASSES];
-void GRM_UserPrecache(void);
+extern gitem_t grmitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_grm[MAX_TEAM_ITEMS];
+extern SMos_t GRM_MOS_List[NUM_CLASSES];
+void GRM_UserPrecache (void);
 
-gitem_t rusitems[MAX_TEAM_ITEMS];
-spawn_t sp_rus[MAX_TEAM_ITEMS];
-SMos_t RUS_MOS_List[NUM_CLASSES];
-void RUS_UserPrecache(void);
+extern gitem_t rusitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_rus[MAX_TEAM_ITEMS];
+extern SMos_t RUS_MOS_List[NUM_CLASSES];
+void RUS_UserPrecache (void);
 
-gitem_t gbritems[MAX_TEAM_ITEMS];
-spawn_t sp_gbr[MAX_TEAM_ITEMS];
-SMos_t GBR_MOS_List[NUM_CLASSES];
-void GBR_UserPrecache(void);
+extern gitem_t gbritems[MAX_TEAM_ITEMS];
+extern spawn_t sp_gbr[MAX_TEAM_ITEMS];
+extern SMos_t GBR_MOS_List[NUM_CLASSES];
+void GBR_UserPrecache (void);
 
-gitem_t politems[MAX_TEAM_ITEMS];
-spawn_t sp_pol[MAX_TEAM_ITEMS];
-SMos_t POL_MOS_List[NUM_CLASSES];
-void POL_UserPrecache(void);
+extern gitem_t politems[MAX_TEAM_ITEMS];
+extern spawn_t sp_pol[MAX_TEAM_ITEMS];
+extern SMos_t POL_MOS_List[NUM_CLASSES];
+void POL_UserPrecache (void);
 
-gitem_t itaitems[MAX_TEAM_ITEMS];
-spawn_t sp_ita[MAX_TEAM_ITEMS];
-SMos_t ITA_MOS_List[NUM_CLASSES];
-void ITA_UserPrecache(void);
+extern gitem_t itaitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_ita[MAX_TEAM_ITEMS];
+extern SMos_t ITA_MOS_List[NUM_CLASSES];
+void ITA_UserPrecache (void);
 
-gitem_t jpnitems[MAX_TEAM_ITEMS];
-spawn_t sp_jpn[MAX_TEAM_ITEMS];
-SMos_t JPN_MOS_List[NUM_CLASSES];
-void JPN_UserPrecache(void);
+extern gitem_t jpnitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_jpn[MAX_TEAM_ITEMS];
+extern SMos_t JPN_MOS_List[NUM_CLASSES];
+void JPN_UserPrecache (void);
 
-gitem_t usmitems[MAX_TEAM_ITEMS];
-spawn_t sp_usm[MAX_TEAM_ITEMS];
-SMos_t USM_MOS_List[NUM_CLASSES];
-void USM_UserPrecache(void);
+extern gitem_t usmitems[MAX_TEAM_ITEMS];
+extern spawn_t sp_usm[MAX_TEAM_ITEMS];
+extern SMos_t USM_MOS_List[NUM_CLASSES];
+void USM_UserPrecache (void);
 
-InitTeam (char *team, int i)
+void InitTeam (char *team, int i)
 {
 	int j;
 
@@ -324,7 +325,7 @@ InitTeam (char *team, int i)
 		GRM_UserPrecache();
 		grm_index = i;
 
-	}	
+	}
 	else if (!strcmp(team, "rus"))
 	{	for(j=0;rusitems[j].classname;j++)
 		{	rusitems[j].mag_index=i;
@@ -403,7 +404,7 @@ InitTeam (char *team, int i)
 		GRM_UserPrecache();
 		grm_index = i;
 
-	}	
+	}
 
 	if (team_list[0] && team_list[1])
 		SetItemNames ();
@@ -414,24 +415,34 @@ InitTeam (char *team, int i)
 void LoadBotChat (int teamnum, char *teamid)
 {
 	char	*tempchat;
-	char	*s, *f=NULL;
+	char	*s, *f = NULL;
 	int		c;
 	char	filename[MAX_QPATH] = "";
 
 	c = 0;
-	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-sorry.txt", teamid);
+
+/*	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-sorry.txt", teamid);
 	tempchat = ReadEntFile(filename);
-	if (!tempchat) tempchat = ReadEntFile("dday/botchat/usa-sorry.txt");
+	if (!tempchat)
+		tempchat = ReadEntFile("dday/botchat/usa-sorry.txt"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/botchat/%s-sorry.txt", GameDir(), teamid);
+	tempchat = ReadEntFile(filename);
+	if (!tempchat) {
+		Com_sprintf (filename, sizeof(filename), "%s/botchat/usa-sorry.txt", GameDir());
+		tempchat = ReadEntFile(filename);
+	}
+
 	if (tempchat)
 	{
 	//	f = strdup (tempchat);
 		f = G_CopyString (tempchat);	// Knightmare- use G_CopyString instead
-		s = strtok(f, "\n");		
+		s = strtok(f, "\n");
 		Com_sprintf (botchat_sorry[teamnum][c], sizeof(botchat_sorry[teamnum][c]), "%s", s);
 		while (s!= NULL) {
 			s = strtok (NULL, "\n");
 			c++;
-			Com_sprintf (botchat_sorry[teamnum][c], sizeof(botchat_sorry[teamnum][c]), "%s", s);		
+			Com_sprintf (botchat_sorry[teamnum][c], sizeof(botchat_sorry[teamnum][c]), "%s", s);
 		}
 		botchat_sorry_count[teamnum] = c;
 	}
@@ -443,19 +454,29 @@ void LoadBotChat (int teamnum, char *teamid)
 	}
 
 	c = 0;
-	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-killed.txt", teamid);
+
+/*	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-killed.txt", teamid);
 	tempchat = ReadEntFile(filename);
-	if (!tempchat) tempchat = ReadEntFile("dday/botchat/usa-killed.txt");
+	if (!tempchat)
+		tempchat = ReadEntFile("dday/botchat/usa-killed.txt"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/botchat/%s-killed.txt", GameDir(), teamid);
+	tempchat = ReadEntFile(filename);
+	if (!tempchat) {
+		Com_sprintf (filename, sizeof(filename), "%s/botchat/usa-killed.txt", GameDir());
+		tempchat = ReadEntFile(filename);
+	}
+
 	if (tempchat)
 	{
 	//	f = strdup (tempchat);
 		f = G_CopyString (tempchat);	// Knightmare- use G_CopyString instead
-		s = strtok(f, "\n");		
+		s = strtok(f, "\n");
 		Com_sprintf (botchat_killed[teamnum][c], sizeof(botchat_killed[teamnum][c]), "%s", s);
 		while (s!= NULL) {
 			s = strtok (NULL, "\n");
 			c++;
-			Com_sprintf (botchat_killed[teamnum][c], sizeof(botchat_killed[teamnum][c]), "%s", s);		
+			Com_sprintf (botchat_killed[teamnum][c], sizeof(botchat_killed[teamnum][c]), "%s", s);
 		}
 		botchat_killed_count[teamnum] = c;
 	}
@@ -467,19 +488,29 @@ void LoadBotChat (int teamnum, char *teamid)
 	}
 
 	c = 0;
-	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-forgive.txt", teamid);
+
+/*	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-forgive.txt", teamid);
 	tempchat = ReadEntFile(filename);
-	if (!tempchat) tempchat = ReadEntFile("dday/botchat/usa-forgive.txt");
+	if (!tempchat)
+		tempchat = ReadEntFile("dday/botchat/usa-forgive.txt"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/botchat/%s-forgive.txt", GameDir(), teamid);
+	tempchat = ReadEntFile(filename);
+	if (!tempchat) {
+		Com_sprintf (filename, sizeof(filename), "%s/botchat/usa-forgive.txt", GameDir());
+		tempchat = ReadEntFile(filename);
+	}
+
 	if (tempchat)
 	{
 	//	f = strdup (tempchat);
 		f = G_CopyString (tempchat);	// Knightmare- use G_CopyString instead
-		s = strtok(f, "\n");		
+		s = strtok(f, "\n");
 		Com_sprintf (botchat_forgive[teamnum][c], sizeof(botchat_forgive[teamnum][c]), "%s", s);
 		while (s!= NULL) {
 			s = strtok (NULL, "\n");
 				c++;
-				Com_sprintf (botchat_forgive[teamnum][c], sizeof(botchat_forgive[teamnum][c]), "%s", s);	
+				Com_sprintf (botchat_forgive[teamnum][c], sizeof(botchat_forgive[teamnum][c]), "%s", s);
 		}
 		botchat_forgive_count[teamnum] = c;
 	}
@@ -491,19 +522,29 @@ void LoadBotChat (int teamnum, char *teamid)
 	}
 
 	c = 0;
-	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-self.txt", teamid);
+
+/*	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-self.txt", teamid);
 	tempchat = ReadEntFile(filename);
-	if (!tempchat) tempchat = ReadEntFile("dday/botchat/usa-self.txt");
+	if (!tempchat)
+		tempchat = ReadEntFile("dday/botchat/usa-self.txt"); */
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/botchat/%s-self.txt", GameDir(), teamid);
+	tempchat = ReadEntFile(filename);
+	if (!tempchat) {
+		Com_sprintf (filename, sizeof(filename), "%s/botchat/usa-self.txt", GameDir());
+		tempchat = ReadEntFile(filename);
+	}
+
 	if (tempchat)
 	{
 	//	f = strdup (tempchat);
 		f = G_CopyString (tempchat);	// Knightmare- use G_CopyString instead
-		s = strtok (f, "\n");		
+		s = strtok (f, "\n");
 		Com_sprintf (botchat_self[teamnum][c], sizeof(botchat_self[teamnum][c]), "%s", s);
 		while (s!= NULL) {
 			s = strtok (NULL, "\n");
 				c++;
-				Com_sprintf (botchat_self[teamnum][c], sizeof(botchat_self[teamnum][c]), "%s", s);	
+				Com_sprintf (botchat_self[teamnum][c], sizeof(botchat_self[teamnum][c]), "%s", s);
 		}
 		botchat_self_count[teamnum] = c;
 	}
@@ -515,14 +556,24 @@ void LoadBotChat (int teamnum, char *teamid)
 	}
 /*
 	c = 0;
-	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-random.txt", teamid);
+
+//	Com_sprintf (filename, sizeof(filename), "dday/botchat/%s-random.txt", teamid);
+//	tempchat = ReadEntFile(filename);
+//	if (!tempchat)
+//		tempchat = ReadEntFile("dday/botchat/usa-random.txt");
+	// Knightmare- use GameDir() instead for compatibility on all platforms
+	Com_sprintf (filename, sizeof(filename), "%s/botchat/%s-random.txt", GameDir(), teamid);
 	tempchat = ReadEntFile(filename);
-	if (!tempchat) tempchat = ReadEntFile("dday/botchat/usa-random.txt");
+	if (!tempchat) {
+		Com_sprintf (filename, sizeof(filename), "%s/botchat/usa-random.txt", GameDir());
+		tempchat = ReadEntFile(filename);
+	}
+
 	if (tempchat)
 	{
 	//	f = strdup (tempchat);
 		f = G_CopyString (tempchat);	// Knightmare- use G_CopyString instead
-		s = strtok(f, "\n");		
+		s = strtok(f, "\n");
 		Com_sprintf (botchat_random[teamnum][c], sizeof(botchat_random[teamnum][c]), "%s", s);
 		while (s!= NULL) {
 			s = strtok (NULL, "\n");
@@ -544,19 +595,15 @@ void LoadBotChat (int teamnum, char *teamid)
 void SP_info_team_start(edict_t *ent)
 {
 	int i, k;
-	
+
 	i = ent->obj_owner;
 
-
-
-	//mapper set fullbright to 1 in info_team_start
+	// mapper set fullbright to 1 in info_team_start
 	if (ent->groundentity_linkcount == true)
 		level.fullbright = true;
-	
+
 	if (ent->teleport_time)
 		level.fog = ent->teleport_time;
-
-
 
 	// fix for mappers who use capital letters for teamid
 	for (k = 0; ent->pathtarget[k]; k++)
@@ -647,7 +694,7 @@ void SP_info_team_start(edict_t *ent)
 	if (ent->style == 2)
 		team_list[i]->kills_and_points = true;
 
-	if (!stricmp(team_list[i]->teamid, "usm"))  
+	if (!Q_stricmp(team_list[i]->teamid, "usm"))
 	{
 	//	strncpy (team_list[i]->teamid, "usa");
 	//	strncpy (team_list[i]->playermodel, "usa");
@@ -669,7 +716,7 @@ void SP_info_team_start(edict_t *ent)
 
 
 	//make it so if allies win dday5 it goes to dday1
-	if (!stricmp(level.mapname, "dday5"))  
+	if (!Q_stricmp(level.mapname, "dday5"))
 	{
 		team_list[0]->nextmap = "dday1";
 	}
@@ -699,7 +746,7 @@ void SP_info_team_start(edict_t *ent)
 
 
 
-	
+
 	if (ent->count!=99 || Last_Team_Winner==99 )
 	{
 		if (ent->count==TEAM_OFFENCE) team_list[i]->mission=TEAM_OFFENCE;
@@ -732,13 +779,13 @@ void SP_info_team_start(edict_t *ent)
 		team_list[i]->delay = 0;
 
 	// now is the time to hook up the mos .dll files...
-	   
+
 //    InitializeUserDLLs(LoadUserDLLs(ent, i),i);
 
 
 	InitTeam(ent->pathtarget,i);
 
-	if (campaign->string 
+	if (campaign->string
 		&& ent->obj_owner == 1)//so it doesn't get run twice
 		SetupCampaign(false);
 
