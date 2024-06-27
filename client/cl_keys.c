@@ -937,6 +937,10 @@ void Key_Init (void)
 	consolekeys[K_KP_PGDN] = true;
     consolekeys[K_KP_MULT] = true;
 
+#ifdef __MACOSX_
+	consolekeys[K_KP_EQUAL] = true;
+#endif // __MACOSX_
+
 	consolekeys[K_SHIFT] = true;
 	consolekeys[K_INS] = true;
 	consolekeys[K_KP_INS] = true;
