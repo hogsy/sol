@@ -384,7 +384,7 @@
     <ClCompile Include="..\..\renderer\r_utils.c">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\qcommon\wal_json.c">
+    <ClCompile Include="..\..\qcommon\json_parse.c">
       <Filter>Source Files\common</Filter>
     </ClCompile>
   </ItemGroup>

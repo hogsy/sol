@@ -556,6 +556,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\qcommon\json_parse.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\qcommon\md4.c"
 					>
 				</File>
@@ -569,10 +573,6 @@
 				</File>
 				<File
 					RelativePath="..\..\game\q_shared.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\qcommon\wal_json.c"
 					>
 				</File>
 				<File

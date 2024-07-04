@@ -257,6 +257,10 @@ SOURCE=..\..\qcommon\filesystem.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\qcommon\json_parse.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\qcommon\md4.c
 # End Source File
 # Begin Source File
@@ -270,10 +274,6 @@ SOURCE=..\..\qcommon\pmove.c
 # Begin Source File
 
 SOURCE=..\..\game\q_shared.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\qcommon\wal_json.c
 # End Source File
 # Begin Source File
 

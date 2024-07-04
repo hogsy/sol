@@ -254,9 +254,9 @@ QUAKE2_OBJS = \
 	$(BUILDDIR)/client/crc.o \
 	$(BUILDDIR)/client/cvar.o \
 	$(BUILDDIR)/client/filesystem.o \
+	$(BUILDDIR)/client/json_parse.o \
 	$(BUILDDIR)/client/md4.o \
 	$(BUILDDIR)/client/net_chan.o \
-	$(BUILDDIR)/client/wal_json.o \
 	$(BUILDDIR)/client/wildcard.o \
 	$(BUILDDIR)/client/zip.o \
 	$(BUILDDIR)/client/unzip.o \
@@ -524,13 +524,13 @@ $(BUILDDIR)/client/cvar.o :       	$(COMMON_DIR)/cvar.c
 $(BUILDDIR)/client/filesystem.o :      	$(COMMON_DIR)/filesystem.c
 	$(DO_CC)
 
+$(BUILDDIR)/client/json_parse.o :   	$(COMMON_DIR)/json_parse.c
+	$(DO_CC)
+
 $(BUILDDIR)/client/md4.o :        	$(COMMON_DIR)/md4.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/net_chan.o :   	$(COMMON_DIR)/net_chan.c
-	$(DO_CC)
-
-$(BUILDDIR)/client/wal_json.o :   	$(COMMON_DIR)/wal_json.c
 	$(DO_CC)
 
 $(BUILDDIR)/client/wildcard.o :   	$(COMMON_DIR)/wildcard.c
@@ -701,9 +701,9 @@ Q2DED_OBJS = \
 	$(BUILDDIR)/ded/crc.o \
 	$(BUILDDIR)/ded/cvar.o \
 	$(BUILDDIR)/ded/filesystem.o \
+	$(BUILDDIR)/ded/json_parse.o \
 	$(BUILDDIR)/ded/md4.o \
 	$(BUILDDIR)/ded/net_chan.o \
-	$(BUILDDIR)/ded/wal_json.o \
 	$(BUILDDIR)/ded/wildcard.o \
 	$(BUILDDIR)/ded/zip.o \
 	$(BUILDDIR)/ded/unzip.o \
@@ -750,13 +750,13 @@ $(BUILDDIR)/ded/cvar.o :       $(COMMON_DIR)/cvar.c
 $(BUILDDIR)/ded/filesystem.o :      $(COMMON_DIR)/filesystem.c
 	$(DO_DED_CC)
 
+$(BUILDDIR)/ded/json_parse.o :   $(COMMON_DIR)/json_parse.c
+	$(DO_DED_CC)
+
 $(BUILDDIR)/ded/md4.o :        $(COMMON_DIR)/md4.c
 	$(DO_DED_CC)
 
 $(BUILDDIR)/ded/net_chan.o :   $(COMMON_DIR)/net_chan.c
-	$(DO_DED_CC)
-
-$(BUILDDIR)/ded/wal_json.o :   $(COMMON_DIR)/wal_json.c
 	$(DO_DED_CC)
 
 $(BUILDDIR)/ded/wildcard.o :   $(COMMON_DIR)/wildcard.c

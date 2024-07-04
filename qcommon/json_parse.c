@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// wal_json.c
+// json_parse.c
 
 #include "qcommon.h"
 #include "../libraries/jsmn/jsmn.h"
