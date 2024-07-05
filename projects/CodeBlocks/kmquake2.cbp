@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="kmquake2" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win x86">
+				<Option platforms="Windows;" />
+				<Option output="./kmquake2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option external_deps="lib.a;lib.a;lib.a;lib.a;" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<Linker>
+					<Add library="winmm" />
+					<Add library="ws2_32" />
+					<Add library="glu32" />
+					<Add library="lib.a" />
+					<Add directory="../../win32/lib/VS2008/" />
+				</Linker>
+			</Target>
+			<Target title="Debug Win x64">
+				<Option platforms="Windows;" />
+				<Option output="./kmquake2_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="x64/Debug/" />
+				<Option external_deps="lib.a;lib.a;lib.a;lib.a;" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-W" />
+					<Add option="-O0" />
+				</Compiler>
+				<Linker>
+					<Add library="winmm" />
+					<Add library="ws2_32" />
+					<Add library="glu32" />
+					<Add library="lib.a" />
+					<Add directory="../../win32/lib/VS2008_x64/" />
+				</Linker>
+			</Target>
+			<Target title="Release Win x86">
+				<Option platforms="Windows;" />
+				<Option output="./kmquake2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release/" />
+				<Option external_deps="lib.a;lib.a;lib.a;lib.a;" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+				</Compiler>
+				<Linker>
+					<Add library="winmm" />
+					<Add library="ws2_32" />
+					<Add library="glu32" />
+					<Add library="lib.a" />
+					<Add directory="../../win32/lib/VS2008/" />
+				</Linker>
+			</Target>
+			<Target title="Release Win x64">
+				<Option platforms="Windows;" />
+				<Option output="./kmquake2_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="x64/Release/" />
+				<Option external_deps="lib.a;lib.a;lib.a;lib.a;" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="Debug Unix x86">
+				<Option platforms="Unix;" />
+				<Option output="./kmquake2_i386" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-m32" />
+					<Add option="-g" />
+					<Add option="-W" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add directory="/usr/include/SDL2" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+					<Add library="libm.a" />
+					<Add library="libvorbisfile.a" />
+					<Add library="libz.a" />
+					<Add library="libpng.a" />
+					<Add library="libjpeg.a" />
+					<Add library="libSDL2.a" />
+				</Linker>
+			</Target>
+			<Target title="Debug Unix x64">
+				<Option platforms="Unix;" />
+				<Option output="./kmquake2_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="x64/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-W" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add directory="/usr/include/SDL2" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+					<Add library="libm.a" />
+					<Add library="libvorbisfile.a" />
+					<Add library="libz.a" />
+					<Add library="libpng.a" />
+					<Add library="libjpeg.a" />
+					<Add library="libSDL2.a" />
+				</Linker>
+			</Target>
+			<Target title="Release Unix x86">
+				<Option platforms="Unix;" />
+				<Option output="./kmquake2_i386" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-m32" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add directory="/usr/include/SDL2" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+					<Add library="libm.a" />
+					<Add library="libvorbisfile.a" />
+					<Add library="libz.a" />
+					<Add library="libpng.a" />
+					<Add library="libjpeg.a" />
+					<Add library="libSDL2.a" />
+				</Linker>
+			</Target>
+			<Target title="Release Unix x64">
+				<Option platforms="Unix;" />
+				<Option output="./kmquake2_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="x64/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-m64" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add directory="/usr/include/SDL2" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+					<Add library="libm.a" />
+					<Add library="libvorbisfile.a" />
+					<Add library="libz.a" />
+					<Add library="libpng.a" />
+					<Add library="libjpeg.a" />
+					<Add library="libSDL2.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../client/anorms.h" />
+		<Unit filename="../../client/cdaudio.h" />
+		<Unit filename="../../client/cinematic.h" />
+		<Unit filename="../../client/cl_cin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_cinematic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_console.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_download.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_effects.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_ents.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_event.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_http.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_hud.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_hud_script.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_input.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_keys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_lights.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_loc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_parse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_particle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_predict.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_qcurl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_screen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_string.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_tempent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/cl_view.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/client.h" />
+		<Unit filename="../../client/console.h" />
+		<Unit filename="../../client/input.h" />
+		<Unit filename="../../client/keys.h" />
+		<Unit filename="../../client/particles.h" />
+		<Unit filename="../../client/qcurl.h" />
+		<Unit filename="../../client/ref.h" />
+		<Unit filename="../../client/screen.h" />
+		<Unit filename="../../client/snd_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/snd_loc.h" />
+		<Unit filename="../../client/snd_mem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/snd_mix.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/snd_ogg.h" />
+		<Unit filename="../../client/snd_stream.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../client/sound.h" />
+		<Unit filename="../../client/vid.h" />
+		<Unit filename="../../client/x86.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../game/game.h" />
+		<Unit filename="../../game/m_flash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../game/q_shared.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../game/q_shared.h" />
+		<Unit filename="../../qcommon/cmd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/cmodel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/crc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/cvar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/filesystem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/filesystem.h" />
+		<Unit filename="../../qcommon/json_parse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/md4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/net_chan.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/pmove.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../qcommon/q1palette.h" />
+		<Unit filename="../../qcommon/q2palette.h" />
+		<Unit filename="../../qcommon/qcommon.h" />
+		<Unit filename="../../qcommon/qfiles.h" />
+		<Unit filename="../../qcommon/vid_modes.h" />
+		<Unit filename="../../qcommon/wildcard.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/glext.h" />
+		<Unit filename="../../renderer/qgl.h" />
+		<Unit filename="../../renderer/r_alias.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_alias.h" />
+		<Unit filename="../../renderer/r_alias_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_arb_program.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_backend.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_beam.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_bloom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_draw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_entity.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_fog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_fragment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_glstate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_image.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_light.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_local.h" />
+		<Unit filename="../../renderer/r_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_model.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_model.h" />
+		<Unit filename="../../renderer/r_particle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_sky.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_sprite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_upscale.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_vlights.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../renderer/r_warp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/server.h" />
+		<Unit filename="../../server/sv_ccmds.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_ents.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_send.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_user.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../server/sv_world.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_apply_changes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_credits.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_defaults_confirm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_game_load.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_game_save.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mods.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_addressbook.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_dmoptions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_download.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_joinserver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_playersetup.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_mp_startserver.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_multiplayer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_controls.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_effects.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_interface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_keys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_screen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_options_sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_quit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_video.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/menu_video_advanced.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_draw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_local.h" />
+		<Unit filename="../../ui/ui_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_mouse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../ui/ui_widgets.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../unix/qasm.h">
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/sdl_gl.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/sdl_snd.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/snd_mixa.s">
+			<Option compilerVar="CC" />
+			<Option compiler="gcc" use="1" buildCommand="$compiler $options $includes -DELF -x assembler-with-cpp -c $file -o $object" />
+			<Option target="Debug Unix x86" />
+			<Option target="Release Unix x86" />
+		</Unit>
+		<Unit filename="../../unix/unix_cd.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_glob.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_glob.h">
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_glw.h">
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_input.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_main.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_net.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_qgl.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_qsh.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unix_vid.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/unixquake.h">
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/zip/ioapi.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/zip/unzip.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../unix/zip/zip.c">
+			<Option compilerVar="CC" />
+			<Option target="Release Unix x86" />
+			<Option target="Release Unix x64" />
+			<Option target="Debug Unix x86" />
+			<Option target="Debug Unix x64" />
+		</Unit>
+		<Unit filename="../../win32/kmq2.ico">
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/q2mp1.ico">
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/q2mp2.ico">
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/startup2.bmp">
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/startup2beta.bmp">
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_cd.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_conproc.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_dedconsole.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_glimp.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_glw.h" />
+		<Unit filename="../../win32/win_input.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_main.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_net.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_qgl.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_qsh.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_snd.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_vid.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/win_wndproc.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug Win x86" />
+			<Option target="Debug Win x64" />
+			<Option target="Release Win x86" />
+			<Option target="Release Win x64" />
+		</Unit>
+		<Unit filename="../../win32/winquake.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

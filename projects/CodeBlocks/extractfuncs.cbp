@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="extractfuncs" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win x86">
+				<Option output="../../tools_bin/extractfuncs" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+				</Compiler>
+			</Target>
+			<Target title="Debug Win x64">
+				<Option output="../../tools_bin/extractfuncs_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/x64/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-W" />
+					<Add option="-O0" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win x86">
+				<Option output="../../tools_bin/extractfuncs" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-W" />
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win x64">
+				<Option output="../../tools_bin/extractfuncs_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/x64/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="-W" />
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+			<Target title="Debug Unix x86">
+				<Option output="../../tools_bin/extractfuncs_i386" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-m32" />
+					<Add option="-g" />
+					<Add option="-W" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Debug Unix x64">
+				<Option output="../../tools_bin/extractfuncs_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/x64/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-W" />
+					<Add option="-O0" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+			<Target title="Release Unix x86">
+				<Option output="../../tools_bin/extractfuncs_i386" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-m32" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Release Unix x64">
+				<Option output="../../tools_bin/extractfuncs_x64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="extractfuncs/x64/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-m64" />
+					<Add option="-W" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add option="-DSCREWUP" />
+					<Add option="-D_CRT_SECURE_NO_WARNINGS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../extractfuncs/ef_local.h" />
+		<Unit filename="../../extractfuncs/extractfuncs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../extractfuncs/l_log.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../extractfuncs/l_log.h" />
+		<Unit filename="../../extractfuncs/l_memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../extractfuncs/l_memory.h" />
+		<Unit filename="../../extractfuncs/l_precomp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../extractfuncs/l_precomp.h" />
+		<Unit filename="../../extractfuncs/l_script.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../extractfuncs/l_script.h" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
