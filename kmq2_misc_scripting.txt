@@ -105,7 +105,8 @@ pakRemapList
 This pak remap script remaps the models and sounds used by the Shambler, including gibs and the lightning bolt
 attachement.
 
-The remap script parser will output any errors it encounters.  This output from filesystem initialization is not visible in the in-game console.  So you will need to start KMQuake2 in dedicated mode to see if the script was correctly
+The remap script parser will output any errors it encounters.  This output from filesystem initialization is not
+visible in the in-game console.  So you will need to start KMQuake2 in dedicated mode to see if the script was correctly
 parsed.  Here's an example of such output:
 
 Loaded 267 pak remaps from file ./gamedir/id1_pakremap.def
@@ -118,6 +119,77 @@ in the script, then one of the remaps is misspelled.  In which case the filesyst
 Pak remap orgName gfx/palete.lmp in ./gamedir/id1_pakremap.def was not found in any paks
 
 Check the spelling of the remap against the contents of the gamedir's paks to correct it.
+
+================================
+
+	OGG_JSON SCRIPTING
+
+================================
+
+KMQuake2 0.20u8 supports remapping .ogg files from under the Quake import path via .ogg_json scripts.  These scripts are
+loaded from the "music" folder under the current gamedir.
+
+Each .ogg_json script specifies a single .ogg file to import.  It must have the same name before the '.' as the virtual filename that
+the imported .ogg file will be mapped to.
+
+Here's an example of a .ogg_json script named q1track02.ogg_json that mounts a .ogg file from the Quake import path:
+
+{
+	"virtualName" : "music/q1track02",
+	"importGame" : "Quake1",
+	"importPath0" : "id1/music/track02.ogg",
+	"importPath1" : "rerelease/id1/music/track02.ogg",
+	"importPath2" : "id1/sound/cdtracks/track002.ogg",
+	"importPath3" : "id1/sound/cdtracks/track02.ogg",
+	"importPath4" : "id1/music/track002.ogg",
+	"importPath5" : "id1/music/cdtracks/track002.ogg",
+	"importPath6" : "id1/music/cdtracks/track02.ogg"
+}
+
+"virtualName"
+This key specifies the virtual filename that the imported ogg file will be mapped to.  It must match the filename
+of the .ogg_json script.
+
+"importGame"
+This key specifies the name of the game path to import from.  Right now only "Quake", "Quake1" and "Quake1RR" are supported.
+These all specify the currently loaded Quake import path.
+
+"importPath0" - "importPath7"
+These keys specify the file paths under the currently loaded Quake import path to try.
+Multiple paths are needed becase the path for a .ogg file varies based on whether it's under the Steam Quake rerelease path,
+the Steam Quake original release path, or one used by a Quake source port in a traditional install path.
+
+You can see a list of the loaded ogg vorbis files in the console by typing "ogg list".  Here's an example of such output:
+
+1 music/track02.ogg
+.
+.
+.
+20 music/track21.ogg
+21 music/q1track02.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track02.ogg)
+22 music/q1track03.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track03.ogg)
+23 music/q1track04.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track04.ogg)
+24 music/q1track05.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track05.ogg)
+25 music/q1track06.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track06.ogg)
+26 music/q1track07.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track07.ogg)
+27 music/q1track08.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track08.ogg)
+28 music/q1track09.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track09.ogg)
+29 music/q1track10.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track10.ogg)
+30 music/q1track11.ogg (imported from D:\\Steam\steamapps\common\Quake\rerelease/id1/music/track11.ogg)
+30 Ogg Vorbis files.
+
+You can test each remapped ogg file by typing "ogg play <trackname>" in the console, where <trackname> is the name without
+the "music/" prefix or the ".ogg" extension (e.g. "ogg play q1track02").
+
+If none of the "importPath" file path keys match a .ogg file under the Quake import path, or the Quake import path is not set up correctly,
+you will get an error message like this in the console:
+
+"S_OpenBackgroundTrack: couldn't find <filename>"
+
+when trying to play the remapped .ogg file in the console.
+
+In that case, check that the "quake_importpath" cvar matches the path of the Quake install to be imported from, and that at
+least one of the "importPath" file path keys are properly relative to the Quake import path.
 
 ================================
 

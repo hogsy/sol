@@ -28,6 +28,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*
 ============================================================================
 
+GENERAL JSON PARSING
+
+============================================================================
+*/
+
+static void jsonprintf (qboolean verbose, char *format, ...)
+{
+	va_list		argptr;
+	char		buf[1024];
+
+	if ( !verbose )
+		return;
+
+	va_start (argptr, format);
+	Q_vsnprintf (buf, sizeof(buf), format, argptr);
+	va_end (argptr);
+
+	Com_DPrintf ("%s", buf);
+}
+
+
+static int jsoneq (const char *json, jsmntok_t *tok, const char *s)
+{
+	if (tok->type == JSMN_STRING && (int)strlen(s) == tok->end - tok->start &&
+		strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
+			return 0;
+	}
+	return -1;
+}
+
+/*
+============================================================================
+
 WAL_JSON LOADING
 
 ============================================================================
@@ -134,30 +167,6 @@ static unsigned int contentflags_from_string (const char *flagName)
 }
 #endif
 
-static void jsonprintf (qboolean verbose, char *format, ...)
-{
-	va_list		argptr;
-	char		buf[1024];
-
-	if ( !verbose )
-		return;
-
-	va_start (argptr, format);
-	Q_vsnprintf (buf, sizeof(buf), format, argptr);
-	va_end (argptr);
-
-	Com_DPrintf ("%s", buf);
-}
-
-static int jsoneq (const char *json, jsmntok_t *tok, const char *s)
-{
-	if (tok->type == JSMN_STRING && (int)strlen(s) == tok->end - tok->start &&
-		strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
-			return 0;
-	}
-	return -1;
-}
-
 qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, color_t *color, qboolean verbose)
 {
 	jsmn_parser		p;
@@ -203,7 +212,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 	// Parse all keys of JSON root object
 	for (i = 1; i < nElements; i++)
 	{
-		if ( jsoneq(jsonStr, &tok[i], "width") == 0)
+		if (jsoneq(jsonStr, &tok[i], "width") == 0)
 		{
 			if ( (tok[i+1].type == JSMN_STRING) || (tok[i+1].type == JSMN_PRIMITIVE) ) {
 				memset (valStr, 0, sizeof(valStr));
@@ -216,7 +225,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'width'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "height") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "height") == 0)
 		{
 			if ( (tok[i+1].type == JSMN_STRING) || (tok[i+1].type == JSMN_PRIMITIVE) ) {
 				memset (valStr, 0, sizeof(valStr));
@@ -229,7 +238,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'height'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "value") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "value") == 0)
 		{
 			if ( (tok[i+1].type == JSMN_STRING) || (tok[i+1].type == JSMN_PRIMITIVE) ) {
 			/*	memset (valStr, 0, sizeof(valStr));
@@ -242,7 +251,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'value'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "flags") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "flags") == 0)
 		{
 			if (tok[i+1].type == JSMN_STRING) {
 			/*	memset (valStr, 0, sizeof(valStr));
@@ -286,7 +295,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'flags'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "contents") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "contents") == 0)
 		{
 			if (tok[i+1].type == JSMN_STRING) {
 			/*	memset (valStr, 0, sizeof(valStr));
@@ -330,7 +339,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'contents'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "animation") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "animation") == 0)
 		{
 			if (tok[i+1].type == JSMN_STRING)  {
 			/*	memset (valStr, 0, sizeof(valStr));
@@ -343,7 +352,7 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 				jsonprintf (verbose, "%s has wrong type for 'animation'\n", fileName);
 			}
 		}
-		else if ( jsoneq(jsonStr, &tok[i], "color") == 0)
+		else if (jsoneq(jsonStr, &tok[i], "color") == 0)
 		{
 			if (tok[i+1].type == JSMN_STRING) 
 			{
@@ -382,7 +391,124 @@ qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jso
 		}
 		else {
 			memset (keyStr, 0, sizeof(keyStr));
-			strncpy (keyStr, jsonStr + tok[i+1].start, min(tok[i+1].end - tok[i+1].start, sizeof(keyStr)-1));
+			strncpy (keyStr, jsonStr + tok[i].start, min(tok[i].end - tok[i].start, sizeof(keyStr)-1));
+			jsonprintf (verbose, "%s has unknown field: %s\n", fileName, keyStr);
+		}
+	}
+
+	return true;
+}
+
+/*
+============================================================================
+
+OGG_JSON LOADING
+
+============================================================================
+*/
+
+qboolean Com_ParseOggJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, oggImport_t *iData, qboolean verbose)
+{
+	jsmn_parser		p;
+	jsmntok_t		tok[1024];	//, *tok2;
+	int				i, j, nElements;
+	char			keyStr[1024];
+	char			valStr[1024];
+	size_t			keyLen;
+	char			numCh;
+	char			numBuf[4] = {0};
+
+	if ( !jsonStr || !iData ) {
+		jsonprintf (verbose, "ParseOggJSON (%s): called with NULL pointer(s)\n", fileName);
+		return false;
+	}
+
+	jsonprintf (verbose, "Parsing %s, size = %i\n", fileName, jsonStrLen);
+
+	jsmn_init (&p);
+	nElements = jsmn_parse (&p, jsonStr, jsonStrLen, tok, sizeof(tok) / sizeof(tok[0]));
+
+	// we had a parse error
+	if (nElements < 0) {
+		jsonprintf (verbose, "ParseOggJSON (%s): jsmn parse error %i\n", fileName, nElements);
+		return false;
+	}
+
+	// must have at least 1 element
+	if (nElements < 1) {
+		jsonprintf (verbose, "ParseOggJSON (%s): too few elements (%i)\n", fileName, nElements);
+		return false;
+	}
+
+	// assume top-level element is an object
+	if (tok[0].type != JSMN_OBJECT) {
+		jsonprintf (verbose, "ParseOggJSON (%s): first element is not an object\n", fileName);
+		return false;
+	}
+
+	// Zero all fields
+	iData->virtualName[0] = 0;
+	iData->importGame[0] = 0;
+	for (i = 0; i < MAX_OGG_IMPORT_PATHS; i++) {
+		iData->importPath[i][0] = 0;
+	}
+
+	// Parse all keys of JSON root object
+	for (i = 1; i < nElements; i++)
+	{
+		if (jsoneq(jsonStr, &tok[i], "virtualName") == 0)
+		{
+			if (tok[i+1].type == JSMN_STRING)  {
+				memset (valStr, 0, sizeof(valStr));
+				strncpy (valStr, jsonStr + tok[i+1].start, min(tok[i+1].end - tok[i+1].start, sizeof(valStr)-1));
+				Q_strncpyz (iData->virtualName, sizeof(iData->virtualName), valStr);
+				jsonprintf (verbose, "virtualName: %s\n", valStr);
+				i++;
+			}
+			else {
+				jsonprintf (verbose, "%s has wrong type for 'virtualName'\n", fileName);
+			}
+		}
+		else if (jsoneq(jsonStr, &tok[i], "importGame") == 0)
+		{
+			if (tok[i+1].type == JSMN_STRING)  {
+				memset (valStr, 0, sizeof(valStr));
+				strncpy (valStr, jsonStr + tok[i+1].start, min(tok[i+1].end - tok[i+1].start, sizeof(valStr)-1));
+				Q_strncpyz (iData->importGame, sizeof(iData->importGame), valStr);
+				jsonprintf (verbose, "importGame: %s\n", valStr);
+				i++;
+			}
+			else {
+				jsonprintf (verbose, "%s has wrong type for 'importGame'\n", fileName);
+			}
+		}
+		else if ( (jsoneq(jsonStr, &tok[i], "importPath0") == 0) || (jsoneq(jsonStr, &tok[i], "importPath1") == 0) ||
+				(jsoneq(jsonStr, &tok[i], "importPath2") == 0) || (jsoneq(jsonStr, &tok[i], "importPath3") == 0) ||
+				(jsoneq(jsonStr, &tok[i], "importPath4") == 0) || (jsoneq(jsonStr, &tok[i], "importPath5") == 0) ||
+				(jsoneq(jsonStr, &tok[i], "importPath6") == 0) || (jsoneq(jsonStr, &tok[i], "importPath7") == 0) )
+		{
+			memset (keyStr, 0, sizeof(keyStr));
+			strncpy (keyStr, jsonStr + tok[i].start, min(tok[i].end - tok[i].start, sizeof(keyStr)-1));
+			keyLen = strlen(keyStr);
+			numCh = keyStr[keyLen - 1];
+			numBuf[0] = numCh;
+			j = atoi(numBuf);
+		//	jsonprintf (verbose, "parsing %s (%c, %i)\n", keyStr, numCh, j);
+			j = min(max(j, 0), MAX_OGG_IMPORT_PATHS - 1);
+			if (tok[i+1].type == JSMN_STRING) {
+				memset (valStr, 0, sizeof(valStr));
+				strncpy (valStr, jsonStr + tok[i+1].start, min(tok[i+1].end - tok[i+1].start, sizeof(valStr)-1));
+				Q_strncpyz (iData->importPath[j], sizeof(iData->importPath[j]), valStr);
+				jsonprintf (verbose, "importPath%i: %s\n", j, valStr);
+				i++;
+			}
+			else {
+				jsonprintf (verbose, "%s has wrong type for 'importPath%i'\n", fileName, j);
+			}
+		}
+		else {
+			memset (keyStr, 0, sizeof(keyStr));
+			strncpy (keyStr, jsonStr + tok[i].start, min(tok[i].end - tok[i].start, sizeof(keyStr)-1));
 			jsonprintf (verbose, "%s has unknown field: %s\n", fileName, keyStr);
 		}
 	}

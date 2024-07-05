@@ -731,6 +731,64 @@ int FS_FOpenFile (const char *name, fileHandle_t *f, fsMode_t mode)
 
 /*
 =================
+FS_FOpenDirectFile
+
+Opens a file for "mode".
+Returns file size or -1 if an error occurs/not found.
+Opens separate files in absolute paths only.
+=================
+*/
+int FS_FOpenDirectFile (const char *name, fileHandle_t *f, fsMode_t mode)
+{
+	fsHandle_t	*handle = NULL;
+	int			size = -1;
+
+	handle = FS_HandleForFile(name, f);
+
+	Q_strncpyz(handle->name, sizeof(handle->name), name);
+	handle->mode = mode;
+
+	switch (mode)
+	{
+	case FS_READ:
+		handle->file = fopen(name, "rb");
+		if (handle->file) {
+			fs_fileInPack = false;
+			size = FS_FileLength(handle->file);
+		}
+		break;
+	case FS_WRITE:
+		handle->file = fopen(name, "wb");
+		if (handle->file) {
+			size = 0;
+		}
+		break;
+	case FS_APPEND:
+		handle->file = fopen(name, "ab");
+		if (handle->file) {
+			size = FS_FileLength(handle->file);
+		}
+		break;
+	default:
+		Com_Error (ERR_FATAL, "FS_FOpenDirectFile: bad mode (%i)", mode);
+	}
+
+	if (fs_debug->integer)
+		Com_Printf ("FS_FOpenDirectFile: %s\n", handle->name);
+
+	if (size != -1)
+		return size;
+
+	// Couldn't open, so free the handle
+	memset(handle, 0, sizeof(*handle));
+
+	*f = 0;
+	return -1;
+}
+
+
+/*
+=================
 FS_FOpenCompressedFileWrite
 
 Always returns 0 or -1 on error

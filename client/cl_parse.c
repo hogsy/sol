@@ -383,7 +383,7 @@ CL_PlayBackgroundTrack
 
 void CL_PlayBackgroundTrack (void)
 {
-	char	name[MAX_QPATH];
+	char	name[MAX_QPATH], name2[MAX_QPATH];
 	int		track;
 
 	if (!cl.refresh_prepped)
@@ -393,7 +393,8 @@ void CL_PlayBackgroundTrack (void)
 	if (strlen(cl.configstrings[CS_CDTRACK]) > 2)
 	{
 		Com_sprintf (name, sizeof(name), "music/%s.ogg", cl.configstrings[CS_CDTRACK]);
-		if (FS_LoadFile(name, NULL) != -1)
+		Com_sprintf (name2, sizeof(name2), "music/%s.ogg_json", cl.configstrings[CS_CDTRACK]);	// Also check .ogg_json file
+		if ( (FS_LoadFile(name, NULL) != -1) || (FS_LoadFile(name2, NULL) != -1) )
 		{
 			CDAudio_Stop ();
 			S_StartBackgroundTrack (name, name);

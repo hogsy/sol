@@ -1013,6 +1013,7 @@ void		FS_Shutdown (void);
 void		FS_DPrintf (const char *format, ...);
 FILE		*FS_FileForHandle (fileHandle_t f);
 int			FS_FOpenFile (const char *name, fileHandle_t *f, fsMode_t mode);
+int			FS_FOpenDirectFile (const char *name, fileHandle_t *f, fsMode_t mode);
 int			FS_FOpenCompressedFile (const char *zipName, const char *fileName, fileHandle_t *f, fsMode_t mode);
 void		FS_FCloseFile (fileHandle_t f);
 int			FS_Read (void *buffer, int size, fileHandle_t f);
@@ -1067,12 +1068,22 @@ qboolean	FS_RoguePath (void);
 /*
 ==============================================================
 
-WAL_JSON PARSING
+JSON PARSING
 
 ==============================================================
 */
 
 qboolean Com_ParseWalJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, miptex_t *mt, color_t *color, qboolean verbose);
+
+#define MAX_OGG_IMPORT_PATHS	8
+
+typedef struct {
+	char	virtualName[MAX_QPATH];
+	char	importGame[MAX_QPATH];
+	char	importPath[MAX_OGG_IMPORT_PATHS][MAX_QPATH];
+} oggImport_t;
+
+qboolean Com_ParseOggJSON (const char *fileName, const char *jsonStr, size_t jsonStrLen, oggImport_t *iData, qboolean verbose);
 
 /*
 ==============================================================

@@ -56,6 +56,9 @@ Changes as of v0.20 update 8:
 - Added Quake import paths and pak remap lists.  Uses cvars quake_importpath_auto, quakerr_importpath_auto, quake_importpath,
 	quake_maingame, quake_game1, quake_game2, quake_game3, and quake_game4.
 	See kmq2_misc_scripting.txt for instructions on making pak remap scripts.
+	
+- Added support for ogg_json scripts to import .ogg files from the Quake import path.
+	See kmq2_misc_scripting.txt for instructions on making .ogg_json scripts.
 
 - Added support for BSPs compiled with lightmaps on warp surfaces.  Set cvar r_load_warp_lightmaps to 1 to enable loading of warp lightmaps.
 	Set cvar r_warp_lighting to 2 to enable drawing of warp lightmaps.
