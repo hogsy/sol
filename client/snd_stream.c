@@ -154,7 +154,6 @@ static qboolean S_OpenBackgroundTrack (const char *name, bgTrack_t *track)
 	char	*path = NULL;
 #endif
 	int		i;
-//	qboolean	importedTrackFound = false;
 
 //	Com_Printf ("Opening background track: %s\n", name);
 
@@ -735,11 +734,10 @@ void S_OGG_LoadFileList (void)
 	int			jsonSize;
 	byte		*jsonData = NULL;
 	char		*jsonStr = NULL;
-	qboolean	json_parsed = false, importFileFound = false;
+	qboolean	json_parsed = false;
 	const char	*importRootPath = NULL;
 	char		importFullPath[MAX_OSPATH];
 	size_t		nameLen;
-	FILE		*importFile = NULL;
 
 #ifdef USE_OGGLIST_STRUCT
 	ogg_filelist = Z_Malloc(sizeof(oggListItem_t) * MAX_OGGLIST);

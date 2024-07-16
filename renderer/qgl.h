@@ -397,9 +397,15 @@ extern	void ( APIENTRY * qglDrawRangeElements)( GLenum mode, GLuint start, GLuin
 extern	void ( APIENTRY * qglLockArraysEXT) (GLint start, GLsizei count);
 extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
 
-extern	void ( APIENTRY * qglMultiTexCoord2fARB)( GLenum, GLfloat, GLfloat ); // Knightmare added
+// Knightmare added
 extern	void ( APIENTRY * qglActiveTextureARB)( GLenum );
 extern	void ( APIENTRY * qglClientActiveTextureARB)( GLenum );
+extern	void ( APIENTRY * qglMultiTexCoord2fARB)( GLenum, GLfloat, GLfloat );
+
+// Knightmare- added dll pointers for logging multitexture calls
+extern	void ( APIENTRY * dllActiveTexture) ( GLenum texUnit );
+extern	void ( APIENTRY * dllClientActiveTexture) ( GLenum texUnit );
+extern	void ( APIENTRY * dllMultiTexCoord2f)( GLenum texUnit, GLfloat s, GLfloat t );
 
 extern	void ( APIENTRY * qglActiveStencilFaceEXT) (GLenum face);
 

@@ -398,9 +398,14 @@ void ( APIENTRY * qglColorTableEXT)( GLenum, GLenum, GLsizei, GLenum, GLenum, co
 void ( APIENTRY * qgl3DfxSetPaletteEXT)( GLuint * );
 void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
 void ( APIENTRY * qglMTexCoord2fSGIS)( GLenum, GLfloat, GLfloat );
-void ( APIENTRY * qglMultiTexCoord2fARB)(GLenum, GLfloat, GLfloat);
 void ( APIENTRY * qglActiveTextureARB) ( GLenum );
 void ( APIENTRY * qglClientActiveTextureARB) ( GLenum );
+void ( APIENTRY * qglMultiTexCoord2fARB)(GLenum, GLfloat, GLfloat);
+
+// Knightmare- added dll pointers for logging multitexture calls
+void ( APIENTRY * dllActiveTexture) ( GLenum texUnit );
+void ( APIENTRY * dllClientActiveTexture) ( GLenum texUnit );
+void ( APIENTRY * dllMultiTexCoord2f)( GLenum texUnit, GLfloat s, GLfloat t );
 
 void ( APIENTRY * qglActiveStencilFaceEXT) (GLenum face);
 
@@ -2675,6 +2680,24 @@ static void APIENTRY logViewport(GLint x, GLint y, GLsizei width, GLsizei height
 	dllViewport( x, y, width, height );
 }
 
+// Knightmare added
+static void APIENTRY logActiveTexture (GLenum texUnit)
+{
+	fprintf( glw_state.log_fp, "glActiveTexture( 0x%x )\n", texUnit );
+	dllActiveTexture( texUnit );
+}
+static void APIENTRY logClientActiveTexture (GLenum texUnit)
+{
+	fprintf( glw_state.log_fp, "glClientActiveTexture( 0x%x )\n", texUnit );
+	dllClientActiveTexture( texUnit );
+}
+static void APIENTRY logMultiTexCoord2f (GLenum texUnit, GLfloat s, GLfloat t)
+{
+	fprintf( glw_state.log_fp, "glMultiTexCoord2f( 0x%x %f %f )\n", texUnit, s, t );
+	dllMultiTexCoord2f( texUnit, s, t );
+}
+// end Knightmare
+
 /*
 ** QGL_Shutdown
 **
@@ -3028,6 +3051,10 @@ void QGL_Shutdown (void)
 	qglVertex4sv                 = NULL;
 	qglVertexPointer             = NULL;
 	qglViewport                  = NULL;
+
+	qglActiveTextureARB			 = NULL;
+	qglClientActiveTextureARB	 = NULL;
+	qglMultiTexCoord2fARB		 = NULL;
 /*
 	qfxMesaCreateContext         = NULL;
 	qfxMesaCreateBestContext     = NULL;
@@ -3458,10 +3485,9 @@ qboolean QGL_Init (const char *dllname)
 	qgl3DfxSetPaletteEXT		 = 0;
 	qglSelectTextureSGIS		 = 0;
 	qglMTexCoord2fSGIS			 = 0;
-	qglActiveTextureARB			 = 0;
-	qglClientActiveTextureARB	 = 0;
-	qglMultiTexCoord2fARB		 = 0;
-
+	qglActiveTextureARB			 = dllClientActiveTexture	= 0;
+	qglClientActiveTextureARB	 = dllMultiTexCoord2f		= 0;
+	qglMultiTexCoord2fARB		 = dllActiveTexture			= 0;
 
 	qglActiveStencilFaceEXT		= 0;
 
@@ -3872,6 +3898,14 @@ void GLimp_EnableLogging (qboolean enable)
 		qglVertex4sv                 = 	logVertex4sv                 ;
 		qglVertexPointer             = 	logVertexPointer             ;
 		qglViewport                  = 	logViewport                  ;
+		// Knightmare added
+		if ( qglActiveTextureARB )
+			qglActiveTextureARB			= logActiveTexture;
+		if ( qglClientActiveTextureARB )
+			qglClientActiveTextureARB	= logClientActiveTexture;
+		if ( qglMultiTexCoord2fARB )
+			qglMultiTexCoord2fARB		= logMultiTexCoord2f;
+		// end Knightmare
 	}
 	else
 	{
@@ -4211,6 +4245,14 @@ void GLimp_EnableLogging (qboolean enable)
 		qglVertex4sv                 = 	dllVertex4sv                 ;
 		qglVertexPointer             = 	dllVertexPointer             ;
 		qglViewport                  = 	dllViewport                  ;
+		// Knightmare added
+		if ( qglActiveTextureARB )
+			qglActiveTextureARB			= dllActiveTexture;
+		if ( qglClientActiveTextureARB )
+			qglClientActiveTextureARB	= dllClientActiveTexture;
+		if ( qglMultiTexCoord2fARB )
+			qglMultiTexCoord2fARB		= dllMultiTexCoord2f;
+		// end Knightmare
 	}
 }
 

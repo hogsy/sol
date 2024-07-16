@@ -1385,9 +1385,9 @@ qboolean R_CheckGLExtensions (char *reason)
 	if ( (glConfig.version_major >= 2) || (glConfig.version_major == 1 && glConfig.version_minor > 2)
 		|| (glConfig.version_major == 1 && glConfig.version_minor == 2 && glConfig.version_release >= 1) )
 	{
-		qglMultiTexCoord2fARB = (void *) qwglGetProcAddress( "glMultiTexCoord2f" );
-		qglActiveTextureARB = (void *) qwglGetProcAddress( "glActiveTexture" );
-		qglClientActiveTextureARB = (void *) qwglGetProcAddress( "glClientActiveTexture" );
+		qglActiveTextureARB = dllActiveTexture = (void *) qwglGetProcAddress( "glActiveTexture" );
+		qglClientActiveTextureARB = dllClientActiveTexture = (void *) qwglGetProcAddress( "glClientActiveTexture" );
+		qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2f" );
 		if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
 			VID_Printf (PRINT_ALL, "...OpenGL multitexture not found, checking for GL_ARB_multitexture\n" );
 		}
@@ -1407,9 +1407,9 @@ qboolean R_CheckGLExtensions (char *reason)
 		}
 		else
 		{
-			qglMultiTexCoord2fARB = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
-			qglActiveTextureARB = (void *) qwglGetProcAddress( "glActiveTextureARB" );
-			qglClientActiveTextureARB = (void *) qwglGetProcAddress( "glClientActiveTextureARB" );
+			qglActiveTextureARB = dllActiveTexture = (void *) qwglGetProcAddress( "glActiveTextureARB" );
+			qglClientActiveTextureARB = dllClientActiveTexture = (void *) qwglGetProcAddress( "glClientActiveTextureARB" );
+			qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
 			if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
 				QGL_Shutdown();
 				VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
