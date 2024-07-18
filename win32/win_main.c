@@ -490,8 +490,8 @@ static qboolean Sys_DetectCPU (char *cpuString, int maxSize)
 
 	char				vendor[16];
 //	int					numLogicalCores=1, numCores=1;
-	int					maxExtFunc, stdBits, features, moreFeatures, extFeatures;
-	int					family, extFamily, model, extModel, stepping;
+	int					maxExtFunc = 0, stdBits = 0, features = 0, moreFeatures = 0, extFeatures = 0;
+	int					family = 0, extFamily = 0, model = 0, extModel = 0, stepping = 0;
 	unsigned __int64	start, end, counter, stop, frequency;
 	unsigned			speed;
 	qboolean			hasMMX, hasMMXExt, has3DNow, has3DNowExt, hasSSE, hasSSE2, hasSSE3, hasSSE41, hasSSE42, hasSSE4a, hasAVX;
@@ -628,7 +628,7 @@ NoExtFunction:
 	}
 	stepping = (stdBits) & 15;
 
-	if (!Q_stricmp(vendor, "AuthenticAMD"))
+	if ( !Q_stricmp(vendor, "AuthenticAMD") )
 	{
 		Q_strncpyz (cpuString, maxSize, "AMD");
 	//	Com_sprintf(cpuString, maxSize, "AMD Family %i ExtFamily %i Model %i ExtModel %i", family, extFamily, model, extModel);
@@ -805,6 +805,8 @@ NoExtFunction:
 						Q_strncatz (cpuString, maxSize, " Ryzen 7/5/3 1x00");
 					else if (extModel == 0x11)	// Raven Ridge
 						Q_strncatz (cpuString, maxSize, " Ryzen 5/3 2x00G");
+					else if (extModel == 0x31)	// Castle Peak
+						Q_strncatz (cpuString, maxSize, " Ryzen Threadripper 39x0X");
 					else if (extModel == 0x71)	// Matisse (Zen 2)
 						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 3x00");
 					break;
@@ -819,7 +821,7 @@ NoExtFunction:
 					break;
 				}
 			}
-			else if (extFamily == 0x19)	// Ryzen Zen3 Family
+			else if (extFamily == 0x19)	// Ryzen Zen3 / Zen4 Family
 			{
 				switch (model)
 				{
@@ -836,9 +838,34 @@ NoExtFunction:
 				case 4:
 					if (extModel == 0x44)	// Rembrandt (Zen3+)
 						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 6x00");
+					else if (extModel == 0x74)	// Phoenix
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 7xx0G/U/HS");
+					break;
+				case 5:
+					if (extModel == 0x75)	// Phoenix 2 / Hawk Point
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 8xxxG/U/HS");
+					break;
+				case 8:
+					if (extModel == 8)		// Chagall
+						Q_strncatz (cpuString, maxSize, " Ryzen Threadripper Pro 59x5WX");
+					else if (extModel == 0x18)	// Storm Peak
+						Q_strncatz (cpuString, maxSize, " Ryzen Threadripper 79x0X");
 					break;
 				default:
 					Q_strncatz (cpuString, maxSize, " Zen3");
+					break;
+				}
+			}
+			else if (extFamily == 0x1A)	// Ryzen Zen5 Family
+			{
+				switch (model)
+				{
+				case 4:
+					if (extModel == 0x44)	// Granite Ridge
+						Q_strncatz (cpuString, maxSize, " Ryzen 9/7/5/3 9x00");
+					break;
+				default:
+					Q_strncatz (cpuString, maxSize, " Zen5");
 					break;
 				}
 			}
@@ -847,7 +874,7 @@ NoExtFunction:
 			break;
 		}
 	}
-	else if (!Q_stricmp(vendor, "CyrixInstead"))
+	else if ( !Q_stricmp(vendor, "CyrixInstead") )
 	{
 		Q_strncpyz (cpuString, maxSize, "Cyrix");
 
@@ -877,7 +904,7 @@ NoExtFunction:
 			break;
 		}
 	}
-	else if (!Q_stricmp(vendor, "CentaurHauls"))
+	else if ( !Q_stricmp(vendor, "CentaurHauls") )
 	{
 		Q_strncpyz (cpuString, maxSize, "Centaur");
 
@@ -903,7 +930,7 @@ NoExtFunction:
 			break;
 		}
 	}
-	else if (!Q_stricmp(vendor, "NexGenDriven"))
+	else if ( !Q_stricmp(vendor, "NexGenDriven") )
 	{
 		Q_strncpyz (cpuString, maxSize, "NexGen");
 
@@ -923,7 +950,7 @@ NoExtFunction:
 			break;
 		}
 	}
-	else if (!Q_stricmp(vendor, "GenuineIntel"))
+	else if ( !Q_stricmp(vendor, "GenuineIntel") )
 	{
 		Q_strncpyz (cpuString, maxSize, "Intel");
 	//	Com_sprintf(cpuString, maxSize, "Intel Family %i ExtFamily %i Model %i ExtModel %i", family, extFamily, model, extModel);
