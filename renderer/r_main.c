@@ -1388,7 +1388,7 @@ qboolean R_CheckGLExtensions (char *reason)
 		qglActiveTextureARB = dllActiveTexture = (void *) qwglGetProcAddress( "glActiveTexture" );
 		qglClientActiveTextureARB = dllClientActiveTexture = (void *) qwglGetProcAddress( "glClientActiveTexture" );
 		qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2f" );
-		if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
+		if ( !qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB ) {
 			VID_Printf (PRINT_ALL, "...OpenGL multitexture not found, checking for GL_ARB_multitexture\n" );
 		}
 		else {
@@ -1410,7 +1410,7 @@ qboolean R_CheckGLExtensions (char *reason)
 			qglActiveTextureARB = dllActiveTexture = (void *) qwglGetProcAddress( "glActiveTextureARB" );
 			qglClientActiveTextureARB = dllClientActiveTexture = (void *) qwglGetProcAddress( "glClientActiveTextureARB" );
 			qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
-			if (!qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB) {
+			if ( !qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB ) {
 				QGL_Shutdown();
 				VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
 				memcpy (reason, "GL_ARB_multitexture not properly implemented in driver!\0", 55);
@@ -1436,17 +1436,17 @@ qboolean R_CheckGLExtensions (char *reason)
 	// GL_EXT_compiled_vertex_array
 	// GL_SGI_compiled_vertex_array
 	glConfig.extCompiledVertArray = false;
-	if ( Q_StrScanToken( glConfig.extensions_string, "GL_EXT_compiled_vertex_array", false ) || 
-		 Q_StrScanToken( glConfig.extensions_string, "GL_SGI_compiled_vertex_array", false ) )
+	if ( Q_StrScanToken(glConfig.extensions_string, "GL_EXT_compiled_vertex_array", false ) || 
+		 Q_StrScanToken(glConfig.extensions_string, "GL_SGI_compiled_vertex_array", false ) )
 	{
 		if (r_ext_compiled_vertex_array->integer)
 		{
-			qglLockArraysEXT = (void *) qwglGetProcAddress( "glLockArraysEXT" );
-			qglUnlockArraysEXT = (void *) qwglGetProcAddress( "glUnlockArraysEXT" );
-			if (!qglLockArraysEXT || !qglUnlockArraysEXT) {
+			qglLockArraysEXT = dllLockArraysEXT = (void *) qwglGetProcAddress( "glLockArraysEXT" );
+			qglUnlockArraysEXT = dllUnlockArraysEXT = (void *) qwglGetProcAddress( "glUnlockArraysEXT" );
+			if ( !qglLockArraysEXT || !qglUnlockArraysEXT ) {
 				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_EXT/SGI_compiled_vertex_array not properly supported!\n");
-				qglLockArraysEXT	= NULL;
-				qglUnlockArraysEXT	= NULL;
+				qglLockArraysEXT	= dllLockArraysEXT = NULL;
+				qglUnlockArraysEXT	= dllLockArraysEXT = NULL;
 			}
 			else {
 				VID_Printf (PRINT_ALL, "...enabling GL_EXT/SGI_compiled_vertex_array\n" );
@@ -1466,10 +1466,10 @@ qboolean R_CheckGLExtensions (char *reason)
 	{
 		if (r_ext_draw_range_elements->integer)
 		{
-			qglDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElements");
-			if (!qglDrawRangeElements)
-				qglDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElementsEXT");
-			if (!qglDrawRangeElements)
+			qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElements");
+			if ( !qglDrawRangeElements )
+				qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElementsEXT");
+			if ( !qglDrawRangeElements )
 				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "glDrawRangeElements not properly supported!\n");
 			else {
 				VID_Printf (PRINT_ALL, "...using glDrawRangeElements\n");
@@ -1479,14 +1479,14 @@ qboolean R_CheckGLExtensions (char *reason)
 		else
 			VID_Printf (PRINT_ALL, "...ignoring glDrawRangeElements\n");
 	}
-	else if ( Q_StrScanToken( glConfig.extensions_string, "GL_EXT_draw_range_elements", false ) )
+	else if ( Q_StrScanToken(glConfig.extensions_string, "GL_EXT_draw_range_elements", false ) )
 	{
 		if (r_ext_draw_range_elements->integer)
 		{
-			qglDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElementsEXT");
-			if (!qglDrawRangeElements)
-				qglDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElements");
-			if (!qglDrawRangeElements)
+			qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElementsEXT");
+			if ( !qglDrawRangeElements )
+				qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElements");
+			if ( !qglDrawRangeElements )
 				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_EXT_draw_range_elements not properly supported!\n");
 			else {
 				VID_Printf (PRINT_ALL, "...enabling GL_EXT_draw_range_elements\n");
@@ -1498,7 +1498,6 @@ qboolean R_CheckGLExtensions (char *reason)
 	}
 	else
 		VID_Printf (PRINT_ALL, "...GL_EXT_draw_range_elements not found\n" );
-
 
 	// GL_ARB_texture_non_power_of_two
 	glConfig.arbTextureNonPowerOfTwo = false;

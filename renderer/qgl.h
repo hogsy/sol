@@ -393,9 +393,13 @@ extern  void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei
 
 // Knightmare added
 extern	void ( APIENTRY * qglDrawRangeElements)( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices );
-
 extern	void ( APIENTRY * qglLockArraysEXT) (GLint start, GLsizei count);
 extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
+
+// Knightmare- added dll pointers for logging rangeElements and lock/unlockArrays calls
+extern	void ( APIENTRY * dllDrawRangeElements)( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices );
+extern	void ( APIENTRY * dllLockArraysEXT) (GLint start, GLsizei count);
+extern	void ( APIENTRY * dllUnlockArraysEXT) (void);
 
 // Knightmare added
 extern	void ( APIENTRY * qglActiveTextureARB)( GLenum );

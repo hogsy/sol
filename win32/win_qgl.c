@@ -402,9 +402,13 @@ void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei height)
 
 // Knightmare added
 void ( APIENTRY * qglDrawRangeElements)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices);
-
 void ( APIENTRY * qglLockArraysEXT) ( GLint start, GLsizei count );
 void ( APIENTRY * qglUnlockArraysEXT) ( void );
+
+// Knightmare- added dll pointers for logging rangeElements and lock/unlockArrays calls
+void ( APIENTRY * dllDrawRangeElements)( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices );
+void ( APIENTRY * dllLockArraysEXT) (GLint start, GLsizei count);
+void ( APIENTRY * dllUnlockArraysEXT) (void);
 
 BOOL ( WINAPI * qwglSwapIntervalEXT)( int interval );
 BOOL ( WINAPI * qwglGetDeviceGammaRampEXT)( unsigned char *, unsigned char *, unsigned char * );
@@ -2701,6 +2705,21 @@ static void APIENTRY logViewport(GLint x, GLint y, GLsizei width, GLsizei height
 }
 
 // Knightmare added
+static void APIENTRY logDrawRangeElements (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices)
+{
+	fprintf( glw_state.log_fp, "glDrawRangeElements( 0x%x 0x%x 0x%x 0x%x 0x%x )\n", mode, start, end, count, type );
+	dllDrawRangeElements( mode, start, end, count, type, indices );
+}
+static void APIENTRY logLockArraysEXT (GLint start, GLsizei count)
+{
+	fprintf( glw_state.log_fp, "glLockArraysEXT( 0x%x 0x%x )\n", start, count );
+	dllLockArraysEXT( start, count );
+}
+static void APIENTRY logUnlockArraysEXT (void)
+{
+	fprintf( glw_state.log_fp, "glUnlockArraysEXT( )\n");
+	dllUnlockArraysEXT( );
+}
 static void APIENTRY logActiveTexture (GLenum texUnit)
 {
 	fprintf( glw_state.log_fp, "glActiveTexture( 0x%x )\n", texUnit );
@@ -3069,6 +3088,10 @@ void QGL_Shutdown( void )
 	qglVertex4sv                 = NULL;
 	qglVertexPointer             = NULL;
 	qglViewport					 = NULL;
+
+	qglDrawRangeElements		 = NULL;
+	qglLockArraysEXT			 = NULL;
+	qglUnlockArraysEXT			 = NULL;
 
 	qglActiveTextureARB			 = NULL;
 	qglClientActiveTextureARB	 = NULL;
@@ -3552,13 +3575,15 @@ qboolean QGL_Init( const char *dllname )
 	qwglSetPixelFormat           = GPA( "wglSetPixelFormat" );
 	qwglSwapBuffers              = GPA( "wglSwapBuffers" );
 
-	qglDrawRangeElements		= 0;
-	qglLockArraysEXT			= 0;
-	qglUnlockArraysEXT			= 0;
+	qglDrawRangeElements		= dllDrawRangeElements		= 0;
+	qglLockArraysEXT			= dllLockArraysEXT			= 0;
+	qglUnlockArraysEXT			= dllUnlockArraysEXT		= 0;
+
 	qwglSwapIntervalEXT			= 0;
 //	qglPointParameterfEXT		= 0;
 //	qglPointParameterfvEXT		= 0;
 	qglColorTableEXT			= 0;
+
 	qglActiveTextureARB			= dllClientActiveTexture	= 0;
 	qglClientActiveTextureARB	= dllMultiTexCoord2f		= 0;
 	qglMultiTexCoord2fARB		= dllActiveTexture			= 0;
@@ -3977,6 +4002,12 @@ void GLimp_EnableLogging( qboolean enable )
 		qglVertexPointer             = 	logVertexPointer             ;
 		qglViewport                  = 	logViewport                  ;
 		// Knightmare added
+		if ( qglDrawRangeElements )
+			qglDrawRangeElements		= logDrawRangeElements;
+		if ( qglLockArraysEXT )
+			qglLockArraysEXT			= logLockArraysEXT;
+		if ( qglUnlockArraysEXT )
+			qglUnlockArraysEXT			= logUnlockArraysEXT;
 		if ( qglActiveTextureARB )
 			qglActiveTextureARB			= logActiveTexture;
 		if ( qglClientActiveTextureARB )
@@ -4323,8 +4354,13 @@ void GLimp_EnableLogging( qboolean enable )
 		qglVertex4sv                 = 	dllVertex4sv                 ;
 		qglVertexPointer             = 	dllVertexPointer             ;
 		qglViewport                  = 	dllViewport                  ;
-		qglViewport                  = 	dllViewport                  ;
 		// Knightmare added
+		if ( qglDrawRangeElements )
+			qglDrawRangeElements		= dllDrawRangeElements;
+		if ( qglLockArraysEXT )
+			qglLockArraysEXT			= dllLockArraysEXT;
+		if ( qglUnlockArraysEXT )
+			qglUnlockArraysEXT			= dllUnlockArraysEXT;
 		if ( qglActiveTextureARB )
 			qglActiveTextureARB			= dllActiveTexture;
 		if ( qglClientActiveTextureARB )
