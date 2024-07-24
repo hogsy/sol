@@ -3105,12 +3105,12 @@ qboolean qwglSwapIntervalEXT (int interval)
 /*
 ** QGL_Init
 **
-** This is responsible for binding our qgl function pointers to 
-** the appropriate GL stuff.  In Windows this means doing a 
+** This is responsible for binding our qgl function pointers to
+** the appropriate GL stuff.  In Windows this means doing a
 ** LoadLibrary and a bunch of calls to GetProcAddress.  On other
 ** operating systems we need to do the right thing, whatever that
 ** might be.
-** 
+**
 */
 
 qboolean QGL_Init (const char *dllname)
@@ -3509,9 +3509,9 @@ qboolean QGL_Init (const char *dllname)
 	qgl3DfxSetPaletteEXT		 = 0;
 	qglSelectTextureSGIS		 = 0;
 	qglMTexCoord2fSGIS			 = 0;
-	qglActiveTextureARB			 = dllClientActiveTexture	= 0;
-	qglClientActiveTextureARB	 = dllMultiTexCoord2f		= 0;
-	qglMultiTexCoord2fARB		 = dllActiveTexture			= 0;
+	qglActiveTextureARB			 = dllActiveTexture				= 0;
+	qglClientActiveTextureARB	 = dllClientActiveTexture		= 0;
+	qglMultiTexCoord2fARB		 = dllMultiTexCoord2f			= 0;
 
 	qglActiveStencilFaceEXT		= 0;
 
