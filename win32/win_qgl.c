@@ -3584,9 +3584,9 @@ qboolean QGL_Init( const char *dllname )
 //	qglPointParameterfvEXT		= 0;
 	qglColorTableEXT			= 0;
 
-	qglActiveTextureARB			= dllClientActiveTexture	= 0;
-	qglClientActiveTextureARB	= dllMultiTexCoord2f		= 0;
-	qglMultiTexCoord2fARB		= dllActiveTexture			= 0;
+	qglActiveTextureARB			= dllActiveTexture				= 0;
+	qglClientActiveTextureARB	= dllClientActiveTexture		= 0;
+	qglMultiTexCoord2fARB		= dllMultiTexCoord2f			= 0;
 
 	qglActiveStencilFaceEXT		= 0;
 
