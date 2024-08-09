@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	USE_SAVEGAMEDIR			// whether to use new fs_savegamedir/fs_downloaddir paths
 
-//#define USE_Q2RR_IMPORT_PATH	// whether to use Quake2 re-release import paths
+#define USE_Q2RR_IMPORT_PATH	// whether to use Quake2 re-release import paths
 
 //
 // in memory

@@ -2045,28 +2045,28 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	strlwr(vendor_buffer);
 
 	// find out the renderer model
-	if (strstr(vendor_buffer, "nvidia")) {
+	if ( strstr(vendor_buffer, "nvidia") ) {
 		glConfig.rendType = GLREND_NVIDIA;
-		if (strstr(renderer_buffer, "geforce"))	glConfig.rendType |= GLREND_GEFORCE;
+		if ( strstr(renderer_buffer, "geforce") )		glConfig.rendType |= GLREND_GEFORCE;
 	}
-	else if (strstr(vendor_buffer, "ati")) {
+	else if ( strstr(vendor_buffer, "ati") ) {
 		glConfig.rendType = GLREND_ATI;
-		if (strstr(vendor_buffer, "radeon"))		glConfig.rendType |= GLREND_RADEON;
+		if  (strstr(vendor_buffer, "radeon") )			glConfig.rendType |= GLREND_RADEON;
 	}
-	else if (strstr(vendor_buffer, "matrox"))		glConfig.rendType = GLREND_MATROX;
-	else if (strstr(vendor_buffer, "intel"))		glConfig.rendType = GLREND_INTEL;
-	else if (strstr	(vendor_buffer, "sgi"))			glConfig.rendType = GLREND_SGI;
-	else if (strstr	(renderer_buffer, "permedia"))	glConfig.rendType = GLREND_PERMEDIA2;
-	else if (strstr	(renderer_buffer, "glint"))		glConfig.rendType = GLREND_GLINT_MX;
-	else if (strstr	(renderer_buffer, "glzicd"))	glConfig.rendType = GLREND_REALIZM;
-	else if (strstr	(renderer_buffer, "pcx1"))		glConfig.rendType = GLREND_PCX1;
-	else if (strstr	(renderer_buffer, "pcx2"))		glConfig.rendType = GLREND_PCX2;
-	else if (strstr	(renderer_buffer, "pmx"))		glConfig.rendType = GLREND_PMX;
-	else if (strstr	(renderer_buffer, "verite"))	glConfig.rendType = GLREND_RENDITION;
-	else if (strstr	(vendor_buffer, "sis"))			glConfig.rendType = GLREND_SIS;
-	else if (strstr (renderer_buffer, "voodoo"))	glConfig.rendType = GLREND_VOODOO;
-	else if (strstr	(renderer_buffer, "gdi generic")) glConfig.rendType = GLREND_MCD;
-	else											glConfig.rendType = GLREND_DEFAULT;
+	else if ( strstr(vendor_buffer, "matrox") )			glConfig.rendType = GLREND_MATROX;
+	else if ( strstr(vendor_buffer, "intel") )			glConfig.rendType = GLREND_INTEL;
+	else if ( strstr(vendor_buffer, "sgi") )			glConfig.rendType = GLREND_SGI;
+	else if ( strstr(renderer_buffer, "permedia") )		glConfig.rendType = GLREND_PERMEDIA2;
+	else if ( strstr(renderer_buffer, "glint") )		glConfig.rendType = GLREND_GLINT_MX;
+	else if ( strstr(renderer_buffer, "glzicd") )		glConfig.rendType = GLREND_REALIZM;
+	else if ( strstr(renderer_buffer, "pcx1") )			glConfig.rendType = GLREND_PCX1;
+	else if ( strstr(renderer_buffer, "pcx2") )			glConfig.rendType = GLREND_PCX2;
+	else if ( strstr(renderer_buffer, "pmx") )			glConfig.rendType = GLREND_PMX;
+	else if ( strstr(renderer_buffer, "verite") )		glConfig.rendType = GLREND_RENDITION;
+	else if ( strstr(vendor_buffer, "sis") )			glConfig.rendType = GLREND_SIS;
+	else if ( strstr(renderer_buffer, "voodoo") )		glConfig.rendType = GLREND_VOODOO;
+	else if ( strstr(renderer_buffer, "gdi generic") )	glConfig.rendType = GLREND_MCD;
+	else												glConfig.rendType = GLREND_DEFAULT;
 
 	if ( toupper( r_monolightmap->string[1] ) != 'F' )
 	{
