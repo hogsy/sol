@@ -61,7 +61,7 @@ cvar_t			*ogg_loopcount;
 cvar_t			*ogg_ambient_track;
 
 extern cvar_t	*fs_quakeimportpath;	// Install path of Quake1 for content mounting, id1 folder paks are automatically added
-//extern cvar_t	*fs_quake2rrimportpath;	// Install path of Quake2RR for content mounting, baseq2 folder paks are automatically added
+extern cvar_t	*fs_quake2rrimportpath;	// Install path of Quake2RR for content mounting, baseq2 folder paks are automatically added
 
 /*
 =======================================================================
@@ -806,6 +806,7 @@ void S_OGG_LoadFileList (void)
 				if ( (oi.virtualName[0] != 0) && (oi.importGame[0] != 0) && (oi.importPath[0] != 0) )
 				{
 					ogg_numImports++;
+					importRootPath = NULL;
 					Com_DPrintf ("virtualName: %s\n", oi.virtualName);
 					Com_DPrintf ("importGame: %s\n", oi.importGame);
 					for (j = 0; j < MAX_OGG_IMPORT_PATHS; j++) {
@@ -818,10 +819,10 @@ void S_OGG_LoadFileList (void)
 						(fs_quakeimportpath != NULL) && (fs_quakeimportpath->string[0] != 0) ) {
 						importRootPath = fs_quakeimportpath->string;
 					}
-				/*	else if ( !Q_stricmp(oi.importGame, "Quake2RR")  &&
+					else if ( !Q_stricmp(oi.importGame, "Quake2RR")  &&
 						(fs_quake2rrimportpath != NULL) && (fs_quake2rrimportpath->string[0] != 0) ) {
 						importRootPath = fs_quake2rrimportpath->string;
-					} */
+					}
 					// Add support for any other import root paths here
 
 					// Check import paths for actual ogg file, add to ogg_filelist if found
@@ -831,8 +832,9 @@ void S_OGG_LoadFileList (void)
 						{
 							if (oi.importPath[j][0] != 0)
 							{
-								Com_sprintf (importFullPath, sizeof(importFullPath), "%s/%s", fs_quakeimportpath->string, oi.importPath[j]);
-								if ( FS_DirectFileExists(importFullPath) ) {
+								Com_sprintf (importFullPath, sizeof(importFullPath), "%s/%s", importRootPath, oi.importPath[j]);
+								if ( FS_DirectFileExists(importFullPath) )
+								{
 									nameLen = strlen(oi.virtualName);
 									if ( Q_stricmp(oi.virtualName + nameLen - 4, ".ogg") != 0 ) {
 										Com_sprintf (ogg_filelist[ogg_numfiles].name, sizeof(ogg_filelist[ogg_numfiles].name), "%s.ogg", oi.virtualName);

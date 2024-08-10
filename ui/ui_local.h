@@ -617,7 +617,7 @@ typedef struct {
 	char		*quakeGame2;
 	char		*quakeGame3;
 	char		*quakeGame4;
-/*
+
 	qboolean	quake2RRImportPathAuto;
 	char		*quake2RRImportPath;
 	char		*quake2RRMainGame;
@@ -625,7 +625,7 @@ typedef struct {
 	char		*quake2RRGame2;
 	char		*quake2RRGame3;
 	char		*quake2RRGame4;
-*/
+
 	qboolean	isUnsupported;
 } modInfo_t;
 

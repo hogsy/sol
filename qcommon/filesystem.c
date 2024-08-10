@@ -1957,7 +1957,7 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 				}
 				// get remapName
 				remapName = COM_ParseExt (&s, true);
-				if ( !remapName[0] || !s ) {
+				if ( /*!remapName[0] ||*/ !s ) {
 					Com_Printf ("FS_LoadPakRemapScript: EOF without closing brace in file %s\n", fileName);
 					break;
 				}
@@ -2015,11 +2015,15 @@ void FS_LoadPakRemapScript (const char *gameDir, const char *importDir)
 
 				// get remapName
 				remapName = COM_ParseExt (&s, true);
-				if ( !remapName[0] || !s ) {
+				if ( /*!remapName[0] ||*/ !s ) {
 					Com_Printf ("FS_LoadPakRemapScript: EOF without closing brace in file %s\n", fileName);
 					break;
 				}
-				Q_strncpyz (fs_pakItemRemaps[i].remapName, sizeof(fs_pakItemRemaps[i].remapName), remapName);
+				// if remap name is an empty string (or ''), use orgName for unchanged filename
+				if ( (remapName[0] == '\0') || !Q_stricmp(remapName, "''") )
+					Q_strncpyz (fs_pakItemRemaps[i].remapName, sizeof(fs_pakItemRemaps[i].remapName), fs_pakItemRemaps[i].orgName);
+				else
+					Q_strncpyz (fs_pakItemRemaps[i].remapName, sizeof(fs_pakItemRemaps[i].remapName), remapName);
 
 				// get remap pair end brace
 				token = COM_ParseExt (&s, true);

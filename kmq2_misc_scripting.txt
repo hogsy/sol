@@ -56,15 +56,24 @@ modInfo
 	quakeGame2		"rogue"
 	quakeGame3		"nehahra"
 	quakeGame4		"ad"
+	quake2RRImportPathAuto	"1"
+	quake2RRImportPath	"D:\Quake2RR"
+	quake2RRMainGame	"baseq2"
+	quake2RRGame1 		"sewerjam1"
 }
 
 This script specifies that that the title of the mod is "Meadow Rumble II: Revenge of the Ovinomancer",
 that the game folder for the mod is named mwrumble2, and that this mod mounts the xatrix, rogue, and zaero game folders.
 The latter is done by the menu internally setting the basegame, basegame2, and basegame3 cvars.
+
 It also mounts pak files in the id1, hipnotic, rogue, nehahra, and ad folders under the Quake import path.
 For the Quake import path, it will first try to find the the Quake re-release Steam install path.
 If it can't find the Quake re-release Steam install path, it will then try to find the original Quake Steam install path.
 If it can't find the original Quake Steam install path, it will then use the path D:\Quake as the Quake import path.
+
+Additionally, it mounts pak files in the baseq2 and sewerjam1 folders under the Quake2 re-release import path.
+If it can't find the Quake2 re-release Steam install path, it will then use the path D:\Quake2RR as the Quake2 re-release
+import path.
 
 ================================
 
@@ -72,11 +81,11 @@ If it can't find the original Quake Steam install path, it will then use the pat
 
 ================================
 
-KMQuake2 0.20u8 supports remapping pak files under the Quake import path.  Only pak files are mounted, and
-only pak items that are remapped will load from those paks.  The other pak items are ignored.
+KMQuake2 0.20u8 supports remapping pak files under the Quake and Quake2 Rerelease import paths.  Only pak files are mounted,
+and only pak items that are remapped will load from those paks.  The other pak items are ignored.
 
-The pak remap list is loaded from a separate script for each folder under the Quake import path.  This file
-is named <quake_gamedir>_pakremap.def.  For example, the paks under the id1 folder are remapped using a script
+The pak remap list is loaded from a separate script for each folder under the Quake (or Quake2 Rerelease) import path. 
+This file is named <quake_gamedir>_pakremap.def.  For example, the paks under the id1 folder are remapped using a script
 called id1_pakremap.def.  This script must be located inside the game folder for the mod using it.  It must be
 a loose file, it cannot be loaded from a pak or pk3 file.
 
@@ -84,6 +93,7 @@ Here's an example of an id1_pakremap.def script for mounting the paks in the id1
 
 pakRemapList
 {
+	{ "gfx/palette.lmp" "''" }
 	{ "progs/gib1.mdl" "models/objects/q1gibs/q1gib1/tris.md2" }
 	{ "progs/gib2.mdl" "models/objects/q1gibs/q1gib2/tris.md2" }
 	{ "progs/gib3.mdl" "models/objects/q1gibs/q1gib3/tris.md2" }
@@ -103,10 +113,10 @@ pakRemapList
 }
 
 This pak remap script remaps the models and sounds used by the Shambler, including gibs and the lightning bolt
-attachement.
+attachement.  It also loads the item gfx/palette.lmp with no remapping of its name, as the '' symbol denotes name duplication.
 
 The remap script parser will output any errors it encounters.  This output from filesystem initialization is not
-visible in the in-game console.  So you will need to start KMQuake2 in dedicated mode to see if the script was correctly
+visible in thein-game console.  So you will need to start KMQuake2 in dedicated mode to see if the script was correctly
 parsed.  Here's an example of such output:
 
 Loaded 267 pak remaps from file ./gamedir/id1_pakremap.def
@@ -126,8 +136,8 @@ Check the spelling of the remap against the contents of the gamedir's paks to co
 
 ================================
 
-KMQuake2 0.20u8 supports remapping .ogg files from under the Quake import path via .ogg_json scripts.  These scripts are
-loaded from the "music" folder under the current gamedir.
+KMQuake2 0.20u8 supports remapping .ogg files from under the Quake and Quake2 Rerelease import paths via .ogg_json scripts.
+These scripts are loaded from the "music" folder under the current gamedir.
 
 Each .ogg_json script specifies a single .ogg file to import.  It must have the same name before the '.' as the virtual filename that
 the imported .ogg file will be mapped to.
@@ -151,11 +161,12 @@ This key specifies the virtual filename that the imported ogg file will be mappe
 of the .ogg_json script.
 
 "importGame"
-This key specifies the name of the game path to import from.  Right now only "Quake", "Quake1" and "Quake1RR" are supported.
-These all specify the currently loaded Quake import path.
+This key specifies the name of the game path to import from.  The values "Quake", "Quake1", "Quake1RR", and "Quake2RR" are supported.
+The first three values specify the currently loaded Quake import path, while the fourth specifies the currently loaded Quake2 Rerelease
+import path.
 
 "importPath0" - "importPath7"
-These keys specify the file paths under the currently loaded Quake import path to try.
+These keys specify the file paths under the currently loaded Quake (or Quake2 Rerelease) import path to try.
 Multiple paths are needed becase the path for a .ogg file varies based on whether it's under the Steam Quake rerelease path,
 the Steam Quake original release path, or one used by a Quake source port in a traditional install path.
 
@@ -181,15 +192,16 @@ You can see a list of the loaded ogg vorbis files in the console by typing "ogg 
 You can test each remapped ogg file by typing "ogg play <trackname>" in the console, where <trackname> is the name without
 the "music/" prefix or the ".ogg" extension (e.g. "ogg play q1track02").
 
-If none of the "importPath" file path keys match a .ogg file under the Quake import path, or the Quake import path is not set up correctly,
-you will get an error message like this in the console:
+If none of the "importPath" file path keys match a .ogg file under the Quake (or Quake2 Rerelease) import paths,
+or the Quake (or Quake2 Rerelease) import path is not set up correctly, you will get an error message like this in the console:
 
 "S_OpenBackgroundTrack: couldn't find <filename>"
 
 when trying to play the remapped .ogg file in the console.
 
-In that case, check that the "quake_importpath" cvar matches the path of the Quake install to be imported from, and that at
-least one of the "importPath" file path keys are properly relative to the Quake import path.
+In that case, check that the "quake_importpath" cvar matches the path of the Quake install to be imported from
+(or that the "quake2rr_importpath" cvar matches the path of the Quake2 Rerelease install), and that at
+least one of the "importPath" file path keys are properly relative to the Quake (or Quake2 Rerelease) import path.
 
 ================================
 

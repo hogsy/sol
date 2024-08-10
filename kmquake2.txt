@@ -153,6 +153,20 @@ How To Run
 	
 	+set quakegame1 hipnotic +set quakegame2 rogue +set quakegame3 nehahra +set quakegame4 ad
 
+	To mount assets from the Steam re-release version of Quake2 using a pak remap script (see kmq2_misc_scripting.txt), add 
+	
+	+set quake2rr_importpath_auto 1
+		
+	For non-Steam versions of the Quake2 re-release, add
+	
+	+set quake2rr_importpath X:\Quake2RR
+	
+	Where X:\Quake2RR is the Quake2 re-release install path.
+	
+	You can also mount up to 4 Quake2 re-release mods in addition to the baseq2 folder:
+	
+	+set quake2rrgame1 mapjam1 +set quake2rrgame2 mapjam2 +set quake2rrgame3 mapjam3 +set quake2rrgame4 mapjam4
+
 	To ensure connection to all standard Quake2 protocol (34) servers, add
 	
 	+set cl_servertrick 1
