@@ -262,20 +262,23 @@ void S_StreamBackgroundTrack (void)
 	//unsigned	buffer;
 	int			samples; // Knightmare added
 
-	if (!s_bgTrack.file || !s_musicvolume->value)
+	if ( !ogg_started )
 		return;
 
-	if (!s_streamingChannel)
+	if ( !s_bgTrack.file || !s_musicvolume->value )
+		return;
+
+	if ( !s_streamingChannel )
 		return;
 
 	// Unqueue and delete any processed buffers
-	/*qalGetSourcei(s_streamingChannel->sourceNum, AL_BUFFERS_PROCESSED, &processed);
+/*	qalGetSourcei(s_streamingChannel->sourceNum, AL_BUFFERS_PROCESSED, &processed);
 	if (processed > 0){
 		while (processed--){
 			qalSourceUnqueueBuffers(s_streamingChannel->sourceNum, 1, &buffer);
 			qalDeleteBuffers(1, &buffer);
 		}
-	}*/
+	} */
 
 	//Com_Printf("Streaming background track\n");
 
@@ -324,9 +327,9 @@ void S_StreamBackgroundTrack (void)
 		S_RawSamples(samples, s_bgTrack.rate,s_bgTrack. width, s_bgTrack.channels, data, true);
 
 		// Upload and queue the new buffer
-		/*qalGenBuffers(1, &buffer);
+	/*	qalGenBuffers(1, &buffer);
 		qalBufferData(buffer, s_bgTrack.format, data, size, s_bgTrack.rate);
-		qalSourceQueueBuffers(s_streamingChannel->sourceNum, 1, &buffer);*/
+		qalSourceQueueBuffers(s_streamingChannel->sourceNum, 1, &buffer); */
 
 		queued++;
 	}
@@ -336,9 +339,9 @@ void S_StreamBackgroundTrack (void)
 	//qalSourcef(s_streamingChannel->sourceNum, AL_GAIN, s_musicVolume->value);
 
 	// If not playing, then do so
-	/*qalGetSourcei(s_streamingChannel->sourceNum, AL_SOURCE_STATE, &state);
+/*	qalGetSourcei(s_streamingChannel->sourceNum, AL_SOURCE_STATE, &state);
 	if (state != AL_PLAYING)
-		qalSourcePlay(s_streamingChannel->sourceNum);*/
+		qalSourcePlay(s_streamingChannel->sourceNum); */
 }
 
 #else
@@ -355,10 +358,13 @@ void S_StreamBackgroundTrack (void)
 	float	scale;
 	byte	data[MAX_RAW_SAMPLES*4];
 
-	if (!s_bgTrack.file || !s_musicvolume->value)
+	if ( !ogg_started )
 		return;
 
-	if (!s_streamingChannel)
+	if ( !s_bgTrack.file || !s_musicvolume->value )
+		return;
+
+	if ( !s_streamingChannel )
 		return;
 
 	if (s_rawend < paintedtime)
@@ -415,7 +421,7 @@ void S_StreamBackgroundTrack (void)
 				ov_raw_seek(s_bgTrack.vorbisFile, (ogg_int64_t)s_bgTrack.start);
 			}
 
-			/*if (s_bgTrack.read)
+		/*	if (s_bgTrack.read)
 				read = s_bgTrack->read( s_bgTrack, data + total, maxRead - total );
 			else
 				read = FS_Read( data + total, maxRead - total, s_bgTrack->file );
@@ -436,7 +442,7 @@ void S_StreamBackgroundTrack (void)
 					s_bgTrack->seek( s_bgTrack, s_bgTrack->info.dataofs );
 				else
 					FS_Seek(s_bgTrack->file, s_bgTrack->info.dataofs, FS_SEEK_SET);
-			}*/
+			} */
 			total += read;
 		}
 		S_RawSamples (samples, s_bgTrack.rate, s_bgTrack.width, s_bgTrack.channels, data, true );
@@ -468,7 +474,7 @@ S_StartBackgroundTrack
 */
 void S_StartBackgroundTrack (const char *introTrack, const char *loopTrack)
 {
-	if (!ogg_started) // was sound_started
+	if ( !ogg_started )
 		return;
 
 	// Stop any playing tracks
@@ -503,12 +509,12 @@ S_StopBackgroundTrack
 */
 void S_StopBackgroundTrack (void)
 {
-	if (!ogg_started) // was sound_started
+	if ( !ogg_started )
 		return;
 
 	S_StopStreaming ();
 
-	S_CloseBackgroundTrack(&s_bgTrack);
+	S_CloseBackgroundTrack (&s_bgTrack);
 
 	ogg_status = STOP;
 
@@ -522,14 +528,14 @@ S_StartStreaming
 */
 void S_StartStreaming (void)
 {
-	if (!ogg_started) // was sound_started
+	if ( !ogg_started )
 		return;
 
-	if (s_streamingChannel)
+	if ( s_streamingChannel )
 		return;		// Already started
 
 	s_streamingChannel = S_PickChannel(0, 0);
-	if (!s_streamingChannel)
+	if ( !s_streamingChannel )
 		return;
 
 	s_streamingChannel->streaming = true;
@@ -556,19 +562,19 @@ S_StopStreaming
 */
 void S_StopStreaming (void)
 {
-	//int			processed;
-	//unsigned	buffer;
+//	int			processed;
+//	unsigned	buffer;
 
-	if (!ogg_started) // was sound_started
+	if ( !ogg_started )
 		return;
 
-	if (!s_streamingChannel)
+	if ( !s_streamingChannel )
 		return;		// Already stopped
 
 	s_streamingChannel->streaming = false;
 
 	// Clean up the source
-	/*qalSourceStop(s_streamingChannel->sourceNum);
+/*	qalSourceStop(s_streamingChannel->sourceNum);
 
 	qalGetSourcei(s_streamingChannel->sourceNum, AL_BUFFERS_PROCESSED, &processed);
 	if (processed > 0){
@@ -582,7 +588,7 @@ void S_StopStreaming (void)
 
 	// FIXME: OpenAL bug?
 	qalDeleteSources(1, &s_streamingChannel->sourceNum);
-	qalGenSources(1, &s_streamingChannel->sourceNum);*/
+	qalGenSources(1, &s_streamingChannel->sourceNum); */
 
 	s_streamingChannel = NULL;
 }
@@ -601,7 +607,7 @@ Based on code by QuDos
 */
 void S_OGG_Init (void)
 {
-	if (ogg_started)
+	if ( ogg_started )
 		return;
 
 	// Cvars
@@ -611,13 +617,14 @@ void S_OGG_Init (void)
 	Cvar_SetDescription ("ogg_ambient_track", "Sets the name of the Ogg Vorbis file used for the ambient music track.");
 
 	// Console commands
-	Cmd_AddCommand("ogg", S_OGG_ParseCmd);
+	Cmd_AddCommand ("ogg", S_OGG_ParseCmd);
 
 	// Build list of files
 	Com_Printf("Searching for Ogg Vorbis files...\n");
 	ogg_numfiles = 0;
 	S_OGG_LoadFileList ();
-	Com_Printf("%d Ogg Vorbis files found.\n", ogg_numfiles);
+//	Com_Printf ("%d Ogg Vorbis files found.\n", ogg_numfiles);
+	Com_Printf ("%d Ogg Vorbis files found (%i imported).\n", ogg_numfiles, ogg_numImportFiles);
 
 	// Initialize variables
 	if (ogg_first_init) {
@@ -668,7 +675,7 @@ void S_OGG_Shutdown (void)
 	ogg_numImportFiles = 0;
 
 	// Remove console commands
-	Cmd_RemoveCommand("ogg");
+	Cmd_RemoveCommand ("ogg");
 
 	ogg_started = false;
 }
