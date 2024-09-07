@@ -617,10 +617,6 @@ SOURCE=.\g_local.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\g_main.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\game.h
 # End Source File
 # Begin Source File
@@ -662,10 +658,6 @@ SOURCE=.\m_chick.h
 # Begin Source File
 
 SOURCE=.\m_dog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\m_fiend.h
 # End Source File
 # Begin Source File
 

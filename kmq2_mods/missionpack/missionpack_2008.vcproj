@@ -927,10 +927,6 @@
 				>
 			</File>
 			<File
-				RelativePath="g_main.h"
-				>
-			</File>
-			<File
 				RelativePath="game.h"
 				>
 			</File>
@@ -972,10 +968,6 @@
 			</File>
 			<File
 				RelativePath="m_dog.h"
-				>
-			</File>
-			<File
-				RelativePath="m_fiend.h"
 				>
 			</File>
 			<File
