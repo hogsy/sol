@@ -259,16 +259,20 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 {
 	int			button_size = LIST_SCROLLBAR_CONTROL_SIZE;
 	int			sk_segment_size = LIST_SCROLLBAR_CONTROL_SIZE / 2;
-	int			i, barWidth, barHeight, sliderPos,red, green, blue, hoverAlpha;
+	int			i, barWidth, barHeight, sliderPos, red, green, blue, hoverAlpha;
 	int			knob_x, knob_y, segmentPos;
 	int			scrollTotal, knobWidth, knobHeight,  sliderPos2, numKnobSegments, centerKnobSegment;
-	float		scroll_proportion, t_ofs[2];
+	int			buttonSizeScaled, skSegmentSizeScaled, knobXScaled, knobYScaled;
+	int			knobWidthScaled, knobWidthUnscaled, knobHeightScaled, knobHeightUnscaled;
+	float		scroll_proportion, t_ofs[2], knob_x_scaled, knob_y_scaled;
 	color_t		arrowColor;
 	vec4_t		arrowTemp[2], sbknobTemp[5];
 	qboolean	mouseClick, mouseOverArrow1, mouseOverArrow2, arrow1_pulse, arrow2_pulse, knobPulse, useDblKnobCenter;
 
 	if (!scroll)	return;
 
+	buttonSizeScaled = UI_ScaledScreen((float)button_size);
+	skSegmentSizeScaled = UI_ScaledScreen((float)sk_segment_size);
 	hoverAlpha = UI_MouseOverAlpha(ui_mousecursor.menuitem);
 	mouseClick = ( ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1] );
 	UI_TextColor (alt_text_color->integer, true, &red, &green, &blue);
@@ -333,51 +337,73 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 			scroll_proportion = (float)scroll->scrollNumVisible / (float)scrollTotal;
 			knobWidth = (int)(scroll_proportion * (float)barWidth);
 			knobWidth -= knobWidth % sk_segment_size;
-
 			if (knobWidth <= button_size) {
 				UI_DrawPicST (box_x+button_size+sliderPos, box_y+boxHeight-button_size, button_size, button_size,
 							stCoord_scrollKnob_h, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 			}
 			else
 			{
-				sliderPos2 = (barWidth-knobWidth) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
 				numKnobSegments = knobWidth / sk_segment_size;
+				knobWidthScaled = skSegmentSizeScaled * numKnobSegments;
+				knobWidthUnscaled = ceil((float)knobWidthScaled / UI_GetScreenScale());
+				if ( knobWidthUnscaled < knobWidth ) {
+					knobWidth = knobWidthUnscaled;
+				//	Com_Printf ("Adjusting knobWidth downwards due to segment size shrinkage.\n");
+				}
+				sliderPos2 = (barWidth-knobWidth) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
 				centerKnobSegment = (numKnobSegments / 2);
 				useDblKnobCenter = (numKnobSegments % 2 == 0);
 				if (useDblKnobCenter)
 					centerKnobSegment -= 1;
 				knob_x = box_x + button_size + sliderPos2;
 				knob_y = box_y + boxHeight - button_size;
+				knob_x_scaled = knob_x;
+				knob_y_scaled = knob_y;
+				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, NULL, NULL, item->scrAlign);
+				knobXScaled = floor(knob_x_scaled);
+				knobYScaled = knob_y_scaled;
 			//	Com_Printf ("scroll_prop: %f barWidth: %i knobWidth: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
 			//				scroll_proportion, barWidth, knobWidth, numKnobSegments, centerKnobSegment, sliderPos2);
 			//	UI_DrawFill (knob_x, knob_y, knobWidth, button_size, ALIGN_CENTER, false, arrowColor[0], arrowColor[1], arrowColor[2], 127);
 				// left
-				UI_DrawPicST (knob_x, knob_y, sk_segment_size, button_size,
-							stCoord_scrollKnob_h_left, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			//	UI_DrawPicST (knob_x, knob_y, sk_segment_size, button_size,
+			//				stCoord_scrollKnob_h_left, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				UI_DrawPrecisePicST (knobXScaled, knobYScaled, skSegmentSizeScaled, buttonSizeScaled,
+									stCoord_scrollKnob_h_left, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 				// center segments
-				for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+			//	for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+				for (i = 1, segmentPos = skSegmentSizeScaled; i < numKnobSegments - 1; i++, segmentPos += skSegmentSizeScaled)
 				{
 					if (i == centerKnobSegment)
 					{
 						if (useDblKnobCenter) {
-							UI_DrawPicST (knob_x+segmentPos, knob_y, button_size, button_size,
-										stCoord_scrollKnob_h_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						//	UI_DrawPicST (knob_x+segmentPos, knob_y, button_size, button_size,
+						//				stCoord_scrollKnob_h_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							UI_DrawPrecisePicST (knobXScaled+segmentPos, knobYScaled, buttonSizeScaled, buttonSizeScaled,
+												stCoord_scrollKnob_h_center_dbl, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 							i++;
-							segmentPos += sk_segment_size;
+							segmentPos -= skSegmentSizeScaled;
+							segmentPos += buttonSizeScaled;
 						}
 						else {
-							UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
-										stCoord_scrollKnob_h_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						//	UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+						//				stCoord_scrollKnob_h_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							UI_DrawPrecisePicST (knobXScaled+segmentPos, knobYScaled, skSegmentSizeScaled, buttonSizeScaled,
+												stCoord_scrollKnob_h_center, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 						}
 					}
 					else {
-						UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
-									stCoord_scrollKnob_h_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+					//	UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+					//				stCoord_scrollKnob_h_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						UI_DrawPrecisePicST (knobXScaled+segmentPos, knobYScaled, skSegmentSizeScaled, buttonSizeScaled,
+											stCoord_scrollKnob_h_seg, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 					}
 				}
 				// right
-				UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
-							stCoord_scrollKnob_h_right, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			//	UI_DrawPicST (knob_x+segmentPos, knob_y, sk_segment_size, button_size,
+			//				stCoord_scrollKnob_h_right, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				UI_DrawPrecisePicST (knobXScaled+segmentPos, knobYScaled, skSegmentSizeScaled, buttonSizeScaled,
+									stCoord_scrollKnob_h_right, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 			}
 		}
 	}
@@ -432,51 +458,73 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 			scroll_proportion = (float)scroll->scrollNumVisible / (float)scrollTotal;
 			knobHeight = (int)(scroll_proportion * (float)barHeight);
 			knobHeight -= knobHeight % sk_segment_size;
-
 			if (knobHeight <= button_size) {
 				UI_DrawPicST (box_x+boxWidth-button_size, box_y+button_size+sliderPos, button_size, button_size,
 							stCoord_scrollKnob_v, item->scrAlign, false, arrowColor, UI_ARROWS_PIC);
 			}
 			else
 			{
-				sliderPos2 = (barHeight - knobHeight) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
 				numKnobSegments = knobHeight / sk_segment_size;
+				knobHeightScaled = skSegmentSizeScaled * numKnobSegments;
+				knobHeightUnscaled = ceil((float)knobHeightScaled / UI_GetScreenScale());
+				if ( knobHeightUnscaled < knobHeight ) {
+					knobHeight = knobHeightUnscaled;
+				//	Com_Printf ("Adjusting knobHeight downwards due to segment size shrinkage.\n");
+				}
+				sliderPos2 = (barHeight - knobHeight) * ((float)scroll->scrollPos / (float)(scroll->scrollMax - scroll->scrollMin));
 				centerKnobSegment = (numKnobSegments / 2);
 				useDblKnobCenter = (numKnobSegments % 2 == 0);
 				if (useDblKnobCenter)
 					centerKnobSegment -= 1;
 				knob_x = box_x + boxWidth - button_size;
 				knob_y = box_y + button_size + sliderPos2;
+				knob_x_scaled = knob_x;
+				knob_y_scaled = knob_y;
+				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, NULL, NULL, item->scrAlign);
+				knobXScaled = knob_x_scaled;
+				knobYScaled = floor(knob_y_scaled);
 			//	Com_Printf ("scroll_prop: %f barHeight: %i knobHeight: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
 			//				scroll_proportion, barHeight, knobHeight, numKnobSegments, centerKnobSegment, sliderPos2);
 			//	UI_DrawFill (knob_x, knob_y, button_size, knobHeight, ALIGN_CENTER, false, arrowColor[0], arrowColor[1], arrowColor[2], 127);
 				// top
-				UI_DrawPicST (knob_x, knob_y, button_size, sk_segment_size,
-							stCoord_scrollKnob_v_top, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			//	UI_DrawPicST (knob_x, knob_y, button_size, sk_segment_size,
+			//				stCoord_scrollKnob_v_top, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				UI_DrawPrecisePicST (knobXScaled, knobYScaled, buttonSizeScaled, skSegmentSizeScaled,
+									stCoord_scrollKnob_v_top, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 				// center segments
-				for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+			//	for (i = 1, segmentPos = sk_segment_size; i < numKnobSegments - 1; i++, segmentPos += sk_segment_size)
+				for (i = 1, segmentPos = skSegmentSizeScaled; i < numKnobSegments - 1; i++, segmentPos += skSegmentSizeScaled)
 				{
 					if (i == centerKnobSegment)
 					{
 						if (useDblKnobCenter) {
-							UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, button_size,
-										stCoord_scrollKnob_v_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						//	UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, button_size,
+						//				stCoord_scrollKnob_v_center_dbl, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							UI_DrawPrecisePicST (knobXScaled, knobYScaled+segmentPos, buttonSizeScaled, buttonSizeScaled,
+												stCoord_scrollKnob_v_center_dbl, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 							i++;
-							segmentPos += sk_segment_size;
+							segmentPos -= skSegmentSizeScaled;
+							segmentPos += buttonSizeScaled;
 						}
 						else {
-							UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
-										stCoord_scrollKnob_v_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						//	UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+						//				stCoord_scrollKnob_v_center, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+							UI_DrawPrecisePicST (knobXScaled, knobYScaled+segmentPos, buttonSizeScaled, skSegmentSizeScaled,
+												stCoord_scrollKnob_v_center, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 						}
 					}
 					else {
-						UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
-									stCoord_scrollKnob_v_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+					//	UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+					//				stCoord_scrollKnob_v_seg, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+						UI_DrawPrecisePicST (knobXScaled, knobYScaled+segmentPos, buttonSizeScaled, skSegmentSizeScaled,
+											stCoord_scrollKnob_v_seg, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 					}
 				}
 				// bottom
-				UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
-							stCoord_scrollKnob_v_bottom, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+			//	UI_DrawPicST (knob_x, knob_y+segmentPos, button_size, sk_segment_size,
+			//				stCoord_scrollKnob_v_bottom, item->scrAlign, false, arrowColor, UI_SCROLLKNOB_PIC);
+				UI_DrawPrecisePicST (knobXScaled, knobYScaled+segmentPos, buttonSizeScaled, skSegmentSizeScaled,
+									stCoord_scrollKnob_v_bottom, item->scrAlign, arrowColor, UI_SCROLLKNOB_PIC);
 			}
 		}
 	}

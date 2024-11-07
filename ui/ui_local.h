@@ -884,6 +884,9 @@ void UI_RefreshData (void);
 #define UI_DrawOffsetPic								SCR_DrawOffsetPic
 #define UI_DrawPicST(x, y, w, h, st, a, r, c,  p)		SCR_DrawOffsetPicST(x, y, w, h, vec2_origin, st, a, r, c, p)
 #define UI_DrawOffsetPicST								SCR_DrawOffsetPicST
+#define UI_DrawPrecisePicST(x, y, w, h, st, a, c, p)	SCR_DrawPicUnscaled(x, y, w, h, vec2_origin, st, vec2_origin, a, c, false, p, NULL)
+#define	UI_ScaledScreen									SCR_ScaledScreen
+#define UI_GetScreenScale								SCR_GetScreenScale
 #define UI_DrawTiledPic									SCR_DrawTiledPic
 #define UI_DrawChar(x, y, s, t, n, r, g, b, a, i, l)	SCR_DrawSizedChar(x, y, s, t, n, FONT_UI, r, g, b, a, i, l)
 #define UI_DrawString									SCR_DrawString

@@ -803,6 +803,37 @@ void SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset
 
 /*
 ================
+SCR_DrawPicUnscaled
+Coordinates are pre-scaled pixel values
+=================
+*/
+void SCR_DrawPicUnscaled (int x, int y, int width, int height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, color_t color, qboolean additive, char *pic, char *maskPic)
+{
+	vec4_t			outColor;
+	drawStruct_t	ds = { 0 };
+	qboolean		useMask = ( (maskPic != NULL) && (strlen(maskPic) > 0) );
+
+	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
+	if (additive) {
+		ds.flags |= DSFLAG_ADDITIVE;
+	}
+
+	ds.pic = pic;
+	if ( useMask ) {
+		ds.maskPic = maskPic;
+	}
+	ds.x = x;	ds.y = y;	ds.w = width;	ds.h = height;
+	ds.flags |= (useMask) ? DSFLAG_USESTCOORDS|DSFLAG_MASKED : DSFLAG_USESTCOORDS;
+	Vector2Copy (scroll, ds.scroll);
+	Vector2Copy (offset, ds.offset);
+	Vector4Copy (texCorners, ds.stCoords);
+	Vector4Copy (outColor, ds.color);
+	R_DrawPic (&ds);
+}
+
+
+/*
+================
 SCR_DrawTiledPic
 Coordinates are 640*480 virtual values
 =================

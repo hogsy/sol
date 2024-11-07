@@ -326,6 +326,7 @@ void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t of
 void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic);
 void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic, char *maskPic);
 void	SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic);
+void	SCR_DrawPicUnscaled (int x, int y, int width, int height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, color_t color, qboolean additive, char *pic, char *maskPic);
 void	SCR_DrawTiledPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, char *pic, float alpha);
 void	SCR_DrawChar (float x, float y, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	SCR_DrawSizedChar (float x, float y, int size, scralign_t align, int num, fontslot_t font, int red, int green, int blue, int alpha, qboolean italic, qboolean last);
