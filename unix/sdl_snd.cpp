@@ -63,10 +63,10 @@ SNDDMA_Init (void)
 	}
 	
 	snd_inited = 0;
-	desired_bits = (Cvar_Get("sndbits", "16", CVAR_ARCHIVE))->value;
+	desired_bits = (Cvar_Get( "sndbits", "16", CVAR_ARCHIVE))->value;
 
 	/* Set up the desired format */
-	freq = (Cvar_Get("s_khz", "0", CVAR_ARCHIVE))->value;
+	freq = (Cvar_Get( "s_khz", "0", CVAR_ARCHIVE))->value;
 	if (freq == 44)
 		desired.freq = 44100;
 	else if (freq == 22)
@@ -88,7 +88,7 @@ SNDDMA_Init (void)
 			Com_Printf ("Unknown number of audio bits: %d\n", desired_bits);
 			return 0;
 	}
-	desired.channels = (Cvar_Get("sndchannels", "2", CVAR_ARCHIVE))->value;
+	desired.channels = (Cvar_Get( "sndchannels", "2", CVAR_ARCHIVE))->value;
 	
 	if (desired.freq == 44100)
 		desired.samples = 2048;

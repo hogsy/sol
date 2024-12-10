@@ -97,12 +97,12 @@ void Netchan_Init (void)
 	// pick a port value that should be nice and random
 	port = Sys_Milliseconds() & 0xffff;
 
-	showpackets = Cvar_Get ("showpackets", "0", 0);
-	Cvar_SetDescription ("showpackets", "Enables debugging output of network packets.");
-	showdrop = Cvar_Get ("showdrop", "0", 0);
-	Cvar_SetDescription ("showdrop", "Enables debugging output of out-of-order and dropped packets.");
-	qport = Cvar_Get ("qport", va("%i", port), CVAR_NOSET);
-	Cvar_SetDescription ("qport", "Random port number for network connections.  This is a NOSET value.");
+	showpackets = Cvar_Get ( "showpackets", "0", 0 );
+	Cvar_SetDescription ( "showpackets", "Enables debugging output of network packets." );
+	showdrop = Cvar_Get ( "showdrop", "0", 0 );
+	Cvar_SetDescription ( "showdrop", "Enables debugging output of out-of-order and dropped packets." );
+	qport = Cvar_Get ( "qport", va( "%i", port ), CVAR_NOSET );
+	Cvar_SetDescription ( "qport", "Random port number for network connections.  This is a NOSET value." );
 }
 
 /*

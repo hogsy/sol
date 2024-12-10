@@ -212,19 +212,16 @@ keyname_t keynames[] =
 ==============================================================================
 */
 
-qboolean Cmd_IsComplete (char *cmd);
+qboolean Cmd_IsComplete ( const char *cmd);
 
-void CompleteCommand (void)
+void CompleteCommand ()
 {
-	char	*cmd, *s;
-
-	s = key_lines[edit_line]+1;
-	if (*s == '\\' || *s == '/')
+	char *s = key_lines[ edit_line ] + 1;
+	if ( *s == '\\' || *s == '/' )
 		s++;
 
-	cmd = Cmd_CompleteCommand (s);
 	// Knightmare - added command auto-complete
-	if (cmd)
+	if ( const char *cmd = Cmd_CompleteCommand( s ) )
 	{
 		key_lines[edit_line][1] = '/';
 	//	strncpy (key_lines[edit_line]+2, cmd);
@@ -237,7 +234,6 @@ void CompleteCommand (void)
 		} else {
 			key_lines[edit_line][key_linepos] = 0;
 		}
-		return;
 	}
 }
 
@@ -989,10 +985,10 @@ void Key_Init (void)
 //
 // register our functions
 //
-	Cmd_AddCommand ("bind", Key_Bind_f);
-	Cmd_AddCommand ("unbind", Key_Unbind_f);
-	Cmd_AddCommand ("unbindall", Key_Unbindall_f);
-	Cmd_AddCommand ("bindlist", Key_Bindlist_f);
+	Cmd_AddCommand ( "bind", Key_Bind_f );
+	Cmd_AddCommand ( "unbind", Key_Unbind_f );
+	Cmd_AddCommand ( "unbindall", Key_Unbindall_f );
+	Cmd_AddCommand ( "bindlist", Key_Bindlist_f );
 }
 
 /*
@@ -1153,7 +1149,7 @@ void Key_Event (int key, qboolean down, unsigned time)
 		kb = keybindings[key];
 		if (kb && kb[0] == '+')
 		{
-			Com_sprintf (cmd, sizeof(cmd), "-%s %i %i\n", kb+1, key, time);
+			snprintf (cmd, sizeof(cmd), "-%s %i %i\n", kb+1, key, time);
 			Cbuf_AddText (cmd);
 		}
 		if (keyshift[key] != key)
@@ -1161,7 +1157,7 @@ void Key_Event (int key, qboolean down, unsigned time)
 			kb = keybindings[keyshift[key]];
 			if (kb && kb[0] == '+')
 			{
-				Com_sprintf (cmd, sizeof(cmd), "-%s %i %i\n", kb+1, key, time);
+				snprintf (cmd, sizeof(cmd), "-%s %i %i\n", kb+1, key, time);
 				Cbuf_AddText (cmd);
 			}
 		}
@@ -1185,7 +1181,7 @@ void Key_Event (int key, qboolean down, unsigned time)
 		{
 			if (kb[0] == '+')
 			{	// button commands add keynum and time as a parm
-				Com_sprintf (cmd, sizeof(cmd), "%s %i %i\n", kb, key, time);
+				snprintf (cmd, sizeof(cmd), "%s %i %i\n", kb, key, time);
 				Cbuf_AddText (cmd);
 			}
 			else

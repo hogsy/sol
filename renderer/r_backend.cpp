@@ -104,7 +104,7 @@ static float *RB_TableForFunc (const waveFunc_t *func)
 	case WAVEFORM_NOISE:
 		return rb_noiseTable;
 	}
-	VID_Error (ERR_DROP, "RB_TableForFunc: unknown waveform type %i", func->type);
+	VID_Error ( ERR_DROP, "RB_TableForFunc: unknown waveform type %i", func->type );
 	return rb_sinTable;
 }
 
@@ -227,7 +227,7 @@ qboolean RB_CheckArrayOverflow (int numVerts, int numIndex)
 	if (rb_vertex == 0 || rb_index == 0)	return false;  // nothing to purge
 
 	if (numVerts > MAX_VERTICES || numIndex > MAX_INDICES)
-		VID_Error (ERR_DROP, "RB_CheckArrayOverflow: %i > MAX_VERTICES or %i > MAX_INDICES", numVerts, numIndex);
+		VID_Error ( ERR_DROP, "RB_CheckArrayOverflow: %i > MAX_VERTICES or %i > MAX_INDICES", numVerts, numIndex );
 
 	if (rb_vertex + numVerts <= MAX_VERTICES && rb_index + numIndex <= MAX_INDICES)
 		return false;

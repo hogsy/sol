@@ -29,12 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	ICON_HEIGHT	24
 #define	ICON_SPACE	8
 
-char		*sb_nums[2][11] = 
-{
-	{"num_0", "num_1", "num_2", "num_3", "num_4", "num_5",
-	"num_6", "num_7", "num_8", "num_9", "num_minus"},
-	{"anum_0", "anum_1", "anum_2", "anum_3", "anum_4", "anum_5",
-	"anum_6", "anum_7", "anum_8", "anum_9", "anum_minus"}
+const char *sb_nums[ 2 ][ 11 ] =
+        {
+                {"num_0",  "num_1",  "num_2",  "num_3",  "num_4",  "num_5",
+                 "num_6",  "num_7",  "num_8",  "num_9",  "num_minus" },
+                {"anum_0", "anum_1", "anum_2", "anum_3", "anum_4", "anum_5",
+                 "anum_6", "anum_7", "anum_8", "anum_9", "anum_minus"}
 };
 
 //===============================================================================
@@ -60,8 +60,8 @@ void Hud_DrawStringAlt (int x, int y, const char *string, int alpha, qboolean is
 	int		i, len;
 	char	highString[1024];
 
-//	Com_sprintf (highString, sizeof(highString), S_COLOR_ALT"%s", string);
-	Com_sprintf (highString, sizeof(highString), "%s", string);
+//	snprintf (highString, sizeof(highString), S_COLOR_ALT"%s", string);
+	snprintf (highString, sizeof(highString), "%s", string);
 	len = (int)strlen(highString);
 	for (i=0; i<len; i++) {
 		highString[i] ^= 128;
@@ -180,7 +180,7 @@ void CL_DrawLayoutString (char *string, int x, int y, int centerwidth, int xOr, 
 
 		if (xOr != 0)
 		{	// Knightmare- text color hack
-		//	Com_sprintf (line, sizeof(line), S_COLOR_ALT"%s", line);
+		//	snprintf (line, sizeof(line), S_COLOR_ALT"%s", line);
 			len = (int)strlen(line);
 			for (i=0; i<len; i++) {
 				line[i] ^= xOr;
@@ -231,7 +231,7 @@ void CL_DrawLayoutField (int x, int y, int color, int width, int value, qboolean
 
 	fieldScale = getScreenScale();
 	width = min (width, 5);
-	Com_sprintf (num, sizeof(num), "%i", value);
+	snprintf (num, sizeof(num), "%i", value);
 	l = (int)strlen(num);
 	if (l > width)
 	{	// allow squeezing in extra digits
@@ -457,7 +457,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			if (ping > 999)
 				ping = 999;
 
-			Com_sprintf (block, sizeof(block), "%3d %3d %-12.12s", score, ping, ci->name);
+			snprintf (block, sizeof(block), "%3d %3d %-12.12s", score, ping, ci->name);
 
 			if (value == cl.playernum)
 				Hud_DrawStringAlt (x, y, block, 255, isStatusBar);
@@ -492,7 +492,7 @@ void CL_ExecuteLayoutString (char *s, qboolean isStatusBar)
 			if (ping > 999)
 				ping = 999;
 			// double spaced before player name for 2 flag icons
-			Com_sprintf (block, sizeof(block), "%3d %3d  %-12.12s", score, ping, ci->name);
+			snprintf (block, sizeof(block), "%3d %3d  %-12.12s", score, ping, ci->name);
 
 			if (value == cl.playernum)
 				Hud_DrawStringAlt (x, y, block, 255, isStatusBar);
@@ -926,10 +926,10 @@ void CL_DrawInventory (void)
 	{
 		item = index[i];
 		// search for a binding
-		Com_sprintf (binding, sizeof(binding), "use %s", cl.configstrings[cs_items+item]);
+		snprintf (binding, sizeof(binding), "use %s", cl.configstrings[cs_items+item]);
 		bind = "";
 		for (j=0; j<256; j++)
-			if (keybindings[j] && !Q_stricmp (keybindings[j], binding))
+			if (keybindings[j] && !Q_stricmp ( keybindings[ j ], binding ) )
 			{
 				bind = Key_KeynumToString(j);
 				break;
@@ -937,12 +937,12 @@ void CL_DrawInventory (void)
 
 		if (item != selected)
 		{
-			Com_sprintf (string, sizeof(string), " " S_COLOR_ALT "%3s %3i %7s", bind, cl.inventory[item],
+			snprintf (string, sizeof(string), " " S_COLOR_ALT "%3s %3i %7s", bind, cl.inventory[item],
 				cl.configstrings[cs_items+item] );
 		}
 		else	// draw a blinky cursor by the selected item
 		{
-			Com_sprintf (string, sizeof(string), S_COLOR_WHITE ">" S_COLOR_ITALIC "%3s %3i %7s", bind, cl.inventory[item],
+			snprintf (string, sizeof(string), S_COLOR_WHITE ">" S_COLOR_ITALIC "%3s %3i %7s", bind, cl.inventory[item],
 				cl.configstrings[cs_items+item] );
 		}
 

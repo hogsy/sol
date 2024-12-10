@@ -60,7 +60,7 @@ void SP_misc_teleporter_dest (edict_t *ent);
 		VectorSubtract(self->s.origin, spot->s.origin, d);
 		if (VectorLength(d) < 384)
 		{
-			if ((!self->targetname) || Q_stricmp(self->targetname, spot->targetname) != 0)
+			if ((!self->targetname) || Q_stricmp( self->targetname, spot->targetname ) != 0)
 			{
 //				gi.dprintf("FixCoopSpots changed %s at %s targetname from %s to %s\n", self->classname, vtos(self->s.origin), self->targetname, spot->targetname);
 				self->targetname = spot->targetname;
@@ -78,7 +78,7 @@ void SP_misc_teleporter_dest (edict_t *ent);
 {
 	edict_t	*spot;
 
-	if (Q_stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp( level.mapname, "security" ) == 0)
 	{
 		spot = G_Spawn();
 		spot->classname = "info_player_coop";
@@ -118,7 +118,7 @@ void SP_info_player_start(edict_t *self)
 
 	if (!coop->value)
 		return;
-	if (Q_stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp( level.mapname, "security" ) == 0)
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_CreateCoopSpots;
@@ -155,20 +155,20 @@ void SP_info_player_coop(edict_t *self)
 
 	self->class_id = ENTITY_INFO_PLAYER_COOP;
 
-	if ((Q_stricmp(level.mapname, "jail2") == 0)   ||
-	   (Q_stricmp(level.mapname, "jail4") == 0)   ||
-	   (Q_stricmp(level.mapname, "mine1") == 0)   ||
-	   (Q_stricmp(level.mapname, "mine2") == 0)   ||
-	   (Q_stricmp(level.mapname, "mine3") == 0)   ||
-	   (Q_stricmp(level.mapname, "mine4") == 0)   ||
-	   (Q_stricmp(level.mapname, "lab") == 0)     ||
-	   (Q_stricmp(level.mapname, "boss1") == 0)   ||
-	   (Q_stricmp(level.mapname, "fact3") == 0)   ||
-	   (Q_stricmp(level.mapname, "biggun") == 0)  ||
-	   (Q_stricmp(level.mapname, "space") == 0)   ||
-	   (Q_stricmp(level.mapname, "command") == 0) ||
-	   (Q_stricmp(level.mapname, "power2") == 0) ||
-	   (Q_stricmp(level.mapname, "strike") == 0))
+	if ((Q_stricmp( level.mapname, "jail2" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "jail4" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "mine1" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "mine2" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "mine3" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "mine4" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "lab" ) == 0)     ||
+	   (Q_stricmp( level.mapname, "boss1" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "fact3" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "biggun" ) == 0)  ||
+	   (Q_stricmp( level.mapname, "space" ) == 0)   ||
+	   (Q_stricmp( level.mapname, "command" ) == 0) ||
+	   (Q_stricmp( level.mapname, "power2" ) == 0) ||
+	   (Q_stricmp( level.mapname, "strike" ) == 0))
 	{
 		// invoke one of our gross, ugly, disgusting hacks
 		self->think = SP_FixCoopSpots;
@@ -433,16 +433,16 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		// Knightmare- Single-player obits
 		if (attacker->svflags & SVF_MONSTER)
 		{	// Light Guard
-			if (!strcmp(attacker->classname, "monster_soldier_light"))
+			if (!strcmp(attacker->classname.c_str(), "monster_soldier_light"))
 				message = "was blasted by a";
 			// Shotgun Guard
-			else if (!strcmp(attacker->classname, "monster_soldier"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_soldier"))
 				message = "was gunned down by a";
 			// Machinegun Guard
-			else if (!strcmp(attacker->classname, "monster_soldier_ss"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_soldier_ss"))
 				message = "was machinegunned by a";
 			// Enforcer
-			else if (!strcmp(attacker->classname, "monster_infantry"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_infantry"))
 			{
 				if (mod == MOD_HIT)
 					message = "was bludgened by an";
@@ -450,7 +450,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was pumped full of lead by an";
 			}
 			// Gunner
-			else if (!strcmp(attacker->classname, "monster_gunner"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_gunner"))
 			{
 				if (mod == MOD_GRENADE)
 				{
@@ -466,10 +466,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was machinegunned by a";
 			}
 			// Berserker
-			else if (!strcmp(attacker->classname, "monster_berserk"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_berserk"))
 				message = "was smashed by a";
 			// Gladiator
-			else if (!strcmp(attacker->classname, "monster_gladiator"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_gladiator"))
 			{
 				if (mod == MOD_RAILGUN)
 					message = "was railed by a";
@@ -480,13 +480,13 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 			// Medic
-			else if (!strcmp(attacker->classname, "monster_medic"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_medic"))
 				message = "was blasted by a";
 			// Icarus
-			else if (!strcmp(attacker->classname, "monster_hover"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_hover"))
 				message = "was blasted by an";
 			// Iron Maiden
-			else if (!strcmp(attacker->classname, "monster_chick"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_chick"))
 			{
 				if (mod == MOD_ROCKET)
 				{
@@ -502,16 +502,16 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was bitch-slapped by an";
 			}
 			// Parasite
-			else if (!strcmp(attacker->classname, "monster_parasite"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_parasite"))
 				message = "was exsanguiated by a";
 			// Brain
-			else if (!strcmp(attacker->classname, "monster_brain"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_brain"))
 			{
 				message = "was torn up by a";
 				message2 = "'s tentacles";
 			}
 			// Flyer
-			else if (!strcmp(attacker->classname, "monster_flyer"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_flyer"))
 			{
 				if (mod == MOD_BLASTER)
 					message = "was blasted by a";
@@ -522,7 +522,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 			// Technician
-			else if (!strcmp(attacker->classname, "monster_floater"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_floater"))
 			{
 				if (mod == MOD_BLASTER)
 					message = "was blasted by a";
@@ -533,8 +533,8 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 			// Tank/Tank Commander
-			else if (!strcmp(attacker->classname, "monster_tank")
-				|| !strcmp(attacker->classname, "monster_tank_commander"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_tank")
+				|| !strcmp(attacker->classname.c_str(), "monster_tank_commander"))
 			{
 				if (mod == MOD_BLASTER)
 					message = "was blasted by a";
@@ -552,7 +552,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was pumped full of lead by a";
 			}
 			// Supertank
-			else if (!strcmp(attacker->classname, "monster_supertank"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_supertank"))
 			{
 				if (mod == MOD_ROCKET)
 				{
@@ -568,7 +568,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was chaingunned by a";
 			}
 			// Hornet
-			else if (!strcmp(attacker->classname, "monster_boss2"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_boss2"))
 			{
 				if (mod == MOD_ROCKET)
 				{
@@ -584,7 +584,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					message = "was chaingunned by a";
 			}
 			// Jorg
-			else if (!strcmp(attacker->classname, "monster_jorg"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_jorg"))
 			{
 				if (mod == MOD_BFG_LASER)
 				{
@@ -608,7 +608,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 			// Makron
-			else if (!strcmp(attacker->classname, "monster_makron"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_makron"))
 			{
 				if (mod == MOD_BLASTER)
 				{
@@ -634,10 +634,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 			// Barracuda Shark
-			else if (!strcmp(attacker->classname, "monster_flipper"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_flipper"))
 				message = "was chewed up by a";
 			// Mutant
-			else if (!strcmp(attacker->classname, "monster_mutant"))
+			else if (!strcmp(attacker->classname.c_str(), "monster_mutant"))
 				message = "was clawed by a";
 			// Turret Driver
 		/*	else if ( !strcmp(attacker->classname, "turret_driver") || !strcmp(attacker->classname, "turret_breach") )
@@ -766,7 +766,7 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	}
 	if (self->client->killer_yaw < 0)
 		self->client->killer_yaw += 360;
-	
+
 
 }
 
@@ -1025,7 +1025,7 @@ void SelectStartWeapon (gclient_t *client, int style)
 	// Lazarus: We allow choice of weapons (or no weapon) at startup
 	// If style is non-zero, first clear player inventory of all
 	// weapons and ammo that might have been passed over through
-	// target_changelevel or acquired when previously called by 
+	// target_changelevel or acquired when previously called by
 	// InitClientPersistant
 	if (style)
 	{
@@ -1200,7 +1200,7 @@ void InitClientResp (gclient_t *client)
 	int ctf_team = client->resp.ctf_team;
 	qboolean id_state = client->resp.id_state;
 //ZOID
-	
+
 	memset (&client->resp, 0, sizeof(client->resp));
 
 //ZOID
@@ -1221,7 +1221,7 @@ void InitClientResp (gclient_t *client)
 ==================
 SaveClientData
 
-Some information that should be persistant, like health, 
+Some information that should be persistant, like health,
 is still stored in the edict structure, so it needs to
 be mirrored out to the client structure before all the
 edicts are wiped.
@@ -1444,7 +1444,7 @@ edict_t *SelectCoopSpawnPoint (edict_t *ent)
 		target = spot->targetname;
 		if (!target)
 			target = "";
-		if ( Q_stricmp(game.spawnpoint, target) == 0 )
+		if ( Q_stricmp( game.spawnpoint, target ) == 0 )
 		{	// this is a coop spawn point for one of the clients here
 			index--;
 			if (!index)
@@ -1488,7 +1488,7 @@ void	SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles, int *style, i
 			if (!game.spawnpoint[0] || !spot->targetname)
 				continue;
 
-			if (Q_stricmp(game.spawnpoint, spot->targetname) == 0)
+			if (Q_stricmp( game.spawnpoint, spot->targetname ) == 0)
 				break;
 		}
 
@@ -1651,7 +1651,7 @@ void respawn (edict_t *self)
 	gi.AddCommandString ("menu_loadgame\n");
 }
 
-/* 
+/*
  * only called when pers.spectator changes
  * note that resp.spectator should be the opposite of pers.spectator here
  */
@@ -1665,10 +1665,10 @@ void spectator_respawn (edict_t *ent)
 	if (ent->client->pers.spectator)
 	{
 		char *value = Info_ValueForKey (ent->client->pers.userinfo, "spectator");
-		if (*spectator_password->string && 
-			strcmp(spectator_password->string, "none") && 
+		if (*spectator_password->string &&
+			strcmp(spectator_password->string, "none") &&
 			strcmp(spectator_password->string, value)) {
-			safe_cprintf(ent, PRINT_HIGH, "Spectator password incorrect.\n");
+			safe_cprintf( ent, PRINT_HIGH, "Spectator password incorrect.\n" );
 			ent->client->pers.spectator = false;
 			gi.WriteByte (svc_stufftext);
 			gi.WriteString ("spectator 0\n");
@@ -1683,7 +1683,7 @@ void spectator_respawn (edict_t *ent)
 
 		if (numspec >= maxspectators->value)
 		{
-			safe_cprintf(ent, PRINT_HIGH, "Server spectator limit is full.");
+			safe_cprintf( ent, PRINT_HIGH, "Server spectator limit is full." );
 			ent->client->pers.spectator = false;
 			// reset his spectator var
 			gi.WriteByte (svc_stufftext);
@@ -1697,10 +1697,10 @@ void spectator_respawn (edict_t *ent)
 		// he was a spectator and wants to join the game
 		// he must have the right password
 		char *value = Info_ValueForKey (ent->client->pers.userinfo, "password");
-		if (*password->string && strcmp(password->string, "none") && 
+		if (*password->string && strcmp(password->string, "none") &&
 			strcmp(password->string, value))
 		{
-			safe_cprintf(ent, PRINT_HIGH, "Password incorrect.\n");
+			safe_cprintf( ent, PRINT_HIGH, "Password incorrect.\n" );
 			ent->client->pers.spectator = true;
 			gi.WriteByte (svc_stufftext);
 			gi.WriteString ("spectator 1\n");
@@ -1716,7 +1716,7 @@ void spectator_respawn (edict_t *ent)
 	PutClientInServer (ent);
 
 	// add a teleportation effect
-	if (!ent->client->pers.spectator) 
+	if (!ent->client->pers.spectator)
 	{
 		// send effect
 		gi.WriteByte (svc_muzzleflash);
@@ -1731,7 +1731,7 @@ void spectator_respawn (edict_t *ent)
 
 	ent->client->respawn_time = level.time;
 
-	if (ent->client->pers.spectator) 
+	if (ent->client->pers.spectator)
 		safe_bprintf (PRINT_HIGH, "%s has moved to the sidelines\n", ent->client->pers.netname);
 	else
 		safe_bprintf (PRINT_HIGH, "%s joined the game\n", ent->client->pers.netname);
@@ -2045,7 +2045,7 @@ void PutClientInServer (edict_t *ent)
 =====================
 ClientBeginDeathmatch
 
-A client has just connected to the server in 
+A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
@@ -2083,12 +2083,12 @@ void ClientBeginDeathmatch (edict_t *ent)
 
 // ACEBOT_ADD
 	safe_centerprintf(ent,"\n======================================\nACE Bot II Mod\n\n'sv addbot' to add a new bot.\n'sv removebot <name>' to remove bot.\n'sv dmpause' to pause the game.\n'sv savenodes' to save level path data.\n======================================\n\n");
-	
+
 	// Knightmare- moved this to g_spawn.c for bot support in dedicated servers
 	// If the map changes on us, init and reload the nodes
 	/*if (strcmp(level.mapname,current_map))
 	{
-		
+
 		ACEND_InitNodes();
 		ACEND_LoadNodes();
 		//ACESP_LoadBots(); // Knightmare- removed this
@@ -2119,7 +2119,7 @@ void ClientBegin (edict_t *ent)
 
 	// Lazarus: Set the alias for our alternate attack
 //	stuffcmd(ent, "alias +attack2 attack2_on; alias -attack2 attack2_off\n");
-	
+
 	if (deathmatch->value)
 	{
 		ClientBeginDeathmatch (ent);
@@ -2226,7 +2226,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	if (!Info_Validate(userinfo))
 	{
 	//	strncpy (userinfo, "\\name\\badinfo\\skin\\male/grunt");
-		Q_strncpyz (userinfo, MAX_INFO_STRING, "\\name\\badinfo\\skin\\male/grunt");	// userinfo is always length of MAX_INFO_STRING 
+		Q_strncpyz (userinfo, MAX_INFO_STRING, "\\name\\badinfo\\skin\\male/grunt");	// userinfo is always length of MAX_INFO_STRING
 	}
 
 	// set name
@@ -2342,8 +2342,8 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	{
 		int		i, numspec;
 
-		if (*spectator_password->string && 
-			strcmp(spectator_password->string, "none") && 
+		if (*spectator_password->string &&
+			strcmp(spectator_password->string, "none") &&
 			strcmp(spectator_password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Spectator password required or incorrect.");
 			return false;
@@ -2363,7 +2363,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	{
 		// check for a password
 		value = Info_ValueForKey (userinfo, "password");
-		if (*password->string && strcmp(password->string, "none") && 
+		if (*password->string && strcmp(password->string, "none") &&
 			strcmp(password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
 			return false;
@@ -2383,7 +2383,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		if (ctf->value)
 		{
 			ent->client->resp.ctf_team = -1;
-			ent->client->resp.id_state = true; 
+			ent->client->resp.id_state = true;
 		}
 //ZOID
 
@@ -2536,7 +2536,7 @@ void RemovePush(edict_t *ent)
 #ifdef KMQUAKE2_ENGINE_MOD
 	if (!tpp->value && tpp_auto->value && (!cl_thirdperson->value || deathmatch->value || coop->value) && ent->client->chasetoggle)
 #else
-	if (!tpp->value && tpp_auto->value && ent->client->chasetoggle)	
+	if (!tpp->value && tpp_auto->value && ent->client->chasetoggle)
 #endif
 		Cmd_Chasecam_Toggle(ent);
 }
@@ -2595,7 +2595,7 @@ void ClientSpycam (edict_t *ent)
 			camera = G_FindNextCamera(camera, client->monitor);
 		else
 			camera = G_FindPrevCamera(camera, client->monitor);
-		
+
 		if (camera)
 		{
 			if (!camera->viewer)
@@ -2634,13 +2634,13 @@ void ClientSpycam (edict_t *ent)
 		if ( (abs(client->ucmd.forwardmove) > 199) && (camera->groundentity) )
 		{
 			// walk/run
-			
+
 			edict_t	*thing;
 			vec3_t	end;
 			float	dist;
 
 			thing  = camera->vehicle;
-			
+
 			VectorMA(camera->s.origin,WORLD_SIZE,forward,end);	// was 8192
 			tr = gi.trace(camera->s.origin, camera->mins, camera->maxs, end, camera, MASK_SOLID);
 			if (client->ucmd.forwardmove < 0)
@@ -2660,7 +2660,7 @@ void ClientSpycam (edict_t *ent)
 			}
 			if (dist > 8)
 			{
-				if (!thing || !thing->inuse || Q_stricmp(thing->classname,"thing"))
+				if (!thing || !thing->inuse || Q_stricmp( thing->classname.c_str(), "thing" ) )
 					thing = camera->vehicle = SpawnThing();
 				thing->touch_debounce_time = level.time + 5.0;
 				thing->target_ent = camera;
@@ -2705,7 +2705,7 @@ void ClientSpycam (edict_t *ent)
 				actor_stand(camera);
 			}
 		}
-		
+
 		if (client->ucmd.upmove)
 		{
 			if ((client->ucmd.upmove > 0) && camera->groundentity && !camera->waterlevel)
@@ -2827,7 +2827,7 @@ void ClientSpycam (edict_t *ent)
 			if (level.time >= camera->monsterinfo.attack_finished)
 			{
 			//	client->latched_buttons &= ~BUTTONS_ATTACK;
-				if ( !Q_stricmp(camera->classname, "turret_breach") || !Q_stricmp(camera->classname, "model_turret") )
+				if ( !Q_stricmp( camera->classname.c_str(), "turret_breach" ) || !Q_stricmp( camera->classname.c_str(), "model_turret" ) )
 				{
 					if ( (camera->sounds == 5) || (camera->sounds == 6) )
 						camera->monsterinfo.attack_finished = level.time;
@@ -2878,7 +2878,7 @@ void ClientSpycam (edict_t *ent)
 	VectorMA (camera->s.origin, camera->move_origin[0], forward, start);
 	VectorMA (start,           -camera->move_origin[1], left,    start);
 	VectorMA (start,            camera->move_origin[2], up,      start);
-	
+
 	tr = gi.trace(camera->s.origin, NULL, NULL, start, camera, MASK_SOLID);
 	if (tr.fraction < 1.0)
 	{
@@ -2889,16 +2889,16 @@ void ClientSpycam (edict_t *ent)
 	}
 	VectorCopy (start, ent->s.origin);
 	VectorCopy (camera->velocity, ent->velocity);
-	
+
 	client->resp.cmd_angles[0] = SHORT2ANGLE(client->ucmd.angles[0]);
 	client->resp.cmd_angles[1] = SHORT2ANGLE(client->ucmd.angles[1]);
 	client->resp.cmd_angles[2] = SHORT2ANGLE(client->ucmd.angles[2]);
-	
+
 	memset (&pm, 0, sizeof(pm));
 	pm.s = client->ps.pmove;
 	for (i=0 ; i<3 ; i++) {
 		pm.s.origin[i] = ent->s.origin[i]*8;
-		client->ps.pmove.delta_angles[i] = 
+		client->ps.pmove.delta_angles[i] =
 			ANGLE2SHORT(client->ps.viewangles[i] - client->resp.cmd_angles[i]);
 	}
 	if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
@@ -2906,15 +2906,15 @@ void ClientSpycam (edict_t *ent)
 	pm.cmd = client->ucmd;
 	pm.trace = PM_trace;	// adds default parms
 	pm.pointcontents = gi.pointcontents;
-	
+
 	gi.Pmove (&pm);
-	
+
 	gi.linkentity (ent);
 //	client->old_owner_angles[0] = client->ucmd.angles[0];
 //	client->old_owner_angles[1] = client->ucmd.angles[1];
-	
+
 	G_TouchTriggers (ent); // we'll only allow touching trigger_look with "Cam Owner" SF
-	
+
 }
 /*
 ==============
@@ -3031,16 +3031,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			float	range;
 
 			viewing = LookingAt(ent,0,intersect,&range);
-			if (viewing && viewing->classname)
+			if (viewing && !viewing->classname.empty())
 			{
-				if (!Q_stricmp(viewing->classname, "crane_control") && range <= 100)
+				if (!Q_stricmp( viewing->classname.c_str(), "crane_control" ) && range <= 100)
 					crane_control_action (viewing, ent, intersect);
-				if (!Q_stricmp(viewing->classname, "target_lock_digit") && range <= 100)
+				if (!Q_stricmp( viewing->classname.c_str(), "target_lock_digit" ) && range <= 100)
 					lock_digit_increment (viewing, ent);
-				if (!Q_stricmp(viewing->classname, "func_trainbutton") && (viewing->spawnflags & 1) && range <= 64)
+				if (!Q_stricmp( viewing->classname.c_str(), "func_trainbutton" ) && (viewing->spawnflags & 1) && range <= 64)
 					trainbutton_use (viewing, ent, ent);
 				// Knightmare- different range for chasecam
-				if (!Q_stricmp(viewing->classname, "func_monitor") && ((range <= 100) || (client->chasetoggle && range <= client->zoom + 160.00)) )
+				if (!Q_stricmp( viewing->classname.c_str(), "func_monitor" ) && ((range <= 100) || (client->chasetoggle && range <= client->zoom + 160.00)) )
 				{
 					use_camera(viewing,ent,ent);
 					if (client->spycam && client->spycam->viewer == ent)
@@ -3120,14 +3120,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			camera_off(ent);
 		client->ps.pmove.pm_type = PM_FREEZE;
 		// can exit intermission after five seconds
-		if (level.time > level.intermissiontime + 5.0 
+		if (level.time > level.intermissiontime + 5.0
 			&& (ucmd->buttons & BUTTON_ANY) )
 			level.exitintermission = true;
 
 		return;
 	}
 
-	if (ent->target_ent && !Q_stricmp(ent->target_ent->classname, "target_monitor"))
+	if (ent->target_ent && !Q_stricmp( ent->target_ent->classname.c_str(), "target_monitor" ) )
 	{
 		edict_t	*monitor = ent->target_ent;
 		if (monitor->target_ent && monitor->target_ent->inuse)
@@ -3152,15 +3152,15 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 // if NOT pushing something AND in third person AND use key is pressed,
 // move viewpoint in/out
 	if (client->chasetoggle && !client->push)
-	{	
+	{
 		// Knigthtmare- and if not about to push something or infront of func_monitor
 		edict_t *viewing;
 		vec3_t	intersect;
 		float	range;
 
 		viewing = LookingAt(ent, 0, intersect, &range);
-		if ( !(viewing && viewing->classname
-			&& (Q_stricmp(viewing->classname, "func_monitor") || Q_stricmp(viewing->classname, "func_pushable"))
+		if ( !(viewing && !viewing->classname.empty()
+			&& (Q_stricmp( viewing->classname.c_str(), "func_monitor" ) || Q_stricmp( viewing->classname.c_str(), "func_pushable" ) )
 			&& (range <= 100)) )
 		{
 			if ((ucmd->buttons & BUTTON_USE) && (!deathmatch->value))

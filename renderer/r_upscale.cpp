@@ -206,7 +206,7 @@ static q_noinline uint32_t R_Upscale2x_blend (int rule, uint32_t E, uint32_t A, 
 		return same(B, D) ? blend_14_1_1(E, D, B) : E;
 	default:
 	//	VID_Error (ERR_FATAL, "%s: bad rule %d", __func__, rule);
-		VID_Error (ERR_FATAL, "HQ2x_blend: bad rule %d", rule);
+		VID_Error ( ERR_FATAL, "HQ2x_blend: bad rule %d", rule );
 		return 0;
 	}
 }
@@ -383,7 +383,7 @@ static q_noinline void R_Upscale4x_blend (int rule, uint32_t *p00, uint32_t *p01
 		break;
 	default:
 	//	VID_Error (ERR_FATAL, "%s: bad rule %d", __func__, rule);
-		VID_Error (ERR_FATAL, "HQ4x_blend: bad rule %d",rule);
+		VID_Error ( ERR_FATAL, "HQ4x_blend: bad rule %d", rule );
 		break;
 	}
 }
@@ -544,12 +544,12 @@ void R_Upscale_Init (void)
 {
 	int		n;
 
-	r_upscale_y  = Cvar_Get("r_upscale_y", "48", 0);	// was CVAR_FILES
-	Cvar_SetDescription ("r_upscale_y", "Sets threshold for y channel for texture upscaler");
-	r_upscale_cb = Cvar_Get("r_upscale_cb", "7", 0);	// was CVAR_FILES
-	Cvar_SetDescription ("r_upscale_cb", "Sets threshold for cb channel for texture upscaler");
-	r_upscale_cr = Cvar_Get("r_upscale_cr", "6", 0);	// was CVAR_FILES
-	Cvar_SetDescription ("r_upscale_cr", "Sets threshold for cr channel for texture upscaler");
+	r_upscale_y  = Cvar_Get( "r_upscale_y", "48", 0 );	// was CVAR_FILES
+	Cvar_SetDescription ( "r_upscale_y", "Sets threshold for y channel for texture upscaler" );
+	r_upscale_cb = Cvar_Get( "r_upscale_cb", "7", 0 );	// was CVAR_FILES
+	Cvar_SetDescription ( "r_upscale_cb", "Sets threshold for cb channel for texture upscaler" );
+	r_upscale_cr = Cvar_Get( "r_upscale_cr", "6", 0 );	// was CVAR_FILES
+	Cvar_SetDescription ( "r_upscale_cr", "Sets threshold for cr channel for texture upscaler" );
 
 	maxY  = FIX(Cvar_ClampValue(r_upscale_y,  0, 256));
 	maxCb = FIX(Cvar_ClampValue(r_upscale_cb, 0, 256));

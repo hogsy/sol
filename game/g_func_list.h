@@ -5,7 +5,6 @@
 {"Info_RemoveKey", (byte *)Info_RemoveKey},
 {"Info_ValueForKey", (byte *)Info_ValueForKey},
 {"Com_HashFileName", (byte *)Com_HashFileName},
-{"Com_sprintf", (byte *)Com_sprintf},
 {"Q_strupr", (byte *)Q_strupr},
 {"Q_strlwr", (byte *)Q_strlwr},
 {"Q_snprintfz", (byte *)Q_snprintfz},

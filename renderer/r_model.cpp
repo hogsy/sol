@@ -75,7 +75,7 @@ mleaf_t *Mod_PointInLeaf (vec3_t p, model_t *model)
 	cplane_t	*plane;
 	
 	if (!model || !model->nodes)
-		VID_Error (ERR_DROP, "Mod_PointInLeaf: bad model");
+		VID_Error ( ERR_DROP, "Mod_PointInLeaf: bad model" );
 
 	node = model->nodes;
 	while (1)
@@ -89,7 +89,7 @@ mleaf_t *Mod_PointInLeaf (vec3_t p, model_t *model)
 		else
 			node = node->children[1];
 	}
-	
+
 	return NULL;	// never reached
 }
 
@@ -106,7 +106,7 @@ byte *Mod_DecompressVis (byte *in, model_t *model)
 	byte	*out;
 	int		row;
 
-	row = (model->vis->numclusters+7)>>3;	
+	row = (model->vis->numclusters+7)>>3;
 	out = decompressed;
 
 	if (!in)
@@ -116,7 +116,7 @@ byte *Mod_DecompressVis (byte *in, model_t *model)
 			*out++ = 0xff;
 			row--;
 		}
-		return decompressed;		
+		return decompressed;
 	}
 
 	do
@@ -126,7 +126,7 @@ byte *Mod_DecompressVis (byte *in, model_t *model)
 			*out++ = *in++;
 			continue;
 		}
-	
+
 		c = in[1];
 		in += 2;
 		while (c)
@@ -135,7 +135,7 @@ byte *Mod_DecompressVis (byte *in, model_t *model)
 			c--;
 		}
 	} while (out - decompressed < row);
-	
+
 	return decompressed;
 }
 
@@ -167,15 +167,15 @@ void Mod_Modellist_f (void)
 	size_t	total;
 
 	total = 0;
-	VID_Printf (PRINT_ALL,"Loaded models:\n");
+	VID_Printf ( PRINT_ALL, "Loaded models:\n" );
 	for (i=0, mod=mod_known ; i < mod_numknown ; i++, mod++)
 	{
 		if (!mod->name[0])
 			continue;
-		VID_Printf (PRINT_ALL, "%8i : %s\n",mod->extradatasize, mod->name);
+		VID_Printf ( PRINT_ALL, "%8i : %s\n", mod->extradatasize, mod->name );
 		total += mod->extradatasize;
 	}
-	VID_Printf (PRINT_ALL, "Total resident: %i\n", total);
+	VID_Printf ( PRINT_ALL, "Total resident: %i\n", total );
 }
 
 /*
@@ -199,16 +199,16 @@ Mod_ForName
 Loads in a model for the given name
 ==================
 */
-model_t *Mod_ForName (char *name, qboolean crash)
+model_t *Mod_ForName ( const char *name, qboolean crash)
 {
 	model_t			*mod;
 	unsigned int	*buf;
-	int				i, modHeader;
+	int				i;
 //	size_t			predictedSize = 0;
-	
+
 	if (!name[0])
-		VID_Error (ERR_DROP, "Mod_ForName: NULL name");
-		
+		VID_Error ( ERR_DROP, "Mod_ForName: NULL name" );
+
 	//
 	// inline models are grabbed only from worldmodel
 	//
@@ -216,7 +216,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	{
 		i = atoi(name+1);
 		if (i < 1 || !r_worldmodel || i >= r_worldmodel->numsubmodels)
-			VID_Error (ERR_DROP, "bad inline model number");
+			VID_Error ( ERR_DROP, "bad inline model number" );
 		return &mod_inline[i];
 	}
 
@@ -230,7 +230,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		if (!strcmp (mod->name, name) )
 			return mod;
 	}
-	
+
 	//
 	// find a free model slot spot
 	//
@@ -242,24 +242,24 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	if (i == mod_numknown)
 	{
 		if (mod_numknown == MAX_MOD_KNOWN)
-			VID_Error (ERR_DROP, "mod_numknown == MAX_MOD_KNOWN");
+			VID_Error ( ERR_DROP, "mod_numknown == MAX_MOD_KNOWN" );
 		mod_numknown++;
 	}
 //	strncpy (mod->name, name);
 	Q_strncpyz (mod->name, sizeof(mod->name), name);
-	
+
 	//
 	// load the file
 	//
-	modfilelen = FS_LoadFile (mod->name, (void*)&buf);
+	modfilelen = FS_LoadFile (mod->name, reinterpret_cast< void ** >( &buf ) );
 	if (!buf)
 	{
 		if (crash)
-			VID_Error (ERR_DROP, "Mod_NumForName: %s not found", mod->name);
+			VID_Error ( ERR_DROP, "Mod_NumForName: %s not found", mod->name );
 		memset (mod->name, 0, sizeof(mod->name));
-		return NULL;
+		return nullptr;
 	}
-	
+
 	loadmodel = mod;
 
 	//
@@ -267,8 +267,8 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	//
 
 	// call the apropriate loader
-	
-	modHeader = LittleLong(*(unsigned int *)buf);
+
+	int modHeader = LittleLong( *( unsigned int * ) buf );
 	switch (modHeader)
 	{
 	case IDMDLHEADER:
@@ -317,7 +317,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		Mod_LoadSP2Model (mod, buf);
 		loadmodel->extradatasize = ModChunk_End ();
 		break;
-	
+
 	case IDBSPHEADER:
 		loadmodel->extradata = Hunk_Begin (0x4000000); // was 0x1000000
 		Mod_Load_Q2_BrushModel (mod, buf);
@@ -326,7 +326,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		break;
 
 	default:
-		VID_Error (ERR_DROP,"Mod_NumForName: unknown fileid for %s", mod->name);
+		VID_Error ( ERR_DROP, "Mod_NumForName: unknown fileid for %s", mod->name );
 		break;
 	}
 
@@ -370,7 +370,7 @@ void Mod_LoadLighting (lump_t *l)
 		loadmodel->lightdata = NULL;
 		return;
 	}
-	loadmodel->lightdata = Hunk_Alloc ( l->filelen);	
+	loadmodel->lightdata = Hunk_Alloc ( l->filelen);
 	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
 }
 
@@ -389,7 +389,7 @@ void Mod_LoadVisibility (lump_t *l)
 		loadmodel->vis = NULL;
 		return;
 	}
-	loadmodel->vis = Hunk_Alloc ( l->filelen);	
+	loadmodel->vis = Hunk_Alloc ( l->filelen);
 	memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
 
 	loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
@@ -414,9 +414,9 @@ void Mod_LoadVertexes (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->vertexes = out;
 	loadmodel->numvertexes = count;
@@ -461,13 +461,13 @@ void Mod_LoadSubmodels (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	// Knightmare- catch submodel overflow
 	if (count >= MAX_MOD_KNOWN)
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: too many submodels (%i >= %i) in %s", count, MAX_MOD_KNOWN, loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: too many submodels (%i >= %i) in %s", count, MAX_MOD_KNOWN, loadmodel->name );
 
 	loadmodel->submodels = out;
 	loadmodel->numsubmodels = count;
@@ -500,9 +500,9 @@ void Mod_LoadEdges (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( (count + 1) * sizeof(*out));	
+	out = Hunk_Alloc ( (count + 1) * sizeof(*out));
 
 	loadmodel->edges = out;
 	loadmodel->numedges = count;
@@ -529,10 +529,8 @@ Mod_InitFailedTexList
 */
 void Mod_InitFailedTexList (void)
 {
-	int		i;
-
-	for (i=0; i<NUM_FAIL_TEXTURES; i++) {
-		Com_sprintf(lastFailedTexture[i], sizeof(lastFailedTexture[i]), "\0");
+	for ( int i = 0; i<NUM_FAIL_TEXTURES; i++) {
+		snprintf(lastFailedTexture[i], sizeof(lastFailedTexture[i]), "\0");
 		lastFailedTextureHash[i] = 0;
 	}
 
@@ -546,14 +544,11 @@ Mod_CheckTexFailed
 */
 qboolean Mod_CheckTexFailed (const char *name)
 {
-	int				i;
-	unsigned int	hash;
-
 	if ( !name || (name[0] == '\0') )
 		return true;
 
-	hash = Com_HashFileName(name, 0, false);
-	for (i=0; i<NUM_FAIL_TEXTURES; i++)
+	unsigned int hash = Com_HashFileName( name, 0, false );
+	for ( int i = 0; i<NUM_FAIL_TEXTURES; i++)
 	{
 		if (hash == lastFailedTextureHash[i]) {	// compare hash first
 			if (lastFailedTexture[i] && strlen(lastFailedTexture[i])
@@ -576,7 +571,7 @@ void Mod_AddToFailedTexList (const char *name)
 	if ( !name || (name[0] == '\0') )
 		return;
 
-	Com_sprintf(lastFailedTexture[failedTexListIndex], sizeof(lastFailedTexture[failedTexListIndex]), "%s", name);
+	snprintf(lastFailedTexture[failedTexListIndex], sizeof(lastFailedTexture[failedTexListIndex]), "%s", name);
 	lastFailedTextureHash[failedTexListIndex] = Com_HashFileName(name, 0, false);
 	failedTexListIndex++;
 
@@ -636,7 +631,7 @@ void Mod_InitWalSizeList (void)
 	int		i;
 
 	for (i=0; i<NUM_WALSIZES; i++) {
-		Com_sprintf(walSizeList[i].name, sizeof(walSizeList[i].name), "\0");
+		snprintf(walSizeList[i].name, sizeof(walSizeList[i].name), "\0");
 		walSizeList[i].hash = 0;
 		walSizeList[i].width = 0;
 		walSizeList[i].height = 0;
@@ -679,7 +674,7 @@ Mod_AddToWalSizeList
 */
 void Mod_AddToWalSizeList (const char *name, int width, int height)
 {
-	Com_sprintf(walSizeList[walSizeListIndex].name, sizeof(walSizeList[walSizeListIndex].name), "%s", name);
+	snprintf(walSizeList[walSizeListIndex].name, sizeof(walSizeList[walSizeListIndex].name), "%s", name);
 	walSizeList[walSizeListIndex].hash = Com_HashFileName(name, 0, false);
 	walSizeList[walSizeListIndex].width = width;
 	walSizeList[walSizeListIndex].height = height;
@@ -705,13 +700,13 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 	byte			*data;
 	char			*jsonStr = NULL;
 	qboolean		json_parsed = false;
-	
-	Com_sprintf (path, sizeof(path), "textures/%s.wal", name);
+
+	snprintf (path, sizeof(path), "textures/%s.wal", name);
 
 	if (Mod_CheckWalSizeList(name, width, height)) // check if already in list
 		return;
 
-	FS_LoadFile (path, (void **)&mt); // load .wal file 
+	FS_LoadFile (path, (void **)&mt); // load .wal file
 	if (mt != NULL)
 	{
 		*width = LittleLong (mt->width); // grab size from wal
@@ -722,7 +717,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 	}
 	else
 	{	// Try loading .wal_json if .wal fails
-		Com_sprintf (path, sizeof(path), "textures/%s.wal_json", name);
+		snprintf (path, sizeof(path), "textures/%s.wal_json", name);
 		size = FS_LoadFile (path, (void*)&data);
 		jsonStr = (char *)data;
 		if (jsonStr)
@@ -764,9 +759,9 @@ void Mod_LoadTexinfo (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->texinfo = out;
 	loadmodel->numtexinfo = count;
@@ -789,21 +784,21 @@ void Mod_LoadTexinfo (lump_t *l)
 #if !defined (_WIN32) || (__APPLE__) || (MACOSX)
 		Q_strlwr (textureName);
 #endif	// !defined (_WIN32) || (__APPLE__) || (MACOSX)
-		Com_sprintf (name, sizeof(name), "textures/%s.wal", textureName);
+		snprintf (name, sizeof(name), "textures/%s.wal", textureName);
 		out->image = Mod_FindTexture (name, it_wall); // was R_FindImage
 
 		if (!out->image)
 		{
-			VID_Printf (PRINT_ALL, "Couldn't load %s\n", name);
+			VID_Printf ( PRINT_ALL, "Couldn't load %s\n", name );
 			out->image = glMedia.noTexture;
 		}
 
 		// Added glow
-		Com_sprintf (name, sizeof(name), "textures/%s_glow.wal", textureName);
+		snprintf (name, sizeof(name), "textures/%s_glow.wal", textureName);
 		out->glow = Mod_FindTexture (name, it_skin); // was R_FindImage
 		if (!out->glow)
 			out->glow = glMedia.noTexture;
-		
+
 		// Q2E HACK: find .wal dimensions for texture coord generation
 		// NOTE: Once Q3 map support is added, be be sure to disable this
 		// for Q3 format maps, because they will be natively textured with
@@ -847,7 +842,7 @@ void CalcSurfaceExtents (msurface_t *s)
 	maxs[0] = maxs[1] = -99999;
 
 	tex = s->texinfo;
-	
+
 	for (i=0 ; i<s->numedges ; i++)
 	{
 		e = loadmodel->surfedges[s->firstedge+i];
@@ -855,7 +850,7 @@ void CalcSurfaceExtents (msurface_t *s)
 			v = &loadmodel->vertexes[loadmodel->edges[e].v[0]];
 		else
 			v = &loadmodel->vertexes[loadmodel->edges[-e].v[1]];
-		
+
 		for (j=0 ; j<2 ; j++)
 		{
 			// Knightmare- precision fix for x64 builds
@@ -863,11 +858,11 @@ void CalcSurfaceExtents (msurface_t *s)
 			// For 32-bit builds, arithmetic is done in 80-bit x87 form and then
 			// rounded down to 32-bit form to store in val.
 			// Casting to long double should guarantee equivalent precision for x64.
-		/*	val = v->position[0] * tex->vecs[j][0] + 
+		/*	val = v->position[0] * tex->vecs[j][0] +
 				v->position[1] * tex->vecs[j][1] +
 				v->position[2] * tex->vecs[j][2] +
 				tex->vecs[j][3]; */
-			val = (long double)v->position[0] * (long double)tex->vecs[j][0] + 
+			val = (long double)v->position[0] * (long double)tex->vecs[j][0] +
 				(long double)v->position[1] * (long double)tex->vecs[j][1] +
 				(long double)v->position[2] * (long double)tex->vecs[j][2] +
 				(long double)tex->vecs[j][3];
@@ -879,7 +874,7 @@ void CalcSurfaceExtents (msurface_t *s)
 	}
 
 	for (i=0 ; i<2 ; i++)
-	{	
+	{
 		bmins[i] = floor(mins[i]/16);
 		bmaxs[i] = ceil(maxs[i]/16);
 
@@ -918,9 +913,9 @@ void Mod_LoadFaces (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->surfaces = out;
 	loadmodel->numsurfaces = count;
@@ -928,7 +923,7 @@ void Mod_LoadFaces (lump_t *l)
 	currentmodel = loadmodel;
 
 	// Knightmare- According to Paril, most maps with no warp lightmaps have a lightofs
-	// value of 0 on all warp faces instead of -1. 
+	// value of 0 on all warp faces instead of -1.
 	// A -1 value would cause out->samples to be set to NULL, but a 0 value wouldn't.
 	// So check for multiple warp faces with 0 lightofs, and disable warp lightmaps
 	// if this is found.
@@ -939,7 +934,7 @@ void Mod_LoadFaces (lump_t *l)
 		{
 			ti = LittleShort (testFace->texinfo);
 			if (ti < 0 || ti >= loadmodel->numtexinfo)
-				VID_Error (ERR_DROP, "MOD_LoadBmodel: bad texinfo number");
+				VID_Error ( ERR_DROP, "MOD_LoadBmodel: bad texinfo number" );
 			testTexinfo = loadmodel->texinfo + ti;
 			i = LittleLong(testFace->lightofs);
 			if ( (testTexinfo->flags & SURF_WARP) && (i == 0) )
@@ -960,24 +955,24 @@ void Mod_LoadFaces (lump_t *l)
 	for ( surfnum=0 ; surfnum<count ; surfnum++, in++, out++)
 	{
 		out->firstedge = LittleLong(in->firstedge);
-		out->numedges = LittleShort(in->numedges);		
+		out->numedges = LittleShort(in->numedges);
 		out->flags = 0;
 		out->polys = NULL;
 
 		planenum = LittleShort(in->planenum);
 		side = LittleShort(in->side);
 		if (side)
-			out->flags |= SURF_PLANEBACK;			
+			out->flags |= SURF_PLANEBACK;
 
 		out->plane = loadmodel->planes + planenum;
 
 		ti = LittleShort (in->texinfo);
 		if (ti < 0 || ti >= loadmodel->numtexinfo)
-			VID_Error (ERR_DROP, "MOD_LoadBmodel: bad texinfo number");
+			VID_Error ( ERR_DROP, "MOD_LoadBmodel: bad texinfo number" );
 		out->texinfo = loadmodel->texinfo + ti;
 
 		CalcSurfaceExtents (out);
-				
+
 	// lighting info
 
 		for (i=0 ; i<MAXLIGHTMAPS ; i++)
@@ -987,9 +982,9 @@ void Mod_LoadFaces (lump_t *l)
 			out->samples = NULL;
 		else
 			out->samples = loadmodel->lightdata + i;
-		
+
 	// set the drawing flags
-		
+
 		if (out->texinfo->flags & SURF_WARP)
 		{
 			out->flags |= SURF_DRAWTURB;
@@ -1037,7 +1032,7 @@ void Mod_LoadFaces (lump_t *l)
 			R_CreateSurfaceLightmap (out);
 		}
 
-		if (! (out->texinfo->flags & SURF_WARP) ) 
+		if (! (out->texinfo->flags & SURF_WARP) )
 			R_BuildPolygonFromSurface (out);
 	}
 
@@ -1072,9 +1067,9 @@ void Mod_LoadNodes (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->nodes = out;
 	loadmodel->numnodes = count;
@@ -1086,7 +1081,7 @@ void Mod_LoadNodes (lump_t *l)
 			out->minmaxs[j] = LittleShort (in->mins[j]);
 			out->minmaxs[3+j] = LittleShort (in->maxs[j]);
 		}
-	
+
 		p = LittleLong(in->planenum);
 		out->plane = loadmodel->planes + p;
 
@@ -1103,7 +1098,7 @@ void Mod_LoadNodes (lump_t *l)
 				out->children[j] = (mnode_t *)(loadmodel->leafs + (-1 - p));
 		}
 	}
-	
+
 	Mod_SetParent (loadmodel->nodes, NULL);	// sets nodes and leafs
 }
 
@@ -1121,9 +1116,9 @@ void Mod_LoadLeafs (lump_t *l)
 
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->leafs = out;
 	loadmodel->numleafs = count;
@@ -1145,7 +1140,7 @@ void Mod_LoadLeafs (lump_t *l)
 		out->firstmarksurface = loadmodel->marksurfaces +
 			(unsigned short)LittleShort(in->firstleafface);	// Knightmare- make sure this doesn't turn negative!
 		out->nummarksurfaces = LittleShort(in->numleaffaces);
-		
+
 		// underwater flag for caustics
 	//	if (out->contents & (CONTENTS_WATER|CONTENTS_SLIME) )
 		if (out->contents & (MASK_WATER) )
@@ -1163,7 +1158,7 @@ void Mod_LoadLeafs (lump_t *l)
 					poly->flags |= flag;
 			}
 		}
-	}	
+	}
 }
 
 /*
@@ -1172,16 +1167,16 @@ Mod_LoadMarksurfaces
 =================
 */
 void Mod_LoadMarksurfaces (lump_t *l)
-{	
+{
 	int				i, j, count;
 	unsigned short	*in;	// Knightmare- changed to unsigned short
 	msurface_t		**out;
-	
+
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
-	out = Hunk_Alloc (count * sizeof(*out));	
+	out = Hunk_Alloc (count * sizeof(*out));
 
 	loadmodel->marksurfaces = out;
 	loadmodel->nummarksurfaces = count;
@@ -1190,7 +1185,7 @@ void Mod_LoadMarksurfaces (lump_t *l)
 	{
 		j = (unsigned short)LittleShort(in[i]);	// Knightmare- make this unsigned!
 		if ( (j < 0) || ( j >= loadmodel->numsurfaces) )
-			VID_Error (ERR_DROP, "Mod_ParseMarksurfaces: bad surface number");
+			VID_Error ( ERR_DROP, "Mod_ParseMarksurfaces: bad surface number" );
 		out[i] = loadmodel->surfaces + j;
 	}
 }
@@ -1201,19 +1196,19 @@ Mod_LoadSurfedges
 =================
 */
 void Mod_LoadSurfedges (lump_t *l)
-{	
+{
 	int		i, count;
 	int		*in, *out;
-	
+
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
 	if (count < 1 || count >= MAX_MAP_SURFEDGES)
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: bad surfedges count in %s: %i",
-		loadmodel->name, count);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: bad surfedges count in %s: %i",
+		           loadmodel->name, count );
 
-	out = Hunk_Alloc ( count*sizeof(*out));	
+	out = Hunk_Alloc ( count*sizeof(*out));
 
 	loadmodel->surfedges = out;
 	loadmodel->numsurfedges = count;
@@ -1235,16 +1230,16 @@ void Mod_LoadPlanes (lump_t *l)
 	dplane_t 	*in;
 	int			count;
 	int			bits;
-	
+
 	in = (void *)(mod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
-		VID_Error (ERR_DROP, "MOD_LoadBmodel: funny lump size in %s",loadmodel->name);
+		VID_Error ( ERR_DROP, "MOD_LoadBmodel: funny lump size in %s", loadmodel->name );
 	count = l->filelen / sizeof(*in);
 
 //original bug- Quake2Max
 //	out = Hunk_Alloc ( count*2*sizeof(*out));
-	out = Hunk_Alloc ( count*sizeof(*out));	
-	
+	out = Hunk_Alloc ( count*sizeof(*out));
+
 	loadmodel->planes = out;
 	loadmodel->numplanes = count;
 
@@ -1274,16 +1269,16 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 	int			i;
 	dheader_t	*header;
 	mmodel_t 	*bm;
-	
+
 	loadmodel->type = mod_brush;
 	if (loadmodel != mod_known)
-		VID_Error (ERR_DROP, "Loaded a brush model after the world");
+		VID_Error ( ERR_DROP, "Loaded a brush model after the world" );
 
 	header = (dheader_t *)buffer;
 
 	i = LittleLong (header->version);
 	if (i != Q2_BSPVERSION) {
-		VID_Error (ERR_DROP, "Mod_Load_Q2_BrushModel: %s has wrong version number (%i should be %i)", mod->name, i, Q2_BSPVERSION);
+		VID_Error ( ERR_DROP, "Mod_Load_Q2_BrushModel: %s has wrong version number (%i should be %i)", mod->name, i, Q2_BSPVERSION );
 	}
 
 	loadmodel->bspFeatures = 0;					// set BSP features flags
@@ -1295,7 +1290,7 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 	for (i=0 ; i<sizeof(dheader_t)/4 ; i++)
 		((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
-	// load into heap	
+	// load into heap
 	Mod_LoadVertexes (&header->lumps[LUMP_VERTEXES]);
 	Mod_LoadEdges (&header->lumps[LUMP_EDGES]);
 	Mod_LoadSurfedges (&header->lumps[LUMP_SURFEDGES]);
@@ -1309,7 +1304,7 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 	Mod_LoadNodes (&header->lumps[LUMP_NODES]);
 	Mod_LoadSubmodels (&header->lumps[LUMP_MODELS]);
 	mod->numframes = 2;		// regular and alternate animation
-	
+
 	//
 	// set up the submodels
 	//
@@ -1321,17 +1316,17 @@ void Mod_Load_Q2_BrushModel (model_t *mod, void *buffer)
 		starmod = &mod_inline[i];
 
 		*starmod = *loadmodel;
-		
+
 		starmod->firstmodelsurface = bm->firstface;
 		starmod->nummodelsurfaces = bm->numfaces;
 		starmod->firstnode = bm->headnode;
 		if (starmod->firstnode >= loadmodel->numnodes)
-			VID_Error (ERR_DROP, "Inline model %i has bad firstnode", i);
+			VID_Error ( ERR_DROP, "Inline model %i has bad firstnode", i );
 
 		VectorCopy (bm->maxs, starmod->maxs);
 		VectorCopy (bm->mins, starmod->mins);
 		starmod->radius = bm->radius;
-	
+
 		if (i == 0)
 			*loadmodel = *starmod;
 
@@ -1380,7 +1375,7 @@ void *ModChunk_Begin (size_t maxsize)
 		Sys_Error ("ModChunk_Begin: malloc of size %i failed, %i chunks already allocated", maxsize, modChunkCount);
 
 	memset (modChunkMemBase, 0, maxsize);
-	
+
 	return (void *)modChunkMemBase;
 }
 
@@ -1477,7 +1472,7 @@ qboolean Mod_GetNextParm (char **data, char **output)
 
 	*output = COM_ParseExt (data, false);
 	if (!*data) {
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: EOF without closing brace\n");
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: EOF without closing brace\n" );
 		return false;
 	}
 	if (!*output[0])
@@ -1537,7 +1532,7 @@ qboolean Mod_ParseFloat (char **data, float *outnum, qboolean normalized)
 
 	if (!Mod_GetNextParm(data, &token))
 		return false;
-	
+
 	if (normalized)
 		*outnum = max(min(atof(token), 1.0f), 0.0f);
 	else
@@ -1561,20 +1556,20 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 	// get the opening curly brace
 	token = COM_ParseExt (data, true);
 	if (!*data) {
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: unexpected EOF in %s.%i in %s\n", meshname, skinnum, scriptname);
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: unexpected EOF in %s.%i in %s\n", meshname, skinnum, scriptname );
 		return;
 	}
 	if (token[0] != '{') {
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: found %s when expecting { in %s.%i in %s\n", token, meshname, skinnum, scriptname);
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: found %s when expecting { in %s.%i in %s\n", token, meshname, skinnum, scriptname );
 		return;
 	}
 
 	// go through all the parms
 	while (*data < (dataStart + dataSize))
-	{	
+	{
 		token = COM_ParseExt (data, true);
 		if (!*data) {
-			VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: EOF in %s.%i in %s without closing brace\n", meshname, skinnum, scriptname);
+			VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: EOF in %s.%i in %s without closing brace\n", meshname, skinnum, scriptname );
 			break;
 		}
 		if (token[0] == '}') break; // end of skin
@@ -1598,47 +1593,47 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 		else if (!Q_strcasecmp(token, "envmap"))
 		{
 			if (!Mod_ParseFloat(data, &skinParms->envmap, true)) {
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'envmap' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'envmap' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
 		}
 		else if (!Q_strcasecmp(token, "alpha") || !Q_strcasecmp(token, "trans"))
 		{
 			if (!Mod_ParseFloat(data, &skinParms->basealpha, true)) {
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'alpha' or 'trans' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'alpha' or 'trans' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
 		}
 		else if (!Q_strcasecmp(token, "tcmod"))
 		{
 			if (!Mod_GetNextParm(data, &token)) {
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'tcmod' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'tcmod' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
 			if (!Q_strcasecmp(token, "translate")) {
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.translate_x, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'tcmod translate' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'tcmod translate' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.translate_y, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'tcmod translate' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'tcmod translate' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					skinParms->tcmod.translate_x = 0.0f;
 					break;
 				}
 			}
 			else if (!Q_strcasecmp(token, "rotate")) {
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.rotate, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'tcmod rotate' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'tcmod rotate' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 			}
 			else if (!Q_strcasecmp(token, "scale")) {
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.scale_x, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'tcmod scale' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'tcmod scale' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.scale_y, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'tcmod scale' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'tcmod scale' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					skinParms->tcmod.scale_x = 1.0f;
 					break;
 				}
@@ -1646,12 +1641,12 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 			else if (!Q_strcasecmp(token, "stretch"))
 			{
 				if (!Mod_ParseWaveFunc(data, &skinParms->tcmod.stretch.type)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing or invalid waveform for 'tcmod stretch' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing or invalid waveform for 'tcmod stretch' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 				for (i=0; i<4; i++)
 					if (!Mod_ParseFloat(data, &skinParms->tcmod.stretch.params[i], false)) {
-						VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'tcmod stretch' in %s.%i in %s\n", meshname, skinnum, scriptname);
+						VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'tcmod stretch' in %s.%i in %s\n", meshname, skinnum, scriptname );
 						break;
 					}
 			}
@@ -1659,7 +1654,7 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 			{	// first parm (base) is unused, so just read twice
 				for (i=0; i<4; i++)
 					if (!Mod_ParseFloat(data, &skinParms->tcmod.turb.params[i], false)) {
-						VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'tcmod turb' in %s.%i in %s\n", meshname, skinnum, scriptname);
+						VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'tcmod turb' in %s.%i in %s\n", meshname, skinnum, scriptname );
 						break;
 					}
 				skinParms->tcmod.turb.type = WAVEFORM_SIN;
@@ -1667,27 +1662,27 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 			else if (!Q_strcasecmp(token, "scroll"))
 			{
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.scroll_x, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'tcmod scroll' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'tcmod scroll' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 				if (!Mod_ParseFloat(data, &skinParms->tcmod.scroll_y, false)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter for 'tcmod scroll' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter for 'tcmod scroll' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					skinParms->tcmod.scroll_x = 0.0f;
 					break;
 				}
 			}
 			else {
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: unknown type '%s' for 'tcmod' in %s.%i in %s\n", token, meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: unknown type '%s' for 'tcmod' in %s.%i in %s\n", token, meshname, skinnum, scriptname );
 				break;
 			}
 		}
 		else if (!Q_strcasecmp(token, "blendfunc"))
 		{	// parse blend parm
 			if (!Mod_GetNextParm(data, &token)) {
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameter(s) for 'blendfunc' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameter(s) for 'blendfunc' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
-			
+
 			if (!Q_strcasecmp(token, "add")) {
 				skinParms->blendfunc_src = GL_ONE;
 				skinParms->blendfunc_dst = GL_ONE;
@@ -1701,21 +1696,21 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 				skinParms->blendfunc_dst = GL_ONE_MINUS_SRC_ALPHA;
 			}
 			else
-			{	// parse 2nd blend parm	
+			{	// parse 2nd blend parm
 				if (!Mod_GetNextParm(data, &token2)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing 2nd parameter for 'blendfunc' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing 2nd parameter for 'blendfunc' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 
 				skinParms->blendfunc_src = Mod_ParseBlendMode (token);
 				if (skinParms->blendfunc_src == -1) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: invalid src blend func in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: invalid src blend func in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 
 				skinParms->blendfunc_dst = Mod_ParseBlendMode (token2);
 				if (skinParms->blendfunc_dst == -1) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: invalid dst blend func in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: invalid dst blend func in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 			}
@@ -1724,29 +1719,29 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 		else if (!Q_strcasecmp(token, "glow"))
 		{
 			if (!Mod_GetNextParm(data, &token)) { // glowname
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing image name for 'glow' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing image name for 'glow' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
 			memcpy (glowname, token, MD3_MAX_PATH);
 			if (!Mod_GetNextParm(data, &token)) { // type
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing 'identity' or 'wave' for 'glow' in %s.%i in %s\n", meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing 'identity' or 'wave' for 'glow' in %s.%i in %s\n", meshname, skinnum, scriptname );
 				break;
 			}
 			if (!Q_strcasecmp(token, "wave")) {
 				if (!Mod_ParseWaveFunc(data, &skinParms->glow.type)) {
-					VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing or invalid waveform for 'glow <glowskin> wave' in %s.%i in %s\n", meshname, skinnum, scriptname);
+					VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing or invalid waveform for 'glow <glowskin> wave' in %s.%i in %s\n", meshname, skinnum, scriptname );
 					break;
 				}
 				for (i=0; i<4; i++)
 					if (!Mod_ParseFloat(data, &skinParms->glow.params[i], false)) {
-						VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: missing parameters for 'glow <glowskin> wave' in %s.%i in %s\n", meshname, skinnum, scriptname);
+						VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: missing parameters for 'glow <glowskin> wave' in %s.%i in %s\n", meshname, skinnum, scriptname );
 						break;
 					}
 			}
 			else if (!Q_strcasecmp(token, "identity"))
 				skinParms->glow.type = -1;
 			else {	// only wave or identity
-				VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: unknown type '%s' for 'glow' in %s.%i in %s\n", token, meshname, skinnum, scriptname);
+				VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: unknown type '%s' for 'glow' in %s.%i in %s\n", token, meshname, skinnum, scriptname );
 				break;
 			}
 			skin->glowimage = R_FindImage (glowname, it_skin);
@@ -1754,7 +1749,7 @@ void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int
 				memcpy (skin->glowname, glowname, MD3_MAX_PATH);
 		}
 		else {	// invalid parameter
-			VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Mod_ParseModelScript: unknown parameter '%s' in %s.%i in %s\n", token, meshname, skinnum, scriptname);
+			VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Mod_ParseModelScript: unknown parameter '%s' in %s.%i in %s\n", token, meshname, skinnum, scriptname );
 			break;
 		}
 	}
@@ -1842,7 +1837,7 @@ void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 		return;
 	//else
 	//	VID_Printf (PRINT_ALL, "Mod_LoadModelScript: loaded model script for %s with %i meshes.\n", mod->name, aliasmod->num_meshes);
-	
+
 	for (i=0; i<aliasmod->num_meshes; i++)
 	{
 		for (j=0; j<aliasmod->meshes[i].num_skins; j++)
@@ -1857,8 +1852,8 @@ void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 				token = COM_Parse (&parse_data);
 				if (!parse_data) break;
 				if (!token) break;
-				
-				if ( !Q_strncasecmp(token, aliasmod->meshes[i].name, strlen(aliasmod->meshes[i].name))
+
+				if ( !Q_strncasecmp( token, aliasmod->meshes[ i ].name, strlen( aliasmod->meshes[ i ].name ) )
 					&& (atoi(COM_FileExtension(token)) == j)) {
 					skinname_found = true;
 					break;
@@ -1877,7 +1872,7 @@ void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 			if (aliasmod->meshes[i].skins[j].renderparms.blend || aliasmod->meshes[i].skins[j].renderparms.basealpha < 1.0f)
 				mod->hasAlpha = true;
 
-	//VID_Printf (PRINT_ALL, "Mod_LoadModelScript: loaded model script for %s with %i bytes per skin.\n", mod->name, sizeof(renderparms_t));	
+	//VID_Printf (PRINT_ALL, "Mod_LoadModelScript: loaded model script for %s with %i bytes per skin.\n", mod->name, sizeof(renderparms_t));
 }
 
 #ifndef MD2_AS_MD3
@@ -1949,7 +1944,7 @@ size_t Mod_GetAllocSizeMD2Old (model_t *mod, void *buffer)
 {
 	dmd2_t				*pinmodel;
 	size_t				allocSize;
-	
+
 	pinmodel = (dmd2_t *)buffer;
 	allocSize = (LittleLong(pinmodel->ofs_end) + 31) & ~31;
 	return allocSize;
@@ -1979,7 +1974,7 @@ void Mod_LoadAliasMD2ModelOld (model_t *mod, void *buffer)
 
 //	pheader = Hunk_Alloc (LittleLong(pinmodel->ofs_end));
 	pheader = ModChunk_Alloc (LittleLong(pinmodel->ofs_end));
-	
+
 	// byte swap the header fields and sanity check
 	for (i=0; i<sizeof(dmd2_t)/4; i++)
 		((int *)pheader)[i] = LittleLong (((int *)buffer)[i]);
@@ -2035,9 +2030,9 @@ void Mod_LoadAliasMD2ModelOld (model_t *mod, void *buffer)
 	//
 	for (i=0; i<pheader->num_frames; i++)
 	{
-		pinframe = (dmd2frame_t *) ((byte *)pinmodel 
+		pinframe = (dmd2frame_t *) ((byte *)pinmodel
 			+ pheader->ofs_frames + i * pheader->framesize);
-		poutframe = (dmd2frame_t *) ((byte *)pheader 
+		poutframe = (dmd2frame_t *) ((byte *)pheader
 			+ pheader->ofs_frames + i * pheader->framesize);
 
 		memcpy (poutframe->name, pinframe->name, sizeof(poutframe->name));
@@ -2047,7 +2042,7 @@ void Mod_LoadAliasMD2ModelOld (model_t *mod, void *buffer)
 			poutframe->translate[j] = LittleFloat (pinframe->translate[j]);
 		}
 		// verts are all 8 bit, so no swapping needed
-		memcpy (poutframe->verts, pinframe->verts, 
+		memcpy (poutframe->verts, pinframe->verts,
 			pheader->num_xyz*sizeof(dmd2vertex_t));
 	}
 
@@ -2104,7 +2099,7 @@ int Mod_FindTriangleWithEdge (maliasmesh_t *mesh, index_t p1, index_t p2, int ig
 
 	count = 0;
 	match = -1;
-	
+
 	for (i=0, indexes=mesh->indexes; i<mesh->num_tris; i++, indexes+=3)
 	{
 		if ( (indexes[0] == p2 && indexes[1] == p1)
@@ -2301,7 +2296,7 @@ size_t Mod_GetAllocSizeMDL (model_t *mod, void *buffer)
 			numFrames = LittleLong(pinFrameGroup->num_frames);
 			pinFrameInterval = (dmdl_interval_t *)(pinFrameGroup + 1);
 			frameData = (byte *)(pinFrameInterval + numFrames);
-			inFrameTypePtr = (dmdl_frametype_t *)frameData; 
+			inFrameTypePtr = (dmdl_frametype_t *)frameData;
 			break;
 		}
 		mdlTotalFrames += numFrames;
@@ -2377,11 +2372,11 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	// byte swap the header fields and sanity check
 	version = LittleLong (pinModel->version);
 	if (version != MDL_ALIAS_VERSION)
-		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, MDL_ALIAS_VERSION);
+		VID_Error ( ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, MDL_ALIAS_VERSION );
 
 	numFramesInitial = LittleLong (pinModel->num_frames);
 	if ( (numFramesInitial > MDL_MAX_FRAMES) || (numFramesInitial <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of initial frames (%i)", mod->name, numFramesInitial);
+		VID_Error ( ERR_DROP, "model %s has invalid number of initial frames (%i)", mod->name, numFramesInitial );
 
 	poutModel->num_tags = 0;
 	poutModel->num_meshes = 1;
@@ -2399,19 +2394,19 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 //	poutMesh = poutModel->meshes = Hunk_Alloc (sizeof(maliasmesh_t));
 	poutMesh = poutModel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t));
 
-	Com_sprintf (poutMesh->name, sizeof(poutMesh->name), "mdlmesh");	// mesh name in script must match this
+	snprintf (poutMesh->name, sizeof(poutMesh->name), "mdlmesh");	// mesh name in script must match this
 
 	poutMesh->num_tris = LittleLong(pinModel->num_tris);
 	if ( (poutMesh->num_tris > MDL_MAX_TRIANGLES) || (poutMesh->num_tris <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutMesh->num_tris);
+		VID_Error ( ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutMesh->num_tris );
 
 	numVerticesInitial = LittleLong(pinModel->num_verts);
 	if ( (numVerticesInitial > MDL_MAX_VERTS) || (numVerticesInitial <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, numVerticesInitial);
+		VID_Error ( ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, numVerticesInitial );
 
 	numSkinsInitial = LittleLong(pinModel->num_skins);
 	if ( (numSkinsInitial > MDL_MAX_SKINS) || (numSkinsInitial < 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of initial skins (%i)", mod->name, numSkinsInitial);
+		VID_Error ( ERR_DROP, "model %s has invalid number of initial skins (%i)", mod->name, numSkinsInitial );
 
 	// MDL has no ofs in header, so each segment is read in linear order
 
@@ -2446,7 +2441,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 
 	poutMesh->num_skins = mdlTotalSkins;
 	if ( (poutMesh->num_skins > MD2_MAX_SKINS) || (poutMesh->num_skins < 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of total skins (%i)", mod->name, poutMesh->num_skins);
+		VID_Error ( ERR_DROP, "model %s has invalid number of total skins (%i)", mod->name, poutMesh->num_skins );
 
 	//
 	// load all skins
@@ -2462,9 +2457,9 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 		{
 		case MDL_SKIN_SINGLE:
 			skinData = (byte *)(inSkinTypePtr + 1);
-			Com_sprintf (name, sizeof(name), "%s_%i.pcx", mod->name, i);
+			snprintf (name, sizeof(name), "%s_%i.pcx", mod->name, i);
 			Q_strncpyz (outSkinPtr->name, sizeof(outSkinPtr->name), name);
-			Com_sprintf (outSkinPtr->glowname, sizeof(outSkinPtr->glowname), "\0");	// set null glowskin
+			snprintf (outSkinPtr->glowname, sizeof(outSkinPtr->glowname), "\0");	// set null glowskin
 			mod->skins[0][nCurSkin] = R_LoadQuakePic (name, skinData, skinWidth, skinHeight, it_skin, 8);
 			outSkinPtr++;
 			nCurSkin++;
@@ -2479,9 +2474,9 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 			skinData = (byte *)(pinSkinInterval + numSkins);
 			for (j = 0; j < numSkins; j++, skinData += skinStride)
 			{
-				Com_sprintf (name, sizeof(name), "%s_%i_%i.pcx", mod->name, i, j);
+				snprintf (name, sizeof(name), "%s_%i_%i.pcx", mod->name, i, j);
 				Q_strncpyz (outSkinPtr->name, sizeof(outSkinPtr->name), name);
-				Com_sprintf (outSkinPtr->glowname, sizeof(outSkinPtr->glowname), "\0");	// set null glowskin
+				snprintf (outSkinPtr->glowname, sizeof(outSkinPtr->glowname), "\0");	// set null glowskin
 				mod->skins[0][nCurSkin] = R_LoadQuakePic (name, skinData, skinWidth, skinHeight, it_skin, 8);
 				outSkinPtr++;
 				nCurSkin++;
@@ -2603,7 +2598,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 			numFrames = LittleLong(pinFrameGroup->num_frames);
 			pinFrameInterval = (dmdl_interval_t *)(pinFrameGroup + 1);
 			frameData = (byte *)(pinFrameInterval + numFrames);
-			inFrameTypePtr = (dmdl_frametype_t *)frameData; 
+			inFrameTypePtr = (dmdl_frametype_t *)frameData;
 		//	VID_Printf (PRINT_DEVELOPER, "MDL: %s: framenum: %i, type: MDL_GROUP numFrames: %i interval: %f\n", mod->name, i, numFrames, LittleFloat(pinFrameInterval->interval));
 			break;
 		}
@@ -2613,7 +2608,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 
 	poutModel->num_frames = mdlTotalFrames;
 	if ( (poutModel->num_frames > MD3_MAX_FRAMES) || (poutModel->num_frames <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of total frames (%i)", mod->name, poutModel->num_frames);
+		VID_Error ( ERR_DROP, "model %s has invalid number of total frames (%i)", mod->name, poutModel->num_frames );
 
 	//
 	// load the frames
@@ -2649,7 +2644,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 				pinFrameList[nCurFrame] = (dmdl_frame_t *)frameData;
 				nCurFrame++;
 			}
-			inFrameTypePtr = (dmdl_frametype_t *)frameData; 
+			inFrameTypePtr = (dmdl_frametype_t *)frameData;
 			break;
 		}
 	}
@@ -2696,7 +2691,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 			normal[1] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][1];
 			normal[2] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][2];
 
-			NormalToLatLong (normal, outVertPtr[poutIndex[j]].normal);			
+			NormalToLatLong (normal, outVertPtr[poutIndex[j]].normal);
 		}
 	}
 
@@ -2740,7 +2735,7 @@ size_t Mod_GetAllocSizeMD2New (model_t *mod, void *buffer)
 //	unsigned int		md2TempXYZIndex[MD2_MAX_TRIANGLES*3], md2TempSTIndex[MD2_MAX_TRIANGLES*3];
 	size_t				headerSize, meshSize, indexSize, coordSize, frameSize, vertSize, trNeighborsSize, skinSize;
 	size_t				allocSize;
-	
+
 	pinModel = (dmd2_t *)buffer;
 
 	numFrames = LittleLong(pinModel->num_frames);
@@ -2780,7 +2775,7 @@ size_t Mod_GetAllocSizeMD2New (model_t *mod, void *buffer)
 	}
 
 	numSkins = max(LittleLong(pinModel->num_skins), 1);	// hack because player models have no skin refs
-	
+
 	// calc sizes rounded to cacheline
 	headerSize = (sizeof(maliasmodel_t) + 31) & ~31;
 	meshSize = ((sizeof(maliasmesh_t) * numMeshes) + 31) & ~31;
@@ -2792,7 +2787,7 @@ size_t Mod_GetAllocSizeMD2New (model_t *mod, void *buffer)
 	skinSize = ((sizeof(maliasskin_t) * numSkins) + 31) & ~31;
 
 	allocSize = headerSize + meshSize + indexSize + coordSize + frameSize + vertSize + trNeighborsSize + skinSize;
-	
+
 	return allocSize;
 }
 
@@ -2835,11 +2830,11 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	// byte swap the header fields and sanity check
 	version = LittleLong (pinModel->version);
 	if (version != MD2_ALIAS_VERSION)
-		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i)",  mod->name, version, MD2_ALIAS_VERSION);
+		VID_Error ( ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, MD2_ALIAS_VERSION );
 
 	poutModel->num_frames = LittleLong (pinModel->num_frames);
 	if ( (poutModel->num_frames > MD2_MAX_FRAMES) || (poutModel->num_frames <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of frames (%i)", mod->name, poutModel->num_frames);
+		VID_Error ( ERR_DROP, "model %s has invalid number of frames (%i)", mod->name, poutModel->num_frames );
 
 	poutModel->num_tags = 0;
 	poutModel->num_meshes = 1;
@@ -2853,19 +2848,19 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 //	poutMesh = poutModel->meshes = Hunk_Alloc (sizeof(maliasmesh_t));
 	poutMesh = poutModel->meshes = ModChunk_Alloc (sizeof(maliasmesh_t));
 
-	Com_sprintf (poutMesh->name, sizeof(poutMesh->name), "md2mesh");	// mesh name in script must match this
+	snprintf (poutMesh->name, sizeof(poutMesh->name), "md2mesh");	// mesh name in script must match this
 
 	poutMesh->num_tris = LittleLong(pinModel->num_tris);
 	if ( (poutMesh->num_tris > MD2_MAX_TRIANGLES) || (poutMesh->num_tris <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutMesh->num_tris);
+		VID_Error ( ERR_DROP, "model %s has invalid number of triangles (%i)", mod->name, poutMesh->num_tris );
 
 	poutMesh->num_verts = LittleLong(pinModel->num_xyz);
 	if ( (poutMesh->num_verts > MD2_MAX_VERTS) || (poutMesh->num_verts <= 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, poutMesh->num_verts);
+		VID_Error ( ERR_DROP, "model %s has invalid number of vertices (%i)", mod->name, poutMesh->num_verts );
 
 	poutMesh->num_skins = LittleLong(pinModel->num_skins);
 	if ( (poutMesh->num_skins > MD2_MAX_SKINS) || (poutMesh->num_skins < 0) )
-		VID_Error (ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutMesh->num_skins);
+		VID_Error ( ERR_DROP, "model %s has invalid number of skins (%i)", mod->name, poutMesh->num_skins );
 
 	pinTri = (dmd2triangle_t *)((byte *)pinModel + LittleLong(pinModel->ofs_tris));
 
@@ -2985,7 +2980,7 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 			normal[1] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][1];
 			normal[2] = r_avertexnormals[poutVert[poutIndex[j]].lightnormalindex][2];
 
-			NormalToLatLong (normal, poutVert[poutIndex[j]].normal);			
+			NormalToLatLong (normal, poutVert[poutIndex[j]].normal);
 		}
 	}
 
@@ -3004,9 +2999,9 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 	//	poutSkin = poutMesh->skins = Hunk_Alloc (sizeof(maliasskin_t) * 1);
 		poutSkin = poutMesh->skins = ModChunk_Alloc (sizeof(maliasskin_t) * 1);
 		poutMesh->num_skins = 1;
-		Com_sprintf (name, sizeof(name), "players/male/grunt.pcx");
+		snprintf (name, sizeof(name), "players/male/grunt.pcx");
 		memcpy (poutSkin->name, name, MD3_MAX_PATH);
-		Com_sprintf (poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
+		snprintf (poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 		mod->skins[0][0] = R_FindImage (name, it_skin);
 	}
 	else
@@ -3017,7 +3012,7 @@ void Mod_LoadAliasMD2ModelNew (model_t *mod, void *buffer)
 		{
 			memcpy (name, ((char *)pinModel + LittleLong(pinModel->ofs_skins) + i*MD2_MAX_SKINNAME), MD3_MAX_PATH);
 			memcpy (poutSkin->name, name, MD3_MAX_PATH);
-			Com_sprintf (poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
+			snprintf (poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 			mod->skins[0][i] = R_FindImage (name, it_skin);
 		}
 	}
@@ -3052,12 +3047,12 @@ size_t Mod_GetAllocSizeMD3 (model_t *mod, void *buffer)
 	size_t				headerSize, frameSize, tagSize, meshSize;
 	size_t				skinSize=0, indexSize=0, coordSize=0, vertSize=0, trNeighborsSize=0;
 	size_t				allocSize;
-	
+
 	pinModel = (dmd3_t *)buffer;
 	numFrames = LittleLong(pinModel->num_frames);
 	numTags = LittleLong(pinModel->num_tags);
 	numMeshes = LittleLong(pinModel->num_meshes);
-	
+
 	// calc sizes rounded to cacheline
 	headerSize = (sizeof(maliasmodel_t) + 31) & ~31;
 	frameSize = ((sizeof(maliasframe_t) * numFrames) + 31) & ~31;
@@ -3080,7 +3075,7 @@ size_t Mod_GetAllocSizeMD3 (model_t *mod, void *buffer)
 		pinMesh = (dmd3mesh_t *)((byte *)pinMesh + LittleLong (pinMesh->meshsize));
 	}
 	allocSize = headerSize + frameSize + tagSize + meshSize + skinSize + indexSize + coordSize + vertSize + trNeighborsSize;
-	
+
 	return allocSize;
 }
 
@@ -3117,7 +3112,7 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 	version = LittleLong( pinModel->version );
 
 	if ( version != MD3_ALIAS_VERSION )
-		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, MD3_ALIAS_VERSION);
+		VID_Error ( ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, MD3_ALIAS_VERSION );
 
 //	poutModel = Hunk_Alloc (sizeof(maliasmodel_t));
 	poutModel = ModChunk_Alloc (sizeof(maliasmodel_t));
@@ -3209,7 +3204,7 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 
 		if (LittleLong((int)pinMesh->id) != IDMD3HEADER) {
 			VID_Error ( ERR_DROP, "mesh %s in model %s has wrong id (%i should be %i)",
-					 poutMesh->name, mod->name, LittleLong((int)pinMesh->id), IDMD3HEADER );
+			           poutMesh->name, mod->name, LittleLong( ( int ) pinMesh->id ), IDMD3HEADER );
 		}
 
 		poutMesh->num_tris = LittleLong ( pinMesh->num_tris );
@@ -3246,7 +3241,7 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 			if (name[1] == 'l')
 				name[0] = 'p';
 			memcpy (poutSkin->name, name, MD3_MAX_PATH);
-			Com_sprintf(poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
+			snprintf(poutSkin->glowname, sizeof(poutSkin->glowname), "\0"); // set null glowskin
 			mod->skins[i][j] = R_FindImage (name, it_skin);
 		}
 
@@ -3297,7 +3292,7 @@ void Mod_LoadAliasMD3Model (model_t *mod, void *buffer)
 
 				lat = (pinVert->norm >> 8) & 0xff;
 				lng = (pinVert->norm & 0xff);
-				
+
 				lat *= M_PI/128;
 				lng *= M_PI/128;
 
@@ -3352,7 +3347,7 @@ SPRITE MODELS
 int		sprTotalFrames;
 /*
 =================
-Mod_GetAllocSizeSPR 
+Mod_GetAllocSizeSPR
 
 Calc exact alloc size for sprite  in memory
 =================
@@ -3412,7 +3407,7 @@ size_t Mod_GetAllocSizeSPR (model_t *mod, void *buffer)
 	frameSize = ((sizeof(mspriteframe_t) * sprTotalFrames) + 31) & ~31;
 
 	allocSize = headerSize + frameSize;
-	
+
 	return allocSize;
 }
 
@@ -3445,11 +3440,11 @@ void Mod_LoadSPRModel (model_t *mod, void *buffer)
 	// byte swap the header fields and sanity check
 	version = LittleLong (pinSprite->version);
 	if ( (version != SPR_VERSION) && (version != SPR32_VERSION) )
-		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i or %i)", mod->name, version, SPR_VERSION, SPR32_VERSION);
+		VID_Error ( ERR_DROP, "%s has wrong version number (%i should be %i or %i)", mod->name, version, SPR_VERSION, SPR32_VERSION );
 
 	numFramesInitial = LittleLong (pinSprite->num_frames);
 	if (numFramesInitial <= 0)
-		VID_Error (ERR_DROP, "model %s has invalid number of initial frames (%i)", mod->name, numFramesInitial);
+		VID_Error ( ERR_DROP, "model %s has invalid number of initial frames (%i)", mod->name, numFramesInitial );
 
 	//
 	// count total frames
@@ -3522,13 +3517,13 @@ void Mod_LoadSPRModel (model_t *mod, void *buffer)
 			outFramePtr->origin_y = LittleLong(pinFrame->origin[1]);
 			if (version == SPR32_VERSION)
 			{
-				Com_sprintf (name, sizeof(name), "%s_%i_%i.tga", mod->name, i, j);
+				snprintf (name, sizeof(name), "%s_%i_%i.tga", mod->name, i, j);
 				Q_strncpyz (outFramePtr->name, sizeof(outFramePtr->name), name);
 				mod->skins[0][nCurFrame] = R_LoadQuakePic (name, frameData, outFramePtr->width, outFramePtr->height, it_skin, 32);
 				frameData += LittleLong(pinFrame->width) * LittleLong(pinFrame->height) * 4;
 			}
 			else {
-				Com_sprintf (name, sizeof(name), "%s_%i_%i.pcx", mod->name, i, j);
+				snprintf (name, sizeof(name), "%s_%i_%i.pcx", mod->name, i, j);
 				Q_strncpyz (outFramePtr->name, sizeof(outFramePtr->name), name);
 				mod->skins[0][nCurFrame] = R_LoadQuakePic (name, frameData, outFramePtr->width, outFramePtr->height, it_skin, 8);
 				frameData += LittleLong(pinFrame->width) * LittleLong(pinFrame->height);
@@ -3546,7 +3541,7 @@ void Mod_LoadSPRModel (model_t *mod, void *buffer)
 #if 1
 /*
 =================
-Mod_GetAllocSizeSP2 
+Mod_GetAllocSizeSP2
 
 Calc exact alloc size for sprite  in memory
 =================
@@ -3557,7 +3552,7 @@ size_t Mod_GetAllocSizeSP2 (model_t *mod, void *buffer)
 	dspr2_t		*pinSprite;
 	size_t		headerSize, frameSize;
 	size_t		allocSize;
-		
+
 	pinSprite = (dspr2_t *)buffer;
 	numFrames = LittleLong(pinSprite->numframes);
 
@@ -3566,7 +3561,7 @@ size_t Mod_GetAllocSizeSP2 (model_t *mod, void *buffer)
 	frameSize = ((sizeof(mspriteframe_t) * numFrames) + 31) & ~31;
 
 	allocSize = headerSize + frameSize;
-	
+
 	return allocSize;
 }
 
@@ -3592,10 +3587,10 @@ void Mod_LoadSP2Model (model_t *mod, void *buffer)
 	poutSprite->num_frames = LittleLong (pinSprite->numframes);
 
 	if (version != SP2_VERSION)
-		VID_Error (ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, SP2_VERSION);
+		VID_Error ( ERR_DROP, "%s has wrong version number (%i should be %i)", mod->name, version, SP2_VERSION );
 
 	if (poutSprite->num_frames > MD2_MAX_SKINS)
-		VID_Error (ERR_DROP, "%s has too many frames (%i > %i)", mod->name, poutSprite->num_frames, MD2_MAX_SKINS);
+		VID_Error ( ERR_DROP, "%s has too many frames (%i > %i)", mod->name, poutSprite->num_frames, MD2_MAX_SKINS );
 	
 //	poutFrame = poutSprite->frames = Hunk_Alloc (sizeof(mspriteframe_t) * poutSprite->num_frames);
 	poutFrame = poutSprite->frames = ModChunk_Alloc (sizeof(mspriteframe_t) * poutSprite->num_frames);
@@ -3695,12 +3690,12 @@ void R_BeginRegistration (char *model)
 	Mod_InitFailedTexList ();	// clear failed texture list
 	Mod_InitWalSizeList ();		// clear wal size list
 
-	Com_sprintf (fullname, sizeof(fullname), "maps/%s.bsp", model);
+	snprintf (fullname, sizeof(fullname), "maps/%s.bsp", model);
 
 	// explicitly free the old map if different
 	// this guarantees that mod_known[0] is the world map
-	flushmap = Cvar_Get ("flushmap", "0", 0);
-	Cvar_SetDescription ("flushmap", "Forces reload of same map when set to 1.");
+	flushmap = Cvar_Get ( "flushmap", "0", 0 );
+	Cvar_SetDescription ( "flushmap", "Forces reload of same map when set to 1." );
 	if (strcmp(mod_known[0].name, fullname) || flushmap->integer) {
 		Mod_Free (&mod_known[0]);
 		// clear this on map change (case of different server and autodownloading)
@@ -3720,7 +3715,7 @@ R_RegisterModel
 
 @@@@@@@@@@@@@@@@@@@@@
 */
-struct model_s *R_RegisterModel (char *name)
+struct model_s *R_RegisterModel ( const char *name )
 {
 	model_t		*mod;
 	int			i, k, nameLen;
@@ -3739,7 +3734,7 @@ struct model_s *R_RegisterModel (char *name)
 	//	strncpy(s,name);
 		Q_strncpyz (s, sizeof(s), name);
 		s[nameLen-1]='3';
-		mod = R_RegisterModel (s);
+		mod = R_RegisterModel ( s );
 		if (mod)
 			return mod;
 	}

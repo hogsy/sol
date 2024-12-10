@@ -119,7 +119,7 @@ void UpdateChaseCam(edict_t *ent)
 		char s[1024];
 
 		ent->client->update_chase = false;
-		Com_sprintf (s, sizeof(s), "xv 0 yb -68 string2 \"Chasing %s\"",
+		snprintf (s, sizeof(s), "xv 0 yb -68 string2 \"Chasing %s\"",
 			targ->client->pers.netname);
 		gi.WriteByte (svc_layout);
 		gi.WriteString (s);

@@ -488,7 +488,7 @@ void CL_PrepRefresh (void)
 
 	// update load message
 	cls.loadingMessage = true;
-	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading %s", cl.configstrings[CS_MODELS+1]);
+	snprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading %s", cl.configstrings[CS_MODELS+1]);
 	cls.loadingPercent = 0.0f;
 	// end Knightmare
 
@@ -504,7 +504,7 @@ void CL_PrepRefresh (void)
 	Com_Printf ("                                     \r");
 
 	// update load message
-	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading models...");
+	snprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading models...");
 	cls.loadingPercent += 20.0f;
 
 	// precache status bar pics
@@ -539,7 +539,7 @@ void CL_PrepRefresh (void)
 			// update load message
 			// only make max of 40 chars long
 			if (i > 1)
-				Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages),
+				snprintf (cls.loadingMessages, sizeof(cls.loadingMessages),
 					S_COLOR_ALT"loading %s", (strlen(pname)>40)? &pname[strlen(pname)-40]: pname);
 		}
 
@@ -557,7 +557,7 @@ void CL_PrepRefresh (void)
 		} 
 		else
 		{
-			cl.model_draw[i] = R_RegisterModel (cl.configstrings[CS_MODELS+i]);
+			cl.model_draw[i] = R_RegisterModel ( cl.configstrings[ CS_MODELS + i ] );
 			if (pname[0] == '*')
 				cl.model_clip[i] = CM_InlineModel (cl.configstrings[CS_MODELS+i]);
 			else
@@ -569,7 +569,7 @@ void CL_PrepRefresh (void)
 		cls.loadingPercent += 40.0f/(float)max;
 	}
 	// update load message
-	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading pics...");
+	snprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading pics...");
 
 	Com_Printf ("images\r", i); 
 	SCR_UpdateScreen ();
@@ -587,7 +587,7 @@ void CL_PrepRefresh (void)
 	}
 
 	// update load message
-	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...");
+	snprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...");
 
 	Com_Printf ("                                     \r");
 
@@ -611,7 +611,7 @@ void CL_PrepRefresh (void)
 	}
 
 	// update load message
-	Com_sprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...done");
+	snprintf (cls.loadingMessages, sizeof(cls.loadingMessages), S_COLOR_ALT"loading players...done");
 	// psychospaz- hack hack hack
 	cls.loadingPercent = 100.0f;
 
@@ -712,8 +712,8 @@ void V_Gun_Model_f (void)
 		gun_model = NULL;
 		return;
 	}
-	Com_sprintf (name, sizeof(name), "models/%s/tris.md2", Cmd_Argv(1));
-	gun_model = R_RegisterModel (name);
+	snprintf (name, sizeof(name), "models/%s/tris.md2", Cmd_Argv(1));
+	gun_model = R_RegisterModel ( name );
 }
 
 //============================================================================
@@ -999,30 +999,30 @@ V_Init
 */
 void V_Init (void)
 {
-	Cmd_AddCommand ("gun_next", V_Gun_Next_f);
-	Cmd_AddCommand ("gun_prev", V_Gun_Prev_f);
-	Cmd_AddCommand ("gun_model", V_Gun_Model_f);
+	Cmd_AddCommand ( "gun_next", V_Gun_Next_f );
+	Cmd_AddCommand ( "gun_prev", V_Gun_Prev_f );
+	Cmd_AddCommand ( "gun_model", V_Gun_Model_f );
 
-	Cmd_AddCommand ("viewpos", V_Viewpos_f);
+	Cmd_AddCommand ( "viewpos", V_Viewpos_f );
 
 	// Knightmare- diagnostic commands from Lazarus
-	Cmd_AddCommand ("texture", V_Texture_f);
-	Cmd_AddCommand ("surf", V_Surf_f);
+	Cmd_AddCommand ( "texture", V_Texture_f );
+	Cmd_AddCommand ( "surf", V_Surf_f );
 //	Cmd_AddCommand ("bbox", V_BBox_f);
 
-	hand = Cvar_Get ("hand", "0", CVAR_ARCHIVE);
+	hand = Cvar_Get ( "hand", "0", CVAR_ARCHIVE );
 
-	cl_testblend = Cvar_Get ("cl_testblend", "0", 0);
-	Cvar_SetDescription ("cl_testblend", "Enables testing screen color blend.");
-	cl_testparticles = Cvar_Get ("cl_testparticles", "0", 0);
-	Cvar_SetDescription ("cl_testparticles", "Enables testing particles.");
-	cl_testentities = Cvar_Get ("cl_testentities", "0", 0);
-	Cvar_SetDescription ("cl_testentities", "Enables testing entities.");
-	cl_testlights = Cvar_Get ("cl_testlights", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("cl_testlights", "Enables testing lights.  This is considered a cheat CVAR for multiplayer.");
+	cl_testblend = Cvar_Get ( "cl_testblend", "0", 0 );
+	Cvar_SetDescription ( "cl_testblend", "Enables testing screen color blend." );
+	cl_testparticles = Cvar_Get ( "cl_testparticles", "0", 0 );
+	Cvar_SetDescription ( "cl_testparticles", "Enables testing particles." );
+	cl_testentities = Cvar_Get ( "cl_testentities", "0", 0 );
+	Cvar_SetDescription ( "cl_testentities", "Enables testing entities." );
+	cl_testlights = Cvar_Get ( "cl_testlights", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "cl_testlights", "Enables testing lights.  This is considered a cheat CVAR for multiplayer." );
 
-	cl_stats = Cvar_Get ("cl_stats", "0", 0);
-	Cvar_SetDescription ("cl_stats", "Enables output of entity and particle rendering counts.");
+	cl_stats = Cvar_Get ( "cl_stats", "0", 0 );
+	Cvar_SetDescription ( "cl_stats", "Enables output of entity and particle rendering counts." );
 
 	// Knightmare- init fog info
 	V_ClearFogInfo ();
@@ -1041,15 +1041,15 @@ void V_Shutdown (void)
 	if (!v_initialized)
 		return;
 
-	Cmd_RemoveCommand ("gun_next");
-	Cmd_RemoveCommand ("gun_prev");
-	Cmd_RemoveCommand ("gun_model");
+	Cmd_RemoveCommand ( "gun_next" );
+	Cmd_RemoveCommand ( "gun_prev" );
+	Cmd_RemoveCommand ( "gun_model" );
 
-	Cmd_RemoveCommand ("viewpos");
+	Cmd_RemoveCommand ( "viewpos" );
 
 	// Knightmare- diagnostic commands from Lazarus
-	Cmd_RemoveCommand ("texture");
-	Cmd_RemoveCommand ("surf");
+	Cmd_RemoveCommand ( "texture" );
+	Cmd_RemoveCommand ( "surf" );
 //	Cmd_RemoveCommand ("bbox");
 
 	V_ClearFogInfo ();

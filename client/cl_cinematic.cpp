@@ -245,7 +245,7 @@ void Com_DefaultPath (char *path, int maxSize, const char *newPath)
 	}
 
 	Q_strncpyz (oldPath, sizeof(oldPath), path);
-	Com_sprintf (path, maxSize, "%s/%s", newPath, oldPath);
+	snprintf (path, maxSize, "%s/%s", newPath, oldPath);
 }
 
 //=============================================================
@@ -1381,7 +1381,7 @@ void SCR_PlayCinematic (char *name)
 	Com_DPrintf("SCR_PlayCinematic( %s )\n", name);
 
 	cl.cinematicframe = 0;
-	if (!Q_stricmp(name + strlen(name)-4, ".pcx"))
+	if (!Q_stricmp( name + strlen( name ) - 4, ".pcx" ) )
 	{
 		Q_strncpyz (filename, sizeof(filename), name);
 		Com_DefaultPath (filename, sizeof(filename), "pics");
@@ -1534,13 +1534,13 @@ cinHandle_t CIN_PlayCinematic (const char *name, int x, int y, int w, int h, int
 		if (!cin->playing)
 			continue;
 
-		if (!Q_stricmp(cin->name, (char *)name))
+		if (!Q_stricmp( cin->name, ( char * ) name ) )
 			return i+1;
 	}
 
 	Com_FileExtension(name, extension, sizeof(extension));
 
-	if (!Q_stricmp(extension, "cin")) // RoQ autoreplace hack
+	if (!Q_stricmp( extension, "cin" ) ) // RoQ autoreplace hack
 	{
 		char s[MAX_QPATH];
 		int len;
@@ -1576,7 +1576,7 @@ cinHandle_t CIN_PlayCinematic (const char *name, int x, int y, int w, int h, int
 
 	//Com_FileExtension(name, extension, sizeof(extension));
 
-	if (!Q_stricmp(extension, "pcx"))
+	if (!Q_stricmp( extension, "pcx" ) )
 	{
 		// Static PCX image
 		if (!CIN_StaticCinematic(cin, name))
@@ -1590,7 +1590,7 @@ cinHandle_t CIN_PlayCinematic (const char *name, int x, int y, int w, int h, int
 		cin->isRoQ = true;
 		cin->rate = 30;
 	}
-	else if (!Q_stricmp(extension, "cin"))
+	else if (!Q_stricmp( extension, "cin" ) )
 	{
 		cin->isRoQ = false;
 		cin->rate = 14;

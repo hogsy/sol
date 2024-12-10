@@ -1110,14 +1110,14 @@ static qboolean R_CullAliasModel (vec3_t bbox[8], vec3_t shadowBBox[8], entity_t
 
 	if ( ( e->frame >= paliashdr->num_frames ) || ( e->frame < 0 ) )
 	{
-		VID_Printf (PRINT_DEVELOPER, "R_CullAliasModel %s: no such frame %d\n", 
-			currentmodel->name, e->frame);
+		VID_Printf ( PRINT_DEVELOPER, "R_CullAliasModel %s: no such frame %d\n",
+		            currentmodel->name, e->frame );
 		e->frame = 0;
 	}
 	if ( ( e->oldframe >= paliashdr->num_frames ) || ( e->oldframe < 0 ) )
 	{
-		VID_Printf (PRINT_DEVELOPER, "R_CullAliasModel %s: no such oldframe %d\n", 
-			currentmodel->name, e->oldframe);
+		VID_Printf ( PRINT_DEVELOPER, "R_CullAliasModel %s: no such oldframe %d\n",
+		            currentmodel->name, e->oldframe );
 		e->oldframe = 0;
 	}
 
@@ -1322,7 +1322,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	// clamp r_celshading_width to >= 1.0
 	if (!r_celshading_width)
-		r_celshading_width = Cvar_Get("r_celshading_width", "4", 0);
+		r_celshading_width = Cvar_Get( "r_celshading_width", "4", 0 );
 	if (r_celshading_width->value < 1.0f)
 		Cvar_SetValue( "r_celshading_width", 1.0f);
 
@@ -1354,15 +1354,15 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( (e->frame >= paliashdr->num_frames) || (e->frame < 0) )
 	{
-		VID_Printf (PRINT_DEVELOPER, "R_DrawAliasModel %s: no such frame %d\n", currentmodel->name, e->frame);
+		VID_Printf ( PRINT_DEVELOPER, "R_DrawAliasModel %s: no such frame %d\n", currentmodel->name, e->frame );
 		e->frame = 0;
 		e->oldframe = 0;
 	}
 
 	if ( (e->oldframe >= paliashdr->num_frames) || (e->oldframe < 0))
 	{
-		VID_Printf (PRINT_DEVELOPER, "R_DrawAliasModel %s: no such oldframe %d\n",
-			currentmodel->name, e->oldframe);
+		VID_Printf ( PRINT_DEVELOPER, "R_DrawAliasModel %s: no such oldframe %d\n",
+		            currentmodel->name, e->oldframe );
 		e->frame = 0;
 		e->oldframe = 0;
 	}

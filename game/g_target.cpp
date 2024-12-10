@@ -138,21 +138,17 @@ void SP_target_speaker (edict_t *ent)
 		}
 		// DWH: Use "message" key to store noise for speakers that change levels
 		//      via trigger_transition
-		if (!strstr (st.noise, ".wav"))
+		if ( !strstr( st.noise, ".wav" ) )
 		{
-			msgSize = strlen(st.noise)+5;
-			ent->message = static_cast<char*>(gi.TagMalloc(msgSize, TAG_LEVEL));
-			Com_sprintf (ent->message, msgSize, "%s.wav", st.noise);
+			ent->message = std::string( st.noise ) + ".wav";
 		}
 		else
 		{
-			msgSize = strlen(st.noise)+1;
-			ent->message = static_cast<char*>(gi.TagMalloc(msgSize, TAG_LEVEL));
-			Q_strncpyz (ent->message, msgSize, st.noise);
+			ent->message = st.noise;
 		}
 	}
 
-	ent->noise_index = gi.soundindex (ent->message);
+	ent->noise_index = gi.soundindex (ent->message.data());
 	ent->spawnflags &= ~8;
 
 	if (!ent->volume)
@@ -183,14 +179,14 @@ void SP_target_speaker (edict_t *ent)
 
 void Use_Target_Help (edict_t *self, edict_t *other, edict_t *activator)
 {
-	if (self->message)
+	if (!self->message.empty())
 	{
 		if (self->spawnflags & 1)
 		//	strncpy (game.helpmessage1, self->message, sizeof(game.helpmessage2)-1);
-			Q_strncpyz (game.helpmessage1, sizeof(game.helpmessage2), self->message);
+			Q_strncpyz (game.helpmessage1, sizeof(game.helpmessage2), self->message.c_str());
 		else
 		//	strncpy (game.helpmessage2, self->message, sizeof(game.helpmessage1)-1);
-			Q_strncpyz (game.helpmessage2, sizeof(game.helpmessage1), self->message);
+			Q_strncpyz (game.helpmessage2, sizeof(game.helpmessage1), self->message.c_str());
 	}
 
 	game.helpchanged++;
@@ -214,7 +210,7 @@ void SP_target_help (edict_t *ent)
 	}
 
 	// Lazarus: we allow blank message if world->effects is "help=pic only"
-	if (!ent->message && !(world->effects & FX_WORLDSPAWN_NOHELP))
+	if (ent->message.empty() && !(world->effects & FX_WORLDSPAWN_NOHELP))
 	{
 		gi.dprintf ("%s with no message at %s\n", ent->classname, vtos(ent->s.origin));
 		G_FreeEdict (ent);
@@ -272,7 +268,7 @@ void SP_target_secret (edict_t *ent)
 		level.total_secrets++;
 
 	// map bug hack
-	if (!Q_stricmp(level.mapname, "mine3") && ent->s.origin[0] == 280 && ent->s.origin[1] == -2048 && ent->s.origin[2] == -624)
+	if (!Q_stricmp( level.mapname, "mine3" ) && ent->s.origin[0] == 280 && ent->s.origin[1] == -2048 && ent->s.origin[2] == -624)
 		ent->message = "You have found a secret area.";
 }
 
@@ -358,7 +354,7 @@ void target_explosion_explode (edict_t *self)
 //		ReflectExplosion (TE_EXPLOSION1, self->s.origin);
 		ReflectExplosion (eventNum, self->s.origin);
 
-	T_RadiusDamage (self, self->activator, self->dmg, NULL, self->dmg+40, MOD_EXPLOSIVE, -0.5);
+	T_RadiusDamage (self, self->activator, self->dmg, nullptr, self->dmg+40, MOD_EXPLOSIVE, -0.5);
 
 	save = self->delay;
 	self->delay = 0;
@@ -403,7 +399,7 @@ Changes level to "map" when fired
 
 Lazarus spawnflags:
  1 CLEAR_INVENTORY: Removes all pickups other than weapons, restore health to 100
- 2 LANDMARK:        If set, player position when spawning in the next map will be at the 
+ 2 LANDMARK:        If set, player position when spawning in the next map will be at the
                     same offset from the info_player_start as his current position relative
                     to the target_changelevel. Velocity, angles, and crouch state will be
                     preserved across maps.
@@ -490,7 +486,7 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 
 				angles[PITCH] = angles[ROLL] = 0.;
 				angles[YAW] = self->s.angles[YAW];
-				AngleVectors(angles,forward,right,NULL);
+				AngleVectors(angles,forward,right, nullptr );
 				VectorNegate(right,right);
 				VectorCopy (activator->client->pers.spawn_offset,v);
 				G_ProjectSource (vec3_origin,
@@ -503,7 +499,7 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 				activator->client->pers.spawn_angles[YAW] += angles[YAW];
 				activator->client->pers.spawn_viewangles[YAW] += angles[YAW];
 			}
-		}		
+		}
 		else if (activator && activator->client) //Knightmare- paranoia
 		{
 			activator->client->pers.spawn_landmark = false;
@@ -571,10 +567,10 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 	game.transition_ents = 0;
 	if (self->spawnflags & 2 && activator->client)
 	{
-		transition = G_Find(NULL,FOFS(classname), "trigger_transition");
+		transition = G_Find( nullptr, FOFS(classname), "trigger_transition");
 		while (transition)
 		{
-			if (!Q_stricmp(transition->targetname,self->targetname))
+			if (!Q_stricmp( transition->targetname, self->targetname ) )
 			{
 				game.transition_ents = trigger_transition_ents(self,transition);
 				break;
@@ -603,7 +599,7 @@ void SP_target_changelevel (edict_t *ent)
 		ent->spawnflags &= ~2;
 	}
 	// ugly hack because *SOMEBODY* screwed up their map
-	if ((Q_stricmp(level.mapname, "fact1") == 0) && (Q_stricmp(ent->map, "fact3") == 0))
+	if ((Q_stricmp( level.mapname, "fact1" ) == 0) && (Q_stricmp( ent->map, "fact3" ) == 0))
 	   ent->map = "fact3$secret1";
 
 	ent->use = use_target_changelevel;
@@ -640,7 +636,7 @@ void use_target_splash (edict_t *self, edict_t *other, edict_t *activator)
 	gi.WriteByte (self->sounds);
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 	if (self->dmg)
-		T_RadiusDamage (self, activator, self->dmg, NULL, self->dmg+40, MOD_SPLASH, -0.5);
+		T_RadiusDamage (self, activator, self->dmg, nullptr, self->dmg+40, MOD_SPLASH, -0.5);
 }
 
 void SP_target_splash (edict_t *self)
@@ -714,7 +710,7 @@ void SP_target_spawner (edict_t *self)
 	self->svflags = SVF_NOCLIENT;
 
 	// Knightmare- a horrendously ugly hack for the insane spawner on fact2
-	if ( !Q_stricmp(level.mapname, "fact2")
+	if ( !Q_stricmp( level.mapname, "fact2" )
 		&& VectorCompare(self->s.origin, fact2spawnpoint1) )
 	{
 		//gi.dprintf("Moving target_spawner origin downward 8 units\n");
@@ -797,7 +793,7 @@ void use_target_blaster (edict_t *self, edict_t *other, edict_t *activator)
 	}
 	else if (self->sounds == 2)
 	{
-		fire_rocket (self, start, movedir, self->dmg, self->speed, self->dmg, self->dmg, NULL);
+		fire_rocket (self, start, movedir, self->dmg, self->speed, self->dmg, self->dmg, nullptr );
 		gi.positioned_sound (start, self, CHAN_WEAPON, gi.soundindex("weapons/rocklf1a.wav"), 1, ATTN_NORM, 0);
 	}
 	else if (self->sounds == 3)
@@ -849,23 +845,23 @@ void target_blaster_think (edict_t *self)
 		// If we are currently targeting a non-player, reset and look for
 		// a player
 		if (self->enemy && !self->enemy->client)
-			self->enemy = NULL;
+			self->enemy = nullptr;
 
 		// Is currently targeted player alive and not using notarget?
 		if (self->enemy) {
 			if (self->enemy->flags & FL_NOTARGET)
-				self->enemy = NULL;
+				self->enemy = nullptr;
 			else if (!self->enemy->inuse || self->enemy->health < 0)
-				self->enemy = NULL;
+				self->enemy = nullptr;
 		}
 
-		// We have a live not-notarget player as target. If BLASTER_IF_VISIBLE is 
+		// We have a live not-notarget player as target. If BLASTER_IF_VISIBLE is
 		// set, see if we can see him
 		if (self->enemy && (self->spawnflags & BLASTER_IF_VISIBLE) ) {
 			VectorMA (self->enemy->absmin, 0.5, self->enemy->size, target);
 			tr = gi.trace(self->s.origin, vec3_origin, vec3_origin, target, self, MASK_OPAQUE);
 			if (tr.fraction != 1.0)
-				self->enemy = NULL;
+				self->enemy = nullptr;
 		}
 
 		// If we STILL have an enemy, then he must be a good player target. Frag him
@@ -875,7 +871,7 @@ void target_blaster_think (edict_t *self)
 				self->nextthink = level.time + self->wait;
 			return;
 		}
-	
+
 		// Find a player - note that we search the entire entity list so we'll
 		// also hit on func_monitor-viewing fake players
 		for (i=1, player=g_edicts+1; i<globals.num_edicts && !self->enemy; i++, player++)
@@ -916,8 +912,8 @@ void target_blaster_think (edict_t *self)
 		if (!(self->spawnflags & BLASTER_IF_VISIBLE))
 		{
 			// have a target, don't care whether it's visible; cannot be a gibbed monster
-			self->enemy = NULL;
-			ent = G_Find (NULL, FOFS(targetname), self->target);
+			self->enemy = nullptr;
+			ent = G_Find ( nullptr, FOFS(targetname), self->target);
 			while (ent && !self->enemy) {
 				// if target is not a monster, we're done
 				if ( !(ent->svflags & SVF_MONSTER)) {
@@ -930,11 +926,11 @@ void target_blaster_think (edict_t *self)
 		else
 		{
 			// has a target, but must be visible and not a monster
-			self->enemy = NULL;
-			ent = G_Find (NULL, FOFS(targetname), self->target);
+			self->enemy = nullptr;
+			ent = G_Find ( nullptr, FOFS(targetname), self->target);
 			while (ent && !self->enemy)
 			{
-				// if the target isn't a monster, we don't care whether 
+				// if the target isn't a monster, we don't care whether
 				// it can be seen or not.
 				if ( !(ent->svflags & SVF_MONSTER) ) {
 					self->enemy = ent;
@@ -999,7 +995,7 @@ void target_blaster_init (edict_t *self)
 	if (self->target)
 	{
 		edict_t	*ent;
-		ent = G_Find (NULL, FOFS(targetname), self->target);
+		ent = G_Find ( nullptr, FOFS(targetname), self->target);
 		if (!ent)
 			gi.dprintf("%s at %s: %s is a bad target\n", self->classname, vtos(self->s.origin), self->target);
 		self->enemy = ent;
@@ -1028,7 +1024,7 @@ void SP_target_blaster (edict_t *self)
 	{
 		// toggled target_blaster
 		self->use = toggle_target_blaster;
-		self->enemy = NULL; // for now
+		self->enemy = nullptr; // for now
 		self->think = target_blaster_think;
 		if (self->spawnflags & 4)
 			self->nextthink = level.time + 1;
@@ -1167,7 +1163,7 @@ void target_laser_ps_think (edict_t *self)
 	if (self->enemy)
 	{
 		if (self->enemy->flags & FL_NOTARGET || (self->enemy->health < self->enemy->gib_health) )
-			self->enemy = NULL;
+			self->enemy = nullptr;
 		else {
 			// first make sure laser can see the center of the enemy
 		//	VectorMA (self->enemy->absmin, 0.5, self->enemy->size, target);
@@ -1176,7 +1172,7 @@ void target_laser_ps_think (edict_t *self)
 			VectorMA (realmin, 0.5, self->enemy->size, target);
 			tr = gi.trace(self->s.origin, vec3_origin, vec3_origin, target, self, MASK_OPAQUE);
 			if (tr.fraction != 1.0)
-				self->enemy = NULL;
+				self->enemy = nullptr;
 		}
 	}
 
@@ -1226,7 +1222,7 @@ void target_laser_ps_think (edict_t *self)
 	VectorMA (start, 2048, self->movedir, end);
 	while (1)
 	{
-		tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+		tr = gi.trace (start, nullptr, nullptr, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
 		if (!tr.ent)
 			break;
@@ -1352,12 +1348,12 @@ void target_laser_think (edict_t *self)
 	VectorMA (start, 2048, self->movedir, end);
 	while (1)
 	{
-		// Knightmare- spawnflag 8192 stops at window, or spawnflag 128 in Rogue maps 
+		// Knightmare- spawnflag 8192 stops at window, or spawnflag 128 in Rogue maps
 		if ( ( (level.maptype != MAPTYPE_ROGUE) && (self->spawnflags & LASER_STOPWINDOW) ) ||
 			( (level.maptype == MAPTYPE_ROGUE) && (self->spawnflags & ROGUE_LASER_STOPWINDOW) ) )
-			tr = gi.trace (start, NULL, NULL, end, ignore, MASK_SHOT);
+			tr = gi.trace (start, nullptr, nullptr, end, ignore, MASK_SHOT);
 		else
-			tr = gi.trace (start, NULL, NULL, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
+			tr = gi.trace (start, nullptr, nullptr, end, ignore, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_DEADMONSTER);
 
 		if (!tr.ent)
 			break;
@@ -1490,12 +1486,12 @@ void target_laser_start (edict_t *self)
 	}
 
 //	if (self->spawnflags & LASER_SEEK_PLAYER)
-	// Knightmare- spawnflag 128 specifies SEEK_PLAYER, or spawnflag 8192 in Rogue maps 
+	// Knightmare- spawnflag 128 specifies SEEK_PLAYER, or spawnflag 8192 in Rogue maps
 	if ( ( (level.maptype != MAPTYPE_ROGUE) && (self->spawnflags & LASER_SEEK_PLAYER) ) ||
 		( (level.maptype == MAPTYPE_ROGUE) && (self->spawnflags & ROGUE_LASER_SEEK_PLAYER) ) )
 	{
 		// player-seeking laser
-		self->enemy = NULL;
+		self->enemy = nullptr;
 		self->use = target_laser_ps_use;
 		self->think = target_laser_ps_think;
 		gi.linkentity(self);
@@ -1511,7 +1507,7 @@ void target_laser_start (edict_t *self)
 	{
 		if (self->target)
 		{
-			ent = G_Find (NULL, FOFS(targetname), self->target);
+			ent = G_Find ( nullptr, FOFS(targetname), self->target);
 			if (!ent)
 				gi.dprintf ("%s at %s: %s is a bad target\n", self->classname, vtos(self->s.origin), self->target);
 			self->enemy = ent;
@@ -1601,7 +1597,7 @@ void target_lightramp_think (edict_t *self)
 		else if (self->spawnflags & LIGHTRAMP_TOGGLE)
 		{
 			char	temp;
-			
+
 			temp = self->movedir[0];
 			self->movedir[0] = self->movedir[1];
 			self->movedir[1] = temp;
@@ -1641,16 +1637,14 @@ void target_lightramp_use (edict_t *self, edict_t *other, edict_t *activator)
 
 	if (!self->enemy)
 	{
-		edict_t		*e;
-
 		// check all the targets
-		e = NULL;
-		while (1)
+		edict_t *e = nullptr;
+		while (true)
 		{
 			e = G_Find (e, FOFS(targetname), self->target);
 			if (!e)
 				break;
-			if (strcmp(e->classname, "light") != 0)
+			if (strcmp(e->classname.c_str(), "light") != 0)
 			{
 				gi.dprintf("%s at %s ", self->classname, vtos(self->s.origin));
 				gi.dprintf("target %s (%s at %s) is not a light\n", self->target, e->classname, vtos(e->s.origin));
@@ -1680,7 +1674,7 @@ void SP_target_lightramp (edict_t *self)
 	// DWH: CUSTOM spawnflag allows custom light switching, speed is ignored
 	if (self->spawnflags & LIGHTRAMP_CUSTOM)
 	{
-		if (!self->message || strlen(self->message) < 2) {
+		if (self->message.empty() || strlen(self->message.c_str()) < 2) {
 			gi.dprintf("custom target_lightramp has bad ramp (%s) at %s\n", self->message, vtos(self->s.origin));
 			G_FreeEdict (self);
 			return;
@@ -1688,7 +1682,7 @@ void SP_target_lightramp (edict_t *self)
 	}
 	else
 	{
-		if (!self->message || strlen(self->message) != 2 || self->message[0] < 'a' || self->message[0] > 'z' || self->message[1] < 'a' || self->message[1] > 'z' || self->message[0] == self->message[1])
+		if (self->message.empty() || strlen(self->message.c_str()) != 2 || self->message[0] < 'a' || self->message[0] > 'z' || self->message[1] < 'a' || self->message[1] > 'z' || self->message[0] == self->message[1])
 		{
 			gi.dprintf("target_lightramp has bad ramp (%s) at %s\n", self->message, vtos(self->s.origin));
 			G_FreeEdict (self);
@@ -1715,7 +1709,7 @@ void SP_target_lightramp (edict_t *self)
 
 	if (self->spawnflags & LIGHTRAMP_CUSTOM) {
 		self->movedir[0] = 0;                        // index into message
-		self->movedir[1] = strlen(self->message)-1;  // position of last character
+		self->movedir[1] = strlen(self->message.c_str())-1;  // position of last character
 		self->movedir[2] = 1;                        // direction = start->end
 	}
 	else {
@@ -1756,11 +1750,11 @@ void target_earthquake_think (edict_t *self)
 			continue;
 		if (!e->groundentity)
 			continue;
-		// Lazarus: special case for tracktrain riders - 
+		// Lazarus: special case for tracktrain riders -
 		// earthquakes hurt 'em too bad, so don't shake 'em
 		if ((e->groundentity->flags & FL_TRACKTRAIN) && (e->groundentity->moveinfo.state))
 			continue;
-		e->groundentity = NULL;
+		e->groundentity = nullptr;
 
 	// Knightmare- added accel for horizontal shaking
 	//	e->velocity[0] += crandom() * 150;
@@ -1819,10 +1813,10 @@ void target_locator_init (edict_t *self)
 	int			num_points = 0;
 	int			i, N, nummoves;
 	qboolean	looped;
-	edict_t		*tgt0 = NULL, *tgtlast = NULL, *target = NULL, *next = NULL;
-	edict_t		*move = NULL;
+	edict_t		*tgt0 = nullptr, *tgtlast = nullptr, *target = nullptr, *next = nullptr;
+	edict_t		*move = nullptr;
 
-	move = NULL;
+	move = nullptr;
 	move = G_Find(move,FOFS(targetname),self->target);
 
 	if (!move)
@@ -1832,7 +1826,7 @@ void target_locator_init (edict_t *self)
 		G_FreeEdict(self);
 		return;
 	}
-	target = G_Find(NULL,FOFS(targetname),self->pathtarget);
+	target = G_Find( nullptr, FOFS(targetname),self->pathtarget);
 	if ( !target )
 	{
 		gi.dprintf("Pathtarget of target_locator (%s) not found.\n",
@@ -1841,15 +1835,15 @@ void target_locator_init (edict_t *self)
 		return;
 	}
 
-	srand(time(NULL));
+	srand(time( nullptr ) );
 	tgt0 = target;
-	next = NULL;
+	next = nullptr;
 	target->spawnflags &= 0x7FFE;
 	while (next != tgt0)
 	{
 		if (target->target)
 		{
-			next = G_Find(NULL,FOFS(targetname),target->target);
+			next = G_Find( nullptr, FOFS(targetname),target->target);
 			if ((!next) || (next==tgt0)) tgtlast = target;
 			if (!next)
 			{
@@ -1868,7 +1862,7 @@ void target_locator_init (edict_t *self)
 		}
 	}
 	if (!num_points) num_points=1;
-	
+
 	nummoves = 1;
 	while (move)
 	{
@@ -1891,7 +1885,7 @@ void target_locator_init (edict_t *self)
 				looped = true;
 			}
 			if (looped && !(target->spawnflags & 1)) i = N+1;
-			next = G_Find(NULL,FOFS(targetname),target->target);
+			next = G_Find( nullptr, FOFS(targetname),target->target);
 		}
 		target->spawnflags |= 1;
 
@@ -1949,20 +1943,20 @@ void SP_target_locator (edict_t *self)
 
 void use_target_anger (edict_t *self, edict_t *other, edict_t *activator)
 {
-	edict_t		*kill_me = NULL, *movetarget = NULL;
-	edict_t		*t = NULL;
+	edict_t		*kill_me = nullptr, *movetarget = nullptr;
+	edict_t		*t = nullptr;
 	vec3_t		vec;
 	float		dist = 0.0f, best_dist = 0.0f;
-	edict_t		*best_target = NULL;
+	edict_t		*best_target = nullptr;
 
 	if (self->pathtarget)
 		movetarget = G_PickTarget(self->pathtarget);
 	else
-		movetarget = NULL;
+		movetarget = nullptr;
 
 	if (self->target)
 	{
-		t = NULL;
+		t = nullptr;
 		while ((t = G_Find (t, FOFS(targetname), self->target)))
 		{
 			if (t == self)
@@ -1981,7 +1975,7 @@ void use_target_anger (edict_t *self, edict_t *other, edict_t *activator)
 						t->velocity[1] = self->movedir[1] * self->speed;
 						if (t->groundentity)
 						{
-							t->groundentity = NULL;
+							t->groundentity = nullptr;
 							t->velocity[2] = self->movedir[2];
 							if (t->monsterinfo.aiflags & AI_ACTOR)
 								gi.sound (self, CHAN_VOICE, t->actor_sound_index[0], 1, ATTN_NORM, 0);
@@ -1989,11 +1983,11 @@ void use_target_anger (edict_t *self, edict_t *other, edict_t *activator)
 					}
 					if (self->killtarget)
 					{
-						kill_me = G_Find(NULL, FOFS(targetname), self->killtarget);
+						kill_me = G_Find( nullptr, FOFS(targetname), self->killtarget);
 						if (kill_me)
 						{
 							best_dist = 9000.;
-							best_target = NULL;
+							best_target = nullptr;
 							if (kill_me->health > 0)
 							{
 								VectorSubtract (kill_me->s.origin,t->s.origin,vec);
@@ -2093,7 +2087,7 @@ void SP_target_anger (edict_t *self)
 	self->use = use_target_anger;
 }
 
-// target_monsterbattle serves the same purpose as target_anger, but 
+// target_monsterbattle serves the same purpose as target_anger, but
 // ends up turning a dmgteam group of monsters against another dmgteam
 
 void use_target_monsterbattle(edict_t *self, edict_t *other, edict_t *activator)
@@ -2101,15 +2095,15 @@ void use_target_monsterbattle(edict_t *self, edict_t *other, edict_t *activator)
 	edict_t *grouch, *grouchmate;
 	edict_t *target, *targetmate;
 
-	grouch = G_Find(NULL,FOFS(targetname),self->target);
+	grouch = G_Find( nullptr, FOFS(targetname),self->target);
 	if (!grouch) return;
 	if (!grouch->inuse) return;
-	target = G_Find(NULL,FOFS(targetname),self->killtarget);
+	target = G_Find( nullptr, FOFS(targetname),self->killtarget);
 	if (!target) return;
 	if (!target->inuse) return;
 	if (grouch->dmgteam)
 	{
-		grouchmate = G_Find(NULL,FOFS(dmgteam),grouch->dmgteam);
+		grouchmate = G_Find( nullptr, FOFS(dmgteam),grouch->dmgteam);
 		while (grouchmate) {
 			grouchmate->monsterinfo.aiflags |= AI_FREEFORALL;
 			grouchmate = G_Find(grouchmate,FOFS(dmgteam),grouch->dmgteam);
@@ -2117,7 +2111,7 @@ void use_target_monsterbattle(edict_t *self, edict_t *other, edict_t *activator)
 	}
 	if (target->dmgteam)
 	{
-		targetmate = G_Find(NULL,FOFS(dmgteam),target->dmgteam);
+		targetmate = G_Find( nullptr, FOFS(dmgteam),target->dmgteam);
 		while (targetmate) {
 			targetmate->monsterinfo.aiflags |= AI_FREEFORALL;
 			targetmate = G_Find(targetmate,FOFS(dmgteam),target->dmgteam);
@@ -2206,13 +2200,13 @@ void use_target_rocks (edict_t *self, edict_t *other, edict_t *activator)
 	VectorSet(source,8,8,8);
 	mass = self->mass;
 
-	// set movedir here- if we're 
+	// set movedir here- if we're
 	G_SetMovedir (self->s.angles, self->movedir);
 
 	// big chunks
 	if (mass >= 100)
 	{
-		Com_sprintf (modelname, sizeof(modelname), "models/objects/rock%d/tris.md2",self->style*2+1);
+		snprintf (modelname, sizeof(modelname), "models/objects/rock%d/tris.md2",self->style*2+1);
 		count = mass / 100;
 		if (count > 16)
 			count = 16;
@@ -2227,7 +2221,7 @@ void use_target_rocks (edict_t *self, edict_t *other, edict_t *activator)
 	}
 	// small chunks
 	count = mass / 25;
-	Com_sprintf (modelname, sizeof(modelname), "models/objects/rock%d/tris.md2",self->style*2+2);
+	snprintf (modelname, sizeof(modelname), "models/objects/rock%d/tris.md2",self->style*2+2);
 	if (count > 16)
 		count = 16;
 	VectorSet(size,4,4,4);
@@ -2239,7 +2233,7 @@ void use_target_rocks (edict_t *self, edict_t *other, edict_t *activator)
 		ThrowRock (self, modelname, self->speed, chunkorigin, size, 25);
 	}
 	if (self->dmg)
-		T_RadiusDamage (self, activator, self->dmg, NULL, self->dmg+40, MOD_SPLASH, -0.5);
+		T_RadiusDamage (self, activator, self->dmg, nullptr, self->dmg+40, MOD_SPLASH, -0.5);
 
 	self->count--;
 	if (!self->count) {
@@ -2314,7 +2308,7 @@ void use_target_rotation (edict_t *self, edict_t *other, edict_t *activator)
 		p1++;
 		p2++;
 	}
-	target = G_Find(NULL,FOFS(targetname),targetname);
+	target = G_Find( nullptr, FOFS(targetname),targetname);
 	while (target) {
 		if (target->inuse && target->use)
 			target->use(target,other,activator);
@@ -2348,7 +2342,7 @@ void SP_target_rotation (edict_t *self)
 	self->mass = 0;  // index of currently selected target
 	self->sounds = 0; // number of comma-delimited targets in target string
 	p = self->target;
-	while ( (p = strstr(p,",")) != NULL)
+	while ( (p = strstr(p,",")) != nullptr )
 	{
 		self->sounds++;
 		p++;
@@ -2453,7 +2447,7 @@ void target_effect_trail (edict_t *self, edict_t *activator)
 	edict_t	*target;
 
 	if (!self->target) return;
-	target = G_Find(NULL,FOFS(targetname),self->target);
+	target = G_Find( nullptr, FOFS(targetname),self->target);
 	if (!target) return;
 
 	gi.WriteByte(svc_temp_entity);
@@ -2486,7 +2480,7 @@ void target_effect_lightning(edict_t *self, edict_t *activator)
 	edict_t	*target;
 
 	if (!self->target) return;
-	target = G_Find(NULL,FOFS(targetname),self->target);
+	target = G_Find( nullptr, FOFS(targetname),self->target);
 	if (!target) return;
 
 	gi.WriteByte (svc_temp_entity);
@@ -2513,10 +2507,10 @@ Broadcasts to all in Potentially Visible Set from vector (origin)
   TE_GREENBLOOD       26 Spurt of green (actually kinda yellow) blood
   TE_BLUEHYPERBLASTER 27 NOT IMPLEMENTED
   TE_BLASTER2         30 Green/white sparks with a yellow/white flash
-  TE_MOREBLOOD        42 
+  TE_MOREBLOOD        42
   TE_HEATBEAM_SPARKS  43
   TE_HEATBEAM_STEAM   44
-  TE_CHAINFIST_SMOKE  45 
+  TE_CHAINFIST_SMOKE  45
   TE_ELECTRIC_SPARKS  46
   TE_FLECHETTE        55
 */
@@ -2526,7 +2520,7 @@ void target_effect_sparks (edict_t *self, edict_t *activator)
 	gi.WriteByte(svc_temp_entity);
 	gi.WriteByte(self->style);
 	gi.WritePosition(self->s.origin);
-	if (self->style != TE_CHAINFIST_SMOKE) 
+	if (self->style != TE_CHAINFIST_SMOKE)
 		gi.WriteDir(self->movedir);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
 
@@ -2547,13 +2541,13 @@ Potentially Hearable set from vector (origin)
   TE_GRENADE_EXPLOSION_WATER 18 underwater grenade explosion
   TE_BFG_EXPLOSION           20 BFG explosion sprite
   TE_BFG_BIGEXPLOSION        21 BFG particle explosion
-  TE_BOSSTPORT               22 
+  TE_BOSSTPORT               22
   TE_PLASMA_EXPLOSION        28
   TE_PLAIN_EXPLOSION         35
   TE_TRACKER_EXPLOSION       47
   TE_TELEPORT_EFFECT	     48
   TE_DBALL_GOAL              49 Identical to TE_TELEPORT_EFFECT?
-  TE_NUKEBLAST               51 
+  TE_NUKEBLAST               51
   TE_WIDOWSPLASH             52
   TE_EXPLOSION1_BIG          53  Works, but requires Rogue models/objects/r_explode2
   TE_EXPLOSION1_NP           54
@@ -2571,7 +2565,7 @@ void target_effect_explosion (edict_t *self, edict_t *activator)
 
 }
 //===============================================================================
-/*  TE_TUNNEL_SPARKS    29 
+/*  TE_TUNNEL_SPARKS    29
     Similar to other splash effects, but Xatrix does some funky things with
 	the origin so we'll do the same */
 
@@ -2626,7 +2620,7 @@ void target_effect_use(edict_t *self, edict_t *other, edict_t *activator)
 		// don't play
 		edict_t	*mover;
 		if (!self->movewith) return;
-		mover = G_Find(NULL,FOFS(targetname),self->movewith);
+		mover = G_Find( nullptr, FOFS(targetname),self->movewith);
 		if (!mover) return;
 		if (!VectorLength(mover->velocity)) return;
 	}
@@ -2634,7 +2628,7 @@ void target_effect_use(edict_t *self, edict_t *other, edict_t *activator)
 }
 void target_effect_think(edict_t *self)
 {
-	self->play(self,NULL);
+	self->play(self, nullptr );
 	self->nextthink = level.time + self->wait;
 }
 //===============================================================================
@@ -2758,7 +2752,7 @@ void SP_target_effect (edict_t *self)
  TARGET_ATTRACTOR - pulls target entity towards its origin
  target     - Targetname of entity to attract. Ignored if PLAYER spawnflag is set
  pathtarget - Entity or entities to "use" when distance criteria is met.
- speed      - Minimum speed to pull target with. Must use a value > sv_gravity/10 
+ speed      - Minimum speed to pull target with. Must use a value > sv_gravity/10
               to overcome gravity when pulling up.
  distance   - When target is within "distance" units of target_attractor, attraction
               is shut off. Use a value < 0 to hold target in place. 0 will be reset
@@ -2768,7 +2762,7 @@ void SP_target_effect (edict_t *self)
       0 = none
       1 = medic cable
       2 = green laser
-              
+
  Spawnflags:   1 - START_ON
                2 - PLAYER (attract player, ignore "target"
                4 - NO_GRAVITY - turns off gravity for target. W/O this flag you'll
@@ -2796,11 +2790,11 @@ void target_attractor_think_single (edict_t *self)
 	vec3_t	forward, right;
 	int		i;
 	int		num_targets = 0;
-	
+
 	if ( !(self->spawnflags & ATTRACTOR_ON) ) return;
 
 	previous_target = self->target_ent;
-	target      = NULL;
+	target      = nullptr;
 	best_dist   = WORLD_SIZE;	// was 8192
 
 	if (self->spawnflags & ATTRACTOR_PLAYER)
@@ -2814,7 +2808,7 @@ void target_attractor_think_single (edict_t *self)
 			dist = VectorLength(dir);
 			if (dist > self->moveinfo.distance) continue;
 			if (self->spawnflags & ATTRACTOR_SIGHT) {
-				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,ent->s.origin,NULL,MASK_OPAQUE | MASK_SHOT);
+				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,ent->s.origin, nullptr, MASK_OPAQUE | MASK_SHOT);
 				if (tr.ent != ent) continue;
 			}
 			if (dist < best_dist) {
@@ -2835,7 +2829,7 @@ void target_attractor_think_single (edict_t *self)
 			dist = VectorLength(dir);
 			if (dist > self->moveinfo.distance) continue;
 			if (self->spawnflags & ATTRACTOR_SIGHT) {
-				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,ent->s.origin,NULL,MASK_OPAQUE | MASK_SHOT);
+				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,ent->s.origin, nullptr, MASK_OPAQUE | MASK_SHOT);
 				if (tr.ent != ent) continue;
 			}
 			if (dist < best_dist) {
@@ -2846,7 +2840,7 @@ void target_attractor_think_single (edict_t *self)
 	}
 	if ( !(self->spawnflags & (ATTRACTOR_PLAYER | ATTRACTOR_MONSTER )))
 	{
-		ent = G_Find(NULL,FOFS(targetname),self->target);
+		ent = G_Find( nullptr, FOFS(targetname),self->target);
 		while (ent)
 		{
 			if (!ent->inuse) continue;
@@ -2856,7 +2850,7 @@ void target_attractor_think_single (edict_t *self)
 			dist = VectorLength(dir);
 			if (dist > self->moveinfo.distance) continue;
 			if (self->spawnflags & ATTRACTOR_SIGHT) {
-				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,targ_org,NULL,MASK_OPAQUE | MASK_SHOT);
+				tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,targ_org, nullptr, MASK_OPAQUE | MASK_SHOT);
 				if (tr.ent != ent) continue;
 			}
 			if (dist < best_dist) {
@@ -2893,7 +2887,7 @@ void target_attractor_think_single (edict_t *self)
 		if (dist == 0)
 		{
 			// fire pathtarget when close
-			ent = G_Find(NULL,FOFS(targetname),self->pathtarget);
+			ent = G_Find( nullptr, FOFS(targetname),self->pathtarget);
 			while (ent) {
 				if (ent->use)
 					ent->use(ent,self,self);
@@ -2936,10 +2930,10 @@ void target_attractor_think_single (edict_t *self)
 			else
 				scale = 0.375;
 			// Players - add movement stuff so he MAY be able to escape
-			AngleVectors (target->client->v_angle, forward, right, NULL);
+			AngleVectors (target->client->v_angle, forward, right, nullptr );
 			for (i=0 ; i<3 ; i++)
 				target->velocity[i] += scale * forward[i] * target->client->ucmd.forwardmove +
-				scale * right[i]   * target->client->ucmd.sidemove; 
+				scale * right[i]   * target->client->ucmd.sidemove;
 			target->velocity[2] += scale * target->client->ucmd.upmove;
 		}
 	}
@@ -2947,7 +2941,7 @@ void target_attractor_think_single (edict_t *self)
 	// This is only really necessary for players
 	if (target->groundentity && (self->s.origin[2] > target->absmax[2])) {
 		target->s.origin[2] += 1;
-		target->groundentity = NULL;
+		target->groundentity = nullptr;
 	}
 
 	if (self->sounds)
@@ -2958,7 +2952,7 @@ void target_attractor_think_single (edict_t *self)
 			VectorCopy (target->s.origin,new_origin);
 		else
 			VectorMA (targ_org,FRAMETIME,target->velocity,new_origin);
-		
+
 		switch (self->sounds)
 		{
 		case 1:
@@ -2978,11 +2972,11 @@ void target_attractor_think_single (edict_t *self)
 		}
 	}
 
-	
+
 	if (self->spawnflags & ATTRACTOR_NO_GRAVITY)
 		target->gravity_debounce_time = level.time + 2*FRAMETIME;
 	gi.linkentity(target);
-	
+
 	if (!num_targets) {
 		// shut 'er down
 		self->spawnflags &= ~ATTRACTOR_ON;
@@ -3012,13 +3006,13 @@ void target_attractor_think(edict_t *self)
 			self->moveinfo.speed = max(self->speed, self->moveinfo.speed + self->accel);
 	}
 
-	target = NULL;
+	target = nullptr;
 	ent_start = 1;
 	while (true)
 	{
 		if (self->spawnflags & (ATTRACTOR_PLAYER | ATTRACTOR_MONSTER))
 		{
-			target = NULL;
+			target = nullptr;
 			for (i=ent_start, ent=&g_edicts[ent_start];i<globals.num_edicts && !target; i++, ent++)
 			{
 				if ((self->spawnflags & ATTRACTOR_PLAYER) && ent->client && ent->inuse)
@@ -3040,25 +3034,25 @@ void target_attractor_think(edict_t *self)
 		if (!target->inuse) continue;
 		if ( ((target->client) || (target->svflags & SVF_MONSTER)) && (target->health <= 0)) continue;
 		num_targets++;
-		
+
 		VectorAdd(target->s.origin,target->origin_offset,targ_org);
 		VectorSubtract (self->s.origin,targ_org,dir);
 		dist = VectorLength(dir);
 
 		if (self->spawnflags & ATTRACTOR_SIGHT) {
-			tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,target->s.origin,NULL,MASK_OPAQUE | MASK_SHOT);
+			tr = gi.trace(self->s.origin,vec3_origin,vec3_origin,target->s.origin, nullptr, MASK_OPAQUE | MASK_SHOT);
 			if (tr.ent != target) continue;
 		}
 
 		if (readout->value) gi.dprintf("distance=%g, pull speed=%g\n",dist,self->moveinfo.speed);
 		if (dist > self->moveinfo.distance)
 			continue;
-		
+
 		if ((self->pathtarget) && (self->spawnflags & ATTRACTOR_PATHTARGET))
 		{
 			if (dist == 0) {
 				// fire pathtarget when close
-				ent = G_Find(NULL,FOFS(targetname),self->pathtarget);
+				ent = G_Find( nullptr, FOFS(targetname),self->pathtarget);
 				while (ent) {
 					if (ent->use)
 						ent->use(ent,self,self);
@@ -3098,10 +3092,10 @@ void target_attractor_think(edict_t *self)
 				else
 					scale = 0.375;
 				// Players - add movement stuff so he MAY be able to escape
-				AngleVectors (target->client->v_angle, forward, right, NULL);
+				AngleVectors (target->client->v_angle, forward, right, nullptr );
 				for (i=0 ; i<3 ; i++)
 					target->velocity[i] += scale * forward[i] * target->client->ucmd.forwardmove +
-					                       scale * right[i]   * target->client->ucmd.sidemove; 
+					                       scale * right[i]   * target->client->ucmd.sidemove;
 				target->velocity[2] += scale * target->client->ucmd.upmove;
 			}
 		}
@@ -3109,7 +3103,7 @@ void target_attractor_think(edict_t *self)
 		// This is only really necessary for players
 		if (target->groundentity && (self->s.origin[2] > target->absmax[2])) {
 			target->s.origin[2] += 1;
-			target->groundentity = NULL;
+			target->groundentity = nullptr;
 		}
 		if (self->spawnflags & ATTRACTOR_NO_GRAVITY)
 			target->gravity_debounce_time = level.time + 2*FRAMETIME;
@@ -3136,7 +3130,7 @@ void use_target_attractor(edict_t *self, edict_t *other, edict_t *activator)
 		{
 			self->spawnflags &= ~ATTRACTOR_ON;
 			self->s.sound = 0;
-			self->target_ent  = NULL;
+			self->target_ent  = nullptr;
 			self->nextthink   = 0;
 		}
 	}
@@ -3254,7 +3248,7 @@ void SP_target_CD (edict_t *self)
 /*
 ===================================================================
  TARGET_MONITOR
- Move the player's viewpoint to the target_monitor origin, 
+ Move the player's viewpoint to the target_monitor origin,
  gives the target_monitor angles to the player, and freezes him
  for "wait" seconds (default=3). If wait < 0, target_monitor
  must be targeted a second time to free the player.
@@ -3283,19 +3277,19 @@ void target_monitor_off (edict_t *self)
 	}
 	faker = player->client->camplayer;
 	VectorCopy (faker->s.origin, player->s.origin);
-	gi.TagFree (faker->client); 
-	G_FreeEdict (faker); 
+	gi.TagFree (faker->client);
+	G_FreeEdict (faker);
 	player->client->ps.pmove.origin[0] = player->s.origin[0]*8;
 	player->client->ps.pmove.origin[1] = player->s.origin[1]*8;
 	player->client->ps.pmove.origin[2] = player->s.origin[2]*8;
 	for (i=0 ; i<3 ; i++)
-		player->client->ps.pmove.delta_angles[i] = 
+		player->client->ps.pmove.delta_angles[i] =
 			ANGLE2SHORT(player->client->org_viewangles[i] - player->client->resp.cmd_angles[i]);
 	VectorCopy (player->client->org_viewangles, player->client->resp.cmd_angles);
 	VectorCopy (player->client->org_viewangles, player->s.angles);
 	VectorCopy (player->client->org_viewangles, player->client->ps.viewangles);
 	VectorCopy (player->client->org_viewangles, player->client->v_angle);
-	
+
 	player->client->ps.gunindex        = gi.modelindex(player->client->pers.weapon->view_model);
 	player->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 	player->client->ps.pmove.pm_type   = PM_NORMAL;
@@ -3306,8 +3300,8 @@ void target_monitor_off (edict_t *self)
 	player->clipmask                   = MASK_PLAYERSOLID;
 	player->solid                      = SOLID_BBOX;
 	player->viewheight                 = 22;
-	player->client->camplayer          = NULL;
-	player->target_ent                 = NULL;
+	player->client->camplayer          = nullptr;
+	player->target_ent                 = nullptr;
 	gi.unlinkentity(player);
 	KillBox(player);
 	gi.linkentity(player);
@@ -3319,12 +3313,12 @@ void target_monitor_off (edict_t *self)
 	if (tpp->value)
 		Cmd_Chasecam_Toggle (player);
 
-	self->child = NULL;
+	self->child = nullptr;
 	gi.linkentity(self);
 
 	self->count--;
 	if (!self->count) {
-		self->use = NULL;
+		self->use = nullptr;
 		self->think = G_FreeEdict;
 		self->nextthink = level.time + 1;
 	}
@@ -3354,7 +3348,7 @@ void target_monitor_move (edict_t *self)
 		return;
 	}
 
-	AngleVectors (self->target_ent->s.angles, forward, NULL, NULL);
+	AngleVectors (self->target_ent->s.angles, forward, nullptr, nullptr );
 	VectorMA (self->target_ent->s.origin, -self->moveinfo.distance, forward, o);
 
 	o[2] += self->viewheight;
@@ -3362,14 +3356,14 @@ void target_monitor_move (edict_t *self)
 	VectorSubtract (o, self->s.origin, o);
 	VectorMA (self->s.origin, 0.2, o, o);
 
-	trace = gi.trace(self->target_ent->s.origin, NULL, NULL, o, self, MASK_SOLID);
+	trace = gi.trace(self->target_ent->s.origin, nullptr, nullptr, o, self, MASK_SOLID);
 	VectorCopy (trace.endpos, goal);
 	VectorMA (goal, 2, forward, goal);
 
 	// pad for floors and ceilings
 	VectorCopy (goal, o);
 	o[2] += 6;
-	trace = gi.trace(goal, NULL, NULL, o, self, MASK_SOLID);
+	trace = gi.trace(goal, nullptr, nullptr, o, self, MASK_SOLID);
 	if (trace.fraction < 1) {
 		VectorCopy (trace.endpos, goal);
 		goal[2] -= 6;
@@ -3377,7 +3371,7 @@ void target_monitor_move (edict_t *self)
 
 	VectorCopy (goal, o);
 	o[2] -= 6;
-	trace = gi.trace(goal, NULL, NULL, o, self, MASK_SOLID);
+	trace = gi.trace(goal, nullptr, nullptr, o, self, MASK_SOLID);
 	if (trace.fraction < 1) {
 		VectorCopy (trace.endpos, goal);
 		goal[2] += 6;
@@ -3407,7 +3401,7 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 	}
 
 	if (self->target)
-		self->target_ent = G_Find(NULL, FOFS(targetname), self->target);
+		self->target_ent = G_Find( nullptr, FOFS(targetname), self->target);
 
 	// if this is a CHASE_CAM target_monitor and the target no longer
 	// exists, remove this target_monitor and exit
@@ -3424,10 +3418,10 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 
 	// create a fake player to stand in real player's position
 	faker = activator->client->camplayer = G_Spawn();
-	faker->s.frame = activator->s.frame; 
-	VectorCopy (activator->s.origin, faker->s.origin); 
-	VectorCopy (activator->velocity, faker->velocity); 
-	VectorCopy (activator->s.angles, faker->s.angles); 
+	faker->s.frame = activator->s.frame;
+	VectorCopy (activator->s.origin, faker->s.origin);
+	VectorCopy (activator->velocity, faker->velocity);
+	VectorCopy (activator->s.angles, faker->s.angles);
 	faker->s = activator->s;
 	faker->takedamage   = DAMAGE_NO;		// so monsters won't attack
 	faker->flags       |= FL_NOTARGET;      // ... just to make sure
@@ -3448,11 +3442,11 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 	VectorCopy (activator->mins, faker->mins);
 	VectorCopy (activator->maxs, faker->maxs);
     // create a client so you can pick up items/be shot/etc while in camera
-	cl = (gclient_t *)gi.TagMalloc(sizeof(gclient_t), TAG_LEVEL); 
-	faker->client = cl; 
+	cl = (gclient_t *)gi.TagMalloc(sizeof(gclient_t), TAG_LEVEL);
+	faker->client = cl;
 	faker->target_ent = activator;
 	faker->s.number = faker - g_edicts;	// Phatman: silence server warning
-	gi.linkentity (faker); 
+	gi.linkentity (faker);
 
 	if (self->target_ent && self->target_ent->inuse)
 	{
@@ -3507,12 +3501,12 @@ void use_target_monitor (edict_t *self, edict_t *other, edict_t *activator)
 		if (!(monster->svflags & SVF_MONSTER)) continue;
 		if (monster->enemy == activator)
 		{
-			monster->enemy = NULL;
-			monster->oldenemy = NULL;
+			monster->enemy = nullptr;
+			monster->oldenemy = nullptr;
 			if (monster->goalentity == activator)
-				monster->goalentity = NULL;
+				monster->goalentity = nullptr;
 			if (monster->movetarget == activator)
-				monster->movetarget = NULL;
+				monster->movetarget = nullptr;
 			monster->monsterinfo.attack_finished = level.time + 1;
 			FindTarget (monster);
 		}
@@ -3561,7 +3555,7 @@ void SP_target_monitor (edict_t *self)
 	if (st.noise)
 	{
 		if (!strstr (st.noise, ".wav"))
-			Com_sprintf (buffer, sizeof(buffer), "%s.wav", st.noise);
+			snprintf (buffer, sizeof(buffer), "%s.wav", st.noise);
 		else
 		//	strncpy (buffer, st.noise, sizeof(buffer));
 			Q_strncpyz (buffer, sizeof(buffer), st.noise);
@@ -3615,7 +3609,7 @@ void SP_target_monitor (edict_t *self)
  ACTIVATOR = 1 - target_animation acts on it's activator rather than
                  it's target
 
- "message" - specifies allowable classname to animate. This prevents 
+ "message" - specifies allowable classname to animate. This prevents
              animating entities with inapplicable frame numbers
 =====================================================================================*/
 
@@ -3633,14 +3627,14 @@ void target_animate (edict_t *ent)
 		}
 		else if (ent->svflags & SVF_MONSTER)
 		{
-			// Hopefully we don't get here, but if we DO then we definitely 
+			// Hopefully we don't get here, but if we DO then we definitely
 			// need for monsters/actors to turn their brains back on.
 			ent->think     = monster_think;
 			ent->nextthink = level.time + FRAMETIME;
 		}
 		else
 		{
-			ent->think     = NULL;
+			ent->think     = nullptr;
 			ent->nextthink = 0;
 		}
 		ent->monsterinfo.currentmove = ent->monsterinfo.savemove;
@@ -3653,7 +3647,7 @@ void target_animate (edict_t *ent)
 
 void target_animation_use (edict_t *self, edict_t *other, edict_t *activator)
 {
-	edict_t	*target = NULL;
+	edict_t	*target = nullptr;
 
 	if (level.time < self->touch_debounce_time)
 		return;
@@ -3661,7 +3655,7 @@ void target_animation_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		if (activator && activator->client)
 			return;
-		if (self->message && Q_stricmp(self->message, activator->classname))
+		if (!self->message.empty() && Q_stricmp( self->message.c_str(), activator->classname.c_str() ) )
 			return;
 		if (!self->target)
 			target = activator;
@@ -3670,7 +3664,7 @@ void target_animation_use (edict_t *self, edict_t *other, edict_t *activator)
 	{
 		if (!self->target)
 			return;
-		target = G_Find(NULL, FOFS(targetname), self->target);
+		target = G_Find(nullptr, FOFS(targetname), self->target);
 		if (!target)
 			return;
 	}
@@ -3680,7 +3674,7 @@ void target_animation_use (edict_t *self, edict_t *other, edict_t *activator)
 		return;
 	self->monsterinfo.currentmove->firstframe = self->startframe;
 	self->monsterinfo.currentmove->lastframe  = self->startframe + self->framenumbers - 1;
-	self->monsterinfo.currentmove->frame      = NULL;
+	self->monsterinfo.currentmove->frame      = nullptr;
 	self->monsterinfo.currentmove->endfunc    = target->think;
 	target->s.frame = self->startframe;
 	target->think   = target_animate;
@@ -3825,7 +3819,7 @@ void target_failure_player_die (edict_t *player)
 void target_failure_think (edict_t *self)
 {
 	target_failure_player_die(self->target_ent);
-	self->target_ent = NULL;
+	self->target_ent = nullptr;
 	self->think = target_failure_wipe;
 	self->nextthink = level.time + 10;
 }
@@ -3846,7 +3840,7 @@ void target_failure_fade_lights (edict_t *self)
 	else
 	{
 		target_failure_player_die(self->target_ent);
-		self->target_ent = NULL;
+		self->target_ent = nullptr;
 		self->think = target_failure_wipe;
 		self->nextthink = level.time + 10;
 	}
@@ -3861,7 +3855,7 @@ void use_target_failure (edict_t *self, edict_t *other, edict_t *activator)
 	if (self->target_ent)
 		return;
 
-	if (strlen(self->message))
+	if (strlen(self->message.c_str()))
 		Use_Target_Text(self,other,activator);
 
 	if (self->noise_index)
@@ -3938,7 +3932,7 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 		newtarget++;
 	}
 	target = buffer;
-	target_ent = G_Find(NULL,FOFS(targetname),target);
+	target_ent = G_Find( nullptr, FOFS(targetname),target);
 	while (target_ent)
 	{
 		if ( newtarget && (strlen(newtarget) > 0) )
@@ -3962,8 +3956,8 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 			target_ent->pathtarget = G_CopyString(self->pathtarget);
 		if ( self->killtarget && (strlen(self->killtarget) > 0) )
 			target_ent->killtarget = G_CopyString(self->killtarget);
-		if ( self->message && (strlen(self->message) > 0) )
-			target_ent->message = G_CopyString(self->message);
+		if ( !self->message.empty() )
+			target_ent->message = self->message;
 		if (self->delay > 0)
 			target_ent->delay = self->delay;
 		if (self->dmg > 0)
@@ -4002,7 +3996,7 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 		{
 			target_ent->spawnflags = self->spawnflags;
 			// special cases:
-			if ( !Q_stricmp(target_ent->classname, "model_train") )
+			if ( !Q_stricmp( target_ent->classname.c_str(), "model_train" ) )
 			{
 				if (target_ent->spawnflags & 32)
 				{
@@ -4017,7 +4011,7 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 			}
 		}
 		// Knightmare- set usermodel and skinnum only for model_spawn/train/turret
-		if ( !Q_stricmp(target_ent->classname, "model_spawn") || !Q_stricmp(target_ent->classname, "model_train") || !Q_stricmp(target_ent->classname, "model_turret") )
+		if ( !Q_stricmp( target_ent->classname.c_str(), "model_spawn" ) || !Q_stricmp( target_ent->classname.c_str(), "model_train" ) || !Q_stricmp( target_ent->classname.c_str(), "model_turret" ) )
 		{
 			char	modelname[256];	// Knightmare added
 
@@ -4026,16 +4020,16 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 				if (strstr(self->usermodel,".sp2")) {
 					// check for "sprites/" already in path
 					if ( !strncmp(self->usermodel, "sprites/", 8) )
-						Com_sprintf (modelname, sizeof(modelname), "%s", self->usermodel);
+						snprintf (modelname, sizeof(modelname), "%s", self->usermodel);
 					else
-						Com_sprintf (modelname, sizeof(modelname), "sprites/%s", self->usermodel);
+						snprintf (modelname, sizeof(modelname), "sprites/%s", self->usermodel);
 				}
 				else {
 					// check for "models/" already in path
 					if ( !strncmp(self->usermodel, "models/", 7) )
-						Com_sprintf (modelname, sizeof(modelname), "%s", self->usermodel);
+						snprintf (modelname, sizeof(modelname), "%s", self->usermodel);
 					else
-						Com_sprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
+						snprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
 				}
 				target_ent->s.modelindex = gi.modelindex (modelname);
 			}
@@ -4049,7 +4043,7 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 		//	target_ent->s.skinnum = self->s.skinnum;
 		}
 		// Knightmare- set solidstate, style, effects, renderfx, startframe, and framenumbers for model_spawn/train
-		if ( !Q_stricmp(target_ent->classname, "model_spawn") || !Q_stricmp(target_ent->classname, "model_train") )
+		if ( !Q_stricmp( target_ent->classname.c_str(), "model_spawn" ) || !Q_stricmp( target_ent->classname.c_str(), "model_train" ) )
 		{
 			int		effects = 0;
 
@@ -4068,7 +4062,7 @@ void use_target_change (edict_t *self, edict_t *other, edict_t *activator)
 					target_ent->takedamage = DAMAGE_YES;
 				}
 				else {
-					target_ent->die = NULL;
+					target_ent->die = nullptr;
 					target_ent->takedamage = DAMAGE_NO;
 				}
 			}
@@ -4148,20 +4142,20 @@ void SP_target_change (edict_t *self)
 void movewith_detach (edict_t *child)
 {
 	edict_t	*e;
-	edict_t	*parent = NULL;
+	edict_t	*parent = nullptr;
 	int		i;
-				
+
 	for (i=1; i<globals.num_edicts && !parent; i++) {
 		e = g_edicts + i;
 		if (e->movewith_next == child) parent = e;
 	}
 	if (parent) parent->movewith_next = child->movewith_next;
-		
-	child->movewith_next = NULL;
-	child->movewith = NULL;
+
+	child->movewith_next = nullptr;
+	child->movewith = nullptr;
 
 	// Knightmare added
-	child->movewith_ent = NULL;		
+	child->movewith_ent = nullptr;
 	VectorClear (child->movewith_offset);
 	VectorClear (child->parent_attach_angles);
 	VectorClear (child->child_attach_angles);
@@ -4185,7 +4179,7 @@ void use_target_movewith (edict_t *self, edict_t *other, edict_t *activator)
 
 	if (!self->target)
 		return;
-	target = G_Find(NULL, FOFS(targetname), self->target);
+	target = G_Find( nullptr, FOFS(targetname), self->target);
 
 	if (self->spawnflags & 1)
 	{
@@ -4204,7 +4198,7 @@ void use_target_movewith (edict_t *self, edict_t *other, edict_t *activator)
 		edict_t	*e;
 		edict_t	*previous;
 
-		parent = G_Find(NULL, FOFS(targetname), self->pathtarget);
+		parent = G_Find( nullptr, FOFS(targetname), self->pathtarget);
 		if (!parent || !parent->inuse)
 			return;
 		while (target)
@@ -4213,7 +4207,7 @@ void use_target_movewith (edict_t *self, edict_t *other, edict_t *activator)
 			{
 				if (target->movewith_ent)
 					movewith_detach(target);
-		
+
 				target->movewith_ent = parent;
 				VectorCopy (parent->s.angles, target->parent_attach_angles);
 				VectorCopy (target->s.angles, target->child_attach_angles);
@@ -4276,14 +4270,14 @@ message - command to send
 */
 void target_command_use (edict_t *self, edict_t *activator, edict_t *other)
 {
-   	gi.WriteByte (11);	        
-	gi.WriteString (self->message);
+   	gi.WriteByte (11);
+	gi.WriteString (self->message.data());
 	gi.unicast (self, true);
 }
 
 void SP_target_command (edict_t *self)
 {
-	if (!self->message)
+	if (self->message.empty())
 	{
 		gi.dprintf("target_command with no command, target name is %s at %s", self->targetname, vtos(self->s.origin));
 		G_FreeEdict (self);
@@ -4304,12 +4298,12 @@ void SP_target_command (edict_t *self)
  1 = NOT
  2 = XOR (toggle)
 ======================================================================================*/
- 
+
 void use_target_set_effect (edict_t *self, edict_t *other, edict_t *activator)
 {
 	edict_t *target;
 
-	target = G_Find(NULL, FOFS(targetname), self->target);
+	target = G_Find( nullptr, FOFS(targetname), self->target);
 	while (target)
 	{
 		if (self->style == 1)
@@ -4382,7 +4376,7 @@ void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 		gi.configstring (CS_CLOUDTILE, va("%f %f %f", self->size[0], self->size[1], self->size[2]) );
 		gi.configstring (CS_CLOUDSPEED, va("%f %f %f", self->velocity[0], self->velocity[1], self->velocity[2]) );
 		gi.configstring (CS_CLOUDALPHA, va("%f %f %f", self->color[0], self->color[1], self->color[2]) );
-		Com_sprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+		snprintf (string, sizeof(string), "skyclouds %s %s %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
 					self->pathtarget, self->followtarget, self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2], self->radius,
 					self->duration, self->offset[0], self->offset[1], self->size[0], self->size[1], self->size[2],
 					self->velocity[0], self->velocity[1], self->velocity[2], self->color[0], self->color[1], self->color[2]);
@@ -4395,11 +4389,11 @@ void use_target_sky (edict_t *self, edict_t *other, edict_t *activator)
 						self->avelocity[0], self->avelocity[1], self->avelocity[2]) );
 #ifdef KMQUAKE2_ENGINE_MOD
 		gi.configstring (CS_SKYDISTANCE, va("%f", self->radius) );
-		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f %.2f\n", self->pathtarget,
+		snprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f %.2f\n", self->pathtarget,
 					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2], self->radius);
 	}
 #else
-		Com_sprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f\n", self->pathtarget,
+		snprintf (string, sizeof(string), "sky %s %.2f %.2f %.2f %.2f\n", self->pathtarget,
 					self->speed, self->avelocity[0], self->avelocity[1], self->avelocity[2]);
 #endif	// KMQUAKE2_ENGINE_MOD
 
@@ -4520,20 +4514,14 @@ void Think_SpawnDoorTrigger (edict_t *ent);
 void func_train_find (edict_t *self);
 void clone (edict_t *self, edict_t *other, edict_t *activator)
 {
-	edict_t	*parent;
-	edict_t	*child;
-	int		newteams = 0;
-	size_t	classSize;
+	int newteams = 0;
 
-	parent = G_Find(NULL,FOFS(targetname),self->source);
+	const edict_t *parent = G_Find( nullptr, FOFS( targetname ), self->source );
 	if (!parent)
 		return;
 
-	child = G_Spawn();
-	classSize = strlen(parent->classname)+1;
-	child->classname = static_cast<char*>(gi.TagMalloc(classSize, TAG_LEVEL));
-//	strncpy(child->classname, parent->classname);
-	Q_strncpyz (child->classname, classSize, parent->classname);
+	edict_t *child   = G_Spawn();
+	child->classname = parent->classname;
 
 	child->s.modelindex = parent->s.modelindex;
 	VectorCopy (self->s.origin, child->s.origin);
@@ -4616,7 +4604,7 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 			{
 				child->mins[0] = child->mins[1];
 				child->mins[1] = -child->maxs[0];
-				child->maxs[0] = child->maxs[1]; 
+				child->maxs[0] = child->maxs[1];
 				child->maxs[1] = -temp;
 			}
 		}
@@ -4627,14 +4615,14 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 		if (child->movedir[PITCH] > 360) child->movedir[PITCH] -= 360;
 		if (child->movedir[YAW]   > 360) child->movedir[YAW]   -= 360;
 		if (child->movedir[ROLL]  > 360) child->movedir[ROLL]  -= 360;
-		AngleVectors(child->movedir,child->movedir,NULL,NULL);
+		AngleVectors(child->movedir,child->movedir, nullptr, nullptr );
 	}
 	VectorAdd(child->s.origin,child->mins,child->absmin);
 	VectorAdd(child->s.origin,child->maxs,child->absmax);
 
 	child->spawnflags = parent->spawnflags;
 	// classname-specific stuff
-	if (!Q_stricmp(child->classname, "func_button"))
+	if (!Q_stricmp( child->classname.c_str(), "func_button" ) )
 	{
 		VectorCopy (child->s.origin,child->pos1);
 		child->moveinfo.distance = parent->moveinfo.distance;
@@ -4651,7 +4639,7 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 		if (!child->targetname)
 			child->touch = button_touch;
 	}
-	else if (!Q_stricmp(child->classname, "func_door"))
+	else if (!Q_stricmp( child->classname.c_str(), "func_door" ) )
 	{
 		VectorCopy (child->s.origin,child->pos1);
 		child->moveinfo.distance = parent->moveinfo.distance;
@@ -4671,7 +4659,7 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 			child->think = Think_SpawnDoorTrigger;
 		child->nextthink = level.time + FRAMETIME;
 	}
-	else if (!Q_stricmp(child->classname, "func_door_rotating"))
+	else if (!Q_stricmp( child->classname.c_str(), "func_door_rotating" ) )
 	{
 		VectorClear(child->s.angles);
 		VectorCopy (parent->s.angles,child->s.angles);
@@ -4693,13 +4681,13 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 			child->think = Think_SpawnDoorTrigger;
 		child->nextthink = level.time + FRAMETIME;
 	}
-	else if (!Q_stricmp(child->classname, "func_rotating"))
+	else if (!Q_stricmp( child->classname.c_str(), "func_rotating" ) )
 	{
 		VectorClear(child->s.angles);
 		if (child->spawnflags & 1)
-			child->use (child, NULL, NULL);
+			child->use (child, nullptr, nullptr );
 	}
-	else if (!Q_stricmp(child->classname, "func_train"))
+	else if (!Q_stricmp( child->classname.c_str(), "func_train" ) )
 	{
 		VectorClear(self->s.angles);
 		child->smooth_movement = parent->smooth_movement;
@@ -4712,13 +4700,12 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 		child->nextthink = level.time + FRAMETIME;
 		if (child->moveinfo.sound_middle || parent->noise_index)
 		{
-			edict_t *speaker;
 			if (child->moveinfo.sound_middle)
 				child->noise_index = child->moveinfo.sound_middle;
 			else
 				child->noise_index = parent->noise_index;
 			child->moveinfo.sound_middle = 0;
-			speaker = G_Spawn();
+			edict_t *speaker             = G_Spawn();
 			speaker->classname   = "moving_speaker";
 			speaker->s.sound     = 0;
 			speaker->volume      = 1;
@@ -4762,7 +4749,7 @@ void clone (edict_t *self, edict_t *other, edict_t *activator)
 
 void target_clone_starton (edict_t *self)
 {
-	self->use(self,NULL,NULL);
+	self->use(self, nullptr, nullptr );
 }
 
 void SP_target_clone (edict_t *self)

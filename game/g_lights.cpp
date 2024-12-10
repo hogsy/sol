@@ -124,16 +124,16 @@ void SP_target_lightswitch (edict_t *self)
 	for(i=1, e=g_edicts+i; i<globals.num_edicts; i++, e++)
 	{
 		if(!e->inuse) continue;
-		if(!e->classname) continue;
+		if(e->classname.empty()) continue;
 		if(e==self) continue;
-		if(!Q_stricmp(e->classname,"target_lightswitch"))
+		if(!Q_stricmp( e->classname.c_str(), "target_lightswitch" ) )
 		{
 			gi.dprintf("Only one target_lightswitch per map is allowed.\n");
 			G_FreeEdict(self);
 			return;
 		}
 	}
-	if(!self->message)
+	if(self->message.empty())
 		lightvalue[0] = 'a';
 	else
 		lightvalue[0] = self->message[0];

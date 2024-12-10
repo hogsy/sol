@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // g_misc.c
 
+#include <iomanip>
+
 #include "g_local.h"
 
 int	gibsthisframe = 0;
@@ -241,7 +243,7 @@ void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage,
 	float	vscale;
 	char	modelname[256];
 	char	*p;
-	size_t	nameSize, msgSize;
+	size_t   msgSize;
 
 	// Lazarus: Prevent gib showers (generally due to firing BFG in a crowd) from
 	// causing SZ_GetSpace: overflow
@@ -255,12 +257,7 @@ void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage,
 		return;
 
 	gib = G_Spawn();
-
-//	gib->classname = "gib";
-	nameSize = 4;
-	gib->classname = static_cast<char*>(gi.TagMalloc (nameSize, TAG_LEVEL));
-//	strncpy(gib->classname, "gib");
-	Q_strncpyz (gib->classname, nameSize, "gib");
+	gib->classname = "gib";
 
 	// Lazarus: mapper-definable gib class
 //	strncpy(modelname, gibname);
@@ -389,7 +386,7 @@ void SP_gib (edict_t *gib)
 	gi.linkentity (gib);
 }
 
-void ThrowHead (edict_t *self, char *gibname, int frame, int skinnum, int damage, int type)
+void ThrowHead (edict_t *self, const char *gibname, int frame, int skinnum, int damage, int type)
 {
 	vec3_t	vd;
 	float	vscale;
@@ -661,8 +658,8 @@ void debris_delayed_start (edict_t *debris)
 
 void SP_debris (edict_t *debris)
 {
-	if (debris->message)
-		gi.setmodel (debris, debris->message);
+	if (!debris->message.empty())
+		gi.setmodel (debris, (char*)debris->message.c_str());
 	else
 		gi.setmodel (debris, "models/objects/debris2/tris.md2");
 	debris->think = debris_delayed_start;
@@ -675,20 +672,20 @@ void BecomeExplosion1 (edict_t *self)
 {
 //ZOID
 	//flags are important
-	if (strcmp(self->classname, "item_flag_team1") == 0) {
+	if (strcmp(self->classname.c_str(), "item_flag_team1") == 0) {
 		CTFResetFlag(CTF_TEAM1); // this will free self!
 		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
 			CTFTeamName(CTF_TEAM1));
 		return;
 	}
-	if (strcmp(self->classname, "item_flag_team2") == 0) {
+	if (strcmp(self->classname.c_str(), "item_flag_team2") == 0) {
 		CTFResetFlag(CTF_TEAM2); // this will free self!
 		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
 			CTFTeamName(CTF_TEAM2));
 		return;
 	}
 	// Knightmare added
-	if (strcmp(self->classname, "item_flag_team3") == 0) {
+	if (strcmp(self->classname.c_str(), "item_flag_team3") == 0) {
 		CTFResetFlag(CTF_TEAM3); // this will free self!
 		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
 			CTFTeamName(CTF_TEAM3));
@@ -700,7 +697,7 @@ void BecomeExplosion1 (edict_t *self)
 		return;
 	}
 	// Knightmare- reset grapple
-	if ((strcmp(self->classname, "grapple") == 0) && self->owner) 
+	if ((strcmp(self->classname.c_str(), "grapple") == 0) && self->owner)
 	{
 		CTFPlayerResetGrapple(self->owner);
 		return;
@@ -779,7 +776,7 @@ void path_corner_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface
 
 	// Lazarus: Distinguish between path_corner and target_actor, or target_actor
 	//          with JUMP spawnflag will result in teleport. Ack!
-	if ((next) && (next->spawnflags & 1) && !Q_stricmp(next->classname,"path_corner"))
+	if ((next) && (next->spawnflags & 1) && !Q_stricmp( next->classname.c_str(), "path_corner" ) )
 	{
 		VectorCopy (next->s.origin, v);
 		v[2] += next->mins[2];
@@ -2745,7 +2742,7 @@ void misc_viper_bomb_use (edict_t *self, edict_t *other, edict_t *activator)
 
 	if (self->pathtarget)
 	{
-		if (!Q_stricmp(self->pathtarget,self->targetname))
+		if (!Q_stricmp( self->pathtarget, self->targetname ) )
 		{
 			VectorScale(self->movedir,self->speed,self->velocity);
 			VectorCopy(self->movedir,self->moveinfo.dir);
@@ -3052,10 +3049,9 @@ void SP_target_character (edict_t *self)
 void target_string_use (edict_t *self, edict_t *other, edict_t *activator)
 {
 	edict_t *e;
-	int		n, l;
-	char	c;
+	int		n;
 
-	l = (int)strlen(self->message);
+	int l = ( int ) strlen( self->message.c_str() );
 	for (e = self->teammaster; e; e = e->teamchain)
 	{
 		if (!e->count)
@@ -3067,7 +3063,7 @@ void target_string_use (edict_t *self, edict_t *other, edict_t *activator)
 			continue;
 		}
 
-		c = self->message[n];
+		char c = self->message[ n ];
 		if (c >= '0' && c <= '9')
 			e->s.frame = c - '0';
 		else if (c == '-')
@@ -3079,12 +3075,9 @@ void target_string_use (edict_t *self, edict_t *other, edict_t *activator)
 	}
 }
 
-void SP_target_string (edict_t *self)
+void SP_target_string( edict_t *self )
 {
-	if (!self->message)
-		self->message = "";
-	self->use = target_string_use;
-
+	self->use      = target_string_use;
 	self->class_id = ENTITY_TARGET_STRING;
 }
 
@@ -3132,6 +3125,7 @@ typedef struct zhead_s {
 
 /*static*/ void func_clock_format_countdown (edict_t *self)
 {
+#if 0//TODO: revisit...
 	zhead_t *z = ( zhead_t * )self->message - 1;
 	int size = z->size - sizeof (zhead_t);
 
@@ -3165,6 +3159,7 @@ typedef struct zhead_s {
 			self->message[6] = '0';
 		return;
 	}
+#endif
 }
 
 void func_clock_think (edict_t *self)
@@ -3193,7 +3188,13 @@ void func_clock_think (edict_t *self)
 
 		time(&gmtime);
 		ltime = localtime(&gmtime);
-		Com_sprintf (self->message, CLOCK_MESSAGE_SIZE, "%2i:%2i:%2i", ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
+
+		std::ostringstream oss;
+		oss << std::setw(2) << std::setfill('0') << ltime->tm_hour << ":"
+			<< std::setw(2) << std::setfill('0') << ltime->tm_min << ":"
+			<< std::setw(2) << std::setfill('0') << ltime->tm_sec;
+		self->message = oss.str();
+
 		if (self->message[3] == ' ')
 			self->message[3] = '0';
 		if (self->message[6] == ' ')
@@ -3206,17 +3207,14 @@ void func_clock_think (edict_t *self)
 	if (((self->spawnflags & 1) && (self->health > self->wait)) ||
 		((self->spawnflags & 2) && (self->health < self->wait)))
 	{
-		if (self->pathtarget)
+		if ( self->pathtarget )
 		{
-			char *savetarget;
-			char *savemessage;
-
-			savetarget = self->target;
-			savemessage = self->message;
-			self->target = self->pathtarget;
-			self->message = NULL;
-			G_UseTargets (self, self->activator);
-			self->target = savetarget;
+			char       *savetarget  = self->target;
+			std::string savemessage = self->message;
+			self->target            = self->pathtarget;
+			self->message           = std::string();
+			G_UseTargets( self, self->activator );
+			self->target  = savetarget;
 			self->message = savemessage;
 		}
 
@@ -3324,10 +3322,10 @@ void teleport_transition_ents (edict_t *transition, edict_t *teleporter, edict_t
 		if (ent->owner && !ent->owner->client) continue;
 		if (ent->movewith) continue;
 		if (ent->solid == SOLID_BSP) continue;
-		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname)) continue;
+		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname.c_str())) continue;
 		// Do not under any circumstances move these entities:
 		for (p=&DoNotMove, nogo=false; p->name && !nogo; p++)
-			if (!Q_stricmp(ent->classname,p->name))
+			if (!Q_stricmp( ent->classname.c_str(), p->name ) )
 				nogo = true;
 		if (nogo) continue;
 		if (!HasSpawnFunction(ent)) continue;
@@ -3371,10 +3369,10 @@ void teleport_transition_ents (edict_t *transition, edict_t *teleporter, edict_t
 		if (ent->owner->client) continue;
 		if (ent->movewith) continue;
 		if (ent->solid == SOLID_BSP) continue;
-		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname)) continue;
+		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname.c_str())) continue;
 		// Do not under any circumstances move these entities:
 		for (p=&DoNotMove, nogo=false; p->name && !nogo; p++)
-			if (!Q_stricmp(ent->classname,p->name))
+			if (!Q_stricmp( ent->classname.c_str(), p->name ) )
 				nogo = true;
 		if (nogo) continue;
 		if (!HasSpawnFunction(ent)) continue;
@@ -3548,7 +3546,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 		transition = G_Find(NULL,FOFS(classname),"trigger_transition");
 		while (transition)
 		{
-			if (!Q_stricmp(transition->targetname,teleporter->targetname))
+			if (!Q_stricmp( transition->targetname, teleporter->targetname ) )
 				teleport_transition_ents(transition,teleporter,dest);
 			transition = G_Find(transition,FOFS(classname),"trigger_transition");
 		}

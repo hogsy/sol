@@ -741,7 +741,7 @@ void	R_Shutdown (void);
 // slash will not use the "pics/" prefix or the ".pcx" postfix)
 void	R_BeginRegistration (char *map);
 void	R_EndRegistration (void);
-struct model_s *R_RegisterModel (char *name);
+struct model_s *R_RegisterModel ( const char *name );
 struct image_s *R_RegisterSkin (char *name);
 struct image_s *R_DrawFindPic (char *name);
 qboolean R_RegistrationIsActive (void);

@@ -1018,7 +1018,7 @@ void G_SetClientEffects (edict_t *ent)
 
 		if (level.flashlight_cost > 0)
 		{
-			if ( !Q_stricmp(FLASHLIGHT_ITEM, "health" ) || 
+			if ( !Q_stricmp( FLASHLIGHT_ITEM, "health" ) ||
 					(ent->client->pers.inventory[ITEM_INDEX(FindItem(FLASHLIGHT_ITEM))] >= level.flashlight_cost) ) {
 				// Player has items remaining
 				if (ent->client->flashlight_time <= level.time) {
@@ -1114,7 +1114,7 @@ G_SetClientSound
 */
 void G_SetClientSound (edict_t *ent)
 {
-	char	*weap;
+	const char	*weap;
 
 	if (ent->client->pers.game_helpchanged != game.helpchanged)
 	{
@@ -1317,7 +1317,7 @@ void WhatsIt(edict_t *ent)
 	if (!ent->client->whatsit)
 		return;
 
-	Com_sprintf (string, sizeof(string), "xv 0 yb -68 cstring2 \"%s\" ", ent->client->whatsit);
+	snprintf (string, sizeof(string), "xv 0 yb -68 cstring2 \"%s\" ", ent->client->whatsit);
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 	gi.unicast(ent,true);

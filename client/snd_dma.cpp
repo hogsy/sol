@@ -126,40 +126,40 @@ void S_Init (void)
 
 	Com_Printf ("\n------- Sound Initialization -------\n");
 
-	cv = Cvar_Get ("s_initsound", "1", 0);
-	Cvar_SetDescription ("s_initsound", "Enables the initialization of the sound subsystem.");
+	cv = Cvar_Get ( "s_initsound", "1", 0 );
+	Cvar_SetDescription ( "s_initsound", "Enables the initialization of the sound subsystem." );
 	if ( !cv->integer ) {
 		Com_Printf ("not initializing.\n");
 	}
 	else
 	{
-		s_volume = Cvar_Get ("s_volume", "1.0", CVAR_ARCHIVE);
-		Cvar_SetDescription ("s_volume", "Sets the sound volume (normalized).  0 = mute, 1.0 = max.");
-		s_khz = Cvar_Get ("s_khz", "22", CVAR_ARCHIVE);
-		Cvar_SetDescription ("s_khz", "Sets the sound sampling rate in KHz.");
-		s_loadas8bit = Cvar_Get ("s_loadas8bit", "0", CVAR_ARCHIVE);
-		Cvar_SetDescription ("s_loadas8bit", "Forces 8-bit low quality sounds when set to 1.");
-		s_mixahead = Cvar_Get ("s_mixahead", "0.2", CVAR_ARCHIVE);
-		Cvar_SetDescription ("s_mixahead", "Sets sound mix-ahead time in seconds.");
-		s_show = Cvar_Get ("s_show", "0", 0);
-		Cvar_SetDescription ("s_show", "Enables sound debugging output.");
-		s_testsound = Cvar_Get ("s_testsound", "0", 0);
-		Cvar_SetDescription ("s_testsound", "Enables generated test sound.");
-		s_primary = Cvar_Get ("s_primary", "0", CVAR_ARCHIVE);	// win32 specific
-		Cvar_SetDescription ("s_primary", "Enables primary sound buffer.  Set to 1 for better performance, or 0 for improved compatibility.");
-		s_usedefaultsound = Cvar_Get ("s_usedefaultsound", "0", CVAR_ARCHIVE);	// Knightmare added
-		Cvar_SetDescription ("s_usedefaultsound", "Enables use of a default generated tone when a sound file can't be loaded.");
+		s_volume = Cvar_Get ( "s_volume", "1.0", CVAR_ARCHIVE );
+		Cvar_SetDescription ( "s_volume", "Sets the sound volume (normalized).  0 = mute, 1.0 = max." );
+		s_khz = Cvar_Get ( "s_khz", "22", CVAR_ARCHIVE );
+		Cvar_SetDescription ( "s_khz", "Sets the sound sampling rate in KHz." );
+		s_loadas8bit = Cvar_Get ( "s_loadas8bit", "0", CVAR_ARCHIVE );
+		Cvar_SetDescription ( "s_loadas8bit", "Forces 8-bit low quality sounds when set to 1." );
+		s_mixahead = Cvar_Get ( "s_mixahead", "0.2", CVAR_ARCHIVE );
+		Cvar_SetDescription ( "s_mixahead", "Sets sound mix-ahead time in seconds." );
+		s_show = Cvar_Get ( "s_show", "0", 0 );
+		Cvar_SetDescription ( "s_show", "Enables sound debugging output." );
+		s_testsound = Cvar_Get ( "s_testsound", "0", 0 );
+		Cvar_SetDescription ( "s_testsound", "Enables generated test sound." );
+		s_primary = Cvar_Get ( "s_primary", "0", CVAR_ARCHIVE );	// win32 specific
+		Cvar_SetDescription ( "s_primary", "Enables primary sound buffer.  Set to 1 for better performance, or 0 for improved compatibility." );
+		s_usedefaultsound = Cvar_Get ( "s_usedefaultsound", "0", CVAR_ARCHIVE );	// Knightmare added
+		Cvar_SetDescription ( "s_usedefaultsound", "Enables use of a default generated tone when a sound file can't be loaded." );
 	#ifdef OGG_SUPPORT
-		s_musicvolume = Cvar_Get ("s_musicvolume", "1.0", CVAR_ARCHIVE); // Q2E
-		Cvar_SetDescription ("s_musicvolume", "Sets the music volume (normalized).  0 = mute, 1.0 = max.");
+		s_musicvolume = Cvar_Get ( "s_musicvolume", "1.0", CVAR_ARCHIVE ); // Q2E
+		Cvar_SetDescription ( "s_musicvolume", "Sets the music volume (normalized).  0 = mute, 1.0 = max." );
 	#endif
 
-		Cmd_AddCommand ("play", S_Play);
-		Cmd_AddCommand ("stopsound", S_StopAllSounds);
-		Cmd_AddCommand ("soundlist", S_SoundList);
-		Cmd_AddCommand ("soundinfo", S_SoundInfo_f);
+		Cmd_AddCommand ( "play", S_Play );
+		Cmd_AddCommand ( "stopsound", S_StopAllSounds );
+		Cmd_AddCommand ( "soundlist", S_SoundList );
+		Cmd_AddCommand ( "soundinfo", S_SoundInfo_f );
 	#ifdef OGG_SUPPORT
-		Cmd_AddCommand ("ogg_restart", S_OGG_Restart);
+		Cmd_AddCommand ( "ogg_restart", S_OGG_Restart );
 	#endif
 
 		if ( !SNDDMA_Init() )
@@ -206,12 +206,12 @@ void S_Shutdown (void)
 
 	sound_started = 0;
 
-	Cmd_RemoveCommand ("play");
-	Cmd_RemoveCommand ("stopsound");
-	Cmd_RemoveCommand ("soundlist");
-	Cmd_RemoveCommand ("soundinfo");
+	Cmd_RemoveCommand ( "play" );
+	Cmd_RemoveCommand ( "stopsound" );
+	Cmd_RemoveCommand ( "soundlist" );
+	Cmd_RemoveCommand ( "soundinfo" );
 #ifdef OGG_SUPPORT
-	Cmd_RemoveCommand ("ogg_restart");
+	Cmd_RemoveCommand ( "ogg_restart" );
 #endif
 
 	// free all sounds
@@ -675,7 +675,7 @@ struct sfx_s *S_RegisterSexedSound (centity_state_t *ent, char *base)
 		Q_strncpyz (model, sizeof(model), "male");
 
 	// see if we already know of the model specific sound
-	Com_sprintf (sexedFilename, sizeof(sexedFilename), "#players/%s/%s", model, base+1);
+	snprintf (sexedFilename, sizeof(sexedFilename), "#players/%s/%s", model, base+1);
 	sfx = S_FindName (sexedFilename, false);
 
 	if (!sfx)
@@ -691,7 +691,7 @@ struct sfx_s *S_RegisterSexedSound (centity_state_t *ent, char *base)
 		else
 		{
 			// no, revert to the male sound in the pak0.pak
-			Com_sprintf (maleFilename, sizeof(maleFilename), "player/%s/%s", "male", base+1);
+			snprintf (maleFilename, sizeof(maleFilename), "player/%s/%s", "male", base+1);
 			sfx = S_AliasName (sexedFilename, maleFilename);
 		}
 	}

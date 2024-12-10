@@ -74,7 +74,7 @@ void Menu_AddressBook_Init (void)
 
 	for (i = 0; i < NUM_ADDRESSBOOK_ENTRIES; i++)
 	{
-		Com_sprintf (adrCvarNames[i], sizeof(adrCvarNames[i]), "adr%d", i);
+		snprintf (adrCvarNames[i], sizeof(adrCvarNames[i]), "adr%d", i);
 
 		s_addressbook_fields[i].generic.type			= MTYPE_FIELD;
 		s_addressbook_fields[i].generic.textSize		= MENU_FONT_SIZE;

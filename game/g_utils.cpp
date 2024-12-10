@@ -26,14 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_local.h"
 
 
-void G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
+void G_ProjectSource (const vec3_t point, const vec3_t distance, const vec3_t forward, const vec3_t right, vec3_t result)
 {
 	result[0] = point[0] + forward[0] * distance[0] + right[0] * distance[1];
 	result[1] = point[1] + forward[1] * distance[0] + right[1] * distance[1];
 	result[2] = point[2] + forward[2] * distance[0] + right[2] * distance[1] + distance[2];
 }
 
-void G_ProjectSource2 (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result)
+void G_ProjectSource2 (const vec3_t point, const vec3_t distance, const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t result)
 {
 	result[0] = point[0] + forward[0] * distance[0] + right[0] * distance[1] + up[0] * distance[2];
 	result[1] = point[1] + forward[1] * distance[0] + right[1] * distance[1] + up[1] * distance[2];
@@ -52,7 +52,7 @@ NULL will be returned if the end of the list is reached.
 
 =============
 */
-edict_t *G_Find (edict_t *from, size_t fieldofs, char *match)	// Knightmare- changed fieldofs from int
+edict_t *G_Find (edict_t *from, size_t fieldofs, const char *match)	// Knightmare- changed fieldofs from int
 {
 	char	*s;
 
@@ -68,11 +68,11 @@ edict_t *G_Find (edict_t *from, size_t fieldofs, char *match)	// Knightmare- cha
 		s = *(char **) ((byte *)from + fieldofs);
 		if (!s)
 			continue;
-		if (!Q_stricmp (s, match))
+		if (!Q_stricmp ( s, match ) )
 			return from;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -85,7 +85,7 @@ Returns entities that have origins within a spherical area
 findradius (origin, radius)
 =================
 */
-edict_t *findradius (edict_t *from, vec3_t org, float rad)
+edict_t *findradius (edict_t *from, const vec3_t org, float rad)
 {
 	vec3_t	eorg;
 	int		j;
@@ -107,7 +107,7 @@ edict_t *findradius (edict_t *from, vec3_t org, float rad)
 		return from;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -127,17 +127,17 @@ NULL will be returned if the end of the list is reached.
 
 edict_t *G_PickTarget (char *targetname)
 {
-	edict_t	*ent = NULL;
+	edict_t	*ent = nullptr;
 	int		num_choices = 0;
 	edict_t	*choice[MAXCHOICES];
 
 	if (!targetname)
 	{
 		gi.dprintf("G_PickTarget called with NULL targetname\n");
-		return NULL;
+		return nullptr;
 	}
 
-	while (1)
+	while (true)
 	{
 		ent = G_Find (ent, FOFS(targetname), targetname);
 		if (!ent)
@@ -150,7 +150,7 @@ edict_t *G_PickTarget (char *targetname)
 	if (!num_choices)
 	{
 		gi.dprintf("G_PickTarget: target %s not found\n", targetname);
-		return NULL;
+		return nullptr;
 	}
 
 	return choice[rand() % num_choices];
@@ -206,15 +206,15 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 		t->noise_index = ent->noise_index;
 		return;
 	}
-	
-	
+
+
 //
 // print the message
 //
-	if ( (ent->message) && (activator) && !(activator->svflags & SVF_MONSTER) )
+	if ( !ent->message.empty() && activator && !(activator->svflags & SVF_MONSTER) )
 	{
 	//	Lazarus - change so that noise_index < 0 means no sound
-		safe_centerprintf (activator, "%s", ent->message);
+		safe_centerprintf (activator, "%s", ent->message.c_str());
 		if (ent->noise_index > 0)
 			gi.sound (activator, CHAN_AUTO, ent->noise_index, 1, ATTN_NORM, 0);
 		else if (ent->noise_index == 0)
@@ -226,7 +226,7 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 //
 	if (ent->killtarget)
 	{
-		t = NULL;
+		t = nullptr;
 		while ((t = G_Find (t, FOFS(targetname), ent->killtarget)))
 		{
 			// Lazarus: remove LIVE killtargeted monsters from total_monsters
@@ -237,10 +237,10 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 						level.total_monsters--;
 			}
 			// and decrement secret count if target_secret is removed
-			else if (!Q_stricmp(t->classname,"target_secret"))
+			else if (!Q_stricmp( t->classname.c_str(), "target_secret" ) )
 				level.total_secrets--;
 			// same deal with target_goal, but also turn off CD music if applicable
-			else if (!Q_stricmp(t->classname,"target_goal"))
+			else if (!Q_stricmp( t->classname.c_str(), "target_goal" ) )
 			{
 				level.total_goals--;
 				if (level.found_goals >= level.total_goals)
@@ -260,13 +260,13 @@ void G_UseTargets (edict_t *ent, edict_t *activator)
 //
 	if (ent->target)
 	{
-		t = NULL;
+		t = nullptr;
 		while ((t = G_Find (t, FOFS(targetname), ent->target)))
 		{
 			// doors fire area portals in a specific way
-			if (!Q_stricmp(t->classname, "func_areaportal") &&
-				(!Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating") 
-				/*DWH*/ || !Q_stricmp(ent->classname,"func_door_rot_dh")))
+			if (!Q_stricmp( t->classname.c_str(), "func_areaportal" ) &&
+				(!Q_stricmp( ent->classname.c_str(), "func_door" ) || !Q_stricmp( ent->classname.c_str(), "func_door_rotating" )
+				/*DWH*/ || !Q_stricmp( ent->classname.c_str(), "func_door_rot_dh" ) ))
 				continue;
 
 			if (t == ent)
@@ -333,7 +333,7 @@ char	*vtos (vec3_t v)
 	s = str[index];
 	index = (index + 1)&7;
 
-	Com_sprintf (s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
+	snprintf (s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
 
 	return s;
 }
@@ -356,7 +356,7 @@ void G_SetMovedir (vec3_t angles, vec3_t movedir)
 	}
 	else
 	{
-		AngleVectors (angles, movedir, NULL, NULL);
+		AngleVectors (angles, movedir, nullptr, nullptr );
 	}
 
 	VectorClear (angles);
@@ -378,7 +378,7 @@ void G_SetMovedir2 (vec3_t angles, vec3_t movedir)
 	}
 	else
 	{
-		AngleVectors (angles, movedir, NULL, NULL);
+		AngleVectors (angles, movedir, nullptr, nullptr );
 	}
 }
 
@@ -386,7 +386,7 @@ void G_SetMovedir2 (vec3_t angles, vec3_t movedir)
 float vectoyaw (vec3_t vec)
 {
 	float	yaw;
-	
+
 	if (vec[PITCH] == 0) {
 		if (vec[YAW] == 0)
 			yaw = 0;
@@ -406,7 +406,7 @@ float vectoyaw (vec3_t vec)
 float vectoyaw2 (vec3_t vec)
 {
 	float	yaw;
-	
+
 	if (vec[PITCH] == 0) {
 		if (vec[YAW] == 0)
 			yaw = 0;
@@ -423,13 +423,10 @@ float vectoyaw2 (vec3_t vec)
 	return yaw;
 }
 
-char *G_CopyString (char *in)
+char *G_CopyString ( const char *in)
 {
-	char	*out;
-	size_t	outSize;
-	
-	outSize = strlen(in)+1;
-	out = static_cast<char*>(gi.TagMalloc (outSize, TAG_LEVEL));
+	size_t outSize = strlen( in ) + 1;
+	char *out = static_cast< char * >( gi.TagMalloc( outSize, TAG_LEVEL ) );
 //	strncpy (out, outSize, in);
 	Q_strncpyz (out, outSize, in);
 	return out;
@@ -447,18 +444,22 @@ mmove_t *G_NewCustomAnim (void)
 	}
 	else {
 	//	gi.dprintf ("G_NewCustomAnimIndex: no more custom anims available!\n");
-		return NULL;
+		return nullptr;
 	}
 }
 // end Knightmare
 
-void G_InitEdict (edict_t *e)
+void G_InitEdict( edict_t *e )
 {
 	e->inuse = true;
+
+	new ( &( e->classname ) ) std::string();
 	e->classname = "noclass";
-	e->gravity = 1.0;
-	e->s.number = e - g_edicts;
+
+	e->gravity      = 1.0;
+	e->s.number     = e - g_edicts;
 	e->org_movetype = -1;
+	new ( &( e->message ) ) std::string();
 }
 
 /*
@@ -472,7 +473,7 @@ instead of being removed and recreated, which can cause interpolated
 angles and bad trails.
 =================
 */
-edict_t *G_Spawn (void)
+edict_t *G_Spawn ()
 {
 	int			i;
 	edict_t		*e;
@@ -515,7 +516,7 @@ void G_FreeEdict (edict_t *ed)
 	if (ed->movewith)
 	{
 		edict_t	*e;
-		edict_t	*parent = NULL;
+		edict_t	*parent = nullptr;
 		int		i;
 
 		for (i=1; i<globals.num_edicts && !parent; i++) {
@@ -554,6 +555,8 @@ void G_FreeEdict (edict_t *ed)
 		ed->flash->freetime  = level.time;
 		ed->flash->inuse     = false;
 	}
+
+	ed->message.~basic_string();
 
 	// Lazarus: reflections
 	if (!(ed->flags & FL_REFLECT))
@@ -598,7 +601,7 @@ void G_TouchTriggers (edict_t *ent)
 			continue;
 		if (ent->client && ent->client->spycam && !(hit->svflags & SVF_TRIGGER_CAMOWNER))
 			continue;
-		hit->touch (hit, ent, NULL, NULL);
+		hit->touch (hit, ent, nullptr, nullptr );
 	}
 }
 
@@ -626,7 +629,7 @@ void G_TouchSolids (edict_t *ent)
 		if (!hit->inuse)
 			continue;
 		if (ent->touch)
-			ent->touch (hit, ent, NULL, NULL);
+			ent->touch (hit, ent, nullptr, nullptr );
 		if (!ent->inuse)
 			break;
 	}
@@ -657,7 +660,7 @@ qboolean KillBox (edict_t *ent)
 
 	while (1)
 	{
-		tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, ent->s.origin, NULL, MASK_PLAYERSOLID);
+		tr = gi.trace (ent->s.origin, ent->mins, ent->maxs, ent->s.origin, nullptr, MASK_PLAYERSOLID);
 		if (!tr.ent)
 			break;
 		// nail it
@@ -708,12 +711,12 @@ qboolean point_infront (edict_t *self, vec3_t point)
 	vec3_t	vec;
 	float	dot;
 	vec3_t	forward;
-	
-	AngleVectors (self->s.angles, forward, NULL, NULL);
+
+	AngleVectors (self->s.angles, forward, nullptr, nullptr );
 	VectorSubtract (point, self->s.origin, vec);
 	VectorNormalize (vec);
 	dot = DotProduct (vec, forward);
-	
+
 	if (dot > 0.3)
 		return true;
 	return false;
@@ -743,31 +746,31 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 	{
 		if (endpos) VectorClear (endpos);
 		if (range) *range = 0;
-		return NULL;
+		return nullptr;
 	}
 	VectorClear(end);
 	if (ent->client->chasetoggle)
 	{
-		AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+		AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 		VectorCopy (ent->client->chasecam->s.origin, start);
 		ignore = ent->client->chasecam;
 	}
 	else if (ent->client->spycam)
 	{
-		AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
+		AngleVectors(ent->client->ps.viewangles, forward, nullptr, nullptr );
 		VectorCopy (ent->s.origin, start);
 		ignore = ent->client->spycam;
 	}
 	else
 	{
-		AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+		AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 		VectorCopy (ent->s.origin, start);
 		start[2] += ent->viewheight;
 		ignore = ent;
 	}
 
 	VectorMA(start, WORLD_SIZE, forward, end);	// was 8192
-	
+
 	/* First check for looking directly at a pickup item */
 	VectorSet (mins, MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);	// was -4096, -4096, -4096
 	VectorSet (maxs, MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);	// was 4096, 4096, 4096
@@ -799,37 +802,37 @@ edict_t	*LookingAt (edict_t *ent, int filter, vec3_t endpos, float *range)
 		return who;
 	}
 
-	tr = gi.trace (start, NULL, NULL, end, ignore, MASK_SHOT);
+	tr = gi.trace (start, nullptr, nullptr, end, ignore, MASK_SHOT);
 	if (tr.fraction == 1.0)
 	{
 		// too far away
 		gi.sound (ent, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
-		return NULL;
+		return nullptr;
 	}
 	if (!tr.ent)
 	{
 		// no hit
 		gi.sound (ent, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
-		return NULL;
+		return nullptr;
 	}
-	if (!tr.ent->classname)
+	if (tr.ent->classname.empty())
 	{
 		// should never happen
 		gi.sound (ent, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
-		return NULL;
+		return nullptr;
 	}
 
-	if ((strstr(tr.ent->classname,"func_") != NULL) && (filter & LOOKAT_NOBRUSHMODELS))
+	if ((strstr(tr.ent->classname.c_str(),"func_") != nullptr ) && (filter & LOOKAT_NOBRUSHMODELS))
 	{
 		// don't hit on brush models
 		gi.sound (ent, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
-		return NULL;
+		return nullptr;
 	}
-	if ((Q_stricmp(tr.ent->classname,"worldspawn") == 0) && (filter & LOOKAT_NOWORLD))
+	if ((Q_stricmp( tr.ent->classname.c_str(), "worldspawn" ) == 0) && (filter & LOOKAT_NOWORLD))
 	{
 		// world brush
 		gi.sound (ent, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
-		return NULL;
+		return nullptr;
 	}
 	if (endpos) {
 		endpos[0] = tr.endpos[0];
@@ -854,9 +857,9 @@ char *GameDir (void)
 	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("gamedir", "", 0);
 	if ( strlen(gamedir->string) > 0 )
-		Com_sprintf (buffer, sizeof(buffer), "%s/%s", basedir->string, gamedir->string);
+		snprintf (buffer, sizeof(buffer), "%s/%s", basedir->string, gamedir->string);
 	else
-		Com_sprintf (buffer, sizeof(buffer), "%s/baseq2", basedir->string);
+		snprintf (buffer, sizeof(buffer), "%s/baseq2", basedir->string);
 
 	return buffer;
 #endif	// KMQUAKE2_ENGINE_MOD
@@ -879,9 +882,9 @@ char *SavegameDir (void)
 	}
 	else {
 		if ( strlen(gamedir->string) > 0 )
-			Com_sprintf (buffer, sizeof(buffer), "%s/%s", basedir->string, gamedir->string);
+			snprintf (buffer, sizeof(buffer), "%s/%s", basedir->string, gamedir->string);
 		else
-			Com_sprintf (buffer, sizeof(buffer), "%s/baseq2", basedir->string);
+			snprintf (buffer, sizeof(buffer), "%s/baseq2", basedir->string);
 	}
 
 	return buffer;
@@ -891,23 +894,23 @@ char *SavegameDir (void)
 void GameDirRelativePath (const char *filename, char *output, size_t outputSize)
 {
 #ifdef KMQUAKE2_ENGINE_MOD
-	Com_sprintf(output, outputSize, "%s/%s", gi.GameDir(), filename);
+	snprintf(output, outputSize, "%s/%s", gi.GameDir(), filename);
 #else	// KMQUAKE2_ENGINE_MOD
 	cvar_t	*basedir, *gamedir;
 
 	basedir = gi.cvar("basedir", "", 0);
 	gamedir = gi.cvar("gamedir", "", 0);
 	if ( strlen(gamedir->string) > 0 )
-		Com_sprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
+		snprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
 	else
-		Com_sprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
+		snprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
 #endif	// KMQUAKE2_ENGINE_MOD
 }
 
 void SavegameDirRelativePath (const char *filename, char *output, size_t outputSize)
 {
 #ifdef KMQUAKE2_ENGINE_MOD
-	Com_sprintf(output, outputSize, "%s/%s", gi.SaveGameDir(), filename);
+	snprintf(output, outputSize, "%s/%s", gi.SaveGameDir(), filename);
 #else	// KMQUAKE2_ENGINE_MOD
 	cvar_t	*basedir, *gamedir, *savegamepath;
 
@@ -916,13 +919,13 @@ void SavegameDirRelativePath (const char *filename, char *output, size_t outputS
 	savegamepath = gi.cvar("savegamepath", "", 0);
 	// use Unofficial Q2 Patch's savegamepath cvar if set
 	if ( strlen(savegamepath->string) > 0 ) {
-		Com_sprintf (output, outputSize, "%s/%s", savegamepath->string, filename);
+		snprintf (output, outputSize, "%s/%s", savegamepath->string, filename);
 	}
 	else {
 		if ( strlen(gamedir->string) > 0 )
-			Com_sprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
+			snprintf (output, outputSize, "%s/%s/%s", basedir->string, gamedir->string, filename);
 		else
-			Com_sprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
+			snprintf (output, outputSize, "%s/baseq2/%s", basedir->string, filename);
 	}
 #endif	// KMQUAKE2_ENGINE_MOD
 }
@@ -1070,14 +1073,14 @@ void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target)
 		t->noise_index = ent->noise_index;
 		return;
 	}
-	
-	
+
+
 //
 // print the message
 //
-	if ((ent->message) && !(activator->svflags & SVF_MONSTER))
+	if (!ent->message.empty() && !(activator->svflags & SVF_MONSTER))
 	{
-		safe_centerprintf (activator, "%s", ent->message);
+		safe_centerprintf (activator, "%s", ent->message.c_str());
 		if (ent->noise_index > 0)
 			gi.sound (activator, CHAN_AUTO, ent->noise_index, 1, ATTN_NORM, 0);
 		else if (ent->noise_index == 0)
@@ -1089,7 +1092,7 @@ void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target)
 //
 	if (ent->killtarget)
 	{
-		t = NULL;
+		t = nullptr;
 		while ((t = G_Find (t, FOFS(targetname), ent->killtarget)))
 		{
 			// Lazarus: remove killtargeted monsters from total_monsters
@@ -1113,9 +1116,9 @@ void G_UseTarget (edict_t *ent, edict_t *activator, edict_t *target)
 	if (target)
 	{
 		// doors fire area portals in a specific way
-		if (!Q_stricmp(target->classname, "func_areaportal") &&
-			(!Q_stricmp(ent->classname, "func_door") || !Q_stricmp(ent->classname, "func_door_rotating") 
-			|| !Q_stricmp(ent->classname,"func_door_rot_dh")))
+		if (!Q_stricmp( target->classname.c_str(), "func_areaportal" ) &&
+			(!Q_stricmp( ent->classname.c_str(), "func_door" ) || !Q_stricmp( ent->classname.c_str(), "func_door_rotating" )
+			|| !Q_stricmp( ent->classname.c_str(), "func_door_rot_dh" ) ))
 			return;
 
 		if (target == ent)
@@ -1147,105 +1150,105 @@ this is used for certain hacks.
 */
 qboolean IsIdMap (void)
 {
-	if (Q_stricmp(level.mapname, "base1") == 0)
+	if (Q_stricmp( level.mapname, "base1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "base2") == 0)
+	if (Q_stricmp( level.mapname, "base2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "base3") == 0)
+	if (Q_stricmp( level.mapname, "base3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "biggun") == 0)
+	if (Q_stricmp( level.mapname, "biggun" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "boss1") == 0)
+	if (Q_stricmp( level.mapname, "boss1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "boss2") == 0)
+	if (Q_stricmp( level.mapname, "boss2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "bunk1") == 0)
+	if (Q_stricmp( level.mapname, "bunk1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "city1") == 0)
+	if (Q_stricmp( level.mapname, "city1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "city2") == 0)
+	if (Q_stricmp( level.mapname, "city2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "city3") == 0)
+	if (Q_stricmp( level.mapname, "city3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "command") == 0)
+	if (Q_stricmp( level.mapname, "command" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "cool1") == 0)
+	if (Q_stricmp( level.mapname, "cool1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "fact1") == 0)
+	if (Q_stricmp( level.mapname, "fact1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "fact2") == 0)
+	if (Q_stricmp( level.mapname, "fact2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "fact3") == 0)
+	if (Q_stricmp( level.mapname, "fact3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "hangar1") == 0)
+	if (Q_stricmp( level.mapname, "hangar1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "hangar2") == 0)
+	if (Q_stricmp( level.mapname, "hangar2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "jail1") == 0)
+	if (Q_stricmp( level.mapname, "jail1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "jail2") == 0)
+	if (Q_stricmp( level.mapname, "jail2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "jail3") == 0)
+	if (Q_stricmp( level.mapname, "jail3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "jail4") == 0)
+	if (Q_stricmp( level.mapname, "jail4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "jail5") == 0)
+	if (Q_stricmp( level.mapname, "jail5" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "lab") == 0)
+	if (Q_stricmp( level.mapname, "lab" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "mine1") == 0)
+	if (Q_stricmp( level.mapname, "mine1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "mine2") == 0)
+	if (Q_stricmp( level.mapname, "mine2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "mine3") == 0)
+	if (Q_stricmp( level.mapname, "mine3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "mine4") == 0)
+	if (Q_stricmp( level.mapname, "mine4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "mintro") == 0)
+	if (Q_stricmp( level.mapname, "mintro" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "power1") == 0)
+	if (Q_stricmp( level.mapname, "power1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "power2") == 0)
+	if (Q_stricmp( level.mapname, "power2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "security") == 0)
+	if (Q_stricmp( level.mapname, "security" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "space") == 0)
+	if (Q_stricmp( level.mapname, "space" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "strike") == 0)
+	if (Q_stricmp( level.mapname, "strike" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "train") == 0)
+	if (Q_stricmp( level.mapname, "train" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ware1") == 0)
+	if (Q_stricmp( level.mapname, "ware1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ware2") == 0)
+	if (Q_stricmp( level.mapname, "ware2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "waste1") == 0)
+	if (Q_stricmp( level.mapname, "waste1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "waste2") == 0)
+	if (Q_stricmp( level.mapname, "waste2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "waste3") == 0)
+	if (Q_stricmp( level.mapname, "waste3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm1") == 0)
+	if (Q_stricmp( level.mapname, "q2dm1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm2") == 0)
+	if (Q_stricmp( level.mapname, "q2dm2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm3") == 0)
+	if (Q_stricmp( level.mapname, "q2dm3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm4") == 0)
+	if (Q_stricmp( level.mapname, "q2dm4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm5") == 0)
+	if (Q_stricmp( level.mapname, "q2dm5" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm6") == 0)
+	if (Q_stricmp( level.mapname, "q2dm6" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm7") == 0)
+	if (Q_stricmp( level.mapname, "q2dm7" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "q2dm8") == 0)
+	if (Q_stricmp( level.mapname, "q2dm8" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "base64") == 0)
+	if (Q_stricmp( level.mapname, "base64" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "city64") == 0)
+	if (Q_stricmp( level.mapname, "city64" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "sewer64") == 0)
+	if (Q_stricmp( level.mapname, "sewer64" ) == 0)
 		return true;
 
 	return false;
@@ -1263,55 +1266,55 @@ This is used for certain hacks.
 */
 qboolean IsXatrixMap (void)
 {
-	if (Q_stricmp(level.mapname, "badlands") == 0)
+	if (Q_stricmp( level.mapname, "badlands" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "industry") == 0)
+	if (Q_stricmp( level.mapname, "industry" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "outbase") == 0)
+	if (Q_stricmp( level.mapname, "outbase" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "refinery") == 0)
+	if (Q_stricmp( level.mapname, "refinery" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "w_treat") == 0)
+	if (Q_stricmp( level.mapname, "w_treat" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xcompnd1") == 0)
+	if (Q_stricmp( level.mapname, "xcompnd1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xcompnd2") == 0)
+	if (Q_stricmp( level.mapname, "xcompnd2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xhangar1") == 0)
+	if (Q_stricmp( level.mapname, "xhangar1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xhangar2") == 0)
+	if (Q_stricmp( level.mapname, "xhangar2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xintell") == 0)
+	if (Q_stricmp( level.mapname, "xintell" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xmoon1") == 0)
+	if (Q_stricmp( level.mapname, "xmoon1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xmoon2") == 0)
+	if (Q_stricmp( level.mapname, "xmoon2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xreactor") == 0)
+	if (Q_stricmp( level.mapname, "xreactor" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xsewer1") == 0)
+	if (Q_stricmp( level.mapname, "xsewer1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xsewer2") == 0)
+	if (Q_stricmp( level.mapname, "xsewer2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xship") == 0)
+	if (Q_stricmp( level.mapname, "xship" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xswamp") == 0)
+	if (Q_stricmp( level.mapname, "xswamp" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xware") == 0)
+	if (Q_stricmp( level.mapname, "xware" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm1") == 0)
+	if (Q_stricmp( level.mapname, "xdm1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm2") == 0)
+	if (Q_stricmp( level.mapname, "xdm2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm3") == 0)
+	if (Q_stricmp( level.mapname, "xdm3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm4") == 0)
+	if (Q_stricmp( level.mapname, "xdm4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm5") == 0)
+	if (Q_stricmp( level.mapname, "xdm5" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm6") == 0)
+	if (Q_stricmp( level.mapname, "xdm6" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "xdm7") == 0)
+	if (Q_stricmp( level.mapname, "xdm7" ) == 0)
 		return true;
 
 	return false;
@@ -1329,63 +1332,63 @@ This is used for certain hacks.
 */
 qboolean IsRogueMap (void)
 {
-	if (Q_stricmp(level.mapname, "rammo1") == 0)
+	if (Q_stricmp( level.mapname, "rammo1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rammo2") == 0)
+	if (Q_stricmp( level.mapname, "rammo2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rbase1") == 0)
+	if (Q_stricmp( level.mapname, "rbase1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rbase2") == 0)
+	if (Q_stricmp( level.mapname, "rbase2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rboss") == 0)
+	if (Q_stricmp( level.mapname, "rboss" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rhangar1") == 0)
+	if (Q_stricmp( level.mapname, "rhangar1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rhangar2") == 0)
+	if (Q_stricmp( level.mapname, "rhangar2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rlava1") == 0)
+	if (Q_stricmp( level.mapname, "rlava1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rlava2") == 0)
+	if (Q_stricmp( level.mapname, "rlava2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rmine1") == 0)
+	if (Q_stricmp( level.mapname, "rmine1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rmine2") == 0)
+	if (Q_stricmp( level.mapname, "rmine2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rsewer1") == 0)
+	if (Q_stricmp( level.mapname, "rsewer1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rsewer2") == 0)
+	if (Q_stricmp( level.mapname, "rsewer2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rware1") == 0)
+	if (Q_stricmp( level.mapname, "rware1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rware2") == 0)
+	if (Q_stricmp( level.mapname, "rware2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm1") == 0)
+	if (Q_stricmp( level.mapname, "rdm1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm2") == 0)
+	if (Q_stricmp( level.mapname, "rdm2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm3") == 0)
+	if (Q_stricmp( level.mapname, "rdm3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm4") == 0)
+	if (Q_stricmp( level.mapname, "rdm4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm5") == 0)
+	if (Q_stricmp( level.mapname, "rdm5" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm6") == 0)
+	if (Q_stricmp( level.mapname, "rdm6" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm7") == 0)
+	if (Q_stricmp( level.mapname, "rdm7" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm8") == 0)
+	if (Q_stricmp( level.mapname, "rdm8" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm9") == 0)
+	if (Q_stricmp( level.mapname, "rdm9" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm10") == 0)
+	if (Q_stricmp( level.mapname, "rdm10" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm11") == 0)
+	if (Q_stricmp( level.mapname, "rdm11" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm12") == 0)
+	if (Q_stricmp( level.mapname, "rdm12" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm13") == 0)
+	if (Q_stricmp( level.mapname, "rdm13" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "rdm14") == 0)
+	if (Q_stricmp( level.mapname, "rdm14" ) == 0)
 		return true;
 
 	return false;
@@ -1403,33 +1406,33 @@ This is used for certain hacks.
 */
 qboolean IsZaeroMap (void)
 {
-	if (Q_stricmp(level.mapname, "zbase1") == 0)
+	if (Q_stricmp( level.mapname, "zbase1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zbase2") == 0)
+	if (Q_stricmp( level.mapname, "zbase2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zboss") == 0)
+	if (Q_stricmp( level.mapname, "zboss" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zdef1") == 0)
+	if (Q_stricmp( level.mapname, "zdef1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zdef2") == 0)
+	if (Q_stricmp( level.mapname, "zdef2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zdef3") == 0)
+	if (Q_stricmp( level.mapname, "zdef3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zdef4") == 0)
+	if (Q_stricmp( level.mapname, "zdef4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ztomb1") == 0)
+	if (Q_stricmp( level.mapname, "ztomb1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ztomb2") == 0)
+	if (Q_stricmp( level.mapname, "ztomb2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ztomb3") == 0)
+	if (Q_stricmp( level.mapname, "ztomb3" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "ztomb4") == 0)
+	if (Q_stricmp( level.mapname, "ztomb4" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zwaste1") == 0)
+	if (Q_stricmp( level.mapname, "zwaste1" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zwaste2") == 0)
+	if (Q_stricmp( level.mapname, "zwaste2" ) == 0)
 		return true;
-	if (Q_stricmp(level.mapname, "zwaste3") == 0)
+	if (Q_stricmp( level.mapname, "zwaste3" ) == 0)
 		return true;
 	return false;
 }
@@ -1448,7 +1451,7 @@ void my_bprintf (int printlevel, char *fmt, ...)
 	va_end (argptr);
 
 	if (dedicated->value)
-		safe_cprintf(NULL, printlevel, bigbuffer);
+		safe_cprintf( nullptr, printlevel, bigbuffer );
 
 	for (i=0 ; i<maxclients->value ; i++)
 	{
@@ -1456,7 +1459,7 @@ void my_bprintf (int printlevel, char *fmt, ...)
 		if (!cl_ent->inuse)
 			continue;
 
-		safe_cprintf(cl_ent, printlevel, bigbuffer);
+		safe_cprintf( cl_ent, printlevel, bigbuffer );
 	}
 }
 
@@ -1472,7 +1475,7 @@ the standard goodguy flag (e.g. not a gekk, stalker, turret, or fixbot).
 qboolean UseRegularGoodGuyFlag (edict_t *monster)
 {
 	// check for bad entity reference
-	if (!monster || !monster->inuse || !monster->classname)
+	if (!monster || !monster->inuse || !monster->classname.c_str())
 		return false;
 
 	if ( /*strcmp(monster->classname, "monster_gekk")
@@ -1480,7 +1483,7 @@ qboolean UseRegularGoodGuyFlag (edict_t *monster)
 		&& strcmp(monster->classname, "monster_turret")
 		&& strcmp(monster->classname, "monster_fixbot")
 		&& strcmp(monster->classname, "monster_handler")
-		&&*/ strcmp(monster->classname, "misc_insane") )
+		&&*/ strcmp(monster->classname.c_str(), "misc_insane") )
 		return true;
 
 	return false;

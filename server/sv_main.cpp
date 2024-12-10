@@ -231,7 +231,7 @@ char	*SV_StatusString (void)
 		cl = &svs.clients[i];
 		if (cl->state == cs_connected || cl->state == cs_spawned )
 		{
-			Com_sprintf (player, sizeof(player), "%i %i \"%s\"\n", 
+			snprintf (player, sizeof(player), "%i %i \"%s\"\n", 
 				cl->edict->client->ps.stats[STAT_FRAGS], cl->ping, cl->name);
 			playerLength = (int)strlen(player);
 			if (statusLength + playerLength >= sizeof(status) )
@@ -294,7 +294,7 @@ void SVC_Info (void)
 
 	if (version != PROTOCOL_VERSION)
 	{	// According to r1ch, this can be used to make servers endlessly ping each other
-	//	Com_sprintf (string, sizeof(string), "%s: wrong version\n", hostname->string, sizeof(string));
+	//	snprintf (string, sizeof(string), "%s: wrong version\n", hostname->string, sizeof(string));
 		return;
 	}
 	else
@@ -305,8 +305,8 @@ void SVC_Info (void)
 			if (svs.clients[i].state >= cs_connected)
 				count++;
 
-	//	Com_sprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, (int)maxclients->value);
-		Com_sprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, maxclients->integer);
+	//	snprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, (int)maxclients->value);
+		snprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, maxclients->integer);
 	}
 
 	Netchan_OutOfBandPrint (NS_SERVER, net_from, "info\n%s", string);
@@ -1139,83 +1139,83 @@ void SV_Init (void)
 {
 	SV_InitOperatorCommands	();
 
-	rcon_password = Cvar_Get ("rcon_password", "", 0);
-	Cvar_SetDescription ("rcon_password", "Sets password for rcon commands.");
-	Cvar_Get ("skill", "1", 0);
-	Cvar_SetDescription ("skill", "Sets skill level. 0 = Easy, 1 = Medium, 2 = Hard, 3 = Nightmare.");
-	Cvar_Get ("deathmatch", "0", CVAR_LATCH);
-	Cvar_SetDescription ("deathmatch", "Enables non-coop multiplayer.  This is enabled for both Deathmatch and CTF.");
-	Cvar_Get ("coop", "0", CVAR_LATCH);
-	Cvar_SetDescription ("coop", "Enables cooperative multiplayer.");
-	Cvar_Get ("dmflags", va("%i", DF_INSTANT_ITEMS), CVAR_SERVERINFO);
-	Cvar_SetDescription ("dmflags", "Bitfield for deathmatch options.  Options and values vary by mod.");
-	Cvar_Get ("fraglimit", "0", CVAR_SERVERINFO);
-	Cvar_SetDescription ("fraglimit", "Number of frags reached in Deathmatch that triggers a map change.");
-	Cvar_Get ("timelimit", "0", CVAR_SERVERINFO);
-	Cvar_SetDescription ("timelimit", "Time in minutes between Deathmatch map changes.");
-	Cvar_Get ("cheats", "0", CVAR_SERVERINFO|CVAR_LATCH);
-	Cvar_SetDescription ("cheats", "Enables cheat codes in multiplayer games.");
-	Cvar_Get ("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO|CVAR_NOSET);;
-	Cvar_SetDescription ("protocol", "Protocol version for this server.");
-	maxclients = Cvar_Get ("maxclients", "1", CVAR_SERVERINFO | CVAR_LATCH);
-	Cvar_SetDescription ("maxclients", "Maximum number of players allowed on this server.");
-	hostname = Cvar_Get ("hostname", "noname", CVAR_SERVERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("hostname", "Name of this server visible to clients.");
-	timeout = Cvar_Get ("timeout", "125", 0);
-	Cvar_SetDescription ("timeout", "Time in seconds after which non-responsive clients are dropped.");
-	zombietime = Cvar_Get ("zombietime", "2", 0);
-	Cvar_SetDescription ("zombietime", "Time in seconds which client slots are kept in zombie state.");
-	sv_showclamp = Cvar_Get ("showclamp", "0", 0);
-	Cvar_SetDescription ("showclamp", "Enables output of high and low frame clamps.");
-	sv_paused = Cvar_Get ("paused", "0", 0);
-	Cvar_SetDescription ("paused", "Value that determines if the game is paused.  Considered a client cheat in multiplayer.");
-	sv_timedemo = Cvar_Get ("timedemo", "0", 0);
-	Cvar_SetDescription ("timedemo", "Set to 1 for timing playback of demos.  Useful for old-school bencmarking.");
-	sv_enforcetime = Cvar_Get ("sv_enforcetime", "0", 0);
-	Cvar_SetDescription ("sv_enforcetime", "Enables check for underflow of client command time.");
-	allow_download = Cvar_Get ("allow_download", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download", "Enables autodownload of game assets in multiplayer.");
-	allow_download_players  = Cvar_Get ("allow_download_players", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_players", "Enables download of player models.");
-	allow_download_models = Cvar_Get ("allow_download_models", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_models", "Enables download of models.");
-	allow_download_sounds = Cvar_Get ("allow_download_sounds", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_sounds", "Enables download of sounds.");
-	allow_download_maps	  = Cvar_Get ("allow_download_maps", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_maps", "Enables download of maps.");
-	allow_download_pics  = Cvar_Get ("allow_download_pics", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_pics", "Enables download of .pcx images.");
-	allow_download_textures  = Cvar_Get ("allow_download_textures", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_textures", "Enables download of .wal textures.");
+	rcon_password = Cvar_Get ( "rcon_password", "", 0 );
+	Cvar_SetDescription ( "rcon_password", "Sets password for rcon commands." );
+	Cvar_Get ( "skill", "1", 0 );
+	Cvar_SetDescription ( "skill", "Sets skill level. 0 = Easy, 1 = Medium, 2 = Hard, 3 = Nightmare." );
+	Cvar_Get ( "deathmatch", "0", CVAR_LATCH );
+	Cvar_SetDescription ( "deathmatch", "Enables non-coop multiplayer.  This is enabled for both Deathmatch and CTF." );
+	Cvar_Get ( "coop", "0", CVAR_LATCH );
+	Cvar_SetDescription ( "coop", "Enables cooperative multiplayer." );
+	Cvar_Get ( "dmflags", va( "%i", DF_INSTANT_ITEMS ), CVAR_SERVERINFO );
+	Cvar_SetDescription ( "dmflags", "Bitfield for deathmatch options.  Options and values vary by mod." );
+	Cvar_Get ( "fraglimit", "0", CVAR_SERVERINFO );
+	Cvar_SetDescription ( "fraglimit", "Number of frags reached in Deathmatch that triggers a map change." );
+	Cvar_Get ( "timelimit", "0", CVAR_SERVERINFO );
+	Cvar_SetDescription ( "timelimit", "Time in minutes between Deathmatch map changes." );
+	Cvar_Get ( "cheats", "0", CVAR_SERVERINFO | CVAR_LATCH );
+	Cvar_SetDescription ( "cheats", "Enables cheat codes in multiplayer games." );
+	Cvar_Get ( "protocol", va( "%i", PROTOCOL_VERSION ), CVAR_SERVERINFO | CVAR_NOSET );;
+	Cvar_SetDescription ( "protocol", "Protocol version for this server." );
+	maxclients = Cvar_Get ( "maxclients", "1", CVAR_SERVERINFO | CVAR_LATCH );
+	Cvar_SetDescription ( "maxclients", "Maximum number of players allowed on this server." );
+	hostname = Cvar_Get ( "hostname", "noname", CVAR_SERVERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "hostname", "Name of this server visible to clients." );
+	timeout = Cvar_Get ( "timeout", "125", 0 );
+	Cvar_SetDescription ( "timeout", "Time in seconds after which non-responsive clients are dropped." );
+	zombietime = Cvar_Get ( "zombietime", "2", 0 );
+	Cvar_SetDescription ( "zombietime", "Time in seconds which client slots are kept in zombie state." );
+	sv_showclamp = Cvar_Get ( "showclamp", "0", 0 );
+	Cvar_SetDescription ( "showclamp", "Enables output of high and low frame clamps." );
+	sv_paused = Cvar_Get ( "paused", "0", 0 );
+	Cvar_SetDescription ( "paused", "Value that determines if the game is paused.  Considered a client cheat in multiplayer." );
+	sv_timedemo = Cvar_Get ( "timedemo", "0", 0 );
+	Cvar_SetDescription ( "timedemo", "Set to 1 for timing playback of demos.  Useful for old-school bencmarking." );
+	sv_enforcetime = Cvar_Get ( "sv_enforcetime", "0", 0 );
+	Cvar_SetDescription ( "sv_enforcetime", "Enables check for underflow of client command time." );
+	allow_download = Cvar_Get ( "allow_download", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download", "Enables autodownload of game assets in multiplayer." );
+	allow_download_players  = Cvar_Get ( "allow_download_players", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_players", "Enables download of player models." );
+	allow_download_models = Cvar_Get ( "allow_download_models", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_models", "Enables download of models." );
+	allow_download_sounds = Cvar_Get ( "allow_download_sounds", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_sounds", "Enables download of sounds." );
+	allow_download_maps	  = Cvar_Get ( "allow_download_maps", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_maps", "Enables download of maps." );
+	allow_download_pics  = Cvar_Get ( "allow_download_pics", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_pics", "Enables download of .pcx images." );
+	allow_download_textures  = Cvar_Get ( "allow_download_textures", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_textures", "Enables download of .wal textures." );
 	// Knightmare- whether to allow downloading 24-bit textures
-	allow_download_textures_24bit = Cvar_Get ("allow_download_textures_24bit", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("allow_download_textures_24bit", "Enables download of TGA/JPG/PNG textures.");
+	allow_download_textures_24bit = Cvar_Get ( "allow_download_textures_24bit", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "allow_download_textures_24bit", "Enables download of TGA/JPG/PNG textures." );
 
-	sv_downloadserver = Cvar_Get ("sv_downloadserver", "", 0);	// r1ch: http dl server
-	Cvar_SetDescription ("sv_downloadserver", "Sets URL of HTTP autodownload server where clients can download game content over HTTP.  Default empty.  Path leads to game dir name, e.g. quake2.com/baseq2/maps.");
+	sv_downloadserver = Cvar_Get ( "sv_downloadserver", "", 0 );	// r1ch: http dl server
+	Cvar_SetDescription ( "sv_downloadserver", "Sets URL of HTTP autodownload server where clients can download game content over HTTP.  Default empty.  Path leads to game dir name, e.g. quake2.com/baseq2/maps." );
 
-	sv_baselines_maxlen = Cvar_Get ("sv_baselines_maxlen", "1200", 0);	// Knightmare- max packet size for connect messages
-	Cvar_SetDescription ("sv_baselines_maxlen", "Sets max packet size for non-local network connect messages.");
-	sv_limit_msglen = Cvar_Get ("sv_limit_msglen", "1", 0);				// Knightmare- whether to use MAX_MSGLEN_MP for multiplayer games
-	Cvar_SetDescription ("sv_limit_msglen", "Enables limited packet size for non-local clients.");
+	sv_baselines_maxlen = Cvar_Get ( "sv_baselines_maxlen", "1200", 0 );	// Knightmare- max packet size for connect messages
+	Cvar_SetDescription ( "sv_baselines_maxlen", "Sets max packet size for non-local network connect messages." );
+	sv_limit_msglen = Cvar_Get ( "sv_limit_msglen", "1", 0 );				// Knightmare- whether to use MAX_MSGLEN_MP for multiplayer games
+	Cvar_SetDescription ( "sv_limit_msglen", "Enables limited packet size for non-local clients." );
 
-	sv_noreload = Cvar_Get ("sv_noreload", "0", 0);
-	Cvar_SetDescription ("sv_noreload", "Disables loading of savegames on map change when set to 1.");
+	sv_noreload = Cvar_Get ( "sv_noreload", "0", 0 );
+	Cvar_SetDescription ( "sv_noreload", "Disables loading of savegames on map change when set to 1." );
 
-	sv_airaccelerate = Cvar_Get("sv_airaccelerate", "0", CVAR_LATCH);
-	Cvar_SetDescription ("sv_airaccelerate", "Sets client air acceleration for non-coop multiplayer games.");
+	sv_airaccelerate = Cvar_Get( "sv_airaccelerate", "0", CVAR_LATCH );
+	Cvar_SetDescription ( "sv_airaccelerate", "Sets client air acceleration for non-coop multiplayer games." );
 
-	public_server = Cvar_Get ("public", "0", 0);
-	Cvar_SetDescription ("public", "Sets whether this is a public server.");
+	public_server = Cvar_Get ( "public", "0", 0 );
+	Cvar_SetDescription ( "public", "Sets whether this is a public server." );
 
-	sv_iplimit = Cvar_Get ("sv_iplimit", "3", 0);	// r1ch: limit connections per ip address (stop zombie dos/flood)
-	Cvar_SetDescription("sv_iplimit", "Sets connection limit per IP address.  Stops zombie DoS/Flood.");
+	sv_iplimit = Cvar_Get ( "sv_iplimit", "3", 0 );	// r1ch: limit connections per ip address (stop zombie dos/flood)
+	Cvar_SetDescription( "sv_iplimit", "Sets connection limit per IP address.  Stops zombie DoS/Flood." );
 
-	sv_reconnect_limit = Cvar_Get ("sv_reconnect_limit", "3", CVAR_ARCHIVE);
-	Cvar_SetDescription ("sv_reconnect_limit", "Sets time in seconds before a client can reconnect.");
+	sv_reconnect_limit = Cvar_Get ( "sv_reconnect_limit", "3", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "sv_reconnect_limit", "Sets time in seconds before a client can reconnect." );
 
-	sv_entfile = Cvar_Get ("sv_entfile", "1", CVAR_ARCHIVE); // whether to use .ent file
-	Cvar_SetDescription ("sv_entfile", "Enables automatic loading of .ent files to replace BSP entity lump.");
+	sv_entfile = Cvar_Get ( "sv_entfile", "1", CVAR_ARCHIVE ); // whether to use .ent file
+	Cvar_SetDescription ( "sv_entfile", "Enables automatic loading of .ent files to replace BSP entity lump." );
 
 	SZ_Init (&net_message, net_message_buffer, sizeof(net_message_buffer));
 }
@@ -1230,7 +1230,7 @@ not just stuck on the outgoing message list, because the server is going
 to totally exit after returning from this function.
 ==================
 */
-void SV_FinalMessage (char *message, qboolean reconnect)
+void SV_FinalMessage ( const char *message, qboolean reconnect)
 {
 	int			i;
 	client_t	*cl;
@@ -1271,7 +1271,7 @@ Called when each game quits,
 before Sys_Quit or Sys_Error
 ================
 */
-void SV_Shutdown (char *finalmsg, qboolean reconnect)
+void SV_Shutdown ( const char *finalmsg, qboolean reconnect)
 {
 	if (svs.clients)
 		SV_FinalMessage (finalmsg, reconnect);

@@ -413,8 +413,8 @@ void vehicle_think (edict_t *self)
 				self->s.origin[2] += 1;
 				gi.linkentity(self);
 
-				if (self->message)
-					safe_centerprintf(ent,self->message);
+				if (!self->message.empty())
+					safe_centerprintf(ent,"%s",self->message.c_str());
 				self->owner = ent;
 				ent->movetype = MOVETYPE_PUSH;
 				ent->gravity = 0;
@@ -460,9 +460,9 @@ void SP_func_vehicle (edict_t *self)
 		char	modelname[256];
 		// check for "models/" already in path
 		if ( !strncmp(self->usermodel, "models/", 7) )
-			Com_sprintf (modelname, sizeof(modelname), "%s", self->usermodel);
+			snprintf (modelname, sizeof(modelname), "%s", self->usermodel);
 		else
-			Com_sprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
+			snprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
 		self->s.modelindex2 = gi.modelindex (modelname);
 	}
 

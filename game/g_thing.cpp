@@ -28,11 +28,8 @@ void HuntTarget (edict_t *self);
 
 edict_t *SpawnThing()
 {
-	edict_t	*thing;
-	thing = G_Spawn();
-	thing->classname = static_cast<char*>( gi.TagMalloc(6, TAG_LEVEL) );
-//	strncpy(thing->classname,"thing");
-	Q_strncpyz(thing->classname, 6, "thing");
+	edict_t *thing   = G_Spawn();
+	thing->classname = "thing";
 	return thing;
 }
 
@@ -53,14 +50,14 @@ void thing_restore_leader (edict_t *self)
 			return;
 		}
 		monster->monsterinfo.leader = monster->monsterinfo.old_leader;
-		monster->monsterinfo.old_leader = NULL;
+		monster->monsterinfo.old_leader = nullptr;
 		monster->movetarget = monster->goalentity = monster->monsterinfo.leader;
 	}
 	else
 	{
 		monster->monsterinfo.aiflags &= ~AI_FOLLOW_LEADER;
 	}
-	monster->vehicle = NULL;
+	monster->vehicle = nullptr;
 	monster->monsterinfo.aiflags &= ~(AI_CHASE_THING | AI_SEEK_COVER | AI_EVADE_GRENADE);
 	gi.linkentity(monster);
 	G_FreeEdict(self);
@@ -98,12 +95,12 @@ void thing_think (edict_t *self)
 		return;
 	}
 	if (monster->goalentity == self)
-		monster->goalentity = NULL;
+		monster->goalentity = nullptr;
 	if (monster->movetarget == self)
-		monster->movetarget = NULL;
+		monster->movetarget = nullptr;
 	if (monster->monsterinfo.aiflags & AI_FOLLOW_LEADER)
 	{
-		monster->monsterinfo.leader = NULL;
+		monster->monsterinfo.leader = nullptr;
 		if (monster->monsterinfo.old_leader && monster->monsterinfo.old_leader->inuse)
 		{
 			monster->monsterinfo.pausetime = level.time + 2;
@@ -125,7 +122,7 @@ void thing_think (edict_t *self)
 		monster->monsterinfo.aiflags |= AI_STAND_GROUND;
 		monster->monsterinfo.pausetime = level.time + 100000;
 	}
-	monster->vehicle = NULL;
+	monster->vehicle = nullptr;
 	monster->monsterinfo.aiflags &= ~(AI_CHASE_THING | AI_SEEK_COVER | AI_EVADE_GRENADE);
 
 	G_FreeEdict(self);
@@ -142,7 +139,7 @@ void thing_think (edict_t *self)
 		HuntTarget (monster);
 		return;
 	}
-	monster->enemy = NULL;
+	monster->enemy = nullptr;
 	monster->monsterinfo.pausetime = level.time + 100000000;
 	monster->monsterinfo.stand (monster);
 }
@@ -204,7 +201,7 @@ void thing_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		G_FreeEdict(self);
 		return;
 	}
-	self->touch = NULL;
+	self->touch = nullptr;
 	if ( self->target_ent->monsterinfo.aiflags & AI_SEEK_COVER )
 	{
 		edict_t	*monster;
@@ -223,20 +220,20 @@ void thing_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		edict_t	*grenade = other->next_grenade;
 
 		if (other->goalentity == self)
-			other->goalentity = NULL;
+			other->goalentity = nullptr;
 		if (other->movetarget == self)
-			other->movetarget = NULL;
-		other->vehicle = NULL;
+			other->movetarget = nullptr;
+		other->vehicle = nullptr;
 		if (grenade)
 		{
 			// make sure this is still a grenade
 			if (grenade->inuse)
 			{
-				if (Q_stricmp(grenade->classname, "grenade") && Q_stricmp(grenade->classname, "hgrenade"))
-					other->next_grenade = grenade = NULL;
+				if (Q_stricmp( grenade->classname.c_str(), "grenade" ) && Q_stricmp( grenade->classname.c_str(), "hgrenade" ) )
+					other->next_grenade = grenade = nullptr;
 			}
 			else
-				other->next_grenade = grenade = NULL;
+				other->next_grenade = grenade = nullptr;
 		}
 		if (grenade)
 		{
@@ -260,7 +257,7 @@ void thing_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			}
 			else
 			{
-				other->enemy = NULL;
+				other->enemy = nullptr;
 				other->monsterinfo.stand (other);
 			}
 			if (other->monsterinfo.pausetime > 0)
@@ -282,7 +279,7 @@ void thing_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		}
 		else
 		{
-			other->enemy = NULL;
+			other->enemy = nullptr;
 			other->monsterinfo.pausetime = level.time + 100000000;
 			other->monsterinfo.aiflags &= ~(AI_CHASE_THING | AI_EVADE_GRENADE);
 			other->monsterinfo.stand (other);

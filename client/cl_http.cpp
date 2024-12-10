@@ -72,7 +72,7 @@ void CL_InitFailedHTTPDownloadList (void)
 	int		i;
 
 	for (i=0; i<NUM_HTTP_FAIL_DLDS; i++) {
-		Com_sprintf (lastFailedHTTPDownload[i].fileName, sizeof(lastFailedHTTPDownload[i].fileName), "\0");
+		snprintf (lastFailedHTTPDownload[i].fileName, sizeof(lastFailedHTTPDownload[i].fileName), "\0");
 		lastFailedHTTPDownload[i].failCount = 0;
 		lastFailedHTTPDownload[i].isDuplicated = false;
 	}
@@ -144,7 +144,7 @@ void CL_AddToFailedHTTPDownloadList (const char *name, qboolean isDuplicated)
 	// if it isn't already in the table, then we need to add it
 	if (!found)
 	{
-		Com_sprintf (lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].fileName, sizeof(lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].fileName), "%s", name);
+		snprintf (lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].fileName, sizeof(lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].fileName), "%s", name);
 		lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].failCount = 1;
 		lastFailedHTTPDownload[failed_HTTP_Dl_ListIndex].isDuplicated = isDuplicated;
 		failed_HTTP_Dl_ListIndex++;
@@ -267,7 +267,7 @@ static size_t /*EXPORT*/ CL_HTTP_Header (void *ptr, size_t size, size_t nmemb, v
 
 	Q_strncpyz (headerBuff, len, (char*)ptr);
 
-	if (!Q_strncasecmp (headerBuff, "Content-Length: ", 16))
+	if (!Q_strncasecmp ( headerBuff, "Content-Length: ", 16 ) )
 	{
 
 		dlhandle_t *dl = static_cast< dlhandle_t * >( stream );
@@ -308,7 +308,7 @@ static void CL_EscapeHTTPPath (const char *filePath, char *escaped, size_t escap
 			filePath[i] != '.' && filePath[i] != '!' && filePath[i] != '~' && filePath[i] != '*' &&
 			filePath[i] != '\'' && filePath[i] != '(' && filePath[i] != ')')
 		{
-			Com_sprintf (p, remainingSize, "%%%02x", filePath[i]);
+			snprintf (p, remainingSize, "%%%02x", filePath[i]);
 			p += 3;
 			remainingSize -= 3;
 		}
@@ -472,14 +472,14 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 	{
 		CL_HTTP_Reset_KBps_counter ();	// Knightmare- for KB/s counter
 
-		Com_sprintf (dl->filePath, sizeof(dl->filePath), "%s/%s", FS_Downloaddir(), entry->quakePath);	// was FS_Gamedir()
-	//	Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);	// always use cl.gamedir (with leading slash) for remote server path
+		snprintf (dl->filePath, sizeof(dl->filePath), "%s/%s", FS_Downloaddir(), entry->quakePath);	// was FS_Gamedir()
+	//	snprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);	// always use cl.gamedir (with leading slash) for remote server path
 		// Knightmare- cvar-switchable download path
 		if ( !entry->useQ2ProPath )	{	// R1Q2 path
-			Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);
+			snprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", cl.gamedir, entry->quakePath);
 		}
 		else {	// Q2Pro path
-			Com_sprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), entry->quakePath);	
+			snprintf (remoteFilePath, sizeof(remoteFilePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), entry->quakePath);	
 		}
 		// end Knightmare
 
@@ -515,7 +515,7 @@ static void CL_StartHTTPDownload (dlqueue_t *entry, dlhandle_t *dl)
 	if (!dl->curl)
 		dl->curl = qcurl_easy_init ();
 
-	Com_sprintf (dl->URL, sizeof(dl->URL), "%s%s", cls.downloadServer, escapedFilePath);
+	snprintf (dl->URL, sizeof(dl->URL), "%s%s", cls.downloadServer, escapedFilePath);
 
 	qcurl_easy_setopt (dl->curl, CURLOPT_ENCODING, "");
 //	qcurl_easy_setopt (dl->curl, CURLOPT_DEBUGFUNCTION, CL_CURL_Debug);
@@ -798,9 +798,9 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 	}
 
 	len = strlen (quakePathFixed);
-	if ( (len > 4) && ( !Q_stricmp((char *)quakePathFixed + len - 4, ".pak") || !Q_stricmp((char *)quakePathFixed + len - 4, ".pk3") ) )
+	if ( (len > 4) && ( !Q_stricmp( ( char * ) quakePathFixed + len - 4, ".pak" ) || !Q_stricmp( ( char * ) quakePathFixed + len - 4, ".pk3" ) ) )
 		isPak = true;
-	if ( (len > 9) && !Q_stricmp((char *)quakePathFixed + len - 9, ".filelist") )
+	if ( (len > 9) && !Q_stricmp( ( char * ) quakePathFixed + len - 9, ".filelist" ) )
 		isFilelist = true;
 
 	// Knightmare- don't try again to download via HTTP a file that failed
@@ -877,12 +877,12 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 
 	// special case for map file lists, I really wanted a server-push mechanism for this, but oh well
 	len = strlen (quakePathFixed);
-	if ( cl_http_filelists->integer && (len > 4) && !Q_stricmp ((char *)(quakePathFixed + len - 4), ".bsp") )
+	if ( cl_http_filelists->integer && (len > 4) && !Q_stricmp ( ( char * ) ( quakePathFixed + len - 4 ), ".bsp" ) )
 	{
 		char	listPath[MAX_OSPATH];
 		char	filePath[MAX_OSPATH];
 
-	/*	Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
+	/*	snprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 		COM_StripExtension (filePath, listPath, sizeof(listPath));
 		Q_strncatz (listPath, sizeof(listPath), ".filelist");
 		CL_QueueHTTPDownload (listPath); */
@@ -891,26 +891,26 @@ qboolean CL_QueueHTTPDownload (const char *quakePath)
 		{
 		default:
 		case 0:	// R1Q2 path
-			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
+			snprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			break;
 		case 1:	// Q2Pro path
-			Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
+			snprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			break;
 		case 2: // attempt both filelist paths
-			Com_sprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
+			snprintf (filePath, sizeof(filePath), "%s/%s", cl.gamedir, quakePathFixed);
 			COM_StripExtension (filePath, listPath, sizeof(listPath));
 			Q_strncatz (listPath, sizeof(listPath), ".filelist");
 			CL_QueueHTTPDownload (listPath);
 			
 			// Gamedir is not set (stock Q2 behavior for baseq2), this is the case where R1Q2 and Q2Pro file paths diverge
 			if (cl.gamedir[0] == '\0') {
-				Com_sprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
+				snprintf (filePath, sizeof(filePath), "/%s/%s", CL_HTTP_GetQ2ProGameDir(), quakePathFixed);
 				COM_StripExtension (filePath, listPath, sizeof(listPath));
 				Q_strncatz (listPath, sizeof(listPath), ".filelist");
 				CL_QueueHTTPDownload (listPath);
@@ -1044,17 +1044,17 @@ static void CL_CheckAndQueueDownload (char *path)
 
 		if (pak)
 		{
-			Com_sprintf (gamePath, sizeof(gamePath),"%s/%s", FS_Downloaddir(), path);	// was FS_Gamedir()
+			snprintf (gamePath, sizeof(gamePath),"%s/%s", FS_Downloaddir(), path);	// was FS_Gamedir()
 			f = fopen (gamePath, "rb");
 			if (!f)
 			{
-				if ( !Q_stricmp(FS_Downloaddir(), FS_Gamedir()) )	// if fs_gamedir and fs_downloaddir are the same, don't bother trying fs_gamedir
+				if ( !Q_stricmp( FS_Downloaddir(), FS_Gamedir() ) )	// if fs_gamedir and fs_downloaddir are the same, don't bother trying fs_gamedir
 				{
 					exists = false;
 				}
 				else
 				{
-					Com_sprintf (gamePath, sizeof(gamePath),"%s/%s", FS_Gamedir(), path);
+					snprintf (gamePath, sizeof(gamePath),"%s/%s", FS_Gamedir(), path);
 					f = fopen (gamePath, "rb");
 					if (!f)
 					{
@@ -1446,7 +1446,7 @@ static void CL_FinishHTTPDownload (void)
 		if (isFile)
 		{
 			// rename the temp file
-			Com_sprintf (tempName, sizeof(tempName), "%s/%s", FS_Downloaddir(), dl->queueEntry->quakePath);	// was FS_Gamedir()
+			snprintf (tempName, sizeof(tempName), "%s/%s", FS_Downloaddir(), dl->queueEntry->quakePath);	// was FS_Gamedir()
 
 			if (rename (dl->filePath, tempName))
 			{	// Knightmare- If this download was mirrored, that possibly means the other path
@@ -1572,7 +1572,7 @@ static void CL_StartNextHTTPDownload (void)
 
 			// ugly hack for pak file single downloading
 			len = strlen (q->quakePath);
-			if ( (len > 4) && ( !Q_stricmp (q->quakePath + len - 4, ".pak") || !Q_stricmp (q->quakePath + len - 4, ".pk3") ) )
+			if ( (len > 4) && ( !Q_stricmp ( q->quakePath + len - 4, ".pak" ) || !Q_stricmp ( q->quakePath + len - 4, ".pk3" ) ) )
 				downloading_pak = true;
 
 			break;

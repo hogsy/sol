@@ -497,13 +497,13 @@ void Use_Weapon (edict_t *ent, gitem_t *in_item)
 					return;
 				}
 			}
-			safe_cprintf (ent, PRINT_HIGH, "No %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			safe_cprintf ( ent, PRINT_HIGH, "No %s for %s.\n", ammo_item->pickup_name, item->pickup_name );
 			return;
 		}
 
 		if (ent->client->pers.inventory[ammo_index] < item->quantity)
 		{
-			safe_cprintf (ent, PRINT_HIGH, "Not enough %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			safe_cprintf ( ent, PRINT_HIGH, "Not enough %s for %s.\n", ammo_item->pickup_name, item->pickup_name );
 			return;
 		}
 	}
@@ -530,7 +530,7 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
 	// see if we're already using it
 	if ( ((item == ent->client->pers.weapon) || (item == ent->client->newweapon))&& (ent->client->pers.inventory[index] == 1) )
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Can't drop current weapon\n" );
 		return;
 	}
 
@@ -541,7 +541,7 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
 		current_weapon_index = ITEM_INDEX(ent->client->pers.weapon);
 		if (current_weapon_index == hml_index)
 		{
-			safe_cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+			safe_cprintf ( ent, PRINT_HIGH, "Can't drop current weapon\n" );
 			return;
 		}
 	}
@@ -774,12 +774,12 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		fire_frames, fire);
 
 	// run the weapon frame again if hasted
-	if (Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0 &&
+	if (Q_stricmp( ent->client->pers.weapon->pickup_name, "Grapple" ) == 0 &&
 		ent->client->weaponstate == WEAPON_FIRING)
 		return;
 
 	if ((CTFApplyHaste(ent) ||
-		(Q_stricmp(ent->client->pers.weapon->pickup_name, "Grapple") == 0 &&
+		(Q_stricmp( ent->client->pers.weapon->pickup_name, "Grapple" ) == 0 &&
 		ent->client->weaponstate != WEAPON_FIRING))
 		&& oldstate == ent->client->weaponstate)
 	{
@@ -1957,19 +1957,19 @@ void kick_attack (edict_t *ent)
 				if ( tr.ent->health <= 0 )
 					return;
 				//Knightmare- don't jump kick exploboxes or pushable crates, or insanes, or ambient models
-				if (!strcmp(tr.ent->classname, "misc_explobox") || !strcmp(tr.ent->classname, "func_pushable")
-					|| !strcmp(tr.ent->classname, "model_spawn") || !strcmp(tr.ent->classname, "model_train")
-					|| !strcmp(tr.ent->classname, "misc_insane"))
+				if (!strcmp(tr.ent->classname.c_str(), "misc_explobox") || !strcmp(tr.ent->classname.c_str(), "func_pushable")
+					|| !strcmp(tr.ent->classname.c_str(), "model_spawn") || !strcmp(tr.ent->classname.c_str(), "model_train")
+					|| !strcmp(tr.ent->classname.c_str(), "misc_insane"))
 					return;
 				//also don't jumpkick actors, unless they're bad guys
-				if (!strcmp(tr.ent->classname, "misc_actor") && (tr.ent->monsterinfo.aiflags & AI_GOOD_GUY))
+				if (!strcmp(tr.ent->classname.c_str(), "misc_actor") && (tr.ent->monsterinfo.aiflags & AI_GOOD_GUY))
 					return;
 				//nor goodguy monsters
-				if (strstr(tr.ent->classname, "monster_") && tr.ent->monsterinfo.aiflags & AI_GOOD_GUY)
+				if (strstr(tr.ent->classname.c_str(), "monster_") && tr.ent->monsterinfo.aiflags & AI_GOOD_GUY)
 					return;
 				//nor shootable items
-				if (tr.ent->item && !strstr(tr.ent->classname, "monster_") && (strstr(tr.ent->classname, "ammo_") || strstr(tr.ent->classname, "weapon_")
-					|| strstr(tr.ent->classname, "item_") || strstr(tr.ent->classname, "key_") || tr.ent->item->pickup == Pickup_Health) )
+				if (tr.ent->item && !strstr(tr.ent->classname.c_str(), "monster_") && (strstr(tr.ent->classname.c_str(), "ammo_") || strstr(tr.ent->classname.c_str(), "weapon_")
+					|| strstr(tr.ent->classname.c_str(), "item_") || strstr(tr.ent->classname.c_str(), "key_") || tr.ent->item->pickup == Pickup_Health) )
 					return;
 				if (((tr.ent != ent) && ((deathmatch->value && ((int)(dmflags->value) & (DF_MODELTEAMS | DF_SKINTEAMS))) || coop->value) && OnSameTeam (tr.ent, ent)))
 					return;

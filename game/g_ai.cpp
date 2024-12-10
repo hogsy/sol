@@ -53,7 +53,7 @@ void AI_SetSightClient (void)
 	edict_t	*ent;
 	int		start, check;
 
-	if (level.sight_client == NULL)
+	if (level.sight_client == nullptr )
 		start = 1;
 	else
 		start = level.sight_client - g_edicts;
@@ -91,7 +91,7 @@ void AI_SetSightClient (void)
 		}
 		if (check == start)
 		{
-			level.sight_client = NULL;
+			level.sight_client = nullptr;
 			return;		// nobody to see
 		}
 	}
@@ -471,7 +471,7 @@ qboolean infront (edict_t *self, edict_t *other)
 	if (!self || !other) // Knightmare- crash protect
 		return false;
 
-	AngleVectors (self->s.angles, forward, NULL, NULL);
+	AngleVectors (self->s.angles, forward, nullptr, nullptr );
 	VectorSubtract (other->s.origin, self->s.origin, vec);
 	VectorNormalize (vec);
 	dot = DotProduct (vec, forward);
@@ -551,8 +551,8 @@ void FoundTarget (edict_t *self)
 		level.sight_entity_framenum = level.framenum;
 		level.sight_entity->light_level = 128;
 
-		goodguy = NULL;
-		goodguy = G_Find(NULL,FOFS(dmgteam), "player");
+		goodguy = nullptr;
+		goodguy = G_Find( nullptr, FOFS(dmgteam), "player");
 		while(goodguy)
 		{
 			if (goodguy->health > 0)
@@ -567,7 +567,7 @@ void FoundTarget (edict_t *self)
 						if (gi.inPVS(goodguy->s.origin,self->enemy->s.origin))
 						{
 							goodguy->monsterinfo.aiflags |= AI_FOLLOW_LEADER;
-							goodguy->monsterinfo.old_leader = NULL;
+							goodguy->monsterinfo.old_leader = nullptr;
 							goodguy->monsterinfo.leader = self->enemy;
 						}
 					}
@@ -600,7 +600,7 @@ void FoundTarget (edict_t *self)
 	self->ideal_yaw = vectoyaw(v);
 
 	// clear out our combattarget, these are a one shot deal
-	self->combattarget = NULL;
+	self->combattarget = nullptr;
 	self->monsterinfo.aiflags |= AI_COMBAT_POINT;
 
 	// clear the targetname, that point is ours!
@@ -633,7 +633,7 @@ slower noticing monsters.
 */
 qboolean FindTarget (edict_t *self)
 {
-	edict_t		*client=NULL;
+	edict_t		*client = nullptr;
 	qboolean	heardit;
 	edict_t		*reflection;
 	edict_t		*self_reflection;
@@ -644,9 +644,9 @@ qboolean FindTarget (edict_t *self)
 
 	if (self->monsterinfo.aiflags & AI_GOOD_GUY)
 	{
-		if (self->goalentity && self->goalentity->inuse && self->goalentity->classname)
+		if (self->goalentity && self->goalentity->inuse && !self->goalentity->classname.empty())
 		{
-			if (strcmp(self->goalentity->classname, "target_actor") == 0)
+			if (strcmp(self->goalentity->classname.c_str(), "target_actor") == 0)
 				return false;
 		}
 
@@ -657,7 +657,7 @@ qboolean FindTarget (edict_t *self)
 			{
 				int		i;
 				edict_t	*e;
-				edict_t	*best=NULL;
+				edict_t	*best = nullptr;
 				vec_t	dist, best_dist;
 
 				best_dist = self->monsterinfo.max_range;
@@ -766,7 +766,7 @@ qboolean FindTarget (edict_t *self)
 		return true;	// JDC false;
 
 	// Lazarus: Force idle medics to look for dead monsters
-	if (!self->enemy && !Q_stricmp(self->classname, "monster_medic"))
+	if (!self->enemy && !Q_stricmp( self->classname.c_str(), "monster_medic" ) )
 	{
 		if (medic_FindDeadMonster(self))
 			return true;
@@ -796,8 +796,8 @@ qboolean FindTarget (edict_t *self)
 	else
 		return false;
 
-	reflection = NULL;
-	self_reflection = NULL;
+	reflection = nullptr;
+	self_reflection = nullptr;
 	if (level.num_reflectors)
 	{
 		int		i;
@@ -910,7 +910,7 @@ qboolean FindTarget (edict_t *self)
 
 		self->enemy = client;
 
-		if (strcmp(self->enemy->classname, "player_noise") != 0)
+		if (strcmp(self->enemy->classname.c_str(), "player_noise") != 0)
 		{
 			self->monsterinfo.aiflags &= ~AI_SOUND_TARGET;
 
@@ -919,7 +919,7 @@ qboolean FindTarget (edict_t *self)
 				self->enemy = self->enemy->enemy;
 				if (!self->enemy->client)
 				{
-					self->enemy = NULL;
+					self->enemy = nullptr;
 					return false;
 				}
 			}
@@ -937,7 +937,7 @@ qboolean FindTarget (edict_t *self)
 		else if (!(client->flags & FL_REFLECT))
 		{
 			// Knightmare- exclude turret drivers from this check
-			if ( !gi.inPHS(self->s.origin, client->s.origin) && strcmp(self->classname, "turret_driver") )
+			if ( !gi.inPHS(self->s.origin, client->s.origin) && strcmp(self->classname.c_str(), "turret_driver") )
 				return false;
 		}
 
@@ -1022,7 +1022,7 @@ qboolean M_CheckAttack (edict_t *self)
 		spot1[2] += self->viewheight;
 		VectorCopy (self->enemy->s.origin, spot2);
 		spot2[2] += self->enemy->viewheight;
-		tr = gi.trace (spot1, NULL, NULL, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_WINDOW);
+		tr = gi.trace (spot1, nullptr, nullptr, spot2, self, CONTENTS_SOLID|CONTENTS_MONSTER|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_WINDOW);
 
 		// do we have a clear shot?
 		if (tr.ent != self->enemy)
@@ -1211,7 +1211,7 @@ qboolean ai_checkattack (edict_t *self, float dist)
 					if (self->movetarget)
 						self->goalentity = self->movetarget;
 					else
-						self->goalentity = NULL;
+						self->goalentity = nullptr;
 				self->monsterinfo.aiflags &= ~AI_SOUND_TARGET;
 				if (self->monsterinfo.aiflags & AI_TEMP_STAND_GROUND)
 					self->monsterinfo.aiflags &= ~(AI_STAND_GROUND | AI_TEMP_STAND_GROUND);
@@ -1262,12 +1262,12 @@ qboolean ai_checkattack (edict_t *self, float dist)
 
 	if (hesDeadJim)
 	{
-		self->enemy = NULL;
+		self->enemy = nullptr;
 	// FIXME: look all around for other targets
 		if (self->oldenemy && self->oldenemy->health > 0)
 		{
 			self->enemy = self->oldenemy;
-			self->oldenemy = NULL;
+			self->oldenemy = nullptr;
 			HuntTarget (self);
 		}
 		else
@@ -1475,12 +1475,12 @@ void ai_run (edict_t *self, float dist)
 		if (!self->inuse) return;
 		// foremost, look for thine enemy, not his echoes
 		if (self->enemy && self->enemy->inuse
-			&& strcmp(self->enemy->classname, "player_noise") )
+			&& strcmp(self->enemy->classname.c_str(), "player_noise") )
 			realFeind = self->enemy;
 		else if (self->enemy && self->enemy->inuse && self->enemy->owner)
 			realFeind = self->enemy->owner;
 		else { // no enemy or enemy went away or don't know thy enemy
-			self->enemy = NULL;
+			self->enemy = nullptr;
 			hintpath_stop (self);
 			return;
 		}
@@ -1576,7 +1576,7 @@ void ai_run (edict_t *self, float dist)
 	//          search time and let him go idle so he'll start tracking hint_paths
 	if (self->monsterinfo.search_time)
 	{
-		if ( !Q_stricmp(self->classname, "monster_medic") && hint_chains_exist )
+		if ( !Q_stricmp( self->classname.c_str(), "monster_medic") && hint_chains_exist )
 		{
 			if (developer->value)
 				gi.dprintf ("medic search_time=%g\n", level.time - self->monsterinfo.search_time);
@@ -1590,10 +1590,10 @@ void ai_run (edict_t *self, float dist)
 					M_MoveToGoal (self, dist);
 				self->monsterinfo.search_time = 0;
 				if (self->goalentity == self->enemy)
-					self->goalentity = NULL;
+					self->goalentity = nullptr;
 				if (self->movetarget == self->enemy)
-					self->movetarget = NULL;
-				self->enemy = self->oldenemy = NULL;
+					self->movetarget = nullptr;
+				self->enemy = self->oldenemy = nullptr;
 				self->monsterinfo.pausetime = level.time + 2;
 				self->monsterinfo.stand (self);
 				return;
@@ -1635,7 +1635,7 @@ void ai_run (edict_t *self, float dist)
 		{
 		//	dprint("was temp goal; retrying original\n");
 			self->monsterinfo.aiflags &= ~AI_PURSUE_TEMP;
-			marker = NULL;
+			marker = nullptr;
 			VectorCopy (self->monsterinfo.saved_goal, self->monsterinfo.last_sighting);
 			isNew = true;
 		}
@@ -1681,7 +1681,7 @@ void ai_run (edict_t *self, float dist)
 			center = tr.fraction;
 			d2 = d1 * ((center+1)/2);
 			self->s.angles[YAW] = self->ideal_yaw = vectoyaw(v);
-			AngleVectors(self->s.angles, v_forward, v_right, NULL);
+			AngleVectors(self->s.angles, v_forward, v_right, nullptr);
 
 			VectorSet(v, d2, -16, 0);
 			G_ProjectSource (self->s.origin, v, v_forward, v_right, left_target);
@@ -1760,7 +1760,7 @@ qboolean ai_chicken (edict_t *self, edict_t *badguy)
 	// If we've already been here, quit
 	if (self->monsterinfo.aiflags & AI_CHICKEN)
 	{
-		if (self->movetarget && !Q_stricmp(self->movetarget->classname,"thing"))
+		if (self->movetarget && !Q_stricmp( self->movetarget->classname.c_str(), "thing"))
 			return true;
 	}
 
@@ -1773,7 +1773,7 @@ qboolean ai_chicken (edict_t *self, edict_t *badguy)
 	VectorCopy(badguy->s.origin,atk);
 	atk[2] += badguy->viewheight;
 	VectorClear(best_dir);
-	AngleVectors(self->s.angles,forward,NULL,NULL);
+	AngleVectors(self->s.angles,forward, nullptr, nullptr);
 	dir[2] = 0;
 	for (travel=512; travel>63 && best_dist == 0; travel /= 2)
 	{
@@ -1790,19 +1790,19 @@ qboolean ai_chicken (edict_t *self, edict_t *badguy)
 			// Test whether proposed position can be seen by badguy. Test
 			// isn't foolproof - tests against 1) new origin, 2) new origin + maxs,
 			// 3) new origin + mins, and 4) new origin + min x,y, max z.
-			trace2 = gi.trace(trace1.endpos,NULL,NULL,atk,self,MASK_SOLID);
+			trace2 = gi.trace(trace1.endpos, nullptr, nullptr,atk,self,MASK_SOLID);
 			if (trace2.fraction == 1.0) continue;
 
 			VectorAdd(trace1.endpos,self->maxs,testpos);
-			trace2 = gi.trace(testpos,NULL,NULL,atk,self,MASK_SOLID);
+			trace2 = gi.trace(testpos, nullptr, nullptr,atk,self,MASK_SOLID);
 			if (trace2.fraction == 1.0) continue;
 
 			VectorAdd(trace1.endpos,self->mins,testpos);
-			trace2 = gi.trace(testpos,NULL,NULL,atk,self,MASK_SOLID);
+			trace2 = gi.trace(testpos, nullptr, nullptr,atk,self,MASK_SOLID);
 			if (trace2.fraction == 1.0) continue;
 
 			testpos[2] = trace1.endpos[2] + self->maxs[2];
-			trace2 = gi.trace(testpos,NULL,NULL,atk,self,MASK_SOLID);
+			trace2 = gi.trace(testpos, nullptr, nullptr,atk,self,MASK_SOLID);
 			if (trace2.fraction == 1.0) continue;
 
 			best_dist = trace1.fraction * travel;

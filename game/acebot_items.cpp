@@ -430,7 +430,7 @@ float ACEIT_ItemNeed (edict_t *self, int item)
 // can lead to some slowdowns I guess, but makes the rest of the code
 // easier to deal with.
 ///////////////////////////////////////////////////////////////////////
-int ACEIT_ClassnameToIndex (char *classname)
+int ACEIT_ClassnameToIndex ( const char *classname)
 {
 	if (strcmp(classname,"item_armor_body")==0) 
 		return ITEMLIST_BODYARMOR;
@@ -670,7 +670,7 @@ void ACEIT_BuildItemNodeTable (qboolean rebuild)
 		// filter out crap
 		if (!items->inuse) // Knightmare added
 			continue;
-		if (!items->classname)
+		if (items->classname.empty())
 			continue;
 		if (items->solid == SOLID_NOT)
 			continue;
@@ -679,13 +679,13 @@ void ACEIT_BuildItemNodeTable (qboolean rebuild)
 		/////////////////////////////////////////////////////////////////
 		// Items
 		/////////////////////////////////////////////////////////////////
-		item_index = ACEIT_ClassnameToIndex(items->classname);
+		item_index = ACEIT_ClassnameToIndex(items->classname.c_str());
 		
 		////////////////////////////////////////////////////////////////
 		// SPECIAL NAV NODE DROPPING CODE
 		////////////////////////////////////////////////////////////////
 		// Special node dropping for platforms
-		if (strcmp(items->classname,"func_plat")==0)
+		if (items->classname == "func_plat")
 		{
 			if (!rebuild)
 				ACEND_AddNode(items,NODE_PLATFORM);
@@ -693,7 +693,7 @@ void ACEIT_BuildItemNodeTable (qboolean rebuild)
 		}
 		
 		// Special node dropping for teleporters
-		if (strcmp(items->classname,"misc_teleporter_dest")==0 || strcmp(items->classname,"misc_teleporter")==0)
+		if (strcmp(items->classname.c_str(),"misc_teleporter_dest")==0 || strcmp(items->classname.c_str(),"misc_teleporter")==0)
 		{
 			if (!rebuild)
 				ACEND_AddNode(items,NODE_TELEPORTER);

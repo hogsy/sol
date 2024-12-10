@@ -136,7 +136,7 @@ SV_BroadcastCommand
 Sends text to all active clients
 =================
 */
-void SV_BroadcastCommand (char *fmt, ...)
+void SV_BroadcastCommand ( const char *fmt, ... )
 {
 	va_list		argptr;
 	char		string[1024];
@@ -150,7 +150,7 @@ void SV_BroadcastCommand (char *fmt, ...)
 
 	MSG_WriteByte (&sv.multicast, svc_stufftext);
 	MSG_WriteString (&sv.multicast, string);
-	SV_Multicast (NULL, MULTICAST_ALL_R);
+	SV_Multicast ( nullptr, MULTICAST_ALL_R);
 }
 
 
@@ -198,7 +198,7 @@ void SV_Multicast (vec3_t origin, multicast_t to)
 		reliable = true;	// intentional fallthrough
 	case MULTICAST_ALL:
 		leafnum = 0;
-		mask = NULL;
+		mask = nullptr;
 		break;
 
 	case MULTICAST_PHS_R:
@@ -218,7 +218,7 @@ void SV_Multicast (vec3_t origin, multicast_t to)
 		break;
 
 	default:
-		mask = NULL;
+		mask = nullptr;
 		Com_Error (ERR_FATAL, "SV_Multicast: bad to:%i", to);
 	}
 
@@ -461,7 +461,7 @@ qboolean SV_SendClientDatagram (client_t *client)
 SV_DemoCompleted
 ==================
 */
-void SV_DemoCompleted (void)
+void SV_DemoCompleted ()
 {
 	if (sv.demofile)
 	{
@@ -586,7 +586,7 @@ void SV_SendClientMessages (void)
 		{
 	// just update reliable	if needed
 			if (c->netchan.message.cursize	|| curtime - c->netchan.last_sent > 1000 )
-				Netchan_Transmit (&c->netchan, 0, NULL);
+				Netchan_Transmit (&c->netchan, 0, nullptr );
 		}
 	}
 }

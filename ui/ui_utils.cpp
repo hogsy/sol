@@ -255,7 +255,7 @@ int	UI_GetIndexForStringValue (const char **item_values, char *value)
 
 	for (i=0; item_values[i]; i++)
 	{	// Store index of wildcard entry
-		if ( !Q_stricmp(va("%s", item_values[i]), UI_ITEMVALUE_WILDCARD) )
+		if ( !Q_stricmp( va( "%s", item_values[ i ] ), UI_ITEMVALUE_WILDCARD ) )
 		{	widlcardIndex = i;	}
 		if ( !Q_strcasecmp(va("%s", item_values[i]), value) ) {
 			index = i;
@@ -473,21 +473,21 @@ void UI_StartServer (char *startmap, qboolean dedicated)
 
 	if ( UI_Coop_MenuMode() )
 	{
- 		if (Q_stricmp(startmap, "bunk1") == 0)
+ 		if (Q_stricmp( startmap, "bunk1" ) == 0)
   			spot = "start";
- 		else if (Q_stricmp(startmap, "mintro") == 0)
+ 		else if (Q_stricmp( startmap, "mintro" ) == 0)
   			spot = "start";
- 		else if (Q_stricmp(startmap, "fact1") == 0)
+ 		else if (Q_stricmp( startmap, "fact1" ) == 0)
   			spot = "start";
- 		else if (Q_stricmp(startmap, "power1") == 0)
+ 		else if (Q_stricmp( startmap, "power1" ) == 0)
   			spot = "pstart";
- 		else if (Q_stricmp(startmap, "biggun") == 0)
+ 		else if (Q_stricmp( startmap, "biggun" ) == 0)
   			spot = "bstart";
- 		else if (Q_stricmp(startmap, "hangar1") == 0)
+ 		else if (Q_stricmp( startmap, "hangar1" ) == 0)
   			spot = "unitstart";
- 		else if (Q_stricmp(startmap, "city1") == 0)
+ 		else if (Q_stricmp( startmap, "city1" ) == 0)
   			spot = "unitstart";
- 		else if (Q_stricmp(startmap, "boss1") == 0)
+ 		else if (Q_stricmp( startmap, "boss1" ) == 0)
 			spot = "bosstart";
 	}
 	UI_ForceMenuOff ();
@@ -714,7 +714,7 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 	path = FS_NextPath (path);
 	while (path) 
 	{
-		Com_sprintf (findName, sizeof(findName), "%s/%s/%s", path, dir, nameMask);
+		snprintf (findName, sizeof(findName), "%s/%s/%s", path, dir, nameMask);
 		itemFiles = FS_ListFiles(findName, &nItems, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
 
 		for (i=0; i < nItems && nItemNames < maxItems; i++)
@@ -842,7 +842,7 @@ void UI_GetVideoModes (void)
 	float		aspect;
 	char		*tok, resBuf[12], aspectBuf[8], nameBuf[20];
 	qboolean	surround = false;
-	cvar_t		*surround_threshold = Cvar_Get ("scr_surroundthreshold", "3.6", 0);
+	cvar_t		*surround_threshold = Cvar_Get ( "scr_surroundthreshold", "3.6", 0 );
 
 	// count video modes >= 640x480
 	for (i=0; i<UI_MAX_VIDMODES; i++)
@@ -879,7 +879,7 @@ void UI_GetVideoModes (void)
 			memset (resBuf, 0, sizeof(resBuf));
 			memset (aspectBuf, 0, sizeof(aspectBuf));
 			memset (nameBuf, 0, sizeof(nameBuf));
-			Com_sprintf (resBuf, sizeof(resBuf), "%dx%d", w, h);
+			snprintf (resBuf, sizeof(resBuf), "%dx%d", w, h);
 
 			// catch surround modes
 			if (aspect > surround_threshold->value) {	// 3.6f
@@ -910,12 +910,12 @@ void UI_GetVideoModes (void)
 				tok = va("%3.1f:1", aspect);
 
 			if (surround)
-				Com_sprintf (aspectBuf, sizeof(aspectBuf), "3x%s", tok);
+				snprintf (aspectBuf, sizeof(aspectBuf), "3x%s", tok);
 			else
-				Com_sprintf (aspectBuf, sizeof(aspectBuf), "%s", tok);
+				snprintf (aspectBuf, sizeof(aspectBuf), "%s", tok);
 
-			Com_sprintf (nameBuf, sizeof(nameBuf), "%-12s%s", resBuf, aspectBuf);
-		//	Com_sprintf (nameBuf, sizeof(nameBuf), "[%-9s] [%-5s]", resBuf, aspectBuf);
+			snprintf (nameBuf, sizeof(nameBuf), "%-12s%s", resBuf, aspectBuf);
+		//	snprintf (nameBuf, sizeof(nameBuf), "[%-9s] [%-5s]", resBuf, aspectBuf);
 
 			ui_resolution_names[j] = UI_CopyString (nameBuf);
 			ui_video_modes[j] = UI_CopyString (va("%i", i));	
@@ -1326,7 +1326,7 @@ void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script, char *buffer,
 			Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: no concluding '}' in 'keyBindList' in keybind list %s\n", handle->fileName);
 			return;
 		}
-		if ( !Q_stricmp(tok, "}") )
+		if ( !Q_stricmp( tok, "}" ) )
 			break;
 		else if ( !Q_strcasecmp(tok, "keyBind") )
 		{
@@ -1338,7 +1338,7 @@ void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script, char *buffer,
 				validBindItem = false;
 			}
 
-			if ( !Q_stricmp(tok, "{") )
+			if ( !Q_stricmp( tok, "{" ) )
 			{
 				while (p < (buffer + bufSize))
 				{
@@ -1347,7 +1347,7 @@ void UI_CountKeyBinds (keyBindListHandle_t *handle, char **script, char *buffer,
 						Com_Printf (S_COLOR_YELLOW"WARNING: UI_CountKeyBinds: no concluding '}' in 'keyBind' in keybind list %s\n", handle->fileName);
 						validBindItem = false;
 					}
-					if ( !Q_stricmp(tok, "}") )
+					if ( !Q_stricmp( tok, "}" ) )
 						break;
 				}
 			}
@@ -1395,7 +1395,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script, char *buff
 		return false;
 	}
 
-	if ( !Q_stricmp(tok, "{") )
+	if ( !Q_stricmp( tok, "{" ) )
 	{
 		while ( (*script) < (buffer + bufSize) )
 		{
@@ -1404,7 +1404,7 @@ qboolean UI_ParseKeyBind (keyBindListHandle_t *handle, char **script, char *buff
 				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBind: no concluding '}' in 'keyBind' item %i in keybind list %s\n", handle->numKeyBinds+1, handle->fileName);
 				return false;
 			}
-			if ( !Q_stricmp(tok, "}") )
+			if ( !Q_stricmp( tok, "}" ) )
 				break;
 			if ( !Q_strcasecmp(tok, "commandName") )
 			{
@@ -1481,7 +1481,7 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer, int buf
 			foundKeyBindList = true;
 
 			tok = COM_ParseExt (&p, true);
-			if ( Q_stricmp(tok, "{") ) {
+			if ( Q_stricmp( tok, "{" ) ) {
 				Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: expected '{', found %s instead in keybind list %s\n", tok, handle->fileName);
 				return false;
 			}
@@ -1499,7 +1499,7 @@ qboolean UI_ParseKeyBindList (keyBindListHandle_t *handle, char *buffer, int buf
 					Com_Printf (S_COLOR_YELLOW"WARNING: UI_ParseKeyBindList: no concluding '}' in 'keyBindList' in keybind list %s\n", handle->fileName);
 					return false;
 				}
-				if ( !Q_stricmp(tok, "}") )
+				if ( !Q_stricmp( tok, "}" ) )
 					break;
 				else if ( !Q_strcasecmp(tok, "keyBind") ) {
 					if ( !UI_ParseKeyBind(handle, &p, buffer, bufSize) )
@@ -1580,7 +1580,7 @@ UI_LoadKeyBindList
 void UI_LoadKeyBindList (void)
 {
 	memset (&ui_customKeyBindList, 0, sizeof(ui_customKeyBindList));
-	Com_sprintf (ui_customKeyBindList.fileName, sizeof(ui_customKeyBindList.fileName), UI_CUSTOM_KEYBIND_FILE);
+	snprintf (ui_customKeyBindList.fileName, sizeof(ui_customKeyBindList.fileName), UI_CUSTOM_KEYBIND_FILE);
 	UI_LoadKeyBindListFromFile (&ui_customKeyBindList);
 }
 
@@ -1842,7 +1842,7 @@ void UI_BuildModList (void)
 	count++;
 
 	// get a list of directories
-	Com_sprintf (findName, sizeof(findName), "%s/*.*", FS_RootDataPath());
+	snprintf (findName, sizeof(findName), "%s/*.*", FS_RootDataPath());
 	dirnames = FS_ListFiles (findName, &ndirs, SFF_SUBDIR, 0);
 	if (!dirnames) {
 		ui_num_mods = count;
@@ -1908,7 +1908,7 @@ void UI_BuildModList (void)
 		quake2RRGame1[0] = quake2RRGame2[0] = quake2RRGame3[0] = quake2RRGame4[0] = 0;
 
 		// try to load and parse modinfo.def
-		Com_sprintf (infoFile, sizeof(infoFile), "../%s/modinfo.def", modDir);
+		snprintf (infoFile, sizeof(infoFile), "../%s/modinfo.def", modDir);
 		if ( UI_ParseModInfoFromFile(infoFile, gameDir, modDesc, baseGame1, baseGame2, baseGame3,
 									quakeImportPathAuto, quakeRRImportPathAuto, quakeImportPath,
 									quakeMainGame, quakeGame1, quakeGame2, quakeGame3, quakeGame4, 
@@ -1962,7 +1962,7 @@ void UI_BuildModList (void)
 			modName = modDir;
 
 		if (unsupportedMod)
-			Com_sprintf (modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
+			snprintf (modFormatedName, sizeof(modFormatedName), S_COLOR_ORANGE"%s\0", modName);
 		else
 			Q_strncpyz (modFormatedName, sizeof(modFormatedName), modName);
 
@@ -2114,8 +2114,8 @@ void UI_Load_Savestrings (qboolean update)
 
 	for (i=0; i<UI_MAX_SAVEGAMES; i++)
 	{
-	//	Com_sprintf (name, sizeof(name), "%s/save/kmq2save%03i/server.ssv", FS_Savegamedir(), i);
-		Com_sprintf (name, sizeof(name), "%s/%s/kmq2save%03i/server.ssv", FS_Savegamedir(), ARCH_SAVEDIR, i);	// was FS_Gamedir()
+	//	snprintf (name, sizeof(name), "%s/save/kmq2save%03i/server.ssv", FS_Savegamedir(), i);
+		snprintf (name, sizeof(name), "%s/%s/kmq2save%03i/server.ssv", FS_Savegamedir(), ARCH_SAVEDIR, i);	// was FS_Gamedir()
 
 		old_timestamp = ui_savetimestamps[i];
 		stat(name, &st);
@@ -2137,8 +2137,8 @@ void UI_Load_Savestrings (qboolean update)
 		else
 		{
 			fclose (fp);
-		//	Com_sprintf (name, sizeof(name), "save/kmq2save%03i/server.ssv", i);
-			Com_sprintf (name, sizeof(name), "%s/kmq2save%03i/server.ssv", ARCH_SAVEDIR, i);
+		//	snprintf (name, sizeof(name), "save/kmq2save%03i/server.ssv", i);
+			snprintf (name, sizeof(name), "%s/kmq2save%03i/server.ssv", ARCH_SAVEDIR, i);
 			FS_FOpenFile (name, &f, FS_READ);
 			if (!f) {
 				Q_strncpyz (ui_savestrings[i], sizeof(ui_savestrings[i]), EMPTY_GAME_STRING);
@@ -2149,7 +2149,7 @@ void UI_Load_Savestrings (qboolean update)
 			{
 			//	FS_Read (ui_savestrings[i], sizeof(ui_savestrings[i]), f);
 				FS_Read (comment, sizeof(comment), f);
-				Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s", comment);
+				snprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s", comment);
 
 				// grab mapname
 				FS_Read (mapname, sizeof(mapname), f);
@@ -2157,9 +2157,9 @@ void UI_Load_Savestrings (qboolean update)
 				{
 				//	FS_Read (mapname, sizeof(mapname), f);
 					if (mapname[0] == '*') // skip * marker
-						Com_sprintf (ui_mapname, sizeof(ui_mapname), mapname+1);
+						snprintf (ui_mapname, sizeof(ui_mapname), mapname+1);
 					else
-						Com_sprintf (ui_mapname, sizeof(ui_mapname), mapname);
+						snprintf (ui_mapname, sizeof(ui_mapname), mapname);
 					if (ch = strchr (ui_mapname, '$'))
 						*ch = 0; // terminate string at $ marker
 				}
@@ -2181,13 +2181,13 @@ void UI_Load_Savestrings (qboolean update)
 					hour = savedate.tm_hour;
 					if (hour > 12) hour -= 12;
 					if (hour == 0) hour += 12;
-					Com_sprintf (datestring, sizeof(datestring), "%2i/%2i/%4i %2i:%i%i %s", savedate.tm_mon+1, savedate.tm_mday, savedate.tm_year+1900,
+					snprintf (datestring, sizeof(datestring), "%2i/%2i/%4i %2i:%i%i %s", savedate.tm_mon+1, savedate.tm_mday, savedate.tm_year+1900,
 								hour, savedate.tm_min/10, savedate.tm_min%10, (savedate.tm_hour > 12) ? "PM" : "AM");
 
 					if (strlen(comment2) > 0)
-						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s %s", comment, comment2, datestring);
+						snprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s %s", comment, comment2, datestring);
 					else
-						Com_sprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s", comment, datestring);
+						snprintf (ui_savestrings[i], sizeof(ui_savestrings[i]), "%s\n%s", comment, datestring);
 
 					aspect = atof(aspectstring);
 					if (aspect > 0.0f)
@@ -2230,14 +2230,14 @@ void UI_ValidateSaveshots (void)
 		if ( ui_savevalid[i] )
 		{
 			if (i == 0)	// mapshot for autosave
-				Com_sprintf(shotname, sizeof(shotname), "/levelshots/%s.pcx", ui_mapname);
+				snprintf(shotname, sizeof(shotname), "/levelshots/%s.pcx", ui_mapname);
 			else
 			{	// free previously loaded shots
-			//	Com_sprintf(shotname, sizeof(shotname), "save/kmq2save%03i/shot.jpg", i);
-				Com_sprintf(shotname, sizeof(shotname), "%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
+			//	snprintf(shotname, sizeof(shotname), "save/kmq2save%03i/shot.jpg", i);
+				snprintf(shotname, sizeof(shotname), "%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 				R_FreePic (shotname);
-			//	Com_sprintf(shotname, sizeof(shotname), "/save/kmq2save%03i/shot.jpg", i);
-				Com_sprintf(shotname, sizeof(shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
+			//	snprintf(shotname, sizeof(shotname), "/save/kmq2save%03i/shot.jpg", i);
+				snprintf(shotname, sizeof(shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 			}
 			if (R_DrawFindPic(shotname))
 				ui_saveshot_valid[i] = true;
@@ -2291,13 +2291,13 @@ char *UI_UpdateSaveshot (int index)
 
 	if ( ui_savevalid[index] && ui_saveshot_valid[index] ) {
 		if ( index == 0 )
-			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
+			snprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/levelshots/%s.pcx", ui_mapname);
 		else
-		//	Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
-			Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, index);
+		//	snprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/save/kmq2save%03i/shot.jpg", index);
+			snprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, index);
 	}
 	else if ( ui_saveshot_valid[UI_MAX_SAVEGAMES] )
-		Com_sprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
+		snprintf (ui_saveload_shotname, sizeof(ui_saveload_shotname), UI_NOSCREEN_NAME);
 	else	// no saveshot or nullshot
 		return NULL;
 
@@ -2464,7 +2464,7 @@ void UI_AddToServerList (netadr_t adr, char *info)
         }
     }
 
-    Com_sprintf( ui_local_server_names[ui_num_servers], 
+    snprintf( ui_local_server_names[ui_num_servers], 
                  sizeof(ui_local_server_names[0]), 
                  "%s %4dms %s", pszProtocol, iPing, info ) ;
 
@@ -2528,10 +2528,10 @@ void UI_JoinServer (int index)
 	if (index < 0 || index >= UI_MAX_LOCAL_SERVERS || index >= ui_num_servers)
 		return;
 
-	if ( Q_stricmp( ui_local_server_names[index], NO_SERVER_STRING ) == 0 )
+	if ( Q_stricmp( ui_local_server_names[ index ], NO_SERVER_STRING ) == 0 )
 		return;
 
-	Com_sprintf (buffer, sizeof(buffer), "connect %s\n", NET_AdrToString (ui_local_server_netadr[index]));
+	snprintf (buffer, sizeof(buffer), "connect %s\n", NET_AdrToString (ui_local_server_netadr[index]));
 	Cbuf_AddText (buffer);
 	UI_ForceMenuOff ();
 	cls.disable_screen = 1; // Knightmare- show loading screen
@@ -2549,7 +2549,7 @@ void UI_InitServerList (void)
 
 	ui_serverlist_names[UI_MAX_LOCAL_SERVERS] = NULL;
 	for ( i = 0; i < UI_MAX_LOCAL_SERVERS; i++ ) {
-		Com_sprintf (ui_local_server_names[i], sizeof(ui_local_server_names[i]), NO_SERVER_STRING);
+		snprintf (ui_local_server_names[i], sizeof(ui_local_server_names[i]), NO_SERVER_STRING);
 		ui_serverlist_names[i] = ui_local_server_names[i];
 	}
 }
@@ -2708,7 +2708,7 @@ void UI_SortArenas (char **list, int len)
 			if (!list[j]) break;
 			s1 = strchr(list[j], '\n')+1;
 			s2 = strchr(list[j+1], '\n')+1;
-			if (Q_stricmp(s1, s2) > 0)
+			if (Q_stricmp( s1, s2 ) > 0)
 			{
 				temp = list[j];
 				list[j] = list[j+1];
@@ -2773,7 +2773,7 @@ void UI_LoadArenas (void)
 		{
 			if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 			{
-				Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
+				snprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 				
 				for (j=0; j<NUM_MAPTYPES; j++)
 					type_supported[j] = false;
@@ -2813,7 +2813,7 @@ void UI_LoadArenas (void)
 	path = FS_NextPath (path);
 	while (path) 
 	{
-		Com_sprintf (findName, sizeof(findName), "%s/scripts/*.arena", path);
+		snprintf (findName, sizeof(findName), "%s/scripts/*.arena", path);
 		arenafiles = FS_ListFiles(findName, &narenas, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
 
 		for (i=0; i < narenas && narenanames < MAX_ARENAS; i++)
@@ -2831,7 +2831,7 @@ void UI_LoadArenas (void)
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
-					Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
+					snprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
@@ -2890,7 +2890,7 @@ void UI_LoadArenas (void)
 			{
 				if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 				{
-					Com_sprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
+					snprintf(scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 					
 					for (j=0; j<NUM_MAPTYPES; j++)
 						type_supported[j] = false;
@@ -2965,7 +2965,7 @@ void UI_LoadMapList (void)
 	//
 	// load the list of map names
 	//
-	Com_sprintf( mapsname, sizeof(mapsname), "%s/maps.lst", FS_Gamedir() );	// FIXME: should this be FS_Savegamedir()?
+	snprintf( mapsname, sizeof(mapsname), "%s/maps.lst", FS_Gamedir() );	// FIXME: should this be FS_Savegamedir()?
 	if ( ( fp = fopen(mapsname, "rb") ) == 0 )
 	{
 		if ( ( length = FS_LoadFile("maps.lst", (void **)&buffer)) == -1 )
@@ -3015,7 +3015,7 @@ void UI_LoadMapList (void)
 	//	strncpy (longname, COM_Parse(&s));
 		Q_strncpyz (shortname, sizeof(shortname), COM_Parse(&s));
 		Q_strncpyz (longname, sizeof(longname), COM_Parse(&s));
-		Com_sprintf (scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
+		snprintf (scratch, sizeof(scratch), MAPLIST_FORMAT, longname, shortname);
 		ui_svr_listfile_mapnames[i] = UI_CopyString(scratch);
 	}
 	ui_svr_listfile_mapnames[ui_svr_listfile_nummaps] = 0;
@@ -3183,7 +3183,7 @@ char *UI_UpdateStartSeverLevelshot (int index)
 	Q_strncpyz (startmap, sizeof(startmap), strchr( ui_svr_maplists[ui_svr_maptype][index], '\n' ) + 1);
 
 	if (ui_svr_mapshotvalid[ui_svr_maptype][index] == M_UNSET) { // init levelshot
-		Com_sprintf(mapshotname, sizeof(mapshotname), "/levelshots/%s.pcx", startmap);
+		snprintf(mapshotname, sizeof(mapshotname), "/levelshots/%s.pcx", startmap);
 		if (R_DrawFindPic(mapshotname))
 			ui_svr_mapshotvalid[ui_svr_maptype][index] = M_FOUND;
 		else
@@ -3191,9 +3191,9 @@ char *UI_UpdateStartSeverLevelshot (int index)
 	}
 
 	if (ui_svr_mapshotvalid[ui_svr_maptype][index] == M_FOUND)
-		Com_sprintf(ui_startserver_shotname, sizeof(ui_startserver_shotname), "/levelshots/%s.pcx", startmap);
+		snprintf(ui_startserver_shotname, sizeof(ui_startserver_shotname), "/levelshots/%s.pcx", startmap);
 	else if (ui_svr_mapshotvalid[ui_svr_maptype][ui_svr_maplist_sizes[ui_svr_maptype]] == M_FOUND)
-		Com_sprintf(ui_startserver_shotname, sizeof(ui_startserver_shotname), UI_NOSCREEN_NAME);
+		snprintf(ui_startserver_shotname, sizeof(ui_startserver_shotname), UI_NOSCREEN_NAME);
 	else
 		return NULL;
 
@@ -3376,7 +3376,7 @@ static qboolean UI_PlayerConfig_ScanDirectories (void)
 		do 
 		{
 			path = FS_NextPath(path);
-			Com_sprintf (findName, sizeof(findName), "%s/players/*.*", path);
+			snprintf (findName, sizeof(findName), "%s/players/*.*", path);
 
 			if ( (dirnames = FS_ListFiles(findName, &ndirs, SFF_SUBDIR, 0)) != 0 )
 				break;
@@ -3681,7 +3681,7 @@ void UI_InitPlayerModelInfo (int *modelNum, int *skinNum)
 	for (i = 0; i < ui_numplayermodels; i++)
 	{
 		ui_pmnames[i] = ui_pmi[i].displayname;
-		if (Q_stricmp( ui_pmi[i].directory, currentdirectory ) == 0)
+		if (Q_stricmp( ui_pmi[ i ].directory, currentdirectory ) == 0)
 		{
 			int j;
 
@@ -3689,7 +3689,7 @@ void UI_InitPlayerModelInfo (int *modelNum, int *skinNum)
 
 			for (j = 0; j < ui_pmi[i].nskins; j++)
 			{
-				if (Q_stricmp( ui_pmi[i].skinDisplayNames[j], currentskin ) == 0)
+				if (Q_stricmp( ui_pmi[ i ].skinDisplayNames[ j ], currentskin ) == 0)
 				{
 					currentskinindex = j;
 					break;
@@ -3717,27 +3717,27 @@ void UI_UpdatePlayerModelInfo (int mNum, int sNum)
 {
 	char	scratch[MAX_QPATH];
 
-	Com_sprintf (scratch, sizeof(scratch), "players/%s/tris.md2", ui_pmi[mNum].directory);
-	ui_playermodel = R_RegisterModel (scratch);
+	snprintf (scratch, sizeof(scratch), "players/%s/tris.md2", ui_pmi[mNum].directory);
+	ui_playermodel = R_RegisterModel ( scratch );
 	Q_strncpyz (ui_playerconfig_playermodelname, sizeof(ui_playerconfig_playermodelname), scratch);
 
-	Com_sprintf (scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
+	snprintf (scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
 	ui_playerskin = R_RegisterSkin (scratch);
 	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
 
 	// show current weapon model (if any)
 	if (ui_currentweaponmodel && strlen(ui_currentweaponmodel))
 	{
-		Com_sprintf (scratch, sizeof(scratch), "players/%s/%s", ui_pmi[mNum].directory, ui_currentweaponmodel);
-		ui_weaponmodel = R_RegisterModel(scratch);
+		snprintf (scratch, sizeof(scratch), "players/%s/%s", ui_pmi[mNum].directory, ui_currentweaponmodel);
+		ui_weaponmodel = R_RegisterModel( scratch );
 		if (!ui_weaponmodel) {
-			Com_sprintf (scratch, sizeof(scratch), "players/%s/weapon.md2", ui_pmi[mNum].directory);
-			ui_weaponmodel = R_RegisterModel (scratch);
+			snprintf (scratch, sizeof(scratch), "players/%s/weapon.md2", ui_pmi[mNum].directory);
+			ui_weaponmodel = R_RegisterModel ( scratch );
 		}
 	}
 	else {
-		Com_sprintf (scratch, sizeof(scratch), "players/%s/weapon.md2", ui_pmi[mNum].directory);
-		ui_weaponmodel = R_RegisterModel (scratch);
+		snprintf (scratch, sizeof(scratch), "players/%s/weapon.md2", ui_pmi[mNum].directory);
+		ui_weaponmodel = R_RegisterModel ( scratch );
 	}
 	Q_strncpyz (ui_playerconfig_weaponmodelname, sizeof(ui_playerconfig_weaponmodelname), scratch);
 }
@@ -3752,7 +3752,7 @@ void UI_UpdatePlayerSkinInfo (int mNum, int sNum)
 {
 	char	scratch[MAX_QPATH];
 
-	Com_sprintf(scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
+	snprintf(scratch, sizeof(scratch), "players/%s/%s.pcx", ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
 	ui_playerskin = R_RegisterSkin(scratch);
 	Q_strncpyz (ui_playerconfig_playerskinname, sizeof(ui_playerconfig_playerskinname), scratch);
 }

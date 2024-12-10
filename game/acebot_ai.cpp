@@ -312,13 +312,13 @@ void ACEAI_PickShortRangeGoal (edict_t *self)
 	
 	while (target)
 	{
-		if (target->classname == NULL)
+		if (target->classname.empty())
 			return;
 		
 		// Missle avoidance code
 		// Set our movetarget to be the rocket or grenade fired at us. 
-		if (strcmp(target->classname,"rocket")==0 || strcmp(target->classname,"grenade")==0
-			|| strcmp(target->classname,"homing rocket")==0)
+		if (strcmp(target->classname.c_str(),"rocket")==0 || strcmp(target->classname.c_str(),"grenade")==0
+			|| strcmp(target->classname.c_str(),"homing rocket")==0)
 		{
 			if (debug_mode) 
 				debug_printf("ROCKET ALERT!\n");
@@ -331,7 +331,7 @@ void ACEAI_PickShortRangeGoal (edict_t *self)
 		{
 			if (infront(self, target))
 			{
-				index = ACEIT_ClassnameToIndex(target->classname);
+				index = ACEIT_ClassnameToIndex(target->classname.c_str());
 				weight = ACEIT_ItemNeed(self, index);
 				
 				if (weight > best_weight)

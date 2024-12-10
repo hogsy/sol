@@ -80,7 +80,7 @@ void CL_LoadLoc (void)
 	// format map pathname
 	Q_strncpyz (mapname, sizeof(mapname), cl.configstrings[CS_MODELS + 1] + 5);	// skip "maps/"
 	mapname[strlen(mapname) - 4] = 0;	// remove ".bsp"
-	Com_sprintf (filename, sizeof(filename), "locs/%s.loc", mapname);
+	snprintf (filename, sizeof(filename), "locs/%s.loc", mapname);
 
 	// load file and check buffer and size
 	fSize = FS_LoadFile (filename, reinterpret_cast< void ** >( &buf ) );
@@ -187,7 +187,7 @@ void CL_LoadLoc (void)
 
 	Com_Printf("CL_LoadLoc: Loaded %d locations from %s.\n", nLines, filename);
 
-/*	Com_sprintf (filename, sizeof(filename), "%s/locs/%s.loc", FS_Savegamedir(), mapname);	// was FS_Gamedir()
+/*	snprintf (filename, sizeof(filename), "%s/locs/%s.loc", FS_Savegamedir(), mapname);	// was FS_Gamedir()
 	if (!(f = fopen(filename, "r"))) {
 		Com_DPrintf("CL_LoadLoc: Couldn't load locs/%s.loc\n", mapname);
 		return;
@@ -349,7 +349,7 @@ void CL_LocWrite (void)
 //	strncpy(mapname, cl.configstrings[CS_MODELS + 1] + 5);   // Xile; lets just keep saving em to one file mmmkay?
 	Q_strncpyz (mapname, sizeof(mapname), cl.configstrings[CS_MODELS + 1] + 5);
 	mapname[strlen(mapname) - 4] = 0;
-	Com_sprintf (filename, sizeof(filename), "%s/locs/%s.loc", FS_Savegamedir(), mapname);	// was FS_Gamedir()
+	snprintf (filename, sizeof(filename), "%s/locs/%s.loc", FS_Savegamedir(), mapname);	// was FS_Gamedir()
 
 //	Sys_Mkdir("locs");
 	FS_CreatePath (filename);

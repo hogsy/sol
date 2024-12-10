@@ -546,7 +546,7 @@ extern	int		registration_sequence;
 float R_ClampValue (float in, float min, float max);
 float R_SmoothStep (float in, float side0, float side1);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
-char *R_CopyString (char *in);
+char *R_CopyString ( const char *in);
 
 
 //
@@ -1086,15 +1086,15 @@ IMPORTED FUNCTIONS
 ====================================================================
 */
 
-void	VID_Error (int err_level, char *str, ...);
+void	VID_Error ( int err_level, const char *str, ... );
 
-void	Cmd_AddCommand (char *name, void(*cmd)(void));
-void	Cmd_RemoveCommand (char *name);
+void	Cmd_AddCommand ( const char *name, void ( *cmd )( void ) );
+void	Cmd_RemoveCommand ( const char *name );
 int		Cmd_Argc (void);
 char	*Cmd_Argv (int i);
 void	Cbuf_ExecuteText (int exec_when, char *text);
 
-void	VID_Printf (int print_level, char *str, ...);
+void	VID_Printf ( int print_level, const char *str, ... );
 
 // files will be memory mapped read only
 // the returned buffer may be part of a larger pak file,
@@ -1110,9 +1110,9 @@ void	FS_FreeFile (void *buf);
 char	*FS_Gamedir (void);
 char	*FS_Savegamedir (void);
 
-cvar_t	*Cvar_Get (char *name, char *value, int flags);
-cvar_t	*Cvar_Set (char *name, char *value );
-void	 Cvar_SetValue (char *name, float value);
+cvar_t	*Cvar_Get ( const char *name, const char *value, int flags );
+cvar_t	*Cvar_Set ( const char *name, const char *value );
+void	 Cvar_SetValue ( const char *name, float value);
 
 qboolean	VID_GetModeInfo (int *width, int *height, int mode);
 void		VID_NewWindow (int width, int height);

@@ -60,7 +60,7 @@ void R_RefreshFont (fontslot_t font)
 	if (!fontimage) // fall back on old Q2 conchars
 		fontimage = R_FindImage ("pics/conchars.pcx", it_font);	// was it_pic
 	if (!fontimage) // prevent crash caused by missing font
-		VID_Error (ERR_FATAL, "RefreshFont: couldn't load pics/conchars");
+		VID_Error ( ERR_FATAL, "RefreshFont: couldn't load pics/conchars" );
 
 	// Don't diable texture filtering for chars, as it causes artifacts when scaling up
 //	GL_Bind (fontimage->texnum);
@@ -300,7 +300,7 @@ image_t	*R_DrawFindPic (char *name)
 		gl = R_FindImage (name, it_pic);
 	}
 	else {
-		Com_sprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
+		snprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
 		gl = R_FindImage (fullname, it_pic);
 	}
 	/* jitfix
@@ -353,7 +353,7 @@ void R_DrawPic (drawStruct_t *ds)
 
 	image = R_DrawFindPic (ds->pic);
 	if (!image) {
-		VID_Printf (PRINT_DEVELOPER, "Can't find pic: %s\n", ds->pic);	// was PRINT_ALL
+		VID_Printf ( PRINT_DEVELOPER, "Can't find pic: %s\n", ds->pic );	// was PRINT_ALL
 		return;
 	}
 
@@ -741,10 +741,10 @@ void R_DrawStretchRaw (int x, int y, int w, int h, const byte *raw, int rawWidth
 			height <<= 1;
 
 		if (rawWidth != width || rawHeight != height)
-			VID_Error(ERR_DROP, "R_DrawStretchRaw: size is not a power of two (%i x %i)", rawWidth, rawHeight);
+			VID_Error( ERR_DROP, "R_DrawStretchRaw: size is not a power of two (%i x %i)", rawWidth, rawHeight );
 
 		if (rawWidth > glConfig.max_texsize || rawHeight > glConfig.max_texsize)
-			VID_Error(ERR_DROP, "R_DrawStretchRaw: size exceeds hardware limits (%i > %i or %i > %i)", rawWidth, glConfig.max_texsize, rawHeight, glConfig.max_texsize);
+			VID_Error( ERR_DROP, "R_DrawStretchRaw: size exceeds hardware limits (%i > %i or %i > %i)", rawWidth, glConfig.max_texsize, rawHeight, glConfig.max_texsize );
 	}
 
 	// Update the texture as appropriate

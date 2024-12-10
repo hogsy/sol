@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void	Svcmd_Test_f (void)
 {
-	safe_cprintf (NULL, PRINT_HIGH, "Svcmd_Test_f()\n");
+	safe_cprintf ( NULL, PRINT_HIGH, "Svcmd_Test_f()\n" );
 }
 
 /*
@@ -93,7 +93,7 @@ static qboolean StringToFilter (char *s, ipfilter_t *f)
 	{
 		if (*s < '0' || *s > '9')
 		{
-			safe_cprintf(NULL, PRINT_HIGH, "Bad filter address: %s\n", s);
+			safe_cprintf( NULL, PRINT_HIGH, "Bad filter address: %s\n", s );
 			return false;
 		}
 		
@@ -163,7 +163,7 @@ void SVCmd_AddIP_f (void)
 	int		i;
 	
 	if (gi.argc() < 3) {
-		safe_cprintf(NULL, PRINT_HIGH, "Usage:  addip <ip-mask>\n");
+		safe_cprintf( NULL, PRINT_HIGH, "Usage:  addip <ip-mask>\n" );
 		return;
 	}
 
@@ -174,7 +174,7 @@ void SVCmd_AddIP_f (void)
 	{
 		if (numipfilters == MAX_IPFILTERS)
 		{
-			safe_cprintf (NULL, PRINT_HIGH, "IP filter list is full\n");
+			safe_cprintf ( NULL, PRINT_HIGH, "IP filter list is full\n" );
 			return;
 		}
 		numipfilters++;
@@ -195,7 +195,7 @@ void SVCmd_RemoveIP_f (void)
 	int			i, j;
 
 	if (gi.argc() < 3) {
-		safe_cprintf(NULL, PRINT_HIGH, "Usage:  sv removeip <ip-mask>\n");
+		safe_cprintf( NULL, PRINT_HIGH, "Usage:  sv removeip <ip-mask>\n" );
 		return;
 	}
 
@@ -209,10 +209,10 @@ void SVCmd_RemoveIP_f (void)
 			for (j=i+1 ; j<numipfilters ; j++)
 				ipfilters[j-1] = ipfilters[j];
 			numipfilters--;
-			safe_cprintf (NULL, PRINT_HIGH, "Removed.\n");
+			safe_cprintf ( NULL, PRINT_HIGH, "Removed.\n" );
 			return;
 		}
-	safe_cprintf (NULL, PRINT_HIGH, "Didn't find %s.\n", gi.argv(2));
+	safe_cprintf ( NULL, PRINT_HIGH, "Didn't find %s.\n", gi.argv( 2 ) );
 }
 
 /*
@@ -225,11 +225,11 @@ void SVCmd_ListIP_f (void)
 	int		i;
 	byte	b[4];
 
-	safe_cprintf (NULL, PRINT_HIGH, "Filter list:\n");
+	safe_cprintf ( NULL, PRINT_HIGH, "Filter list:\n" );
 	for (i=0 ; i<numipfilters ; i++)
 	{
 		*(unsigned *)b = ipfilters[i].compare;
-		safe_cprintf (NULL, PRINT_HIGH, "%3i.%3i.%3i.%3i\n", b[0], b[1], b[2], b[3]);
+		safe_cprintf ( NULL, PRINT_HIGH, "%3i.%3i.%3i.%3i\n", b[ 0 ], b[ 1 ], b[ 2 ], b[ 3 ] );
 	}
 }
 
@@ -249,18 +249,18 @@ void SVCmd_WriteIP_f (void)
 	game = gi.cvar("game", "", 0);
 
 	if (!*game->string)
-		Com_sprintf (name, sizeof(name), "%s/listip.cfg", GAMEVERSION);
+		snprintf (name, sizeof(name), "%s/listip.cfg", GAMEVERSION);
 	else
-		Com_sprintf (name, sizeof(name), "%s/listip.cfg", game->string); */
+		snprintf (name, sizeof(name), "%s/listip.cfg", game->string); */
 	// Knightmare- use SavegameDir() instead for compatibility on all platforms
-	Com_sprintf (name, sizeof(name), "%s/listip.cfg", SavegameDir());
+	snprintf (name, sizeof(name), "%s/listip.cfg", SavegameDir());
 
-	safe_cprintf (NULL, PRINT_HIGH, "Writing %s.\n", name);
+	safe_cprintf ( NULL, PRINT_HIGH, "Writing %s.\n", name );
 
 	f = fopen (name, "wb");
 	if (!f)
 	{
-		safe_cprintf (NULL, PRINT_HIGH, "Couldn't open %s\n", name);
+		safe_cprintf ( NULL, PRINT_HIGH, "Couldn't open %s\n", name );
 		return;
 	}
 	
@@ -289,19 +289,19 @@ void	ServerCommand (void)
 	char	*cmd;
 
 	cmd = gi.argv(1);
-	if (Q_stricmp (cmd, "test") == 0)
+	if (Q_stricmp ( cmd, "test" ) == 0)
 		Svcmd_Test_f ();
-	else if (Q_stricmp (cmd, "addip") == 0)
+	else if (Q_stricmp ( cmd, "addip" ) == 0)
 		SVCmd_AddIP_f ();
-	else if (Q_stricmp (cmd, "removeip") == 0)
+	else if (Q_stricmp ( cmd, "removeip" ) == 0)
 		SVCmd_RemoveIP_f ();
-	else if (Q_stricmp (cmd, "listip") == 0)
+	else if (Q_stricmp ( cmd, "listip" ) == 0)
 		SVCmd_ListIP_f ();
-	else if (Q_stricmp (cmd, "writeip") == 0)
+	else if (Q_stricmp ( cmd, "writeip" ) == 0)
 		SVCmd_WriteIP_f ();
 
 // ACEBOT_ADD
-	else if (Q_stricmp (cmd, "acedebug") == 0)
+	else if (Q_stricmp ( cmd, "acedebug" ) == 0)
  		if (strcmp(gi.argv(2),"on")==0)
 		{
 			safe_bprintf (PRINT_MEDIUM, "ACE: Debug Mode On\n");
@@ -313,7 +313,7 @@ void	ServerCommand (void)
 			debug_mode = false;
 		}
 
-	else if (Q_stricmp (cmd, "addbot") == 0)
+	else if (Q_stricmp ( cmd, "addbot" ) == 0)
 	{
 		if (!deathmatch->value) // Knightmare added
 		{
@@ -327,17 +327,17 @@ void	ServerCommand (void)
 	}	
 
 	// removebot
-    else if (Q_stricmp (cmd, "removebot") == 0)
+    else if (Q_stricmp ( cmd, "removebot" ) == 0)
     	ACESP_RemoveBot (gi.argv(2));
 	// Node saving
-	else if (Q_stricmp (cmd, "savenodes") == 0)
+	else if (Q_stricmp ( cmd, "savenodes" ) == 0)
     	ACEND_SaveNodes ();
 // ACEBOT_END
 	// Knightmare added- DM pause
-    else if(Q_stricmp (cmd, "dmpause") == 0)
+    else if(Q_stricmp ( cmd, "dmpause" ) == 0)
 	{
 		if (!deathmatch->value) {
-			safe_cprintf (NULL, PRINT_HIGH, "Dmpause only works in deathmatch.\n", cmd);
+			safe_cprintf ( NULL, PRINT_HIGH, "Dmpause only works in deathmatch.\n", cmd );
 			paused = false;
 			return;
 		}
@@ -359,6 +359,6 @@ void	ServerCommand (void)
 		}
 	}
 	else
-		safe_cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);
+		safe_cprintf ( NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd );
 }
 

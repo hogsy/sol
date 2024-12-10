@@ -40,7 +40,7 @@ qboolean CL_StringSetParams (char modifier, int *red, int *green, int *blue, int
 		return false;
 
 	if (!alt_text_color)
-		alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
+		alt_text_color = Cvar_Get ( "alt_text_color", "2", CVAR_ARCHIVE );
 
 	switch (modifier)
 	{

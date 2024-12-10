@@ -65,7 +65,7 @@ void M_LoadGameCallback (void *self)
 	if ( UI_SaveshotIsValid(s_loadgame_gamelist.curValue) && (s_loadgame_gamelist.curValue != 0) )	// autosave has no saveshot, but uses levelshot instead
 	{
 	//	Com_sprintf(ui_loadshotname, sizeof(ui_loadshotname), "/save/kmq2save%03i/shot.jpg", s_loadgame_gamelist.curValue);
-		Com_sprintf(ui_loadshotname, sizeof(ui_loadshotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, s_loadgame_gamelist.curValue);
+		snprintf(ui_loadshotname, sizeof(ui_loadshotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, s_loadgame_gamelist.curValue);
 		scr_load_saveshot = ui_loadshotname; }
 	else {
 		scr_load_saveshot = NULL;

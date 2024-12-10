@@ -160,7 +160,7 @@ static qboolean S_OpenBackgroundTrack (const char *name, bgTrack_t *track)
 #ifdef OGG_DIRECT_FILE
 	do {
 		path = FS_NextPath( path );
-		Com_sprintf( filename, sizeof(filename), "%s/%s", path, name );
+		snprintf( filename, sizeof(filename), "%s/%s", path, name );
 		if ( (track->file = fopen(filename, "rb")) != 0)
 			break;
 	} while ( path );
@@ -172,7 +172,7 @@ static qboolean S_OpenBackgroundTrack (const char *name, bgTrack_t *track)
 	{	// Check for import path for this file in ogg list
 		for (i = 0; i < ogg_numfiles; i++)
 		{
-			if ( !Q_stricmp(ogg_filelist[i].name, (char *)name) ) {
+			if ( !Q_stricmp( ogg_filelist[ i ].name, ( char * ) name ) ) {
 				if ( (ogg_filelist[i].importFilePath != NULL) && (ogg_filelist[i].importFilePath[0] != 0) ) {
 					FS_FOpenDirectFile (ogg_filelist[i].importFilePath, &track->file, FS_READ);
 				}
@@ -611,13 +611,13 @@ void S_OGG_Init (void)
 		return;
 
 	// Cvars
-	ogg_loopcount = Cvar_Get ("ogg_loopcount", "5", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ogg_loopcount", "Sets number of music track loops until the ambient music track is played.");
-	ogg_ambient_track = Cvar_Get ("ogg_ambient_track", "track11", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ogg_ambient_track", "Sets the name of the Ogg Vorbis file used for the ambient music track.");
+	ogg_loopcount = Cvar_Get ( "ogg_loopcount", "5", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ogg_loopcount", "Sets number of music track loops until the ambient music track is played." );
+	ogg_ambient_track = Cvar_Get ( "ogg_ambient_track", "track11", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ogg_ambient_track", "Sets the name of the Ogg Vorbis file used for the ambient music track." );
 
 	// Console commands
-	Cmd_AddCommand ("ogg", S_OGG_ParseCmd);
+	Cmd_AddCommand ( "ogg", S_OGG_ParseCmd );
 
 	// Build list of files
 	Com_Printf("Searching for Ogg Vorbis files...\n");
@@ -675,7 +675,7 @@ void S_OGG_Shutdown (void)
 	ogg_numImportFiles = 0;
 
 	// Remove console commands
-	Cmd_RemoveCommand ("ogg");
+	Cmd_RemoveCommand ( "ogg" );
 
 	ogg_started = false;
 }
@@ -822,11 +822,11 @@ void S_OGG_LoadFileList (void)
 					}
 
 					// Get import root path for this ogg_json script
-					if ( ( !Q_stricmp(oi.importGame, "Quake") || !Q_stricmp(oi.importGame, "Quake1") || !Q_stricmp(oi.importGame, "Quake1RR") ) &&
+					if ( ( !Q_stricmp( oi.importGame, "Quake" ) || !Q_stricmp( oi.importGame, "Quake1" ) || !Q_stricmp( oi.importGame, "Quake1RR" ) ) &&
 						(fs_quakeimportpath != NULL) && (fs_quakeimportpath->string[0] != 0) ) {
 						importRootPath = fs_quakeimportpath->string;
 					}
-					else if ( !Q_stricmp(oi.importGame, "Quake2RR")  &&
+					else if ( !Q_stricmp( oi.importGame, "Quake2RR" )  &&
 						(fs_quake2rrimportpath != NULL) && (fs_quake2rrimportpath->string[0] != 0) ) {
 						importRootPath = fs_quake2rrimportpath->string;
 					}
@@ -839,12 +839,12 @@ void S_OGG_LoadFileList (void)
 						{
 							if (oi.importPath[j][0] != 0)
 							{
-								Com_sprintf (importFullPath, sizeof(importFullPath), "%s/%s", importRootPath, oi.importPath[j]);
+								snprintf (importFullPath, sizeof(importFullPath), "%s/%s", importRootPath, oi.importPath[j]);
 								if ( FS_DirectFileExists(importFullPath) )
 								{
 									nameLen = strlen(oi.virtualName);
-									if ( Q_stricmp(oi.virtualName + nameLen - 4, ".ogg") != 0 ) {
-										Com_sprintf (ogg_filelist[ogg_numfiles].name, sizeof(ogg_filelist[ogg_numfiles].name), "%s.ogg", oi.virtualName);
+									if ( Q_stricmp( oi.virtualName + nameLen - 4, ".ogg" ) != 0 ) {
+										snprintf (ogg_filelist[ogg_numfiles].name, sizeof(ogg_filelist[ogg_numfiles].name), "%s.ogg", oi.virtualName);
 									}
 									else {
 										Q_strncpyz (ogg_filelist[ogg_numfiles].name, sizeof(ogg_filelist[ogg_numfiles].name), oi.virtualName);
@@ -891,7 +891,7 @@ void S_OGG_PlayCmd (void)
 		Com_Printf("Usage: ogg play {track}\n");
 		return;
 	}
-	Com_sprintf(name, sizeof(name), "music/%s.ogg", Cmd_Argv(2) );
+	snprintf(name, sizeof(name), "music/%s.ogg", Cmd_Argv(2) );
 	S_StartBackgroundTrack (name, name);
 }
 

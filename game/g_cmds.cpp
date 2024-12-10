@@ -155,7 +155,7 @@ void laser_sight_think (edict_t *laser)
 		return;
 	player = laser->activator;
 
-	AngleVectors (player->client->v_angle, forward, right, NULL);
+	AngleVectors (player->client->v_angle, forward, right, nullptr );
 	VectorSet (offset, 16, 8, player->viewheight-8);
 
 	if (player->client->pers.hand == LEFT_HANDED)
@@ -245,7 +245,7 @@ void SaveEntProps (edict_t *e, FILE *f)
 		"deathtarget = %s\n"
 		"combattarget= %s\n"
 		"dmgteam     = %s\n",
-		e->movetype, e->flags, e->freetime, e->message, e->key_message,
+		e->movetype, e->flags, e->freetime, e->message.c_str(), e->key_message,
 		e->classname, e->spawnflags, e->moreflags, e->timestamp, e->angle, e->target,
 		e->targetname, e->killtarget, e->team, e->pathtarget, e->deathtarget,
 		e->combattarget, e->dmgteam);
@@ -388,11 +388,11 @@ void ShiftItem (edict_t *ent, int direction)
 
 	if (!ent->client) return;
 
-	target = LookingAt(ent,0,NULL,NULL);
+	target = LookingAt(ent,0, nullptr, nullptr );
 	if (!target) return;
 
 	ent->client->shift_dir = direction;
-	
+
 	VectorClear(move);
 	VectorCopy(ent->s.origin,start);
 	VectorAdd(target->s.origin,target->origin_offset,end);
@@ -624,7 +624,7 @@ void Cmd_Give_f (edict_t *ent)
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n" );
 		return;
 	}
 
@@ -633,11 +633,11 @@ void Cmd_Give_f (edict_t *ent)
 
 	name = gi.args();
 
-	if (!Q_stricmp(name,"jetpack"))
+	if (!Q_stricmp( name, "jetpack" ) )
 	{
 		if (!developer->value)
 		{
-			safe_cprintf (ent, PRINT_HIGH, "Jetpack not available via give cheat\n");
+			safe_cprintf ( ent, PRINT_HIGH, "Jetpack not available via give cheat\n" );
 			return;
 		}
 		else
@@ -649,23 +649,23 @@ void Cmd_Give_f (edict_t *ent)
 	}
 	if (!developer->value)
 	{
-		if ( !Q_stricmp(name,"flashlight")      ||
-			!Q_stricmp(name,"fuel")            ||
-			!Q_stricmp(name,"homing rockets") ||
-			!Q_stricmp(name,"stasis generator")   )
+		if ( !Q_stricmp( name, "flashlight" )      ||
+			!Q_stricmp( name, "fuel" )            ||
+			!Q_stricmp( name, "homing rockets" ) ||
+			!Q_stricmp( name, "stasis generator" )   )
 		{
 
-			safe_cprintf (ent, PRINT_HIGH, "%s not available via give cheat\n",name);
+			safe_cprintf ( ent, PRINT_HIGH, "%s not available via give cheat\n", name );
 			return;
 		}
 	}
 
-	if (Q_stricmp(name, "all") == 0)
+	if (Q_stricmp( name, "all" ) == 0)
 		give_all = true;
 	else
 		give_all = false;
 
-	if (give_all || Q_stricmp(gi.argv(1), "health") == 0)
+	if (give_all || Q_stricmp( gi.argv( 1 ), "health" ) == 0)
 	{
 		if (gi.argc() == 3)
 			ent->health = atoi(gi.argv(2));
@@ -675,7 +675,7 @@ void Cmd_Give_f (edict_t *ent)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "weapons") == 0)
+	if (give_all || Q_stricmp( name, "weapons" ) == 0)
 	{
 		for (i=0 ; i<game.num_items ; i++)
 		{
@@ -690,7 +690,7 @@ void Cmd_Give_f (edict_t *ent)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "ammo") == 0)
+	if (give_all || Q_stricmp( name, "ammo" ) == 0)
 	{
 		for (i=0 ; i<game.num_items ; i++)
 		{
@@ -699,9 +699,9 @@ void Cmd_Give_f (edict_t *ent)
 				continue;
 			if (!(it->flags & IT_AMMO))
 				continue;
-			if (it->classname && !Q_stricmp(it->classname,"ammo_fuel") && !developer->value)
+			if (it->classname && !Q_stricmp( it->classname, "ammo_fuel" ) && !developer->value)
 				continue;
-			if (it->classname && !Q_stricmp(it->classname,"ammo_homing_missiles") && !developer->value)
+			if (it->classname && !Q_stricmp( it->classname, "ammo_homing_missiles" ) && !developer->value)
 				continue;
 			Add_Ammo (ent, it, 1000);
 		}
@@ -709,7 +709,7 @@ void Cmd_Give_f (edict_t *ent)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "armor") == 0)
+	if (give_all || Q_stricmp( name, "armor" ) == 0)
 	{
 		gitem_armor_t	*info;
 
@@ -727,13 +727,13 @@ void Cmd_Give_f (edict_t *ent)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "Power Shield") == 0)
+	if (give_all || Q_stricmp( name, "Power Shield" ) == 0)
 	{
 		it = FindItem("Power Shield");
 		it_ent = G_Spawn();
 		it_ent->classname = it->classname;
 		SpawnItem (it_ent, it);
-		Touch_Item (it_ent, ent, NULL, NULL);
+		Touch_Item (it_ent, ent, nullptr, nullptr );
 		if (it_ent->inuse)
 			G_FreeEdict(it_ent);
 
@@ -750,11 +750,11 @@ void Cmd_Give_f (edict_t *ent)
 				continue;
 			if (it->flags & (IT_ARMOR|IT_WEAPON|IT_AMMO|IT_TECH)) // exclude ctf techs
 				continue;
-			if (it->classname && !Q_stricmp(it->classname,"item_jetpack") && !developer->value)
+			if (it->classname && !Q_stricmp( it->classname, "item_jetpack" ) && !developer->value)
 				continue;
-			if (it->classname && !Q_stricmp(it->classname,"item_flashlight") && !developer->value)
+			if (it->classname && !Q_stricmp( it->classname, "item_flashlight" ) && !developer->value)
 				continue;
-			if (it->classname && !Q_stricmp(it->classname,"item_freeze") && !developer->value)
+			if (it->classname && !Q_stricmp( it->classname, "item_freeze" ) && !developer->value)
 				continue;
 			ent->client->pers.inventory[i] = 1;
 		}
@@ -768,14 +768,14 @@ void Cmd_Give_f (edict_t *ent)
 		it = FindItem (name);
 		if (!it)
 		{
-			safe_cprintf (ent, PRINT_HIGH, "unknown item\n");
+			safe_cprintf ( ent, PRINT_HIGH, "unknown item\n" );
 			return;
 		}
 	}
 
 	if (!it->pickup)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "non-pickup item\n");
+		safe_cprintf ( ent, PRINT_HIGH, "non-pickup item\n" );
 		return;
 	}
 
@@ -804,7 +804,7 @@ void Cmd_Give_f (edict_t *ent)
 		it_ent = G_Spawn();
 		it_ent->classname = it->classname;
 		SpawnItem (it_ent, it);
-		Touch_Item (it_ent, ent, NULL, NULL);
+		Touch_Item (it_ent, ent, nullptr, nullptr );
 		if (it_ent->inuse)
 			G_FreeEdict(it_ent);
 	}
@@ -826,7 +826,7 @@ void Cmd_God_f (edict_t *ent)
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n" );
 		return;
 	}
 
@@ -836,7 +836,7 @@ void Cmd_God_f (edict_t *ent)
 	else
 		msg = "godmode ON\n";
 
-	safe_cprintf (ent, PRINT_HIGH, msg);
+	safe_cprintf ( ent, PRINT_HIGH, msg );
 }
 
 
@@ -855,7 +855,7 @@ void Cmd_Notarget_f (edict_t *ent)
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n" );
 		return;
 	}
 
@@ -865,7 +865,7 @@ void Cmd_Notarget_f (edict_t *ent)
 	else
 		msg = "notarget ON\n";
 
-	safe_cprintf (ent, PRINT_HIGH, msg);
+	safe_cprintf ( ent, PRINT_HIGH, msg );
 }
 
 
@@ -882,7 +882,7 @@ void Cmd_Noclip_f (edict_t *ent)
 
 	if (deathmatch->value && !sv_cheats->value)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n" );
 		return;
 	}
 
@@ -899,7 +899,7 @@ void Cmd_Noclip_f (edict_t *ent)
 		msg = "noclip ON\n";
 	}
 
-	safe_cprintf (ent, PRINT_HIGH, msg);
+	safe_cprintf ( ent, PRINT_HIGH, msg );
 }
 
 
@@ -920,17 +920,17 @@ void Cmd_Use_f (edict_t *ent)
 	it = FindItem (s);
 	if (!it)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
+		safe_cprintf ( ent, PRINT_HIGH, "unknown item: %s\n", s );
 		return;
 	}
 	if (!it->use)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Item is not usable.\n" );
 		return;
 	}
 	index = ITEM_INDEX(it);
 #ifdef JETPACK_MOD
-	if (!Q_stricmp(s, "jetpack"))
+	if (!Q_stricmp( s, "jetpack" ) )
 	{
 		// Special case - turns on/off
 		if (!ent->client->jetpack)
@@ -939,12 +939,12 @@ void Cmd_Use_f (edict_t *ent)
 				return;
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+				safe_cprintf ( ent, PRINT_HIGH, "Out of item: %s\n", s );
 				return;
 			}
 			else if (ent->client->pers.inventory[fuel_index] <= 0)
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No fuel for: %s\n", s);
+				safe_cprintf ( ent, PRINT_HIGH, "No fuel for: %s\n", s );
 				return;
 			}
 		}
@@ -952,7 +952,7 @@ void Cmd_Use_f (edict_t *ent)
 		return;
 	}
 #endif
-	if (!Q_stricmp(s, "stasis generator"))
+	if (!Q_stricmp( s, "stasis generator" ) )
 	{
 		// Special case - turn freeze off if already on
 		if (level.freeze)
@@ -964,7 +964,7 @@ void Cmd_Use_f (edict_t *ent)
 	}
 	if (!ent->client->pers.inventory[index])
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+		safe_cprintf ( ent, PRINT_HIGH, "Out of item: %s\n", s );
 		return;
 	}
 
@@ -986,12 +986,12 @@ void Cmd_Drop_f (edict_t *ent)
 	char		*s;
 
 //ZOID--special case for tech powerups
-	if (Q_stricmp(gi.args(), "tech") == 0 && (it = CTFWhat_Tech(ent)) != NULL) {
+	if (Q_stricmp( gi.args(), "tech" ) == 0 && (it = CTFWhat_Tech(ent)) != nullptr ) {
 		it->drop (ent, it);
 		return;
 	}
 //ZOID
-	if (Q_stricmp(gi.args(), "flag") == 0 && (it = CTFWhat_Flag(ent)) != NULL) {
+	if (Q_stricmp( gi.args(), "flag" ) == 0 && (it = CTFWhat_Flag(ent)) != nullptr ) {
 		it->drop (ent, it);
 		return;
 	}
@@ -1000,18 +1000,18 @@ void Cmd_Drop_f (edict_t *ent)
 	it = FindItem (s);
 	if (!it)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "unknown item: %s\n", s);
+		safe_cprintf ( ent, PRINT_HIGH, "unknown item: %s\n", s );
 		return;
 	}
 	if (!it->drop)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Item is not dropable.\n" );
 		return;
 	}
 	index = ITEM_INDEX(it);
 	if (!ent->client->pers.inventory[index])
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+		safe_cprintf ( ent, PRINT_HIGH, "Out of item: %s\n", s );
 		return;
 	}
 
@@ -1100,19 +1100,19 @@ void Cmd_InvUse_f (edict_t *ent)
 
 	if (ent->client->pers.selected_item == -1)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "No item to use.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "No item to use.\n" );
 		return;
 	}
 
 	it = &itemlist[ent->client->pers.selected_item];
 	if (!it->use)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Item is not usable.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Item is not usable.\n" );
 		return;
 	}
 
 #ifdef JETPACK_MOD
-	if (!Q_stricmp(it->classname,"item_jetpack"))
+	if (!Q_stricmp( it->classname, "item_jetpack" ) )
 	{
 		if (!ent->client->jetpack)
 		{
@@ -1120,13 +1120,13 @@ void Cmd_InvUse_f (edict_t *ent)
 				return;
 			if (ent->client->pers.inventory[fuel_index] <= 0)
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No fuel for jetpack\n" );
+				safe_cprintf ( ent, PRINT_HIGH, "No fuel for jetpack\n" );
 				return;
 			}
 		}
 	}
 #endif
-	
+
 	it->use (ent, it);
 }
 
@@ -1242,14 +1242,14 @@ void Cmd_InvDrop_f (edict_t *ent)
 
 	if (ent->client->pers.selected_item == -1)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "No item to drop.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "No item to drop.\n" );
 		return;
 	}
 
 	it = &itemlist[ent->client->pers.selected_item];
 	if (!it->drop)
 	{
-		safe_cprintf (ent, PRINT_HIGH, "Item is not dropable.\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Item is not dropable.\n" );
 		return;
 	}
 	it->drop (ent, it);
@@ -1340,7 +1340,7 @@ void Cmd_Players_f (edict_t *ent)
 
 	for (i = 0 ; i < count ; i++)
 	{
-		Com_sprintf (small, sizeof(small), "%3i %s\n",
+		snprintf (small, sizeof(small), "%3i %s\n",
 			game.clients[index[i]].ps.stats[STAT_FRAGS],
 			game.clients[index[i]].pers.netname);
 		if (strlen (small) + strlen(large) > sizeof(large) - 100 )
@@ -1353,7 +1353,7 @@ void Cmd_Players_f (edict_t *ent)
 		Q_strncatz (large, sizeof(large), small);
 	}
 
-	safe_cprintf (ent, PRINT_HIGH, "%s\n%i players\n", large, count);
+	safe_cprintf ( ent, PRINT_HIGH, "%s\n%i players\n", large, count );
 }
 
 /*
@@ -1379,28 +1379,28 @@ void Cmd_Wave_f (edict_t *ent)
 	switch (i)
 	{
 	case 0:
-		safe_cprintf (ent, PRINT_HIGH, "flipoff\n");
+		safe_cprintf ( ent, PRINT_HIGH, "flipoff\n" );
 		ent->s.frame = FRAME_flip01-1;
 		ent->client->anim_end = FRAME_flip12;
 		break;
 	case 1:
-		safe_cprintf (ent, PRINT_HIGH, "salute\n");
+		safe_cprintf ( ent, PRINT_HIGH, "salute\n" );
 		ent->s.frame = FRAME_salute01-1;
 		ent->client->anim_end = FRAME_salute11;
 		break;
 	case 2:
-		safe_cprintf (ent, PRINT_HIGH, "taunt\n");
+		safe_cprintf ( ent, PRINT_HIGH, "taunt\n" );
 		ent->s.frame = FRAME_taunt01-1;
 		ent->client->anim_end = FRAME_taunt17;
 		break;
 	case 3:
-		safe_cprintf (ent, PRINT_HIGH, "wave\n");
+		safe_cprintf ( ent, PRINT_HIGH, "wave\n" );
 		ent->s.frame = FRAME_wave01-1;
 		ent->client->anim_end = FRAME_wave11;
 		break;
 	case 4:
 	default:
-		safe_cprintf (ent, PRINT_HIGH, "point\n");
+		safe_cprintf ( ent, PRINT_HIGH, "point\n" );
 		ent->s.frame = FRAME_point01-1;
 		ent->client->anim_end = FRAME_point12;
 		break;
@@ -1417,18 +1417,18 @@ qboolean CheckFlood(edict_t *ent)
 		cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
-			safe_cprintf (ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
-				(int)(cl->flood_locktill - level.time));
+			safe_cprintf ( ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
+			              ( int ) ( cl->flood_locktill - level.time ) );
             return true;
         }
         i = cl->flood_whenhead - flood_msgs->value + 1;
         if (i < 0)
             i = (sizeof(cl->flood_when)/sizeof(cl->flood_when[0])) + i;
-		if (cl->flood_when[i] && 
+		if (cl->flood_when[i] &&
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
-			safe_cprintf (ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
-				(int)flood_waitdelay->value);
+			safe_cprintf ( ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
+			              ( int ) flood_waitdelay->value );
             return true;
         }
 		cl->flood_whenhead = (cl->flood_whenhead + 1) %
@@ -1458,9 +1458,9 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		team = false;
 
 	if (team)
-		Com_sprintf (text, sizeof(text), "(%s): ", ent->client->pers.netname);
+		snprintf (text, sizeof(text), "(%s): ", ent->client->pers.netname);
 	else
-		Com_sprintf (text, sizeof(text), "%s: ", ent->client->pers.netname);
+		snprintf (text, sizeof(text), "%s: ", ent->client->pers.netname);
 
 	if (arg0)
 	{
@@ -1496,18 +1496,18 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		cl = ent->client;
 
         if (level.time < cl->flood_locktill) {
-			safe_cprintf (ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
-				(int)(cl->flood_locktill - level.time));
+			safe_cprintf ( ent, PRINT_HIGH, "You can't talk for %d more seconds\n",
+			              ( int ) ( cl->flood_locktill - level.time ) );
             return;
         }
         i = cl->flood_whenhead - flood_msgs->value + 1;
         if (i < 0)
             i = (sizeof(cl->flood_when)/sizeof(cl->flood_when[0])) + i;
-		if (cl->flood_when[i] && 
+		if (cl->flood_when[i] &&
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
-			safe_cprintf (ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
-				(int)flood_waitdelay->value);
+			safe_cprintf ( ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",
+			              ( int ) flood_waitdelay->value );
             return;
         }
 		cl->flood_whenhead = (cl->flood_whenhead + 1) %
@@ -1516,7 +1516,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 	}
 
 	if (dedicated->value)
-		safe_cprintf (NULL, PRINT_CHAT, "%s", text);
+		safe_cprintf ( nullptr, PRINT_CHAT, "%s", text );
 
 	for (j = 1; j <= game.maxclients; j++)
 	{
@@ -1530,7 +1530,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 			if (!OnSameTeam(ent, other))
 				continue;
 		}
-		safe_cprintf (other, PRINT_CHAT, "%s", text);
+		safe_cprintf ( other, PRINT_CHAT, "%s", text );
 	}
 }
 
@@ -1564,7 +1564,7 @@ void Cmd_PlayerList_f (edict_t *ent)
 		if (!e2->inuse)
 			continue;
 
-		Com_sprintf (st, sizeof(st), "%02d:%02d %4d %3d %s%s\n",
+		snprintf (st, sizeof(st), "%02d:%02d %4d %3d %s%s\n",
 			(level.framenum - e2->client->resp.enterframe) / 600,
 			((level.framenum - e2->client->resp.enterframe) % 600)/10,
 			e2->client->ping,
@@ -1572,14 +1572,14 @@ void Cmd_PlayerList_f (edict_t *ent)
 			e2->client->pers.netname,
 			e2->client->resp.spectator ? " (spectator)" : "");
 		if (strlen(text) + strlen(st) > sizeof(text) - 50) {
-			Com_sprintf (text+strlen(text), sizeof(text)-1-strlen(text), "And more...\n");
-			safe_cprintf (ent, PRINT_HIGH, "%s", text);
+			snprintf (text+strlen(text), sizeof(text)-1-strlen(text), "And more...\n");
+			safe_cprintf ( ent, PRINT_HIGH, "%s", text );
 			return;
 		}
 	//	strncat(text, st);
 		Q_strncatz (text, sizeof(text), st);
 	}
-	safe_cprintf (ent, PRINT_HIGH, "%s", text);
+	safe_cprintf ( ent, PRINT_HIGH, "%s", text );
 }
 
 // from Yamagi Q2
@@ -1601,24 +1601,24 @@ static int get_ammo_usage (gitem_t *weap)
 
 static gitem_t *cycle_weapon (edict_t *ent)
 {
-	gclient_t	*cl = NULL;
-	gitem_t		*noammo_fallback = NULL;
-	gitem_t		*noweap_fallback = NULL;
-	gitem_t		*weap = NULL;
-	gitem_t		*ammo = NULL;
+	gclient_t	*cl = nullptr;
+	gitem_t		*noammo_fallback = nullptr;
+	gitem_t		*noweap_fallback = nullptr;
+	gitem_t		*weap = nullptr;
+	gitem_t		*ammo = nullptr;
 	int			i;
 	int			start;
 	int			num_weaps;
-	const char	*weapname = NULL;
+	const char	*weapname = nullptr;
 
 	if (!ent) {
-		return NULL;
+		return nullptr;
 	}
 
 	cl = ent->client;
 
 	if (!cl) {
-		return NULL;
+		return nullptr;
 	}
 
 	num_weaps = gi.argc();
@@ -1634,7 +1634,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	if (weapname)
 	{
 		for (i = 1; i < num_weaps; i++) {
-			if (Q_stricmp((char *)weapname, gi.argv(i)) == 0) {
+			if (Q_stricmp( ( char * ) weapname, gi.argv( i ) ) == 0) {
 				break;
 			}
 		}
@@ -1649,8 +1649,8 @@ static gitem_t *cycle_weapon (edict_t *ent)
 	}
 
 	start = i;
-	noammo_fallback = NULL;
-	noweap_fallback = NULL;
+	noammo_fallback = nullptr;
+	noweap_fallback = nullptr;
 
 	// find the first eligible weapon in the list we can switch to
 	do
@@ -1702,7 +1702,7 @@ static gitem_t *cycle_weapon (edict_t *ent)
 
 static void Cmd_CycleWeap_f (edict_t *ent)
 {
-	gitem_t		*weap = NULL;
+	gitem_t		*weap = nullptr;
 
 	if (!ent) {
 		return;
@@ -1736,18 +1736,18 @@ static gitem_t *preferred_weapon (edict_t *ent)
 	int			num_weaps;
 
 	if (!ent) {
-		return NULL;
+		return nullptr;
 	}
 
 	cl = ent->client;
 
 	if (!cl) {
-		return NULL;
+		return nullptr;
 	}
 
 	num_weaps = gi.argc();
-	noammo_fallback = NULL;
-	noweap_fallback = NULL;
+	noammo_fallback = nullptr;
+	noweap_fallback = nullptr;
 
 	// find the first eligible weapon in the list we can switch to
 	for (i = 1; i < num_weaps; i++)
@@ -1908,7 +1908,7 @@ void Cmd_Bbox_f (edict_t *ent)
 {
 	edict_t	*viewing;
 
-	viewing = LookingAt(ent, 0, NULL, NULL);
+	viewing = LookingAt(ent, 0, nullptr, nullptr );
 	if (!viewing) return;
 	DrawBBox(viewing);
 }
@@ -1951,12 +1951,12 @@ void SetSensitivities (edict_t *ent, qboolean reset)
 
 		if (crosshair->value != lazarus_crosshair->value)
 		{
-			Com_sprintf (string, sizeof(string), "crosshair %i\n", atoi(lazarus_crosshair->string));
+			snprintf (string, sizeof(string), "crosshair %i\n", atoi(lazarus_crosshair->string));
 			stuffcmd (ent, string);
 		}
 		if (cl_gun->value != lazarus_cl_gun->value)
 		{
-			Com_sprintf (string, sizeof(string), "cl_gun %i\n", atoi(lazarus_cl_gun->string));
+			snprintf (string, sizeof(string), "cl_gun %i\n", atoi(lazarus_cl_gun->string));
 			stuffcmd (ent, string);
 		}
 #endif
@@ -1970,14 +1970,14 @@ void SetSensitivities (edict_t *ent, qboolean reset)
 		float	ratio;
 
 		// save in lazarus_crosshair
-		Com_sprintf (string, sizeof(string), "lazarus_crosshair %i\n", atoi(crosshair->string));
+		snprintf (string, sizeof(string), "lazarus_crosshair %i\n", atoi(crosshair->string));
 		stuffcmd (ent, string);
-		Com_sprintf (string, sizeof(string), "crosshair 0\n");
+		snprintf (string, sizeof(string), "crosshair 0\n");
 		stuffcmd (ent, string);
 
-		Com_sprintf (string, sizeof(string), "lazarus_cl_gun %i\n", atoi(cl_gun->string));
+		snprintf (string, sizeof(string), "lazarus_cl_gun %i\n", atoi(cl_gun->string));
 		stuffcmd (ent, string);
-		Com_sprintf (string, sizeof(string), "cl_gun 0\n");
+		snprintf (string, sizeof(string), "cl_gun 0\n");
 		stuffcmd (ent, string);
 
 		if (!ent->client->sensitivities_init)
@@ -2004,7 +2004,7 @@ void SetSensitivities (edict_t *ent, qboolean reset)
 #endif
 	}
 #ifndef KMQUAKE2_ENGINE_MOD // engine has zoom autosensitivity
-	Com_sprintf (string, sizeof(string), "m_pitch %g;m_yaw %g;joy_pitchsensitivity %g;joy_yawsensitivity %g\n",
+	snprintf (string, sizeof(string), "m_pitch %g;m_yaw %g;joy_pitchsensitivity %g;joy_yawsensitivity %g\n",
 				m_pitch->value, m_yaw->value, joy_pitchsensitivity->value, joy_yawsensitivity->value);
 	stuffcmd (ent, string);
 #endif
@@ -2096,29 +2096,29 @@ void SpawnForcewall(edict_t	*player)
 	edict_t  *wall;
 	vec3_t	forward, point, start;
 	trace_t  tr;
-	
+
 	wall = G_Spawn();
 	VectorCopy(player->s.origin,start);
 	start[2] += player->viewheight;
-	AngleVectors(player->client->v_angle,forward,NULL,NULL);
+	AngleVectors(player->client->v_angle,forward, nullptr, nullptr );
 	VectorMA(start,	WORLD_SIZE,	forward,	point);	// was 8192
-	tr = gi.trace(start,NULL,NULL,point,player,MASK_SOLID);
+	tr = gi.trace(start, nullptr, nullptr, point,player,MASK_SOLID);
 	VectorCopy(tr.endpos,wall->s.origin);
-	
+
 	if (fabs(forward[0]) > fabs(forward[1]))
 	{
 		wall->pos1[0] = wall->pos2[0] = wall->s.origin[0];
 		wall->mins[0] =  -1;
 		wall->maxs[0] =   1;
-		
+
 		VectorCopy(wall->s.origin,point);
 		point[1] -= WORLD_SIZE;	// was 8192
-		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
+		tr = gi.trace(wall->s.origin, nullptr, nullptr, point, nullptr, MASK_SOLID);
 		wall->pos1[1] = tr.endpos[1];
 		wall->mins[1] = wall->pos1[1] - wall->s.origin[1];
-		
+
 		point[1] = wall->s.origin[1] + WORLD_SIZE;	// was 8192
-		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
+		tr = gi.trace(wall->s.origin, nullptr, nullptr, point, nullptr, MASK_SOLID);
 		wall->pos2[1] = tr.endpos[1];
 		wall->maxs[1] = wall->pos2[1] - wall->s.origin[1];
 	}
@@ -2126,27 +2126,27 @@ void SpawnForcewall(edict_t	*player)
 	{
 		VectorCopy(wall->s.origin,point);
 		point[0] -= WORLD_SIZE;	// was 8192
-		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
+		tr = gi.trace(wall->s.origin, nullptr, nullptr, point, nullptr, MASK_SOLID);
 		wall->pos1[0] = tr.endpos[0];
 		wall->mins[0] = wall->pos1[0] - wall->s.origin[0];
-		
+
 		point[0] = wall->s.origin[0] + WORLD_SIZE;	// was 8192
-		tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
+		tr = gi.trace(wall->s.origin, nullptr, nullptr, point, nullptr, MASK_SOLID);
 		wall->pos2[0] = tr.endpos[0];
 		wall->maxs[0] = wall->pos2[0] - wall->s.origin[0];
-		
+
 		wall->pos1[1] = wall->pos2[1] = wall->s.origin[1];
 		wall->mins[1] = -1;
 		wall->maxs[1] =  1;
 	}
 	wall->mins[2] = 0;
-	
+
 	VectorCopy(wall->s.origin,point);
 	point[2] = wall->s.origin[2] + WORLD_SIZE;	// was 8192
-	tr = gi.trace(wall->s.origin,NULL,NULL,point,NULL,MASK_SOLID);
+	tr = gi.trace(wall->s.origin, nullptr, nullptr, point, nullptr, MASK_SOLID);
 	wall->maxs[2] = tr.endpos[2] - wall->s.origin[2];
 	wall->pos1[2] = wall->pos2[2] = tr.endpos[2];
-	
+
 	wall->style = 208;	// Color from Q2 palette
 	wall->movetype = MOVETYPE_NONE;
 	wall->solid = SOLID_BBOX;
@@ -2163,21 +2163,20 @@ void SpawnForcewall(edict_t	*player)
 void ForcewallOff(edict_t *player)
 {
 	vec3_t	forward, point, start;
-	trace_t  tr;
-	
+
 	VectorCopy(player->s.origin,start);
 	start[2] += player->viewheight;
-	AngleVectors(player->client->v_angle,forward,NULL,NULL);
+	AngleVectors(player->client->v_angle,forward, nullptr, nullptr );
 	VectorMA(start, WORLD_SIZE, forward, point);	// was 8192
-	tr = gi.trace(start,NULL,NULL,point,player,MASK_SHOT);
-	if (Q_stricmp(tr.ent->classname,"forcewall"))
+	trace_t tr = gi.trace( start, nullptr, nullptr, point, player, MASK_SHOT );
+	if (Q_stricmp( tr.ent->classname.c_str(), "forcewall" ) )
 	{
-		safe_cprintf (player,PRINT_HIGH,"Not a forcewall!\n");
+		safe_cprintf ( player, PRINT_HIGH, "Not a forcewall!\n" );
 		return;
 	}
 	if (tr.ent->activator != player)
 	{
-		safe_cprintf (player,PRINT_HIGH,"You don't own this forcewall, bub!\n");
+		safe_cprintf ( player, PRINT_HIGH, "You don't own this forcewall, bub!\n" );
 		return;
 	}
 	G_FreeEdict(tr.ent);
@@ -2203,21 +2202,21 @@ void ClientCommand (edict_t *ent)
 
 	cmd = gi.argv(0);
 	if (gi.argc() < 2)
-		parm = NULL;
+		parm = nullptr;
 	else
 		parm = gi.argv(1);
 
-	if (Q_stricmp (cmd, "players") == 0)
+	if (Q_stricmp ( cmd, "players" ) == 0)
 	{
 		Cmd_Players_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "say") == 0)
+	if (Q_stricmp ( cmd, "say" ) == 0)
 	{
 		Cmd_Say_f (ent, false, false);
 		return;
 	}
-	if (Q_stricmp (cmd, "say_team") == 0)
+	if (Q_stricmp ( cmd, "say_team" ) == 0)
 	{
 		if (ctf->value)
 			CTFSay_Team (ent, gi.args());
@@ -2225,12 +2224,12 @@ void ClientCommand (edict_t *ent)
 			Cmd_Say_f (ent, true, false);
 		return;
 	}
-	if (Q_stricmp (cmd, "score") == 0)
+	if (Q_stricmp ( cmd, "score" ) == 0)
 	{
 		Cmd_Score_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "help") == 0)
+	if (Q_stricmp ( cmd, "help" ) == 0)
 	{
 		Cmd_Help_f (ent);
 		return;
@@ -2239,49 +2238,49 @@ void ClientCommand (edict_t *ent)
 	if (level.intermissiontime)
 		return;
 
-	if (Q_stricmp (cmd, "use") == 0)
+	if (Q_stricmp ( cmd, "use" ) == 0)
 		Cmd_Use_f (ent);
-	else if (Q_stricmp (cmd, "drop") == 0)
+	else if (Q_stricmp ( cmd, "drop" ) == 0)
 		Cmd_Drop_f (ent);
-	else if (Q_stricmp (cmd, "give") == 0)
+	else if (Q_stricmp ( cmd, "give" ) == 0)
 		Cmd_Give_f (ent);
-	else if (Q_stricmp (cmd, "god") == 0)
+	else if (Q_stricmp ( cmd, "god" ) == 0)
 		Cmd_God_f (ent);
-	else if (Q_stricmp (cmd, "notarget") == 0)
+	else if (Q_stricmp ( cmd, "notarget" ) == 0)
 		Cmd_Notarget_f (ent);
-	else if (Q_stricmp (cmd, "noclip") == 0)
+	else if (Q_stricmp ( cmd, "noclip" ) == 0)
 		Cmd_Noclip_f (ent);
-	else if (Q_stricmp (cmd, "inven") == 0)
+	else if (Q_stricmp ( cmd, "inven" ) == 0)
 		Cmd_Inven_f (ent);
-	else if (Q_stricmp (cmd, "invnext") == 0)
+	else if (Q_stricmp ( cmd, "invnext" ) == 0)
 		SelectNextItem (ent, -1);
-	else if (Q_stricmp (cmd, "invprev") == 0)
+	else if (Q_stricmp ( cmd, "invprev" ) == 0)
 		SelectPrevItem (ent, -1);
-	else if (Q_stricmp (cmd, "invnextw") == 0)
+	else if (Q_stricmp ( cmd, "invnextw" ) == 0)
 		SelectNextItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invprevw") == 0)
+	else if (Q_stricmp ( cmd, "invprevw" ) == 0)
 		SelectPrevItem (ent, IT_WEAPON);
-	else if (Q_stricmp (cmd, "invnextp") == 0)
+	else if (Q_stricmp ( cmd, "invnextp" ) == 0)
 		SelectNextItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invprevp") == 0)
+	else if (Q_stricmp ( cmd, "invprevp" ) == 0)
 		SelectPrevItem (ent, IT_POWERUP);
-	else if (Q_stricmp (cmd, "invuse") == 0)
+	else if (Q_stricmp ( cmd, "invuse" ) == 0)
 		Cmd_InvUse_f (ent);
-	else if (Q_stricmp (cmd, "invdrop") == 0)
+	else if (Q_stricmp ( cmd, "invdrop" ) == 0)
 		Cmd_InvDrop_f (ent);
-	else if (Q_stricmp (cmd, "weapprev") == 0)
+	else if (Q_stricmp ( cmd, "weapprev" ) == 0)
 		Cmd_WeapPrev_f (ent);
-	else if (Q_stricmp (cmd, "weapnext") == 0)
+	else if (Q_stricmp ( cmd, "weapnext" ) == 0)
 		Cmd_WeapNext_f (ent);
-	else if (Q_stricmp (cmd, "weaplast") == 0)
+	else if (Q_stricmp ( cmd, "weaplast" ) == 0)
 		Cmd_WeapLast_f (ent);
-	else if (Q_stricmp (cmd, "kill") == 0)
+	else if (Q_stricmp ( cmd, "kill" ) == 0)
 		Cmd_Kill_f (ent);
-	else if (Q_stricmp (cmd, "putaway") == 0)
+	else if (Q_stricmp ( cmd, "putaway" ) == 0)
 		Cmd_PutAway_f (ent);
-	else if (Q_stricmp (cmd, "wave") == 0)
+	else if (Q_stricmp ( cmd, "wave" ) == 0)
 		Cmd_Wave_f (ent);
-	else if (Q_stricmp(cmd, "playerlist") == 0)
+	else if (Q_stricmp( cmd, "playerlist" ) == 0)
 	{
 		if (ctf->value)
 			CTFPlayerList(ent);
@@ -2289,32 +2288,32 @@ void ClientCommand (edict_t *ent)
 			Cmd_PlayerList_f(ent);
 	}
 //ZOID
-	else if (Q_stricmp (cmd, "team") == 0)
+	else if (Q_stricmp ( cmd, "team" ) == 0)
 		CTFTeam_f (ent);
-	else if (Q_stricmp(cmd, "id") == 0)
+	else if (Q_stricmp( cmd, "id" ) == 0)
 		CTFID_f (ent);
-	else if (Q_stricmp(cmd, "yes") == 0)
+	else if (Q_stricmp( cmd, "yes" ) == 0)
 		CTFVoteYes(ent);
-	else if (Q_stricmp(cmd, "no") == 0)
+	else if (Q_stricmp( cmd, "no" ) == 0)
 		CTFVoteNo(ent);
-	else if (Q_stricmp(cmd, "ready") == 0)
+	else if (Q_stricmp( cmd, "ready" ) == 0)
 		CTFReady(ent);
-	else if (Q_stricmp(cmd, "notready") == 0)
+	else if (Q_stricmp( cmd, "notready" ) == 0)
 		CTFNotReady(ent);
-	else if (Q_stricmp(cmd, "ghost") == 0)
+	else if (Q_stricmp( cmd, "ghost" ) == 0)
 		CTFGhost(ent);
-	else if (Q_stricmp(cmd, "admin") == 0)
+	else if (Q_stricmp( cmd, "admin" ) == 0)
 		CTFAdmin(ent);
-	else if (Q_stricmp(cmd, "stats") == 0)
+	else if (Q_stricmp( cmd, "stats" ) == 0)
 		CTFStats(ent);
-	else if (Q_stricmp(cmd, "warp") == 0)
+	else if (Q_stricmp( cmd, "warp" ) == 0)
 		CTFWarp(ent);
-	else if (Q_stricmp(cmd, "boot") == 0)
+	else if (Q_stricmp( cmd, "boot" ) == 0)
 		CTFBoot(ent);
-	else if (Q_stricmp(cmd, "observer") == 0)
+	else if (Q_stricmp( cmd, "observer" ) == 0)
 		CTFObserver(ent);
 	// Knightmare added
-	else if (Q_stricmp(cmd, "ctfmenu") == 0)
+	else if (Q_stricmp( cmd, "ctfmenu" ) == 0)
 	{
 		if (!ctf->value)
 			return;
@@ -2327,7 +2326,7 @@ void ClientCommand (edict_t *ent)
 				CTFOpenJoinMenu(ent);
 		}
 	}
-	else if (Q_stricmp(cmd, "techcount") == 0)
+	else if (Q_stricmp( cmd, "techcount" ) == 0)
 		Cmd_TechCount_f (ent);
 
 //ZOID
@@ -2339,21 +2338,21 @@ void ClientCommand (edict_t *ent)
 #endif
 
 	// ==================== fog stuff =========================
-	else if (developer->value && !Q_stricmp(cmd,"fog"))
+	else if (developer->value && !Q_stricmp( cmd, "fog" ) )
 		Cmd_Fog_f(ent);
-	else if (developer->value && !Q_strncasecmp(cmd, "fog_", 4))
+	else if (developer->value && !Q_strncasecmp( cmd, "fog_", 4 ) )
 		Cmd_Fog_f(ent);
 	// ================ end fog stuff =========================
 
 	// tpp
-	else if (Q_stricmp (cmd, "thirdperson") == 0) {
+	else if (Q_stricmp ( cmd, "thirdperson" ) == 0) {
 		Cmd_Chasecam_Toggle (ent);
 		gi.cvar_set ("tpp", va("%i", ent->client->chasetoggle));
 	//	tpp->value = ent->client->chasetoggle;
 	}
 
 	// Knightmare- added entcount cmd
-	else if (Q_stricmp (cmd, "entcount") == 0)
+	else if (Q_stricmp ( cmd, "entcount" ) == 0)
 		Cmd_EntCount_f(ent);
 
 	// alternate attack mode
@@ -2363,7 +2362,7 @@ void ClientCommand (edict_t *ent)
 		Cmd_attack2_f (ent, true);*/
 
 	// zoom
-	else if (!Q_stricmp(cmd, "zoomin"))
+	else if (!Q_stricmp( cmd, "zoomin" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2379,7 +2378,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoomout"))
+	else if (!Q_stricmp( cmd, "zoomout" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2395,7 +2394,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoom"))
+	else if (!Q_stricmp( cmd, "zoom" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2421,7 +2420,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoomoff"))
+	else if (!Q_stricmp( cmd, "zoomoff" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2433,7 +2432,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoomon"))
+	else if (!Q_stricmp( cmd, "zoomon" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2451,7 +2450,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoominstop"))
+	else if (!Q_stricmp( cmd, "zoominstop" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2469,7 +2468,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "zoomoutstop"))
+	else if (!Q_stricmp( cmd, "zoomoutstop" ) )
 	{
 		if (!deathmatch->value && !coop->value && !ent->client->chasetoggle)
 		{
@@ -2486,7 +2485,7 @@ void ClientCommand (edict_t *ent)
 			}
 		}
 	}
-	else if (!Q_stricmp(cmd, "entlist"))
+	else if (!Q_stricmp( cmd, "entlist" ) )
 	{
 		if (parm)
 		{
@@ -2555,7 +2554,7 @@ void ClientCommand (edict_t *ent)
 				{
 					VectorAdd(e->s.origin,e->origin_offset,origin);
 					fprintf(f, "entity #%d, classname = %s at %s, velocity = %s\n", i,
-						( (e->classname && (e->classname[0] != 0)) ? e->classname : "<noclass>"),
+						( (!e->classname.empty() && (e->classname[0] != 0)) ? e->classname.c_str() : "<noclass>"),
 						vtos(origin), vtos(e->velocity));
 					fprintf(f, "health=%d, mass=%d, dmg=%d, wait=%g, angles=%s\n", e->health, e->mass, e->dmg, e->wait, vtos(e->s.angles));
 					fprintf(f, "targetname=%s, target=%s, spawnflags=0x%04x\n",
@@ -2565,11 +2564,11 @@ void ClientCommand (edict_t *ent)
 					fprintf(f, "absmin, absmax, size=%s, %s, %s\n", vtos(e->absmin), vtos(e->absmax), vtos(e->size));
 					fprintf(f, "groundentity=%s\n",
 					//	(e->groundentity ? e->groundentity->classname : "NULL"));
-						(e->groundentity ? ( (e->groundentity->classname && (e->groundentity->classname[0] != 0)) ? e->groundentity->classname : "<noclass>" ) : "NULL"));
-					if (e->classname)
+						(e->groundentity ? ( (!e->groundentity->classname.empty() && (e->groundentity->classname[0] != 0)) ? e->groundentity->classname.c_str() : "<noclass>" ) : "NULL"));
+					if (!e->classname.empty())
 					{
 						// class-specific output
-						if (!Q_stricmp(e->classname, "target_changelevel"))
+						if (!Q_stricmp( e->classname.c_str(), "target_changelevel" ) )
 							fprintf(f, "map=%s\n", (e->map && (e->map[0] != 0)) ? e->map : "<nomap>");
 					}
 					fprintf(f, "movetype=%d, solid=%d, clipmask=0x%08x\n", e->movetype, e->solid, e->clipmask);
@@ -2588,7 +2587,7 @@ void ClientCommand (edict_t *ent)
 			gi.dprintf("syntax: entlist <filename>\n");
 		}
 	}
-	else if (!Q_stricmp(cmd, "properties"))
+	else if (!Q_stricmp( cmd, "properties" ) )
 	{
 		if (parm)
 		{
@@ -2597,9 +2596,9 @@ void ClientCommand (edict_t *ent)
 			FILE	*f;
 		//	int		i;
 
-			e = LookingAt(ent, 0, NULL, NULL);
+			e = LookingAt(ent, 0, nullptr, nullptr );
 			if (!e) return;
-	
+
 			SavegameDirRelativePath (parm, filename, sizeof(filename));
 		//	strncat(filename, ".txt");
 			Q_strncatz (filename, sizeof(filename), ".txt");
@@ -2617,12 +2616,12 @@ void ClientCommand (edict_t *ent)
 			gi.dprintf("syntax: properties <filename>\n");
 		}
 	}
-	else if (!Q_stricmp(cmd, "go"))
+	else if (!Q_stricmp( cmd, "go" ) )
 	{
 		edict_t *viewing;
 		float	range;
 
-		viewing = LookingAt(ent, 0, NULL, &range);
+		viewing = LookingAt(ent, 0, nullptr, &range);
 		if (range > 512)
 			return;
 		if (!(viewing->monsterinfo.aiflags & AI_ACTOR))
@@ -2633,7 +2632,7 @@ void ClientCommand (edict_t *ent)
 			return;
 		actor_moveit(ent, viewing);
 	}
-	else if (!Q_stricmp(cmd, "hud"))
+	else if (!Q_stricmp( cmd, "hud" ) )
 	{
 		if (parm)
 		{
@@ -2647,7 +2646,7 @@ void ClientCommand (edict_t *ent)
 		else
 			Cmd_ToggleHud();
 	}
-	else if (!Q_stricmp(cmd, "whatsit"))
+	else if (!Q_stricmp( cmd, "whatsit" ) )
 	{
 		if (parm)
 		{
@@ -2686,7 +2685,7 @@ void ClientCommand (edict_t *ent)
 			laser->think(laser);
 		}
 	} */
-	else if (!Q_stricmp(cmd, "whereis"))
+	else if (!Q_stricmp( cmd, "whereis" ) )
 	{
 		if (parm)
 		{
@@ -2697,7 +2696,7 @@ void ClientCommand (edict_t *ent)
 			for (i=1; i<globals.num_edicts; i++)
 			{
 				e = &g_edicts[i];
-				if (e->classname && !Q_stricmp(parm, e->classname))
+				if (!e->classname.empty() && !Q_stricmp( parm, e->classname.c_str() ) )
 				{
 					count++;
 					gi.dprintf("%d. %s\n", count, vtos(e->s.origin));
@@ -2710,11 +2709,11 @@ void ClientCommand (edict_t *ent)
 			gi.dprintf("syntax: whereis <classname>\n");
 	}
 	// from Yamagi Q2
-	else if (Q_stricmp(cmd, "cycleweap") == 0)
+	else if (Q_stricmp( cmd, "cycleweap" ) == 0)
 	{
 		Cmd_CycleWeap_f (ent);
 	}
-	else if (Q_stricmp(cmd, "prefweap") == 0)
+	else if (Q_stricmp( cmd, "prefweap" ) == 0)
 	{
 		Cmd_PrefWeap_f (ent);
 	}
@@ -2722,23 +2721,23 @@ void ClientCommand (edict_t *ent)
 	// debugging/developer stuff
 	else if (developer->value)
 	{
-		if (!Q_stricmp(cmd, "lightswitch"))
+		if (!Q_stricmp( cmd, "lightswitch" ) )
 		{
 			ToggleLights ();
 		}
-		else if (!Q_stricmp(cmd, "bbox"))
+		else if (!Q_stricmp( cmd, "bbox" ) )
 		{
 			Cmd_Bbox_f (ent);
 		}
-		else if (!Q_stricmp(cmd, "forcewall"))
+		else if (!Q_stricmp( cmd, "forcewall" ) )
 		{
 			SpawnForcewall(ent);
 		}
-		else if (!Q_stricmp(cmd, "forcewall_off"))
+		else if (!Q_stricmp( cmd, "forcewall_off" ) )
 		{
 			ForcewallOff(ent);
 		}
-		else if (!Q_stricmp(cmd, "freeze"))
+		else if (!Q_stricmp( cmd, "freeze" ) )
 		{
 			if (level.freeze) {
 				gi.dprintf ("Unfreezing time.\n", (int)sk_stasis_time->value);
@@ -2755,11 +2754,11 @@ void ClientCommand (edict_t *ent)
 				}
 			}
 		}
-		else if (!Q_stricmp(cmd, "hint_test"))
+		else if (!Q_stricmp( cmd, "hint_test" ) )
 		{
 			edict_t *viewing;
 			int		result;
-			viewing = LookingAt(ent, LOOKAT_MD2, NULL, NULL);
+			viewing = LookingAt(ent, LOOKAT_MD2, nullptr, nullptr );
 			if (!viewing)
 			{
 				gi.dprintf("Not looking at an entity.\n");
@@ -2774,7 +2773,7 @@ void ClientCommand (edict_t *ent)
 			{
 				viewing->monsterinfo.aiflags &= ~AI_HINT_TEST;
 				gi.dprintf("%s (%s): Back to my normal self now.\n",
-						( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
+						( (!viewing->classname.empty() && (viewing->classname[0] != 0)) ? viewing->classname.c_str() : "<noclass>"),
 						( (viewing->targetname && (viewing->targetname[0] != 0)) ? viewing->targetname : "<noname>"));
 				return;
 			}
@@ -2783,16 +2782,16 @@ void ClientCommand (edict_t *ent)
 			{
 			case -1:
 				gi.dprintf("%s (%s): I cannot see any hint_paths from here.\n",
-						( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
+						( (!viewing->classname.empty() && (viewing->classname[0] != 0)) ? viewing->classname.c_str() : "<noclass>"),
 						( (viewing->targetname && (viewing->targetname[0] != 0)) ? viewing->targetname : "<noname>"));
 				break;
 			case  0:
 				gi.dprintf("This map does not contain hint_paths.\n");
 				break;
 			case  1:
-				if (viewing->movetarget != NULL) {
+				if (viewing->movetarget != nullptr ) {
 					gi.dprintf("%s (%s) searching for hint_path %s at %s. %s\n",
-			 				( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
+			 				( (!viewing->classname.empty() && (viewing->classname[0] != 0)) ? viewing->classname.c_str() : "<noclass>"),
 							( (viewing->targetname && (viewing->targetname[0] != 0)) ? viewing->targetname : "<noname>"),
 							( (viewing->movetarget->targetname && (viewing->movetarget->targetname[0] != 0)) ? viewing->movetarget->targetname : "<noname>"),
 							vtos(viewing->movetarget->s.origin),
@@ -2800,7 +2799,7 @@ void ClientCommand (edict_t *ent)
 				}
 				else {
 					gi.dprintf("%s (%s) searching for unknown hint_path.\n",
-							( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
+							( (!viewing->classname.empty() && (viewing->classname[0] != 0)) ? viewing->classname.c_str() : "<noclass>"),
 							( (viewing->targetname && (viewing->targetname[0] != 0)) ? viewing->targetname : "<noname>"));
 				}
 				break;
@@ -2809,17 +2808,17 @@ void ClientCommand (edict_t *ent)
 				break;
 			}
 		}
-		else if (!Q_stricmp(cmd, "entid"))
+		else if (!Q_stricmp( cmd, "entid" ) )
 		{
 			edict_t		*viewing;
 			vec3_t		origin;
 			float		range;
-			viewing = LookingAt(ent, 0, NULL, &range);
-			if (!viewing) 
+			viewing = LookingAt(ent, 0, nullptr, &range);
+			if (!viewing)
 				return;
 			VectorAdd (viewing->s.origin, viewing->origin_offset, origin);
 			gi.dprintf("classname = %s at %s, velocity = %s\n",
-				( (viewing->classname && (viewing->classname[0] != 0)) ? viewing->classname : "<noclass>"),
+				( (!viewing->classname.empty() && (viewing->classname[0] != 0)) ? viewing->classname.c_str() : "<noclass>"),
 				vtos(origin), vtos(viewing->velocity));
 			gi.dprintf("health=%d, mass=%d, dmg=%d, wait=%g, sounds=%d, angles=%s, movetype=%d\n", viewing->health, viewing->mass, viewing->dmg, viewing->wait, viewing->sounds, vtos(viewing->s.angles), viewing->movetype);
 			gi.dprintf("targetname=%s, target=%s, spawnflags=0x%04x\n",
@@ -2829,29 +2828,29 @@ void ClientCommand (edict_t *ent)
 			gi.dprintf("absmin, absmax, size=%s, %s, %s, range=%g\n", vtos(viewing->absmin), vtos(viewing->absmax), vtos(viewing->size), range);
 			gi.dprintf("groundentity=%s\n", (viewing->groundentity ? viewing->groundentity->classname : "NULL"));
 		}
-		else if (!Q_stricmp(cmd, "item_left"))
+		else if (!Q_stricmp( cmd, "item_left" ) )
 			ShiftItem (ent, 1);
-		else if (!Q_stricmp(cmd, "item_right"))
+		else if (!Q_stricmp( cmd, "item_right" ) )
 			ShiftItem (ent, 2);
-		else if (!Q_stricmp(cmd, "item_forward"))
+		else if (!Q_stricmp( cmd, "item_forward" ) )
 			ShiftItem (ent, 4);
-		else if (!Q_stricmp(cmd, "item_back"))
+		else if (!Q_stricmp( cmd, "item_back" ) )
 			ShiftItem (ent, 8);
-		else if (!Q_stricmp(cmd, "item_up"))
+		else if (!Q_stricmp( cmd, "item_up" ) )
 			ShiftItem (ent, 16);
-		else if (!Q_stricmp(cmd, "item_down"))
+		else if (!Q_stricmp( cmd, "item_down" ) )
 			ShiftItem (ent, 32);
-		else if (!Q_stricmp(cmd, "item_drop"))
+		else if (!Q_stricmp( cmd, "item_drop" ) )
 			ShiftItem (ent, 64);
-		else if (!Q_stricmp(cmd, "item_pitch"))
+		else if (!Q_stricmp( cmd, "item_pitch" ) )
 			ShiftItem (ent, 128);
-		else if (!Q_stricmp(cmd, "item_yaw"))
+		else if (!Q_stricmp( cmd, "item_yaw" ) )
 			ShiftItem (ent, 256);
-		else if (!Q_stricmp(cmd, "item_roll"))
+		else if (!Q_stricmp( cmd, "item_roll" ) )
 			ShiftItem (ent, 512);
-		else if (!Q_stricmp(cmd, "item_release"))
+		else if (!Q_stricmp( cmd, "item_release" ) )
 			ent->client->shift_dir = 0;
-		else if (!Q_stricmp(cmd, "medic_test"))
+		else if (!Q_stricmp( cmd, "medic_test" ) )
 		{
 			extern	int	medic_test;
 			if (parm)
@@ -2865,10 +2864,10 @@ void ClientCommand (edict_t *ent)
 		else if (strstr(cmd, "muzzle"))
 		{
 			edict_t	*viewing;
-			viewing = LookingAt(ent, 0, NULL, NULL);
+			viewing = LookingAt(ent, 0, nullptr, nullptr );
 			if (!viewing)
 				return;
-			if (!viewing->classname)
+			if (viewing->classname.empty())
 				return;
 			if (!(viewing->monsterinfo.aiflags & AI_ACTOR))
 				return;
@@ -2879,30 +2878,30 @@ void ClientCommand (edict_t *ent)
 			}
 			else
 			{
-				if (!Q_stricmp(cmd,"muzzlex"))
+				if (!Q_stricmp( cmd, "muzzlex" ) )
 					viewing->muzzle[0] = atof(gi.argv(1));
-				else if (!Q_stricmp(cmd,"muzzley"))
+				else if (!Q_stricmp( cmd, "muzzley" ) )
 					viewing->muzzle[1] = atof(gi.argv(1));
-				else if (!Q_stricmp(cmd,"muzzlez"))
+				else if (!Q_stricmp( cmd, "muzzlez" ) )
 					viewing->muzzle[2] = atof(gi.argv(1));
 				else
 					gi.dprintf("Syntax: muzzle[x|y|z] <value>\n");
 			}
 		}
-		else if (!Q_stricmp(cmd, "range"))
+		else if (!Q_stricmp( cmd, "range" ) )
 		{
 			vec3_t	forward, point, start;
 			trace_t	tr;
 			VectorCopy(ent->s.origin,start);
 
 			start[2] += ent->viewheight;
-			AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+			AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 			VectorMA (start, WORLD_SIZE, forward, point);	// was 8192
-			tr = gi.trace(start, NULL, NULL, point, ent, MASK_SOLID);
+			tr = gi.trace(start, nullptr, nullptr, point, ent, MASK_SOLID);
 			VectorSubtract (tr.endpos, start, point);
 			gi.dprintf ("range=%g\n", VectorLength(point));
 		}
-		else if (!Q_stricmp(cmd, "setskill"))
+		else if (!Q_stricmp( cmd, "setskill" ) )
 		{
 			if (gi.argc() < 2)
 				gi.dprintf("Syntax: setskill X\n");
@@ -2912,13 +2911,13 @@ void ClientCommand (edict_t *ent)
 				gi.cvar_forceset("skill", va("%i", s));
 			}
 		}
-		else if (!Q_stricmp(cmd, "sk"))
+		else if (!Q_stricmp( cmd, "sk" ) )
 		{
 			edict_t *viewing;
 			int		skinnum;
 
-			viewing = LookingAt(ent ,0, NULL, NULL);
-			if (!viewing) 
+			viewing = LookingAt(ent ,0, nullptr, nullptr );
+			if (!viewing)
 				return;
 
 			if (parm) {
@@ -2930,12 +2929,12 @@ void ClientCommand (edict_t *ent)
 				gi.dprintf("Currently using skin #%i\n", viewing->s.skinnum);
 
 		}
-		else if (!Q_stricmp(cmd, "spawn"))
+		else if (!Q_stricmp( cmd, "spawn" ) )
 		{
 			edict_t	*e;
 			vec3_t	forward;
 			size_t	classSize;
-		
+
 			if (!parm)
 			{
 				gi.dprintf("syntax: spawn <classname>\n");
@@ -2943,20 +2942,18 @@ void ClientCommand (edict_t *ent)
 			}
 			e = G_Spawn();
 			classSize = strlen(parm)+1;
-			e->classname = static_cast< char * >( gi.TagMalloc( classSize, TAG_LEVEL ) );
-		//	strncpy(e->classname, parm);
-			Q_strncpyz (e->classname, classSize, parm);
-			AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+			e->classname = parm;
+			AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 			VectorMA (ent->s.origin, 128, forward, e->s.origin);
 			e->s.angles[YAW] = ent->s.angles[YAW];
 			ED_CallSpawn(e);
 		}
-		else if (!Q_stricmp(cmd, "spawngoodguy"))
+		else if (!Q_stricmp( cmd, "spawngoodguy" ) )
 		{
 			edict_t	*e;
 			vec3_t	forward;
 			size_t	classSize;
-		
+
 			if (gi.argc() < 3)
 			{
 				gi.dprintf("syntax: spawngoodguy <modelname> <weapon>\n");
@@ -2964,20 +2961,18 @@ void ClientCommand (edict_t *ent)
 			}
 			e = G_Spawn();
 			classSize = 12;
-			e->classname = static_cast<char*>( gi.TagMalloc(classSize, TAG_LEVEL) );
-		//	strncpy(e->classname, "misc_actor");
-			Q_strncpyz (e->classname, classSize, "misc_actor");
+			e->classname = "misc_actor";
 			e->usermodel = gi.argv(1);
 			e->sounds = atoi(gi.argv(2));
 			e->spawnflags = SF_MONSTER_GOODGUY;
-			AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+			AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 			VectorMA (ent->s.origin, 128, forward, e->s.origin);
 			e->s.origin[2] = max(e->s.origin[2],ent->s.origin[2] + 8);
 			e->s.angles[YAW] = ent->s.angles[YAW];
 			ED_CallSpawn (e);
 			actor_files ();
 		}
-		else if (!Q_stricmp(cmd, "spawnself"))
+		else if (!Q_stricmp( cmd, "spawnself" ) )
 		{
 			edict_t	*decoy;
 			vec3_t	forward;
@@ -2986,10 +2981,10 @@ void ClientCommand (edict_t *ent)
 			decoy->classname    = "fakeplayer";
 			memcpy(&decoy->s,&ent->s,sizeof(entity_state_t));
 			decoy->s.number     = decoy-g_edicts;
-			decoy->s.frame      = ent->s.frame; 
-			AngleVectors (ent->client->v_angle, forward, NULL, NULL);
+			decoy->s.frame      = ent->s.frame;
+			AngleVectors (ent->client->v_angle, forward, nullptr, nullptr );
 			VectorMA (ent->s.origin, 64, forward, decoy->s.origin);
-			decoy->s.angles[YAW] = ent->s.angles[YAW]; 
+			decoy->s.angles[YAW] = ent->s.angles[YAW];
 			decoy->takedamage   = DAMAGE_AIM;
 			decoy->flags        = (ent->flags & FL_NOTARGET);
 			decoy->movetype     = MOVETYPE_TOSS;
@@ -3006,14 +3001,14 @@ void ClientCommand (edict_t *ent)
 			decoy->nextthink    = level.time + FRAMETIME;
 			VectorCopy (ent->mins, decoy->mins);
 			VectorCopy (ent->maxs, decoy->maxs);
-			gi.linkentity (decoy); 
+			gi.linkentity (decoy);
 		}
-		else if (!Q_stricmp(cmd, "switch"))
+		else if (!Q_stricmp( cmd, "switch" ) )
 		{
 			extern mmove_t	actor_move_switch;
 			edict_t *viewing;
 
-			viewing = LookingAt(ent, 0, NULL, NULL);
+			viewing = LookingAt(ent, 0, nullptr, nullptr );
 			if (!viewing)
 				return;
 			if (!(viewing->monsterinfo.aiflags & AI_ACTOR))
@@ -3023,7 +3018,7 @@ void ClientCommand (edict_t *ent)
 			}
 			viewing->monsterinfo.currentmove = &actor_move_switch;
 		}
-		else if (!Q_stricmp(cmd, "resettargets"))
+		else if (!Q_stricmp( cmd, "resettargets" ) )
 		{
 			edict_t	*e;
 			int		i;
@@ -3039,7 +3034,7 @@ void ClientCommand (edict_t *ent)
 					continue;
 				if (e->health <= 0)
 					continue;
-				e->enemy = e->oldenemy = NULL;
+				e->enemy = e->oldenemy = nullptr;
 				e->monsterinfo.pausetime = 0;
 				e->monsterinfo.stand (e);
 				count++;

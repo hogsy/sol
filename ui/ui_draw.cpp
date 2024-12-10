@@ -43,9 +43,9 @@ void UI_DrawMenuString (int x, int y, int size, scralign_t align, const char *st
 	char	newstring[1024];
 
 	if (altColor)
-		Com_sprintf (newstring, sizeof(newstring), S_COLOR_ALT"%s", string);
+		snprintf (newstring, sizeof(newstring), S_COLOR_ALT"%s", string);
 	else
-		Com_sprintf (newstring, sizeof(newstring), "%s", string);
+		snprintf (newstring, sizeof(newstring), "%s", string);
 
 	if (R2L)
 		x -= stringLen(string)*size;
@@ -183,7 +183,7 @@ void UI_DrawPopupMessage (char *message)
 	if (!message)	return;
 
 	memset (&buffer, 0, sizeof(buffer));
-	Com_sprintf(buffer, sizeof(buffer), message);
+	snprintf(buffer, sizeof(buffer), message);
 
 	// get max width and num of lines
 	parse = buffer;

@@ -59,7 +59,6 @@ typedef struct
 // scripted status bar stuff, from Quake2Evolved
 //
 #define	STAT_MINUS		10	// num frame for '-' stats digit
-#define CHAR_WIDTH		16
 
 #define HUD_MAX_RENAMESETS			8
 #define HUD_MAX_ITEMGROUPS			128
@@ -252,7 +251,7 @@ typedef struct {
 #define HUD_FONT_SIZE	8.0
 #define	HUD_CHAR_WIDTH	16
 
-extern	char		*sb_nums[2][11];
+extern	const char		*sb_nums[2][11];
 
 extern	float		scr_con_current;
 extern	float		scr_conlines;		// lines of console to display

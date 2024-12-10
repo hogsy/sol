@@ -1555,10 +1555,10 @@ void SP_turret_breach (edict_t *self)
 
 	// Knightmare- no goodguy flag on Neil Manke's maps
 	if ( (int)g_nm_maphacks->value
-		&& ( (Q_stricmp(level.mapname, "cm3pt1") == 0)
-		|| (Q_stricmp(level.mapname, "cm3pt3") == 0) 
-		|| (Q_stricmp(level.mapname, "sofm2") == 0)
-		|| (Q_stricmp(level.mapname, "sofpt1") == 0) ) )
+		&& ( (Q_stricmp( level.mapname, "cm3pt1" ) == 0)
+		|| (Q_stricmp( level.mapname, "cm3pt3" ) == 0) 
+		|| (Q_stricmp( level.mapname, "sofm2" ) == 0)
+		|| (Q_stricmp( level.mapname, "sofpt1" ) == 0) ) )
 	{
 		gi.dprintf ("Removing goodguy flag from turret.\n");
 		self->spawnflags &= ~SF_TURRET_GOODGUY;
@@ -1580,9 +1580,9 @@ void SP_turret_breach (edict_t *self)
 		}
 		// Knightmare- check for "models/" already in path
 		if ( !strncmp(self->usermodel, "models/", 7) )
-			Com_sprintf (modelname, sizeof(modelname), "%s", self->usermodel);
+			snprintf (modelname, sizeof(modelname), "%s", self->usermodel);
 		else
-			Com_sprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
+			snprintf (modelname, sizeof(modelname), "models/%s", self->usermodel);
 		self->s.modelindex = gi.modelindex (modelname);
 
 		if ( (VectorLength(self->bleft) == 0) &&

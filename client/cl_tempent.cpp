@@ -121,78 +121,78 @@ void CL_RegisterTEntSounds (void)
 	clMedia.sfx_q1_hknighthit = S_RegisterSound ("q1hknight/hit.wav");
 
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/step%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/step%i.wav", i+1);
 		clMedia.sfx_footsteps[i] = S_RegisterSound (name);
 	}
 
 	// Lazarus footstep sounds
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_metal%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_metal%i.wav", i+1);
 		clMedia.sfx_metal_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_dirt%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_dirt%i.wav", i+1);
 		clMedia.sfx_dirt_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_duct%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_duct%i.wav", i+1);
 		clMedia.sfx_vent_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_grate%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_grate%i.wav", i+1);
 		clMedia.sfx_grate_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_tile%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_tile%i.wav", i+1);
 		clMedia.sfx_tile_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_grass%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_grass%i.wav", i+1);
 		clMedia.sfx_grass_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_snow%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_snow%i.wav", i+1);
 		clMedia.sfx_snow_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_carpet%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_carpet%i.wav", i+1);
 		clMedia.sfx_carpet_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_force%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_force%i.wav", i+1);
 		clMedia.sfx_force_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0 ; i<4 ; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_gravel%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_gravel%i.wav", i+1);
 		clMedia.sfx_gravel_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_ice%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_ice%i.wav", i+1);
 		clMedia.sfx_ice_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_sand%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_sand%i.wav", i+1);
 		clMedia.sfx_sand_footsteps[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_wood%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_wood%i.wav", i+1);
 		clMedia.sfx_wood_footsteps[i] = S_RegisterSound (name);
 	}
 
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_slosh%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_slosh%i.wav", i+1);
 		clMedia.sfx_slosh[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_wade%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_wade%i.wav", i+1);
 		clMedia.sfx_wade[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<2; i++) {
-		Com_sprintf (name, sizeof(name), "mud/wade_mud%i.wav", i+1);
+		snprintf (name, sizeof(name), "mud/wade_mud%i.wav", i+1);
 		clMedia.sfx_mud_wade[i] = S_RegisterSound (name);
 	}
 	for (i=0; i<4; i++) {
-		Com_sprintf (name, sizeof(name), "player/pl_ladder%i.wav", i+1);
+		snprintf (name, sizeof(name), "player/pl_ladder%i.wav", i+1);
 		clMedia.sfx_ladder[i] = S_RegisterSound (name);
 	}
 	// player loud step
@@ -201,7 +201,7 @@ void CL_RegisterTEntSounds (void)
 	clMedia.sfx_player_teleport = S_RegisterSound ("misc/tele1.wav");
 	// Q1-style player teleport (in rogue pak0.pak)
 	for (i=0; i<5; i++) {
-		Com_sprintf (name, sizeof(name), "misc/r_tele%i.wav", i+1);
+		snprintf (name, sizeof(name), "misc/r_tele%i.wav", i+1);
 		clMedia.sfx_player_teleport2[i] = S_RegisterSound (name);
 	}
 	// item respawn
@@ -225,37 +225,37 @@ CL_RegisterTEntModels
 */
 void CL_RegisterTEntModels (void)
 {
-	clMedia.mod_explode = R_RegisterModel ("models/objects/explode/tris.md2");
-	clMedia.mod_smoke = R_RegisterModel ("models/objects/smoke/tris.md2");
-	clMedia.mod_flash = R_RegisterModel ("models/objects/flash/tris.md2");
-	clMedia.mod_parasite_segment = R_RegisterModel ("models/monsters/parasite/segment/tris.md2");
-	clMedia.mod_grapple_cable = R_RegisterModel ("models/ctf/segment/tris.md2");
-	clMedia.mod_parasite_tip = R_RegisterModel ("models/monsters/parasite/tip/tris.md2");
-	clMedia.mod_explo = R_RegisterModel ("models/objects/r_explode/tris.md2");
-	clMedia.mod_bfg_explo = R_RegisterModel ("sprites/s_bfg2.sp2");
-	clMedia.mod_powerscreen = R_RegisterModel ("models/items/armor/effect/tris.md2");
+	clMedia.mod_explode = R_RegisterModel ( "models/objects/explode/tris.md2" );
+	clMedia.mod_smoke = R_RegisterModel ( "models/objects/smoke/tris.md2" );
+	clMedia.mod_flash = R_RegisterModel ( "models/objects/flash/tris.md2" );
+	clMedia.mod_parasite_segment = R_RegisterModel ( "models/monsters/parasite/segment/tris.md2" );
+	clMedia.mod_grapple_cable = R_RegisterModel ( "models/ctf/segment/tris.md2" );
+	clMedia.mod_parasite_tip = R_RegisterModel ( "models/monsters/parasite/tip/tris.md2" );
+	clMedia.mod_explo = R_RegisterModel ( "models/objects/r_explode/tris.md2" );
+	clMedia.mod_bfg_explo = R_RegisterModel ( "sprites/s_bfg2.sp2" );
+	clMedia.mod_powerscreen = R_RegisterModel ( "models/items/armor/effect/tris.md2" );
 
 	// Rogue
-	clMedia.mod_explo_big = R_RegisterModel ("models/objects/r_explode2/tris.md2");
-	clMedia.mod_lightning = R_RegisterModel ("models/proj/lightning/tris.md2");
-	clMedia.mod_heatbeam = R_RegisterModel ("models/proj/beam/tris.md2");
-	clMedia.mod_monster_heatbeam = R_RegisterModel ("models/proj/widowbeam/tris.md2");
+	clMedia.mod_explo_big = R_RegisterModel ( "models/objects/r_explode2/tris.md2" );
+	clMedia.mod_lightning = R_RegisterModel ( "models/proj/lightning/tris.md2" );
+	clMedia.mod_heatbeam = R_RegisterModel ( "models/proj/beam/tris.md2" );
+	clMedia.mod_monster_heatbeam = R_RegisterModel ( "models/proj/widowbeam/tris.md2" );
 
 	// new effect models
-	clMedia.mod_shocksplash = R_RegisterModel ("models/objects/shocksplash/tris.md2");
-	clMedia.mod_q1_explo = R_RegisterModel ("sprites/s_explod.sp2");
-	clMedia.mod_q1_lightning_1 = R_RegisterModel ("models/objects/q1lightning1/tris.md2");
-	clMedia.mod_q1_lightning_2 = R_RegisterModel ("models/objects/q1lightning2/tris.md2");
-	clMedia.mod_q1_lightning_3 = R_RegisterModel ("models/objects/q1lightning3/tris.md2");
+	clMedia.mod_shocksplash = R_RegisterModel ( "models/objects/shocksplash/tris.md2" );
+	clMedia.mod_q1_explo = R_RegisterModel ( "sprites/s_explod.sp2" );
+	clMedia.mod_q1_lightning_1 = R_RegisterModel ( "models/objects/q1lightning1/tris.md2" );
+	clMedia.mod_q1_lightning_2 = R_RegisterModel ( "models/objects/q1lightning2/tris.md2" );
+	clMedia.mod_q1_lightning_3 = R_RegisterModel ( "models/objects/q1lightning3/tris.md2" );
 
-	R_RegisterModel ("models/objects/laser/tris.md2");
-	R_RegisterModel ("models/objects/grenade2/tris.md2");
-	R_RegisterModel ("models/weapons/v_machn/tris.md2");
-	R_RegisterModel ("models/weapons/v_handgr/tris.md2");
-	R_RegisterModel ("models/weapons/v_shotg2/tris.md2");
-	R_RegisterModel ("models/objects/gibs/bone/tris.md2");
-	R_RegisterModel ("models/objects/gibs/sm_meat/tris.md2");
-	R_RegisterModel ("models/objects/gibs/bone2/tris.md2");
+	R_RegisterModel ( "models/objects/laser/tris.md2" );
+	R_RegisterModel ( "models/objects/grenade2/tris.md2" );
+	R_RegisterModel ( "models/weapons/v_machn/tris.md2" );
+	R_RegisterModel ( "models/weapons/v_handgr/tris.md2" );
+	R_RegisterModel ( "models/weapons/v_shotg2/tris.md2" );
+	R_RegisterModel ( "models/objects/gibs/bone/tris.md2" );
+	R_RegisterModel ( "models/objects/gibs/sm_meat/tris.md2" );
+	R_RegisterModel ( "models/objects/gibs/bone2/tris.md2" );
 	// Xatrix
 //	R_RegisterModel ("models/objects/blaser/tris.md2");
 

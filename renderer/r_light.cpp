@@ -997,14 +997,14 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 #else	// WARP_LIGHTMAPS
 	if ( surf->texinfo->flags & (SURF_SKY|SURF_WARP) )
 #endif	// WARP_LIGHTMAPS
-		VID_Error (ERR_DROP, "R_BuildLightMap called for non-lit surface");
+		VID_Error ( ERR_DROP, "R_BuildLightMap called for non-lit surface" );
 
 	smax = (surf->extents[0]>>4)+1;
 	tmax = (surf->extents[1]>>4)+1;
 	size = smax*tmax;
 	// FIXME- can this limit be directly increased?		Yep - Knightmare
 	if (size > (sizeof(s_blocklights)>>4) )
-		VID_Error (ERR_DROP, "Bad s_blocklights size: %d", size);
+		VID_Error ( ERR_DROP, "Bad s_blocklights size: %d", size );
 
 	// set to full bright if no light data
 	if (!surf->samples)
@@ -1318,7 +1318,7 @@ void R_CreateSurfaceLightmap (msurface_t *surf)
 		LM_InitBlock();
 		if ( !LM_AllocBlock (smax, tmax, &surf->light_s, &surf->light_t) )
 		{
-			VID_Error (ERR_FATAL, "Consecutive calls to LM_AllocBlock(%d,%d) failed\n", smax, tmax);
+			VID_Error ( ERR_FATAL, "Consecutive calls to LM_AllocBlock(%d,%d) failed\n", smax, tmax );
 		}
 	}
 

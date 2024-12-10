@@ -34,7 +34,7 @@ qboolean	userinfo_modified;
 Cvar_InfoValidate
 ============
 */
-static qboolean Cvar_InfoValidate (char *s)
+static qboolean Cvar_InfoValidate (const char *s)
 {
 	if (strstr (s, "\\"))
 		return false;
@@ -50,31 +50,27 @@ static qboolean Cvar_InfoValidate (char *s)
 Cvar_FindVar
 ============
 */
-static cvar_t *Cvar_FindVar (char *var_name)
+static cvar_t *Cvar_FindVar (const char *var_name)
 {
-	cvar_t	*var;
-	
-	for (var=cvar_vars ; var ; var=var->next)
+	for ( cvar_t *var = cvar_vars ; var ; var=var->next)
 		if (!strcmp (var_name, var->name))
 			return var;
 
-	return NULL;
+	return nullptr;
 }
-
 
 /*
 ============
 Cvar_VariableValue
 ============
 */
-float Cvar_VariableValue (char *var_name)
+float Cvar_VariableValue( const char *var_name )
 {
-	cvar_t	*var;
-	
-	var = Cvar_FindVar (var_name);
-	if (!var)
+	const cvar_t *var = Cvar_FindVar( var_name );
+	if ( !var )
 		return 0;
-	return atof (var->string);
+
+	return strtof( var->string, nullptr );
 }
 
 
@@ -83,11 +79,9 @@ float Cvar_VariableValue (char *var_name)
 Cvar_VariableInteger
 =================
 */
-int Cvar_VariableInteger (char *var_name)
+int Cvar_VariableInteger ( const char *var_name)
 {
-	cvar_t	*var;
-
-	var = Cvar_FindVar(var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return 0;
 	return atoi (var->string);
@@ -99,13 +93,12 @@ int Cvar_VariableInteger (char *var_name)
 Cvar_VariableString
 ============
 */
-char *Cvar_VariableString (char *var_name)
+char *Cvar_VariableString ( const char *var_name)
 {
-	cvar_t *var;
-	
-	var = Cvar_FindVar (var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return "";
+
 	return var->string;
 }
 
@@ -117,14 +110,13 @@ Cvar_DefaultValue
 Knightmare added
 ============
 */
-float Cvar_DefaultValue (char *var_name)
+float Cvar_DefaultValue ( const char *var_name)
 {
-	cvar_t	*var;
-	
-	var = Cvar_FindVar (var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return 0;
-	return atof (var->default_string);
+
+	return strtof (var->default_string, nullptr);
 }
 
 
@@ -135,13 +127,12 @@ Cvar_DefaultInteger
 Knightmare added
 ============
 */
-int Cvar_DefaultInteger (char *var_name)
+int Cvar_DefaultInteger ( const char *var_name)
 {
-	cvar_t	*var;
-	
-	var = Cvar_FindVar (var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return 0;
+
 	return atoi (var->default_string);
 }
 
@@ -153,13 +144,12 @@ Cvar_DefaultString
 Knightmare added
 ============
 */
-char *Cvar_DefaultString (char *var_name)
+char *Cvar_DefaultString ( const char *var_name)
 {
-	cvar_t *var;
-	
-	var = Cvar_FindVar (var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return "";
+
 	return var->default_string;
 }
 
@@ -171,13 +161,12 @@ Cvar_IsModified
 Knightmare added
 ============
 */
-qboolean Cvar_IsModified (char *var_name)
+qboolean Cvar_IsModified ( const char *var_name)
 {
-	cvar_t *var;
-	
-	var = Cvar_FindVar (var_name);
+	const cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return false;
+
 	return var->modified;
 }
 
@@ -187,15 +176,13 @@ qboolean Cvar_IsModified (char *var_name)
 Cvar_CompleteVariable
 ============
 */
-char *Cvar_CompleteVariable (char *partial)
+char *Cvar_CompleteVariable ( const char *partial)
 {
 	cvar_t		*cvar;
-	int			len;
-	
-	len = (int)strlen(partial);
-	
+
+	int len = ( int ) strlen( partial );
 	if (!len)
-		return NULL;
+		return nullptr;
 		
 	// check exact match
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
@@ -207,7 +194,7 @@ char *Cvar_CompleteVariable (char *partial)
 		if (!strncmp (partial,cvar->name, len))
 			return cvar->name;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -219,51 +206,50 @@ If the variable already exists, the value will not be set
 The flags will be or'ed in if the variable exists.
 ============
 */
-cvar_t *Cvar_Get (char *var_name, char *var_value, int flags)
+cvar_t *Cvar_Get ( const char *var_name, const char *value, int flags )
 {
-	cvar_t	*var;
-	
+
 	if (flags & (CVAR_USERINFO | CVAR_SERVERINFO))
 	{
 		if (!Cvar_InfoValidate (var_name))
 		{
 			Com_Printf("invalid info cvar name\n");
-			return NULL;
+			return nullptr;
 		}
 	}
 
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar( var_name );
 	if (var)
 	{
 		var->flags |= flags;
 		// Knightmare- added cvar defaults
 		Z_Free (var->default_string);
-		var->default_string = CopyString (var_value);
+		var->default_string = CopyString (value);
 
 		return var;
 	}
 
-	if (!var_value)
-		return NULL;
+	if (!value)
+		return nullptr;
 
 	if (flags & (CVAR_USERINFO | CVAR_SERVERINFO))
 	{
-		if (!Cvar_InfoValidate (var_value))
+		if (!Cvar_InfoValidate (value))
 		{
 			Com_Printf("invalid info cvar value\n");
-			return NULL;
+			return nullptr;
 		}
 	}
 
 	var = static_cast< cvar_t * >( Z_Malloc( sizeof( *var ) ) );
 	var->name = CopyString (var_name);
-	var->string = CopyString (var_value);
+	var->string = CopyString (value);
 	// Knightmare- added cvar defaults
-	var->default_string = CopyString (var_value);
+	var->default_string = CopyString (value);
 	var->modified = true;
-	var->value = atof (var->string);
+	var->value = strtof (var->string, nullptr);
 	var->integer = atoi(var->string);
-	var->description = NULL;	// Knightmare- added descriptions from From Maraa'kate's cvar code
+	var->description = nullptr;	// Knightmare- added descriptions from From Maraa'kate's cvar code
 
 	// link the variable in
 	var->next = cvar_vars;
@@ -279,14 +265,12 @@ cvar_t *Cvar_Get (char *var_name, char *var_value, int flags)
 Cvar_Set2
 ============
 */
-cvar_t *Cvar_Set2 (char *var_name, char *value, qboolean force)
+static cvar_t *Cvar_Set2 (const char *var_name, const char *value, qboolean force)
 {
-	cvar_t		*var;
-
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 	{	// create it
-		return Cvar_Get (var_name, value, 0);
+		return Cvar_Get ( var_name, value, 0 );
 	}
 
 	if (var->flags & (CVAR_USERINFO | CVAR_SERVERINFO))
@@ -354,7 +338,7 @@ cvar_t *Cvar_Set2 (char *var_name, char *value, qboolean force)
 		if (var->latched_string)
 		{
 			Z_Free (var->latched_string);
-			var->latched_string = NULL;
+			var->latched_string = nullptr;
 		}
 	}
 
@@ -369,7 +353,7 @@ cvar_t *Cvar_Set2 (char *var_name, char *value, qboolean force)
 	Z_Free (var->string);	// free the old value string
 	
 	var->string = CopyString(value);
-	var->value = atof (var->string);
+	var->value = strtof (var->string, nullptr);
 	var->integer = atoi(var->string);
 
 	return var;
@@ -380,7 +364,7 @@ cvar_t *Cvar_Set2 (char *var_name, char *value, qboolean force)
 Cvar_ForceSet
 ============
 */
-cvar_t *Cvar_ForceSet (char *var_name, char *value)
+cvar_t *Cvar_ForceSet ( const char *var_name, const char *value)
 {
 	return Cvar_Set2 (var_name, value, true);
 }
@@ -390,7 +374,7 @@ cvar_t *Cvar_ForceSet (char *var_name, char *value)
 Cvar_Set
 ============
 */
-cvar_t *Cvar_Set (char *var_name, char *value)
+cvar_t *Cvar_Set ( const char *var_name, const char *value)
 {
 	return Cvar_Set2 (var_name, value, false);
 }
@@ -403,7 +387,7 @@ Cvar_SetToDefault
 Knightmare added
 ============
 */
-cvar_t *Cvar_SetToDefault (char *var_name)
+cvar_t *Cvar_SetToDefault ( const char *var_name)
 {
 	return Cvar_Set2 (var_name, Cvar_DefaultString(var_name), false);
 }
@@ -416,7 +400,7 @@ Cvar_ForceSetToDefault
 Knightmare added
 ============
 */
-cvar_t	*Cvar_ForceSetToDefault (char *var_name)
+cvar_t	*Cvar_ForceSetToDefault ( const char *var_name)
 {
 	return Cvar_Set2 (var_name, Cvar_DefaultString(var_name), true);
 }
@@ -429,11 +413,10 @@ Knightmare added
 From Maraa'kate's cvar code
 ============
 */
-void Cvar_SetDescription (char *var_name, char *description)
+void Cvar_SetDescription ( const char *var_name, const char *description )
 {
-	cvar_t *var;
-	
-	var = Cvar_FindVar (var_name);
+
+	cvar_t *var = Cvar_FindVar( var_name );
 	if (!var) {
 		Com_DPrintf ("Cvar_SetDescription: cvar %s is invalid, can't set description!\n", var_name);
 		return;
@@ -455,13 +438,12 @@ Used to force the modified field of a cvar on.
 Used mainly for vid_ref, to force a vid_restart. 
 ============
 */
-void Cvar_SetModified (char *var_name, qboolean value)
+void Cvar_SetModified ( const char *var_name, qboolean value)
 {
-	cvar_t *var;
-	
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 		return;
+
 	var->modified = value;
 }
 
@@ -471,14 +453,12 @@ void Cvar_SetModified (char *var_name, qboolean value)
 Cvar_FullSet
 ============
 */
-cvar_t *Cvar_FullSet (char *var_name, char *value, int flags)
+cvar_t *Cvar_FullSet ( const char *var_name, const char *value, int flags)
 {
-	cvar_t	*var;
-	
-	var = Cvar_FindVar (var_name);
+	cvar_t *var = Cvar_FindVar( var_name );
 	if (!var)
 	{	// create it
-		return Cvar_Get (var_name, value, flags);
+		return Cvar_Get ( var_name, value, flags );
 	}
 
 	var->modified = true;
@@ -489,7 +469,7 @@ cvar_t *Cvar_FullSet (char *var_name, char *value, int flags)
 	Z_Free (var->string);	// free the old value string
 	
 	var->string = CopyString(value);
-	var->value = atof (var->string);
+	var->value = strtof (var->string, nullptr);
 	var->integer = atoi (var->string);
 	var->flags = flags;
 
@@ -502,14 +482,14 @@ cvar_t *Cvar_FullSet (char *var_name, char *value, int flags)
 Cvar_SetValue
 ============
 */
-void Cvar_SetValue (char *var_name, float value)
+void Cvar_SetValue ( const char *var_name, float value)
 {
 	char	val[32];
 
 	if (value == (int)value)
-		Com_sprintf (val, sizeof(val), "%i",(int)value);
+		snprintf (val, sizeof(val), "%i",(int)value);
 	else
-		Com_sprintf (val, sizeof(val), "%f",value);
+		snprintf (val, sizeof(val), "%f",value);
 	Cvar_Set (var_name, val);
 }
 
@@ -523,7 +503,7 @@ void Cvar_SetInteger (char *var_name, int integer)
 {
 	char	val[32];
 
-	Com_sprintf (val, sizeof(val), "%i",integer);
+	snprintf (val, sizeof(val), "%i",integer);
 	Cvar_Set (var_name, val);
 }
 
@@ -535,17 +515,17 @@ Cvar_ClampValue
 From Q2Pro
 =================
 */
-float Cvar_ClampValue (cvar_t *var, float min, float max)
+float Cvar_ClampValue ( const cvar_t *var, float min, float max)
 {
     char    val[32];
 
     if (var->value < min)
 	{
         if (min == (int)min) {
-            Com_sprintf (val, sizeof(val), "%i", (int)min);
+            snprintf (val, sizeof(val), "%i", (int)min);
         }
 		else {
-            Com_sprintf (val, sizeof(val), "%f", min);
+            snprintf (val, sizeof(val), "%f", min);
         }
 		Cvar_Set (var->name, val);
         return min;
@@ -553,10 +533,10 @@ float Cvar_ClampValue (cvar_t *var, float min, float max)
     if (var->value > max)
 	{
         if (max == (int)max) {
-            Com_sprintf (val, sizeof(val), "%i", (int)max);
+            snprintf (val, sizeof(val), "%i", (int)max);
         }
 		else {
-            Com_sprintf (val, sizeof(val), "%f", max);
+            snprintf (val, sizeof(val), "%f", max);
         }
 		Cvar_Set (var->name, val);
         return max;
@@ -572,19 +552,19 @@ Cvar_ClampInteger
 From Q2Pro
 =================
 */
-int Cvar_ClampInteger (cvar_t *var, int min, int max)
+int Cvar_ClampInteger ( const cvar_t *var, int min, int max)
 {
     char    val[32];
 
     if (var->integer < min)
 	{
-        Com_sprintf (val, sizeof(val), "%i", min);
+        snprintf (val, sizeof(val), "%i", min);
         Cvar_Set (var->name, val);
         return min;
     }
     if (var->integer > max)
 	{
-        Com_sprintf (val, sizeof(val), "%i", max);
+        snprintf (val, sizeof(val), "%i", max);
         Cvar_Set (var->name, val);
         return max;
     }
@@ -599,17 +579,15 @@ Cvar_GetLatchedVars
 Any variables with latched values will now be updated
 ============
 */
-void Cvar_GetLatchedVars (void)
+void Cvar_GetLatchedVars ()
 {
-	cvar_t	*var;
-
-	for (var = cvar_vars ; var ; var = var->next)
+	for ( cvar_t *var = cvar_vars ; var ; var = var->next)
 	{
 		if (!var->latched_string)
 			continue;
 		Z_Free (var->string);
 		var->string = var->latched_string;
-		var->latched_string = NULL;
+		var->latched_string = nullptr;
 		var->value = atof(var->string);
 		var->integer = atoi(var->string);
 		if (!strcmp(var->name, "game"))
@@ -635,8 +613,6 @@ Borrowed from Q2E
 */
 void Cvar_FixCheatVars (qboolean allowCheats)
 {
-	cvar_t	*var;
-
 	if (cvar_allowCheats == allowCheats)
 		return;
 	cvar_allowCheats = allowCheats;
@@ -644,12 +620,12 @@ void Cvar_FixCheatVars (qboolean allowCheats)
 	if (cvar_allowCheats)
 		return;
 
-	for (var = cvar_vars; var; var = var->next)
+	for ( const cvar_t *var = cvar_vars; var; var = var->next)
 	{
 		if (!(var->flags & CVAR_CHEAT))
 			continue;
 
-		if (!Q_stricmp(var->string, var->default_string))
+		if (!Q_stricmp( var->string, var->default_string ) )
 			continue;
 
 		Cvar_Set2 (var->name, var->default_string, true);
@@ -664,12 +640,10 @@ Cvar_Command
 Handles variable inspection and changing from the console
 ============
 */
-qboolean Cvar_Command (void)
+qboolean Cvar_Command ()
 {
-	cvar_t			*v;
-
-// check variables
-	v = Cvar_FindVar (Cmd_Argv(0));
+	// check variables
+	const cvar_t *v = Cvar_FindVar( Cmd_Argv( 0 ) );
 	if (!v)
 		return false;
 		
@@ -682,7 +656,7 @@ qboolean Cvar_Command (void)
 			Com_Printf ("\"%s\" is \"%s\" : default is \"%s\"\n", v->name, v->string, v->default_string);
 
 		// Knightmare- added descriptions from From Maraa'kate's cvar code
-		if ( (v->description != NULL) && (con_show_description->integer || !strcmp(v->name, "con_show_description")) )
+		if ( (v->description != nullptr ) && (con_show_description->integer || !strcmp(v->name, "con_show_description")) )
 			Com_Printf ("Description: %s\n", v->description);
 		// end Knightmare
 
@@ -701,7 +675,7 @@ Cvar_Set_f
 Allows setting and defining of arbitrary cvars from console
 ============
 */
-void Cvar_Set_f (void)
+void Cvar_Set_f ()
 {
 	int		c;
 	int		flags;
@@ -802,7 +776,7 @@ void Cvar_WriteVariables (char *path)
 	{
 		if (var->flags & CVAR_ARCHIVE)
 		{
-			Com_sprintf (buffer, sizeof(buffer), "set %s \"%s\"\n", var->name, var->string);
+			snprintf (buffer, sizeof(buffer), "set %s \"%s\"\n", var->name, var->string);
 			fprintf (f, "%s", buffer);
 		}
 	}
@@ -871,7 +845,7 @@ void Cvar_List_f (void)
 				Com_Printf (" ");
 
 			// Knightmare- added descriptions from From Maraa'kate's cvar code
-			if (var->description != NULL)
+			if (var->description != nullptr )
 				Com_Printf ("D");
 			else
 				Com_Printf (" ");
@@ -921,7 +895,7 @@ void DumpCvars_f (void)
 	else
 		wc = "*";
 
-	Com_sprintf (name, sizeof(name), "%s/cvarlist.txt", FS_Savegamedir());
+	snprintf (name, sizeof(name), "%s/cvarlist.txt", FS_Savegamedir());
 	cvar_list_file = fopen ( name, "w" );
 	if ( !cvar_list_file ) {
 		Com_Printf ("DumpCvars_f: coudn't open %s\n", name);
@@ -938,9 +912,9 @@ void DumpCvars_f (void)
 		{
 			j++;
 			if (var->flags & CVAR_ARCHIVE)
-				Com_sprintf (var_line, sizeof(var_line), "A");
+				snprintf (var_line, sizeof(var_line), "A");
 			else
-				Com_sprintf (var_line, sizeof(var_line), " ");
+				snprintf (var_line, sizeof(var_line), " ");
 
 			if (var->flags & CVAR_USERINFO)
 				Q_strncatz (var_line, sizeof(var_line), "U");
@@ -966,20 +940,20 @@ void DumpCvars_f (void)
 
 			// show latched value if applicable
 			if ((var->flags & CVAR_LATCH) && var->latched_string) {
-				Com_sprintf (line2, sizeof(line2), " %s \"%s\" - default: \"%s\", latched to: \"%s\"\n", var->name, var->string, var->default_string, var->latched_string);
+				snprintf (line2, sizeof(line2), " %s \"%s\" - default: \"%s\", latched to: \"%s\"\n", var->name, var->string, var->default_string, var->latched_string);
 			}
 			else {
-				Com_sprintf (line2, sizeof(line2), " %s \"%s\" - default: \"%s\"\n", var->name, var->string, var->default_string);
+				snprintf (line2, sizeof(line2), " %s \"%s\" - default: \"%s\"\n", var->name, var->string, var->default_string);
 			}
 			Q_strncatz (var_line, sizeof(var_line), line2);
 			fprintf (cvar_list_file, var_line);
 
 			// Knightmare- added descriptions from From Maraa'kate's cvar code
-			if (var->description != NULL) {
-				Com_sprintf (var_line, sizeof(var_line), "%s\n\n", var->description);
+			if (var->description != nullptr ) {
+				snprintf (var_line, sizeof(var_line), "%s\n\n", var->description);
 			}
 			else {
-				Com_sprintf (var_line, sizeof(var_line), "This variable does not have a description.\n\n");
+				snprintf (var_line, sizeof(var_line), "This variable does not have a description.\n\n");
 			}
 			fprintf (cvar_list_file, var_line);
 		}
@@ -1045,9 +1019,9 @@ Reads in all archived cvars
 */
 void Cvar_Init (void)
 {
-	Cmd_AddCommand ("set", Cvar_Set_f);
-	Cmd_AddCommand ("toggle", Cvar_Toggle_f);
-	Cmd_AddCommand ("reset", Cvar_Reset_f);
-	Cmd_AddCommand ("cvarlist", Cvar_List_f);
-	Cmd_AddCommand ("dumpcvars", DumpCvars_f);	// Knightmare added
+	Cmd_AddCommand ( "set", Cvar_Set_f );
+	Cmd_AddCommand ( "toggle", Cvar_Toggle_f );
+	Cmd_AddCommand ( "reset", Cvar_Reset_f );
+	Cmd_AddCommand ( "cvarlist", Cvar_List_f );
+	Cmd_AddCommand ( "dumpcvars", DumpCvars_f );	// Knightmare added
 }

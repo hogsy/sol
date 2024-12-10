@@ -85,7 +85,7 @@ qboolean QCURL_Init (void)
 	if (qcurl_initialized)	// already intitialized
 		return true;
 
-	cl_libcurl_filename = Cvar_Get ("cl_libcurl_filename", (char *)libcurl_filenames[0], CVAR_ARCHIVE);
+	cl_libcurl_filename = Cvar_Get ( "cl_libcurl_filename", ( char * ) libcurl_filenames[ 0 ], CVAR_ARCHIVE );
 
 	Com_Printf ("Loading library: %s...", cl_libcurl_filename->string);
 	Sys_LoadLibrary (cl_libcurl_filename->string, NULL, &CURL_handle);

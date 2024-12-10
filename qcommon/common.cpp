@@ -113,7 +113,7 @@ Both client and server can use this, and it will output
 to the apropriate place.
 =============
 */
-void Com_Printf (char *fmt, ...)
+void Com_Printf (const char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -149,7 +149,7 @@ void Com_Printf (char *fmt, ...)
 		
 		if (!logfile)
 		{
-			Com_sprintf (name, sizeof(name), "%s/qconsole.log", FS_Savegamedir ());	// was FS_Gamedir()
+			snprintf (name, sizeof(name), "%s/qconsole.log", FS_Savegamedir ());	// was FS_Gamedir()
 		//	if (logfile_active->value > 2)
 			if (logfile_active->integer > 2)
 				logfile = fopen (name, "a");
@@ -172,7 +172,7 @@ Com_DPrintf
 A Com_Printf that only shows up if the "developer" cvar is set
 ================
 */
-void Com_DPrintf (char *fmt, ...)
+void Com_DPrintf (const char *fmt, ...)
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -198,7 +198,7 @@ Both client and server can use this, and it will
 do the apropriate things.
 =============
 */
-void Com_Error (int code, char *fmt, ...)
+void Com_Error (int code, const char *fmt, ...)
 {
 	va_list		argptr;
 	static char		msg[MAXPRINTMSG];
@@ -395,7 +395,7 @@ void MSG_WriteFloatAsShort (sizebuf_t *sb, float f)
 	MSG_WriteShort (sb, asShort);
 }
 
-void MSG_WriteString (sizebuf_t *sb, char *s)
+void MSG_WriteString (sizebuf_t *sb, const char *s)
 {
 	if (!s)
 		SZ_Write (sb, (void*)"", 1);
@@ -1346,8 +1346,7 @@ void SZ_Clear (sizebuf_t *buf)
 
 void *SZ_GetSpace (sizebuf_t *buf, int length)
 {
-	void	*data;
-	
+
 	if (buf->cursize + length > buf->maxsize)
 	{
 		if (!buf->allowoverflow)
@@ -1361,22 +1360,20 @@ void *SZ_GetSpace (sizebuf_t *buf, int length)
 		buf->overflowed = true;
 	}
 
-	data = buf->data + buf->cursize;
+	void *data = buf->data + buf->cursize;
 	buf->cursize += length;
 	
 	return data;
 }
 
-void SZ_Write (sizebuf_t *buf, void *data, int length)
+void SZ_Write (sizebuf_t *buf, const void *data, int length)
 {
 	memcpy (SZ_GetSpace(buf,length),data,length);		
 }
 
-void SZ_Print (sizebuf_t *buf, char *data)
+void SZ_Print (sizebuf_t *buf, const char *data)
 {
-	int		len;
-	
-	len = (int)strlen(data)+1;
+	int len = ( int ) strlen( data ) + 1;
 
 	if (buf->cursize)
 	{
@@ -1399,7 +1396,7 @@ Returns the position (1 to argc-1) in the program's argument list
 where the given parameter apears, or 0 if not present
 ================
 */
-int COM_CheckParm (char *parm)
+int COM_CheckParm ( const char *parm)
 {
 	int		i;
 	
@@ -1412,7 +1409,7 @@ int COM_CheckParm (char *parm)
 	return 0;
 }
 
-int COM_Argc (void)
+int COM_Argc ()
 {
 	return com_argc;
 }
@@ -1469,7 +1466,7 @@ void COM_AddParm (char *parm)
 
 
 /// just for debugging
-int	memsearch (byte *start, int count, int search)
+int	memsearch ( const byte *start, int count, int search)
 {
 	int		i;
 	
@@ -1480,7 +1477,7 @@ int	memsearch (byte *start, int count, int search)
 }
 
 
-char *CopyString (char *in)
+char *CopyString (const char *in)
 {
 	size_t outSize = strlen( in ) + 1;
 	char  *out     = static_cast< char * >( Z_Malloc( outSize ) );
@@ -1490,22 +1487,20 @@ char *CopyString (char *in)
 }
 
 
-void Info_Print (char *s)
+void Info_Print ( const char *s)
 {
 	char	key[512];
-	char	value[512];
-	char	*o;
-	int		l;
 
 	if (*s == '\\')
 		s++;
 	while (*s)
 	{
-		o = key;
+		char value[ 512 ];
+		char *o = key;
 		while (*s && *s != '\\')
 			*o++ = *s++;
 
-		l = o - key;
+		int l = o - key;
 		if (l < 20)
 		{
 			memset (o, ' ', 20-l);
@@ -1565,9 +1560,7 @@ Z_Free
 */
 void Z_Free (void *ptr)
 {
-	zhead_t	*z;
-
-	z = ((zhead_t *)ptr) - 1;
+	zhead_t *z = ( ( zhead_t * ) ptr ) - 1;
 
 	if (z->magic != Z_MAGIC)
 		Com_Error (ERR_FATAL, "Z_Free: bad magic");
@@ -1586,7 +1579,7 @@ void Z_Free (void *ptr)
 Z_Stats_f
 ========================
 */
-void Z_Stats_f (void)
+void Z_Stats_f ()
 {
 	Com_Printf ("%i bytes in %i blocks\n", z_bytes, z_count);
 }
@@ -1775,7 +1768,7 @@ COM_BlockSequenceCRCByte
 For proxy protecting
 ====================
 */
-byte COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
+byte COM_BlockSequenceCRCByte ( const byte *base, int length, int sequence)
 {
 	int		n;
 	byte	*p;
@@ -1812,18 +1805,18 @@ byte COM_BlockSequenceCRCByte (byte *base, int length, int sequence)
 
 //========================================================
 
-float	frand(void)
+float	frand()
 {
 	return (rand()&32767)* (1.0/32767);
 }
 
-float	crand(void)
+float	crand()
 {
 	return (rand()&32767)* (2.0/32767) - 1;
 }
 
-void Key_Init (void);
-void SCR_EndLoadingPlaque (void);
+void Key_Init ();
+void SCR_EndLoadingPlaque ();
 
 /*
 =============
@@ -1833,7 +1826,7 @@ Just throw a fatal error to
 test error shutdown procedures
 =============
 */
-void Com_Error_f (void)
+void Com_Error_f ()
 {
 	Com_Error (ERR_FATAL, "%s", Cmd_Argv(1));
 }
@@ -1885,48 +1878,48 @@ void Qcommon_Init (int argc, char **argv)
 	//
 	// init commands and vars
 	//
-    Cmd_AddCommand ("z_stats", Z_Stats_f);
-    Cmd_AddCommand ("error", Com_Error_f);
+    Cmd_AddCommand ( "z_stats", Z_Stats_f );
+    Cmd_AddCommand ( "error", Com_Error_f );
 
-	host_speeds = Cvar_Get ("host_speeds", "0", 0);
-	Cvar_SetDescription ("host_speeds", "Enables output of per-frame time elapsed in ms for server/game/client/renderer.");
-	log_stats = Cvar_Get ("log_stats", "0", 0);
-	Cvar_SetDescription ("log_stats", "Enables output of entities, dlights, particles, and frame time for each frame to stats.log.");
-	developer = Cvar_Get ("developer", "0", 0);
-	Cvar_SetDescription ("developer", "Enables developer messages in console.  Values > 1 will enable more verbose outputs, such as for image loading.");
+	host_speeds = Cvar_Get ( "host_speeds", "0", 0 );
+	Cvar_SetDescription ( "host_speeds", "Enables output of per-frame time elapsed in ms for server/game/client/renderer." );
+	log_stats = Cvar_Get ( "log_stats", "0", 0 );
+	Cvar_SetDescription ( "log_stats", "Enables output of entities, dlights, particles, and frame time for each frame to stats.log." );
+	developer = Cvar_Get ( "developer", "0", 0 );
+	Cvar_SetDescription ( "developer", "Enables developer messages in console.  Values > 1 will enable more verbose outputs, such as for image loading." );
 
-	timescale = Cvar_Get ("timescale", "1", CVAR_CHEAT);
-	Cvar_SetDescription ("timescale", "Timescaling feature.  Values lower than 1 slow down the game, while higher values speed it up.  This is considered a cheat in multiplayer.");
-	fixedtime = Cvar_Get ("fixedtime", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("fixedtime", "Fixed frametime feature.  Non-zero values set time in ms for each common frame.  This is considered a cheat in multiplayer.");
+	timescale = Cvar_Get ( "timescale", "1", CVAR_CHEAT );
+	Cvar_SetDescription ( "timescale", "Timescaling feature.  Values lower than 1 slow down the game, while higher values speed it up.  This is considered a cheat in multiplayer." );
+	fixedtime = Cvar_Get ( "fixedtime", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "fixedtime", "Fixed frametime feature.  Non-zero values set time in ms for each common frame.  This is considered a cheat in multiplayer." );
 
-	logfile_active = Cvar_Get ("logfile", "0", 0);
-	Cvar_SetDescription ("logfile", "Enables logging of console to qconsole.log.  Values > 1 cause writes on every console ouput.");
-	showtrace = Cvar_Get ("showtrace", "0", 0);
-	Cvar_SetDescription ("showtrace", "Toggles output of per-frame trace operation counts to console.");
-	con_show_description = Cvar_Get ("con_show_description", "1", CVAR_ARCHIVE);	// Knightmare added
-	Cvar_SetDescription ("con_show_description", "Toggles output of descriptions for cvars.  This cvar will always show its description.");
+	logfile_active = Cvar_Get ( "logfile", "0", 0 );
+	Cvar_SetDescription ( "logfile", "Enables logging of console to qconsole.log.  Values > 1 cause writes on every console ouput." );
+	showtrace = Cvar_Get ( "showtrace", "0", 0 );
+	Cvar_SetDescription ( "showtrace", "Toggles output of per-frame trace operation counts to console." );
+	con_show_description = Cvar_Get ( "con_show_description", "1", CVAR_ARCHIVE );	// Knightmare added
+	Cvar_SetDescription ( "con_show_description", "Toggles output of descriptions for cvars.  This cvar will always show its description." );
 
 #ifdef DEDICATED_ONLY
 	dedicated = Cvar_Get ("dedicated", "1", CVAR_NOSET);
 #else
-	dedicated = Cvar_Get ("dedicated", "0", CVAR_NOSET);
+	dedicated = Cvar_Get ( "dedicated", "0", CVAR_NOSET );
 #endif
-	Cvar_SetDescription ("dedicated", "Toggles dedicated server.  Can only be set from the command line or the start server menu.");
+	Cvar_SetDescription ( "dedicated", "Toggles dedicated server.  Can only be set from the command line or the start server menu." );
 
 	// Knightmare- for the game DLL to tell what engine it's running under
-	sv_engine = Cvar_Get ("sv_engine", "KMQuake2", CVAR_SERVERINFO | CVAR_NOSET | CVAR_LATCH);
-	Cvar_SetDescription ("sv_engine", "Identifies the server engine.");
-	sv_engine_version = Cvar_Get ("sv_engine_version", va("%4.2f", VERSION), CVAR_SERVERINFO | CVAR_NOSET | CVAR_LATCH);
-	Cvar_SetDescription ("sv_engine_version", "Identifies the server engine version.");
+	sv_engine = Cvar_Get ( "sv_engine", "KMQuake2", CVAR_SERVERINFO | CVAR_NOSET | CVAR_LATCH );
+	Cvar_SetDescription ( "sv_engine", "Identifies the server engine." );
+	sv_engine_version = Cvar_Get ( "sv_engine_version", va( "%4.2f", VERSION ), CVAR_SERVERINFO | CVAR_NOSET | CVAR_LATCH );
+	Cvar_SetDescription ( "sv_engine_version", "Identifies the server engine version." );
 	// end Knightmare
 	
 	s = va("KMQ2 %4.2fu%d %s %s %s %s", VERSION, VERSION_UPDATE, CPUSTRING, OS_STRING, COMPILETYPE_STRING, __DATE__);
-	Cvar_Get ("version", s, CVAR_SERVERINFO|CVAR_NOSET);
+	Cvar_Get ( "version", s, CVAR_SERVERINFO | CVAR_NOSET );
 
 //	if (dedicated->value)
 	if (dedicated->integer)
-		Cmd_AddCommand ("quit", Com_Quit);
+		Cmd_AddCommand ( "quit", Com_Quit );
 
 	dedicated->modified = false;	// make sure this starts false
 
@@ -2012,7 +2005,7 @@ void Qcommon_Frame (int msec)
 			}
 			// Knightmare- write stats.log in fs_savegamedir instead of game root
 		//	log_stats_file = fopen( "stats.log", "w" );
-			Com_sprintf (name, sizeof(name), "%s/stats.log", FS_Savegamedir());
+			snprintf (name, sizeof(name), "%s/stats.log", FS_Savegamedir());
 			log_stats_file = fopen( name, "w" );
 			if ( log_stats_file )
 				fprintf( log_stats_file, "entities,dlights,parts,frame time\n" );
@@ -2073,7 +2066,7 @@ void Qcommon_Frame (int msec)
 		if (!dedicated->integer)
 		{
 			// remove server quit command, to be replaced with client quit command
-			Cmd_RemoveCommand ("quit");
+			Cmd_RemoveCommand ( "quit" );
 
 			CL_Init ();
 			Sys_ShowConsole (false);
@@ -2083,7 +2076,7 @@ void Qcommon_Frame (int msec)
 			CL_Shutdown ();
 
 			// the above function call removes client quit command, replace it with server quit command
-			Cmd_AddCommand ("quit", Com_Quit);
+			Cmd_AddCommand ( "quit", Com_Quit );
 
 			Sys_ShowConsole (true);
 		}
@@ -2381,7 +2374,7 @@ const char *MakePrintable (const void *subject, size_t numchars)
 		}
 		else
 		{
-			Com_sprintf (tmp, sizeof(tmp), "%.3d", s[0]);
+			snprintf (tmp, sizeof(tmp), "%.3d", s[0]);
 			*p++ = '\\';
 			*p++ = tmp[0];
 			*p++ = tmp[1];

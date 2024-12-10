@@ -87,12 +87,12 @@ void UI_MenuScrollBar_ClickPos (widgetScroll_s *scroll, menuCommon_s *item, floa
 	if (!scroll)	return;
 
 	if (scroll->scrollType == SCROLL_X) {
-		SCR_ScaleCoords (&barStart, NULL, NULL, NULL, item->scrAlign);
-		SCR_ScaleCoords (&barEnd, NULL, NULL, NULL, item->scrAlign);
+		SCR_ScaleCoords (&barStart, nullptr, nullptr, nullptr, item->scrAlign);
+		SCR_ScaleCoords (&barEnd, nullptr, nullptr, nullptr, item->scrAlign);
 	}
 	else { // SCROLL_Y
-		SCR_ScaleCoords (NULL, &barStart, NULL, NULL, item->scrAlign);
-		SCR_ScaleCoords (NULL, &barEnd, NULL, NULL, item->scrAlign);
+		SCR_ScaleCoords ( nullptr, &barStart, nullptr, nullptr, item->scrAlign);
+		SCR_ScaleCoords ( nullptr, &barEnd, nullptr, nullptr, item->scrAlign);
 	}
 	barLength = barEnd - barStart;
 	clickPos = ((scroll->scrollType == SCROLL_X) ? ui_mousecursor.x : ui_mousecursor.y) - barStart;
@@ -273,7 +273,7 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 
 	buttonSizeScaled = UI_ScaledScreen((float)button_size);
 	skSegmentSizeScaled = UI_ScaledScreen((float)sk_segment_size);
-	hoverAlpha = UI_MouseOverAlpha(ui_mousecursor.menuitem);
+	hoverAlpha = UI_MouseOverAlpha( static_cast< menuCommon_s * >( ui_mousecursor.menuitem ) );
 	mouseClick = ( ui_mousecursor.buttonused[MOUSEBUTTON1] && ui_mousecursor.buttonclicks[MOUSEBUTTON1] );
 	UI_TextColor (alt_text_color->integer, true, &red, &green, &blue);
 
@@ -359,7 +359,7 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 				knob_y = box_y + boxHeight - button_size;
 				knob_x_scaled = knob_x;
 				knob_y_scaled = knob_y;
-				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, NULL, NULL, item->scrAlign);
+				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, nullptr, nullptr, item->scrAlign);
 				knobXScaled = floor(knob_x_scaled);
 				knobYScaled = knob_y_scaled;
 			//	Com_Printf ("scroll_prop: %f barWidth: %i knobWidth: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
@@ -480,7 +480,7 @@ void UI_MenuScrollBar_Draw (menuCommon_s *item, widgetScroll_s *scroll, int box_
 				knob_y = box_y + button_size + sliderPos2;
 				knob_x_scaled = knob_x;
 				knob_y_scaled = knob_y;
-				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, NULL, NULL, item->scrAlign);
+				SCR_ScaleCoords (&knob_x_scaled, &knob_y_scaled, nullptr, nullptr, item->scrAlign);
 				knobXScaled = knob_x_scaled;
 				knobYScaled = floor(knob_y_scaled);
 			//	Com_Printf ("scroll_prop: %f barHeight: %i knobHeight: %i numKnobSegments: %i centerKnobSegment: %i sliderPos2: %i\n",
@@ -629,7 +629,7 @@ void UI_MenuKeyBind_DoEnter (menuKeyBind_s *k)
 //		UI_UnbindCommand (k->commandName);
 
 	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
-		
+
 	if (k->generic.callback)
 		k->generic.callback (k);
 }
@@ -751,7 +751,7 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 			if (k->keys[1] != -1)	// if two keys are already bound to this, clear them
 				UI_UnbindCommand (k->commandName);
 
-			Com_sprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->commandName);
+			snprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->commandName);
 			Cbuf_InsertText (cmd);
 		}
 
@@ -787,10 +787,10 @@ const char *UI_MenuKeyBind_Key (menuKeyBind_s *k, int key)
 
 //=========================================================
 
-static keyBindSubitem_t ui_binds_null[] = 
+static keyBindSubitem_t ui_binds_null[] =
 {
 { "null",	"No Bind Commands Found",	0, 0 },
-{ 0, 0,	0, 0 }
+{ nullptr, nullptr,	0, 0 }
 };
 
 void UI_MenuKeyBindList_DoEnter (menuKeyBindList_s *k)
@@ -810,7 +810,7 @@ void UI_MenuKeyBindList_DoEnter (menuKeyBindList_s *k)
 //		UI_UnbindCommand (k->commandName);
 
 	UI_SetGrabBindItem (menu, (menuCommon_s *)k);
-		
+
 	if (k->generic.dblClkCallback)
 		k->generic.dblClkCallback (k);
 }
@@ -935,7 +935,7 @@ void UI_MenuKeyBindList_Draw (menuKeyBindList_s *k)
 						k->generic.scrAlign, true, k->backColor[0], k->backColor[1], k->backColor[2], k->backColor[3]);
 
 	// scrollbar
-	UI_MenuScrollBar_Draw (&k->generic, &k->scrollState, k->generic.topLeft[0], k->generic.topLeft[1], boxWidth, boxHeight); 
+	UI_MenuScrollBar_Draw (&k->generic, &k->scrollState, k->generic.topLeft[0], k->generic.topLeft[1], boxWidth, boxHeight);
 
 	// items
 	x = k->generic.topLeft[0];
@@ -966,10 +966,10 @@ void UI_MenuKeyBindList_Draw (menuKeyBindList_s *k)
 
 			xofs = LISTBOX_ITEM_PADDING + (k->itemNameWidth + 1) * MENU_FONT_SIZE;
 			if ( (i == k->curValue) && k->grabBind ) {
-				Com_sprintf (buf, sizeof(buf), " = ");
+				snprintf (buf, sizeof(buf), " = ");
 			}
 			else
-				Com_sprintf (buf, sizeof(buf), "   ");
+				snprintf (buf, sizeof(buf), "   ");
 
 			if (k->bindList[i].keys[0] == -1) {
 				Q_strncatz (buf, sizeof(buf), "???");
@@ -1077,10 +1077,10 @@ const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key)
 		if (key != K_ESCAPE && key != '`')
 		{
 			char cmd[1024];
-			
+
 			if (k->bindList[k->curValue].keys[1] != -1)	// if two keys are already bound to this, clear them
 				UI_UnbindCommand ((char *)k->bindList[k->curValue].commandName);
-			Com_sprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->bindList[k->curValue].commandName);
+			snprintf (cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", Key_KeynumToString(key), k->bindList[k->curValue].commandName);
 			Cbuf_InsertText (cmd);
 		}
 
@@ -1118,7 +1118,7 @@ const char *UI_MenuKeyBindList_Key (menuKeyBindList_s *k, int key)
 
 char *UI_MenuField_GetValue (menuField_s *f)
 {
-	if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp 
+	if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp
 		&& !(f->generic.cvarMin == 0 && f->generic.cvarMax == 0) )
 		return va("%f", ClampCvar(f->generic.cvarMin, f->generic.cvarMax, atof(f->buffer)) );
 	else
@@ -1143,7 +1143,7 @@ void UI_MenuField_SaveValue (menuField_s *f)
 	if (f->generic.cvar && strlen(f->generic.cvar) > 0)
 	{
 		// clamp numeric values if needed
-		if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp 
+		if ( (f->generic.flags & QMF_NUMBERSONLY) && f->generic.cvarClamp
 			&& !(f->generic.cvarMin == 0 && f->generic.cvarMax == 0) )
 			Cvar_SetValue ( f->generic.cvar, ClampCvar(f->generic.cvarMin, f->generic.cvarMax, atof(f->buffer)) );
 		else
@@ -1257,7 +1257,7 @@ void UI_MenuField_Draw (menuField_s *f)
 
 	// add cursor thingie
 	if ( (UI_ItemAtMenuCursor(menu) == f)  && (((int)(Sys_Milliseconds()/250)) & 1) )
-		Com_sprintf (tempbuffer, sizeof(tempbuffer), "%s%c", tempbuffer, 11);
+		snprintf (tempbuffer, sizeof(tempbuffer), "%s%c", tempbuffer, 11);
 
 	UI_DrawMenuString (menu->x + f->generic.x + (int)(f->generic.textSize*2.5),
 						menu->y + f->generic.y, f->generic.textSize, f->generic.scrAlign, tempbuffer, hoverAlpha, false, false);
@@ -1296,8 +1296,8 @@ qboolean UI_MenuField_Key (menuField_s *f, int key)
 		 ( ( (key == K_INS) || (key == K_KP_INS) ) && keydown[K_SHIFT] ) )
 	{
 		char *cbd;
-		
-		if ( ( cbd = Sys_GetClipboardData() ) != 0 )
+
+		if ( ( cbd = Sys_GetClipboardData() ) != nullptr )
 		{
 			strtok( cbd, "\n\r\b" );
 
@@ -1474,7 +1474,7 @@ void UI_MenuSlider_ClickPos (menuFramework_s *menu, void *menuitem)
 				+ (float)SLIDER_RANGE*(float)SLIDER_SECTION_WIDTH*range);
 	x = menu->x + item->x + sliderPos;
 	w = SLIDER_KNOB_WIDTH;
-	SCR_ScaleCoords (&x, NULL, &w, NULL, item->scrAlign);
+	SCR_ScaleCoords (&x, nullptr, &w, nullptr, item->scrAlign);
 	min = x - w/2;
 	max = x + w/2;
 
@@ -1490,7 +1490,7 @@ void UI_MenuSlider_DragPos (menuFramework_s *menu, void *menuitem)
 	float			newValue, sliderbase;
 
 	sliderbase = menu->x + slider->generic.x + RCOLUMN_OFFSET + SLIDER_ENDCAP_WIDTH;
-	SCR_ScaleCoords (&sliderbase, NULL, NULL, NULL, slider->generic.scrAlign);
+	SCR_ScaleCoords (&sliderbase, nullptr, nullptr, nullptr, slider->generic.scrAlign);
 	newValue = (float)(ui_mousecursor.x - sliderbase)
 				/ (SLIDER_RANGE * SCR_ScaledScreen(SLIDER_SECTION_WIDTH));
 	slider->curPos = newValue * (float)slider->maxPos;
@@ -1508,12 +1508,12 @@ qboolean UI_MenuSlider_Check_Mouseover (menuSlider_s *s)
 	x2 = s->generic.botRight[0];
 	y2 = s->generic.botRight[1];
 
-	SCR_ScaleCoords (&x1, &y1, NULL, NULL, s->generic.scrAlign);
-	SCR_ScaleCoords (&x2, &y2, NULL, NULL, s->generic.scrAlign);
+	SCR_ScaleCoords (&x1, &y1, nullptr, nullptr, s->generic.scrAlign);
+	SCR_ScaleCoords (&x2, &y2, nullptr, nullptr, s->generic.scrAlign);
 	min[0] = x1;	max[0] = x2;
 	min[1] = y1;	max[1] = y2;
 
-	if ( ui_mousecursor.x >= min[0] && ui_mousecursor.x <= max[0] 
+	if ( ui_mousecursor.x >= min[0] && ui_mousecursor.x <= max[0]
 		&& ui_mousecursor.y >= min[1] &&  ui_mousecursor.y <= max[1] )
 		return true;
 	else
@@ -1599,13 +1599,13 @@ void UI_MenuSlider_Draw (menuSlider_s *s)
 	tmpValue = s->curPos * s->increment + s->baseValue;
 	if (s->displayAsPercent) {
 		tmpValue *= 100.0f;
-		Com_sprintf (valueText, sizeof(valueText), "%.0f%%", tmpValue);
+		snprintf (valueText, sizeof(valueText), "%.0f%%", tmpValue);
 	}
 	else {
 		if (fabs((int)tmpValue - tmpValue) < 0.01f)
-			Com_sprintf (valueText, sizeof(valueText), "%i", (int)tmpValue);
+			snprintf (valueText, sizeof(valueText), "%i", (int)tmpValue);
 		else
-			Com_sprintf (valueText, sizeof(valueText), "%4.2f", tmpValue);
+			snprintf (valueText, sizeof(valueText), "%4.2f", tmpValue);
 	}
 	UI_DrawMenuString (s->generic.topLeft[0] + RCOLUMN_OFFSET + 2*SLIDER_ENDCAP_WIDTH + i*SLIDER_SECTION_WIDTH + MENU_FONT_SIZE/2,
 						s->generic.topLeft[1] + SLIDER_V_OFFSET, MENU_FONT_SIZE-2, s->generic.scrAlign, valueText, hoverAlpha, false, false);
@@ -1642,7 +1642,7 @@ char *UI_MenuPicker_GetValue (menuPicker_s *p)
 	if (p->bitFlag) {
 		return va("%i", (p->curValue ? (!p->invertValue) : p->invertValue) ? p->bitFlag : 0);
 	}
-	else if (p->bitFlags != NULL) {
+	else if (p->bitFlags != nullptr ) {
 		return va("%i", (p->curValue ? p->bitFlags[p->curValue] : 0));
 	}
 	else {
@@ -1677,7 +1677,7 @@ void UI_MenuPicker_SetValue (menuPicker_s *p)
 
 		p->curValue = ( p->invertValue ? !(menu->bitFlags & p->bitFlag) : (menu->bitFlags & p->bitFlag) ) ? 1 : 0;
 	}
-	else if (p->bitFlags != NULL)
+	else if (p->bitFlags != nullptr )
 	{
 		menuFramework_s	*menu = p->generic.parent;
 		int				i, foundBit=0;
@@ -1697,7 +1697,7 @@ void UI_MenuPicker_SaveValue (menuPicker_s *p)
 	{
 		if (p->itemValues) {
 			// Don't save to cvar if this itemvalue is the wildcard
-			if ( Q_stricmp(va("%s", p->itemValues[p->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+			if ( Q_stricmp( va( "%s", p->itemValues[ p->curValue ] ), UI_ITEMVALUE_WILDCARD ) != 0 )
 				Cvar_Set (p->generic.cvar, va("%s", p->itemValues[p->curValue]));
 		}
 		else
@@ -1716,7 +1716,7 @@ void UI_MenuPicker_SaveValue (menuPicker_s *p)
 
 		UI_SetMenuBitFlags (menu, p->bitFlag, (p->curValue ? (!p->invertValue) : p->invertValue));
 	}
-	else if (p->bitFlags != NULL)
+	else if (p->bitFlags != nullptr )
 	{
 		menuFramework_s	*menu = p->generic.parent;
 		int				i, clearBits=0;
@@ -1732,13 +1732,13 @@ void UI_MenuPicker_SaveValue (menuPicker_s *p)
 
 qboolean UI_MenuPicker_ValueChanged (menuPicker_s *p)
 {
-	if ( (p->bitFlag != 0) || (p->bitFlags != NULL) )	// doesn't apply to bitflag/bitflags
+	if ( (p->bitFlag != 0) || (p->bitFlags != nullptr ) )	// doesn't apply to bitflag/bitflags
 		return false;
 	if (!p->generic.cvar || !strlen(p->generic.cvar))	// must have a valid cvar
 		return false;
 	if (!p->generic.cvarNoSave)	// only for cvarNoSave items
 		return false;
-		
+
 	if (p->itemValues)
 		return ( p->curValue != UI_GetIndexForStringValue(p->itemValues, Cvar_VariableString(p->generic.cvar)) );
 	else {
@@ -1753,7 +1753,7 @@ void UI_MenuPicker_DoEnter (menuPicker_s *p)
 		return;
 
 	p->curValue++;
-	if (p->itemNames[p->curValue] == 0)
+	if (p->itemNames[p->curValue] == nullptr)
 		p->curValue = 0;
 
 	if (!p->generic.cvarNoSave)
@@ -1776,13 +1776,13 @@ void UI_MenuPicker_DoSlide (menuPicker_s *p, int dir)
 	{
 		if (p->curValue < 0)
 			p->curValue = 0;
-		else if (p->itemNames[p->curValue] == 0)
+		else if (p->itemNames[p->curValue] == nullptr)
 			p->curValue--;
 	}
 	else {
 		if (p->curValue < 0)
 			p->curValue = p->numItems-1; // was 0
-		else if (p->itemNames[p->curValue] == 0)
+		else if (p->itemNames[p->curValue] == nullptr)
 			p->curValue = 0; // was --
 	}
 
@@ -1991,7 +1991,7 @@ void UI_MenuCheckBox_Draw (menuCheckBox_s *c)
 
 	UI_DrawPicST (menu->x + c->generic.x + RCOLUMN_OFFSET,
 				menu->y + c->generic.y-CHECKBOX_V_OFFSET, CHECKBOX_WIDTH, CHECKBOX_HEIGHT,
-				(c->curValue) ? stCoord_checkbox_on : stCoord_checkbox_off, c->generic.scrAlign, false, color_identity, UI_CHECKBOX_PIC);	
+				(c->curValue) ? stCoord_checkbox_on : stCoord_checkbox_off, c->generic.scrAlign, false, color_identity, UI_CHECKBOX_PIC);
 }
 
 void UI_MenuCheckBox_Setup (menuCheckBox_s *c)
@@ -2015,7 +2015,7 @@ void UI_MenuCheckBox_Setup (menuCheckBox_s *c)
 
 	if (c->generic.name) {
 		if (c->generic.flags & QMF_LEFT_JUSTIFY)
-			c->generic.botRight[0] += (nameWidth + RCOLUMN_OFFSET);	
+			c->generic.botRight[0] += (nameWidth + RCOLUMN_OFFSET);
 		else
 			c->generic.topLeft[0] -= (nameWidth + RCOLUMN_OFFSET);
 	}
@@ -2349,7 +2349,7 @@ void UI_MenuListBox_SaveValue (menuListBox_s *l)
 	{
 		if (l->itemValues) {
 			// Don't save to cvar if this itemvalue is the wildcard
-			if ( Q_stricmp(va("%s", l->itemValues[l->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+			if ( Q_stricmp( va( "%s", l->itemValues[ l->curValue ] ), UI_ITEMVALUE_WILDCARD ) != 0 )
 				Cvar_Set (l->generic.cvar, va("%s", l->itemValues[l->curValue]));
 		}
 		else
@@ -2364,7 +2364,7 @@ qboolean UI_MenuListBox_ValueChanged (menuListBox_s *l)
 		return false;
 	if (!l->generic.cvarNoSave)	// only for cvarNoSave items
 		return false;
-		
+
 	if (l->itemValues)
 		return ( l->curValue != UI_GetIndexForStringValue(l->itemValues, Cvar_VariableString(l->generic.cvar)) );
 	else {
@@ -2511,7 +2511,7 @@ void UI_MenuListBox_Draw (menuListBox_s *l)
 						l->generic.scrAlign, true, l->backColor[0], l->backColor[1], l->backColor[2], l->backColor[3]);
 
 	// scrollbar
-	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight); 
+	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight);
 
 	// items
 	x = l->generic.topLeft[0];
@@ -2530,7 +2530,7 @@ void UI_MenuListBox_Draw (menuListBox_s *l)
 				UI_DrawFill (x, y, itemWidth, itemHeight, l->generic.scrAlign, true, l->altBackColor[0], l->altBackColor[1], l->altBackColor[2], l->altBackColor[3]);
 			else
 				UI_DrawFill (x, y, itemWidth, itemHeight, l->generic.scrAlign, true, l->backColor[0], l->backColor[1], l->backColor[2], l->backColor[3]);
-		}	
+		}
 
 		if (l->itemHeight > 1)
 		{
@@ -2543,7 +2543,7 @@ void UI_MenuListBox_Draw (menuListBox_s *l)
 				strncpy(buf2, va("%s\0", p), l->itemWidth);
 				UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING+j*MENU_LINE_SIZE,
 									MENU_FONT_SIZE, l->generic.scrAlign, buf2, itemPulse ? hoverAlpha : 255, false, false);
-				p = strtok(NULL, "\n");
+				p = strtok( nullptr, "\n");
 			}
 		}
 		else {
@@ -2623,7 +2623,7 @@ void UI_MenuComboBox_SetValue (menuComboBox_s *c)
 			c->curValue = Cvar_VariableInteger(c->generic.cvar);
 		}
 	}
-	else if (c->bitFlags != NULL)
+	else if (c->bitFlags != nullptr )
 	{
 		menuFramework_s	*menu = c->generic.parent;
 		int				i, foundBit=0;
@@ -2643,13 +2643,13 @@ void UI_MenuComboBox_SaveValue (menuComboBox_s *c)
 	{
 		if (c->itemValues) {
 			// Don't save to cvar if this itemvalue is the wildcard
-			if ( Q_stricmp(va("%s", c->itemValues[c->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+			if ( Q_stricmp( va( "%s", c->itemValues[ c->curValue ] ), UI_ITEMVALUE_WILDCARD ) != 0 )
 				Cvar_Set (c->generic.cvar, va("%s", c->itemValues[c->curValue]));
 		}
 		else
 			Cvar_SetInteger (c->generic.cvar, c->curValue);
 	}
-	else if (c->bitFlags != NULL)
+	else if (c->bitFlags != nullptr )
 	{
 		menuFramework_s	*menu = c->generic.parent;
 		int				i, clearBits=0;
@@ -2665,13 +2665,13 @@ void UI_MenuComboBox_SaveValue (menuComboBox_s *c)
 
 qboolean UI_MenuComboBox_ValueChanged (menuComboBox_s *c)
 {
-	if (c->bitFlags != NULL)	// doesn't apply to bitflags
+	if (c->bitFlags != nullptr )	// doesn't apply to bitflags
 		return false;
 	if (!c->generic.cvar || !strlen(c->generic.cvar))	// must have a valid cvar
 		return false;
 	if (!c->generic.cvarNoSave)	// only for cvarNoSave items
 		return false;
-		
+
 	if (c->itemValues)
 		return ( c->curValue != UI_GetIndexForStringValue(c->itemValues, Cvar_VariableString(c->generic.cvar)) );
 	else {
@@ -2691,13 +2691,13 @@ void UI_MenuComboBox_DoSlide (menuComboBox_s *c, int dir)
 	{
 		if (c->curValue < 0)
 			c->curValue = 0;
-		else if (c->itemNames[c->curValue] == 0)
+		else if (c->itemNames[c->curValue] == nullptr)
 			c->curValue--;
 	}
 	else {
 		if (c->curValue < 0)
 			c->curValue = c->numItems-1;
-		else if (c->itemNames[c->curValue] == 0)
+		else if (c->itemNames[c->curValue] == nullptr)
 			c->curValue = 0;
 	}
 
@@ -2816,7 +2816,7 @@ void UI_MenuComboBox_Draw (menuComboBox_s *c)
 
 	UI_DrawMenuString (x+LISTBOX_ITEM_PADDING, y+LISTBOX_ITEM_PADDING+c->itemSpacing,
 						MENU_FONT_SIZE, c->generic.scrAlign, c->itemNames[c->curValue], itemPulse ? hoverAlpha : 255, false, false);
-	
+
 	Vector4Copy (stCoord_arrow_down, arrowTemp);
 	arrowTemp[1] += t_ofs;
 	arrowTemp[3] += t_ofs;
@@ -2825,7 +2825,7 @@ void UI_MenuComboBox_Draw (menuComboBox_s *c)
 	UI_DrawPicST (x+itemWidth, y, button_size, button_size, arrowTemp, c->generic.scrAlign, false, arrowColor, UI_ARROWS_PIC);
 
 	// catch loss of focus
-	if ( ((ui_mousecursor.menuitem != NULL) && (ui_mousecursor.menuitem != c))
+	if ( ((ui_mousecursor.menuitem != nullptr ) && (ui_mousecursor.menuitem != c))
 		|| ((menuCommon_s *)c) != UI_ItemAtMenuCursor(menu) )
 		c->generic.isExtended = false;
 }
@@ -2864,12 +2864,12 @@ void UI_MenuComboBox_DrawExtension (menuComboBox_s *c)
 
 	// scrollbar
 	if (c->scrollState.scrollEnabled)
-		UI_MenuScrollBar_Draw (&c->generic, &c->scrollState, c->generic.topLeft[0], boxTop, fieldWidth, boxHeight); 
+		UI_MenuScrollBar_Draw (&c->generic, &c->scrollState, c->generic.topLeft[0], boxTop, fieldWidth, boxHeight);
 
 	// items
 	x = c->generic.topLeft[0];
 	startItem = c->scrollState.scrollPos;
-	visibleLines = min(c->items_y, c->numItems);	
+	visibleLines = min(c->items_y, c->numItems);
 	itemIncrement = MENU_LINE_SIZE + c->itemSpacing;
 	for (i=startItem; i<c->numItems && i<(startItem+visibleLines); i++)
 	{
@@ -2977,7 +2977,7 @@ void UI_MenuListView_SaveValue (menuListView_s *l)
 	{
 		if (l->itemValues) {
 			// Don't save to cvar if this itemvalue is the wildcard
-			if ( Q_stricmp(va("%s", l->itemValues[l->curValue]), UI_ITEMVALUE_WILDCARD) != 0 )
+			if ( Q_stricmp( va( "%s", l->itemValues[ l->curValue ] ), UI_ITEMVALUE_WILDCARD ) != 0 )
 				Cvar_Set (l->generic.cvar, va("%s", l->itemValues[l->curValue]));
 		}
 		else
@@ -3132,7 +3132,7 @@ void UI_MenuListView_Draw (menuListView_s *l)
 						boxWidth, boxHeight, l->generic.scrAlign, true, l->backColor[0],l->backColor[1],l->backColor[2],l->backColor[3]);
 
 	// scrollbar
-	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight); 
+	UI_MenuScrollBar_Draw (&l->generic, &l->scrollState, l->generic.topLeft[0], l->generic.topLeft[1], boxWidth, boxHeight);
 
 	// items
 	if (scrollX)
@@ -3168,11 +3168,11 @@ void UI_MenuListView_Draw (menuListView_s *l)
 
 			if (i == l->curValue)
 				UI_DrawFill (x, y, itemWidth, realItemHeight, l->generic.scrAlign, false, hc[0], hc[1], hc[2], hoverAlpha);
-			
+
 			if (l->underImgColor[3] > 0)
 				UI_DrawFill (x+l->itemPadding, y+l->itemPadding, itemWidth-l->itemPadding*2, itemHeight-l->itemPadding*2,
 							l->generic.scrAlign, false, l->underImgColor[0], l->underImgColor[1], l->underImgColor[2], l->underImgColor[3]);
-			if ( (l->generic.flags & QMF_COLORIMAGE) && (l->imageColors != NULL) )
+			if ( (l->generic.flags & QMF_COLORIMAGE) && (l->imageColors != nullptr ) )
 				UI_DrawColoredPic (x+l->itemPadding, y+l->itemPadding, itemWidth-l->itemPadding*2, itemHeight-l->itemPadding*2,
 							l->generic.scrAlign, false, l->imageColors[i], (char *)l->imageNames[i]);
 			else
@@ -3199,12 +3199,12 @@ void UI_MenuListView_Setup (menuListView_s *l)
 	// count # of items
 	for (i=0; l->imageNames[i]; i++);
 		numImages = i;
-	if (l->imageColors != NULL) {
+	if (l->imageColors != nullptr ) {
 		l->generic.flags |= QMF_COLORIMAGE;
 		for (i=0; l->imageColors[i][3] != 0; i++);
 			numColors = i;
 	}
-	if (l->itemNames != NULL) {
+	if (l->itemNames != nullptr ) {
 		for (i=0; l->itemNames[i]; i++);
 			numNames = i;
 	}
@@ -3369,12 +3369,12 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 	// free this if reinitializing
 	if (t->fileBuffer) {
 		FS_FreeFile (t->fileBuffer);
-		t->fileBuffer = NULL;
-		t->scrollText = NULL;
+		t->fileBuffer = nullptr;
+		t->scrollText = nullptr;
 	}
 
 	if ( t->fileName && (strlen(t->fileName) > 0)
-		&& (count = FS_LoadFile (t->fileName, (void*)&t->fileBuffer)) != -1 )
+		&& (count = FS_LoadFile (t->fileName, reinterpret_cast< void ** >( &t->fileBuffer ) )) != -1 )
 	{
 		p = t->fileBuffer;
 		for (n = 0; n < 255; n++)
@@ -3396,18 +3396,18 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 			if (--count == 0)
 				break;
 		}
-		lineIndex[++n] = 0;
+		lineIndex[++n] = nullptr;
 		t->scrollText = (const char **)lineIndex;
 		t->initialized = true;
 	}
-	else if (t->scrollText != NULL)
+	else if (t->scrollText != nullptr )
 	{
 		t->initialized = true;
 	}
 
 	t->generic.textSize = min(max(t->generic.textSize, 4), 32);			// text size must be between 4 and 32 px
 	t->lineSize = min(max(t->lineSize, t->generic.textSize+1), t->generic.textSize*2);	// line spacing must be at least 1 px
-	t->width = min(max(t->width, t->generic.textSize*4), SCREEN_WIDTH);	// width must be at least 4 columns 
+	t->width = min(max(t->width, t->generic.textSize*4), SCREEN_WIDTH);	// width must be at least 4 columns
 	t->height = min(max(t->height, t->lineSize*8), SCREEN_HEIGHT);		// height must be at least 8 lines
 	t->time_scale = min(max(t->time_scale, 0.01f), 0.25f);				// scroll speed must be between 100 and 4 px/s
 	t->start_time = cls.realtime;
@@ -3436,10 +3436,10 @@ void UI_MenuModelView_Reregister (menuModelView_s *m)
 		if (!m->modelValid[i] || !m->model[i])
 			continue;
 
-		Com_sprintf( scratch, sizeof(scratch),  m->modelName[i]);
-		m->model[i] = R_RegisterModel(scratch);
+		snprintf( scratch, sizeof(scratch),  m->modelName[i]);
+		m->model[i] = R_RegisterModel( scratch );
 		if (m->skin[i]) {
-			Com_sprintf( scratch, sizeof(scratch),  m->skinName[i]);
+			snprintf( scratch, sizeof(scratch),  m->skinName[i]);
 			m->skin[i] = R_RegisterSkin (scratch);
 		}
 	}
@@ -3469,8 +3469,8 @@ void UI_MenuModelView_Draw (menuModelView_s *m)
 	refdef.fov_x = m->fov;
 	refdef.fov_y = CalcFov (refdef.fov_x, refdef.width, refdef.height);
 	refdef.time = cls.realtime*0.001;
-	refdef.areabits = 0;
-	refdef.lightstyles = 0;
+	refdef.areabits = nullptr;
+	refdef.lightstyles = nullptr;
 	refdef.rdflags = RDF_NOWORLDMODEL;
 	refdef.num_entities = 0;
 	refdef.entities = entity;
@@ -3487,13 +3487,13 @@ void UI_MenuModelView_Draw (menuModelView_s *m)
 		// model pointer may become invalid after a vid_restart
 		reRegister = ( !R_ModelIsValid(m->model[i]) );
 		if (reRegister) {
-			Com_sprintf (scratch, sizeof(scratch),  m->modelName[i]);
-			m->model[i] = R_RegisterModel(scratch);
+			snprintf (scratch, sizeof(scratch),  m->modelName[i]);
+			m->model[i] = R_RegisterModel( scratch );
 		}
 		ent->model = m->model[i];
 		if (m->skin[i]) {
 			if (reRegister) {
-				Com_sprintf (scratch, sizeof(scratch),  m->skinName[i]);
+				snprintf (scratch, sizeof(scratch),  m->skinName[i]);
 				m->skin[i] = R_RegisterSkin (scratch);
 			}
 			ent->skin = m->skin[i];
@@ -3538,7 +3538,7 @@ void UI_MenuModelView_Setup (menuModelView_s *m)
 	m->num_entities = 0;
 	for (i=0; i<MODELVIEW_MAX_MODELS; i++) {
 		m->modelValid[i] = false;
-		m->model[i] = NULL;	m->skin[i] = NULL;
+		m->model[i] = nullptr;	m->skin[i] = nullptr;
 	}
 	m->width	= min(max(m->width, 16), SCREEN_WIDTH);		// width must be at least 16 px
 	m->height	= min(max(m->height, 16), SCREEN_HEIGHT);	// height must be at least 16 px
@@ -3548,12 +3548,12 @@ void UI_MenuModelView_Setup (menuModelView_s *m)
 		if (!m->modelName[i] || !strlen(m->modelName[i]))
 			continue;
 
-		Com_sprintf( scratch, sizeof(scratch),  m->modelName[i]);
-		if ( !(m->model[i] = R_RegisterModel(scratch)) )
+		snprintf( scratch, sizeof(scratch),  m->modelName[i]);
+		if ( !(m->model[i] = R_RegisterModel( scratch ) ) )
 			continue;
 
 		if (m->skinName[i] && strlen(m->skinName[i])) {
-			Com_sprintf( scratch, sizeof(scratch),  m->skinName[i]);
+			snprintf( scratch, sizeof(scratch),  m->skinName[i]);
 			m->skin[i] = R_RegisterSkin (scratch);
 		}
 		for (j=0; j<3; j++) {
@@ -3641,7 +3641,7 @@ valid type to be a cursor item.
 qboolean UI_ItemCanBeCursorItem (void *item)
 {
 	if (!item)	return false;
-	
+
 	switch ( ((menuCommon_s *)item)->type )
 	{
 	case MTYPE_IMAGE:
@@ -3667,7 +3667,7 @@ as a cursor position.
 qboolean UI_ItemIsValidCursorPosition (void *item)
 {
 	if (!item)	return false;
-	
+
 	if ( (((menuCommon_s *)item)->flags & QMF_NOINTERACTION) || (((menuCommon_s *)item)->flags & QMF_MOUSEONLY) )
 		return false;
 
@@ -3723,32 +3723,32 @@ UI_GetMenuItemValue
 Retruns string value for menu item from linked cvar.
 ==========================
 */
-char *UI_GetMenuItemValue (void *item)
+const char *UI_GetMenuItemValue( void *item )
 {
 	if (!item)	return "";
 
-	switch ( ((menuCommon_s *)item)->type )
+	switch ( static_cast< menuCommon_s * >( item )->type )
 	{
 	case MTYPE_FIELD:
-		return UI_MenuField_GetValue ((menuField_s *)item);
+		return UI_MenuField_GetValue ( static_cast< menuField_s * >( item ) );
 		break;
 	case MTYPE_SLIDER:
-		return UI_MenuSlider_GetValue ((menuSlider_s *)item);
+		return UI_MenuSlider_GetValue ( static_cast< menuSlider_s * >( item ) );
 		break;
 	case MTYPE_PICKER:
-		return UI_MenuPicker_GetValue ((menuPicker_s *)item);
+		return UI_MenuPicker_GetValue ( static_cast< menuPicker_s * >( item ) );
 		break;
 	case MTYPE_CHECKBOX:
-		return UI_MenuCheckBox_GetValue ((menuCheckBox_s *)item);
+		return UI_MenuCheckBox_GetValue ( static_cast< menuCheckBox_s * >( item ) );
 		break;
 	case MTYPE_LISTBOX:
-		return UI_MenuListBox_GetValue ((menuListBox_s *)item);
+		return UI_MenuListBox_GetValue ( static_cast< menuListBox_s * >( item ) );
 		break;
 	case MTYPE_COMBOBOX:
-		return UI_MenuComboBox_GetValue ((menuComboBox_s *)item);
+		return UI_MenuComboBox_GetValue ( static_cast< menuComboBox_s * >( item ) );
 		break;
 	case MTYPE_LISTVIEW:
-		return UI_MenuListView_GetValue ((menuListView_s *)item);
+		return UI_MenuListView_GetValue ( static_cast< menuListView_s * >( item ) );
 		break;
 	default:
 		return "";
@@ -4004,7 +4004,7 @@ UI_ClickMenuItem
 */
 char *UI_ClickMenuItem (menuCommon_s *item, qboolean mouse2)
 {
-	char	*s = NULL;
+	char	*s = nullptr;
 
 	if ( UI_MouseOverScrollKnob(item) && !mouse2 )
 	{
@@ -4069,7 +4069,7 @@ UI_SelectMenuItem
 */
 qboolean UI_SelectMenuItem (menuFramework_s *s)
 {
-	menuCommon_s *item=NULL;
+	menuCommon_s *item = nullptr;
 
 	if (!s)	return false;
 
@@ -4115,7 +4115,7 @@ UI_SlideMenuItem
 */
 char *UI_SlideMenuItem (menuFramework_s *s, int dir)
 {
-	menuCommon_s *item=NULL;
+	menuCommon_s *item = nullptr;
 
 	if (!s)	return ui_menu_null_sound;
 
@@ -4157,7 +4157,7 @@ UI_ScrollMenuItem
 qboolean UI_ScrollMenuItem (menuFramework_s *s, int dir)
 {
 	menuCommon_s *item;
-	
+
 	if (!ui_mousecursor.menuitem)
 		return false;
 

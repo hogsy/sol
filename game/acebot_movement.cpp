@@ -252,7 +252,7 @@ qboolean ACEMV_CheckEyes (edict_t *self, usercmd_t *ucmd)
 	// check will be done first.
 		
 	// If open space move ok
-	if (traceRight.fraction != 1 || traceLeft.fraction != 1 || strcmp(traceLeft.ent->classname,"func_door")!=0)
+	if (traceRight.fraction != 1 || traceLeft.fraction != 1 || strcmp(traceLeft.ent->classname.c_str(),"func_door")!=0)
 	{
 		// Special uppoint logic to check for slopes/stairs/jumping etc.
 		VectorSet(offset, 0, 18, 24);
@@ -373,9 +373,9 @@ void ACEMV_MoveToGoal (edict_t *self, usercmd_t *ucmd)
 {
 	// If a rocket or grenade is around deal with it
 	// Simple, but effective (could be rewritten to be more accurate)
-	if (strcmp(self->movetarget->classname,"rocket")==0 ||
-	   strcmp(self->movetarget->classname,"grenade")==0 ||
-	   strcmp(self->movetarget->classname,"homing rocket")==0)
+	if (strcmp(self->movetarget->classname.c_str(),"rocket")==0 ||
+	   strcmp(self->movetarget->classname.c_str(),"grenade")==0 ||
+	   strcmp(self->movetarget->classname.c_str(),"homing rocket")==0)
 
 	{
 		VectorSubtract (self->movetarget->s.origin, self->s.origin, self->move_vector);

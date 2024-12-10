@@ -89,7 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define FL_BOB                  0x00004000  // Lazarus: Used for bobbing water
 #define	FL_TURRET_OWNER			0x00008000  // Lazarus: player on turret and controlling it
-#define FL_TRACKTRAIN			0x00010000	
+#define FL_TRACKTRAIN			0x00010000
 #define FL_DISGUISED			0x00020000	// entity is in disguise, monsters will not recognize.
 #define	FL_NOGIB				0x00040000	// player has been vaporized by a nuke, drop no gibs
 
@@ -104,7 +104,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	FL2_TURRET_DOUBLE		0x00000001	// this is a double-barreled turret
 #define	FL2_TURRET_DOUBLE_ALT	0x00000002	// this turret alternates firing its barrels (style is set)
 #define	FL2_TURRET_DOUBLE_ALT_FIRING	0x00000004		// secondary barrel in use for alternate firing
-#define FL2_CRUCIFIED			0x00000008	// insane is crucified 
+#define FL2_CRUCIFIED			0x00000008	// insane is crucified
 
 
 #define	FRAMETIME		0.1
@@ -125,9 +125,9 @@ typedef enum
 	DAMAGE_AIM			// auto targeting recognizes this
 } damage_t;
 
-typedef enum 
+typedef enum
 {
-	WEAPON_READY, 
+	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
 	WEAPON_FIRING
@@ -182,7 +182,7 @@ typedef enum
 // Lazarus: Eliminate many inapplicable Rogue AI flags to make room for more
 #define AI_TARGET_ANGER			0x00008000
 #define AI_HINT_PATH			0x00010000
-#define	AI_BLOCKED				0x00020000	// used by blocked_checkattack: set to say I'm attacking while blocked 
+#define	AI_BLOCKED				0x00020000	// used by blocked_checkattack: set to say I'm attacking while blocked
 											// (prevents run-attacks)
 
 // Lazarus:
@@ -298,15 +298,15 @@ typedef struct
 //ZOID
 
 // gitem_t->weapmodel for weapons indicates model index
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_SUPERSHOTGUN		3 
-#define WEAP_MACHINEGUN			4 
-#define WEAP_CHAINGUN			5 
-#define WEAP_GRENADES			6 
-#define WEAP_GRENADELAUNCHER	7 
-#define WEAP_ROCKETLAUNCHER		8 
-#define WEAP_HYPERBLASTER		9 
+#define WEAP_BLASTER			1
+#define WEAP_SHOTGUN			2
+#define WEAP_SUPERSHOTGUN		3
+#define WEAP_MACHINEGUN			4
+#define WEAP_CHAINGUN			5
+#define WEAP_GRENADES			6
+#define WEAP_GRENADELAUNCHER	7
+#define WEAP_ROCKETLAUNCHER		8
+#define WEAP_HYPERBLASTER		9
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
 #define WEAP_GRAPPLE			12
@@ -314,32 +314,32 @@ typedef struct
 
 typedef struct gitem_s
 {
-	char		*classname;	// spawning name
-	qboolean	(*pickup)(struct edict_s *ent, struct edict_s *other);
-	void		(*use)(struct edict_s *ent, struct gitem_s *item);
-	void		(*drop)(struct edict_s *ent, struct gitem_s *item);
-	void		(*weaponthink)(struct edict_s *ent);
-	char		*pickup_sound;
-	char		*world_model;
-	int			world_model_skinnum; // Knightmare- added skinnum here so items can share models
-	int			world_model_flags;
-	char		*view_model;
+	const char *classname;// spawning name
+	qboolean ( *pickup )( struct edict_s *ent, struct edict_s *other );
+	void ( *use )( struct edict_s *ent, struct gitem_s *item );
+	void ( *drop )( struct edict_s *ent, struct gitem_s *item );
+	void ( *weaponthink )( struct edict_s *ent );
+	char *pickup_sound;
+	char *world_model;
+	int   world_model_skinnum;// Knightmare- added skinnum here so items can share models
+	int   world_model_flags;
+	char *view_model;
 
 	// client side info
-	char		*icon;
-	char		*pickup_name;	// for printing on pickup
-	int			count_width;		// number of digits to display by icon
+	char *icon;
+	char *pickup_name;// for printing on pickup
+	int   count_width;// number of digits to display by icon
 
-	int			quantity;		// for ammo how much, for weapons how much is used per shot
-	char		*ammo;			// for weapons
-	int			flags;			// IT_* flags
+	int   quantity;// for ammo how much, for weapons how much is used per shot
+	char *ammo;    // for weapons
+	int   flags;   // IT_* flags
 
-	int			weapmodel;		// weapon model index (for weapons)
+	int weapmodel;// weapon model index (for weapons)
 
-	void		*info;
-	int			tag;
+	void *info;
+	int   tag;
 
-	char		*precaches;		// string of all models, sounds, and images this item will use
+	char *precaches;// string of all models, sounds, and images this item will use
 } gitem_t;
 
 
@@ -883,16 +883,18 @@ extern	int		max_soundindex;
 #define FFL_NOSPAWN			2
 #define FFL_DEFAULT_NEG		4	// Knightmare- spawntemp that defaults to -1
 
-typedef enum {
-	F_INT, 
+typedef enum
+{
+	F_INT,
 	F_FLOAT,
-	F_LSTRING,			// string on disk, pointer in memory, TAG_LEVEL
-	F_GSTRING,			// string on disk, pointer in memory, TAG_GAME
+	F_DSTRING,
+	F_LSTRING,// string on disk, pointer in memory, TAG_LEVEL
+	F_GSTRING,// string on disk, pointer in memory, TAG_GAME
 	F_VECTOR,
 	F_ANGLEHACK,
-	F_EDICT,			// index on disk, pointer in memory
-	F_ITEM,				// index on disk, pointer in memory
-	F_CLIENT,			// index on disk, pointer in memory
+	F_EDICT, // index on disk, pointer in memory
+	F_ITEM,  // index on disk, pointer in memory
+	F_CLIENT,// index on disk, pointer in memory
 	F_FUNCTION,
 	F_MMOVE,
 	F_IGNORE
@@ -900,23 +902,23 @@ typedef enum {
 
 typedef struct
 {
-	char		*name;
-	size_t		ofs;	// Knightmare- was int
-	fieldtype_t	type;
-	int			flags;
+	const char *name;
+	size_t      ofs;// Knightmare- was int
+	fieldtype_t type;
+	int         flags;
 } field_t;
 
 typedef struct
 {
-	char	*name;
-	void	(*spawn)(edict_t *ent);
+	const char *name;
+	void ( *spawn )( edict_t *ent );
 } spawn_t;
 
 // Knightmare- added soundcache struct
 typedef struct
 {
-	char	*name;
-	void	(*soundcache)(edict_t *ent);	
+	const char *name;
+	void ( *soundcache )( edict_t *ent );
 } soundcache_t;
 
 // Lazarus: worldspawn effects
@@ -1036,7 +1038,7 @@ void Fog_SetFogParms (void);
 //
 
 // Knightmare- enable this to call set_child_movement() from postthink function instead of various movement functions
-#define POSTTHINK_CHILD_MOVEMENT	
+#define POSTTHINK_CHILD_MOVEMENT
 
 #define TRAIN_START_ON		   1
 #define TRAIN_TOGGLE		   2
@@ -1063,8 +1065,8 @@ void PrecacheItem (gitem_t *it);
 void InitItems (void);
 void SetItemNames (void);
 void SetAmmoPickupValues (void);
-gitem_t	*FindItem (char *pickup_name);
-gitem_t	*FindItemByClassname (char *classname);
+gitem_t	*FindItem ( const char *pickup_name);
+gitem_t	*FindItemByClassname ( const char *classname);
 #define	ITEM_INDEX(x) ((x)-itemlist)
 edict_t *Drop_Item (edict_t *ent, gitem_t *item);
 void SetRespawn (edict_t *ent, float delay);
@@ -1074,7 +1076,7 @@ void Think_Weapon (edict_t *ent);
 int ArmorIndex (edict_t *ent);
 int PowerArmorType (edict_t *ent);
 gitem_t	*GetItemByIndex (int index);
-int GetMaxAmmoByIndex (gclient_t *client, int item_index); // Knightmare added
+int GetMaxAmmoByIndex ( const gclient_t *client, int item_index); // Knightmare added
 int GetMaxArmorByIndex (int item_index); // Knightmare added
 qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count);
 void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
@@ -1111,7 +1113,7 @@ void EndDMLevel (void);
 //
 // g_misc.c
 //
-void ThrowHead (edict_t *self, char *gibname, int frame, int skinnum, int damage, int type);
+void ThrowHead (edict_t *self, const char *gibname, int frame, int skinnum, int damage, int type);
 void ThrowClientHead (edict_t *self, int damage);
 void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage, int type);
 void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin, int frame, int skin, int effects);
@@ -1236,16 +1238,16 @@ typedef struct
 {
 	char	*name;
 } entlist_t;
-qboolean HasSpawnFunction(edict_t *ent);
+qboolean HasSpawnFunction( const edict_t *ent);
 int trigger_transition_ents (edict_t *changelevel, edict_t *self);
 
 //
 // g_utils.c
 //
 qboolean	KillBox (edict_t *ent);
-void	G_ProjectSource (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
-edict_t *G_Find (edict_t *from, size_t fieldofs, char *match);	// Knightmare- changed fieldofs from int
-edict_t *findradius (edict_t *from, vec3_t org, float rad);
+void	G_ProjectSource (const vec3_t point, const vec3_t distance, const vec3_t forward, const vec3_t right, vec3_t result);
+edict_t *G_Find (edict_t *from, size_t fieldofs, const char *match);	// Knightmare- changed fieldofs from int
+edict_t *findradius (edict_t *from, const vec3_t org, float rad);
 edict_t *G_PickTarget (char *targetname);
 void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
@@ -1256,7 +1258,7 @@ edict_t	*G_Spawn (void);
 void	G_FreeEdict (edict_t *e);
 void	G_TouchTriggers (edict_t *ent);
 void	G_TouchSolids (edict_t *ent);
-char	*G_CopyString (char *in);
+char	*G_CopyString ( const char *in);
 void	stuffcmd(edict_t *ent,char *command);
 float	*tv (float x, float y, float z);
 char	*vtos (vec3_t v);
@@ -1287,7 +1289,7 @@ qboolean IsZaeroMap (void);		// Knightmare added
 void my_bprintf (int printlevel, char *fmt, ...);
 qboolean UseRegularGoodGuyFlag (edict_t *monster); // Knightmare added
 
-void	G_ProjectSource2 (vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t up, vec3_t result);
+void	G_ProjectSource2 (const vec3_t point, const vec3_t distance, const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t result);
 float	vectoyaw2 (vec3_t vec);
 edict_t *findradius2 (edict_t *from, vec3_t org, float rad);
 
@@ -1732,7 +1734,7 @@ struct edict_s
 
 	// FIXME: move these fields to a server private sv_entity_t
 	link_t		area;				// linked to a division node or leaf
-	
+
 	int			num_clusters;		// if -1, use headnode instead
 	int			clusternums[MAX_ENT_CLUSTERS];
 	int			headnode;			// unused if num_clusters != -1
@@ -1761,14 +1763,14 @@ struct edict_s
 
 	char		*model;
 	float		freetime;			// sv.time when the object was freed
-	
+
 	//
 	// only used locally in game, not by server
 	//
-	char		*message;
-	char        *key_message;   // Lazarus: used from tremor_trigger_key
-	char		*classname;
-	int			spawnflags;
+	std::string message;
+	char       *key_message;// Lazarus: used from tremor_trigger_key
+	std::string classname;
+	int         spawnflags;
 
 	float		timestamp;
 
@@ -1898,7 +1900,7 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 
 	float		goal_frame;
-	
+
 	// various Lazarus additions follow:
 
 	edict_t		*turret;		// player-controlled turret
@@ -1939,7 +1941,7 @@ struct edict_s
 	int			bounce_me;		// 0 for no bounce, 1 to bounce, 2 if velocity should not be clipped
 								// this is solely used by func_pushable for now
 	// Knightmare- added for func_door_secret
-	float		width;			
+	float		width;
 	float		length;
 	float		side;
 	// end Knightmare
@@ -2009,7 +2011,7 @@ struct edict_s
 	// MOVETYPE_PUSH rider angles
 	int			turn_rider;
 
-	// selected brush models will move their origin to 
+	// selected brush models will move their origin to
 	// the origin of this entity:
 	char		*move_to;
 
@@ -2085,9 +2087,9 @@ struct edict_s
 // ACEBOT_ADD
 	qboolean is_bot;
 	qboolean is_jumping;
-	
+
 	// For movement
-	vec3_t move_vector; 
+	vec3_t move_vector;
 	float next_move_time;
 	float wander_timeout;
 	float suicide_timeout;
@@ -2120,7 +2122,7 @@ struct edict_s
 #define FLASHLIGHT_ITEM      "Cells"
 
 // Knightmare- simulated pause for deathmatch
-extern	qboolean	paused;	
+extern	qboolean	paused;
 
 
 //ZOID

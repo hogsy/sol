@@ -95,7 +95,7 @@ static void R_ClipFragment (int numPoints, vec3_t points, int stage, markFragmen
 	cplane_t	*plane;
 
 	if (numPoints > MAX_FRAGMENT_POINTS-2)
-		VID_Error(ERR_DROP, "Mod_ClipFragment: MAX_FRAGMENT_POINTS hit");
+		VID_Error( ERR_DROP, "Mod_ClipFragment: MAX_FRAGMENT_POINTS hit" );
 
 	if (stage == MAX_FRAGMENT_PLANES)
 	{

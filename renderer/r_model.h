@@ -310,7 +310,7 @@ typedef struct model_s
 
 void	R_BeginRegistration (char *map);
 void	R_EndRegistration (void);
-struct model_s *R_RegisterModel (char *name);
+struct model_s *R_RegisterModel ( const char *name );
 struct image_s *R_RegisterSkin (char *name);
 struct image_s *R_DrawFindPic (char *name);
 qboolean R_RegistrationIsActive (void);
@@ -321,7 +321,7 @@ void	Mod_ClearAll (void);
 void	Mod_SetTCModParmsDefaults (tcmodParms_t *tcmod);
 void	Mod_SetRenderParmsDefaults (renderparms_t *parms);
 void	Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod);
-model_t *Mod_ForName (char *name, qboolean crash);
+model_t *Mod_ForName ( const char *name, qboolean crash);
 mleaf_t *Mod_PointInLeaf (float *p, model_t *model);
 byte	*Mod_ClusterPVS (int cluster, model_t *model);
 

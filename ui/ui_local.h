@@ -238,32 +238,32 @@ typedef struct
 
 typedef struct
 {
-	menuCommon_s	generic;
+	menuCommon_s generic;
 
-	int				width;
-	int				drawWidth;
-	int				height;
-	float			aspectRatio;
-	char			*imageName;
-//	qboolean		imageValid;
+	int         width;
+	int         drawWidth;
+	int         height;
+	float       aspectRatio;
+	const char *imageName;
+	//	qboolean		imageValid;
 
-	qboolean		isAnimated;
-	char			*animTemplate;
-	int				numAnimFrames;
-	float			animTimeScale;
-	int				start_time;
+	qboolean isAnimated;
+	char    *animTemplate;
+	int      numAnimFrames;
+	float    animTimeScale;
+	int      start_time;
 
-	float			oscillate_amplitude[2];		// oscillate dist x/y
-	float			oscillate_timeScale[2];		// oscillate speed x/y
+	float oscillate_amplitude[ 2 ];// oscillate dist x/y
+	float oscillate_timeScale[ 2 ];// oscillate speed x/y
 
-	byte			alpha;
-	int				border;
-	byte			borderColor[4];
-	byte			imageColor[4];
-	qboolean		overrideColor;
-	qboolean		hCentered;
-	qboolean		vCentered;
-	qboolean		useAspectRatio;
+	byte     alpha;
+	int      border;
+	byte     borderColor[ 4 ];
+	byte     imageColor[ 4 ];
+	qboolean overrideColor;
+	qboolean hCentered;
+	qboolean vCentered;
+	qboolean useAspectRatio;
 } menuImage_s;
 
 typedef struct
@@ -800,8 +800,8 @@ void UI_ReregisterMenuItem (void *item);
 void UI_UpdateMenuItemCoords (void *item);
 qboolean UI_ItemCanBeCursorItem (void *item);
 qboolean UI_ItemIsValidCursorPosition (void *item);
-qboolean UI_ItemHasMouseBounds (void *item);
-char *UI_GetMenuItemValue (void *item);
+qboolean    UI_ItemHasMouseBounds( void *item );
+const char *UI_GetMenuItemValue( void *item );
 void UI_SetMenuItemValue (void *item);
 void UI_SaveMenuItemValue (void *item);
 void UI_DrawMenuItem (void *item);
@@ -849,7 +849,7 @@ void UI_SetGrabBindItem (menuFramework_s *menu, menuCommon_s *c);
 void UI_ClearGrabBindItem (menuFramework_s *menu);
 qboolean UI_HasValidGrabBindItem (menuFramework_s *menu);
 void UI_RefreshMenuItems (void);
-void UI_SetMenuItemValues (menuFramework_s	*menu);
+void UI_SetMenuItemValues ( const menuFramework_s	*menu);
 void UI_SetMenuDefaults (void);
 const char *UI_GetDefaultsMessage (void);
 void UI_Defaults_Popup (void *unused);

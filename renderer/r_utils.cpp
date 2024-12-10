@@ -78,19 +78,15 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 	return false;
 }
 
-
 /*
 =================
 R_CopyString
 =================
 */
-char *R_CopyString (char *in)
+char *R_CopyString( const char *in )
 {
-	char	*out;
-	size_t	outSize;
-	
-	outSize = strlen(in)+1;
-	out = Z_Malloc (outSize);
-	Q_strncpyz (out, outSize, in);
+	size_t outSize = strlen( in ) + 1;
+	auto   out     = static_cast< char * >( Z_Malloc( outSize ) );
+	Q_strncpyz( out, outSize, in );
 	return out;
 }

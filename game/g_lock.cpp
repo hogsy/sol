@@ -44,7 +44,6 @@ void target_lock_use (edict_t *self, edict_t *other, edict_t *activator)
 	edict_t *e;
 	int		n;
 	char    current[16];
-	char	*copy_message;
 
 	memset(current,0,16);
 
@@ -57,16 +56,16 @@ void target_lock_use (edict_t *self, edict_t *other, edict_t *activator)
 	}
 	if (strcmp(current, self->key_message)==0)
 	{
-		copy_message  = self->message;
-		self->message = NULL;
+		const std::string copy_message = self->message;
+		self->message = "";
 		G_UseTargets(self,activator);
 		self->message = copy_message;
 	}
 	else
 	{
-		if (self->message) safe_centerprintf(activator,self->message);
+		if (!self->message.empty()) safe_centerprintf(activator,"%s",self->message.c_str());
 		if (self->pathtarget) {
-			e = G_Find(NULL,FOFS(targetname),self->pathtarget);
+			e = G_Find(nullptr,FOFS(targetname),self->pathtarget);
 			if (e) e->use(e,other,activator);
 		}
 		else {
@@ -177,7 +176,7 @@ void lock_code_use (edict_t *self, edict_t *other, edict_t *activator)
 			gi.dprintf("Lock has not been properly initialized.\n");
 			return;
 		}
-		Com_sprintf (message, sizeof(message), "Lock combination is %s",game.lock_code);
+		snprintf (message, sizeof(message), "Lock combination is %s",game.lock_code);
 		Do_Text_Display(activator, 0, message);
 		L = (int)strlen(game.lock_code);
 		for (i=0; i<L; i++)
@@ -191,7 +190,7 @@ void lock_code_use (edict_t *self, edict_t *other, edict_t *activator)
 			gi.dprintf("Target of target_lock_code does not exist\n");
 		else
 		{
-			Com_sprintf (message, sizeof(message), "Lock combination is %s",game.lock_code);
+			snprintf (message, sizeof(message), "Lock combination is %s",game.lock_code);
 			Do_Text_Display(activator, 0, message);
 			L = min(8, (int)strlen(lock->key_message));
 			for (i=0; i<L; i++)

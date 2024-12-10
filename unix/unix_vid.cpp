@@ -75,7 +75,7 @@ DLL GLUE
 */
 
 #define	MAXPRINTMSG	16384 // was 4096
-void VID_Printf (int print_level, char *fmt, ...)
+void VID_Printf ( int print_level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -91,7 +91,7 @@ void VID_Printf (int print_level, char *fmt, ...)
 		Com_DPrintf ("%s", msg);
 }
 
-void VID_Error (int err_level, char *fmt, ...)
+void VID_Error ( int err_level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		msg[MAXPRINTMSG];
@@ -150,14 +150,14 @@ void VID_ModeList_f (void)
 {
 	int		i;
 
-	VID_Printf (PRINT_ALL, "\n");
+	VID_Printf ( PRINT_ALL, "\n" );
 	for (i = 0; i < VID_NUM_MODES; i++) {
 		if ( (vid_modes[i].width < 640) || (vid_modes[i].height < 480) )
-			VID_Printf (PRINT_ALL, "%s (hidden)\n", vid_modes[i].description );
+			VID_Printf ( PRINT_ALL, "%s (hidden)\n", vid_modes[ i ].description );
 		else
-			VID_Printf (PRINT_ALL, "%s\n", vid_modes[i].description );
+			VID_Printf ( PRINT_ALL, "%s\n", vid_modes[ i ].description );
 	}
-	VID_Printf (PRINT_ALL, "\n");
+	VID_Printf ( PRINT_ALL, "\n" );
 }
 
 /*
@@ -298,24 +298,24 @@ void VID_Init (void)
 	/* Create the video variables so we know how to start the graphics drivers */
 	// if DISPLAY is defined, try X
 	//if (getenv("DISPLAY"))
-		vid_ref = Cvar_Get ("vid_ref", "glx", CVAR_ARCHIVE);	// was "kmglx"
+		vid_ref = Cvar_Get ( "vid_ref", "glx", CVAR_ARCHIVE );	// was "kmglx"
 	/*else
 		vid_ref = Cvar_Get ("vid_ref", "kmsdlgl", CVAR_ARCHIVE);*/
-	Cvar_SetDescription ("vid_ref", "Video renderer module in use.  This is always set to \"gl\" in KMQuake2.");
+	Cvar_SetDescription ( "vid_ref", "Video renderer module in use.  This is always set to \"gl\" in KMQuake2." );
 		
-	vid_xpos = Cvar_Get ("vid_xpos", "3", CVAR_ARCHIVE);
-	Cvar_SetDescription ("vid_xpos", "Sets horizontal desktop position of window in windowed mode.");
-	vid_ypos = Cvar_Get ("vid_ypos", "22", CVAR_ARCHIVE);
-	Cvar_SetDescription ("vid_ypos", "Sets vertical desktop position of window in windowed mode.");
-	vid_fullscreen = Cvar_Get ("vid_fullscreen", "0", CVAR_ARCHIVE);
+	vid_xpos = Cvar_Get ( "vid_xpos", "3", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "vid_xpos", "Sets horizontal desktop position of window in windowed mode." );
+	vid_ypos = Cvar_Get ( "vid_ypos", "22", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "vid_ypos", "Sets vertical desktop position of window in windowed mode." );
+	vid_fullscreen = Cvar_Get ( "vid_fullscreen", "0", CVAR_ARCHIVE );
 //	Cvar_SetDescription ("vid_fullscreen", "Enables fullscreen video mode.");
-	Cvar_SetDescription ("vid_fullscreen", "Sets fullscreen or borderless video mode.  0 = windowed, 1 = fullscreen, 2 = borderless");	// borderless support
+	Cvar_SetDescription ( "vid_fullscreen", "Sets fullscreen or borderless video mode.  0 = windowed, 1 = fullscreen, 2 = borderless" );	// borderless support
 	vid_gamma = Cvar_Get( "vid_gamma", "0.8", CVAR_ARCHIVE );
-	Cvar_SetDescription ("vid_gamma", "Screen brightness value.  Uses inverse scale.");
+	Cvar_SetDescription ( "vid_gamma", "Screen brightness value.  Uses inverse scale." );
 	r_customwidth = Cvar_Get( "r_customwidth", "1600", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_customwidth", "Sets resolution width when using custom video mode (-1).");
+	Cvar_SetDescription ( "r_customwidth", "Sets resolution width when using custom video mode (-1)." );
 	r_customheight = Cvar_Get( "r_customheight", "1024", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_customheight", "Sets resolution height when using custom video mode (-1).");
+	Cvar_SetDescription ( "r_customheight", "Sets resolution height when using custom video mode (-1)." );
 	// Knightmare- just here to enable command line option without error
 	scanforcd = Cvar_Get( "scanforcd", "0", 0 );
 
@@ -325,8 +325,8 @@ void VID_Init (void)
 	vidref_val = VIDREF_GL;	// this is always in GL mode
 	
 	/* Add some console commands that we want to handle */
-	Cmd_AddCommand ("vid_restart", VID_Restart_f);
-	Cmd_AddCommand ("vid_modelist", VID_ModeList_f);
+	Cmd_AddCommand ( "vid_restart", VID_Restart_f );
+	Cmd_AddCommand ( "vid_modelist", VID_ModeList_f );
 		
 	/* Start the graphics mode and load refresh DLL */
 	VID_CheckChanges();

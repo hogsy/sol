@@ -37,7 +37,7 @@ clean up heal targets for medic
 */
 void cleanupHealTarget (edict_t *self)
 {
-	self->monsterinfo.healer = NULL;
+	self->monsterinfo.healer = nullptr;
 	self->takedamage = DAMAGE_YES;
 	self->monsterinfo.aiflags &= ~AI_RESURRECTING;
 	M_SetEffects (self);
@@ -148,7 +148,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 			if (coop->value && attacker->client)
 				attacker->client->resp.score++;
 			// medics won't heal monsters that they kill themselves
-			if (strcmp(attacker->classname, "monster_medic") == 0)
+			if (attacker->classname == "monster_medic")
 				targ->owner = attacker;
 		}
 	}
@@ -164,7 +164,7 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 
 	if ((targ->svflags & SVF_MONSTER) && (targ->deadflag != DEAD_DEAD))
 	{
-		targ->touch = NULL;
+		targ->touch = nullptr;
 		monster_death_use (targ);
 	}
 
@@ -247,7 +247,7 @@ dflags		these flags are used to control how T_Damage works
 */
 static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
 {
-	gclient_t	*client = NULL;
+	gclient_t	*client = nullptr;
 	int			save = 0;
 	int			power_armor_type = 0;
 	int			index = 0;
@@ -293,7 +293,7 @@ static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damag
 		vec3_t		forward;
 
 		// only works if damage point is in front
-		AngleVectors (ent->s.angles, forward, NULL, NULL);
+		AngleVectors (ent->s.angles, forward, nullptr, nullptr );
 		VectorSubtract (point, ent->s.origin, vec);
 		VectorNormalize (vec);
 		dot = DotProduct (vec, forward);
@@ -381,13 +381,12 @@ void DefendMyFriend (edict_t *self, edict_t *enemy)
 
 void CallMyFriends (edict_t *targ, edict_t *attacker)
 {
-	edict_t	*teammate;
 
 	if (!targ || !attacker)
 		return;
 
 	// Knightmare- insanes ignore damage- fix crash on fact2?
-	if (!strcmp(targ->classname, "misc_insane"))
+	if (!strcmp(targ->classname.c_str(), "misc_insane"))
 		return;
 
 	// Lazarus dmgteam stuff
@@ -397,7 +396,7 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 		{	// the target is a live monster on a dmgteam
 			if ( !attacker->dmgteam || strcmp(targ->dmgteam,attacker->dmgteam) )
 			{	// attacker is not on same dmgteam as target
-				if ( !Q_stricmp(targ->dmgteam,"player") && attacker->client )
+				if ( !Q_stricmp( targ->dmgteam, "player" ) && attacker->client )
 				{	// Target is a GOOD_GUY, attacked by the player. Allow self-defense,
 					// but don't get other dmgteam teammates involved.
 					// Special case for misc_actors - if ACTOR_BAD_GUY isn't set,
@@ -419,7 +418,7 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 					// Either target is not a monster, or attacker is not a monster, or
 					// they're both monsters but one is AI_GOOD_GUY and the other is not,
 					// or we've turned the game into a free-for-all with a target_monsterbattle
-					teammate = G_Find(NULL, FOFS(dmgteam), targ->dmgteam);
+					edict_t *teammate = G_Find( nullptr, FOFS( dmgteam ), targ->dmgteam );
 					while (teammate)
 					{
 						if (teammate != targ)
@@ -457,8 +456,8 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 	{
 		// target is player; attacker is monster... alert "good guys", if any
 //		trace_t	tr;
-		edict_t	*teammate = NULL;
-		teammate = G_Find(NULL, FOFS(dmgteam), "player");
+		edict_t	*teammate = nullptr;
+		teammate = G_Find( nullptr, FOFS(dmgteam), "player");
 		while (teammate)
 		{
 			if ((teammate->health > 0) && !(teammate->monsterinfo.aiflags & AI_CHASE_THING) && (teammate != attacker))
@@ -473,7 +472,7 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 					if (teammate->monsterinfo.aiflags & AI_ACTOR)
 					{
 						teammate->monsterinfo.aiflags |= AI_FOLLOW_LEADER;
-						teammate->monsterinfo.old_leader = NULL;
+						teammate->monsterinfo.old_leader = nullptr;
 						teammate->monsterinfo.leader = targ;
 					}
 				}
@@ -489,8 +488,8 @@ void CallMyFriends (edict_t *targ, edict_t *attacker)
 		{
 			targ->spawnflags &= ~SF_MONSTER_GOODGUY;
 			targ->monsterinfo.aiflags &= ~(AI_GOOD_GUY + AI_FOLLOW_LEADER);
-			if (targ->dmgteam && !Q_stricmp(targ->dmgteam, "player"))
-				targ->dmgteam = NULL;
+			if (targ->dmgteam && !Q_stricmp( targ->dmgteam, "player" ) )
+				targ->dmgteam = nullptr;
 		}
 	}
 	// 1.6.1.3 change - one chance and one chance only to call friends
@@ -512,14 +511,14 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 		return;
 
 	// Knightmare- insanes ignore damage- fixes crash on fact2
-	if (!strcmp(targ->classname, "misc_insane"))
+	if (!strcmp(targ->classname.c_str(), "misc_insane"))
 		return;
 
 	// If targ is a robot camera, ignore damage
 	if (targ->flags & FL_ROBOT)
 		return;
 
-	is_turret = (attacker->classname && !Q_stricmp(attacker->classname, "turret_breach"));
+	is_turret = (!attacker->classname.empty() && !Q_stricmp( attacker->classname.c_str(), "turret_breach" ) );
 
 	targ->spawnflags &= ~(SF_MONSTER_AMBUSH | SF_MONSTER_SIGHT);	// 1.6.1.3
 
@@ -528,7 +527,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 	if (!(attacker->client) && !(attacker->svflags & SVF_MONSTER) && !is_turret &&
 		!(targ->monsterinfo.aiflags & AI_DUCKED) )
 	{
-		if (!targ->movetarget || (targ->movetarget && Q_stricmp(targ->movetarget->classname,"thing")) )
+		if (!targ->movetarget || (targ->movetarget && Q_stricmp( targ->movetarget->classname.c_str(), "thing" ) ) )
 		{
 			int		i;
 			edict_t	*thing;
@@ -543,14 +542,14 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 			if (mins[2] > 0) mins[2] = 0;
 			VectorCopy(targ->maxs,maxs);
 			if ((attacker == world) ||
-				(!Q_stricmp(attacker->classname,"func_door") )   ||
-				(!Q_stricmp(attacker->classname,"func_water"))   ||
-				(!Q_stricmp(attacker->classname,"func_pushable"))  )
+				(!Q_stricmp( attacker->classname.c_str(), "func_door" ) )   ||
+				(!Q_stricmp( attacker->classname.c_str(), "func_water" ) )   ||
+				(!Q_stricmp( attacker->classname.c_str(), "func_pushable" ) )  )
 			{
 				// Just send the monster straight ahead and hope for the best.
 				thing = SpawnThing();
 				VectorCopy(targ->s.angles,thing->s.angles);
-				AngleVectors(targ->s.angles,dir,NULL,NULL);
+				AngleVectors(targ->s.angles,dir, nullptr, nullptr );
 				for (i=0; i<5; i++)
 				{
 					dir[2] = 0.1*i;
@@ -564,7 +563,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 					}
 				}
 			}
-			else if (!Q_stricmp(attacker->classname,"target_laser")) 
+			else if (!Q_stricmp( attacker->classname.c_str(), "target_laser" ) )
 			{
 				// Send the monster in a direction perpendicular to laser
 				// path, whichever direction is closest to current angles
@@ -572,7 +571,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 				if (attacker->movedir[2] > 0.7)
 				{
 					// Just move straight ahead and hope for the best
-					AngleVectors(targ->s.angles,best_dir,NULL,NULL);
+					AngleVectors(targ->s.angles,best_dir, nullptr, nullptr );
 				}
 				else
 				{
@@ -581,7 +580,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 					best_dir[0] = -best_dir[1];
 					best_dir[1] =  best_dir[2];
 					best_dir[2] =  0;
-					AngleVectors(targ->s.angles,dir,NULL,NULL);
+					AngleVectors(targ->s.angles,dir, nullptr, nullptr );
 					if (DotProduct(best_dir,dir) < 0)
 						VectorNegate(best_dir,best_dir);
 				}
@@ -600,7 +599,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 					VectorMA(attacker->mins,0.5,attacker->size,atk);
 				}
 				VectorClear(best_dir);
-				AngleVectors(targ->s.angles,forward,NULL,NULL);
+				AngleVectors(targ->s.angles,forward, nullptr, nullptr );
 				for (i=0; i<32 && best_dist == 0; i++)
 				{
 					// Weight escape route tests in favor of forward-facing direction
@@ -617,7 +616,7 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 					VectorNormalize(dir);
 					VectorMA(targ->s.origin, WORLD_SIZE, dir, end);	// was 8192
 					trace1 = gi.trace(targ->s.origin,mins,maxs,end,targ,MASK_MONSTERSOLID);
-					trace2 = gi.trace(trace1.endpos,NULL,NULL,atk,targ,MASK_SOLID);
+					trace2 = gi.trace(trace1.endpos, nullptr, nullptr, atk,targ,MASK_SOLID);
 					if (trace2.fraction == 1.0) continue;
 					dist = trace1.fraction * WORLD_SIZE;	// was 8192
 					if (dist > best_dist) {
@@ -630,8 +629,8 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 				thing = SpawnThing();
 				vectoangles (best_dir, thing->s.angles);
 			}
-			if ( (!Q_stricmp(attacker->classname,"func_door"))    ||
-				(!Q_stricmp(attacker->classname,"func_pushable"))   )
+			if ( (!Q_stricmp( attacker->classname.c_str(), "func_door" ) )    ||
+				(!Q_stricmp( attacker->classname.c_str(), "func_pushable" ) )   )
 				run = 256;
 			else
 				run = WORLD_SIZE;	// was 8192
@@ -736,11 +735,11 @@ void M_ReactToDamage (edict_t *targ, edict_t *attacker)
 	// it's the same base (walk/swim/fly) type and a different classname and it's not a tank
 	// (they spray too much), get mad at them
 	if (((targ->flags & (FL_FLY|FL_SWIM)) == (attacker->flags & (FL_FLY|FL_SWIM))) &&
-		 (strcmp (targ->classname, attacker->classname) != 0) &&
-		 (strcmp(attacker->classname, "monster_tank") != 0) &&
-		 (strcmp(attacker->classname, "monster_supertank") != 0) &&
-		 (strcmp(attacker->classname, "monster_makron") != 0) &&
-		 (strcmp(attacker->classname, "monster_jorg") != 0) )
+		 (strcmp (targ->classname.c_str(), attacker->classname.c_str()) != 0) &&
+		 (strcmp(attacker->classname.c_str(), "monster_tank") != 0) &&
+		 (strcmp(attacker->classname.c_str(), "monster_supertank") != 0) &&
+		 (strcmp(attacker->classname.c_str(), "monster_makron") != 0) &&
+		 (strcmp(attacker->classname.c_str(), "monster_jorg") != 0) )
 	{
 		// Lazarus: Check IGNORE_SHOTS spawnflag for attacker. If set AND 
 		//          targ and attacker have same GOODGUY setting, don't respond
@@ -833,15 +832,15 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 
 	// If targ is a fake player for the real player viewing camera, get that player
 	// out of the camera and do the damage to him
-	if (!Q_stricmp(targ->classname, "camplayer"))
+	if (!Q_stricmp( targ->classname.c_str(), "camplayer" ) )
 	{
 		if (targ->target_ent && targ->target_ent->client && targ->target_ent->client->spycam)
 		{
 			if (attacker->enemy == targ)
 			{
 				attacker->enemy = targ->target_ent;
-				attacker->goalentity = NULL;
-				attacker->movetarget = NULL;
+				attacker->goalentity = nullptr;
+				attacker->movetarget = nullptr;
 			}
 			targ = targ->target_ent;
 			camera_off(targ);
@@ -851,7 +850,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 				{
 					if (attacker->enemy == targ)
 					{
-						attacker->enemy = NULL;
+						attacker->enemy = nullptr;
 						attacker->monsterinfo.aiflags &= ~AI_FOLLOW_LEADER;
 						attacker->monsterinfo.attack_finished = 0;
 						attacker->monsterinfo.pausetime = level.time + 100000000;
@@ -871,7 +870,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 	}
 	// If targ is a remote turret_driver and attacker is a player, replace turret_driver
 	// with normal infantry dude and turn TRACK off on corresponding turret_breach
-	if ( targ->classname && !Q_stricmp(targ->classname,"turret_driver") && 
+	if ( !targ->classname.empty() && !Q_stricmp( targ->classname.c_str(), "turret_driver" ) &&
 		(targ->spawnflags & 1) && (attacker->client) )
 	{
 		edict_t	*monster;
@@ -883,7 +882,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 			{
 				targ->target_ent->spawnflags &= ~4;
 				targ->target_ent->move_angles[0] = 0;
-				targ->target_ent->owner = NULL;
+				targ->target_ent->owner = nullptr;
 			}
 			G_FreeEdict(targ);
 			monster->solid = SOLID_BBOX;
@@ -946,7 +945,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 
 // Lazarus: If monster is currently chasing a "thing" and mod is a laser,
 //          ignore knockback to give poor guy a chance to vamoose.
-	if (targ->movetarget && !Q_stricmp(targ->movetarget->classname,"thing") && (mod == MOD_TARGET_LASER))
+	if (targ->movetarget && !Q_stricmp( targ->movetarget->classname.c_str(), "thing" ) && (mod == MOD_TARGET_LASER))
 		knockback = 0;
 
 // figure momentum add
@@ -1096,7 +1095,7 @@ void T_Damage (edict_t *in_targ, edict_t *inflictor, edict_t *in_attacker, vec3_
 		{
 			// Lazarus: For func_explosive target, check spawnflags and, if needed,
 			//          damage type
-			if (targ->classname && !Q_stricmp(targ->classname,"func_explosive"))
+			if (!targ->classname.empty() && !Q_stricmp( targ->classname.c_str(), "func_explosive" ) )
 			{
 				qboolean good_damage = true;
 				// Knightmare- changed spawnflag
@@ -1178,11 +1177,11 @@ Lazarus adds dmg_slope to alter the radius damage equation. (Standard Q2 = -0.5)
 void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_t *ignore, float radius, int mod, double dmg_slope)
 {
 	float	points;
-	edict_t	*ent = NULL;
+	edict_t	*ent = nullptr;
 	vec3_t	v;
 	vec3_t	dir;
 
-	while ((ent = findradius(ent, inflictor->s.origin, radius)) != NULL)
+	while ((ent = findradius(ent, inflictor->s.origin, radius)) != nullptr )
 	{
 		if (ent == ignore)
 			continue;

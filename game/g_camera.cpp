@@ -34,7 +34,7 @@ void camera_off (edict_t *ent)
     if (!ent->client->spycam)
 		return;
 	if (ent->client->spycam->viewer == ent)
-		ent->client->spycam->viewer = NULL;
+		ent->client->spycam->viewer = nullptr;
 
 	ent->client->spycam->flags &= ~FL_ROBOT;
 	if (ent->client->spycam->svflags & SVF_MONSTER)
@@ -62,8 +62,8 @@ void camera_off (edict_t *ent)
 	ent->svflags                   &= ~SVF_NOCLIENT;
 	ent->clipmask                   = MASK_PLAYERSOLID;
 	ent->solid                      = SOLID_BBOX;
-	ent->client->camplayer          = NULL;
-	ent->client->spycam             = NULL;
+	ent->client->camplayer          = nullptr;
+	ent->client->spycam             = nullptr;
 	gi.linkentity(ent);
 	
 	// if we were previously in third person view, restore it
@@ -194,7 +194,7 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 {
 	edict_t	*next;
 
-	if (!monitor->target) return NULL;
+	if (!monitor->target) return nullptr;
 
 	// If we already have a camera that's a monster, make it visible now
 	if (camera && (camera->svflags & SVF_MONSTER))
@@ -207,8 +207,8 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 	// or just scan through the list of entities. If count for the first camera
 	// in the map is 0, then we'll just use the map order.
 
-	next = G_Find(NULL, FOFS(targetname), monitor->target);
-	if (!next) return NULL;
+	next = G_Find( nullptr, FOFS(targetname), monitor->target);
+	if (!next) return nullptr;
 	if (!next->count)
 	{
 		if (camera) {
@@ -229,9 +229,9 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 			if (!next->targetname)
 				continue;
 			// don't select "inactive" cameras
-			if ( !Q_stricmp (next->classname, "turret_breach") && (next->spawnflags & 16) )
+			if ( !Q_stricmp ( next->classname.c_str(), "turret_breach" ) && (next->spawnflags & 16) )
 				continue;
-			if ( !Q_stricmp (next->targetname, monitor->target) )
+			if ( !Q_stricmp ( next->targetname, monitor->target ) )
 				goto found_one;
 
 		}
@@ -247,9 +247,9 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 			if (!next->targetname)
 				continue;
 			// don't select "inactive" cameras
-			if ( !Q_stricmp (next->classname, "turret_breach") && (next->spawnflags & 16) )
+			if ( !Q_stricmp ( next->classname.c_str(), "turret_breach" ) && (next->spawnflags & 16) )
 				continue;
-			if ( !Q_stricmp (next->targetname, monitor->target ))
+			if ( !Q_stricmp ( next->targetname, monitor->target ) )
 				goto found_one;
 		}
 	}
@@ -269,17 +269,17 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 		{
 			if (next->targetname)
 			{
-				if ( !Q_stricmp(next->targetname, monitor->target) )
+				if ( !Q_stricmp( next->targetname, monitor->target ) )
 				{
 					if (next->count == which)
 					{
 						if (!next->inuse || (next->deadflag == DEAD_DEAD) ||
-							( !Q_stricmp (next->classname, "turret_breach") && (next->spawnflags & 16) ) )
+							( !Q_stricmp ( next->classname.c_str(), "turret_breach" ) && (next->spawnflags & 16) ) )
 						{
 							next = g_edicts;
 							which++;
 							if (which > monitor->count) which = 1;
-							if (which == start) return NULL;
+							if (which == start) return nullptr;
 						}
 						else
 							goto found_one;
@@ -290,12 +290,12 @@ edict_t *G_FindNextCamera (edict_t *camera, edict_t *monitor)
 				next = g_edicts;
 				which++;
 				if (which > monitor->count) which = 1;
-				if (which == start) return NULL;
+				if (which == start) return nullptr;
 			}
 			next++;
 		}
 	}
-	return NULL;
+	return nullptr;
 
 found_one:
 	if (!(monitor->spawnflags & 32) && (next->svflags & SVF_MONSTER))
@@ -308,7 +308,7 @@ edict_t *G_FindPrevCamera (edict_t *camera, edict_t *monitor)
 	edict_t	*prev;
 	edict_t	*newcamera;
 
-	if (!monitor->target) return NULL;
+	if (!monitor->target) return nullptr;
 
 	// If we already have a camera that's a monster, make it visible now
 	if (camera && (camera->svflags & SVF_MONSTER))
@@ -321,11 +321,11 @@ edict_t *G_FindPrevCamera (edict_t *camera, edict_t *monitor)
 	// or just scan through the list of entities. If count for the first camera
 	// in the map is 0, then we'll just use the map order.
 
-	prev = G_Find(NULL, FOFS(targetname), monitor->target);
-	if (!prev) return NULL;
+	prev = G_Find( nullptr, FOFS(targetname), monitor->target);
+	if (!prev) return nullptr;
 	if (!prev->count)
 	{
-		newcamera = NULL;
+		newcamera = nullptr;
 		for (prev = g_edicts ; prev < &g_edicts[globals.num_edicts] ; prev++)
 		{
 			if (prev == camera) {
@@ -339,9 +339,9 @@ edict_t *G_FindPrevCamera (edict_t *camera, edict_t *monitor)
 			if (!prev->targetname)
 				continue;
 			// don't select "inactive" cameras
-			if ( !Q_stricmp (prev->classname, "turret_breach") && (prev->spawnflags & 16) )
+			if ( !Q_stricmp ( prev->classname.c_str(), "turret_breach" ) && (prev->spawnflags & 16) )
 				continue;
-			if ( !Q_stricmp (prev->targetname, monitor->target) )
+			if ( !Q_stricmp ( prev->targetname, monitor->target ) )
 				newcamera = prev;
 		}
 		goto found_one;
@@ -362,17 +362,17 @@ edict_t *G_FindPrevCamera (edict_t *camera, edict_t *monitor)
 		{
 			if (prev->targetname)
 			{
-				if ( !Q_stricmp(prev->targetname, monitor->target) )
+				if ( !Q_stricmp( prev->targetname, monitor->target ) )
 				{
 					if (prev->count == which)
 					{
 						if (!prev->inuse || (prev->deadflag == DEAD_DEAD) ||
-							( !Q_stricmp (prev->classname, "turret_breach") && (prev->spawnflags & 16)) )
+							( !Q_stricmp ( prev->classname.c_str(), "turret_breach" ) && (prev->spawnflags & 16)) )
 						{
 							prev = g_edicts;
 							which--;
 							if (which <= 0) which = monitor->count;
-							if (which == start) return NULL;
+							if (which == start) return nullptr;
 						}
 						else {
 							newcamera = prev;
@@ -385,7 +385,7 @@ edict_t *G_FindPrevCamera (edict_t *camera, edict_t *monitor)
 				prev = g_edicts;
 				which--;
 				if (which <= 0) which=monitor->count;
-				if (which == start) return NULL;
+				if (which == start) return nullptr;
 			}
 			prev++;
 		}
@@ -407,7 +407,7 @@ void use_camera (edict_t *self, edict_t *other, edict_t *activator)
 	if (activator->client->spycam)	// already using camera
 		return;
 
-	target = G_FindNextCamera(NULL, self);
+	target = G_FindNextCamera( nullptr, self);
 	if (!target) return;
 
 	// if currently in thirdperson, turn that sucker off
@@ -433,8 +433,8 @@ void func_monitor_init (edict_t *self)
 	edict_t	*camera;
 
 	self->count = 0;
-	camera = NULL;
-	while ( (camera = G_Find(camera, FOFS(targetname), self->target)) != NULL)
+	camera = nullptr;
+	while ( (camera = G_Find(camera, FOFS(targetname), self->target)) != nullptr )
 		self->count++;
 	if (!self->count)
 		self->s.effects = 0; // don't animate a func_monitor that has no cameras

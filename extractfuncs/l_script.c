@@ -1396,7 +1396,7 @@ script_t *LoadScriptFile( char *filename )
 	script_t *script;
 
 #ifdef BOTLIB
-	Com_sprintf( pathname, MAX_QPATH, "botfiles/%s", filename );
+	snprintf( pathname, MAX_QPATH, "botfiles/%s", filename );
 	length = botimport.FS_FOpenFile( pathname, &fp, FS_READ );
 	if ( !fp ) {
 		return NULL;

@@ -31,281 +31,280 @@ mmove_t mmove_reloc;
 #endif
 
 field_t fields[] = {
-	{"classname", FOFS(classname), F_LSTRING},
-	{"model", FOFS(model), F_LSTRING},
-	{"spawnflags", FOFS(spawnflags), F_INT},
-	{"speed", FOFS(speed), F_FLOAT},
-	{"accel", FOFS(accel), F_FLOAT},
-	{"decel", FOFS(decel), F_FLOAT},
-	{"target", FOFS(target), F_LSTRING},
-	{"targetname", FOFS(targetname), F_LSTRING},
-	{"pathtarget", FOFS(pathtarget), F_LSTRING},
-	{"deathtarget", FOFS(deathtarget), F_LSTRING},
-	{"killtarget", FOFS(killtarget), F_LSTRING},
-	{"combattarget", FOFS(combattarget), F_LSTRING},
-	{"message", FOFS(message), F_LSTRING},
-	{"key_message", FOFS(key_message), F_LSTRING},
-	{"team", FOFS(team), F_LSTRING},
-	{"wait", FOFS(wait), F_FLOAT},
-	{"delay", FOFS(delay), F_FLOAT},
-	{"random", FOFS(random), F_FLOAT},
-	{"move_origin", FOFS(move_origin), F_VECTOR},
-	{"move_angles", FOFS(move_angles), F_VECTOR},
-	{"style", FOFS(style), F_INT},
-	{"count", FOFS(count), F_INT},
-	{"health", FOFS(health), F_INT},
-	{"health2", FOFS(health2), F_INT},
-	{"sounds", FOFS(sounds), F_INT},
-	{"light", 0, F_IGNORE},
-	{"dmg", FOFS(dmg), F_INT},
-	{"mass", FOFS(mass), F_INT},
-	{"volume", FOFS(volume), F_FLOAT},
-	{"attenuation", FOFS(attenuation), F_FLOAT},
-	{"map", FOFS(map), F_LSTRING},
-	{"origin", FOFS(s.origin), F_VECTOR},
-	{"angles", FOFS(s.angles), F_VECTOR},
-	{"angle", FOFS(s.angles), F_ANGLEHACK},
+        { "classname", FOFS( classname ), F_DSTRING },
+        { "model", FOFS( model ), F_LSTRING },
+        { "spawnflags", FOFS( spawnflags ), F_INT },
+        { "speed", FOFS( speed ), F_FLOAT },
+        { "accel", FOFS( accel ), F_FLOAT },
+        { "decel", FOFS( decel ), F_FLOAT },
+        { "target", FOFS( target ), F_LSTRING },
+        { "targetname", FOFS( targetname ), F_LSTRING },
+        { "pathtarget", FOFS( pathtarget ), F_LSTRING },
+        { "deathtarget", FOFS( deathtarget ), F_LSTRING },
+        { "killtarget", FOFS( killtarget ), F_LSTRING },
+        { "combattarget", FOFS( combattarget ), F_LSTRING },
+        { "message", FOFS( message ), F_DSTRING },
+        { "key_message", FOFS( key_message ), F_LSTRING },
+        { "team", FOFS( team ), F_LSTRING },
+        { "wait", FOFS( wait ), F_FLOAT },
+        { "delay", FOFS( delay ), F_FLOAT },
+        { "random", FOFS( random ), F_FLOAT },
+        { "move_origin", FOFS( move_origin ), F_VECTOR },
+        { "move_angles", FOFS( move_angles ), F_VECTOR },
+        { "style", FOFS( style ), F_INT },
+        { "count", FOFS( count ), F_INT },
+        { "health", FOFS( health ), F_INT },
+        { "health2", FOFS( health2 ), F_INT },
+        { "sounds", FOFS( sounds ), F_INT },
+        { "light", 0, F_IGNORE },
+        { "dmg", FOFS( dmg ), F_INT },
+        { "mass", FOFS( mass ), F_INT },
+        { "volume", FOFS( volume ), F_FLOAT },
+        { "attenuation", FOFS( attenuation ), F_FLOAT },
+        { "map", FOFS( map ), F_LSTRING },
+        { "origin", FOFS( s.origin ), F_VECTOR },
+        { "angles", FOFS( s.angles ), F_VECTOR },
+        { "angle", FOFS( s.angles ), F_ANGLEHACK },
 
-	{"goalentity", FOFS(goalentity), F_EDICT, FFL_NOSPAWN},
-	{"movetarget", FOFS(movetarget), F_EDICT, FFL_NOSPAWN},
-	{"enemy", FOFS(enemy), F_EDICT, FFL_NOSPAWN},
-	{"oldenemy", FOFS(oldenemy), F_EDICT, FFL_NOSPAWN},
-	{"activator", FOFS(activator), F_EDICT, FFL_NOSPAWN},
-	{"groundentity", FOFS(groundentity), F_EDICT, FFL_NOSPAWN},
-	{"teamchain", FOFS(teamchain), F_EDICT, FFL_NOSPAWN},
-	{"teammaster", FOFS(teammaster), F_EDICT, FFL_NOSPAWN},
-	{"owner", FOFS(owner), F_EDICT, FFL_NOSPAWN},
-	{"mynoise", FOFS(mynoise), F_EDICT, FFL_NOSPAWN},
-	{"mynoise2", FOFS(mynoise2), F_EDICT, FFL_NOSPAWN},
-	{"target_ent", FOFS(target_ent), F_EDICT, FFL_NOSPAWN},
-	{"chain", FOFS(chain), F_EDICT, FFL_NOSPAWN},
+        { "goalentity", FOFS( goalentity ), F_EDICT, FFL_NOSPAWN },
+        { "movetarget", FOFS( movetarget ), F_EDICT, FFL_NOSPAWN },
+        { "enemy", FOFS( enemy ), F_EDICT, FFL_NOSPAWN },
+        { "oldenemy", FOFS( oldenemy ), F_EDICT, FFL_NOSPAWN },
+        { "activator", FOFS( activator ), F_EDICT, FFL_NOSPAWN },
+        { "groundentity", FOFS( groundentity ), F_EDICT, FFL_NOSPAWN },
+        { "teamchain", FOFS( teamchain ), F_EDICT, FFL_NOSPAWN },
+        { "teammaster", FOFS( teammaster ), F_EDICT, FFL_NOSPAWN },
+        { "owner", FOFS( owner ), F_EDICT, FFL_NOSPAWN },
+        { "mynoise", FOFS( mynoise ), F_EDICT, FFL_NOSPAWN },
+        { "mynoise2", FOFS( mynoise2 ), F_EDICT, FFL_NOSPAWN },
+        { "target_ent", FOFS( target_ent ), F_EDICT, FFL_NOSPAWN },
+        { "chain", FOFS( chain ), F_EDICT, FFL_NOSPAWN },
 
-	{"prethink", FOFS(prethink), F_FUNCTION, FFL_NOSPAWN},
-	{"think", FOFS(think), F_FUNCTION, FFL_NOSPAWN},
-	{"postthink", FOFS(postthink), F_FUNCTION, FFL_NOSPAWN}, // Knightmare added
-	{"blocked", FOFS(blocked), F_FUNCTION, FFL_NOSPAWN},
-	{"touch", FOFS(touch), F_FUNCTION, FFL_NOSPAWN},
-	{"use", FOFS(use), F_FUNCTION, FFL_NOSPAWN},
-	{"pain", FOFS(pain), F_FUNCTION, FFL_NOSPAWN},
-	{"die", FOFS(die), F_FUNCTION, FFL_NOSPAWN},
+        { "prethink", FOFS( prethink ), F_FUNCTION, FFL_NOSPAWN },
+        { "think", FOFS( think ), F_FUNCTION, FFL_NOSPAWN },
+        { "postthink", FOFS( postthink ), F_FUNCTION, FFL_NOSPAWN }, // Knightmare added
+        { "blocked", FOFS( blocked ), F_FUNCTION, FFL_NOSPAWN },
+        { "touch", FOFS( touch ), F_FUNCTION, FFL_NOSPAWN },
+        { "use", FOFS( use ), F_FUNCTION, FFL_NOSPAWN },
+        { "pain", FOFS( pain ), F_FUNCTION, FFL_NOSPAWN },
+        { "die", FOFS( die ), F_FUNCTION, FFL_NOSPAWN },
 
-	{"stand", FOFS(monsterinfo.stand), F_FUNCTION, FFL_NOSPAWN},
-	{"idle", FOFS(monsterinfo.idle), F_FUNCTION, FFL_NOSPAWN},
-	{"search", FOFS(monsterinfo.search), F_FUNCTION, FFL_NOSPAWN},
-	{"walk", FOFS(monsterinfo.walk), F_FUNCTION, FFL_NOSPAWN},
-	{"run", FOFS(monsterinfo.run), F_FUNCTION, FFL_NOSPAWN},
-	{"dodge", FOFS(monsterinfo.dodge), F_FUNCTION, FFL_NOSPAWN},
-	{"attack", FOFS(monsterinfo.attack), F_FUNCTION, FFL_NOSPAWN},
-	{"melee", FOFS(monsterinfo.melee), F_FUNCTION, FFL_NOSPAWN},
-	{"sight", FOFS(monsterinfo.sight), F_FUNCTION, FFL_NOSPAWN},
-	{"jump", FOFS(monsterinfo.jump), F_FUNCTION, FFL_NOSPAWN},
-	{"checkattack", FOFS(monsterinfo.checkattack), F_FUNCTION, FFL_NOSPAWN},
-	{"currentmove", FOFS(monsterinfo.currentmove), F_MMOVE, FFL_NOSPAWN},
+        { "stand", FOFS( monsterinfo.stand ), F_FUNCTION, FFL_NOSPAWN },
+        { "idle", FOFS( monsterinfo.idle ), F_FUNCTION, FFL_NOSPAWN },
+        { "search", FOFS( monsterinfo.search ), F_FUNCTION, FFL_NOSPAWN },
+        { "walk", FOFS( monsterinfo.walk ), F_FUNCTION, FFL_NOSPAWN },
+        { "run", FOFS( monsterinfo.run ), F_FUNCTION, FFL_NOSPAWN },
+        { "dodge", FOFS( monsterinfo.dodge ), F_FUNCTION, FFL_NOSPAWN },
+        { "attack", FOFS( monsterinfo.attack ), F_FUNCTION, FFL_NOSPAWN },
+        { "melee", FOFS( monsterinfo.melee ), F_FUNCTION, FFL_NOSPAWN },
+        { "sight", FOFS( monsterinfo.sight ), F_FUNCTION, FFL_NOSPAWN },
+        { "jump", FOFS( monsterinfo.jump ), F_FUNCTION, FFL_NOSPAWN },
+        { "checkattack", FOFS( monsterinfo.checkattack ), F_FUNCTION, FFL_NOSPAWN },
+        { "currentmove", FOFS( monsterinfo.currentmove ), F_MMOVE, FFL_NOSPAWN },
 
-	{"endfunc", FOFS(moveinfo.endfunc), F_FUNCTION, FFL_NOSPAWN},
+        { "endfunc", FOFS( moveinfo.endfunc ), F_FUNCTION, FFL_NOSPAWN },
 
-	// temp spawn vars -- only valid when the spawn function is called
-	{"lip", STOFS(lip), F_INT, FFL_SPAWNTEMP},
-	{"distance", STOFS(distance), F_INT, FFL_SPAWNTEMP},
-	{"height", STOFS(height), F_INT, FFL_SPAWNTEMP},
-	{"noise", STOFS(noise), F_LSTRING, FFL_SPAWNTEMP},
-	{"pausetime", STOFS(pausetime), F_FLOAT, FFL_SPAWNTEMP},
-	{"phase", STOFS(phase), F_FLOAT, FFL_SPAWNTEMP},
-	{"item", STOFS(item), F_LSTRING, FFL_SPAWNTEMP},
-	{"shift", STOFS(shift), F_FLOAT, FFL_SPAWNTEMP},
-	// Knightmare added
-	{"skydistance", STOFS(skydistance), F_FLOAT, FFL_SPAWNTEMP},
-	{"cloudname", STOFS(cloudname), F_LSTRING, FFL_SPAWNTEMP},
-	{"lightningfreq", STOFS(lightningfreq), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloudxdir", STOFS(cloudxdir), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloudydir", STOFS(cloudydir), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud1tile", STOFS(cloud1tile), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud1speed", STOFS(cloud1speed), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud1alpha", STOFS(cloud1alpha), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud2tile", STOFS(cloud2tile), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud2speed", STOFS(cloud2speed), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud2alpha", STOFS(cloud2alpha), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud3tile", STOFS(cloud3tile), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud3speed", STOFS(cloud3speed), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"cloud3alpha", STOFS(cloud3alpha), F_FLOAT, FFL_SPAWNTEMP|FFL_DEFAULT_NEG},
-	{"fade_start_dist", STOFS(fade_start_dist), F_INT, FFL_SPAWNTEMP},
-	{"fade_end_dist", STOFS(fade_end_dist), F_INT, FFL_SPAWNTEMP},
-	{"image", STOFS(image), F_LSTRING, FFL_SPAWNTEMP},
-	{"rgba", STOFS(rgba), F_LSTRING, FFL_SPAWNTEMP},
-	{"spritetype", STOFS(spritetype), F_INT, FFL_SPAWNTEMP},
+        // temp spawn vars -- only valid when the spawn function is called
+        { "lip", STOFS( lip ), F_INT, FFL_SPAWNTEMP },
+        { "distance", STOFS( distance ), F_INT, FFL_SPAWNTEMP },
+        { "height", STOFS( height ), F_INT, FFL_SPAWNTEMP },
+        { "noise", STOFS( noise ), F_LSTRING, FFL_SPAWNTEMP },
+        { "pausetime", STOFS( pausetime ), F_FLOAT, FFL_SPAWNTEMP },
+        { "phase", STOFS( phase ), F_FLOAT, FFL_SPAWNTEMP },
+        { "item", STOFS( item ), F_LSTRING, FFL_SPAWNTEMP },
+        { "shift", STOFS( shift ), F_FLOAT, FFL_SPAWNTEMP },
+        // Knightmare added
+        { "skydistance", STOFS( skydistance ), F_FLOAT, FFL_SPAWNTEMP },
+        { "cloudname", STOFS( cloudname ), F_LSTRING, FFL_SPAWNTEMP },
+        { "lightningfreq", STOFS( lightningfreq ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloudxdir", STOFS( cloudxdir ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloudydir", STOFS( cloudydir ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud1tile", STOFS( cloud1tile ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud1speed", STOFS( cloud1speed ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud1alpha", STOFS( cloud1alpha ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud2tile", STOFS( cloud2tile ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud2speed", STOFS( cloud2speed ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud2alpha", STOFS( cloud2alpha ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud3tile", STOFS( cloud3tile ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud3speed", STOFS( cloud3speed ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "cloud3alpha", STOFS( cloud3alpha ), F_FLOAT, FFL_SPAWNTEMP | FFL_DEFAULT_NEG },
+        { "fade_start_dist", STOFS( fade_start_dist ), F_INT, FFL_SPAWNTEMP },
+        { "fade_end_dist", STOFS( fade_end_dist ), F_INT, FFL_SPAWNTEMP },
+        { "image", STOFS( image ), F_LSTRING, FFL_SPAWNTEMP },
+        { "rgba", STOFS( rgba ), F_LSTRING, FFL_SPAWNTEMP },
+        { "spritetype", STOFS( spritetype ), F_INT, FFL_SPAWNTEMP },
 
-	// need for item field in edict struct, FFL_SPAWNTEMP item will be skipped on saves
-	{"item", FOFS(item), F_ITEM},
+        // need for item field in edict struct, FFL_SPAWNTEMP item will be skipped on saves
+        { "item", FOFS( item ), F_ITEM },
 
-	{"gravity", STOFS(gravity), F_LSTRING, FFL_SPAWNTEMP},
-	{"sky", STOFS(sky), F_LSTRING, FFL_SPAWNTEMP},
-	{"skyrotate", STOFS(skyrotate), F_FLOAT, FFL_SPAWNTEMP},
-	{"skyaxis", STOFS(skyaxis), F_VECTOR, FFL_SPAWNTEMP},
-	{"minyaw", STOFS(minyaw), F_FLOAT, FFL_SPAWNTEMP},
-	{"maxyaw", STOFS(maxyaw), F_FLOAT, FFL_SPAWNTEMP},
-	{"minpitch", STOFS(minpitch), F_FLOAT, FFL_SPAWNTEMP},
-	{"maxpitch", STOFS(maxpitch), F_FLOAT, FFL_SPAWNTEMP},
-	{"nextmap", STOFS(nextmap), F_LSTRING, FFL_SPAWNTEMP},
+        { "gravity", STOFS( gravity ), F_LSTRING, FFL_SPAWNTEMP },
+        { "sky", STOFS( sky ), F_LSTRING, FFL_SPAWNTEMP },
+        { "skyrotate", STOFS( skyrotate ), F_FLOAT, FFL_SPAWNTEMP },
+        { "skyaxis", STOFS( skyaxis ), F_VECTOR, FFL_SPAWNTEMP },
+        { "minyaw", STOFS( minyaw ), F_FLOAT, FFL_SPAWNTEMP },
+        { "maxyaw", STOFS( maxyaw ), F_FLOAT, FFL_SPAWNTEMP },
+        { "minpitch", STOFS( minpitch ), F_FLOAT, FFL_SPAWNTEMP },
+        { "maxpitch", STOFS( maxpitch ), F_FLOAT, FFL_SPAWNTEMP },
+        { "nextmap", STOFS( nextmap ), F_LSTRING, FFL_SPAWNTEMP },
 #ifdef KMQUAKE2_ENGINE_MOD
-	{"salpha", FOFS(s.alpha), F_FLOAT}, // Knightmare- hack for setting alpha
+        { "salpha", FOFS( s.alpha ), F_FLOAT }, // Knightmare- hack for setting alpha
 #endif
-	{"musictrack", FOFS(musictrack), F_LSTRING},
-	// Knightmare- movetype backup
-	{"oldmovetype", FOFS(oldmovetype), F_INT},
-	{"relative_velocity", FOFS(relative_velocity), F_VECTOR}, 	//relative velocity
-	{"relative_avelocity", FOFS(relative_avelocity), F_VECTOR}, //relative angular velocity
-	{"oldvelocity", FOFS(oldvelocity), F_VECTOR}, //relative angular velocity
+        { "musictrack", FOFS( musictrack ), F_LSTRING },
+        // Knightmare- movetype backup
+        { "oldmovetype", FOFS( oldmovetype ), F_INT },
+        { "relative_velocity", FOFS( relative_velocity ), F_VECTOR }, //relative velocity
+        { "relative_avelocity", FOFS( relative_avelocity ), F_VECTOR }, //relative angular velocity
+        { "oldvelocity", FOFS( oldvelocity ), F_VECTOR }, //relative angular velocity
 
-	{"width", FOFS(width), F_FLOAT},	// Knightmare- these are needed to update func_door_secret's positions
-	{"length", FOFS(length), F_FLOAT},
-	{"side", FOFS(side), F_FLOAT},
+        { "width", FOFS( width ), F_FLOAT }, // Knightmare- these are needed to update func_door_secret's positions
+        { "length", FOFS( length ), F_FLOAT },
+        { "side", FOFS( side ), F_FLOAT },
 
-	// Lazarus additions
-	{"actor_current_weapon", FOFS(actor_current_weapon), F_INT},
-	{"aiflags", FOFS(monsterinfo.aiflags), F_INT},
-	{"alpha", FOFS(alpha), F_FLOAT},
-	{"axis", FOFS(axis), F_INT},
-	{"base_radius", FOFS(base_radius), F_FLOAT},
-	{"bleft", FOFS(bleft), F_VECTOR},
-	{"blood_type", FOFS(blood_type), F_INT},
-	{"bob", FOFS(bob), F_FLOAT},
-	{"bobframe", FOFS(bobframe), F_INT},
-	{"busy", FOFS(busy), F_INT},
-	{"child", FOFS(child), F_EDICT},
-	{"class_id", FOFS(class_id), F_INT},
-	{"color", FOFS(color), F_VECTOR},
-	{"crane_beam", FOFS(crane_beam), F_EDICT, FFL_NOSPAWN},
-	{"crane_bonk", FOFS(crane_bonk), F_VECTOR},
-	{"crane_cable", FOFS(crane_cable), F_EDICT, FFL_NOSPAWN},
-	{"crane_cargo", FOFS(crane_cargo), F_EDICT, FFL_NOSPAWN},
-	{"crane_control", FOFS(crane_control), F_EDICT, FFL_NOSPAWN},
-	{"crane_dir", FOFS(crane_dir), F_INT},
-	{"crane_hoist", FOFS(crane_hoist), F_EDICT, FFL_NOSPAWN},
-	{"crane_hook", FOFS(crane_hook), F_EDICT, FFL_NOSPAWN},
-	{"crane_increment", FOFS(crane_increment), F_INT},
-	{"crane_light", FOFS(crane_light), F_EDICT, FFL_NOSPAWN},
-	{"crane_onboard_control", FOFS(crane_onboard_control), F_EDICT, FFL_NOSPAWN},
-	{"datafile", FOFS(datafile), F_LSTRING},
-	{"deadflag", FOFS(deadflag), F_INT},
-	{"show_hostile", FOFS(show_hostile), F_INT}, // Knightmare added
-	{"powerarmor_time", FOFS(powerarmor_time), F_FLOAT}, // Knightmare added
-	{"density", FOFS(density), F_FLOAT},
-	{"destroytarget", FOFS(destroytarget), F_LSTRING},
-	{"dmgteam", FOFS(dmgteam), F_LSTRING},
-	{"do_not_rotate", FOFS(do_not_rotate), F_INT},
-	{"duration", FOFS(duration), F_FLOAT},
-	{"effects", FOFS(effects), F_INT},
-	{"fadein", FOFS(fadein), F_FLOAT},
-	{"fadeout", FOFS(fadeout), F_FLOAT},
-	{"flies", FOFS(monsterinfo.flies), F_FLOAT},
-	{"fog_color", FOFS(fog_color), F_VECTOR},
-	{"fog_density", FOFS(fog_density), F_FLOAT},
-	{"fog_far", FOFS(fog_far), F_FLOAT},
-	{"fog_model", FOFS(fog_model), F_INT},
-	{"fog_near", FOFS(fog_near), F_FLOAT},
-	{"fogclip", FOFS(fogclip), F_INT},
-	{"followtarget", FOFS(followtarget), F_LSTRING},
-	{"frame", FOFS(s.frame), F_INT},
-	{"framenumbers", FOFS(framenumbers), F_INT},
-	{"gib_health", FOFS(gib_health), F_INT},
-	{"gib_type", FOFS(gib_type), F_INT},
-	{"health2", FOFS(health2), F_INT},
-	{"holdtime", FOFS(holdtime), F_FLOAT},
-	{"id", FOFS(id), F_INT},
-	{"idle_noise", FOFS(idle_noise), F_LSTRING},
-	{"jumpdn", FOFS(monsterinfo.jumpdn), F_FLOAT},
-	{"jumpup", FOFS(monsterinfo.jumpup), F_FLOAT},
-	{"mass2", FOFS(mass2), F_INT},
-	{"max_health", FOFS(max_health), F_INT},
-	{"max_range", FOFS(monsterinfo.max_range), F_FLOAT},
-	{"moreflags", FOFS(moreflags), F_INT},
-	{"movewith", FOFS(movewith), F_LSTRING},
-	{"movewith_ent", FOFS(movewith_ent), F_EDICT},
-	{"movewith_next", FOFS(movewith_next), F_EDICT},
-	{"movewith_offset", FOFS(movewith_offset), F_VECTOR},
-	{"move_to", FOFS(move_to), F_LSTRING},
-	{"muzzle", FOFS(muzzle), F_VECTOR},
-	{"muzzle2", FOFS(muzzle2), F_VECTOR},
-	{"newtargetname", FOFS(newtargetname), F_LSTRING},
-	{"next_grenade", FOFS(next_grenade), F_EDICT, FFL_NOSPAWN},
-	{"origin_offset", FOFS(origin_offset), F_VECTOR},
-	{"offset", FOFS(offset), F_VECTOR},
-	{"org_maxs", FOFS(org_maxs), F_VECTOR},
-	{"org_mins", FOFS(org_mins), F_VECTOR},
-	{"org_size", FOFS(org_size), F_VECTOR},
-	{"owner_id", FOFS(owner_id), F_INT},
-	{"parent_attach_angles", FOFS(parent_attach_angles), F_VECTOR},
-	{"child_attach_angles", FOFS(child_attach_angles), F_VECTOR},
-	{"aim_point", FOFS(aim_point), F_VECTOR},
-	{"pitch_speed", FOFS(pitch_speed), F_FLOAT},
-	{"powerarmor", FOFS(powerarmor), F_INT},
-	{"powerarmortype", FOFS(powerarmortype), F_INT},
-	{"prev_grenade", FOFS(prev_grenade), F_EDICT, FFL_NOSPAWN},
-	{"prevpath", FOFS(prevpath), F_EDICT},
-	{"radius", FOFS(radius), F_FLOAT},
-	{"renderfx", FOFS(renderfx), F_INT},
-	{"roll", FOFS(roll), F_FLOAT},
-	{"roll_speed", FOFS(roll_speed), F_FLOAT},
-	{"skinnum", FOFS(skinnum), F_INT},	// was s.skinnum
-	{"speaker", FOFS(speaker), F_EDICT, FFL_NOSPAWN},
-	{"smooth_movement", FOFS(smooth_movement), F_INT},
-	{"solidstate", FOFS(solidstate), F_INT},
-	{"source", FOFS(source), F_LSTRING},
-	{"startframe", FOFS(startframe), F_INT},
-	{"target2", FOFS(target2), F_LSTRING},
-	{"tright", FOFS(tright), F_VECTOR},
-	{"turn_rider", FOFS(turn_rider), F_INT},
-	{"turret", FOFS(turret), F_EDICT},
-	{"usermodel", FOFS(usermodel), F_LSTRING},
-	{"vehicle", FOFS(vehicle), F_EDICT, FFL_NOSPAWN},
-	{"viewer", FOFS(viewer), F_EDICT},
-	{"viewheight", FOFS(viewheight), F_INT},
-	{"viewmessage", FOFS(viewmessage), F_LSTRING},
-	{"yaw_speed", FOFS(yaw_speed), F_FLOAT},
+        // Lazarus additions
+        { "actor_current_weapon", FOFS( actor_current_weapon ), F_INT },
+        { "aiflags", FOFS( monsterinfo.aiflags ), F_INT },
+        { "alpha", FOFS( alpha ), F_FLOAT },
+        { "axis", FOFS( axis ), F_INT },
+        { "base_radius", FOFS( base_radius ), F_FLOAT },
+        { "bleft", FOFS( bleft ), F_VECTOR },
+        { "blood_type", FOFS( blood_type ), F_INT },
+        { "bob", FOFS( bob ), F_FLOAT },
+        { "bobframe", FOFS( bobframe ), F_INT },
+        { "busy", FOFS( busy ), F_INT },
+        { "child", FOFS( child ), F_EDICT },
+        { "class_id", FOFS( class_id ), F_INT },
+        { "color", FOFS( color ), F_VECTOR },
+        { "crane_beam", FOFS( crane_beam ), F_EDICT, FFL_NOSPAWN },
+        { "crane_bonk", FOFS( crane_bonk ), F_VECTOR },
+        { "crane_cable", FOFS( crane_cable ), F_EDICT, FFL_NOSPAWN },
+        { "crane_cargo", FOFS( crane_cargo ), F_EDICT, FFL_NOSPAWN },
+        { "crane_control", FOFS( crane_control ), F_EDICT, FFL_NOSPAWN },
+        { "crane_dir", FOFS( crane_dir ), F_INT },
+        { "crane_hoist", FOFS( crane_hoist ), F_EDICT, FFL_NOSPAWN },
+        { "crane_hook", FOFS( crane_hook ), F_EDICT, FFL_NOSPAWN },
+        { "crane_increment", FOFS( crane_increment ), F_INT },
+        { "crane_light", FOFS( crane_light ), F_EDICT, FFL_NOSPAWN },
+        { "crane_onboard_control", FOFS( crane_onboard_control ), F_EDICT, FFL_NOSPAWN },
+        { "datafile", FOFS( datafile ), F_LSTRING },
+        { "deadflag", FOFS( deadflag ), F_INT },
+        { "show_hostile", FOFS( show_hostile ), F_INT }, // Knightmare added
+        { "powerarmor_time", FOFS( powerarmor_time ), F_FLOAT }, // Knightmare added
+        { "density", FOFS( density ), F_FLOAT },
+        { "destroytarget", FOFS( destroytarget ), F_LSTRING },
+        { "dmgteam", FOFS( dmgteam ), F_LSTRING },
+        { "do_not_rotate", FOFS( do_not_rotate ), F_INT },
+        { "duration", FOFS( duration ), F_FLOAT },
+        { "effects", FOFS( effects ), F_INT },
+        { "fadein", FOFS( fadein ), F_FLOAT },
+        { "fadeout", FOFS( fadeout ), F_FLOAT },
+        { "flies", FOFS( monsterinfo.flies ), F_FLOAT },
+        { "fog_color", FOFS( fog_color ), F_VECTOR },
+        { "fog_density", FOFS( fog_density ), F_FLOAT },
+        { "fog_far", FOFS( fog_far ), F_FLOAT },
+        { "fog_model", FOFS( fog_model ), F_INT },
+        { "fog_near", FOFS( fog_near ), F_FLOAT },
+        { "fogclip", FOFS( fogclip ), F_INT },
+        { "followtarget", FOFS( followtarget ), F_LSTRING },
+        { "frame", FOFS( s.frame ), F_INT },
+        { "framenumbers", FOFS( framenumbers ), F_INT },
+        { "gib_health", FOFS( gib_health ), F_INT },
+        { "gib_type", FOFS( gib_type ), F_INT },
+        { "health2", FOFS( health2 ), F_INT },
+        { "holdtime", FOFS( holdtime ), F_FLOAT },
+        { "id", FOFS( id ), F_INT },
+        { "idle_noise", FOFS( idle_noise ), F_LSTRING },
+        { "jumpdn", FOFS( monsterinfo.jumpdn ), F_FLOAT },
+        { "jumpup", FOFS( monsterinfo.jumpup ), F_FLOAT },
+        { "mass2", FOFS( mass2 ), F_INT },
+        { "max_health", FOFS( max_health ), F_INT },
+        { "max_range", FOFS( monsterinfo.max_range ), F_FLOAT },
+        { "moreflags", FOFS( moreflags ), F_INT },
+        { "movewith", FOFS( movewith ), F_LSTRING },
+        { "movewith_ent", FOFS( movewith_ent ), F_EDICT },
+        { "movewith_next", FOFS( movewith_next ), F_EDICT },
+        { "movewith_offset", FOFS( movewith_offset ), F_VECTOR },
+        { "move_to", FOFS( move_to ), F_LSTRING },
+        { "muzzle", FOFS( muzzle ), F_VECTOR },
+        { "muzzle2", FOFS( muzzle2 ), F_VECTOR },
+        { "newtargetname", FOFS( newtargetname ), F_LSTRING },
+        { "next_grenade", FOFS( next_grenade ), F_EDICT, FFL_NOSPAWN },
+        { "origin_offset", FOFS( origin_offset ), F_VECTOR },
+        { "offset", FOFS( offset ), F_VECTOR },
+        { "org_maxs", FOFS( org_maxs ), F_VECTOR },
+        { "org_mins", FOFS( org_mins ), F_VECTOR },
+        { "org_size", FOFS( org_size ), F_VECTOR },
+        { "owner_id", FOFS( owner_id ), F_INT },
+        { "parent_attach_angles", FOFS( parent_attach_angles ), F_VECTOR },
+        { "child_attach_angles", FOFS( child_attach_angles ), F_VECTOR },
+        { "aim_point", FOFS( aim_point ), F_VECTOR },
+        { "pitch_speed", FOFS( pitch_speed ), F_FLOAT },
+        { "powerarmor", FOFS( powerarmor ), F_INT },
+        { "powerarmortype", FOFS( powerarmortype ), F_INT },
+        { "prev_grenade", FOFS( prev_grenade ), F_EDICT, FFL_NOSPAWN },
+        { "prevpath", FOFS( prevpath ), F_EDICT },
+        { "radius", FOFS( radius ), F_FLOAT },
+        { "renderfx", FOFS( renderfx ), F_INT },
+        { "roll", FOFS( roll ), F_FLOAT },
+        { "roll_speed", FOFS( roll_speed ), F_FLOAT },
+        { "skinnum", FOFS( skinnum ), F_INT }, // was s.skinnum
+        { "speaker", FOFS( speaker ), F_EDICT, FFL_NOSPAWN },
+        { "smooth_movement", FOFS( smooth_movement ), F_INT },
+        { "solidstate", FOFS( solidstate ), F_INT },
+        { "source", FOFS( source ), F_LSTRING },
+        { "startframe", FOFS( startframe ), F_INT },
+        { "target2", FOFS( target2 ), F_LSTRING },
+        { "tright", FOFS( tright ), F_VECTOR },
+        { "turn_rider", FOFS( turn_rider ), F_INT },
+        { "turret", FOFS( turret ), F_EDICT },
+        { "usermodel", FOFS( usermodel ), F_LSTRING },
+        { "vehicle", FOFS( vehicle ), F_EDICT, FFL_NOSPAWN },
+        { "viewer", FOFS( viewer ), F_EDICT },
+        { "viewheight", FOFS( viewheight ), F_INT },
+        { "viewmessage", FOFS( viewmessage ), F_LSTRING },
+        { "yaw_speed", FOFS( yaw_speed ), F_FLOAT },
 
-	{"crosshair", FOFS(crosshair), F_EDICT},
-	{"from", FOFS(from), F_EDICT},
-	{"to", FOFS(to), F_EDICT},
-	{"flash", FOFS(flash), F_EDICT},
-	// FIXME: how to save 6-part reflection field?
+        { "crosshair", FOFS( crosshair ), F_EDICT },
+        { "from", FOFS( from ), F_EDICT },
+        { "to", FOFS( to ), F_EDICT },
+        { "flash", FOFS( flash ), F_EDICT },
+        // FIXME: how to save 6-part reflection field?
 
-	// fields added by Rogue mission pack
-	{"bad_area", FOFS(bad_area), F_EDICT},
-	{"hint_chain", FOFS(hint_chain), F_EDICT},
-	{"monster_hint_chain", FOFS(monster_hint_chain), F_EDICT},
-	{"target_hint_chain", FOFS(target_hint_chain), F_EDICT},
-	{"goal_hint", FOFS(monsterinfo.goal_hint), F_EDICT},
-	{"badMedic1", FOFS(monsterinfo.badMedic1), F_EDICT},
-	{"badMedic2", FOFS(monsterinfo.badMedic2), F_EDICT},
-	{"last_player_enemy", FOFS(monsterinfo.last_player_enemy), F_EDICT},
-	{"commander", FOFS(monsterinfo.commander), F_EDICT},
-	{"blocked", FOFS(monsterinfo.blocked), F_FUNCTION, FFL_NOSPAWN},
-	{"duck", FOFS(monsterinfo.duck), F_FUNCTION, FFL_NOSPAWN},
-	{"unduck", FOFS(monsterinfo.unduck), F_FUNCTION, FFL_NOSPAWN},
-	{"sidestep", FOFS(monsterinfo.sidestep), F_FUNCTION, FFL_NOSPAWN},
-//	{"blocked", FOFS(monsterinfo.blocked), F_MMOVE, FFL_NOSPAWN},
-//	{"duck", FOFS(monsterinfo.duck), F_MMOVE, FFL_NOSPAWN},
-//	{"unduck", FOFS(monsterinfo.unduck), F_MMOVE, FFL_NOSPAWN},
-//	{"sidestep", FOFS(monsterinfo.sidestep), F_MMOVE, FFL_NOSPAWN},
+        // fields added by Rogue mission pack
+        { "bad_area", FOFS( bad_area ), F_EDICT },
+        { "hint_chain", FOFS( hint_chain ), F_EDICT },
+        { "monster_hint_chain", FOFS( monster_hint_chain ), F_EDICT },
+        { "target_hint_chain", FOFS( target_hint_chain ), F_EDICT },
+        { "goal_hint", FOFS( monsterinfo.goal_hint ), F_EDICT },
+        { "badMedic1", FOFS( monsterinfo.badMedic1 ), F_EDICT },
+        { "badMedic2", FOFS( monsterinfo.badMedic2 ), F_EDICT },
+        { "last_player_enemy", FOFS( monsterinfo.last_player_enemy ), F_EDICT },
+        { "commander", FOFS( monsterinfo.commander ), F_EDICT },
+        { "blocked", FOFS( monsterinfo.blocked ), F_FUNCTION, FFL_NOSPAWN },
+        { "duck", FOFS( monsterinfo.duck ), F_FUNCTION, FFL_NOSPAWN },
+        { "unduck", FOFS( monsterinfo.unduck ), F_FUNCTION, FFL_NOSPAWN },
+        { "sidestep", FOFS( monsterinfo.sidestep ), F_FUNCTION, FFL_NOSPAWN },
+        //	{"blocked", FOFS(monsterinfo.blocked), F_MMOVE, FFL_NOSPAWN},
+        //	{"duck", FOFS(monsterinfo.duck), F_MMOVE, FFL_NOSPAWN},
+        //	{"unduck", FOFS(monsterinfo.unduck), F_MMOVE, FFL_NOSPAWN},
+        //	{"sidestep", FOFS(monsterinfo.sidestep), F_MMOVE, FFL_NOSPAWN},
 
-// ACEBOT_ADD
-	{"is_bot", FOFS(is_bot), F_INT},
-	{"is_jumping", FOFS(is_jumping), F_INT},
-	{"move_vector", FOFS(move_vector), F_VECTOR},
-	{"next_move_time", FOFS(next_move_time), F_FLOAT},
-	{"wander_timeout", FOFS(wander_timeout), F_FLOAT},
-	{"suicide_timeout", FOFS(suicide_timeout), F_FLOAT},
-	{"current_node", FOFS(current_node), F_INT},
-	{"goal_node", FOFS(goal_node), F_INT},
-	{"next_node", FOFS(next_node), F_INT},
-	{"node_timeout", FOFS(node_timeout), F_INT},
-	{"last_node", FOFS(last_node), F_INT},
-	{"tries", FOFS(tries), F_INT},
-	{"state", FOFS(state), F_INT},
-// ACEBOT_END
+        // ACEBOT_ADD
+        { "is_bot", FOFS( is_bot ), F_INT },
+        { "is_jumping", FOFS( is_jumping ), F_INT },
+        { "move_vector", FOFS( move_vector ), F_VECTOR },
+        { "next_move_time", FOFS( next_move_time ), F_FLOAT },
+        { "wander_timeout", FOFS( wander_timeout ), F_FLOAT },
+        { "suicide_timeout", FOFS( suicide_timeout ), F_FLOAT },
+        { "current_node", FOFS( current_node ), F_INT },
+        { "goal_node", FOFS( goal_node ), F_INT },
+        { "next_node", FOFS( next_node ), F_INT },
+        { "node_timeout", FOFS( node_timeout ), F_INT },
+        { "last_node", FOFS( last_node ), F_INT },
+        { "tries", FOFS( tries ), F_INT },
+        { "state", FOFS( state ), F_INT },
+        // ACEBOT_END
 
-	{0, 0, F_INT, 0}
-
+        { nullptr, 0, F_INT, 0 }
 };
 
 field_t		levelfields[] =
@@ -317,7 +316,7 @@ field_t		levelfields[] =
 	{"sound2_entity", LLOFS(sound2_entity), F_EDICT},
 	{"disguise_violator", LLOFS(disguise_violator), F_EDICT},
 
-	{NULL, 0, F_INT}
+	{nullptr, 0, F_INT}
 };
 
 field_t		clientfields[] =
@@ -328,7 +327,7 @@ field_t		clientfields[] =
 	{"chasecam", CLOFS(chasecam), F_EDICT},
 	{"oldplayer", CLOFS(oldplayer), F_EDICT},
 
-	{NULL, 0, F_INT}
+	{nullptr, 0, F_INT}
 };
 
 
@@ -528,9 +527,9 @@ void InitGame (void)
 	// items
 	InitItems ();
 
-	Com_sprintf (game.helpmessage1, sizeof(game.helpmessage1), "");
+	snprintf (game.helpmessage1, sizeof(game.helpmessage1), "");
 
-	Com_sprintf (game.helpmessage2, sizeof(game.helpmessage2), "");
+	snprintf (game.helpmessage2, sizeof(game.helpmessage2), "");
 
 	// initialize all entities for this game
 	game.maxentities = maxentities->value;
@@ -556,20 +555,23 @@ void InitGame (void)
 #pragma warning(disable : 4054)	// type cast for function pointers
 #endif	// _MSC_VER
 
-typedef struct {
-	char *funcStr;
-	byte *funcPtr;
+typedef struct
+{
+	const char *funcStr;
+	byte       *funcPtr;
 } functionList_t;
 
-typedef struct {
-	char	*mmoveStr;
-	mmove_t *mmovePtr;
+typedef struct
+{
+	const char *mmoveStr;
+	mmove_t    *mmovePtr;
 } mmoveList_t;
 
 #include "g_func_decs.h"
 
 functionList_t functionList[] = {
 #include "g_func_list.h"
+
 };
 
 #include "g_mmove_decs.h"
@@ -578,48 +580,44 @@ mmoveList_t mmoveList[] = {
 #include "g_mmove_list.h"
 };
 
-functionList_t *GetFunctionByAddress (byte *adr)
+functionList_t *GetFunctionByAddress ( const byte *adr)
 {
-	int i;
-	for (i=0; functionList[i].funcStr; i++)
+	for ( int i = 0; functionList[i].funcStr; i++)
 	{
 		if (functionList[i].funcPtr == adr)
 			return &functionList[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
-byte *FindFunctionByName (char *name)
+byte *FindFunctionByName ( const char *name)
 {
-	int i;
-	for (i=0; functionList[i].funcStr; i++)
+	for ( int i = 0; functionList[i].funcStr; i++)
 	{
 		if (!strcmp(name, functionList[i].funcStr))
 			return functionList[i].funcPtr;
 	}
-	return NULL;
+	return nullptr;
 }
 
-mmoveList_t *GetMmoveByAddress (mmove_t *adr)
+mmoveList_t *GetMmoveByAddress ( const mmove_t *adr)
 {
-	int i;
-	for (i=0; mmoveList[i].mmoveStr; i++)
+	for ( int i = 0; mmoveList[i].mmoveStr; i++)
 	{
 		if (mmoveList[i].mmovePtr == adr)
 			return &mmoveList[i];
 	}
-	return NULL;
+	return nullptr;
 }
 
-mmove_t *FindMmoveByName (char *name)
+mmove_t *FindMmoveByName ( const char *name)
 {
-	int i;
-	for (i=0; mmoveList[i].mmoveStr; i++)
+	for ( int i = 0; mmoveList[i].mmoveStr; i++)
 	{
 		if (!strcmp(name, mmoveList[i].mmoveStr))
 			return mmoveList[i].mmovePtr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 #endif // SAVEGAME_USE_FUNCTION_TABLE
@@ -648,7 +646,10 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 	case F_VECTOR:
 	case F_IGNORE:
 		break;
-
+		case F_DSTRING:
+		{
+			break;
+		}
 	case F_LSTRING:
 	case F_GSTRING:
 		if ( *(char **)p )
@@ -658,21 +659,21 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 		*(int *)p = len;
 		break;
 	case F_EDICT:
-		if ( *(edict_t **)p == NULL)
+		if ( *(edict_t **)p == nullptr )
 			index = -1;
 		else
 			index = *(edict_t **)p - g_edicts;
 		*(int *)p = index;
 		break;
 	case F_CLIENT:
-		if ( *(gclient_t **)p == NULL)
+		if ( *(gclient_t **)p == nullptr )
 			index = -1;
 		else
 			index = *(gclient_t **)p - game.clients;
 		*(int *)p = index;
 		break;
 	case F_ITEM:
-		if ( *(edict_t **)p == NULL)
+		if ( *(edict_t **)p == nullptr )
 			index = -1;
 		else
 			index = *(gitem_t **)p - itemlist;
@@ -682,7 +683,7 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 	// Matches with an address in the function list, which is generated by extractfuncs.exe.
 	// Actual name of function is saved as a string, allowing version-independent savegames.
 	case F_FUNCTION:
-		if (*(byte **)p == NULL)
+		if (*(byte **)p == nullptr )
 			len = 0;
 		else
 		{
@@ -696,7 +697,7 @@ void WriteField1 (FILE *f, field_t *field, byte *base)
 	// Matches with an address in the mmove list, which is generated by extractfuncs.exe.
 	// Actual name of mmove is saved as a string, allowing version-independent savegames.
 	case F_MMOVE:
-		if (*(byte **)p == NULL)
+		if (*(byte **)p == nullptr )
 			len = 0;
 		else
 		{
@@ -746,6 +747,10 @@ void WriteField2 (FILE *f, field_t *field, byte *base)
 	p = (void *)(base + field->ofs);
 	switch (field->type)
 	{
+		case F_DSTRING:
+		{
+			break;
+		}
 	case F_LSTRING:
 		if ( *(char **)p )
 		{
@@ -800,10 +805,15 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	case F_IGNORE:
 		break;
 
+		case F_DSTRING:
+		{
+			break;
+		}
+
 	case F_LSTRING:
 		len = *(int *)p;
 		if (!len)
-			*(char **)p = NULL;
+			*(char **)p = nullptr;
 		else
 		{
 			*(char **)p = static_cast<char*>(gi.TagMalloc (len, TAG_LEVEL));
@@ -813,21 +823,21 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	case F_EDICT:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(edict_t **)p = NULL;
+			*(edict_t **)p = nullptr;
 		else
 			*(edict_t **)p = &g_edicts[index];
 		break;
 	case F_CLIENT:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(gclient_t **)p = NULL;
+			*(gclient_t **)p = nullptr;
 		else
 			*(gclient_t **)p = &game.clients[index];
 		break;
 	case F_ITEM:
 		index = *(int *)p;
 		if ( index == -1 )
-			*(gitem_t **)p = NULL;
+			*(gitem_t **)p = nullptr;
 		else
 			*(gitem_t **)p = &itemlist[index];
 		break;
@@ -837,7 +847,7 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	case F_FUNCTION:
 		len = *(int *)p;
 		if (!len)
-			*(byte **)p = NULL;
+			*(byte **)p = nullptr;
 		else
 		{
 			if (len > sizeof(funcStr))
@@ -852,7 +862,7 @@ void ReadField (FILE *f, field_t *field, byte *base)
 	case F_MMOVE:
 		len = *(int *)p;
 		if (!len)
-			*(byte **)p = NULL;
+			*(byte **)p = nullptr;
 		else
 		{
 			if (len > sizeof(funcStr))
@@ -939,7 +949,7 @@ void ReadClient (FILE *f, gclient_t *client)
 	}
 
 	// Knightmare- fix/hack for loading game with textdisplay open
-	client->textdisplay = NULL;
+	client->textdisplay = nullptr;
 	client->showscores = false;
 }
 
@@ -1153,7 +1163,7 @@ void ReadEdict (FILE *f, edict_t *ent)
 	}
 	// Knightmare- nullify reflection pointers to prevent crash
 	for (i=0; i<6; i++)
-		ent->reflection[i] = NULL;
+		ent->reflection[i] = nullptr;
 }
 
 /*
@@ -1351,8 +1361,8 @@ void ReadLevel (char *filename)
 			continue;
 
 		// fire any cross-level triggers
-		if (ent->classname)
-			if (strcmp(ent->classname, "target_crosslevel_target") == 0)
+		if (!ent->classname.empty())
+			if (strcmp(ent->classname.c_str(), "target_crosslevel_target") == 0)
 				ent->nextthink = level.time + ent->delay;
 	}
 

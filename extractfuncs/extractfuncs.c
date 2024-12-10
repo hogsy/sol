@@ -196,21 +196,21 @@ void DumpReplaceFunctions (char *typeName)
 						for (k = 0; k < rf->arrayDimSizes[2]; k++)
 						{
 							for (l = 0; l < rf->arrayDimSizes[3]; l++) {
-								Com_sprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d][%d][%d]", rf->name, i, j, k, l);
+								snprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d][%d][%d]", rf->name, i, j, k, l);
 								Log_Print( "{\"%s\", &%s},\n", varNameBuf, varNameBuf );
 							}
 							if (rf->nArrayDims == 3) {
-								Com_sprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d][%d]", rf->name, i, j, k);
+								snprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d][%d]", rf->name, i, j, k);
 								Log_Print( "{\"%s\", &%s},\n", varNameBuf, varNameBuf );
 							}
 						}
 						if (rf->nArrayDims == 2) {
-							Com_sprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d]", rf->name, i, j);
+							snprintf (varNameBuf, sizeof(varNameBuf), "%s[%d][%d]", rf->name, i, j);
 							Log_Print( "{\"%s\", &%s},\n", varNameBuf, varNameBuf );
 						}
 					}
 					if (rf->nArrayDims == 1) {
-						Com_sprintf (varNameBuf, sizeof(varNameBuf), "%s[%d]", rf->name, i);
+						snprintf (varNameBuf, sizeof(varNameBuf), "%s[%d]", rf->name, i);
 						Log_Print( "{\"%s\", &%s},\n", varNameBuf, varNameBuf );
 					}
 				}
@@ -491,7 +491,7 @@ void AddFunctionName (char *funcname, char *filename, tokenList_t *head)
 	Q_strncpyz (f->name, strlen(funcname) + 1, funcname);
 	f->newname = (char *)f + sizeof(replacefunc_t) + strlen(funcname) + 1;
 //	sprintf (f->newname, "F%d", numfuncs++);
-	Com_sprintf (f->newname, 6, "F%d", numfuncs++);
+	snprintf (f->newname, 6, "F%d", numfuncs++);
 	f->filename = (char *)f + sizeof(replacefunc_t) + strlen(funcname) + 1 + strlen(f->newname) + 1;
 //	strncpy (f->filename, filename);
 	Q_strncpyz (f->filename, strlen(filename) + 1, filename);
@@ -521,7 +521,7 @@ void ConcatVarDec (tokenList_t *list, char *str, size_t strSize, int nDims, size
 	}
 	Q_strncatz (str, strSize, list->token.string);
 	for (i = 0; i < nDims; i++) {
-		Com_sprintf (buf, sizeof(buf), "[%d]", DimSizes[i]);
+		snprintf (buf, sizeof(buf), "[%d]", DimSizes[i]);
 		Q_strncatz (str, strSize, buf );
 	}
 	Q_strncatz (str, strSize, " " );
@@ -548,7 +548,7 @@ void AddVarName (char *funcname, int nDims, size_t DimSizes[], char *filename, t
 	f->name = (char *)f + sizeof(replacefunc_t);
 	Q_strncpyz (f->name, strlen(funcname) + 1, funcname);
 	f->newname = (char *)f + sizeof(replacefunc_t) + strlen(funcname) + 1;
-	Com_sprintf (f->newname, 6, "F%d", numfuncs++);
+	snprintf (f->newname, 6, "F%d", numfuncs++);
 	f->filename = (char *)f + sizeof(replacefunc_t) + strlen(funcname) + 1 + strlen(f->newname) + 1;
 	Q_strncpyz (f->filename, strlen(filename) + 1, filename);
 	if (nDims > 0)
@@ -905,11 +905,11 @@ void main (int argc, char *argv[])
 		if ( !Q_stricmp(argv[i], "-t") && (i < argc-1) && (argv[i+1][0] != '-') )
 		{
 			char	buf[_MAX_PATH];
-			Com_sprintf (typeName, sizeof(typeName), argv[i+1]);
+			snprintf (typeName, sizeof(typeName), argv[i+1]);
 			printf("Data type to extract: %s\n", typeName);
-			Com_sprintf (buf, sizeof(buf), "g_%s_list.h", typeName);
+			snprintf (buf, sizeof(buf), "g_%s_list.h", typeName);
 			func_listfile = _strdup(buf);
-			Com_sprintf (buf, sizeof(buf), "g_%s_decs.h", typeName);
+			snprintf (buf, sizeof(buf), "g_%s_decs.h", typeName);
 			func_decsfile = _strdup(buf);
 			typeExtract = true;
 		}
@@ -989,11 +989,11 @@ int main (int argc, char *argv[])
 		if ( !Q_stricmp(argv[i], "-t") && (i < argc-1) && (argv[i+1][0] != '-') )
 		{
 			char	buf[_MAX_PATH];
-			Com_sprintf (typeName, sizeof(typeName), argv[i+1]);
+			snprintf (typeName, sizeof(typeName), argv[i+1]);
 			printf("Data type to extract: %s\n", typeName);
-			Com_sprintf (buf, sizeof(buf), "g_%s_list.h", typeName);
+			snprintf (buf, sizeof(buf), "g_%s_list.h", typeName);
 			func_listfile = strdup(buf);
-			Com_sprintf (buf, sizeof(buf), "g_%s_decs.h", typeName);
+			snprintf (buf, sizeof(buf), "g_%s_decs.h", typeName);
 			func_decsfile = strdup(buf);
 			typeExtract = true;
 		}

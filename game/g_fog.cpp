@@ -194,7 +194,7 @@ void Cmd_Fog_f (edict_t *ent)
 	if (!ent || !ent->client || ent->is_bot)
 		return;
 
-	if (Q_stricmp (cmd, "fog_help") == 0 )
+	if (Q_stricmp ( cmd, "fog_help" ) == 0 )
 	{
 		gi.dprintf("Fog parameters for console only.\n"
 			       "Use fog_active to see parameters for currently active fog.\n");
@@ -214,7 +214,7 @@ void Cmd_Fog_f (edict_t *ent)
 				   "Fog_Density   Best results with values < 100\n\n"
 				   "Command without a value will show current setting\n");
 	}
-	else if (Q_stricmp (cmd, "fog_active") == 0 )
+	else if (Q_stricmp ( cmd, "fog_active" ) == 0 )
 	{
 		if (level.active_fog)
 		{
@@ -234,11 +234,11 @@ void Cmd_Fog_f (edict_t *ent)
 		else
 			gi.dprintf("No fogs currently active\n");
 	}
-	else if (Q_stricmp (cmd, "fog_stuff") == 0 )
+	else if (Q_stricmp ( cmd, "fog_stuff" ) == 0 )
 	{
 		gi.dprintf("active_fog=%d, last_active_fog=%d\n",level.active_fog,level.last_active_fog);
 	}
-	else if (Q_stricmp (cmd, "fog") == 0 )
+	else if (Q_stricmp ( cmd, "fog" ) == 0 )
 	{
 		if (parm)
 		{
@@ -249,7 +249,7 @@ void Cmd_Fog_f (edict_t *ent)
 		}
 		gi.dprintf("fog is %s\n",(level.active_fog ? "on" : "off"));
 	}
-	else if (Q_stricmp (cmd, "Fog_Red") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Red" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Color[0]);
@@ -260,7 +260,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Grn") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Grn" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Color[1]);
@@ -271,7 +271,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Blu") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Blu" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Color[2]);
@@ -282,7 +282,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Near") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Near" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Near);
@@ -293,7 +293,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Far") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Far" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Far);
@@ -304,7 +304,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Model") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Model" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %d\n0=Linear\n1=Exp\n2=Exp2\n",cmd,fog->Model);
@@ -320,7 +320,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_Density") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_Density" ) == 0 )
 	{
 		if (!parm)
 			gi.dprintf("%s = %f\n",cmd,fog->Density);
@@ -331,7 +331,7 @@ void Cmd_Fog_f (edict_t *ent)
 			Fog_ConsoleFog();
 		}
 	}
-	else if (Q_stricmp (cmd, "Fog_List") == 0 )
+	else if (Q_stricmp ( cmd, "Fog_List" ) == 0 )
 	{
 		int		i;
 		fog_t	*cFog;

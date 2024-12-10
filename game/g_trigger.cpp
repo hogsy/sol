@@ -496,7 +496,7 @@ static int windsound;
 
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	if (strcmp(other->classname, "grenade") == 0)
+	if (strcmp(other->classname.c_str(), "grenade") == 0)
 	{
 		VectorScale (self->movedir, self->speed * 10, other->velocity);
 	}
@@ -1175,7 +1175,7 @@ void trigger_inside_think (edict_t *self)
 		hit = touch[i];
 		if (!hit->inuse) continue;
 		if (!hit->targetname) continue;
-		if (Q_stricmp(self->pathtarget, hit->targetname)) continue;
+		if (Q_stricmp( self->pathtarget, hit->targetname ) ) continue;
 		// must be COMPLETELY inside
 		if (hit->absmin[0] < self->absmin[0]) continue;
 		if (hit->absmin[1] < self->absmin[1]) continue;
@@ -1753,7 +1753,7 @@ void SP_trigger_speaker (edict_t *self)
 	self->class_id = ENTITY_TRIGGER_SPEAKER;
 
 	if (!strstr (st.noise, ".wav"))
-		Com_sprintf (buffer, sizeof(buffer), "%s.wav", st.noise);
+		snprintf (buffer, sizeof(buffer), "%s.wav", st.noise);
 	else
 	//	strncpy (buffer, st.noise, sizeof(buffer));
 		Q_strncpyz (buffer, sizeof(buffer), st.noise);
@@ -1783,13 +1783,12 @@ void SP_trigger_speaker (edict_t *self)
 //==============================================================================
 void WriteEdict (FILE *f, edict_t *ent);
 
-qboolean HasSpawnFunction (edict_t *ent)
+qboolean HasSpawnFunction ( const edict_t *ent)
 {
-	spawn_t	*s;
 	gitem_t	*item;
 	int		i;
 
-	if ( !ent->classname )
+	if ( ent->classname.empty() )
 		return false;
 
 	// check item spawn functions
@@ -1797,18 +1796,18 @@ qboolean HasSpawnFunction (edict_t *ent)
 	{
 		if ( !item->classname )
 			continue;
-		if ( !strcmp(item->classname, ent->classname) )
+		if ( !strcmp(item->classname, ent->classname.c_str()) )
 			return true;
 	}
 	// check normal spawn functions
-	for (s=spawns; s->name; s++)
+	for ( const spawn_t *s = spawns; s->name; s++)
 	{
-		if ( !strcmp(s->name, ent->classname) )
+		if ( !strcmp(s->name, ent->classname.c_str()) )
 			return true;
 	}
 	return false;
 }
-void WriteTransitionEdict (FILE *f, edict_t *changelevel, edict_t *ent)
+void WriteTransitionEdict (FILE *f, const edict_t *changelevel, edict_t *ent)
 {
 	byte		*temp;
 	edict_t		e;
@@ -1816,11 +1815,11 @@ void WriteTransitionEdict (FILE *f, edict_t *changelevel, edict_t *ent)
 	void		*p;
 
 	memcpy (&e, ent, sizeof(edict_t));
-	if ( !Q_stricmp(e.classname, "target_laser") ||
-		!Q_stricmp(e.classname, "target_blaster") )
+	if ( !Q_stricmp( e.classname.c_str(), "target_laser" ) ||
+		!Q_stricmp( e.classname.c_str(), "target_blaster" ) )
 		vectoangles (e.movedir, e.s.angles);
 
-	if (!Q_stricmp(e.classname, "target_speaker"))
+	if (!Q_stricmp( e.classname.c_str(), "target_speaker" ) )
 		e.spawnflags |= 8;  // indicates that "message" contains noise
 
 	if (changelevel->s.angles[YAW])
@@ -1890,8 +1889,8 @@ void WriteTransitionEdict (FILE *f, edict_t *changelevel, edict_t *ent)
 		if ( (ent->enemy == &g_edicts[1]) && (ent->health > 0) )
 			e.monsterinfo.aiflags = AI_RESPAWN_FINDPLAYER;
 	}
-	if (e.classname &&
-	   ( !Q_stricmp(e.classname,"misc_actor") || strstr(e.classname,"monster_") ) &&
+	if (!e.classname.empty() &&
+	   ( !Q_stricmp( e.classname.c_str(), "misc_actor" ) || strstr(e.classname.c_str(),"monster_") ) &&
 	   (e.svflags & SVF_GIB) )
 	   //(e.health <= e.gib_health) )
 		e.classname = "gibhead";
@@ -1994,19 +1993,15 @@ int trigger_transition_ents (edict_t *changelevel, edict_t *self)
 		if (ent->s.origin[0] < self->mins[0]) continue;
 		if (ent->s.origin[1] < self->mins[1]) continue;
 		if (ent->s.origin[2] < self->mins[2]) continue;
-		if (!Q_stricmp(ent->classname,"func_tracktrain") && !(ent->spawnflags & 8) && ent->targetname)
+		if (!Q_stricmp( ent->classname.c_str(), "func_tracktrain" ) && !(ent->spawnflags & 8) && ent->targetname)
 		{
-			edict_t	*e;
-			size_t	classSize, targetnameSize, targetSize;
 
-			e = G_Spawn();
-			classSize = 17;
-			e->classname = static_cast<char*>(gi.TagMalloc(classSize, TAG_LEVEL));
-			Q_strncpyz (e->classname, classSize, "info_train_start");
-			targetnameSize = strlen(ent->targetname) + 1;
+			edict_t *e     = G_Spawn();
+			e->classname = "info_train_start";
+			size_t targetnameSize = strlen( ent->targetname ) + 1;
 			e->targetname = static_cast<char*>(gi.TagMalloc(targetnameSize, TAG_LEVEL));
 			Q_strncpyz (e->targetname, targetnameSize, ent->targetname);
-			targetSize = strlen(ent->target) + 1;
+			size_t targetSize = strlen( ent->target ) + 1;
 			e->target = static_cast<char*>(gi.TagMalloc(targetSize, TAG_LEVEL));
 			Q_strncpyz (e->target, targetSize, ent->target);
 			e->spawnflags = ent->spawnflags;
@@ -2054,10 +2049,10 @@ int trigger_transition_ents (edict_t *changelevel, edict_t *self)
 		if (ent->s.origin[1] < self->mins[1]) continue;
 		if (ent->s.origin[2] < self->mins[2]) continue;
 		if (ent->solid == SOLID_BSP) continue;
-		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname)) continue;
+		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname.c_str())) continue;
 		// Do not under any circumstances move these entities:
 		for (p=DoNotMove, nogo=false; p->name && !nogo; p++)
-			if (!Q_stricmp(ent->classname,p->name))
+			if (!Q_stricmp( ent->classname.c_str(), p->name ) )
 				nogo = true;
 		if (nogo) continue;
 		if (!HasSpawnFunction(ent)) continue;
@@ -2080,10 +2075,10 @@ int trigger_transition_ents (edict_t *changelevel, edict_t *self)
 		if (ent->owner->client) continue;
 		if (ent->movewith) continue;
 		if (ent->solid == SOLID_BSP) continue;
-		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname)) continue;
+		if ((ent->solid == SOLID_TRIGGER) && !FindItemByClassname(ent->classname.c_str())) continue;
 		// Do not under any circumstances move these entities:
 		for (p=DoNotMove, nogo=false; p->name && !nogo; p++)
-			if (!Q_stricmp(ent->classname,p->name))
+			if (!Q_stricmp( ent->classname.c_str(), p->name ) )
 				nogo = true;
 		if (nogo) continue;
 		if (!HasSpawnFunction(ent)) continue;
@@ -2258,10 +2253,10 @@ void trigger_switch_usetargets (edict_t *ent, edict_t *activator)
 //
 // print the message
 //
-	if ((ent->message) && !(activator->svflags & SVF_MONSTER))
+	if (!ent->message.empty() && !(activator->svflags & SVF_MONSTER))
 	{
 //		Lazarus - change so that noise_index < 0 means no sound
-		safe_centerprintf (activator, "%s", ent->message);
+		safe_centerprintf (activator, "%s", ent->message.c_str());
 		if (ent->noise_index > 0)
 			gi.sound (activator, CHAN_AUTO, ent->noise_index, 1, ATTN_NORM, 0);
 		else if (ent->noise_index == 0)

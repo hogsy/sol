@@ -129,13 +129,13 @@ void GL_TextureMode (char *string)
 
 	for (i=0; i< NUM_GL_MODES; i++)
 	{
-		if ( !Q_stricmp(gl_modes[i].name, string) )
+		if ( !Q_stricmp( gl_modes[ i ].name, string ) )
 			break;
 	}
 
 	if (i == NUM_GL_MODES)
 	{
-		VID_Printf (PRINT_ALL, "bad filter name\n");
+		VID_Printf ( PRINT_ALL, "bad filter name\n" );
 		return;
 	}
 
@@ -234,7 +234,7 @@ void R_ImageList_f (void)
 		"PAL"
 	};
 
-	VID_Printf (PRINT_ALL, "------------------\n");
+	VID_Printf ( PRINT_ALL, "------------------\n" );
 	texels = 0;
 
 	for (i=0, image=gltextures; i<numgltextures; i++, image++)
@@ -245,35 +245,35 @@ void R_ImageList_f (void)
 		switch (image->type)
 		{
 		case it_skin:
-			VID_Printf (PRINT_ALL, "M");
+			VID_Printf ( PRINT_ALL, "M" );
 			break;
 		case it_sprite:
-			VID_Printf (PRINT_ALL, "S");
+			VID_Printf ( PRINT_ALL, "S" );
 			break;
 		case it_wall:
-			VID_Printf (PRINT_ALL, "W");
+			VID_Printf ( PRINT_ALL, "W" );
 			break;
 		case it_pic:
-			VID_Printf (PRINT_ALL, "P");
+			VID_Printf ( PRINT_ALL, "P" );
 			break;
 		case it_font:
-			VID_Printf (PRINT_ALL, "F");
+			VID_Printf ( PRINT_ALL, "F" );
 			break;
 		case it_scrap:
-			VID_Printf (PRINT_ALL, "C");
+			VID_Printf ( PRINT_ALL, "C" );
 			break;
 		case it_part:
-			VID_Printf (PRINT_ALL, "R");
+			VID_Printf ( PRINT_ALL, "R" );
 			break;
 		default:
-			VID_Printf (PRINT_ALL, " ");
+			VID_Printf ( PRINT_ALL, " " );
 			break;
 		}
 
-		VID_Printf (PRINT_ALL,  " %3i %3i %s: %s\n",
-			image->upload_width, image->upload_height, palstrings[image->paletted], image->name);
+		VID_Printf ( PRINT_ALL, " %3i %3i %s: %s\n",
+		            image->upload_width, image->upload_height, palstrings[ image->paletted ], image->name );
 	}
-	VID_Printf (PRINT_ALL, "Total texel count (not counting mipmaps): %i\n", texels);
+	VID_Printf ( PRINT_ALL, "Total texel count (not counting mipmaps): %i\n", texels );
 }
 
 
@@ -397,7 +397,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 	if (!raw)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "Bad pcx file %s\n", filename);
+			VID_Printf ( PRINT_DEVELOPER, "Bad pcx file %s\n", filename );
 		return;
 	}
 
@@ -425,7 +425,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 		|| pcx->xmax >= 4096	// was 640
 		|| pcx->ymax >= 4096)	// was 480
 	{
-		VID_Printf (PRINT_ALL, "Bad pcx file %s\n", filename);
+		VID_Printf ( PRINT_ALL, "Bad pcx file %s\n", filename );
 		return;
 	}
 
@@ -468,7 +468,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 
 	if ( raw - (byte *)pcx > len)
 	{
-		VID_Printf (PRINT_DEVELOPER, "PCX file %s was malformed", filename);
+		VID_Printf ( PRINT_DEVELOPER, "PCX file %s was malformed", filename );
 		free (*pic);
 		*pic = NULL;
 	}
@@ -539,7 +539,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 	if (!data)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "R_LoadTGA (%s): Bad tga file\n", filename);
+			VID_Printf ( PRINT_DEVELOPER, "R_LoadTGA (%s): Bad tga file\n", filename );
 		return;
 	}
 
@@ -585,7 +585,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 	default:
 		FS_FreeFile (data);
 	//	VID_Error ( ERR_DROP, "R_LoadTGA: Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n" );
-		VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n", filename );
 		return;
 	}
 
@@ -601,7 +601,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 	default:
 		FS_FreeFile (data);
 	//	VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n" );
-		VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Only 8, 15, 16, 24 and 32 bit images (with colormaps) supported\n", filename );
 		return;
 	}
 
@@ -624,7 +624,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 		default:
 			FS_FreeFile (data);
 		//	VID_Error ( ERR_DROP, "R_LoadTGA: Only 8, 16, 24 and 32 bit colormaps supported\n" );
-			VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Only 8, 16, 24 and 32 bit colormaps supported\n", filename);
+			VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Only 8, 16, 24 and 32 bit colormaps supported\n", filename );
 			return;
 		}
 
@@ -632,7 +632,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 		temp2 = header.colormap_length;
 		if ( (temp1 + temp2 + 1) >= MAXCOLORS ) {
 			FS_FreeFile (data);
-			VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Color map exceeds %i colors\n", filename, MAXCOLORS);
+			VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Color map exceeds %i colors\n", filename, MAXCOLORS );
 			return;
 		}
 		ColorMap = (byte *)malloc(MAXCOLORS * 4);
@@ -792,7 +792,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 				*pic = NULL;
 				FS_FreeFile (data);
 			//	VID_Error ( ERR_DROP, "Illegal pixel_size '%d' in file '%s'\n", pixel_size, filename );
-				VID_Printf (PRINT_ALL, "R_LoadTGA (%s): Illegal pixel_size '%d'\n", filename, pixel_size );
+				VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Illegal pixel_size '%d'\n", filename, pixel_size );
 				return;
 		 }
 
@@ -1065,7 +1065,7 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 	nBits = (nBytes == 4) ? 32 : 24;
 
 	if (relativePath)
-		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+		snprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
 	else
 		Q_strncpyz (checkname, sizeof(checkname), filename);
 	FS_CreatePath (checkname);
@@ -1099,13 +1099,13 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 			fclose (file);
 		}
 		else
-			VID_Printf (PRINT_ALL, "R_WriteTGA: couldn't open %s for writing\n", checkname);
+			VID_Printf ( PRINT_ALL, "R_WriteTGA: couldn't open %s for writing\n", checkname );
 
 		free (buffer);
 	}
 	else {
 		fclose (file);
-		VID_Printf (PRINT_ALL, "R_WriteTGA: %s already exists\n", checkname);
+		VID_Printf ( PRINT_ALL, "R_WriteTGA: %s already exists\n", checkname );
 	}
 }
 
@@ -1243,7 +1243,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	if (!raw)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png file\n", filename);
+			VID_Printf ( PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png file\n", filename );
 		return;
 	}
 
@@ -1281,7 +1281,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 
 	// conversion of non-RGB types to RGBA is not working, so exclude them for now
 	if ( (r_png_handle->colorType != PNG_COLOR_TYPE_RGB) && (r_png_handle->colorType != PNG_COLOR_TYPE_RGB_ALPHA) ) {
-		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename);
+		VID_Printf ( PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename );
 		png_destroy_read_struct (&png, &pnginfo, 0);
 		R_DestroyPNG (false);
 		FS_FreeFile (raw);
@@ -1336,7 +1336,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 			*height = r_png_handle->height;
 	}
 	else {
-		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png color depth\n", filename);
+		VID_Printf ( PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png color depth\n", filename );
 		*pic = NULL;
 		free (r_png_handle->data);
 	}
@@ -1371,7 +1371,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	imageSize = width * height * nBytes;
 
 	if (relativePath)
-		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+		snprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
 	else
 		Q_strncpyz (checkname, sizeof(checkname), filename);
 	FS_CreatePath (checkname);
@@ -1382,21 +1382,21 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	{
 		png_sptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
 		if ( !png_sptr ) {
-			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n"); 
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n" ); 
 			return;
 		}
 
 		png_infoptr = png_create_info_struct (png_sptr);
 		if ( !png_infoptr ) {
 			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n"); 
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n" ); 
 			return;
 		}
 
 		if ( setjmp(png_jmpbuf(png_sptr)) ) {
 			png_destroy_info_struct (png_sptr, &png_infoptr);
 			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: bad data\n"); 
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: bad data\n" ); 
 			return;
 		}
 
@@ -1405,7 +1405,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 		if ( !file ) {
 			png_destroy_info_struct (png_sptr, &png_infoptr);
 			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Couldn't open %s for writing\n", checkname); 
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't open %s for writing\n", checkname ); 
 			return;
  		}
 
@@ -1431,7 +1431,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	}
 	else {
 		fclose (file);
-		VID_Printf (PRINT_ALL, "R_WritePNG: %s already exists\n", checkname);
+		VID_Printf ( PRINT_ALL, "R_WritePNG: %s already exists\n", checkname );
 	}
 }
 #endif	// PNG_SUPPORT
@@ -1452,7 +1452,7 @@ void jpg_null (j_decompress_ptr cinfo)
 
 boolean jpg_fill_input_buffer (j_decompress_ptr cinfo)
 {
-    VID_Printf (PRINT_ALL, "Premature end of JPEG data\n");
+    VID_Printf ( PRINT_ALL, "Premature end of JPEG data\n" );
     return 1;
 }
 
@@ -1462,7 +1462,7 @@ void jpg_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
 
     if (cinfo->src->bytes_in_buffer < 0) 
-		VID_Printf (PRINT_ALL, "Premature end of JPEG data\n");
+		VID_Printf ( PRINT_ALL, "Premature end of JPEG data\n" );
 }
 
 //void jpeg_mem_src (j_decompress_ptr cinfo, const byte *mem, unsigned long len)
@@ -1501,7 +1501,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	if (!rawdata)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
-			VID_Printf (PRINT_DEVELOPER, "R_LoadJPG (%s): Bad jpg file\n", filename);
+			VID_Printf ( PRINT_DEVELOPER, "R_LoadJPG (%s): Bad jpg file\n", filename );
 		return;	
 	}
 
@@ -1510,7 +1510,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 		||	rawdata[7] != 'F'
 		||	rawdata[8] != 'I'
 		||	rawdata[9] != 'F' ) {
-		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Bad jpg file\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadJPG (%s): Bad jpg file\n", filename );
 		FS_FreeFile(rawdata);
 		return;
 	}
@@ -1531,7 +1531,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	// Check Color Components
 	if (cinfo.output_components != 3)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Invalid JPEG color components\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadJPG (%s): Invalid JPEG color components\n", filename );
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
@@ -1541,7 +1541,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	rgbadata = malloc(cinfo.output_width * cinfo.output_height * 4);
 	if (!rgbadata)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG buffer\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG buffer\n", filename );
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
 		return;
@@ -1557,7 +1557,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	scanline = malloc(cinfo.output_width * 3);
 	if (!scanline)
 	{
-		VID_Printf (PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG scanline buffer\n", filename);
+		VID_Printf ( PRINT_ALL, "R_LoadJPG (%s): Insufficient RAM for JPEG scanline buffer\n", filename );
 		free (rgbadata);
 		jpeg_destroy_decompress (&cinfo);
 		FS_FreeFile (rawdata);
@@ -1625,7 +1625,7 @@ void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *
 	imageSize = width * height * nBytes;
 
 	if (relativePath)
-		Com_sprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
+		snprintf (checkname, sizeof(checkname), "%s/%s", FS_Savegamedir(), filename);
 	else
 		Q_strncpyz (checkname, sizeof(checkname), filename);
 	FS_CreatePath (checkname);
@@ -1636,7 +1636,7 @@ void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *
 	{
 		file = fopen (checkname, "wb");
 		if ( !file ) {
-			VID_Printf (PRINT_ALL, "R_WriteJPG: couldn't open %s for writing\n", checkname);
+			VID_Printf ( PRINT_ALL, "R_WriteJPG: couldn't open %s for writing\n", checkname );
 			return;
 		}
 
@@ -1674,7 +1674,7 @@ void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *
 	}
 	else {
 		fclose (file);
-		VID_Printf (PRINT_ALL, "R_WriteJPG: %s already exists\n", checkname);
+		VID_Printf ( PRINT_ALL, "R_WriteJPG: %s already exists\n", checkname );
 	}
 }
 
@@ -2235,7 +2235,7 @@ qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t typ
 		if (upscaleFactor > 0)
 		{
 			upscaleFactor = min(upscaleFactor, MAX_UPSAMPLE_FACTOR);	// clamp to max upscale factor
-			VID_Printf (PRINT_DEVELOPER, "GL_Upload32: scaling font or scrap image from %dx%d to %dx%d.\n", width, height, scaled_width, scaled_height);
+			VID_Printf ( PRINT_DEVELOPER, "GL_Upload32: scaling font or scrap image from %dx%d to %dx%d.\n", width, height, scaled_width, scaled_height );
 			scaled = malloc((scaled_width * scaled_height) * 4);
 			if (type == it_font)
 				GL_UpscaleTexture (data, width, height, scaled, upscaleFactor, (r_font_upscale->integer >= 2));
@@ -2437,13 +2437,13 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	if (i == numgltextures)
 	{
 		if (numgltextures == MAX_GLTEXTURES)
-			VID_Error (ERR_DROP, "MAX_GLTEXTURES");
+			VID_Error ( ERR_DROP, "MAX_GLTEXTURES" );
 		numgltextures++;
 	}
 	image = &gltextures[i];
 
 	if (strlen(name) >= sizeof(image->name))
-		VID_Error (ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name);
+		VID_Error ( ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name );
 	Q_strncpyz (image->name, sizeof(image->name), name);
 	image->hash = Com_HashFileName(name, 0, false);	// Knightmare added
 	image->registration_sequence = registration_sequence;
@@ -2570,13 +2570,13 @@ image_t *R_LoadQuakePic (const char *name, byte *pic, int width, int height, ima
 	if (i == numgltextures)
 	{
 		if (numgltextures == MAX_GLTEXTURES)
-			VID_Error (ERR_DROP, "MAX_GLTEXTURES");
+			VID_Error ( ERR_DROP, "MAX_GLTEXTURES" );
 		numgltextures++;
 	}
 	image = &gltextures[i];
 
 	if (strlen(name) >= sizeof(image->name))
-		VID_Error (ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name);
+		VID_Error ( ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name );
 	Q_strncpyz (image->name, sizeof(image->name), name);
 	image->hash = Com_HashFileName(name, 0, false);
 	image->registration_sequence = registration_sequence;
@@ -2624,7 +2624,7 @@ void R_InitFailedImgList (void)
 	int		i;
 
 	for (i=0; i<NUM_FAIL_IMAGES; i++) {
-		Com_sprintf(lastFailedImage[i], sizeof(lastFailedImage[i]), "\0");
+		snprintf(lastFailedImage[i], sizeof(lastFailedImage[i]), "\0");
 		lastFailedImageHash[i] = 0;
 	}
 
@@ -2675,7 +2675,7 @@ void R_AddToFailedImgList (const char *name)
 
 //	VID_Printf (PRINT_ALL, "R_AddToFailedImgList: adding %s to failed to load list\n", name);
 
-	Com_sprintf(lastFailedImage[failedImgListIndex], sizeof(lastFailedImage[failedImgListIndex]), "%s", name);
+	snprintf(lastFailedImage[failedImgListIndex], sizeof(lastFailedImage[failedImgListIndex]), "%s", name);
 	lastFailedImageHash[failedImgListIndex] = Com_HashFileName(name, 0, false);
 	failedImgListIndex++;
 
@@ -2702,7 +2702,7 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 	if (!mt)
 	{
 		if (type == it_wall)
-			VID_Printf (PRINT_ALL, "R_FindImage: can't load %s\n", name);
+			VID_Printf ( PRINT_ALL, "R_FindImage: can't load %s\n", name );
 	//	return glMedia.noTexture;
 		return NULL;
 	}
@@ -2959,7 +2959,7 @@ int Draw_GetPalette (void)
 
 	LoadPCX ("pics/colormap.pcx", &pic, &pal, &width, &height);
 	if (!pal)
-		VID_Error (ERR_FATAL, "Couldn't load pics/colormap.pcx");
+		VID_Error ( ERR_FATAL, "Couldn't load pics/colormap.pcx" );
 
 	for (i=0 ; i<256 ; i++)
 	{
@@ -2997,11 +2997,11 @@ void Draw_GetQuakePalette (void)
 
 	len = FS_LoadFile ("gfx/palette.lmp", (void*)&pal);
 	if ( !pal ) {
-		VID_Printf (PRINT_DEVELOPER, "gfx/palette.lmp not found, using internal default\n");
+		VID_Printf ( PRINT_DEVELOPER, "gfx/palette.lmp not found, using internal default\n" );
 		useDefaultPal = true;
 	}
 	else if (len < 768) {
-		VID_Printf (PRINT_DEVELOPER, "gfx/palette.lmp has wrong size, using internal default\n");
+		VID_Printf ( PRINT_DEVELOPER, "gfx/palette.lmp has wrong size, using internal default\n" );
 		FS_FreeFile (pal);
 		useDefaultPal = true;
 	}
@@ -3022,7 +3022,7 @@ void Draw_GetQuakePalette (void)
 
 	if ( !useDefaultPal ) {
 		FS_FreeFile (pal);
-		VID_Printf (PRINT_DEVELOPER, "Sucessfully loaded gfx/palette.lmp\n");
+		VID_Printf ( PRINT_DEVELOPER, "Sucessfully loaded gfx/palette.lmp\n" );
 	}
 }
 
@@ -3047,10 +3047,10 @@ void R_InitImages (void)
 	// init intensity conversions
 	// added Vic's RGB brightening
 	if (glConfig.mtexcombine)
-		r_intensity = Cvar_Get ("r_intensity", "1", 0);
+		r_intensity = Cvar_Get ( "r_intensity", "1", 0 );
 	else
-		r_intensity = Cvar_Get ("r_intensity", "2", 0);
-	Cvar_SetDescription ("r_intensity", "Sets intensity value for gamma table.  Value range is >= 1.");
+		r_intensity = Cvar_Get ( "r_intensity", "2", 0 );
+	Cvar_SetDescription ( "r_intensity", "Sets intensity value for gamma table.  Value range is >= 1." );
 
 	if ( r_intensity->value <= 1 )
 		Cvar_Set( "r_intensity", "1" );

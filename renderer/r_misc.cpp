@@ -589,7 +589,7 @@ void R_ScaledScreenshot (const char *name)
 	// Resize grabbed screen
 	R_ResampleShot (r_saveShot.buffer, r_saveShot.width, r_saveShot.height, rgbdata, saveshotWidth, saveshotHeight);
 
-	Com_sprintf (shotname, sizeof(shotname), "%s", name);
+	snprintf (shotname, sizeof(shotname), "%s", name);
 	R_WriteJPG (rgbdata, saveshotWidth, saveshotHeight, 3, shotname, 85, false, false);	// was 100
 
 	// Free reduced screenshot
@@ -650,7 +650,7 @@ void R_ScreenShot_JPG (qboolean silent)
 	int			i, grab_width, grab_x;
 
 	// Create the screenshots directory if it doesn't exist
-	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
+	snprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
 	// Copy mapname to buffer
@@ -669,17 +669,17 @@ void R_ScreenShot_JPG (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.jpg", mapname, thousand, hundred, ten, one);
+			snprintf (picname, sizeof(picname), "%s_%i%i%i%i.jpg", mapname, thousand, hundred, ten, one);
 		else
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.jpg", thousand, hundred, ten, one);
-		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
+			snprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.jpg", thousand, hundred, ten, one);
+		snprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		file = fopen (checkname, "rb");
 		if (!file)
 			break;	// file doesn't exist
 		fclose (file);
 	} 
 	if (i == 10000) {
-		VID_Printf (PRINT_ALL, "R_ScreenShot_JPG: Screenshots directory is full!\n"); 
+		VID_Printf ( PRINT_ALL, "R_ScreenShot_JPG: Screenshots directory is full!\n" ); 
 		return;
  	}
 
@@ -707,7 +707,7 @@ void R_ScreenShot_JPG (qboolean silent)
 
 	// Done!
 	if (!silent)
-		VID_Printf (PRINT_ALL, "Wrote %s (at %i%% quality)\n", picname, r_screenshot_jpeg_quality->integer);
+		VID_Printf ( PRINT_ALL, "Wrote %s (at %i%% quality)\n", picname, r_screenshot_jpeg_quality->integer );
 }
 
 
@@ -732,7 +732,7 @@ void R_ScreenShot_PNG (qboolean silent)
 	FILE		*file = NULL;
 
 	// create the screenshots directory if it doesn't exist
-	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
+	snprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
 	// Copy mapname to buffer
@@ -751,17 +751,17 @@ void R_ScreenShot_PNG (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.png", mapname, thousand, hundred, ten, one);
+			snprintf (picname, sizeof(picname), "%s_%i%i%i%i.png", mapname, thousand, hundred, ten, one);
 		else
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.png", thousand, hundred, ten, one);
-		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
+			snprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.png", thousand, hundred, ten, one);
+		snprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		file = fopen (checkname, "rb");
 		if (!file)
 			break;	// file doesn't exist
 		fclose (file);
 	} 
 	if (i == 10000) {
-		VID_Printf (PRINT_ALL, "R_ScreenShot_PNG: Screenshots directory is full!\n"); 
+		VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Screenshots directory is full!\n" ); 
 		return;
  	}
 
@@ -785,7 +785,7 @@ void R_ScreenShot_PNG (qboolean silent)
 	free (rgbdata);
 
 	if (!silent)
-		VID_Printf (PRINT_ALL, "Wrote %s\n", picname);
+		VID_Printf ( PRINT_ALL, "Wrote %s\n", picname );
 }
 #endif	// PNG_SUPPORT
 
@@ -804,7 +804,7 @@ void R_ScreenShot_TGA (qboolean silent)
 	FILE		*file = NULL;
 
 	// create the screenshots directory if it doesn't exist
-	Com_sprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
+	snprintf (checkname, sizeof(checkname), "%s/screenshots", FS_Savegamedir());	// was FS_Gamedir()
 	Sys_Mkdir (checkname);
 
 	// Copy mapname to buffer
@@ -823,17 +823,17 @@ void R_ScreenShot_TGA (qboolean silent)
 
 		// Include mapname in filename if enabled
 		if ( r_screenshot_use_mapname->integer && (r_worldmodel != NULL) && (mapname[0] != 0) )
-			Com_sprintf (picname, sizeof(picname), "%s_%i%i%i%i.tga", mapname, thousand, hundred, ten, one);
+			snprintf (picname, sizeof(picname), "%s_%i%i%i%i.tga", mapname, thousand, hundred, ten, one);
 		else
-			Com_sprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
-		Com_sprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
+			snprintf (picname, sizeof(picname), "kmquake2_%i%i%i%i.tga", thousand, hundred, ten, one);
+		snprintf (checkname, sizeof(checkname), "%s/screenshots/%s", FS_Savegamedir(), picname);	// was FS_Gamedir()
 		file = fopen (checkname, "rb");
 		if (!file)
 			break;	// file doesn't exist
 		fclose (file);
 	} 
 	if (i == 10000) {
-		VID_Printf (PRINT_ALL, "R_ScreenShot_TGA: Screenshots directory is full!\n"); 
+		VID_Printf ( PRINT_ALL, "R_ScreenShot_TGA: Screenshots directory is full!\n" ); 
 		return;
  	}
 
@@ -877,7 +877,7 @@ void R_ScreenShot_TGA (qboolean silent)
 	file = fopen (checkname, "wb");
 	if (!file) {
 		free (buffer);
-		VID_Printf (PRINT_ALL, "R_ScreenShot_TGA: Couldn't create a file\n"); 
+		VID_Printf ( PRINT_ALL, "R_ScreenShot_TGA: Couldn't create a file\n" ); 
 		return;
  	}
 	fwrite (buffer, 1, c, file);
@@ -887,7 +887,7 @@ void R_ScreenShot_TGA (qboolean silent)
 #endif	// USE_WRITETGA
 
 	if (!silent)
-		VID_Printf (PRINT_ALL, "Wrote %s\n", picname);
+		VID_Printf ( PRINT_ALL, "Wrote %s\n", picname );
 }
 
 

@@ -287,7 +287,7 @@ void CL_Record_f (void)
 	//
 	// open the demo file
 	//
-	Com_sprintf (name, sizeof(name), "%s/demos/%s.dm2", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
+	snprintf (name, sizeof(name), "%s/demos/%s.dm2", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
 
 	Com_Printf ("recording to %s.\n", name);
 	FS_CreatePath (name);
@@ -1353,7 +1353,7 @@ void CL_PingServers_f (void)
         memset(&global_adr_server_netadr[i], 0, sizeof(global_adr_server_netadr[0]));
         global_adr_server_time[i] = Sys_Milliseconds() ;
 
-        Com_sprintf (name, sizeof(name), "adr%i", i);
+        snprintf (name, sizeof(name), "adr%i", i);
 		adrstring = Cvar_VariableString (name);
 		if (!adrstring || !adrstring[0])
 			continue;
@@ -1374,7 +1374,7 @@ void CL_PingServers_f (void)
 		Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
 	}
 
-	noudp = Cvar_Get ("noudp", "0", CVAR_NOSET);
+	noudp = Cvar_Get ( "noudp", "0", CVAR_NOSET );
 	if (!noudp->integer)
 	{
         global_udp_server_time = Sys_Milliseconds() ;
@@ -1385,7 +1385,7 @@ void CL_PingServers_f (void)
 		Netchan_OutOfBandPrint (NS_CLIENT, adr, va("info %i", PROTOCOL_VERSION));
 	}
 
-	noipx = Cvar_Get ("noipx", "0", CVAR_NOSET);
+	noipx = Cvar_Get ( "noipx", "0", CVAR_NOSET );
 	if (!noipx->integer)
 	{
         global_ipx_server_time = Sys_Milliseconds() ;
@@ -1435,7 +1435,7 @@ void CL_PingServers_f (void)
 	// send a packet to each address book entry
 	for (i=0; i<16; i++)
 	{
-		Com_sprintf (name, sizeof(name), "adr%i", i);
+		snprintf (name, sizeof(name), "adr%i", i);
 		adrstring = Cvar_VariableString (name);
 		if (!adrstring || !adrstring[0])
 			continue;
@@ -1478,7 +1478,7 @@ void CL_Skins_f (void)
 	{
 		if (!cl.configstrings[cs_playerskins+i][0])
 			continue;
-		Com_Printf ("client %i: %s\n", i, cl.configstrings[cs_playerskins+i]); 
+		Com_Printf ("client %i: %s\n", i, cl.configstrings[cs_playerskins+i]);
 
 		SCR_UpdateScreen ();
 		Sys_SendKeyEvents ();	// pump message loop
@@ -1501,7 +1501,7 @@ void CL_ConnectionlessPacket (void)
 	char	*buff, *p;
 	int		i;
 	// end HTTP downloading from R1Q2
-	
+
 	MSG_BeginReading (&net_message);
 	MSG_ReadLong (&net_message);	// skip the -1
 
@@ -1534,7 +1534,7 @@ void CL_ConnectionlessPacket (void)
 				if ( qcurl_initialized )
 				{
 					p += 9;
-					Com_sprintf (cls.downloadReferer, sizeof(cls.downloadReferer), "quake2://%s", buff);
+					snprintf (cls.downloadReferer, sizeof(cls.downloadReferer), "quake2://%s", buff);
 					CL_SetHTTPServer (p);
 					if ( cls.downloadServer[0] )
 						Com_Printf ("HTTP downloading enabled, URL: %s\n", cls.downloadServer);
@@ -1550,7 +1550,7 @@ void CL_ConnectionlessPacket (void)
 		// end HTTP downloading from R1Q2
 
 		MSG_WriteChar (&cls.netchan.message, clc_stringcmd);
-		MSG_WriteString (&cls.netchan.message, "new");	
+		MSG_WriteString (&cls.netchan.message, "new");
 		cls.forcePacket = true;
 		cls.state = ca_connected;
 		return;
@@ -1587,8 +1587,8 @@ void CL_ConnectionlessPacket (void)
 		Com_Printf ("%s", s);
 
 		// catch wrong version reply from server here
-		Com_sprintf (thisVersionRejMsg, sizeof(thisVersionRejMsg), "You need KMQuake2 version %4.2f to play on this server.", VERSION);
-		Com_sprintf (thisVersionRejMsg2, sizeof(thisVersionRejMsg2), "Server is version %4.2f.", VERSION);
+		snprintf (thisVersionRejMsg, sizeof(thisVersionRejMsg), "You need KMQuake2 version %4.2f to play on this server.", VERSION);
+		snprintf (thisVersionRejMsg2, sizeof(thisVersionRejMsg2), "Server is version %4.2f.", VERSION);
 		if ( strstr(s, thisVersionRejMsg) || strstr(s, thisVersionRejMsg2) )	// Same version of KMQ2
 		{
 			Com_DPrintf ("Wrong version reply received from KMQ2 server.  Reconnecting as protocol version %i.\n", PROTOCOL_VERSION);
@@ -1767,7 +1767,7 @@ void CL_ReadPackets (void)
 	}
 	else
 		cl.timeoutcount = 0;
-	
+
 }
 
 
@@ -1794,9 +1794,9 @@ void CL_FixUpGender(void)
 		strncpy(sk, skin->string, sizeof(sk) - 1);
 		if ((p = strchr(sk, '/')) != NULL)
 			*p = 0;
-		if (Q_stricmp(sk, "male") == 0 || Q_stricmp(sk, "cyborg") == 0)
+		if (Q_stricmp( sk, "male" ) == 0 || Q_stricmp( sk, "cyborg" ) == 0)
 			Cvar_Set ("gender", "male");
-		else if (Q_stricmp(sk, "female") == 0 || Q_stricmp(sk, "crackhor") == 0)
+		else if (Q_stricmp( sk, "female" ) == 0 || Q_stricmp( sk, "crackhor" ) == 0)
 			Cvar_Set ("gender", "female");
 		else
 			Cvar_Set ("gender", "none");
@@ -1872,7 +1872,7 @@ void CL_Precache_f (void)
 	{
 		unsigned	map_checksum;		// for detecting cheater maps
 
-		CM_LoadMap (cl.configstrings[CS_MODELS+1], true, &map_checksum);
+		CM_LoadMap ( cl.configstrings[ CS_MODELS + 1 ], true, &map_checksum );
 		CL_RegisterSounds ();
 		CL_PrepRefresh ();
 		return;
@@ -1958,312 +1958,314 @@ void CL_InitLocal (void)
 	adr9 = Cvar_Get( "adr9", "", CVAR_ARCHIVE );
 	adr10 = Cvar_Get( "adr10", "", CVAR_ARCHIVE );
 	adr11 = Cvar_Get( "adr11", "", CVAR_ARCHIVE );
-	Cvar_SetDescription ("adr0", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr1", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr2", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr3", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr4", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr5", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr6", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr7", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr8", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr9", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr10", "Address book entry for Join Server menu.");
-	Cvar_SetDescription ("adr11", "Address book entry for Join Server menu.");
+	Cvar_SetDescription ( "adr0", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr1", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr2", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr3", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr4", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr5", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr6", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr7", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr8", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr9", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr10", "Address book entry for Join Server menu." );
+	Cvar_SetDescription ( "adr11", "Address book entry for Join Server menu." );
 
 	//
 	// register our variables
 	//
 	cl_stereo_separation = Cvar_Get( "cl_stereo_separation", "0.4", CVAR_ARCHIVE );
-	Cvar_SetDescription ("cl_stereo_separation", "Stereo separation used when cl_stereo is enabled.");
+	Cvar_SetDescription ( "cl_stereo_separation", "Stereo separation used when cl_stereo is enabled." );
 	cl_stereo = Cvar_Get( "cl_stereo", "0", 0 );
-	Cvar_SetDescription ("cl_stereo", "Enables stereo mode for 3D glasses.");
+	Cvar_SetDescription ( "cl_stereo", "Enables stereo mode for 3D glasses." );
 
-	cl_add_blend = Cvar_Get ("cl_blend", "1", 0);
-	Cvar_SetDescription ("cl_blend", "Enables screen blend effects.");
-	cl_add_lights = Cvar_Get ("cl_lights", "1", 0);
-	Cvar_SetDescription ("cl_lights", "Enables drawing of dynamic light effects.");
-	cl_add_particles = Cvar_Get ("cl_particles", "1", 0);
-	Cvar_SetDescription ("cl_particles", "Enables drawing of particles.");
-	cl_add_entities = Cvar_Get ("cl_entities", "1", 0);
-	Cvar_SetDescription ("cl_entities", "Enables drawing of entities.");
-	cl_gun = Cvar_Get ("cl_gun", "1", 0);
-	Cvar_SetDescription ("cl_gun", "Enables drawing of first-person gun model.  Set to 0 when taking screenshots.");
-	cl_weapon_shells = Cvar_Get ("cl_weapon_shells", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_weapon_shells", "Enables drawing of powerup shells on first-person gun model.");
-	cl_footsteps = Cvar_Get ("cl_footsteps", "1", 0);
-	Cvar_SetDescription ("cl_footsteps", "Enables player footstep sounds.");
+	cl_add_blend = Cvar_Get ( "cl_blend", "1", 0 );
+	Cvar_SetDescription ( "cl_blend", "Enables screen blend effects." );
+	cl_add_lights = Cvar_Get ( "cl_lights", "1", 0 );
+	Cvar_SetDescription ( "cl_lights", "Enables drawing of dynamic light effects." );
+	cl_add_particles = Cvar_Get ( "cl_particles", "1", 0 );
+	Cvar_SetDescription ( "cl_particles", "Enables drawing of particles." );
+	cl_add_entities = Cvar_Get ( "cl_entities", "1", 0 );
+	Cvar_SetDescription ( "cl_entities", "Enables drawing of entities." );
+	cl_gun = Cvar_Get ( "cl_gun", "1", 0 );
+	Cvar_SetDescription ( "cl_gun", "Enables drawing of first-person gun model.  Set to 0 when taking screenshots." );
+	cl_weapon_shells = Cvar_Get ( "cl_weapon_shells", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_weapon_shells", "Enables drawing of powerup shells on first-person gun model." );
+	cl_footsteps = Cvar_Get ( "cl_footsteps", "1", 0 );
+	Cvar_SetDescription ( "cl_footsteps", "Enables player footstep sounds." );
 
 	// reduction factor for particle effects
-	cl_particle_scale = Cvar_Get ("cl_particle_scale", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_particle_scale", "Scales down particle effects for better performance.  Higher value = fewer particles.");
+	cl_particle_scale = Cvar_Get ( "cl_particle_scale", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_particle_scale", "Scales down particle effects for better performance.  Higher value = fewer particles." );
 
 	// whether to adjust fov for wide aspect ratio
-	cl_widescreen_fov = Cvar_Get ("cl_widescreen_fov", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_widescreen_fov", "Enables automatic scaling of FOV for widescreen video modes.");
+	cl_widescreen_fov = Cvar_Get ( "cl_widescreen_fov", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_widescreen_fov", "Enables automatic scaling of FOV for widescreen video modes." );
 
 	// hook to simplify Lazarus zoom feature
-	cl_zoommode = Cvar_Get ("cl_zoommode", "0", 0);
-	Cvar_SetDescription ("cl_zoommode", "Disables gun model and crosshair for Lazarus zoom feature.");
+	cl_zoommode = Cvar_Get ( "cl_zoommode", "0", 0 );
+	Cvar_SetDescription ( "cl_zoommode", "Disables gun model and crosshair for Lazarus zoom feature." );
 
-	cl_noskins = Cvar_Get ("cl_noskins", "0", 0);
-	Cvar_SetDescription ("cl_noskins", "Forces all skins to male/grunt when enabled.");
+	cl_noskins = Cvar_Get ( "cl_noskins", "0", 0 );
+	Cvar_SetDescription ( "cl_noskins", "Forces all skins to male/grunt when enabled." );
 //	cl_autoskins = Cvar_Get ("cl_autoskins", "0", 0);	// unused
-	cl_predict = Cvar_Get ("cl_predict", "1", 0);
-	Cvar_SetDescription ("cl_predict", "Enables client-side movement prediction.  Recommended to leave enabled.");
+	cl_predict = Cvar_Get ( "cl_predict", "1", 0 );
+	Cvar_SetDescription ( "cl_predict", "Enables client-side movement prediction.  Recommended to leave enabled." );
 //	cl_minfps = Cvar_Get ("cl_minfps", "5", 0);	// unused
-	cl_maxfps = Cvar_Get ("cl_maxfps", "90", 0);
-	Cvar_SetDescription ("cl_maxfps", "Shared framerate cap when when cl_async (asynchronous frames) is set to 0.");
+	cl_maxfps = Cvar_Get ( "cl_maxfps", "90", 0 );
+	Cvar_SetDescription ( "cl_maxfps", "Shared framerate cap when when cl_async (asynchronous frames) is set to 0." );
 
 #ifdef CLIENT_SPLIT_NETFRAME
-	cl_async = Cvar_Get ("cl_async", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_async", "Enables asynchronous frame rendering.  Network frames and renderer frames are separated.  Uses r_maxfps and net_maxfps cvars.");
-	net_maxfps = Cvar_Get ("net_maxfps", "60", 0);
-	Cvar_SetDescription ("net_maxfps", "Framerate cap for network frames when cl_async (asynchronous frames) is set to 1.  Set to 100 to allow those box jumps in Q2DM8.");
-	r_maxfps = Cvar_Get ("r_maxfps", "125", 0);
-	Cvar_SetDescription ("r_maxfps", "Framerate cap for video frames when cl_async (asynchronous frames) is set to 1.");
-	r_maxfps_autoset = Cvar_Get ("r_maxfps_autoset", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_maxfps_autoset", "Enables automatic setting of framerate cap (r_maxfps) based on refresh rate.  Does nothing when refresh rate is left at default.");
+	cl_async = Cvar_Get ( "cl_async", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_async", "Enables asynchronous frame rendering.  Network frames and renderer frames are separated.  Uses r_maxfps and net_maxfps cvars." );
+	net_maxfps = Cvar_Get ( "net_maxfps", "60", 0 );
+	Cvar_SetDescription ( "net_maxfps", "Framerate cap for network frames when cl_async (asynchronous frames) is set to 1.  Set to 100 to allow those box jumps in Q2DM8." );
+	r_maxfps = Cvar_Get ( "r_maxfps", "125", 0 );
+	Cvar_SetDescription ( "r_maxfps", "Framerate cap for video frames when cl_async (asynchronous frames) is set to 1." );
+	r_maxfps_autoset = Cvar_Get ( "r_maxfps_autoset", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_maxfps_autoset", "Enables automatic setting of framerate cap (r_maxfps) based on refresh rate.  Does nothing when refresh rate is left at default." );
 #endif	// CLIENT_SPLIT_NETFRAME
 
-	cl_sleep = Cvar_Get ("cl_sleep", "1", 0); 
-	Cvar_SetDescription ("cl_sleep", "Enables application sleep between render and network frames.  Reduces CPU usage when enabled.");
+	cl_sleep = Cvar_Get ( "cl_sleep", "1", 0 );
+	Cvar_SetDescription ( "cl_sleep", "Enables application sleep between render and network frames.  Reduces CPU usage when enabled." );
 
 	// whether to trick version 34 servers that this is a version 34 client
-	cl_servertrick = Cvar_Get ("cl_servertrick", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_servertrick", "Enables sending of Vanilla Q2 protocol version to servers.  Set to 1 to connect to non-KMQ2 servers.");
+	cl_servertrick = Cvar_Get ( "cl_servertrick", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_servertrick", "Enables sending of Vanilla Q2 protocol version to servers.  Set to 1 to connect to non-KMQ2 servers." );
 
 	// Psychospaz's chasecam
-	cg_thirdperson = Cvar_Get ("cg_thirdperson", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson", "Enables third-person mode.");
-	cg_thirdperson_angle = Cvar_Get ("cg_thirdperson_angle", "10", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_angle", "Sets angle for third-person camera.");
-	cg_thirdperson_dist = Cvar_Get ("cg_thirdperson_dist", "50", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_dist", "Sets distance for third-person camera.");
-	cg_thirdperson_offset = Cvar_Get ("cg_thirdperson_offset", "16", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_offset", "Sets horizontal offset for third-person camera.");
-	cg_thirdperson_alpha = Cvar_Get ("cg_thirdperson_alpha", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_alpha", "Enables close-distance alpha fade of player model for third-person camera.");
-	cg_thirdperson_chase = Cvar_Get ("cg_thirdperson_chase", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_chase", "Enables chasecam-type third-person camera.");
-	cg_thirdperson_adjust = Cvar_Get ("cg_thirdperson_adjust", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_adjust", "Enables view angle adjustment for third-person camera.");
-	cg_thirdperson_indemo = Cvar_Get ("cg_thirdperson_indemo", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_indemo", "Enables third-person camera in demos.");
-	cg_thirdperson_overhead = Cvar_Get ("cg_thirdperson_overhead", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_overhead", "Enables overhead third-person camera mode.  EXPERIMENTAL!");
-	cg_thirdperson_overhead_dist = Cvar_Get ("cg_thirdperson_overhead_dist", "192", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cg_thirdperson_overhead_dist", "Sets camera distance for overhead third-person camera mode.");
+	cg_thirdperson = Cvar_Get ( "cg_thirdperson", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson", "Enables third-person mode." );
+	cg_thirdperson_angle = Cvar_Get ( "cg_thirdperson_angle", "10", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_angle", "Sets angle for third-person camera." );
+	cg_thirdperson_dist = Cvar_Get ( "cg_thirdperson_dist", "50", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_dist", "Sets distance for third-person camera." );
+	cg_thirdperson_offset = Cvar_Get ( "cg_thirdperson_offset", "16", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_offset", "Sets horizontal offset for third-person camera." );
+	cg_thirdperson_alpha = Cvar_Get ( "cg_thirdperson_alpha", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_alpha", "Enables close-distance alpha fade of player model for third-person camera." );
+	cg_thirdperson_chase = Cvar_Get ( "cg_thirdperson_chase", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_chase", "Enables chasecam-type third-person camera." );
+	cg_thirdperson_adjust = Cvar_Get ( "cg_thirdperson_adjust", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_adjust", "Enables view angle adjustment for third-person camera." );
+	cg_thirdperson_indemo = Cvar_Get ( "cg_thirdperson_indemo", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_indemo", "Enables third-person camera in demos." );
+	cg_thirdperson_overhead = Cvar_Get ( "cg_thirdperson_overhead", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_overhead", "Enables overhead third-person camera mode.  EXPERIMENTAL!" );
+	cg_thirdperson_overhead_dist = Cvar_Get ( "cg_thirdperson_overhead_dist", "192", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cg_thirdperson_overhead_dist", "Sets camera distance for overhead third-person camera mode." );
 
-	cl_blood = Cvar_Get ("cl_blood", "2", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_blood", "Sets blood effect type.  0 = none, 1 = puff, 2 = splat,  3 = bleed, 4 = gore.");
+	cl_blood = Cvar_Get ( "cl_blood", "2", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_blood", "Sets blood effect type.  0 = none, 1 = puff, 2 = splat,  3 = bleed, 4 = gore." );
 
 	// Option for old explosions
-	cl_old_explosions = Cvar_Get ("cl_old_explosions", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_old_explosions", "Enables old model explosions.");
+	cl_old_explosions = Cvar_Get ( "cl_old_explosions", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_old_explosions", "Enables old model explosions." );
 	// Option for unique plasma explosion sound
-	cl_plasma_explo_sound = Cvar_Get ("cl_plasma_explo_sound", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_plasma_explo_sound", "Enables unique explosion sound for Phalanx Cannon.");
-	cl_item_bobbing = Cvar_Get ("cl_item_bobbing", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_item_bobbing", "Enables Quake3-style item bobbing.");
+	cl_plasma_explo_sound = Cvar_Get ( "cl_plasma_explo_sound", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_plasma_explo_sound", "Enables unique explosion sound for Phalanx Cannon." );
+	cl_item_bobbing = Cvar_Get ( "cl_item_bobbing", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_item_bobbing", "Enables Quake3-style item bobbing." );
 
 	// Psychospaz's changeable rail code
-	cl_railred = Cvar_Get ("cl_railred", "20", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_railred", "Sets red color component of railgun trail.  Values range 0-255.");
-	cl_railgreen = Cvar_Get ("cl_railgreen", "48", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_railgreen", "Sets green color component of railgun trail.  Values range 0-255.");
-	cl_railblue = Cvar_Get ("cl_railblue", "176", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_railblue", "Sets blue color component of railgun trail.  Values range 0-255.");
-	cl_railtype = Cvar_Get ("cl_railtype", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_railtype", "Sets type of railgun trail.  0 = original spiral, 1 = solid beam, 2 = devrail.");
-	cl_rail_length = Cvar_Get ("cl_rail_length", va("%i", DEFAULT_RAIL_LENGTH), CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_rail_length", "Sets maximum length of railgun trails.");
-	cl_rail_space = Cvar_Get ("cl_rail_space", va("%i", DEFAULT_RAIL_SPACE), CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_rail_space", "Sets space between railgun particles.");
+	cl_railred = Cvar_Get ( "cl_railred", "20", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_railred", "Sets red color component of railgun trail.  Values range 0-255." );
+	cl_railgreen = Cvar_Get ( "cl_railgreen", "48", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_railgreen", "Sets green color component of railgun trail.  Values range 0-255." );
+	cl_railblue = Cvar_Get ( "cl_railblue", "176", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_railblue", "Sets blue color component of railgun trail.  Values range 0-255." );
+	cl_railtype = Cvar_Get ( "cl_railtype", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_railtype", "Sets type of railgun trail.  0 = original spiral, 1 = solid beam, 2 = devrail." );
+	cl_rail_length = Cvar_Get ( "cl_rail_length", va( "%i", DEFAULT_RAIL_LENGTH ), CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_rail_length", "Sets maximum length of railgun trails." );
+	cl_rail_space = Cvar_Get ( "cl_rail_space", va( "%i", DEFAULT_RAIL_SPACE ), CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_rail_space", "Sets space between railgun particles." );
 
 	// whether to use texsurfs.txt footstep sounds
-	cl_footstep_override = Cvar_Get ("cl_footstep_override", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_footstep_override", "Enables use of texsurfs.txt file for texture-based footstep definitions.");
+	cl_footstep_override = Cvar_Get ( "cl_footstep_override", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_footstep_override", "Enables use of texsurfs.txt file for texture-based footstep definitions." );
 
 	// decal control
-	r_decals = Cvar_Get ("r_decals", "500", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_decals", "Sets maximum number of decals.");
-	r_decal_life = Cvar_Get ("r_decal_life", "1000", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_decal_life", "Sets duration in seconds of decals.");
+	r_decals = Cvar_Get ( "r_decals", "500", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_decals", "Sets maximum number of decals." );
+	r_decal_life = Cvar_Get ( "r_decal_life", "1000", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_decal_life", "Sets duration in seconds of decals." );
 
-	alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
-	Cvar_SetDescription ("alt_text_color", "Sets color of high-bit highlighted text.");
+	alt_text_color = Cvar_Get ( "alt_text_color", "2", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "alt_text_color", "Sets color of high-bit highlighted text." );
 
 	// whether to try to play OGGs instead of CD tracks
-	cl_ogg_music = Cvar_Get ("cl_ogg_music", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_ogg_music", "Enables playing of Ogg Vorbis files instead of CD audio tracks.");
-	cl_rogue_music = Cvar_Get ("cl_rogue_music", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_rogue_music", "Forces remapping of Ogg Vorbs tracks for Ground Zero mission pack.");
-	cl_xatrix_music = Cvar_Get ("cl_xatrix_music", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_xatrix_music", "Forces remapping of Ogg Vorbs tracks for The Reckoning mission pack.");
+	cl_ogg_music = Cvar_Get ( "cl_ogg_music", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_ogg_music", "Enables playing of Ogg Vorbis files instead of CD audio tracks." );
+	cl_rogue_music = Cvar_Get ( "cl_rogue_music", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_rogue_music", "Forces remapping of Ogg Vorbs tracks for Ground Zero mission pack." );
+	cl_xatrix_music = Cvar_Get ( "cl_xatrix_music", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_xatrix_music", "Forces remapping of Ogg Vorbs tracks for The Reckoning mission pack." );
 
-	cl_upspeed = Cvar_Get ("cl_upspeed", "200", 0);
-	Cvar_SetDescription ("cl_upspeed", "Scalar adjustment for jumping/upward swimming sensitiviy.");
-	cl_forwardspeed = Cvar_Get ("cl_forwardspeed", "200", 0);
-	Cvar_SetDescription ("cl_forwardspeed", "Scalar adjustment for forward movement sensitiviy.");
-	cl_sidespeed = Cvar_Get ("cl_sidespeed", "200", 0);
-	Cvar_SetDescription ("cl_sidespeed", "Scalar adjustment for sideways movement sensitiviy.");
-	cl_yawspeed = Cvar_Get ("cl_yawspeed", "140", 0);
-	Cvar_SetDescription ("cl_yawspeed", "Scalar adjustment for view yaw speed.");
-	cl_pitchspeed = Cvar_Get ("cl_pitchspeed", "150", 0);
-	Cvar_SetDescription ("cl_pitchspeed", "Scalar adjustment for view pitch speed.");
-	cl_anglespeedkey = Cvar_Get ("cl_anglespeedkey", "1.5", 0);
-	Cvar_SetDescription ("cl_anglespeedkey", "Scalar adjustment for keyboard-based camera control.");
+	cl_upspeed = Cvar_Get ( "cl_upspeed", "200", 0 );
+	Cvar_SetDescription ( "cl_upspeed", "Scalar adjustment for jumping/upward swimming sensitiviy." );
+	cl_forwardspeed = Cvar_Get ( "cl_forwardspeed", "200", 0 );
+	Cvar_SetDescription ( "cl_forwardspeed", "Scalar adjustment for forward movement sensitiviy." );
+	cl_sidespeed = Cvar_Get ( "cl_sidespeed", "200", 0 );
+	Cvar_SetDescription ( "cl_sidespeed", "Scalar adjustment for sideways movement sensitiviy." );
+	cl_yawspeed = Cvar_Get ( "cl_yawspeed", "140", 0 );
+	Cvar_SetDescription ( "cl_yawspeed", "Scalar adjustment for view yaw speed." );
+	cl_pitchspeed = Cvar_Get ( "cl_pitchspeed", "150", 0 );
+	Cvar_SetDescription ( "cl_pitchspeed", "Scalar adjustment for view pitch speed." );
+	cl_anglespeedkey = Cvar_Get ( "cl_anglespeedkey", "1.5", 0 );
+	Cvar_SetDescription ( "cl_anglespeedkey", "Scalar adjustment for keyboard-based camera control." );
 
-	cl_run = Cvar_Get ("cl_run", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_run", "Enables always-run movement.");
+	cl_run = Cvar_Get ( "cl_run", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_run", "Enables always-run movement." );
 	freelook = Cvar_Get( "freelook", "1", CVAR_ARCHIVE ); // Knightmare changed, was 0
-	Cvar_SetDescription ("freelook", "Enables use of mouse for looking around instead of player movement.");
-	lookspring = Cvar_Get ("lookspring", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("lookspring", "Enables automatic centering of view when freelook is disabled.");
-	lookstrafe = Cvar_Get ("lookstrafe", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("lookstrafe", "Enables lookstrafe mode (horizontal mouse movement as strafing).");
-	sensitivity = Cvar_Get ("sensitivity", "3", CVAR_ARCHIVE);
-	Cvar_SetDescription ("sensitivity", "Sets in-game mouse sensitivity.");
+	Cvar_SetDescription ( "freelook", "Enables use of mouse for looking around instead of player movement." );
+	lookspring = Cvar_Get ( "lookspring", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "lookspring", "Enables automatic centering of view when freelook is disabled." );
+	lookstrafe = Cvar_Get ( "lookstrafe", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "lookstrafe", "Enables lookstrafe mode (horizontal mouse movement as strafing)." );
+	sensitivity = Cvar_Get ( "sensitivity", "3", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "sensitivity", "Sets in-game mouse sensitivity." );
 
-	m_pitch = Cvar_Get ("m_pitch", "0.022", CVAR_ARCHIVE);
-	Cvar_SetDescription ("m_pitch", "Vertical sensitvity of mouse input for freelook.  Is negative for inverted mode.");
-	m_yaw = Cvar_Get ("m_yaw", "0.022", 0);
-	Cvar_SetDescription ("m_yaw", "Horizontal sensitvity of mouse input for freelook.");
-	m_forward = Cvar_Get ("m_forward", "1", 0);
-	Cvar_SetDescription ("m_forward", "Forward mouse movement value when freelook is disabled.");
-	m_side = Cvar_Get ("m_side", "1", 0);
-	Cvar_SetDescription ("m_side", "Sideways mouse movement value when freelook is disabled.");
+	m_pitch = Cvar_Get ( "m_pitch", "0.022", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "m_pitch", "Vertical sensitvity of mouse input for freelook.  Is negative for inverted mode." );
+	m_yaw = Cvar_Get ( "m_yaw", "0.022", 0 );
+	Cvar_SetDescription ( "m_yaw", "Horizontal sensitvity of mouse input for freelook." );
+	m_forward = Cvar_Get ( "m_forward", "1", 0 );
+	Cvar_SetDescription ( "m_forward", "Forward mouse movement value when freelook is disabled." );
+	m_side = Cvar_Get ( "m_side", "1", 0 );
+	Cvar_SetDescription ( "m_side", "Sideways mouse movement value when freelook is disabled." );
 
-	cl_shownet = Cvar_Get ("cl_shownet", "0", 0);
-	Cvar_SetDescription ("cl_shownet", "Shows verbose output about server packets.  1 will show current message sizes.  2 will show svc_xxx packets as they are parsed.  3 will show verbose information about delta encoding from packet entities.");
-	cl_showmiss = Cvar_Get ("cl_showmiss", "0", 0);
-	Cvar_SetDescription ("cl_showmiss", "Shows misses on movement prediction.");
-	cl_showclamp = Cvar_Get ("showclamp", "0", 0);
-	Cvar_SetDescription ("showclamp", "Shows time skews from clients timer versus the servers timer.");
-	cl_timeout = Cvar_Get ("cl_timeout", "120", 0);
-	Cvar_SetDescription ("cl_timeout", "Timeout (in seconds) for connecting to servers.");
-	cl_paused = Cvar_Get ("paused", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("paused", "Value that determines if the game is paused.  Considered a client cheat in multiplayer.");
-	cl_timedemo = Cvar_Get ("timedemo", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("timedemo", "Set to 1 for timing playback of demos.  Useful for old-school bencmarking.");
+	cl_shownet = Cvar_Get ( "cl_shownet", "0", 0 );
+	Cvar_SetDescription ( "cl_shownet", "Shows verbose output about server packets.  1 will show current message sizes.  2 will show svc_xxx packets as they are parsed.  3 will show verbose information about delta encoding from packet entities." );
+	cl_showmiss = Cvar_Get ( "cl_showmiss", "0", 0 );
+	Cvar_SetDescription ( "cl_showmiss", "Shows misses on movement prediction." );
+	cl_showclamp = Cvar_Get ( "showclamp", "0", 0 );
+	Cvar_SetDescription ( "showclamp", "Shows time skews from clients timer versus the servers timer." );
+	cl_timeout = Cvar_Get ( "cl_timeout", "120", 0 );
+	Cvar_SetDescription ( "cl_timeout", "Timeout (in seconds) for connecting to servers." );
+	cl_paused = Cvar_Get ( "paused", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "paused", "Value that determines if the game is paused.  Considered a client cheat in multiplayer." );
+	cl_timedemo = Cvar_Get ( "timedemo", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "timedemo", "Set to 1 for timing playback of demos.  Useful for old-school bencmarking." );
 
-	rcon_client_password = Cvar_Get ("rcon_password", "", 0);
-	Cvar_SetDescription ("rcon_password", "Sets password for rcon commands.");
-	rcon_address = Cvar_Get ("rcon_address", "", 0);
-	Cvar_SetDescription ("rcon_address", "Sets server address for rcon commands.");
+	rcon_client_password = Cvar_Get ( "rcon_password", "", 0 );
+	Cvar_SetDescription ( "rcon_password", "Sets password for rcon commands." );
+	rcon_address = Cvar_Get ( "rcon_address", "", 0 );
+	Cvar_SetDescription ( "rcon_address", "Sets server address for rcon commands." );
 
-	cl_lightlevel = Cvar_Get ("r_lightlevel", "0", 0);
+	cl_lightlevel = Cvar_Get ( "r_lightlevel", "0", 0 );
 
 	//
 	// userinfo
 	//
-	info_password = Cvar_Get ("password", "", CVAR_USERINFO);
-	Cvar_SetDescription ("password", "Sets password for multiplayer games.");
-	info_spectator = Cvar_Get ("spectator", "0", CVAR_USERINFO);
-	Cvar_SetDescription ("spectator", "Sets spectator mode for multiplayer games.");
-	name = Cvar_Get ("name", "unnamed", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("name", "Sets player name.");
-	skin = Cvar_Get ("skin", "male/grunt", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("skin", "Sets player model and skin, e.g. \"male/grunt\".");
-	rate = Cvar_Get ("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);	// FIXME
-	Cvar_SetDescription ("rate", "Sets network connect rate.  Higher values are recommended for faster connections.");
-	msg = Cvar_Get ("msg", "1", CVAR_USERINFO | CVAR_ARCHIVE);
-	hand = Cvar_Get ("hand", "0", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("hand", "Sets handedness of player.  0 = right, 1 = left, 2 = center.");
-	fov = Cvar_Get ("fov", "90", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("fov", "Field of view of player.  Will be automatically scaled up for widescreen when cl_widescreen_fov is set to 1.");
-	gender = Cvar_Get ("gender", "male", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("gender", "Sex of player model.");
-	gender_auto = Cvar_Get ("gender_auto", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("gender_auto", "Enables automatic setting of gender based on player model.");
+	info_password = Cvar_Get ( "password", "", CVAR_USERINFO );
+	Cvar_SetDescription ( "password", "Sets password for multiplayer games." );
+	info_spectator = Cvar_Get ( "spectator", "0", CVAR_USERINFO );
+	Cvar_SetDescription ( "spectator", "Sets spectator mode for multiplayer games." );
+	name = Cvar_Get ( "name", "unnamed", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "name", "Sets player name." );
+	skin = Cvar_Get ( "skin", "male/grunt", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "skin", "Sets player model and skin, e.g. \"male/grunt\"." );
+	rate = Cvar_Get ( "rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE );	// FIXME
+	Cvar_SetDescription ( "rate", "Sets network connect rate.  Higher values are recommended for faster connections." );
+	msg = Cvar_Get ( "msg", "1", CVAR_USERINFO | CVAR_ARCHIVE );
+	hand = Cvar_Get ( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "hand", "Sets handedness of player.  0 = right, 1 = left, 2 = center." );
+	fov = Cvar_Get ( "fov", "90", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "fov", "Field of view of player.  Will be automatically scaled up for widescreen when cl_widescreen_fov is set to 1." );
+	gender = Cvar_Get ( "gender", "male", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "gender", "Sex of player model." );
+	gender_auto = Cvar_Get ( "gender_auto", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "gender_auto", "Enables automatic setting of gender based on player model." );
 	gender->modified = false; // clear this so we know when user sets it manually
 
 	// custom client colors
-	color1 = Cvar_Get ("color1", "1430B0", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_SetDescription ("color1", "Sets color for player's railgun effect.  Format is RRGGBB hexadecimal.");
+	color1 = Cvar_Get ( "color1", "1430B0", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_SetDescription ( "color1", "Sets color for player's railgun effect.  Format is RRGGBB hexadecimal." );
 //	color2 = Cvar_Get ("color2", "FFFFFF", CVAR_USERINFO | CVAR_ARCHIVE);
 //	Cvar_SetDescription ("color2", "Sets player's secondary color.  Format is RRGGBB hexadecimal.");
 
-	cl_vwep = Cvar_Get ("cl_vwep", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_vwep", "Enables visible player weapons.");
+	cl_vwep = Cvar_Get ( "cl_vwep", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_vwep", "Enables visible player weapons." );
 
 	// for the server to tell which version the client is
-	cl_engine = Cvar_Get ("cl_engine", "KMQuake2", /*CVAR_USERINFO |*/ CVAR_NOSET | CVAR_LATCH);
-	Cvar_SetDescription ("cl_engine", "Identifies the client engine.");
-	cl_engine_version = Cvar_Get ("cl_engine_version", va("%4.2f",VERSION), /*CVAR_USERINFO |*/ CVAR_NOSET | CVAR_LATCH);
-	Cvar_SetDescription ("cl_engine_version", "Identifies the client engine version.");
+	cl_engine = Cvar_Get ( "cl_engine", "KMQuake2", /*CVAR_USERINFO |*/
+	                      CVAR_NOSET | CVAR_LATCH );
+	Cvar_SetDescription ( "cl_engine", "Identifies the client engine." );
+	cl_engine_version = Cvar_Get ( "cl_engine_version", va( "%4.2f", VERSION ), /*CVAR_USERINFO |*/
+	                              CVAR_NOSET | CVAR_LATCH );
+	Cvar_SetDescription ( "cl_engine_version", "Identifies the client engine version." );
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
-	cl_drawlocs =		Cvar_Get("cl_drawlocs", "0", 0);
-	Cvar_SetDescription ("cl_drawlocs", "Enables drawing of null models for location points.");
-	loc_here =			Cvar_Get("loc_here", "", CVAR_NOSET);
-	Cvar_SetDescription ("loc_here", "Internal value for loc-based chat.  This is a NOSET value.");
-	loc_there =			Cvar_Get("loc_there", "", CVAR_NOSET);
-	Cvar_SetDescription ("loc_there", "Internal value for loc-based chat.  This is a NOSET value.");
+	cl_drawlocs =		Cvar_Get( "cl_drawlocs", "0", 0 );
+	Cvar_SetDescription ( "cl_drawlocs", "Enables drawing of null models for location points." );
+	loc_here =			Cvar_Get( "loc_here", "", CVAR_NOSET );
+	Cvar_SetDescription ( "loc_here", "Internal value for loc-based chat.  This is a NOSET value." );
+	loc_there =			Cvar_Get( "loc_there", "", CVAR_NOSET );
+	Cvar_SetDescription ( "loc_there", "Internal value for loc-based chat.  This is a NOSET value." );
 #endif // LOC_SUPPORT
 
 #ifdef USE_CURL	// HTTP downloading from R1Q2
-	cl_http_downloads = Cvar_Get ("cl_http_downloads", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_http_downloads", "Enables HTTP-based downloading.");
-	cl_http_filelists = Cvar_Get ("cl_http_filelists", "1", 0);
-	Cvar_SetDescription ("cl_http_filelists", "Enables use of filelists for HTTP downloading.");
-	cl_http_proxy = Cvar_Get ("cl_http_proxy", "", 0);
-	Cvar_SetDescription ("cl_http_proxy", "Sets proxy server for HTTP downloading.");
-	cl_http_max_connections = Cvar_Get ("cl_http_max_connections", "8", 0);
-	Cvar_SetDescription ("cl_http_max_connections", "Sets max connections for HTTP downloading.");
+	cl_http_downloads = Cvar_Get ( "cl_http_downloads", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_http_downloads", "Enables HTTP-based downloading." );
+	cl_http_filelists = Cvar_Get ( "cl_http_filelists", "1", 0 );
+	Cvar_SetDescription ( "cl_http_filelists", "Enables use of filelists for HTTP downloading." );
+	cl_http_proxy = Cvar_Get ( "cl_http_proxy", "", 0 );
+	Cvar_SetDescription ( "cl_http_proxy", "Sets proxy server for HTTP downloading." );
+	cl_http_max_connections = Cvar_Get ( "cl_http_max_connections", "8", 0 );
+	Cvar_SetDescription ( "cl_http_max_connections", "Sets max connections for HTTP downloading." );
 //	cl_http_max_connections->changed = _cl_http_max_connections_changed;
-	cl_http_pathtype = Cvar_Get ("cl_http_pathtype", "2", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_http_pathtype", "Sets server path type for HTTP downloading. 0 = R1Q2, 1 = Q2Pro, 2 = both.");
-	cl_http_download_lowercase = Cvar_Get ("cl_http_download_lowercase", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_http_download_lowercase", "Converts filenames to lowercase for HTTP downloading.");
+	cl_http_pathtype = Cvar_Get ( "cl_http_pathtype", "2", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_http_pathtype", "Sets server path type for HTTP downloading. 0 = R1Q2, 1 = Q2Pro, 2 = both." );
+	cl_http_download_lowercase = Cvar_Get ( "cl_http_download_lowercase", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_http_download_lowercase", "Converts filenames to lowercase for HTTP downloading." );
 #endif	// USE_CURL
 
 	//
 	// register our commands
 	//
-	Cmd_AddCommand ("cmd", CL_ForwardToServer_f);
-	Cmd_AddCommand ("pause", CL_Pause_f);
-	Cmd_AddCommand ("pingservers", CL_PingServers_f);
-	Cmd_AddCommand ("skins", CL_Skins_f);
+	Cmd_AddCommand ( "cmd", CL_ForwardToServer_f );
+	Cmd_AddCommand ( "pause", CL_Pause_f );
+	Cmd_AddCommand ( "pingservers", CL_PingServers_f );
+	Cmd_AddCommand ( "skins", CL_Skins_f );
 
-	Cmd_AddCommand ("userinfo", CL_Userinfo_f);
-	Cmd_AddCommand ("snd_restart", CL_Snd_Restart_f);
+	Cmd_AddCommand ( "userinfo", CL_Userinfo_f );
+	Cmd_AddCommand ( "snd_restart", CL_Snd_Restart_f );
 
-	Cmd_AddCommand ("changing", CL_Changing_f);
-	Cmd_AddCommand ("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand ("record", CL_Record_f);
-	Cmd_AddCommand ("stop", CL_Stop_f);
+	Cmd_AddCommand ( "changing", CL_Changing_f );
+	Cmd_AddCommand ( "disconnect", CL_Disconnect_f );
+	Cmd_AddCommand ( "record", CL_Record_f );
+	Cmd_AddCommand ( "stop", CL_Stop_f );
 
-	Cmd_AddCommand ("quit", CL_Quit_f);
+	Cmd_AddCommand ( "quit", CL_Quit_f );
 
-	Cmd_AddCommand ("connect", CL_Connect_f);
-	Cmd_AddCommand ("reconnect", CL_Reconnect_f);
+	Cmd_AddCommand ( "connect", CL_Connect_f );
+	Cmd_AddCommand ( "reconnect", CL_Reconnect_f );
 
-	Cmd_AddCommand ("rcon", CL_Rcon_f);
+	Cmd_AddCommand ( "rcon", CL_Rcon_f );
 
 // 	Cmd_AddCommand ("packet", CL_Packet_f); // this is dangerous to leave in
 
-	Cmd_AddCommand ("setenv", CL_Setenv_f );
+	Cmd_AddCommand ( "setenv", CL_Setenv_f );
 
-	Cmd_AddCommand ("precache", CL_Precache_f);
+	Cmd_AddCommand ( "precache", CL_Precache_f );
 
-	Cmd_AddCommand ("download", CL_Download_f);
+	Cmd_AddCommand ( "download", CL_Download_f );
 
-	Cmd_AddCommand ("writeconfig", CL_WriteConfig_f);
+	Cmd_AddCommand ( "writeconfig", CL_WriteConfig_f );
 
 	// Chat Ignore from R1Q2/Q2Pro
-	Cmd_AddCommand ("ignorenick", CL_IgnoreChatNick_f);
-	Cmd_AddCommand ("unignorenick", CL_UnIgnoreChatNick_f);
-	Cmd_AddCommand ("ignoretext", CL_IgnoreChatText_f);
-	Cmd_AddCommand ("unignoretext", CL_UnIgnoreChatText_f);
+	Cmd_AddCommand ( "ignorenick", CL_IgnoreChatNick_f );
+	Cmd_AddCommand ( "unignorenick", CL_UnIgnoreChatNick_f );
+	Cmd_AddCommand ( "ignoretext", CL_IgnoreChatText_f );
+	Cmd_AddCommand ( "unignoretext", CL_UnIgnoreChatText_f );
 	// end R1Q2/Q2Pro Chat Ignore
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
-	Cmd_AddCommand ("loc_add", CL_AddLoc_f);
-	Cmd_AddCommand ("loc_del", CL_DeleteLoc_f);
-	Cmd_AddCommand ("loc_save", CL_SaveLoc_f);
-	Cmd_AddCommand ("loc_help", CL_LocHelp_f);
+	Cmd_AddCommand ( "loc_add", CL_AddLoc_f );
+	Cmd_AddCommand ( "loc_del", CL_DeleteLoc_f );
+	Cmd_AddCommand ( "loc_save", CL_SaveLoc_f );
+	Cmd_AddCommand ( "loc_help", CL_LocHelp_f );
 #endif	// LOC_SUPPORT
 
 	//
@@ -2272,25 +2274,25 @@ void CL_InitLocal (void)
 	// the only thing this does is allow command completion
 	// to work -- all unknown commands are automatically
 	// forwarded to the server
-	Cmd_AddCommand ("wave", NULL);
-	Cmd_AddCommand ("inven", NULL);
-	Cmd_AddCommand ("kill", NULL);
-	Cmd_AddCommand ("use", NULL);
-	Cmd_AddCommand ("drop", NULL);
-	Cmd_AddCommand ("say", NULL);
-	Cmd_AddCommand ("say_team", NULL);
-	Cmd_AddCommand ("info", NULL);
-	Cmd_AddCommand ("prog", NULL);
-	Cmd_AddCommand ("give", NULL);
-	Cmd_AddCommand ("god", NULL);
-	Cmd_AddCommand ("notarget", NULL);
-	Cmd_AddCommand ("noclip", NULL);
-	Cmd_AddCommand ("invuse", NULL);
-	Cmd_AddCommand ("invprev", NULL);
-	Cmd_AddCommand ("invnext", NULL);
-	Cmd_AddCommand ("invdrop", NULL);
-	Cmd_AddCommand ("weapnext", NULL);
-	Cmd_AddCommand ("weapprev", NULL);
+	Cmd_AddCommand ( "wave", NULL );
+	Cmd_AddCommand ( "inven", NULL );
+	Cmd_AddCommand ( "kill", NULL );
+	Cmd_AddCommand ( "use", NULL );
+	Cmd_AddCommand ( "drop", NULL );
+	Cmd_AddCommand ( "say", NULL );
+	Cmd_AddCommand ( "say_team", NULL );
+	Cmd_AddCommand ( "info", NULL );
+	Cmd_AddCommand ( "prog", NULL );
+	Cmd_AddCommand ( "give", NULL );
+	Cmd_AddCommand ( "god", NULL );
+	Cmd_AddCommand ( "notarget", NULL );
+	Cmd_AddCommand ( "noclip", NULL );
+	Cmd_AddCommand ( "invuse", NULL );
+	Cmd_AddCommand ( "invprev", NULL );
+	Cmd_AddCommand ( "invnext", NULL );
+	Cmd_AddCommand ( "invdrop", NULL );
+	Cmd_AddCommand ( "weapnext", NULL );
+	Cmd_AddCommand ( "weapprev", NULL );
 
 	// Chat Ignore from R1Q2/Q2Pro
 	// Init list pointers
@@ -2314,69 +2316,69 @@ void CL_ShutdownLocal (void)
 	if (!local_initialized)
 		return;
 
-	Cmd_RemoveCommand ("cmd");
-	Cmd_RemoveCommand ("pause");
-	Cmd_RemoveCommand ("pingservers");
-	Cmd_RemoveCommand ("skins");
+	Cmd_RemoveCommand ( "cmd" );
+	Cmd_RemoveCommand ( "pause" );
+	Cmd_RemoveCommand ( "pingservers" );
+	Cmd_RemoveCommand ( "skins" );
 
-	Cmd_RemoveCommand ("userinfo");
-	Cmd_RemoveCommand ("snd_restart");
+	Cmd_RemoveCommand ( "userinfo" );
+	Cmd_RemoveCommand ( "snd_restart" );
 
-	Cmd_RemoveCommand ("changing");
-	Cmd_RemoveCommand ("disconnect");
-	Cmd_RemoveCommand ("record");
-	Cmd_RemoveCommand ("stop");
+	Cmd_RemoveCommand ( "changing" );
+	Cmd_RemoveCommand ( "disconnect" );
+	Cmd_RemoveCommand ( "record" );
+	Cmd_RemoveCommand ( "stop" );
 
-	Cmd_RemoveCommand ("quit");
+	Cmd_RemoveCommand ( "quit" );
 
-	Cmd_RemoveCommand ("connect");
-	Cmd_RemoveCommand ("reconnect");
+	Cmd_RemoveCommand ( "connect" );
+	Cmd_RemoveCommand ( "reconnect" );
 
-	Cmd_RemoveCommand ("rcon");
+	Cmd_RemoveCommand ( "rcon" );
 
 // 	Cmd_RemoveCommand ("packet"); // this is dangerous to leave in
 
-	Cmd_RemoveCommand ("setenv");
+	Cmd_RemoveCommand ( "setenv" );
 
-	Cmd_RemoveCommand ("precache");
+	Cmd_RemoveCommand ( "precache" );
 
-	Cmd_RemoveCommand ("download");
+	Cmd_RemoveCommand ( "download" );
 
-	Cmd_RemoveCommand ("writeconfig");
+	Cmd_RemoveCommand ( "writeconfig" );
 
 	// Chat Ignore from R1Q2/Q2Pro
-	Cmd_RemoveCommand ("ignorenick");
-	Cmd_RemoveCommand ("unignorenick");
-	Cmd_RemoveCommand ("ignoretext");
-	Cmd_RemoveCommand ("unignoretext");
+	Cmd_RemoveCommand ( "ignorenick" );
+	Cmd_RemoveCommand ( "unignorenick" );
+	Cmd_RemoveCommand ( "ignoretext" );
+	Cmd_RemoveCommand ( "unignoretext" );
 	// end R1Q2/Q2Pro Chat Ignore
 
 #ifdef LOC_SUPPORT	// Xile/NiceAss LOC
-	Cmd_RemoveCommand ("loc_add");
-	Cmd_RemoveCommand ("loc_del");
-	Cmd_RemoveCommand ("loc_save");
-	Cmd_RemoveCommand ("loc_help");
+	Cmd_RemoveCommand ( "loc_add" );
+	Cmd_RemoveCommand ( "loc_del" );
+	Cmd_RemoveCommand ( "loc_save" );
+	Cmd_RemoveCommand ( "loc_help" );
 #endif	// LOC_SUPPORT
 
-	Cmd_RemoveCommand ("wave");
-	Cmd_RemoveCommand ("inven");
-	Cmd_RemoveCommand ("kill");
-	Cmd_RemoveCommand ("use");
-	Cmd_RemoveCommand ("drop");
-	Cmd_RemoveCommand ("say");
-	Cmd_RemoveCommand ("say_team");
-	Cmd_RemoveCommand ("info");
-	Cmd_RemoveCommand ("prog");
-	Cmd_RemoveCommand ("give");
-	Cmd_RemoveCommand ("god");
-	Cmd_RemoveCommand ("notarget");
-	Cmd_RemoveCommand ("noclip");
-	Cmd_RemoveCommand ("invuse");
-	Cmd_RemoveCommand ("invprev");
-	Cmd_RemoveCommand ("invnext");
-	Cmd_RemoveCommand ("invdrop");
-	Cmd_RemoveCommand ("weapnext");
-	Cmd_RemoveCommand ("weapprev");
+	Cmd_RemoveCommand ( "wave" );
+	Cmd_RemoveCommand ( "inven" );
+	Cmd_RemoveCommand ( "kill" );
+	Cmd_RemoveCommand ( "use" );
+	Cmd_RemoveCommand ( "drop" );
+	Cmd_RemoveCommand ( "say" );
+	Cmd_RemoveCommand ( "say_team" );
+	Cmd_RemoveCommand ( "info" );
+	Cmd_RemoveCommand ( "prog" );
+	Cmd_RemoveCommand ( "give" );
+	Cmd_RemoveCommand ( "god" );
+	Cmd_RemoveCommand ( "notarget" );
+	Cmd_RemoveCommand ( "noclip" );
+	Cmd_RemoveCommand ( "invuse" );
+	Cmd_RemoveCommand ( "invprev" );
+	Cmd_RemoveCommand ( "invnext" );
+	Cmd_RemoveCommand ( "invdrop" );
+	Cmd_RemoveCommand ( "weapnext" );
+	Cmd_RemoveCommand ( "weapprev" );
 
 	// Chat Ignore from R1Q2/Q2Pro
 	CL_RemoveAllChatIgnores (&cl_chatNickIgnores);
@@ -2406,8 +2408,8 @@ qboolean CL_WriteConfiguration (char *cfgName)
 		return false;
 
 	// Knightmare changed- use separate config for better cohabitation
-//	Com_sprintf (path, sizeof(path),"%s/kmq2config.cfg", FS_Savegamedir());
-	Com_sprintf (path, sizeof(path),"%s/%s.cfg", FS_Savegamedir(), cfgName);	// was FS_Gamedir()
+//	snprintf (path, sizeof(path),"%s/kmq2config.cfg", FS_Savegamedir());
+	snprintf (path, sizeof(path),"%s/%s.cfg", FS_Savegamedir(), cfgName);	// was FS_Gamedir()
 	f = fopen (path, "w");
 	if (!f)
 	{
@@ -2440,7 +2442,7 @@ void CL_WriteConfig_f (void)
 	if (Cmd_Argc() == 1 || Cmd_Argc() == 2)
 	{
 		if (Cmd_Argc() == 1)
-			Com_sprintf (cfgName, sizeof(cfgName), "kmq2config");
+			snprintf (cfgName, sizeof(cfgName), "kmq2config");
 		else // if (Cmd_Argc() == 2)
 			Q_strncpyz (cfgName, sizeof(cfgName), Cmd_Argv(1));
 
@@ -2483,7 +2485,7 @@ void CL_AdvertiseVersion (void)
 {
 	char adBuf[128];
 
-	Com_sprintf (adBuf, sizeof(adBuf), "say \"KMQuake2 %4.2fu%d %s %s %s %s [www.markshan.com/knightmare]\"\n",
+	snprintf (adBuf, sizeof(adBuf), "say \"KMQuake2 %4.2fu%d %s %s %s %s [www.markshan.com/knightmare]\"\n",
 										VERSION, VERSION_UPDATE, CPUSTRING, OS_STRING, COMPILETYPE_STRING, __DATE__);
 	Cbuf_AddText (adBuf);
 	cls.lastAdvertiseTime = cls.realtime;
@@ -2503,7 +2505,7 @@ Does nothing if r_displayrefresh is not set.
 void CL_SetFramerateCap (void)
 {
 	int		displayFreq = Cvar_VariableInteger("r_displayrefresh");
-	cvar_t	*autoSet = Cvar_Get ("r_maxfps_autoset", "1", CVAR_ARCHIVE);
+	cvar_t	*autoSet = Cvar_Get ( "r_maxfps_autoset", "1", CVAR_ARCHIVE );
 
 	if (!autoSet->integer)
 		return;

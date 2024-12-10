@@ -124,7 +124,7 @@ edict_t *CrateOnTop (edict_t *from, edict_t *ent)
 		return from;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void Cargo_Stop (edict_t *ent)
@@ -134,7 +134,7 @@ void Cargo_Stop (edict_t *ent)
 	VectorClear (ent->velocity);
 	// Sanity check: force cargo to correct elevation
 	ent->s.origin[2] += ent->crane_hook->absmin[2] - CARGO_BUFFER - ent->absmax[2];
-	ent->think = NULL;
+	ent->think = nullptr;
 	ent->nextthink = 0;
 	ent->gravity   = 0.0;
 	VectorAdd(ent->absmax,ent->absmin,v);
@@ -155,8 +155,8 @@ void cargo_blocked (edict_t *cargo, edict_t *obstacle )
 	cargo->velocity[2] = 0;
 	box_movestep (cargo, vec3_origin, true);
 	cargo->crane_control->busy = false;
-	cargo->crane_hook->crane_cargo = NULL;
-	cargo->blocked   = NULL;
+	cargo->crane_hook->crane_cargo = nullptr;
+	cargo->blocked   = nullptr;
 	cargo->touch     = box_touch;
 	cargo->nextthink = 0;
 	gi.linkentity(cargo);
@@ -199,7 +199,7 @@ void SetSpotlightLength(edict_t *hook)
 	end[0] = start[0];
 	end[1] = start[1];
 	end[2] = start[2] - WORLD_SIZE;	// was 8192
-	tr = gi.trace(start,NULL,NULL,end,hook,MASK_SOLID);
+	tr = gi.trace(start, nullptr, nullptr, end,hook,MASK_SOLID);
 	hook->crane_light->s.origin[2] = tr.endpos[2] + 1;
 }
 
@@ -217,7 +217,7 @@ void crane_light_off(edict_t *light)
 
 void Crane_Move_Done (edict_t *ent)
 {
-	if (!Q_stricmp(ent->classname,"crane_hook"))
+	if (!Q_stricmp( ent->classname.c_str(), "crane_hook" ) )
 	{
 		edict_t *cable;
 		edict_t *light;
@@ -249,15 +249,15 @@ void Crane_Move_Done (edict_t *ent)
 	}
 // Lazarus: ACK! If crate is being carried, it's NOT a MOVETYPE_PUSHABLE!!!!
 //	        if (ent->movetype == MOVETYPE_PUSHABLE)
-	if (!Q_stricmp(ent->classname,"func_pushable"))
+	if (!Q_stricmp( ent->classname.c_str(), "func_pushable" ) )
 	{
 		edict_t *e;
 
 		ent->s.origin[2] += ent->crane_hook->absmin[2] - CARGO_BUFFER - ent->absmax[2];
 		// Check to see if any OTHER crates are stacked on this one. If so,
 		// adjust their position and velocity as well.
-		e = NULL;
-		while ((e = CrateOnTop(e, ent)) != NULL)
+		e = nullptr;
+		while ((e = CrateOnTop(e, ent)) != nullptr )
 		{
 			VectorClear(e->velocity);
 			e->s.origin[2] += ent->crane_hook->absmin[2] - e->absmin[2];
@@ -266,7 +266,7 @@ void Crane_Move_Done (edict_t *ent)
 	}
 	VectorClear (ent->velocity);
 	ent->busy      = false;
-	ent->think     = NULL;
+	ent->think     = nullptr;
 	ent->nextthink = 0;
 	gi.linkentity(ent);
 }
@@ -388,14 +388,13 @@ qboolean Crane_Hook_Bonk(edict_t *hook, int axis, int dir, vec3_t bonk)
 
 void Crane_blocked (edict_t *self, edict_t *other)
 {
-	if ( (other->classname) && (other->movetype == MOVETYPE_PUSHABLE))
+	if ( !other->classname.empty() && (other->movetype == MOVETYPE_PUSHABLE))
 	{
 		// treat func_pushable like a world brush - attempt to stop
 		// crane
 		// This *shouldn't* be necessary, but I'm a pessimist
 		Crane_Stop(self->crane_control);
 		return;
-
 	}
 
 	if (self->crane_control->crane_hook == other)
@@ -445,7 +444,7 @@ void Crane_Move_Final (edict_t *ent)
 			return;
 		}
 	}
-	
+
 	if (ent->moveinfo.remaining_distance == 0)
 	{
 		Crane_Move_Done (ent);
@@ -453,12 +452,12 @@ void Crane_Move_Final (edict_t *ent)
 	}
 
 	VectorScale (ent->moveinfo.dir, ent->moveinfo.remaining_distance / FRAMETIME, ent->velocity);
-	if (!Q_stricmp(ent->classname,"crane_hook"))
+	if (!Q_stricmp( ent->classname.c_str(), "crane_hook" ) )
 	{
 		VectorCopy(ent->velocity,ent->crane_cable->velocity);
 		ent->crane_cable->velocity[2] = 0;
 		gi.linkentity(ent);
-		if (ent->crane_light != NULL)
+		if (ent->crane_light != nullptr )
 		{
 			VectorCopy(ent->velocity,ent->crane_light->velocity);
 			ent->crane_light->velocity[2] = 0;
@@ -482,9 +481,9 @@ void Crane_Move_Begin (edict_t *ent)
 	VectorScale (ent->moveinfo.dir, ent->moveinfo.speed, ent->velocity);
 	frames = floor((ent->moveinfo.remaining_distance / ent->moveinfo.speed) / FRAMETIME);
 	ent->moveinfo.remaining_distance -= frames * ent->moveinfo.speed * FRAMETIME;
-	if (!Q_stricmp(ent->classname,"crane_hook"))
+	if (!Q_stricmp( ent->classname.c_str(), "crane_hook" ) )
 	{
-		if ((ent->crane_light) && (ent->crane_cargo==NULL))
+		if ((ent->crane_light) && (ent->crane_cargo == nullptr ) )
 		{
 			SetSpotlightLength(ent);
 			ent->crane_light->svflags &= ~SVF_NOCLIENT;
@@ -492,7 +491,7 @@ void Crane_Move_Begin (edict_t *ent)
 		VectorCopy(ent->velocity,ent->crane_cable->velocity);
 		ent->crane_cable->velocity[2] = 0;
 		gi.linkentity(ent->crane_cable);
-		if (ent->crane_light != NULL)
+		if (ent->crane_light != nullptr )
 		{
 			VectorCopy(ent->velocity,ent->crane_light->velocity);
 			ent->crane_light->velocity[2] = 0;
@@ -508,13 +507,13 @@ void Crane_Move_Begin (edict_t *ent)
 void G_FindCraneParts (void)
 {
 	vec3_t  dist;
-	edict_t *cable = NULL;
-	edict_t *control = NULL;
-	edict_t *beam = NULL;
-	edict_t *hoist = NULL;
-	edict_t *hook = NULL;
-	edict_t *light = NULL;
-	edict_t *p1 = NULL, *p2 = NULL;
+	edict_t *cable = nullptr;
+	edict_t *control = nullptr;
+	edict_t *beam = nullptr;
+	edict_t *hoist = nullptr;
+	edict_t *hook = nullptr;
+	edict_t *light = nullptr;
+	edict_t *p1 = nullptr, *p2 = nullptr;
 
 	edict_t	*e;
 	int		direction;
@@ -524,13 +523,13 @@ void G_FindCraneParts (void)
 	{
 		if (!e->inuse)
 			continue;
-		if (!e->classname)
+		if (e->classname.empty())
 			continue;
-		if (Q_stricmp(e->classname,"crane_control"))
+		if (Q_stricmp( e->classname.c_str(), "crane_control" ) )
 			continue;
 
 		control = e;
-		beam = G_Find(NULL,FOFS(targetname),control->target);
+		beam = G_Find( nullptr, FOFS(targetname),control->target);
 		if (!beam)
 		{
 			gi.dprintf("Crane_control with no target\n");
@@ -538,7 +537,7 @@ void G_FindCraneParts (void)
 			return;
 		}
 		// get path_corner locations to determine movement direction
-		p1 = G_Find(NULL,FOFS(targetname),beam->pathtarget);
+		p1 = G_Find( nullptr, FOFS(targetname),beam->pathtarget);
 		if (!p1->target)
 		{
 			gi.dprintf("Only 1 path_corner in pathtarget sequence for crane_beam\n"
@@ -548,7 +547,7 @@ void G_FindCraneParts (void)
 			G_FreeEdict(p1);
 			return;
 		}
-		p2 = G_Find(NULL,FOFS(targetname),p1->target);
+		p2 = G_Find( nullptr, FOFS(targetname),p1->target);
 		VectorSubtract(p1->s.origin,p2->s.origin,dist);
 		if (fabs(dist[0]) > fabs(dist[1]))
 		{
@@ -580,7 +579,7 @@ void G_FindCraneParts (void)
 				VectorCopy(p1->s.origin,beam->pos2);
 			}
 		}
-		hoist = G_Find(NULL,FOFS(targetname),beam->target);
+		hoist = G_Find( nullptr, FOFS(targetname),beam->target);
 		if (!hoist)
 		{
 			gi.dprintf("Crane_beam with no target\n");
@@ -589,7 +588,7 @@ void G_FindCraneParts (void)
 			return;
 		}
 		// get path_corner locations to determine movement direction
-		p1 = G_Find(NULL,FOFS(targetname),hoist->pathtarget);
+		p1 = G_Find( nullptr, FOFS(targetname),hoist->pathtarget);
 		if (!p1->target)
 		{
 			gi.dprintf("Only 1 path_corner in pathtarget sequence for crane_hoist\n"
@@ -600,7 +599,7 @@ void G_FindCraneParts (void)
 			G_FreeEdict(p1);
 			return;
 		}
-		p2 = G_Find(NULL,FOFS(targetname),p1->target);
+		p2 = G_Find( nullptr, FOFS(targetname),p1->target);
 		VectorSubtract(p1->s.origin,p2->s.origin,dist);
 		if (fabs(dist[0]) > fabs(dist[1]))
 		{
@@ -647,7 +646,7 @@ void G_FindCraneParts (void)
 				hoist->speaker->spawnflags = 2;
 		}
 
-		hook = G_Find(NULL,FOFS(targetname),hoist->target);
+		hook = G_Find( nullptr, FOFS(targetname),hoist->target);
 		if (!hook)
 		{
 			gi.dprintf("Crane hoist with no target\n");
@@ -663,13 +662,13 @@ void G_FindCraneParts (void)
 		// moving to play
 		if (hook->speaker)
 			hook->speaker->spawnflags = 1 - (control->spawnflags & 1);
-			
+
 		// Get offset from hook origin to hoist origin, so we can
 		// correct timing problems
 		VectorSubtract(hook->s.origin,hoist->s.origin,hook->offset);
 
 		// get path_corner locations to determine movement direction
-		p1 = G_Find(NULL,FOFS(targetname),hook->pathtarget);
+		p1 = G_Find( nullptr, FOFS(targetname),hook->pathtarget);
 		if (!p1->target)
 		{
 			gi.dprintf("Only 1 path_corner in pathtarget sequence for crane_hook\n"
@@ -681,7 +680,7 @@ void G_FindCraneParts (void)
 			G_FreeEdict(p1);
 			return;
 		}
-		p2 = G_Find(NULL,FOFS(targetname),p1->target);
+		p2 = G_Find( nullptr, FOFS(targetname),p1->target);
 		VectorSet(hook->movedir,0.0,0.0,1.0);
 		if (p1->s.origin[2] < p2->s.origin[2])
 		{
@@ -708,7 +707,7 @@ void G_FindCraneParts (void)
 				beam->crane_onboard_control = beam->teamchain;
 		}
 		else
-			beam->crane_onboard_control = NULL;
+			beam->crane_onboard_control = nullptr;
 		beam->crane_hoist    = hoist;
 		beam->crane_hook     = hook;
 		hoist->crane_control = beam->crane_control;
@@ -724,7 +723,7 @@ void G_FindCraneParts (void)
 			hook->dmg  = 0;
 		}
 
-		if (hook->crane_cable == NULL)
+		if (hook->crane_cable == nullptr )
 		{
 			int   frame;
 			float length;
@@ -762,7 +761,7 @@ void G_FindCraneParts (void)
 		}
 		control->crane_cable = hook->crane_cable;
 
-		if ((hook->spawnflags & 1) && (hook->crane_light == NULL))
+		if ((hook->spawnflags & 1) && (hook->crane_light == nullptr ) )
 		{
 			light = G_Spawn();
 			light->s.origin[0] = (hook->absmin[0] + hook->absmax[0])/2;
@@ -833,8 +832,8 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 
 	if (!(control->spawnflags & 1))
 	{
-		if (control->message)
-			safe_centerprintf(activator,"%s\n",control->message);
+		if (!control->message.empty())
+			safe_centerprintf(activator,"%s\n",control->message.c_str());
 		else
 			safe_centerprintf(activator,"No power\n");
 		return;
@@ -1151,7 +1150,7 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 			beam->absmin[dir];
 		cable->crane_control = control;
 		memcpy(&cable->moveinfo,&beam->moveinfo,sizeof(moveinfo_t));
-		
+
 		if (beam->crane_onboard_control)
 		{
 			beam->crane_onboard_control->crane_dir  = dir;
@@ -1264,7 +1263,7 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 			VectorScale(maxs,0.3333,maxs);
 			// end 06/03/00 change
 			tr=gi.trace(start, mins, maxs, end, hook, MASK_SOLID);
-			if ((tr.fraction < 1) && (tr.ent) && (tr.ent->classname) &&
+			if ((tr.fraction < 1) && (tr.ent) && !tr.ent->classname.empty() &&
 				(tr.ent->movetype == MOVETYPE_PUSHABLE) )
 			{
 				Z = hook->absmin[2] - tr.ent->absmax[2];
@@ -1273,7 +1272,7 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 					safe_centerprintf(activator,"Too far\n");
 					return;
 				}
-				if (CrateOnTop(NULL,tr.ent))
+				if (CrateOnTop( nullptr, tr.ent))
 				{
 					BeepBeep(activator);
 					gi.dprintf("Too heavy\n");
@@ -1304,11 +1303,11 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 				}
 				Z -= CARGO_BUFFER;   // leave a buffer between hook and cargo
 				hook->crane_cargo    = cargo = tr.ent;
-				cargo->groundentity  = NULL;
+				cargo->groundentity  = nullptr;
 				cargo->crane_control = control;
 				cargo->crane_hook    = hook;
 				cargo->movetype      = MOVETYPE_PUSH;
-				cargo->touch         = NULL;
+				cargo->touch         = nullptr;
 				// Make cargo float up to the hook
 				if (Z > 0)
 				{
@@ -1340,10 +1339,10 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 				hook->crane_cargo->gravity    = 1.0;
 				hook->crane_cargo->movetype   = MOVETYPE_PUSHABLE;
 				hook->crane_cargo->touch      = box_touch;
-				hook->crane_cargo->crane_control = NULL;
+				hook->crane_cargo->crane_control = nullptr;
 				gi.linkentity(hook->crane_cargo);
 				box_movestep (hook->crane_cargo, vec3_origin, true);
-				hook->crane_cargo = NULL;
+				hook->crane_cargo = nullptr;
 			}
 			else
 				BeepBeep(activator);
@@ -1352,7 +1351,7 @@ void crane_control_action(edict_t *control, edict_t *activator, vec3_t point)
 }
 
 void Use_Crane_Control (edict_t *ent, edict_t *other, edict_t *activator)
-{ 
+{
 	ent->spawnflags ^= 1;
 	if (ent->crane_hook->speaker)
 		ent->crane_hook->speaker->spawnflags = 1 - (ent->spawnflags & 1);
@@ -1583,9 +1582,9 @@ void crane_reset_use (edict_t *self, edict_t *other, edict_t *activator)
 	edict_t *crane;
 	edict_t *control, *beam, *cable, *cargo, *hoist, *hook;
 	vec3_t  bonk, v1, v2;
-	
 
-	crane = G_Find (NULL, FOFS(targetname), self->target);
+
+	crane = G_Find ( nullptr, FOFS(targetname), self->target);
 	if (!crane)
 	{
 		gi.dprintf("Cannot find target of crane_reset at %s\n",vtos(self->s.origin));
@@ -1596,8 +1595,8 @@ void crane_reset_use (edict_t *self, edict_t *other, edict_t *activator)
 
 	if (!(control->spawnflags & 1))
 	{
-		if (control->message)
-			safe_centerprintf(activator,"%s\n",control->message);
+		if (!control->message.empty())
+			safe_centerprintf(activator,"%s\n",control->message.c_str());
 		else
 			safe_centerprintf(activator,"No power\n");
 		return;

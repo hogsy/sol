@@ -63,23 +63,23 @@ void Force_CenterView_f (void)
 
 void IN_Init (void)
 {
-	in_mouse = Cvar_Get ("in_mouse", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("in_mouse", "Enables mouse input.");
-	in_joystick = Cvar_Get ("in_joystick", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("in_joystick", "Enables joystick input.");
-	m_filter = Cvar_Get ("m_filter", "0", 0);
-	Cvar_SetDescription ("m_filter", "Enables mouse input filtering.");
+	in_mouse = Cvar_Get ( "in_mouse", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "in_mouse", "Enables mouse input." );
+	in_joystick = Cvar_Get ( "in_joystick", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "in_joystick", "Enables joystick input." );
+	m_filter = Cvar_Get ( "m_filter", "0", 0 );
+	Cvar_SetDescription ( "m_filter", "Enables mouse input filtering." );
 //	in_dgamouse = Cvar_Get ("in_dgamouse", "1", CVAR_ARCHIVE);
 //	in_menumouse = Cvar_Get ("in_menumouse", "0", CVAR_ARCHIVE);
 	// Knightmare added
-	in_autosensitivity = Cvar_Get ("in_autosensitivity", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("autosensitivity", "Enables scaling of mouse and joystick sensitivty when zoomed in.");
-	in_doubleclicktime	= Cvar_Get ("in_doubleclicktime", "0.5", CVAR_ARCHIVE);		// reset time for double click
-	Cvar_SetDescription ("in_doubleclicktime", "Sets reset time in seconds for mouse double click.");
+	in_autosensitivity = Cvar_Get ( "in_autosensitivity", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "autosensitivity", "Enables scaling of mouse and joystick sensitivty when zoomed in." );
+	in_doubleclicktime	= Cvar_Get ( "in_doubleclicktime", "0.5", CVAR_ARCHIVE );		// reset time for double click
+	Cvar_SetDescription ( "in_doubleclicktime", "Sets reset time in seconds for mouse double click." );
 
-	Cmd_AddCommand ("+mlook", IN_MLookDown);
-	Cmd_AddCommand ("-mlook", IN_MLookUp);
-	Cmd_AddCommand ("force_centerview", Force_CenterView_f);
+	Cmd_AddCommand ( "+mlook", IN_MLookDown );
+	Cmd_AddCommand ( "-mlook", IN_MLookUp );
+	Cmd_AddCommand ( "force_centerview", Force_CenterView_f );
 
 	mx = my = 0;
 	controller_leftx = 0.0f;
@@ -106,9 +106,9 @@ void IN_Shutdown (void)
 
 	mouse_avail = false;
 
-	Cmd_RemoveCommand ("+mlook");
-	Cmd_RemoveCommand ("-mlook");
-	Cmd_RemoveCommand ("force_centerview");
+	Cmd_RemoveCommand ( "+mlook" );
+	Cmd_RemoveCommand ( "-mlook" );
+	Cmd_RemoveCommand ( "force_centerview" );
 }
 
 void IN_Commands (void)
@@ -123,7 +123,7 @@ void IN_Move (usercmd_t *cmd)
 		return;
 
 	if ( !in_autosensitivity )
-		in_autosensitivity = Cvar_Get ("in_autosensitivity", "1", CVAR_ARCHIVE);
+		in_autosensitivity = Cvar_Get ( "in_autosensitivity", "1", CVAR_ARCHIVE );
 
 	if (m_filter->value)
 	{

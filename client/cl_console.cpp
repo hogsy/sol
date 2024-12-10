@@ -160,7 +160,7 @@ void Con_Dump_f (void)
 		return;
 	}
 
-	Com_sprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
+	snprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
 
 	Com_Printf ("Dumped console text to %s.\n", name);
 	FS_CreatePath (name);
@@ -333,23 +333,23 @@ void Con_Init (void)
 	con.backedit = 0;
 
 	// init this cvar first, as it's used by Con_CheckResize()
-	con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
-	Cvar_SetDescription ("con_font_size", "Sets size of console font.  Values > 8 are larger than default, while values < 8 are smaller.");
+	con_font_size = Cvar_Get ( "con_font_size", "8", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "con_font_size", "Sets size of console font.  Values > 8 are larger than default, while values < 8 are smaller." );
 
 	Con_CheckResize ();
 
 //
 // register our commands
 //
-	con_notifytime = Cvar_Get ("con_notifytime", "4", 0); // Knightmare- increased for fade
-	Cvar_SetDescription ("con_notifytime", "Time in seconds for console notify messages to fade away.");
+	con_notifytime = Cvar_Get ( "con_notifytime", "4", 0 ); // Knightmare- increased for fade
+	Cvar_SetDescription ( "con_notifytime", "Time in seconds for console notify messages to fade away." );
 
-	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f);
-	Cmd_AddCommand ("togglechat", Con_ToggleChat_f);
-	Cmd_AddCommand ("messagemode", Con_MessageMode_f);
-	Cmd_AddCommand ("messagemode2", Con_MessageMode2_f);
-	Cmd_AddCommand ("clear", Con_Clear_f);
-	Cmd_AddCommand ("condump", Con_Dump_f);
+	Cmd_AddCommand ( "toggleconsole", Con_ToggleConsole_f );
+	Cmd_AddCommand ( "togglechat", Con_ToggleChat_f );
+	Cmd_AddCommand ( "messagemode", Con_MessageMode_f );
+	Cmd_AddCommand ( "messagemode2", Con_MessageMode2_f );
+	Cmd_AddCommand ( "clear", Con_Clear_f );
+	Cmd_AddCommand ( "condump", Con_Dump_f );
 
 	// whether to use new-style console background
 	newconback_found = false;
@@ -373,12 +373,12 @@ Con_Shutdown
 */
 void Con_Shutdown (void)
 {
-	Cmd_RemoveCommand ("toggleconsole");
-	Cmd_RemoveCommand ("togglechat");
-	Cmd_RemoveCommand ("messagemode");
-	Cmd_RemoveCommand ("messagemode2");
-	Cmd_RemoveCommand ("clear");
-	Cmd_RemoveCommand ("condump");
+	Cmd_RemoveCommand ( "toggleconsole" );
+	Cmd_RemoveCommand ( "togglechat" );
+	Cmd_RemoveCommand ( "messagemode" );
+	Cmd_RemoveCommand ( "messagemode2" );
+	Cmd_RemoveCommand ( "clear" );
+	Cmd_RemoveCommand ( "condump" );
 
 	con.initialized = false;
 }
@@ -671,7 +671,7 @@ void Con_DrawInput (void)
 // draw it
 	y = con.vislines-FONT_SIZE*2; // was 16
 
-	Com_sprintf (output, sizeof(output), "");
+	snprintf (output, sizeof(output), "");
 	for (i=0; i<con.linewidth; i++)
 	{
 		if (con.backedit == key_linepos-i && ((int)(cls.realtime>>8)&1)) {
@@ -717,15 +717,15 @@ void Con_DrawNotify (void)
 	conWidth = SCREEN_WIDTH;
 	SCR_ScaleCoords (&conLeft, NULL, &conWidth, NULL, ALIGN_STRETCH);
 
-	Com_sprintf (output, sizeof(output), "");
+	snprintf (output, sizeof(output), "");
 
 	// this is the say msg while typeing...
 	if (cls.key_dest == key_message)
 	{
 		if (chat_team)
-			Com_sprintf (output, sizeof(output), "%s", " say_team: ");
+			snprintf (output, sizeof(output), "%s", " say_team: ");
 		else
-			Com_sprintf (output, sizeof(output), "%s", " say: ");
+			snprintf (output, sizeof(output), "%s", " say: ");
 
 		s = chat_buffer;
 		x = 0;
@@ -797,7 +797,7 @@ void Con_DrawNotify (void)
 			if (alpha < 0) alpha = 0;
 			if (alpha > 255) alpha = 255;
 
-			Com_sprintf (output, sizeof(output), "");
+			snprintf (output, sizeof(output), "");
 			for (x = 0; x < con.linewidth; x++) {
 			//	Com_sprintf (output, sizeof(output), "%s%c", output, (char)text[x]);
 				addch[0] = (char)text[x];
@@ -863,12 +863,12 @@ void Con_DrawDownloadProgress (float conLeft, float conWidth, float conLineHeigh
 	graph_h = FONT_SIZE;
 
 	for (j = 0; j < y; j++) // add blank spaces
-		Com_sprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " ");
+		snprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " ");
 
 	if (cls.downloadrate > 0.0f)
-		Com_sprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " %2d%% (%4.2fKB/s)", cls.downloadpercent, cls.downloadrate);
+		snprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " %2d%% (%4.2fKB/s)", cls.downloadpercent, cls.downloadrate);
 	else
-		Com_sprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " %2d%%", cls.downloadpercent);
+		snprintf(dlbar + strlen(dlbar), sizeof(dlbar)-strlen(dlbar), " %2d%%", cls.downloadpercent);
 
 	// draw it
 	//y = graph_y;
@@ -977,7 +977,7 @@ void Con_DrawConsole (float frac, qboolean trans)
 	}
 
 	// changed to "KMQuake2 vx.xx cpuarch"
-	Com_sprintf( version, sizeof( version ), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT SOL_ENGINE_NAME " v%u.%u (%s) %s",
+	snprintf( version, sizeof( version ), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT SOL_ENGINE_NAME " v%u.%u (%s) %s",
 	             SOL_ENGINE_VERSION_MAJOR,
 	             SOL_ENGINE_VERSION_MINOR,
 	             GIT_COMMIT_COUNT,
@@ -1015,7 +1015,7 @@ void Con_DrawConsole (float frac, qboolean trans)
 
 		text = con.text + (row % con.totallines)*con.linewidth;
 
-		Com_sprintf (output, sizeof(output), "");
+		snprintf (output, sizeof(output), "");
 		for (x=0; x<con.linewidth; x++) {
 		//	Com_sprintf (output, sizeof(output), "%s%c", output, text[x]);
 			addch[0] = text[x];

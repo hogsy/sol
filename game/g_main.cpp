@@ -175,7 +175,7 @@ int	max_modelindex;
 int	max_soundindex;
 
 
-int Debug_Modelindex (char *name)
+int Debug_Modelindex (const char *name)
 {
 	int	modelnum;
 	modelnum = RealFunc.modelindex(name);
@@ -187,7 +187,7 @@ int Debug_Modelindex (char *name)
 	return modelnum;
 }
 
-int Debug_Soundindex (char *name)
+int Debug_Soundindex (const char *name)
 {
 	int soundnum;
 	soundnum = RealFunc.soundindex(name);
@@ -317,7 +317,7 @@ edict_t *CreateTargetChangeLevel(char *map)
 
 	ent = G_Spawn ();
 	ent->classname = "target_changelevel";
-	Com_sprintf (level.nextmap, sizeof(level.nextmap), "%s", map);
+	snprintf (level.nextmap, sizeof(level.nextmap), "%s", map);
 	ent->map = level.nextmap;
 	return ent;
 }
@@ -350,7 +350,7 @@ void EndDMLevel (void)
 		t = strtok(s, seps);
 		while (t != NULL)
 		{
-			if (Q_stricmp(t, level.mapname) == 0)
+			if (Q_stricmp( t, level.mapname ) == 0)
 			{
 				// it's in the list, go to the next one
 				t = strtok(NULL, seps);
@@ -405,9 +405,9 @@ void CheckNeedPass (void)
 
 		need = 0;
 
-		if (*password->string && Q_stricmp(password->string, "none"))
+		if (*password->string && Q_stricmp( password->string, "none" ) )
 			need |= 1;
-		if (*spectator_password->string && Q_stricmp(spectator_password->string, "none"))
+		if (*spectator_password->string && Q_stricmp( spectator_password->string, "none" ) )
 			need |= 2;
 
 		gi.cvar_set("needpass", va("%d", need));
@@ -470,7 +470,7 @@ void ExitLevel (void)
 	edict_t	*ent;
 	char	command [256];
 
-	Com_sprintf (command, sizeof(command), "gamemap \"%s\"\n", level.changemap);
+	snprintf (command, sizeof(command), "gamemap \"%s\"\n", level.changemap);
 	gi.AddCommandString (command);
 	level.changemap = NULL;
 	level.exitintermission = 0;

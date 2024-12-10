@@ -34,15 +34,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-#include <assert.h>
-#include <limits.h>
-#include <ctype.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cassert>
+#include <cctype>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cstdarg>
+#include <ctime>
+#include <climits>
+
+#include <string>
+#include <vector>
 
 #if (defined _M_IX86 || defined __i386__) && !defined C_ONLY && !defined __sun__
 #define id386	1
@@ -57,64 +60,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #if defined(__APPLE__) || defined(MACOSX)
-#undef true
-#undef false
 #define _mkdir(a)	mkdir(a, 0777)
 //#define DISABLE_FOG
 #endif // __APPLE__ || MACOSX
 
 typedef unsigned char byte;
+typedef bool          qboolean;
 
-#if !defined( __cplusplus )
-typedef enum
-{
-	false,
-	true
-} qboolean;
-#else
-typedef unsigned int qboolean;
-#endif
-
-// 64-bit integer definitions
-#ifdef _WIN32 
-#  ifndef __GNUC__	// MSVC/Borland
-	typedef __int64 qint64;
-	typedef unsigned __int64 uint64;
-#  else	// Cygwin
-#	include <_G_config.h>
-	typedef _G_int64_t qint64;
-	typedef unsigned _G_int64_t uint64;
-#  endif
-#elif defined(__MACOS__)
-#	include <sys/types.h>
-	typedef SInt64 qint64;
-	typedef UInt64 uint64;
-/*#elif defined(__APPLE__) || defined(MACOSX) // MacOS X Framework build
-#	include <sys/types.h>
-	typedef int64_t qint64;
-	typedef unsigned int64_t uint64;
-#elif defined(__linux__) // Linux */
-#elif defined(__linux__) || defined(__APPLE__) || defined(MACOSX) // Linux, MacOSX
-#	include <stdint.h>
-	typedef int64_t qint64;
-	typedef uint64_t uint64;
-#elif defined(__BEOS__)	// Be
-#	include <inttypes.h>
-	typedef int64_t qint64;
-	typedef unsigned int64_t uint64;
-#elif defined (__EMX__)	// OS/2 GCC
-	typedef long long qint64;
-	typedef unsigned long long uint64;
-#elif defined (DJGPP)	// DJGPP
-	typedef long long qint64;
-	typedef unsigned long long uint64;
-#elif defined(R5900)	// PS2 EE
-	typedef long qint64;
-	typedef unsigned long uint64;
-#elif defined(linux)
-	typedef int64_t qint64;
-	typedef unsigned int64_t uint64;
-#endif
+#include <cstdint>
+typedef int64_t  qint64;
+typedef uint64_t uint64;
 
 #ifndef NULL
 #define NULL ((void *)0)
@@ -176,7 +131,7 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 #define MAX_CUSTOM_ANIMS	1024	// This sets the size of an mmove_t array that is saved
 									// to the level file, so it affects savegame compatibility.
 
-#define SAVEGAME_USE_FUNCTION_TABLE
+//#define SAVEGAME_USE_FUNCTION_TABLE
 #define SAVEGAME_DLLNAME "Lazarus Quake II mod with CTF"
 #define SAVEGAME_VERSION 5
 
@@ -431,7 +386,7 @@ unsigned int Com_ParseColorStringPacked (const char *s);
 qboolean Com_ParseRGBAField (const char *s, color_t outColor);
 unsigned int Com_ParseRGBAFieldPacked (const char *s);
 
-void Com_sprintf (char *dest, size_t size, char *fmt, ...);
+void Com_sprintf (char *dest, size_t size, const char *fmt, ...);
 unsigned int Com_HashFileName (const char *fname, int hashSize, qboolean sized);
 
 void Com_PageInMemory (byte *buffer, int size);
@@ -484,9 +439,9 @@ int Q_SortStrcmp (const void *arg1, const void *arg2);
 qboolean Q_StrScanToken (const char *string, const char *findToken, qboolean isCommand);
 
 // portable case insensitive string compare
-int Q_stricmp (char *s1, char *s2);
-int Q_strcasecmp (char *s1, char *s2);
-int Q_strncasecmp (char *s1, char *s2, size_t n);
+int Q_stricmp ( const char *s1, const char *s2 );
+int Q_strcasecmp ( const char *s1, const char *s2);
+int Q_strncasecmp ( const char *s1, const char *s2, size_t n );
 
 size_t Q_strncpyz (char *dst, size_t dstSize, const char *src);
 size_t Q_strncatz (char *dst, size_t dstSize, const char *src);
@@ -506,7 +461,7 @@ float	BigFloat (float l);
 float	LittleFloat (float l);
 
 void	Swap_Init (void);
-char	*va(char *format, ...);
+char	*va(const char *format, ...);
 
 //=============================================
 
@@ -561,7 +516,7 @@ unsigned	Sys_TickCount (void);
 
 // this is only here so the functions in q_shared.c and q_shwin.c can link
 void Sys_Error (const char *error, ...);
-void Com_Printf (char *msg, ...);
+void Com_Printf (const char *msg, ...);
 
 
 /*

@@ -1407,7 +1407,7 @@ Multi-buffer allows use by nested functions without overwrite of
 buffer(s) used by previous function call.
 ============
 */
-char *va (char *format, ...)
+char *va (const char *format, ...)
 {
 	va_list			argptr;
 	static char		string[16][1024];
@@ -2135,7 +2135,7 @@ Q_stricmp
 =================
 */
 // FIXME: replace all Q_stricmp with Q_strcasecmp
-int Q_stricmp (char *s1, char *s2)
+int Q_stricmp ( const char *s1, const char *s2 )
 {
 #if defined(WIN32)
 	return _stricmp (s1, s2);
@@ -2215,7 +2215,7 @@ int Q_SortStrcmp (const void *arg1, const void *arg2)
 Q_strncasecmp
 =================
 */
-int Q_strncasecmp (char *s1, char *s2, size_t n)
+int Q_strncasecmp ( const char *s1, const char *s2, size_t n )
 {
 	int		c1, c2;
 	
@@ -2247,9 +2247,9 @@ int Q_strncasecmp (char *s1, char *s2, size_t n)
 Q_strcasecmp
 =================
 */
-int Q_strcasecmp (char *s1, char *s2)
+int Q_strcasecmp ( const char *s1, const char *s2)
 {
-	return Q_strncasecmp (s1, s2, 99999);
+	return Q_strncasecmp ( s1, s2, 99999 );
 }
 
 
@@ -2385,27 +2385,6 @@ char *Q_strupr (char *string)
 	return string;
 }
 
-
-void Com_sprintf (char *dest, size_t size, char *fmt, ...)
-{
-	char		bigbuffer[0x10000];
-	int			len;
-	va_list		argptr;
-
-	va_start (argptr, fmt);
-	len = Q_vsnprintf (bigbuffer, sizeof(bigbuffer), fmt, argptr);
-	va_end (argptr);
-//	if (len >= size)
-//		Com_Printf ("Com_sprintf: overflow of %i in %i\n", len, size);
-	if (len < 0)
-		Com_Printf ("Com_sprintf: overflow in temp buffer of size %i\n", sizeof(bigbuffer));
-	else if (len >= size)
-		Com_Printf ("Com_sprintf: overflow of %i in dest buffer of size %i\n", len, size);
-	strncpy (dest, bigbuffer, size-1);
-	dest[size-1] = 0;
-}
-
-
 /*
 =============
 Com_HashFileName
@@ -2493,23 +2472,20 @@ char *Info_ValueForKey (char *s, char *key)
 
 void Info_RemoveKey (char *s, char *key)
 {
-	char	*start;
-	char	pkey[512];
-	char	value[512];
-	char	*o;
-
 	if (strstr (key, "\\"))
 	{
 	//	Com_Printf ("Can't use a key with a \\\n");
 		return;
 	}
 
-	while (1)
+	while (true)
 	{
-		start = s;
+		char  value[ 512 ];
+		char  pkey[ 512 ];
+		char *start = s;
 		if (*s == '\\')
 			s++;
-		o = pkey;
+		char *o = pkey;
 		while (*s != '\\')
 		{
 			if (!*s)
@@ -2560,9 +2536,7 @@ qboolean Info_Validate (char *s)
 
 void Info_SetValueForKey (char *s, char *key, char *value)
 {
-	char	newi[MAX_INFO_STRING], *v;
-	int		c;
-	int		maxsize = MAX_INFO_STRING;
+	char	newi[MAX_INFO_STRING ];
 
 	if (strstr (key, "\\") || strstr (value, "\\") )
 	{
@@ -2591,25 +2565,27 @@ void Info_SetValueForKey (char *s, char *key, char *value)
 	if (!value || !strlen(value))
 		return;
 
-	Com_sprintf (newi, sizeof(newi), "\\%s\\%s", key, value);
+	snprintf (newi, sizeof(newi), "\\%s\\%s", key, value);
 
 	// Knightmare- according to Maraakate, this can overflow
 //	if (strlen(newi) + strlen(s) > maxsize)
-	if (strlen(newi) + strlen(s) >= maxsize)
+	if ( constexpr int maxsize = MAX_INFO_STRING; strlen(newi) + strlen(s) >= maxsize)
 	{
 		Com_Printf ("Info string length exceeded\n");
 		return;
 	}
 
 	// only copy ascii values
-	s += strlen(s);
-	v = newi;
+	s += strlen( s );
+	const char *v = newi;
 	while (*v)
 	{
-		c = *v++;
+		int c = *v++;
 		c &= 127;		// strip high bits
 		if (c >= 32 && c < 127)
+		{
 			*s++ = c;
+		}
 	}
 	*s = 0;
 }

@@ -85,13 +85,13 @@ void item_die (edict_t *self,edict_t *inflictor, edict_t *attacker, int damage, 
 {
 //ZOID
 	// flags are important
-	if (strcmp(self->classname, "item_flag_team1") == 0) {
+	if (strcmp(self->classname.c_str(), "item_flag_team1") == 0) {
 		CTFResetFlag(CTF_TEAM1); // this will free self!
 		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
 			CTFTeamName(CTF_TEAM1));
 		return;
 	}
-	if (strcmp(self->classname, "item_flag_team2") == 0) {
+	if (strcmp(self->classname.c_str(), "item_flag_team2") == 0) {
 		CTFResetFlag(CTF_TEAM2); // this will free self!
 		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
 			CTFTeamName(CTF_TEAM1));
@@ -126,7 +126,7 @@ GetItemByIndex
 gitem_t	*GetItemByIndex (int index)
 {
 	if (index == 0 || index >= game.num_items)
-		return NULL;
+		return nullptr;
 
 	return &itemlist[index];
 }
@@ -136,7 +136,7 @@ gitem_t	*GetItemByIndex (int index)
 GetMaxAmmoByIndex
 ===============
 */
-int GetMaxAmmoByIndex (gclient_t *client, int item_index)
+int GetMaxAmmoByIndex ( const gclient_t *client, int item_index)
 {
 	int value;
 
@@ -191,21 +191,18 @@ int GetMaxArmorByIndex (int item_index)
 FindItemByClassname
 ===============
 */
-gitem_t	*FindItemByClassname (char *classname)
+gitem_t	*FindItemByClassname ( const char *classname)
 {
-	int		i;
-	gitem_t	*it;
-
-	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	gitem_t *it = itemlist;
+	for ( int i = 0 ; i<game.num_items ; i++, it++)
 	{
 		if (!it->classname)
 			continue;
-		if (!Q_stricmp(it->classname, classname))
+		if (!Q_stricmp( it->classname, classname ) )
 			return it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*
@@ -213,21 +210,18 @@ gitem_t	*FindItemByClassname (char *classname)
 FindItem
 ===============
 */
-gitem_t	*FindItem (char *pickup_name)
+gitem_t	*FindItem ( const char *pickup_name)
 {
-	int		i;
-	gitem_t	*it;
-
-	it = itemlist;
-	for (i=0 ; i<game.num_items ; i++, it++)
+	gitem_t *it = itemlist;
+	for ( int i = 0 ; i<game.num_items ; i++, it++)
 	{
 		if (!it->pickup_name)
 			continue;
-		if (!Q_stricmp(it->pickup_name, pickup_name))
+		if (!Q_stricmp( it->pickup_name, pickup_name ) )
 			return it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //======================================================================
@@ -306,10 +300,10 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 
 	// Lazarus: Don't allow more than one of some items
 #ifdef FLASHLIGHT_MOD
-	if ( !Q_stricmp(ent->classname,"item_flashlight")   && quantity >= 1 ) return false;
+	if ( !Q_stricmp( ent->classname.c_str(), "item_flashlight" )   && quantity >= 1 ) return false;
 #endif
 #ifdef JETPACK_MOD
-	if ( !Q_stricmp(ent->classname,"item_jetpack") )
+	if ( !Q_stricmp( ent->classname.c_str(), "item_jetpack" ) )
 	{
 		gitem_t *fuel;
 
@@ -370,7 +364,7 @@ void Drop_General (edict_t *ent, gitem_t *item)
 void Drop_Jetpack (edict_t *ent, gitem_t *item)
 {
 	if (ent->client->jetpack)
-		safe_cprintf(ent,PRINT_HIGH,"Cannot drop jetpack in use\n");
+		safe_cprintf( ent, PRINT_HIGH, "Cannot drop jetpack in use\n" );
 	else
 	{
 		edict_t	*dropped;
@@ -653,7 +647,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 {
 	if (coop->value)
 	{
-		if (strcmp(ent->classname, "key_power_cube") == 0)
+		if (strcmp(ent->classname.c_str(), "key_power_cube") == 0)
 		{
 			if (other->client->pers.power_cubes & ((ent->spawnflags & 0x0000ff00)>> 8))
 				return false;
@@ -801,11 +795,11 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	else
 		dropped->count = ent->client->pers.inventory[index];
 
-	if (ent->client->pers.weapon && 
+	if (ent->client->pers.weapon &&
 		ent->client->pers.weapon->tag == AMMO_GRENADES &&
 		item->tag == AMMO_GRENADES &&
 		ent->client->pers.inventory[index] - dropped->count <= 0) {
-		safe_cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
+		safe_cprintf ( ent, PRINT_HIGH, "Can't drop current weapon\n" );
 		G_FreeEdict(dropped);
 		return;
 	}
@@ -845,7 +839,7 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 	if (ctf->value && other->health >= 250 && ent->count > 25)
 		return false;
 //ZOID
-	
+
 	other->health += ent->count;
 
 //ZOID
@@ -1032,7 +1026,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 			index = ITEM_INDEX(FindItem("cells"));
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No cells for power screen.\n");
+				safe_cprintf ( ent, PRINT_HIGH, "No cells for power screen.\n" );
 				return;
 			}
 			ent->flags &= ~FL_POWER_SHIELD;
@@ -1051,7 +1045,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 			index = ITEM_INDEX(FindItem("cells"));
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No cells for power screen.\n");
+				safe_cprintf ( ent, PRINT_HIGH, "No cells for power screen.\n" );
 				return;
 			}
 			ent->flags |= FL_POWER_SCREEN;
@@ -1066,7 +1060,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 			index = ITEM_INDEX(FindItem("cells"));
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No cells for power shield.\n");
+				safe_cprintf ( ent, PRINT_HIGH, "No cells for power shield.\n" );
 				return;
 			}
 			ent->flags &= ~FL_POWER_SCREEN;
@@ -1085,7 +1079,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 			index = ITEM_INDEX(FindItem("cells"));
 			if (!ent->client->pers.inventory[index])
 			{
-				safe_cprintf (ent, PRINT_HIGH, "No cells for power shield.\n");
+				safe_cprintf ( ent, PRINT_HIGH, "No cells for power shield.\n" );
 				return;
 			}
 			ent->flags |= FL_POWER_SHIELD;
@@ -1153,7 +1147,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (taken)
 	{
 		// flash the screen
-		other->client->bonus_alpha = 0.25;	
+		other->client->bonus_alpha = 0.25;
 
 		// show icon and name on status bar
 		other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
@@ -1249,7 +1243,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	VectorSet (dropped->maxs, 16, 16, 16);
 	gi.setmodel (dropped, dropped->item->world_model);
 	dropped->solid = SOLID_TRIGGER;
-	dropped->movetype = MOVETYPE_TOSS;  
+	dropped->movetype = MOVETYPE_TOSS;
 	dropped->touch = drop_temp_touch;
 	dropped->owner = ent;
 
@@ -1267,7 +1261,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	{
 		trace_t	trace;
 
-		AngleVectors (ent->client->v_angle, forward, right, NULL);
+		AngleVectors (ent->client->v_angle, forward, right, nullptr );
 		VectorSet(offset, 24, 0, -16);
 		G_ProjectSource (ent->s.origin, offset, forward, right, dropped->s.origin);
 		trace = gi.trace (ent->s.origin, dropped->mins, dropped->maxs,
@@ -1279,7 +1273,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 // Lazarus: throw the dropped item a bit farther than the default
 		trace_t	trace;
 
-		AngleVectors (ent->s.angles, forward, right, NULL);
+		AngleVectors (ent->s.angles, forward, right, nullptr );
 //		VectorCopy (ent->s.origin, dropped->s.origin);
 		VectorSet(offset, 24, 0, -16);
 		G_ProjectSource (ent->s.origin, offset, forward, right, dropped->s.origin);
@@ -1302,12 +1296,12 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 void Use_Item (edict_t *ent, edict_t *other, edict_t *activator)
 {
 	ent->svflags &= ~SVF_NOCLIENT;
-	ent->use = NULL;
+	ent->use = nullptr;
 
 	if (ent->spawnflags & ITEM_NO_TOUCH)
 	{
 		ent->solid = SOLID_BBOX;
-		ent->touch = NULL;
+		ent->touch = nullptr;
 	}
 	else
 	{
@@ -1375,7 +1369,7 @@ void droptofloor (edict_t *ent)
 	else if (ent->spawnflags & NO_DROPTOFLOOR)
 		ent->movetype = MOVETYPE_NONE;
 	else
-		ent->movetype = MOVETYPE_TOSS;  
+		ent->movetype = MOVETYPE_TOSS;
 	ent->touch = Touch_Item;
 
 	// Lazarus:
@@ -1400,7 +1394,7 @@ void droptofloor (edict_t *ent)
 	{
 		ent->flags &= ~FL_TEAMSLAVE;
 		ent->chain = ent->teamchain;
-		ent->teamchain = NULL;
+		ent->teamchain = nullptr;
 
 		ent->svflags |= SVF_NOCLIENT;
 		ent->solid = SOLID_NOT;
@@ -1414,7 +1408,7 @@ void droptofloor (edict_t *ent)
 	if (ent->spawnflags & ITEM_NO_TOUCH)
 	{
 		ent->solid = SOLID_BBOX;
-		ent->touch = NULL;
+		ent->touch = nullptr;
 		ent->s.effects &= ~EF_ROTATE;
 		ent->s.renderfx &= ~RF_GLOW;
 	}
@@ -1514,7 +1508,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	// Lazarus: added several spawnflags, plus gave ALL keys trigger_spawn and no_touch
 	// capabilities
 	if ( ( (item->flags & IT_KEY) && (ent->spawnflags & ~31) ) ||
-		 (!(item->flags & IT_KEY) && (ent->spawnflags & ~28) )    ) 
+		 (!(item->flags & IT_KEY) && (ent->spawnflags & ~28) )    )
 //	if (ent->spawnflags)
 	{
 //		if (strcmp(ent->classname, "key_power_cube") != 0)
@@ -1556,7 +1550,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		}
 		if ( (int)dmflags->value & DF_INFINITE_AMMO )
 		{
-			if ( (item->flags == IT_AMMO) || (strcmp(ent->classname, "weapon_bfg") == 0) )
+			if ( (item->flags == IT_AMMO) || (strcmp(ent->classname.c_str(), "weapon_bfg") == 0) )
 			{
 				G_FreeEdict (ent);
 				return;
@@ -1564,7 +1558,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		}
 	}
 
-	if (coop->value && (strcmp(ent->classname, "key_power_cube") == 0))
+	if (coop->value && (strcmp(ent->classname.c_str(), "key_power_cube") == 0))
 	{
 		ent->spawnflags |= (1 << (8 + level.power_cubes));
 		level.power_cubes++;
@@ -1573,18 +1567,18 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	// don't let them drop items that stay in a coop game
 	if ((coop->value) && (item->flags & IT_STAY_COOP))
 	{
-		item->drop = NULL;
+		item->drop = nullptr;
 	}
 
 	// Lazarus: flashlight - get level-wide cost for use
-	if (strcmp(ent->classname, "item_flashlight") == 0)
+	if (strcmp(ent->classname.c_str(), "item_flashlight") == 0)
 		level.flashlight_cost = ent->count;
 
 //ZOID
 //Don't spawn the flags unless enabled
 	if (!ctf->value &&
-		(strcmp(ent->classname, "item_flag_team1") == 0 ||
-		strcmp(ent->classname, "item_flag_team2") == 0)) {
+		(strcmp(ent->classname.c_str(), "item_flag_team1") == 0 ||
+		strcmp(ent->classname.c_str(), "item_flag_team2") == 0)) {
 		G_FreeEdict(ent);
 		return;
 	}
@@ -1603,7 +1597,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	// Lazarus:
 	if (item->pickup == Pickup_Health)
 	{
-		if (strcmp(ent->classname, "item_health_small") == 0)
+		if (strcmp(ent->classname.c_str(), "item_health_small") == 0)
 			ent->count = sk_health_bonus_value->value;
 		else
 			ent->count = item->quantity;
@@ -1620,9 +1614,9 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //ZOID
 //flags are server animated and have special handling
-	if (strcmp(ent->classname, "item_flag_team1") == 0 ||
-		strcmp(ent->classname, "item_flag_team2") == 0 ||
-		strcmp(ent->classname, "item_flag_team3") == 0)	// Knightmare added
+	if (strcmp(ent->classname.c_str(), "item_flag_team1") == 0 ||
+		strcmp(ent->classname.c_str(), "item_flag_team2") == 0 ||
+		strcmp(ent->classname.c_str(), "item_flag_team3") == 0)	// Knightmare added
 		ent->think = CTFFlagSetup;
 //ZOID
 
@@ -1630,11 +1624,9 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-gitem_t	itemlist[] = 
+gitem_t	itemlist[] =
 {
-	{
-		NULL
-	},	// leave index 0 alone
+	{ nullptr },	// leave index 0 alone
 
 	//
 	// ARMOR
@@ -1643,19 +1635,19 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_body (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_body", 
+		"item_armor_body",
 		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"misc/ar1_pkup.wav",
 		"models/items/armor/body/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_bodyarmor",
 /* pickup */	"Body Armor",
 /* width */		3,
 		0,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
 		&bodyarmor_info,
@@ -1666,19 +1658,19 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_combat", 
+		"item_armor_combat",
 		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"misc/ar1_pkup.wav",
 		"models/items/armor/combat/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_combatarmor",
 /* pickup */	"Combat Armor",
 /* width */		3,
 		0,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
 		&combatarmor_info,
@@ -1689,19 +1681,19 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_jacket", 
+		"item_armor_jacket",
 		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"misc/ar1_pkup.wav",
 		"models/items/armor/jacket/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_jacketarmor",
 /* pickup */	"Jacket Armor",
 /* width */		3,
 		0,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
 		&jacketarmor_info,
@@ -1712,14 +1704,14 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_shard", 
+		"item_armor_shard",
 		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"misc/ar2_pkup.wav",
 		"models/items/armor/shard/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 #ifdef KMQUAKE2_ENGINE_MOD
 		"i_shard", //icon
 #else
@@ -1728,10 +1720,10 @@ gitem_t	itemlist[] =
 /* pickup */	"Armor Shard",
 /* width */		3,
 		0,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
-		NULL,
+                 nullptr,
 		ARMOR_SHARD,
 /* precache */ ""
 	},
@@ -1741,14 +1733,14 @@ gitem_t	itemlist[] =
 /*QUAKED item_armor_shard_flat (.3 .3 1) (-16 -16 -16) (16 16 16) TRIGGER_SPAWN
 */
 	{
-		"item_armor_shard_flat", 
+		"item_armor_shard_flat",
 		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"misc/ar2_pkup.wav",
 		"models/items/armor/shard/flat/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 #ifdef KMQUAKE2_ENGINE_MOD
 		"i_shard", //icon
 #else
@@ -1757,10 +1749,10 @@ gitem_t	itemlist[] =
 		"Armor Shard", //pickup
 		3, //width
 		0,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
-		NULL,
+                 nullptr,
 		ARMOR_SHARD,
 		"" //precache
 	},
@@ -1768,22 +1760,22 @@ gitem_t	itemlist[] =
 /*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_power_screen", 
+		"item_power_screen",
 		Pickup_PowerArmor,
 		Use_PowerArmor,
 		Drop_PowerArmor,
-		NULL,
+                 nullptr,
 		"misc/ar3_pkup.wav",
 		"models/items/armor/screen/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_powerscreen",
 /* pickup */	"Power Screen",
 /* width */		0,
 		60,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -1795,46 +1787,46 @@ gitem_t	itemlist[] =
 		Pickup_PowerArmor,
 		Use_PowerArmor,
 		Drop_PowerArmor,
-		NULL,
+                 nullptr,
 		"misc/ar3_pkup.wav",
 		"models/items/armor/shield/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_powershield",
 /* pickup */	"Power Shield",
 /* width */		0,
 		60,
-		NULL,
+                 nullptr,
 		IT_ARMOR,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "misc/power2.wav misc/power1.wav"
 	},
 
 	//
-	// WEAPONS 
+	// WEAPONS
 	//
 
 /* weapon_grapple (.3 .3 1) (-16 -16 -16) (16 16 16)
 always owned, never in the world
 */
 	{
-		"weapon_grapple", 
-		NULL,
+		"weapon_grapple",
+                 nullptr,
 		Use_Weapon,
-		NULL,
+                 nullptr,
 		CTFWeapon_Grapple,
 		"misc/w_pkup.wav",
-		NULL, 0, 0,
+                 nullptr, 0, 0,
 		"models/weapons/grapple/tris.md2",
 /* icon */		"w_grapple",
 /* pickup */	"Grapple",
 		0,
 		0,
-		NULL,
+                 nullptr,
 		IT_WEAPON,
 		WEAP_GRAPPLE,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/grapple/grfire.wav weapons/grapple/grpull.wav weapons/grapple/grhang.wav weapons/grapple/grreset.wav weapons/grapple/grhit.wav"
 	},
@@ -1843,7 +1835,7 @@ always owned, never in the world
 always owned, never in the world
 */
 /*	{
-		"weapon_blaster", 
+		"weapon_blaster",
 		NULL,
 		Use_Weapon,
 		NULL,
@@ -1879,10 +1871,10 @@ always owned, never in the world
 		"Blaster",
 		0,
 		0,
-		NULL,
+                 nullptr,
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_BLASTER,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/blastf1a.wav misc/lasfly.wav"
 	},
@@ -1890,7 +1882,7 @@ always owned, never in the world
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_shotgun", 
+		"weapon_shotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1905,7 +1897,7 @@ always owned, never in the world
 		"Shells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_SHOTGUN,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
 	},
@@ -1913,7 +1905,7 @@ always owned, never in the world
 /*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_supershotgun", 
+		"weapon_supershotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1928,7 +1920,7 @@ always owned, never in the world
 		"Shells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_SUPERSHOTGUN,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/sshotf1b.wav"
 	},
@@ -1936,7 +1928,7 @@ always owned, never in the world
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_machinegun", 
+		"weapon_machinegun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1951,7 +1943,7 @@ always owned, never in the world
 		"Bullets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_MACHINEGUN,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/machgf1b.wav weapons/machgf2b.wav weapons/machgf3b.wav weapons/machgf4b.wav weapons/machgf5b.wav"
 	},
@@ -1959,7 +1951,7 @@ always owned, never in the world
 /*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_chaingun", 
+		"weapon_chaingun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1974,7 +1966,7 @@ always owned, never in the world
 		"Bullets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_CHAINGUN,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/chngnu1a.wav weapons/chngnl1a.wav weapons/machgf3b.wav weapons/chngnd1a.wav"
 	},
@@ -1997,7 +1989,7 @@ always owned, never in the world
 		"grenades",
 		IT_AMMO|IT_WEAPON,
 		WEAP_GRENADES,
-		NULL,
+                 nullptr,
 		AMMO_GRENADES,
 /* precache */ "models/objects/grenade2/tris.md2 weapons/hgrent1a.wav weapons/hgrena1b.wav weapons/hgrenc1b.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav "
 	},
@@ -2020,7 +2012,7 @@ always owned, never in the world
 		"Grenades",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_GRENADELAUNCHER,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "models/objects/grenade/tris.md2 weapons/grenlf1a.wav weapons/grenlr1b.wav weapons/grenlb1b.wav"
 	},
@@ -2043,7 +2035,7 @@ always owned, never in the world
 		"Rockets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_ROCKETLAUNCHER,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "models/objects/rocket/tris.md2 weapons/rockfly.wav weapons/rocklf1a.wav weapons/rocklr1b.wav models/objects/debris2/tris.md2"
 	},
@@ -2051,7 +2043,7 @@ always owned, never in the world
 /*QUAKED weapon_hyperblaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_hyperblaster", 
+		"weapon_hyperblaster",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2066,7 +2058,7 @@ always owned, never in the world
 		"Cells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_HYPERBLASTER,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav" // removed weapons/hyprbu1a.wav
 	},
@@ -2074,7 +2066,7 @@ always owned, never in the world
 /*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_railgun", 
+		"weapon_railgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2089,7 +2081,7 @@ always owned, never in the world
 		"Slugs",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_RAILGUN,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "weapons/rg_hum.wav"
 	},
@@ -2112,7 +2104,7 @@ always owned, never in the world
 		"Cells",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_BFG,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
 	},
@@ -2121,21 +2113,21 @@ always owned, never in the world
 */
 	{
 		"weapon_hml",
-		NULL,
+                 nullptr,
 		Use_Weapon,
-		NULL,
+                 nullptr,
 		Weapon_HomingMissileLauncher,
-		NULL,
-		NULL, 0, EF_ROTATE,
+                 nullptr,
+                 nullptr, 0, EF_ROTATE,
 		"models/weapons/v_homing/tris.md2",
-/* icon */		NULL,
+/* icon */ nullptr,
 /* pickup */	"Homing Rocket Launcher",
 		0,
 		1,
 		"homing rockets",
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_ROCKETLAUNCHER,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "models/objects/rocket/tris.md2 weapons/rockfly.wav weapons/rocklf1a.wav weapons/rocklr1b.wav models/objects/debris2/tris.md2"
 	},
@@ -2143,21 +2135,21 @@ always owned, never in the world
 	// Lazarus: No weapon - we HAVE to have a weapon
 	{
 		"weapon_null",
-		NULL,
+                 nullptr,
 		Use_Weapon,
-		NULL,
+                 nullptr,
 		Weapon_Null,
 		"misc/w_pkup.wav",
-		NULL, 0, 0,
-		NULL,
-		NULL,
+                 nullptr, 0, 0,
+                 nullptr,
+                 nullptr,
 		"No Weapon",
 	  	0,
 		0,
-		NULL,
+                 nullptr,
 		IT_WEAPON|IT_STAY_COOP,
 		WEAP_NONE,
-		NULL,
+                 nullptr,
 		0,
 		""
 	},
@@ -2171,20 +2163,20 @@ always owned, never in the world
 	{
 		"ammo_shells",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/shells/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_shells",
 /* pickup */	"Shells",
 /* width */		3,
 		10,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_SHELLS,
 /* precache */ ""
 	},
@@ -2194,20 +2186,20 @@ always owned, never in the world
 	{
 		"ammo_bullets",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/bullets/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_bullets",
 /* pickup */	"Bullets",
 /* width */		3,
 		50,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_BULLETS,
 /* precache */ ""
 	},
@@ -2217,20 +2209,20 @@ always owned, never in the world
 	{
 		"ammo_cells",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/cells/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_cells",
 /* pickup */	"Cells",
 /* width */		3,
 		50,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_CELLS,
 /* precache */ ""
 	},
@@ -2240,20 +2232,20 @@ always owned, never in the world
 	{
 		"ammo_rockets",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/rockets/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_rockets",
 /* pickup */	"Rockets",
 /* width */		3,
 		5,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_ROCKETS,
 /* precache */ ""
 	},
@@ -2263,20 +2255,20 @@ always owned, never in the world
 	{
 		"ammo_homing_missiles",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/homing/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_homing",
 /* pickup */	"Homing Rockets",
 /* width */		3,
 		5,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_HOMING_ROCKETS,
 /* precache */ ""
 	},
@@ -2286,20 +2278,20 @@ always owned, never in the world
 	{
 		"ammo_slugs",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/slugs/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_slugs",
 /* pickup */	"Slugs",
 /* width */		3,
 		10,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_SLUGS,
 /* precache */ ""
 	},
@@ -2308,20 +2300,20 @@ always owned, never in the world
 	{
 		"ammo_fuel",
 		Pickup_Ammo,
-		NULL,
+                 nullptr,
 		Drop_Ammo,
-		NULL,
+                 nullptr,
 		"misc/am_pkup.wav",
 		"models/items/ammo/fuel/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 /* icon */		"a_fuel",
 /* pickup */	"fuel",
 /* width */		4,
 		500,
-		NULL,
+                 nullptr,
 		IT_AMMO,
 		0,
-		NULL,
+                 nullptr,
 		AMMO_FUEL,
 /* precache */ ""
 	},
@@ -2332,22 +2324,22 @@ always owned, never in the world
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_quad", 
+		"item_quad",
 		Pickup_Powerup,
 		Use_Quad,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/quaddama/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_quad",
 /* pickup */	"Quad Damage",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "items/damage.wav items/damage2.wav items/damage3.wav"
 	},
@@ -2359,18 +2351,18 @@ always owned, never in the world
 		Pickup_Powerup,
 		Use_Invulnerability,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/invulner/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_invulnerability",
 /* pickup */	"Invulnerability",
 /* width */		2,
 		300,
-		NULL,
+                 nullptr,
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "items/protect.wav items/protect2.wav items/protect4.wav"
 	},
@@ -2382,18 +2374,18 @@ always owned, never in the world
 		Pickup_Powerup,
 		Use_Silencer,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/silencer/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_silencer",
 /* pickup */	"Silencer",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2405,18 +2397,18 @@ always owned, never in the world
 		Pickup_Powerup,
 		Use_Breather,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/breather/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_rebreather",
 /* pickup */	"Rebreather",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		IT_POWERUP|IT_STAY_COOP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "items/airout.wav"
 	},
@@ -2428,18 +2420,18 @@ always owned, never in the world
 		Pickup_Powerup,
 		Use_Envirosuit,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/enviro/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_envirosuit",
 /* pickup */	"Environment Suit",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		IT_POWERUP|IT_STAY_COOP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "items/airout.wav"
 	},
@@ -2450,20 +2442,20 @@ Special item that gives +2 to maximum health
 	{
 		"item_ancient_head",
 		Pickup_AncientHead,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/c_head/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_fixme",
 /* pickup */	"Ancient Head",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2474,20 +2466,20 @@ gives +1 to maximum health
 	{
 		"item_adrenaline",
 		Pickup_Adrenaline,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/adrenal/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_adrenaline",
 /* pickup */	"Adrenaline",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2497,20 +2489,20 @@ gives +1 to maximum health
 	{
 		"item_bandolier",
 		Pickup_Bandolier,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/band/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"p_bandolier",
 /* pickup */	"Bandolier",
 /* width */		2,
 		60,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2520,20 +2512,20 @@ gives +1 to maximum health
 	{
 		"item_pack",
 		Pickup_Pack,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/pack/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_pack",
 /* pickup */	"Ammo Pack",
 /* width */		2,
 		180,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2545,18 +2537,18 @@ gives +1 to maximum health
 		Pickup_Powerup,
 		Use_Flashlight,
 	    Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/f_light/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"p_flash",
 		"Flashlight",
 		2,
 		60,
-	    NULL,
+                 nullptr,
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		""
   },
@@ -2569,10 +2561,10 @@ gives +1 to maximum health
 		Pickup_Powerup,
 		Use_Jet,
 	    Drop_Jetpack,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/jet/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"p_jet",
 		"Jetpack",
 		2,
@@ -2580,7 +2572,7 @@ gives +1 to maximum health
 	    "fuel",
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		"jetpack/activate.wav jetpack/rev1.wav jetpack/revrun.wav jetpack/running.wav jetpack/shutdown.wav jetpack/stutter.wav"
   },
@@ -2591,18 +2583,18 @@ gives +1 to maximum health
 		Pickup_Powerup,
 		Use_Stasis,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/stasis/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"p_freeze",
 		"Stasis Generator",
 		2,
 		30,
-		NULL,
+                 nullptr,
 		IT_POWERUP,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		"items/stasis_start.wav items/stasis.wav items/stasis_stop.wav"
 	},
@@ -2615,20 +2607,20 @@ key for computer centers
 	{
 		"key_data_cd",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/data_cd/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_datacd",
 		"Data CD",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2639,20 +2631,20 @@ warehouse circuits
 	{
 		"key_power_cube",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/power/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_powercube",
 		"Power Cube",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2663,20 +2655,20 @@ key for the entrance of jail3
 	{
 		"key_pyramid",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/pyramid/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_pyramid",
 		"Pyramid Key",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2687,20 +2679,20 @@ key for the city computer
 	{
 		"key_data_spinner",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/spinner/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_dataspin",
 		"Data Spinner",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2711,20 +2703,20 @@ security pass for the security level
 	{
 		"key_pass",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/pass/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_security",
 		"Security Pass",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2735,20 +2727,20 @@ normal door key - blue
 	{
 		"key_blue_key",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/key/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_bluekey",
 		"Blue Key",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2759,20 +2751,20 @@ normal door key - red
 	{
 		"key_red_key",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/red_key/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 		"k_redkey",
 		"Red Key",
 		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2783,20 +2775,20 @@ tank commander's head
 	{
 		"key_commander_head",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/monsters/commandr/head/tris.md2", 0, EF_GIB,
-		NULL,
+                 nullptr,
 /* icon */		"k_comhead",
 /* pickup */	"Commander's Head",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2807,20 +2799,20 @@ tank commander's head
 	{
 		"key_airstrike_target",
 		Pickup_Key,
-		NULL,
+                 nullptr,
 		Drop_General,
-		NULL,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/keys/target/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_airstrike",
 /* pickup */	"Airstrike Marker",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_STAY_COOP|IT_KEY,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
@@ -2852,20 +2844,20 @@ tank commander's head
 	{
 		"item_health_small",
 		Pickup_Health,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/s_health.wav",
 		"models/items/healing/stimpack/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 		"i_health",
 		"Health",
 		3,
 		2,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		HEALTH_IGNORE_MAX|HEALTH_SMALL,
 		"items/s_health.wav"
 	},
@@ -2873,20 +2865,20 @@ tank commander's head
 	{
 		"item_health",
 		Pickup_Health,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/n_health.wav",
 		"models/items/healing/medium/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 		"i_health",
 		"Health",
 		3,
 		10,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		"items/n_health.wav"
 	},
@@ -2894,20 +2886,20 @@ tank commander's head
 	{
 		"item_health_large",
 		Pickup_Health,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/l_health.wav",
 		"models/items/healing/large/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 		"i_health",
 		"Health",
 		3,
 		25,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		HEALTH_LARGE,
 		"items/l_health.wav"
 	},
@@ -2915,20 +2907,20 @@ tank commander's head
 	{
 		"item_health_mega",
 		Pickup_Health,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/m_health.wav",
 		"models/items/mega_h/tris.md2", 0, 0,
-		NULL,
+                 nullptr,
 		"i_health",
 		"Health",
 		3,
 		100,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		HEALTH_IGNORE_MAX | HEALTH_TIMED,
 		"items/m_health.wav"
 	},
@@ -2939,20 +2931,20 @@ tank commander's head
 	{
 		"item_flag_team1",
 		CTFPickup_Flag,
-		NULL,
+                 nullptr,
 		CTFDrop_Flag, //Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"ctf/flagtk.wav",
 		"players/male/flag1.md2", 0, EF_FLAG1,
-		NULL,
+                 nullptr,
 /* icon */		"i_ctf1",
 /* pickup */	"Red Flag",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/flagcap.wav ctf/flagret.wav"
 	},
@@ -2962,20 +2954,20 @@ tank commander's head
 	{
 		"item_flag_team2",
 		CTFPickup_Flag,
-		NULL,
+                 nullptr,
 		CTFDrop_Flag, //Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"ctf/flagtk.wav",
 		"players/male/flag2.md2", 0, EF_FLAG2,
-		NULL,
+                 nullptr,
 /* icon */		"i_ctf2",
 /* pickup */	"Blue Flag",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/flagcap.wav ctf/flagret.wav"
 	},
@@ -2986,24 +2978,24 @@ tank commander's head
 	{
 		"item_flag_team3",
 		CTFPickup_Flag,
-		NULL,
+                 nullptr,
 		CTFDrop_Flag, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"ctf/flagtk.wav",
 #ifdef KMQUAKE2_ENGINE_MOD
 		"models/ctf/flags/flag3.md2", 0, EF_FLAG1|EF_FLAG2,
 #else
 		"models/ctf/flags/flag3.md2", 0, EF_FLAG2,
 #endif
-		NULL,
+                 nullptr,
 /* icon */		"3tctfg",
 /* pickup */	"Green Flag",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/flagcap.wav ctf/flagret.wav"
 	},
@@ -3012,20 +3004,20 @@ tank commander's head
 	{
 		"item_tech1",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/resistance/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech1",
 /* pickup */	"Disruptor Shield",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech1.wav"
 	},
@@ -3034,20 +3026,20 @@ tank commander's head
 	{
 		"item_tech2",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/strength/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech2",
 /* pickup */	"Power Amplifier",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech2.wav ctf/tech2x.wav"
 	},
@@ -3056,20 +3048,20 @@ tank commander's head
 	{
 		"item_tech3",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/haste/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech3",
 /* pickup */	"Time Accel",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech3.wav"
 	},
@@ -3078,20 +3070,20 @@ tank commander's head
 	{
 		"item_tech4",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/regeneration/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech4",
 /* pickup */	"AutoDoc",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech4.wav"
 	},
@@ -3100,20 +3092,20 @@ tank commander's head
 	{
 		"item_tech5",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/vampire/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech5",
 /* pickup */	"Vampire",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech5.wav"
 	},
@@ -3122,20 +3114,20 @@ tank commander's head
 	{
 		"item_tech6",
 		CTFPickup_Tech,
-		NULL,
+                 nullptr,
 		CTFDrop_Tech, // Should this be null if we don't want players to drop it manually?
-		NULL,
+                        nullptr,
 		"items/pkup.wav",
 		"models/ctf/ammogen/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"tech6",
 /* pickup */	"Ammogen",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		IT_TECH,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ "ctf/tech6.wav"
 	},
@@ -3144,27 +3136,27 @@ tank commander's head
 	{
 		"item_ammogen_pack",
 		Pickup_AmmogenPack,
-		NULL,
-		NULL,
-		NULL,
+                 nullptr,
+                 nullptr,
+                 nullptr,
 		"items/pkup.wav",
 		"models/items/pack/tris.md2", 0, EF_ROTATE,
-		NULL,
+                 nullptr,
 /* icon */		"i_pack",
 /* pickup */	"Backpack",
 /* width */		2,
 		0,
-		NULL,
+                 nullptr,
 		0,
 		0,
-		NULL,
+                 nullptr,
 		0,
 /* precache */ ""
 	},
 //ZOID
 
 	// end of list marker
-	{NULL}
+	{ nullptr }
 };
 
 
@@ -3309,7 +3301,7 @@ void Use_Flashlight ( edict_t *ent, gitem_t *item )
 	{
 		if (ent->client->pers.inventory[ITEM_INDEX(FindItem(FLASHLIGHT_ITEM))] < level.flashlight_cost)
 		{
-			safe_cprintf (ent, PRINT_HIGH, "Flashlight requires %s\n", FLASHLIGHT_ITEM);
+			safe_cprintf ( ent, PRINT_HIGH, "Flashlight requires %s\n", FLASHLIGHT_ITEM );
 			return;
 		}
 #if FLASHLIGHT_USE != POWERUP_USE_ITEM

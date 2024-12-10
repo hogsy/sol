@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
-#include "pak.h"
 
 void SP_item_health (edict_t *self);
 void SP_item_health_small (edict_t *self);
@@ -480,7 +479,7 @@ spawn_t	spawns[] = {
 	{"rocket", SP_rocket},
 	{"homing rocket", SP_rocket},
 // end Lazarus
-	{NULL, NULL}
+	{nullptr,                     nullptr                     }
 };
 
 // Knightmare- sound precache functions
@@ -531,7 +530,7 @@ soundcache_t	soundcaches[] = {
 	{"monster_tank", monster_tank_soundcache},
 	{"monster_tank_commander", monster_tank_soundcache},
 
-	{NULL, NULL}
+	{nullptr,                  nullptr                     }
 };
 // end Knightmare
 
@@ -560,14 +559,14 @@ void ED_CallSpawn (edict_t *ent)
 
 	// Lazarus: if this fails, edict is freed.
 
-	if (!ent->classname)
+	if (ent->classname.empty())
 	{
 		gi.dprintf ("ED_CallSpawn: NULL classname\n");
 		G_FreeEdict(ent);
 		return;
 	}
 
-	// Lazarus: Preserve original angles for movewith stuff 
+	// Lazarus: Preserve original angles for movewith stuff
 	//          before G_SetMoveDir wipes 'em out
 	VectorCopy(ent->s.angles, ent->org_angles);
 
@@ -576,7 +575,7 @@ void ED_CallSpawn (edict_t *ent)
 	{
 		if (!item->classname)
 			continue;
-		if (!strcmp(item->classname, ent->classname))
+		if (!strcmp(item->classname, ent->classname.c_str()))
 		{	// found it
 			SpawnItem (ent, item);
 			return;
@@ -586,7 +585,7 @@ void ED_CallSpawn (edict_t *ent)
 	// check normal spawn functions
 	for (s=spawns ; s->name ; s++)
 	{
-		if (!strcmp(s->name, ent->classname))
+		if (!strcmp(s->name, ent->classname.c_str()))
 		{	// found it
 			s->spawn (ent);
 			return;
@@ -603,7 +602,7 @@ void ReInitialize_Entity (edict_t *ent)
 	// check normal spawn functions
 	for (s=spawns; s->name; s++)
 	{
-		if (!strcmp(s->name, ent->classname))
+		if (!strcmp(s->name, ent->classname.c_str()))
 		{	// found it
 			s->spawn (ent);
 			return;
@@ -620,7 +619,7 @@ char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
 	int		i,l;
-	
+
 	l = (int)strlen(string) + 1;
 
 	newb = static_cast<char*>(gi.TagMalloc (l, TAG_LEVEL));
@@ -640,12 +639,9 @@ char *ED_NewString (char *string)
 		else
 			*new_p++ = string[i];
 	}
-	
+
 	return newb;
 }
-
-
-
 
 /*
 ===============
@@ -655,57 +651,68 @@ Takes a key/value pair and sets the binary values
 in an edict
 ===============
 */
-void ED_ParseField (char *key, char *value, edict_t *ent)
+void ED_ParseField( char *key, char *value, edict_t *ent )
 {
-	field_t	*f;
-	byte	*b;
-	float	v;
-	vec3_t	vec = { 0.0f, 0.0f, 0.0f };
+	byte  *b;
+	float  v;
+	vec3_t vec = { 0.0f, 0.0f, 0.0f };
 
-	for (f=fields ; f->name ; f++)
+	for ( const field_t *f = fields; f->name; f++ )
 	{
-		if ( !(f->flags & FFL_NOSPAWN) && !Q_stricmp(f->name, key) )
-		{	// found it
-			if (f->flags & FFL_SPAWNTEMP)
-				b = (byte *)&st;
-			else
-				b = (byte *)ent;
-
-			switch (f->type)
+		if ( !( f->flags & FFL_NOSPAWN ) && !Q_stricmp( f->name, key ) )
+		{// found it
+			if ( f->flags & FFL_SPAWNTEMP )
 			{
-			case F_LSTRING:
-				*(char **)(b+f->ofs) = ED_NewString (value);
-				break;
-			case F_VECTOR:
-			//	sscanf (value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
-				if (sscanf (value, "%f %f %f", &vec[0], &vec[1], &vec[2]) != 3) {
-					gi.dprintf ("ED_ParseField: map '%s' has invalid vector '%s' for key '%s'.\n", level.mapname, value, key);
+				b = reinterpret_cast< byte * >( &st );
+			}
+			else
+			{
+				b = reinterpret_cast< byte * >( ent );
+			}
+
+			switch ( f->type )
+			{
+				default:
+					break;
+				case F_DSTRING:
+				{
+					auto *s = reinterpret_cast< std::string * >( b + f->ofs );
+					*s      = value;
+					break;
 				}
-				((float *)(b+f->ofs))[0] = vec[0];
-				((float *)(b+f->ofs))[1] = vec[1];
-				((float *)(b+f->ofs))[2] = vec[2];
-				break;
-			case F_INT:
-				*(int *)(b+f->ofs) = atoi(value);
-				break;
-			case F_FLOAT:
-				*(float *)(b+f->ofs) = atof(value);
-				break;
-			case F_ANGLEHACK:
-				v = atof(value);
-				((float *)(b+f->ofs))[0] = 0;
-				((float *)(b+f->ofs))[1] = v;
-				((float *)(b+f->ofs))[2] = 0;
-				break;
-			case F_IGNORE:
-				break;
+				case F_LSTRING:
+					*reinterpret_cast< char ** >( b + f->ofs ) = ED_NewString( value );
+					break;
+				case F_VECTOR:
+					//	sscanf (value, "%f %f %f", &vec[0], &vec[1], &vec[2]);
+					if ( sscanf( value, "%f %f %f", &vec[ 0 ], &vec[ 1 ], &vec[ 2 ] ) != 3 )
+					{
+						gi.dprintf( "ED_ParseField: map '%s' has invalid vector '%s' for key '%s'.\n", level.mapname, value, key );
+					}
+					reinterpret_cast< float * >( b + f->ofs )[ 0 ] = vec[ 0 ];
+					reinterpret_cast< float * >( b + f->ofs )[ 1 ] = vec[ 1 ];
+					reinterpret_cast< float * >( b + f->ofs )[ 2 ] = vec[ 2 ];
+					break;
+				case F_INT:
+					*reinterpret_cast< int * >( b + f->ofs ) = std::strtol( value, nullptr, 10 );
+					break;
+				case F_FLOAT:
+					*reinterpret_cast< float * >( b + f->ofs ) = std::strtof( value, nullptr );
+					break;
+				case F_ANGLEHACK:
+					v                                              = std::strtof( value, nullptr );
+					reinterpret_cast< float * >( b + f->ofs )[ 0 ] = 0;
+					reinterpret_cast< float * >( b + f->ofs )[ 1 ] = v;
+					reinterpret_cast< float * >( b + f->ofs )[ 2 ] = 0;
+					break;
+				case F_IGNORE:
+					break;
 			}
 			return;
 		}
 	}
-	gi.dprintf ("%s is not a field\n", key);
+	gi.dprintf( "%s is not a field\n", key );
 }
-
 
 // Knightmare added
 /*
@@ -719,7 +726,7 @@ void ED_SetDefaultFields (edict_t *ent)
 {
 	field_t	*f;
 	byte	*b;
-	
+
 	for (f=fields ; f->name ; f++)
 	{
 		if (f->flags & FFL_DEFAULT_NEG)
@@ -728,7 +735,7 @@ void ED_SetDefaultFields (edict_t *ent)
 				b = (byte *)&st;
 			else
 				b = (byte *)ent;
-				
+
 			if (f->type == F_LSTRING)
 				*(char **)(b+f->ofs) = ED_NewString ("-1");
 			else if ( (f->type == F_VECTOR) || (f->type == F_ANGLEHACK) ) {
@@ -944,7 +951,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 		if (!strcmp(search_token, "classname"))
 			classname_found = true;
 
-		// parse value	
+		// parse value
 		search_token = COM_Parse (&search_data);
 		if (!search_data)
 			gi.error ("ED_ParseEntityAlias: end of entity data without closing brace");
@@ -995,7 +1002,7 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 			}
 			// go through all the dictionary pairs
 			while (search_data < (alias_data + alias_data_size))
-			{	
+			{
 			// parse key
 				search_token = COM_Parse (&search_data);
 				if (!search_data) {
@@ -1005,8 +1012,8 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 				if (search_token[0] == '}')
 					break;
 				Q_strncpyz (keyname, sizeof(keyname), search_token);
-				
-			// parse value	
+
+			// parse value
 				search_token = COM_Parse (&search_data);
 				if (!search_data) {
 					gi.dprintf ("ED_ParseEntityAlias: EOF without closing brace\n");
@@ -1056,7 +1063,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 // go through all the dictionary pairs
 	while (1)
-	{	
+	{
 	// parse key
 		com_token = COM_Parse (&data);
 		if (com_token[0] == '}')
@@ -1065,8 +1072,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
 		Q_strncpyz (keyname, sizeof(keyname), com_token);
-		
-	// parse value	
+
+	// parse value
 		com_token = COM_Parse (&data);
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
@@ -1118,15 +1125,15 @@ across maps in SP and coop.
 void G_PrecachePlayerInventories (void)
 {
 	int			i, j;
-	gclient_t	*client = NULL;
-	gitem_t		*item = NULL;
+	gclient_t	*client = nullptr;
+	gitem_t		*item = nullptr;
 
 	if (deathmatch->value)	// not needed in DM/CTF
 		return;
 
 	for (i = 0; i < game.maxclients; i++)
 	{
-		if (&game.clients[i] != NULL)
+		if (&game.clients[i] != nullptr )
 		{
 		//	gi.dprintf ("PrecachePlayerInventories(): precaching for client %i\n", i);
 			client = &game.clients[i];
@@ -1134,7 +1141,7 @@ void G_PrecachePlayerInventories (void)
 			{
 				if (client->pers.inventory[j] > 0) {
 					item = &itemlist[j];
-					if (item != NULL) {
+					if (item != nullptr ) {
 					//	gi.dprintf ("PrecachePlayerInventories(): precaching item %i: %s\n", j, item->classname);
 						PrecacheItem (item);
 					}
@@ -1154,7 +1161,7 @@ Borrowed from Rogue source
 */
 void G_FixTeams (void)
 {
-	edict_t	*e, *e2, *chain;
+	edict_t	*e, *e2;
 	int		i, j;
 	int		c, c2;
 
@@ -1167,15 +1174,15 @@ void G_FixTeams (void)
 		if (!e->team)
 			continue;
 		// Lazarus- ignore bmodel spawner (its team isn't used)
-		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
-			continue; 
-		if (!strcmp(e->classname, "func_train"))
+		if (!e->classname.empty() && !Q_stricmp( e->classname.c_str(), "target_bmodel_spawner" ) )
+			continue;
+		if (!strcmp(e->classname.c_str(), "func_train"))
 		{
 			if (e->flags & FL_TEAMSLAVE)
 			{
-				chain = e;
+				edict_t *chain = e;
 				e->teammaster = e;
-				e->teamchain = NULL;
+				e->teamchain = nullptr;
 				e->flags &= ~FL_TEAMSLAVE;
 				c++;
 				c2++;
@@ -1192,7 +1199,7 @@ void G_FixTeams (void)
 						c2++;
 						chain->teamchain = e2;
 						e2->teammaster = e;
-						e2->teamchain = NULL;
+						e2->teamchain = nullptr;
 						chain = e2;
 						e2->flags |= FL_TEAMSLAVE;
 						e2->movetype = MOVETYPE_PUSH;
@@ -1216,7 +1223,7 @@ All but the first will have the FL_TEAMSLAVE flag set.
 All but the last will have the teamchain field set to the next one
 ================
 */
-void G_FindTeams (void)
+void G_FindTeams ()
 {
 	edict_t	*e, *e2, *chain;
 	int		i, j;
@@ -1233,11 +1240,11 @@ void G_FindTeams (void)
 		if (e->flags & FL_TEAMSLAVE)
 			continue;
 		// Lazarus: some entities may have psuedo-teams that shouldn't be handled here
-		if (e->classname && !Q_stricmp(e->classname, "target_change"))
+		if (!e->classname.empty() && !Q_stricmp( e->classname.c_str(), "target_change" ) )
 			continue;
-		if (e->classname && !Q_stricmp(e->classname, "target_bmodel_spawner"))
+		if (!e->classname.empty() && !Q_stricmp( e->classname.c_str(), "target_bmodel_spawner" ) )
 			continue;
-		if (e->classname && !Q_stricmp(e->classname, "target_clone"))
+		if (!e->classname.empty() && !Q_stricmp( e->classname.c_str(), "target_clone" ) )
 			continue;
 		chain = e;
 		e->teammaster = e;
@@ -1273,7 +1280,7 @@ void G_FindTeams (void)
 
 void trans_ent_filename (char *filename, size_t filenameSize);
 void ReadEdict (FILE *f, edict_t *ent);
-void LoadTransitionEnts (void)
+void LoadTransitionEnts()
 {
 	if (developer->value)
 		gi.dprintf("==== LoadTransitionEnts ====\n");
@@ -1285,14 +1292,14 @@ void LoadTransitionEnts (void)
 		vec3_t		v_spawn;
 		edict_t		*ent;
 		edict_t		*spawn;
-		
+
 		VectorClear (v_spawn);
 		if (strlen(game.spawnpoint))
 		{
-			spawn = G_Find(NULL, FOFS(targetname), game.spawnpoint);
+			spawn = G_Find( nullptr, FOFS(targetname), game.spawnpoint);
 			while (spawn)
 			{
-				if (!Q_stricmp (spawn->classname, "info_player_start"))
+				if (!Q_stricmp ( spawn->classname.c_str(), "info_player_start" ) )
 				{
 					VectorCopy (spawn->s.origin, v_spawn);
 					break;
@@ -1336,9 +1343,9 @@ void LoadTransitionEnts (void)
 					}
 					else
 					{
-						// We KNOW owners precede owned ents in the 
+						// We KNOW owners precede owned ents in the
 						// list because of the way it was constructed
-						ent->owner = NULL;
+						ent->owner = nullptr;
 						for (j=game.maxclients+1; j<globals.num_edicts && !ent->owner; j++)
 						{
 							if (ent->owner_id == g_edicts[j].id)
@@ -1408,7 +1415,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	for (i=0 ; i<game.maxclients ; i++)
 		g_edicts[i+1].client = game.clients + i;
 
-	ent = NULL;
+	ent = nullptr;
 	inhibit = 0;
 
 	// Knightmare- set maptype for pack-specific changes
@@ -1441,7 +1448,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -1455,7 +1462,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		entities = ED_ParseEdict (entities, ent);
 
 		// yet another map hack
-		if (!Q_stricmp(level.mapname, "command") && !Q_stricmp(ent->classname, "trigger_once") && !Q_stricmp(ent->model, "*27"))
+		if (!Q_stricmp( level.mapname, "command" ) && !Q_stricmp( ent->classname.c_str(), "trigger_once" ) && !Q_stricmp( ent->model, "*27" ) )
 			ent->spawnflags &= ~SPAWNFLAG_NOT_HARD;
 
 		// remove things (except the world) from different skill levels or deathmatch
@@ -1465,7 +1472,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -1474,7 +1481,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_COOP )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -1490,7 +1497,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					((skill->value == 1) && (ent->spawnflags & SPAWNFLAG_NOT_MEDIUM)) ||
 					((skill->value >= 2) && (ent->spawnflags & SPAWNFLAG_NOT_HARD)) )
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -1501,7 +1508,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					((skill->value == 1) && (ent->spawnflags & SPAWNFLAG_NOT_MEDIUM)) ||
 					((skill->value >= 2) && (ent->spawnflags & SPAWNFLAG_NOT_HARD)) )
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -1513,7 +1520,7 @@ removeflags:
 
 		ED_CallSpawn (ent);
 		ent->s.renderfx |= RF_IR_VISIBLE; // ir goggles flag
-	}	
+	}
 
 	// Knightmare- unload the alias script file
 	if (alias_data) { // If no alias file was loaded, don't bother
@@ -1568,7 +1575,7 @@ removeflags:
 	CTFSpawn ();
 	// Knightmare added
 	if (deathmatch->value && !ctf->value)
-		CTFSetupTechSpawn ();	
+		CTFSetupTechSpawn ();
 //ZOID
 
 	if (!deathmatch->value)
@@ -1580,34 +1587,34 @@ removeflags:
 			continue;
 		if (ent->movewith_ent)
 			continue;
-		ent->movewith_ent = G_Find(NULL, FOFS(targetname), ent->movewith);
+		ent->movewith_ent = G_Find( nullptr, FOFS(targetname), ent->movewith);
 		// Make sure that we can really "movewith" this guy. This check
 		// allows us to have movewith parent with same targetname as
 		// other entities
 		while (ent->movewith_ent &&
-			(Q_stricmp(ent->movewith_ent->classname, "func_train")			&&
-			 Q_stricmp(ent->movewith_ent->classname, "model_train")			&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_door")			&&
-		
+			(Q_stricmp( ent->movewith_ent->classname.c_str(), "func_train" )			&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "model_train" )			&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_door" )			&&
+
 			// Knightmare added
 #ifdef POSTTHINK_CHILD_MOVEMENT
-			 Q_stricmp(ent->movewith_ent->classname, "func_door_rotating")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_water")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_plat")			&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_plat2")			&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_rotating")		&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_button")			&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_door_secret")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_door_secret2")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_bobbingwater")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_door_swinging")	&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_breakaway")		&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_trackchange")	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_door_rotating" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_water" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_plat" )			&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_plat2" )			&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_rotating" )		&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_button" )			&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_door_secret" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_door_secret2" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_bobbingwater" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_door_swinging" )	&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_breakaway" )		&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_trackchange" )	&&
 #endif	// POSTTHINK_CHILD_MOVEMENT
 			// end Knightmare
-		
-			 Q_stricmp(ent->movewith_ent->classname, "func_vehicle")		&&
-			 Q_stricmp(ent->movewith_ent->classname, "func_tracktrain")  ))
+
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_vehicle" )		&&
+			 Q_stricmp( ent->movewith_ent->classname.c_str(), "func_tracktrain" )  ))
 			 ent->movewith_ent = G_Find (ent->movewith_ent, FOFS(targetname), ent->movewith);
 		if (ent->movewith_ent)
 			movewith_init (ent->movewith_ent);
@@ -1649,8 +1656,8 @@ Reloads static cached sounds for entities using spawns table
 void G_SoundcacheEntities (void)
 {
 	int		i;
-	edict_t	*ent = NULL;
-	soundcache_t	*s = NULL;
+	edict_t	*ent = nullptr;
+	soundcache_t	*s = nullptr;
 
 	ent = &g_edicts[0];
 	for (i = 0; i < globals.num_edicts; i++, ent++)
@@ -1661,9 +1668,9 @@ void G_SoundcacheEntities (void)
 		// check normal spawn functions
 		for (s=soundcaches; s->name; s++)
 		{
-			if ( !strcmp(s->name, ent->classname) )
+			if ( !strcmp(s->name, ent->classname.c_str()) )
 			{	// found it
-				if (s->soundcache != NULL) {
+				if (s->soundcache != nullptr ) {
 					s->soundcache (ent);
 				}
 				break;
@@ -1698,7 +1705,7 @@ void G_SoundcacheEntities (void)
 
 #endif
 
-char *single_statusbar = 
+char *single_statusbar =
 "yb	-24 "
 
 // health
@@ -1749,7 +1756,7 @@ char *single_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -1822,7 +1829,7 @@ char *dm_statusbar =
 "	pic	9 "
 "endif "
 
-// help / weapon icon 
+// help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -1902,13 +1909,15 @@ void SP_worldspawn (edict_t *ent)
 
 	// make some data visible to the server
 
-	if (ent->message && ent->message[0])
+	if (!ent->message.empty() && ent->message[0])
 	{
-		gi.configstring (CS_NAME, ent->message);
-		Q_strncpyz (level.level_name, sizeof(level.level_name), ent->message);
+		gi.configstring (CS_NAME, ent->message.data());
+		Q_strncpyz (level.level_name, sizeof(level.level_name), ent->message.c_str());
 	}
 	else
+	{
 		Q_strncpyz (level.level_name, sizeof(level.level_name), level.mapname);
+	}
 
 	if (st.sky && st.sky[0])
 		gi.configstring (CS_SKY, st.sky);
@@ -1993,7 +2002,7 @@ void SP_worldspawn (edict_t *ent)
 	// If the map changes on us, init and reload the nodes
 	if (deathmatch->value && strcmp(level.mapname,current_map))
 	{
-		
+
 		ACEND_InitNodes();
 		ACEND_LoadNodes();
 		//ACESP_LoadBots(); // Knightmare- removed this
@@ -2034,9 +2043,9 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*death3.wav");
 	gi.soundindex ("*death4.wav");
 	gi.soundindex ("*fall1.wav");
-	gi.soundindex ("*fall2.wav");	
+	gi.soundindex ("*fall2.wav");
 	gi.soundindex ("*gurp1.wav");		// drowning damage
-	gi.soundindex ("*gurp2.wav");	
+	gi.soundindex ("*gurp2.wav");
 	gi.soundindex ("*jump1.wav");		// player jump
 	gi.soundindex ("*pain25_1.wav");
 	gi.soundindex ("*pain25_2.wav");
@@ -2076,7 +2085,7 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/watr_out.wav");	// feet leaving water
 
 	gi.soundindex ("player/watr_un.wav");	// head going underwater
-	
+
 	gi.soundindex ("player/u_breath1.wav");
 	gi.soundindex ("player/u_breath2.wav");
 
@@ -2112,7 +2121,7 @@ void SP_worldspawn (edict_t *ent)
 	// value for obscuring HOM with fog... "good" is driver-dependent
 	if (ent->fogclip)
 	{
-		if ( gl_driver && !Q_stricmp(gl_driver->string, "3dfxgl") )
+		if ( gl_driver && !Q_stricmp( gl_driver->string, "3dfxgl" ) )
 			gi.cvar_forceset (GL_CLEAR_CVAR, "0");
 		else
 			gi.cvar_forceset (GL_CLEAR_CVAR, "1");
@@ -2142,7 +2151,7 @@ void Hud_On (void)
 
 void Hud_Off (void)
 {
-	gi.configstring (CS_STATUSBAR, NULL);
+	gi.configstring (CS_STATUSBAR, nullptr );
 	nohud = 1;
 }
 

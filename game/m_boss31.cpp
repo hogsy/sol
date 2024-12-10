@@ -635,8 +635,8 @@ void jorg_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage,
 	// This is needed because Q2 originally lacked a direct spawn function for Makron.
 	// Hence, mappers who wanted to use Makron without Jorg had to kill Jorg with a trigger_hurt.
 	// The below causes the dead jorg to gib after going through the death animations, as normal.
-	if (!strcmp(inflictor->classname, "trigger_hurt") || !strcmp(inflictor->classname, "trigger_hurt_bbox")
-		|| Q_stricmp(level.mapname, "grinsp3f") == 0)  { // gross hack for map6 of COS3- Jorg isn't killed with trigger_hurt
+	if (!strcmp(inflictor->classname.c_str(), "trigger_hurt") || !strcmp(inflictor->classname.c_str(), "trigger_hurt_bbox")
+		|| Q_stricmp( level.mapname, "grinsp3f" ) == 0)  { // gross hack for map6 of COS3- Jorg isn't killed with trigger_hurt
 		self->fogclip |= 4; // non-jumping makron
 	//	self->fog_index |= 1; // gib flag
 	}

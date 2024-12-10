@@ -96,7 +96,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	    	
 //	if ((pOut = fopen("ace/bots.tmp", "wb")) == NULL)
 	// Knightmare- use SavegameDir()
-	Com_sprintf (filename, sizeof(filename), "%s/ace/bots.tmp", SavegameDir());
+	snprintf (filename, sizeof(filename), "%s/ace/bots.tmp", SavegameDir());
 	pOut = fopen(filename, "wb");
 	if (pOut == NULL)
 	// end Knightmare
@@ -140,10 +140,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //	if ((pIn = fopen("ace/bots.tmp", "rb")) == NULL)
 	// Knightmare- use SavegameDir()
-	Com_sprintf (filename, sizeof(filename), "%s/ace/bots.tmp", SavegameDir());
+	snprintf (filename, sizeof(filename), "%s/ace/bots.tmp", SavegameDir());
 	pIn = fopen(filename, "rb");
 	if (pIn == NULL) {
-		Com_sprintf (filename, sizeof(filename), "%s/ace/bots.tmp", GameDir());
+		snprintf (filename, sizeof(filename), "%s/ace/bots.tmp", GameDir());
 		pIn = fopen(filename, "rb");
 	}
 	if (pIn == NULL) {
@@ -552,7 +552,7 @@ void ACESP_SetName (edict_t *bot, char *name, char *skin, char *team)
 			for (i = r; i < num_botinfo; i++)
 				if (!bot_info[i].ingame_count)
 				{
-					Com_sprintf (bot_name, sizeof(bot_name), bot_info[i].name);
+					snprintf (bot_name, sizeof(bot_name), bot_info[i].name);
 					bot_info[i].ingame_count++;
 					break;
 				}
@@ -561,16 +561,16 @@ void ACESP_SetName (edict_t *bot, char *name, char *skin, char *team)
 				for (i = 0; i < r; i++)
 					if (!bot_info[i].ingame_count)
 					{
-						Com_sprintf (bot_name, sizeof(bot_name), bot_info[i].name);
+						snprintf (bot_name, sizeof(bot_name), bot_info[i].name);
 						bot_info[i].ingame_count++;
 						break;
 					}
 			// If no more free bots in table, use a numbered name
 			if (strlen(bot_name) == 0)
-				Com_sprintf (bot_name, sizeof(bot_name), "ACEBot_%d",bot->count);
+				snprintf (bot_name, sizeof(bot_name), "ACEBot_%d",bot->count);
 		}
 		else
-			Com_sprintf (bot_name, sizeof(bot_name), "ACEBot_%d",bot->count);
+			snprintf (bot_name, sizeof(bot_name), "ACEBot_%d",bot->count);
 	}
 	else
 	//	strncpy(bot_name, name);
@@ -580,10 +580,10 @@ void ACESP_SetName (edict_t *bot, char *name, char *skin, char *team)
 	if (strlen(skin) == 0)
 	{	// check if this bot is in the table
 		for (i = 0; i < num_botinfo; i++)
-			if (!Q_stricmp(bot_name, bot_info[i].name))
+			if (!Q_stricmp( bot_name, bot_info[ i ].name ) )
 			{
-				Com_sprintf (bot_name, sizeof(bot_name), bot_info[i].name); // fix capitalization
-				Com_sprintf (bot_skin, sizeof(bot_skin), bot_info[i].skin);
+				snprintf (bot_name, sizeof(bot_name), bot_info[i].name); // fix capitalization
+				snprintf (bot_skin, sizeof(bot_skin), bot_info[i].skin);
 				bot_info[i].ingame_count++;
 				break;
 			}
@@ -593,7 +593,7 @@ void ACESP_SetName (edict_t *bot, char *name, char *skin, char *team)
 				for (i = 0; i < NUM_BOT_SKINS; i++)
 					if (rnd < ((float)(i+1)/(float)NUM_BOT_SKINS) )
 					{	r=i; break; }
-				Com_sprintf (bot_skin, sizeof(bot_skin), "%s", skinnames[r]);
+				snprintf (bot_skin, sizeof(bot_skin), "%s", skinnames[r]);
 			}
 	}
 	else
@@ -745,7 +745,7 @@ void ACESP_RemoveBot (char *name)
 		bot = g_edicts + i + 1;
 		if (bot->inuse)
 		{
-			if (bot->is_bot && (Q_stricmp(bot->client->pers.netname,name)==0 || Q_stricmp(name,"all")==0))
+			if (bot->is_bot && (Q_stricmp( bot->client->pers.netname, name ) ==0 || Q_stricmp( name, "all" ) ==0))
 			{
 				bot->health = 0;
 				player_die (bot, bot, bot, 100000, vec3_origin);
@@ -757,10 +757,10 @@ void ACESP_RemoveBot (char *name)
 
 				safe_bprintf (PRINT_MEDIUM, "%s removed\n", bot->client->pers.netname);
 				// Knightmare- decrement this bot name's counter and exit loop
-				if (Q_stricmp(name,"all"))
+				if (Q_stricmp( name, "all" ) )
 				{
 					for (j = 0; j < num_botinfo; j++)
-						if (!Q_stricmp(name, bot_info[j].name))
+						if (!Q_stricmp( name, bot_info[ j ].name ) )
 						{
 							bot_info[j].ingame_count--;
 							bot_info[j].ingame_count = max(bot_info[j].ingame_count, 0);

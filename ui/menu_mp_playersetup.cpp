@@ -167,7 +167,7 @@ void Menu_PConfigSaveChanges (void *unused)
 
 	mNum = s_playerconfig_model_box.curValue;
 	sNum = s_playerconfig_skin_box.curValue;
-	Com_sprintf (scratch, sizeof( scratch ), "%s/%s", 
+	snprintf (scratch, sizeof( scratch ), "%s/%s",
 		ui_pmi[mNum].directory, ui_pmi[mNum].skinDisplayNames[sNum]);
 	Cvar_Set ("skin", scratch);
 }

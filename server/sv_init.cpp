@@ -149,14 +149,14 @@ void SV_CheckForSavegame (void)
 	if (Cvar_VariableValue ("deathmatch"))
 		return;
 
-//	Com_sprintf (name, sizeof(name), "%s/save/current/%s.sav", FS_Savegamedir(), sv.name);	// was FS_Gamedir()
-	Com_sprintf (name, sizeof(name), "%s/%s/current/%s.sav", FS_Savegamedir(), ARCH_SAVEDIR, sv.name);	// was FS_Gamedir()
+//	snprintf (name, sizeof(name), "%s/save/current/%s.sav", FS_Savegamedir(), sv.name);	// was FS_Gamedir()
+	snprintf (name, sizeof(name), "%s/%s/current/%s.sav", FS_Savegamedir(), ARCH_SAVEDIR, sv.name);	// was FS_Gamedir()
 	f = fopen (name, "rb");
 	if (!f)
 #ifdef COMPRESSED_SAVEGAMES
 	{
-	//	Com_sprintf (name, sizeof(name), "%s/save/current/%s.savz", FS_Savegamedir(), sv.name);	// was FS_Gamedir()
-		Com_sprintf (name, sizeof(name), "%s/%s/current/%s.savz", FS_Savegamedir(), ARCH_SAVEDIR, sv.name);	// was FS_Gamedir()
+	//	snprintf (name, sizeof(name), "%s/save/current/%s.savz", FS_Savegamedir(), sv.name);	// was FS_Gamedir()
+		snprintf (name, sizeof(name), "%s/%s/current/%s.savz", FS_Savegamedir(), ARCH_SAVEDIR, sv.name);	// was FS_Gamedir()
 		f = fopen (name, "rb");
 		if (!f)
 			return;		// no savegame
@@ -231,7 +231,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	Q_strncpyz (sv.configstrings[CS_NAME], sizeof(sv.configstrings[CS_NAME]), server);
 	if (Cvar_VariableValue ("deathmatch"))
 	{
-		Com_sprintf(sv.configstrings[CS_AIRACCEL], sizeof(sv.configstrings[CS_AIRACCEL]), "%g", sv_airaccelerate->value);
+		snprintf(sv.configstrings[CS_AIRACCEL], sizeof(sv.configstrings[CS_AIRACCEL]), "%g", sv_airaccelerate->value);
 		pm_airaccelerate = sv_airaccelerate->value;
 	}
 	else
@@ -265,11 +265,11 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 
 	if (serverstate != ss_game)
 	{
-		sv.models[1] = CM_LoadMap ("", false, &checksum);	// no real map
+		sv.models[1] = CM_LoadMap ( "", false, &checksum );	// no real map
 	}
 	else
 	{
-		Com_sprintf (sv.configstrings[CS_MODELS+1],sizeof(sv.configstrings[CS_MODELS+1]),
+		snprintf (sv.configstrings[CS_MODELS+1],sizeof(sv.configstrings[CS_MODELS+1]),
 			"maps/%s.bsp", server);
 	
 		// resolve CS_PAKFILE, hack by Jay Dolan
@@ -282,9 +282,9 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	//	FS_FCloseFile(f);
 		}
 	
-		sv.models[1] = CM_LoadMap (sv.configstrings[CS_MODELS+1], false, &checksum);
+		sv.models[1] = CM_LoadMap ( sv.configstrings[ CS_MODELS + 1 ], false, &checksum );
 	}
-	Com_sprintf (sv.configstrings[CS_MAPCHECKSUM],sizeof(sv.configstrings[CS_MAPCHECKSUM]),
+	snprintf (sv.configstrings[CS_MAPCHECKSUM],sizeof(sv.configstrings[CS_MAPCHECKSUM]),
 		"%i", checksum);
 
 	//
@@ -294,7 +294,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	
 	for (i=1 ; i< CM_NumInlineModels() ; i++)
 	{
-		Com_sprintf (sv.configstrings[CS_MODELS+1+i], sizeof(sv.configstrings[CS_MODELS+1+i]),
+		snprintf (sv.configstrings[CS_MODELS+1+i], sizeof(sv.configstrings[CS_MODELS+1+i]),
 			"*%i", i);
 		sv.models[i+1] = CM_InlineModel (sv.configstrings[CS_MODELS+1+i]);
 	}
@@ -342,8 +342,6 @@ void PF_Configstring (int index, char *val);
 
 void SV_InitGame (void)
 {
-	int		i;
-	edict_t	*ent;
 	char	idmaster[32];
 
 	if (svs.initialized)
@@ -401,10 +399,10 @@ void SV_InitGame (void)
 
 	svs.spawncount = rand();
 //	svs.clients = Z_Malloc (sizeof(client_t)*maxclients->value);
-	svs.clients = Z_Malloc (sizeof(client_t) * maxclients->integer);
+	svs.clients = static_cast< client_t * >( Z_Malloc( sizeof( client_t ) * maxclients->integer ) );
 //	svs.num_client_entities = maxclients->value * UPDATE_BACKUP * MAX_PACKET_ENTITIES;		// was UPDATE_BACKUP * 64
 	svs.num_client_entities = maxclients->integer * UPDATE_BACKUP * MAX_PACKET_ENTITIES;	// was UPDATE_BACKUP * 64
-	svs.client_entities = Z_Malloc (sizeof(centity_state_t) * svs.num_client_entities);
+	svs.client_entities = static_cast< centity_state_t * >( Z_Malloc( sizeof( centity_state_t ) * svs.num_client_entities ) );
 
 	// init network stuff
 //	NET_Config ( (maxclients->value > 1) );
@@ -412,18 +410,18 @@ void SV_InitGame (void)
 
 	// heartbeats will always be sent to the id master
 	svs.last_heartbeat = -99999;		// send immediately
-	Com_sprintf(idmaster, sizeof(idmaster), "192.246.40.37:%i", PORT_MASTER);
+	snprintf(idmaster, sizeof(idmaster), "192.246.40.37:%i", PORT_MASTER);
 	NET_StringToAdr (idmaster, &master_adr[0]);
 
 	// init game
 	SV_InitGameProgs ();
 //	for (i = 0; i < maxclients->value; i++)
-	for (i = 0; i < maxclients->integer; i++)
+	for ( int i = 0; i < maxclients->integer; i++ )
 	{
-		ent = EDICT_NUM(i+1);
-		ent->s.number = i+1;
-		svs.clients[i].edict = ent;
-		memset (&svs.clients[i].lastcmd, 0, sizeof(svs.clients[i].lastcmd));
+		edict_t *ent           = EDICT_NUM( i + 1 );
+		ent->s.number          = i + 1;
+		svs.clients[ i ].edict = ent;
+		memset( &svs.clients[ i ].lastcmd, 0, sizeof( svs.clients[ i ].lastcmd ) );
 	}
 }
 
@@ -444,7 +442,7 @@ another level:
 	map tram.cin+jail_e3
 ======================
 */
-void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
+void SV_Map (qboolean attractloop, const char *levelstring, qboolean loadgame)
 {
 	char	level[MAX_QPATH];
 	char	*ch;
@@ -476,7 +474,7 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 		Cvar_Set ("nextserver", "");
 
 	//ZOID special hack for end game screen in coop mode
-	if (Cvar_VariableValue ("coop") && !Q_stricmp(level, "victory.pcx"))
+	if (Cvar_VariableValue ("coop") && !Q_stricmp( level, "victory.pcx" ) )
 		Cvar_Set ("nextserver", "gamemap \"*base1\"");
 
 	// if there is a $, use the remainder as a spawnpoint
@@ -504,7 +502,7 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 	//	if (!dedicated->value)
 		if (!dedicated->integer)
 			SCR_BeginLoadingPlaque ();			// for local system
-		SV_BroadcastCommand ("changing\n");
+		SV_BroadcastCommand ( "changing\n" );
 		SV_SpawnServer (level, spawnpoint, ss_cinematic, attractloop, loadgame);
 	}
 	else if (l > 4 && !strcmp (level+l-4, ".dm2") )
@@ -512,7 +510,7 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 	//	if (!dedicated->value)
 		if (!dedicated->integer)
 			SCR_BeginLoadingPlaque ();			// for local system
-		SV_BroadcastCommand ("changing\n");
+		SV_BroadcastCommand ( "changing\n" );
 		SV_SpawnServer (level, spawnpoint, ss_demo, attractloop, loadgame);
 	}
 	else if (l > 4 && !strcmp (level+l-4, ".pcx"))
@@ -520,7 +518,7 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 	//	if (!dedicated->value)
 		if (!dedicated->integer)
 			SCR_BeginLoadingPlaque ();			// for local system
-		SV_BroadcastCommand ("changing\n");
+		SV_BroadcastCommand ( "changing\n" );
 		SV_SpawnServer (level, spawnpoint, ss_pic, attractloop, loadgame);
 	}
 	else
@@ -528,11 +526,11 @@ void SV_Map (qboolean attractloop, char *levelstring, qboolean loadgame)
 	//	if (!dedicated->value)
 		if (!dedicated->integer)
 			SCR_BeginLoadingPlaque ();			// for local system
-		SV_BroadcastCommand ("changing\n");
+		SV_BroadcastCommand ( "changing\n" );
 		SV_SendClientMessages ();
 		SV_SpawnServer (level, spawnpoint, ss_game, attractloop, loadgame);
 		Cbuf_CopyToDefer ();
 	}
 
-	SV_BroadcastCommand ("reconnect\n");
+	SV_BroadcastCommand ( "reconnect\n" );
 }

@@ -46,31 +46,33 @@ SCRIPTED HUD PARSING
 Hud_NameForDrawItem
 ================
 */
-static char	hud_itemname_buf[MAX_QPATH+18];
-char *Hud_NameForDrawItem (hudDrawItem_t *drawItem)
+static char hud_itemname_buf[ MAX_QPATH + 18 ];
+char       *Hud_NameForDrawItem( hudDrawItem_t *drawItem )
 {
-	char	*temp, *typeName;
+	const char *temp;
+	char       *typeName;
 
-	if (!drawItem) {
+	if ( !drawItem )
+	{
 		typeName = "null drawItem";
 		return typeName;
 	}
 
-	if	(drawItem->type == HUD_DRAWPIC)
+	if ( drawItem->type == HUD_DRAWPIC )
 		temp = "pic drawItem";
-	else if (drawItem->type == HUD_DRAWSTRING)
+	else if ( drawItem->type == HUD_DRAWSTRING )
 		temp = "string drawItem";
-	else if	(drawItem->type == HUD_DRAWNUMBER)
+	else if ( drawItem->type == HUD_DRAWNUMBER )
 		temp = "number drawItem";
-	else if	(drawItem->type == HUD_DRAWBAR)
+	else if ( drawItem->type == HUD_DRAWBAR )
 		temp = "bar drawItem";
 	else
 		temp = "unknown drawItem";
 
-	if ( strlen(drawItem->name) )
-		Com_sprintf(hud_itemname_buf, sizeof(hud_itemname_buf), "%s '%s'", temp, drawItem->name);
+	if ( strlen( drawItem->name ) )
+		snprintf( hud_itemname_buf, sizeof( hud_itemname_buf ), "%s '%s'", temp, drawItem->name );
 	else
-		Com_sprintf(hud_itemname_buf, sizeof(hud_itemname_buf), "%s", temp);
+		snprintf( hud_itemname_buf, sizeof( hud_itemname_buf ), "%s", temp );
 
 	typeName = hud_itemname_buf;
 	return typeName;
@@ -126,21 +128,21 @@ qboolean Hud_Parse_SkipIfStat (hudSkipIfStat_t *skipIfStat, char **script, char 
 			return false;
 		}
 
-		if ( !Q_stricmp(tok, ">") )
+		if ( !Q_stricmp( tok, ">" ) )
 			skipIfStat->func[cmp] = HUD_GREATER;
-		else if ( !Q_stricmp(tok, "<") )
+		else if ( !Q_stricmp( tok, "<" ) )
 			skipIfStat->func[cmp] = HUD_LESS;
-		else if ( !Q_stricmp(tok, ">=") )
+		else if ( !Q_stricmp( tok, ">=" ) )
 			skipIfStat->func[cmp] = HUD_GEQUAL;
-		else if ( !Q_stricmp(tok, "<=") )
+		else if ( !Q_stricmp( tok, "<=" ) )
 			skipIfStat->func[cmp] = HUD_LEQUAL;
-		else if ( !Q_stricmp(tok, "==") )
+		else if ( !Q_stricmp( tok, "==" ) )
 			skipIfStat->func[cmp] = HUD_EQUAL;
-		else if ( !Q_stricmp(tok, "!=") )
+		else if ( !Q_stricmp( tok, "!=" ) )
 			skipIfStat->func[cmp] = HUD_NOTEQUAL;
-		else if ( !Q_stricmp(tok, "&") )
+		else if ( !Q_stricmp( tok, "&" ) )
 			skipIfStat->func[cmp] = HUD_AND;
-		else if ( !Q_stricmp(tok, "!&") || !Q_stricmp(tok, "&~"))
+		else if ( !Q_stricmp( tok, "!&" ) || !Q_stricmp( tok, "&~" ) )
 			skipIfStat->func[cmp] = HUD_NOTAND;
 		else {
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_Parse_SkipIfStat: unknown parameter '%s' for 'skipIfStat' in hud script %s\n", tok, cl_hudName);
@@ -156,7 +158,7 @@ qboolean Hud_Parse_SkipIfStat (hudSkipIfStat_t *skipIfStat, char **script, char 
 
 		cmp++;
 		tok = COM_ParseExt (script, false);
-		nextCmp = ( tok[0] && !Q_stricmp(tok, "&&") );
+		nextCmp = ( tok[0] && !Q_stricmp( tok, "&&" ) );
 
 	} while (nextCmp && cmp < HUD_SKIPIFSTAT_MAX_CMPS);
 	skipIfStat->numCmps = cmp;
@@ -778,7 +780,7 @@ qboolean Hud_ParseItem_StatFlash (hudDrawItem_t *drawItem, char **script, char *
 	if ( !drawItem || !script || !buffer )
 		return false;
 
-	if ( !Hud_Parse_Int(&drawItem->statFlash.stat, script, buffer, bufSize) || 
+	if ( !Hud_Parse_Int(&drawItem->statFlash.stat, script, buffer, bufSize) ||
 		 !Hud_Parse_Int(&drawItem->statFlash.bit, script, buffer, bufSize) ||
 		 !Hud_Parse_ColorVec(&drawItem->statFlash.color, script, buffer, bufSize) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItem_StatFlash: missing parameters for 'statFlash' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
@@ -1077,7 +1079,7 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script, char *buff
 		return false;
 	}
 
-	if ( !Q_stricmp(tok, "{") )
+	if ( !Q_stricmp( tok, "{" ) )
 	{
 		while ( (*script) < (buffer + bufSize) )
 		{
@@ -1086,7 +1088,7 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script, char *buff
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseDrawItem: no concluding '}' in %s in hud script %s\n", Hud_NameForDrawItem(drawItem), cl_hudName);
 				return false;
 			}
-			if ( !Q_stricmp(tok, "}") )
+			if ( !Q_stricmp( tok, "}" ) )
 				break;
 			if ( !Q_strcasecmp(tok, "name") )
 			{
@@ -1166,7 +1168,7 @@ qboolean Hud_ParseDrawItem (hudItemGroup_t *itemGroup, char **script, char *buff
 			else if ( !Q_strcasecmp(tok, "addColorRangeRel") )
 			{
 				if ( !Hud_ParseItem_ColorRange(drawItem, script, buffer, bufSize, HUD_RANGETYPE_RELATIVE) )
-					return false;				
+					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "colorRangeStat") )
 			{
@@ -1300,7 +1302,7 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script, char *buffer, int 
 		return false;
 	}
 
-	if ( !Q_stricmp(tok, "{") )
+	if ( !Q_stricmp( tok, "{" ) )
 	{
 		while ( (*script) < (buffer + bufSize) )
 		{
@@ -1309,7 +1311,7 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script, char *buffer, int 
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseItemGroup: no concluding '}' in 'itemGroup' in hud script %s\n", cl_hudName);
 				return false;
 			}
-			if ( !Q_stricmp(tok, "}") )
+			if ( !Q_stricmp( tok, "}" ) )
 				break;
 			if ( !Q_strcasecmp(tok, "name") ) {
 				tok = COM_ParseExt (script, true);
@@ -1324,7 +1326,7 @@ qboolean Hud_ParseItemGroup (hudDef_t *hudDef, char **script, char *buffer, int 
 			}
 			else if ( !Q_strcasecmp(tok, "variant") ) {
 				if ( !Hud_ParseItemGroup_Variant(itemGroup, script, buffer, bufSize) )
-					return false;				
+					return false;
 			}
 			else if ( !Q_strcasecmp(tok, "skipIfStat") ) {
 				if ( !Hud_ParseItemGroup_SkipIfStat(itemGroup, script, buffer, bufSize) )
@@ -1367,7 +1369,7 @@ qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script, char 
 		return false;
 	}
 
-	if ( !Q_stricmp(tok, "{") )
+	if ( !Q_stricmp( tok, "{" ) )
 	{
 		while ( (*script) < (buffer + bufSize) )
 		{
@@ -1376,7 +1378,7 @@ qboolean Hud_CountRenameItemDef (hudRenameSet_t *renameSet, char **script, char 
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_CountRenameItemDef: no concluding '}' in 'renameItemDef' in hud script %s\n", cl_hudName);
 				return false;
 			}
-			if ( !Q_stricmp(tok, "}") )
+			if ( !Q_stricmp( tok, "}" ) )
 				break;
 		}
 	}
@@ -1409,7 +1411,7 @@ void Hud_CountRenameItems (hudRenameSet_t *renameSet, char **script, char *buffe
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_CountRenameItems: no concluding '}' in 'renameSetDef' in hud script %s\n", cl_hudName);
 			return;
 		}
-		if ( !Q_stricmp(tok, "}") )
+		if ( !Q_stricmp( tok, "}" ) )
 			break;
 		if ( !Q_strcasecmp(tok, "name") ) {
 			tok = COM_ParseExt (&p, false);
@@ -1456,7 +1458,7 @@ qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script, char 
 		return false;
 	}
 
-	if ( !Q_stricmp(tok, "{") )
+	if ( !Q_stricmp( tok, "{" ) )
 	{
 		while ( (*script) < (buffer + bufSize) )
 		{
@@ -1465,7 +1467,7 @@ qboolean Hud_ParseRenameItemDef (hudRenameSet_t *renameSet, char **script, char 
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameItemDef: no concluding '}' in 'renameItemDef' in hud script %s\n", cl_hudName);
 				return false;
 			}
-			if ( !Q_stricmp(tok, "}") )
+			if ( !Q_stricmp( tok, "}" ) )
 				break;
 			if ( !Q_strcasecmp(tok, "oldName") )
 			{
@@ -1530,7 +1532,7 @@ qboolean Hud_ParseRenameSet (char **script, char *buffer, int bufSize)
 	renameSet = &cl_hudRenames[cl_numHudRenames++];
 
 	tok = COM_ParseExt (script, true);
-	if ( Q_stricmp(tok, "{") ) {
+	if ( Q_stricmp( tok, "{" ) ) {
 		Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: expected '{', found %s instead in hud script %s\n", tok, cl_hudName);
 		return false;
 	}
@@ -1547,7 +1549,7 @@ qboolean Hud_ParseRenameSet (char **script, char *buffer, int bufSize)
 			Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseRenameSet: no concluding '}' in 'renameSetDef' in hud script %s\n", cl_hudName);
 			return false;
 		}
-		if ( !Q_stricmp(tok, "}") )
+		if ( !Q_stricmp( tok, "}" ) )
 			break;
 		if ( !Q_strcasecmp(tok, "name") ) {
 			tok = COM_ParseExt (script, false);
@@ -1598,7 +1600,7 @@ qboolean Hud_ParseHud (char *buffer, int bufSize)
 		if ( !Q_strcasecmp(tok, "hudDef") )
 		{
 			tok = COM_ParseExt (&p, true);
-			if ( Q_stricmp(tok, "{") ) {
+			if ( Q_stricmp( tok, "{" ) ) {
 				Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseHud: expected '{', found %s instead in hud script %s\n", tok, cl_hudName);
 				return false;
 			}
@@ -1610,7 +1612,7 @@ qboolean Hud_ParseHud (char *buffer, int bufSize)
 					Com_Printf (S_COLOR_YELLOW"WARNING: Hud_ParseHud: no concluding '}' in 'hudDef' in hud script %s\n", cl_hudName);
 					return false;
 				}
-				if ( !Q_stricmp(tok, "}") )
+				if ( !Q_stricmp( tok, "}" ) )
 					break;
 				if ( !Q_strcasecmp(tok, "overridePath") ) {
 					tok = COM_ParseExt (&p, false);
@@ -1641,7 +1643,7 @@ qboolean Hud_ParseHud (char *buffer, int bufSize)
 			return false;
 		}
 	}
-	Com_sprintf (cl_hudDef.name, sizeof(cl_hudDef.name), cl_hudName);
+	snprintf (cl_hudDef.name, sizeof(cl_hudDef.name), cl_hudName);
 	if ( !strlen(cl_hudDef.overridePath) )
 		Q_strncpyz (cl_hudDef.overridePath, sizeof(cl_hudDef.overridePath), cl_hudDef.name);
 	return true;
@@ -1724,7 +1726,7 @@ void CL_LoadHud (qboolean startup)
 		Cvar_ForceSetToDefault ("cl_hud");
 		return;
 	}
-	
+
 	// catch same hud currently loaded
 	if ( !Q_strcasecmp(hudName, cl_hudDef.name) ) {
 		Com_Printf ("CL_LoadHud: HUD %s already loaded\n", cl_hudDef.name);
@@ -1732,7 +1734,7 @@ void CL_LoadHud (qboolean startup)
 	}
 
 	// Load the file
-	Com_sprintf (fileName, sizeof(fileName), "scripts/huds/%s.hud", hudName);
+	snprintf (fileName, sizeof(fileName), "scripts/huds/%s.hud", hudName);
 	bufSize = FS_LoadFile (fileName, (void **)&buffer);
 	if ( !buffer )
 	{	// failed to load, keep scripted hud if already loaded
@@ -1792,7 +1794,7 @@ void CL_SetHud (const char *value)
 {
 	if ( !value || (strlen(value) == 0) )
 		return;
-	
+
 	Cvar_ForceSet ("cl_hud", (char *)value);
 	CL_LoadHud (false);
 }
@@ -1804,7 +1806,7 @@ CL_SetDefaultHud
 ================
 */
 void CL_SetDefaultHud (void)
-{	
+{
 	Cvar_ForceSetToDefault ("cl_hud");
 	CL_LoadHud (false);
 }
@@ -1827,7 +1829,7 @@ void CL_SetHudVariant (void)
 	// check cl_hud_variant cvar first, then fall back to CS_HUDVARIANT
 	cvar_len = (int)strlen(cvarString);
 	cs_len = (int)strlen(cl.configstrings[CS_HUDVARIANT]);
-	if ( (cvar_len > 0) && (Q_stricmp(cvarString, "default") != 0) && (Q_stricmp(cvarString, "*") != 0) )
+	if ( (cvar_len > 0) && (Q_stricmp( cvarString, "default" ) != 0) && (Q_stricmp( cvarString, "*" ) != 0) )
 	{
 		cl_hudVariant = cvarString;
 		// skip leading *, allows forcing "default" if CS_HUDVARIANT contains a string other than "default"
@@ -2021,7 +2023,7 @@ char *Hud_GetRenamedPic (char *renameSetName, char *picName)
 			if ( (strlen(oldPrefix) > 0) && (strlen(newPrefix) > 0) )
 			{
 			//	Com_Printf ("Hud_GetRenamedPic: Wildcard match: %s in %s to %s (%s -> %s)\n", oldName, picName, newName, oldPrefix, newPrefix);
-				Com_sprintf(renameBuf, sizeof(renameBuf), "%s%s", newPrefix, picName + strlen(oldPrefix));
+				snprintf(renameBuf, sizeof(renameBuf), "%s%s", newPrefix, picName + strlen(oldPrefix));
 				newPic = renameBuf;
 				wc_renamed = true;
 
@@ -2161,12 +2163,12 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 
 		// renamed pics implicitly use the override path
 		if ( (drawItem->flags & DSF_OVERRIDEPATH) || (pic != orgPic) )
-			Com_sprintf (shader, sizeof(shader), "/gfx/huds/%s/%s.pcx", cl_hudDef.overridePath, pic);
+			snprintf (shader, sizeof(shader), "/gfx/huds/%s/%s.pcx", cl_hudDef.overridePath, pic);
 		else
-			Com_sprintf (shader, sizeof(shader), "%s", pic);
+			snprintf (shader, sizeof(shader), "%s", pic);
 	}
 	else
-		Com_sprintf (shader, sizeof(shader), "/%s.pcx", drawItem->shader);
+		snprintf (shader, sizeof(shader), "/%s.pcx", drawItem->shader);
 
 	if (drawItem->type == HUD_DRAWPIC)
 	{	// no modding of tex coords for existing HUD pics (.pcx is FUBARed)
@@ -2200,7 +2202,7 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 			{	FlipTexCoord (texCoord[1]);	FlipTexCoord (texCoord[3]);	}
 
 			if ( (drawItem->flags & DSF_MASKSHADER) && strlen(drawItem->shaderMinus) > 0 ) {
-				Com_sprintf (shaderMinus, sizeof(shaderMinus), "/%s.pcx", drawItem->shaderMinus);
+				snprintf (shaderMinus, sizeof(shaderMinus), "/%s.pcx", drawItem->shaderMinus);
 			//	SCR_DrawMaskedPic (drawItem->rect[0], drawItem->rect[1], drawItem->rect[2], drawItem->rect[3],
 			//						offset, texCoord, drawItem->scroll, drawItem->scrnAlignment, false, color, shader, shaderMinus);
 				SCR_DrawPicFull (drawItem->rect[0], drawItem->rect[1], drawItem->rect[2], drawItem->rect[3],
@@ -2284,7 +2286,7 @@ void Hud_DrawItem (hudDrawItem_t *drawItem)
 		l = (int)strlen(num);
 		l = min(l, width);
 
-		Com_sprintf (shaderMinus, sizeof(shaderMinus), "/%s.pcx", drawItem->shaderMinus);
+		snprintf (shaderMinus, sizeof(shaderMinus), "/%s.pcx", drawItem->shaderMinus);
 		if (drawItem->flags & DSF_LEFT)
 			x = drawItem->rect[0];
 		else if  (drawItem->flags & DSF_CENTER)

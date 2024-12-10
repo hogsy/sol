@@ -1185,8 +1185,8 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 //	else
 		rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 
-	if ( !strncmp(self->classname, "monster_", 8) && (self->spawnflags & SF_MONSTER_SPECIAL)
-		&& (strcmp(self->classname, "monster_turret") != 0) )
+	if ( !strncmp(self->classname.c_str(), "monster_", 8) && (self->spawnflags & SF_MONSTER_SPECIAL)
+		&& (strcmp(self->classname.c_str(), "monster_turret") != 0) )
 		homing = true;
 	// Knightmare- use different skin, not different model, for homing rocket
 	if (home_target || (self->client && self->client->pers.fire_mode) || homing)
@@ -1497,7 +1497,7 @@ void bfg_think (edict_t *self)
 		if (!ent->takedamage)
 			continue;
 
-		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname, "misc_explobox") != 0))
+		if (!(ent->svflags & SVF_MONSTER) && (!ent->client) && (strcmp(ent->classname.c_str(), "misc_explobox") != 0))
 			continue;
 
 

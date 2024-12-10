@@ -58,12 +58,12 @@ void UI_PushMenu (menuFramework_s *menu)
 				if (menu->cantOpenMessage)
 					UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, menu->cantOpenMessage);
 				else
-					UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, NULL);
+					UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, nullptr );
 			}
 			return;
 		}
 		if (ui_menudepth > 0 && ui_menuState.menu)
-			UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, NULL);
+			UI_SetMenuCurrentItemStatusBar (ui_menuState.menu, nullptr );
 	}
 
 	// set item values for menu
@@ -107,7 +107,7 @@ void UI_PushMenu (menuFramework_s *menu)
 
 	// if menu has an on open function, call it now
 	if (menu->onOpenFunc)
-		menu->onOpenFunc (NULL);
+		menu->onOpenFunc ( nullptr );
 }
 
 
@@ -140,7 +140,7 @@ void UI_PopMenu (void)
 	if (ui_menudepth < 1)
 		Com_Error (ERR_FATAL, "UI_PopMenu: depth < 1");
 
-	UI_SetMenuStatusBar (ui_menuState.menu, NULL);	// Clear status bar
+	UI_SetMenuStatusBar (ui_menuState.menu, nullptr );	// Clear status bar
 	ui_menudepth--;
 
 	ui_menuState.menu = ui_layers[ui_menudepth].menu;
@@ -204,7 +204,7 @@ void UI_LoadMenuBitFlags (menuFramework_s *menu)
 		return;
 
 	menu->bitFlags = Cvar_VariableValue(menu->flagCvar);
-	Com_sprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
+	snprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
 }
 
 
@@ -225,7 +225,7 @@ void UI_SetMenuBitFlags (menuFramework_s *menu, int bit, qboolean set)
 			menu->bitFlags &= ~bit;
 	}
 	Cvar_SetValue (menu->flagCvar, menu->bitFlags);
-	Com_sprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
+	snprintf (menu->bitFlags_statusbar, sizeof(menu->bitFlags_statusbar), "%s = %d", menu->flagCvar, menu->bitFlags);
 }
 
 
@@ -362,10 +362,8 @@ UI_RefreshItemsForMenu
 Refreshes models for the given menu.
 =================
 */
-void UI_RefreshItemsForMenu (menuFramework_s *menu)
+void UI_RefreshItemsForMenu ( const menuFramework_s *menu)
 {
-	int				i;
-	menuCommon_s	*item;
 
 	if (!menu)	return;
 
@@ -374,9 +372,9 @@ void UI_RefreshItemsForMenu (menuFramework_s *menu)
 	if ( menu->isPopup && (ui_menudepth > 1) && ui_layers[ui_menudepth-1].menu )
 		UI_RefreshItemsForMenu (ui_layers[ui_menudepth-1].menu);
 
-	for (i=0; i<menu->nitems; i++)
+	for ( int i = 0; i<menu->nitems; i++)
 	{
-		item = menu->items[i];
+		auto *item = static_cast< menuCommon_s * >( menu->items[ i ] );
 		if (!item)	continue;
 		UI_ReregisterMenuItem (item);
 	}
@@ -412,16 +410,13 @@ Loads values for all menu items
 from linked cvars.
 =================
 */
-void UI_SetMenuItemValues (menuFramework_s *menu)
+void UI_SetMenuItemValues ( const menuFramework_s *menu)
 {
-	int				i;
-	menuCommon_s	*item;
-
 	if (!menu)	return;
 
-	for (i=0; i<menu->nitems; i++)
+	for ( int i = 0; i<menu->nitems; i++)
 	{
-		item = menu->items[i];
+		auto *item = static_cast< menuCommon_s * >( menu->items[ i ] );
 		if (!item)	continue;
 		UI_SetMenuItemValue (item);
 	}
@@ -518,7 +513,7 @@ const char *UI_GetApplyChangesMessage (int line)
 			&& (strlen(curMenu->applyChangesMessage[1]) > 0))
 			return curMenu->applyChangesMessage[1];
 		else
-			return NULL;
+			return nullptr;
 	}
 	else if (line == 2) {
 		if (curMenu && curMenu->applyChangesMessage[2]
@@ -559,7 +554,6 @@ slot.
 */
 void UI_AdjustMenuCursor (menuFramework_s *menu, int dir)
 {
-	int				loopCount;
 	menuCommon_s	*citem;
 
 	// check if menu only has one item
@@ -571,7 +565,7 @@ void UI_AdjustMenuCursor (menuFramework_s *menu, int dir)
 	//
 	if (menu->cursor >= 0 && menu->cursor < menu->nitems)
 	{
-		if ( (citem = UI_ItemAtMenuCursor(menu)) != 0 )
+		if ( (citem = static_cast< menuCommon_s * >( UI_ItemAtMenuCursor( menu ) ) ) != nullptr )
 		{
 			if ( UI_ItemIsValidCursorPosition(citem) )
 				return;
@@ -582,10 +576,10 @@ void UI_AdjustMenuCursor (menuFramework_s *menu, int dir)
 	// it's not in a valid spot, so crawl in the direction indicated until we
 	// find a valid spot
 	//
-	loopCount = 0;
-	while (1)
+	int loopCount = 0;
+	while (true)
 	{
-		if ( (citem = UI_ItemAtMenuCursor(menu)) != 0 )
+		if ( (citem = static_cast< menuCommon_s * >( UI_ItemAtMenuCursor( menu ) ) ) != nullptr )
 			if ( UI_ItemIsValidCursorPosition(citem) )
 				break;
 		menu->cursor += dir;
@@ -626,8 +620,8 @@ void UI_DrawMenu (menuFramework_s *menu)
 		UI_DrawMenu (ui_layers[ui_menudepth-1].menu);
 
 	// update cursor item coords
-	if ( ((cursorItem = menu->cursorItem) != NULL)
-		&& ((item = UI_ItemAtMenuCursor (menu)) != NULL) )
+	if ( ((cursorItem = static_cast< menuCommon_s * >( menu->cursorItem ) ) != nullptr )
+		&& ((item = static_cast< menuCommon_s * >( UI_ItemAtMenuCursor( menu ) ) ) != nullptr ) )
 	{
 		if (cursorItem->isCursorItem) {
 			cursorItem->x = item->x + cursorItem->cursorItemOffset[0];
@@ -643,17 +637,15 @@ void UI_DrawMenu (menuFramework_s *menu)
 	for (i = 0; i < menu->nitems; i++)
 	{
 		// cursor items can only be drawn if specified by the menu
-		if ( ((menuCommon_s *)menu->items[i])->isCursorItem
+		if ( static_cast< menuCommon_s * >( menu->items[ i ] )->isCursorItem
 			&& (menu->cursorItem != menu->items[i]) )
 			continue;
 
 		if (ui_debug_itembounds->integer)
 		{
-			float	w, h;
-
-			item = menu->items[i];
-			w = item->botRight[0] - item->topLeft[0];
-			h = item->botRight[1] - item->topLeft[1];
+			item = static_cast< menuCommon_s * >( menu->items[ i ] );
+			float w = item->botRight[ 0 ] - item->topLeft[ 0 ];
+			float h = item->botRight[ 1 ] - item->topLeft[ 1 ];
 
 			// add length and height of current item
 			UI_SetMenuItemDynamicSize (menu->items[i]);
@@ -662,7 +654,7 @@ void UI_DrawMenu (menuFramework_s *menu)
 
 			if ( UI_ItemHasMouseBounds(item) )
 				UI_DrawFill (item->topLeft[0], item->topLeft[1], w, h, item->scrAlign, false, 128,128,128,128);
-			item = NULL;
+			item = nullptr;
 		}
 
 		UI_DrawMenuItem (menu->items[i]);
@@ -685,7 +677,7 @@ void UI_DrawMenu (menuFramework_s *menu)
 	// check for mouseovers
 	UI_Mouseover_Check (menu);
 
-	item = UI_ItemAtMenuCursor(menu);
+	item = static_cast< menuCommon_s * >( UI_ItemAtMenuCursor( menu ) );
 
 	if (!hasCursorItem)
 	{
@@ -699,8 +691,8 @@ void UI_DrawMenu (menuFramework_s *menu)
 		}
 		else if ( item && (item->type != MTYPE_FIELD) && !(item->flags & QMF_NOINTERACTION) )
 		{
-			char		*cursor;
-			int			cursorX, cursorOscillate = 0;
+			const char		*cursor;
+			int              cursorOscillate = 0;
 			qboolean	oscillate = false;
 
 			if ( (menu->cursorOscillate_amplitude != 0.0f) && (menu->cursorOscillate_timeScale != 0.0f) ) {
@@ -708,14 +700,14 @@ void UI_DrawMenu (menuFramework_s *menu)
 				cursorOscillate = (int)(menu->cursorOscillate_amplitude * sin(anglemod(cl.time * menu->cursorOscillate_timeScale)));
 			}
 
-			if ( (item->type == MTYPE_KEYBIND) && ((menuKeyBind_s *)item)->grabBind )
+			if ( (item->type == MTYPE_KEYBIND) && reinterpret_cast< menuKeyBind_s * >( item )->grabBind )
 				cursor = UI_ITEMCURSOR_KEYBIND_PIC;
 			else if ( oscillate )
 				cursor = UI_ITEMCURSOR_DEFAULT_PIC;	// oscillating cursor doesn't blink
 			else
 				cursor = ((int)(Sys_Milliseconds()/250)&1) ? UI_ITEMCURSOR_DEFAULT_PIC : UI_ITEMCURSOR_BLINK_PIC;
 
-			cursorX = menu->x + item->x + item->cursor_offset;
+			int cursorX = menu->x + item->x + item->cursor_offset;
 			if ( (item->flags & QMF_LEFT_JUSTIFY) && (item->type == MTYPE_ACTION) )
 				cursorX -= 4*MENU_FONT_SIZE;
 
@@ -780,31 +772,31 @@ UI_DefaultMenuKey
 */
 const char *UI_DefaultMenuKey (menuFramework_s *menu, int key)
 {
-	const char		*sound = NULL;
+	const char		*sound = nullptr;
 	menuCommon_s	*item;
 
 	if ( menu )
 	{
-		if ( ( item = UI_ItemAtMenuCursor( menu ) ) != 0 )
+		if ( ( item = static_cast< menuCommon_s * >( UI_ItemAtMenuCursor( menu ) ) ) != 0 )
 		{
 			if ( item->type == MTYPE_FIELD )
 			{
-				if ( UI_MenuField_Key((menuField_s *) item, key) )
-					return NULL;
+				if ( UI_MenuField_Key( reinterpret_cast< menuField_s * >( item ), key) )
+					return nullptr;
 			}
 			else if (item->type == MTYPE_KEYBIND)
 			{
-				if ( (sound = UI_MenuKeyBind_Key((menuKeyBind_s *)item, key)) != ui_menu_null_sound )
+				if ( (sound = UI_MenuKeyBind_Key( reinterpret_cast< menuKeyBind_s * >( item ), key)) != ui_menu_null_sound )
 					return sound;
 				else
-					sound = NULL;
+					sound = nullptr;
 			}
 			else if (item->type == MTYPE_KEYBINDLIST)
 			{
-				if ( (sound = UI_MenuKeyBindList_Key((menuKeyBindList_s *)item, key)) != ui_menu_null_sound )
+				if ( (sound = UI_MenuKeyBindList_Key( reinterpret_cast< menuKeyBindList_s * >( item ), key)) != ui_menu_null_sound )
 					return sound;
 				else
-					sound = NULL;
+					sound = nullptr;
 			}
 		}
 	}
@@ -940,5 +932,5 @@ const char *UI_QuitMenuKey (menuFramework_s *menu, int key)
 	default:
 		break;
 	}
-	return NULL;
+	return nullptr;
 }

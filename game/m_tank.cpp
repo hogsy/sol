@@ -927,7 +927,7 @@ void SP_monster_tank (edict_t *self)
 	}
 
 	// Lazarus: special purpose skins
-	if (strcmp(self->classname, "monster_tank_commander") == 0)
+	if (strcmp(self->classname.c_str(), "monster_tank_commander") == 0)
 		self->s.skinnum = 2;
 	if ( self->style )
 	{
@@ -953,7 +953,7 @@ void SP_monster_tank (edict_t *self)
 	gi.soundindex ("tank/tnkatk2e.wav");
 	gi.soundindex ("tank/tnkatck3.wav");
 
-	if (strcmp(self->classname, "monster_tank_commander") == 0)
+	if (strcmp(self->classname.c_str(), "monster_tank_commander") == 0)
 	{
 		// Lazarus: mapper-configurable health
 		if (!self->health)

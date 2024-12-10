@@ -3121,9 +3121,9 @@ qboolean QGL_Init (const char *dllname)
 		float g;
 
 		g = 2.00 * ( 0.8 - ( vid_gamma->value - 0.5 ) ) + 1.0F;
-		Com_sprintf( envbuffer, sizeof(envbuffer), "SSTV2_GAMMA=%f", g );
+		snprintf( envbuffer, sizeof(envbuffer), "SSTV2_GAMMA=%f", g );
 		putenv( envbuffer );
-		Com_sprintf( envbuffer, sizeof(envbuffer), "SST_GAMMA=%f", g );
+		snprintf( envbuffer, sizeof(envbuffer), "SST_GAMMA=%f", g );
 		putenv( envbuffer );
 	}
 
@@ -3150,7 +3150,7 @@ qboolean QGL_Init (const char *dllname)
 	SDL_FreeSurface(icon);
 #endif
 	glw_state.glContext = SDL_GL_CreateContext(glw_state.glWindow);
-	SDL_SetRelativeMouseMode (SDL_TRUE);
+	SDL_SetRelativeMouseMode (SDL_FALSE);
 
 	glConfig.allowCDS = true;
 	glConfig.have_stencil = true;
@@ -3580,7 +3580,7 @@ void GLimp_EnableLogging (qboolean enable)
 
 			asctime( newtime );
 
-			Com_sprintf( buffer, sizeof(buffer), "%s/gl.log", FS_Savegamedir() );  	// was FS_Gamedir()
+			snprintf( buffer, sizeof(buffer), "%s/gl.log", FS_Savegamedir() );  	// was FS_Gamedir()
 			glw_state.log_fp = fopen( buffer, "wt" );
 
 			fprintf( glw_state.log_fp, "%s\n", asctime( newtime ) );

@@ -95,7 +95,7 @@ Cbuf_AddText
 Adds command text at the end of the buffer
 ============
 */
-void Cbuf_AddText (char *text)
+void Cbuf_AddText (const char *text)
 {
 	int		l;
 	
@@ -133,7 +133,7 @@ void Cbuf_InsertText (char *text)
 		SZ_Clear (&cmd_text);
 	}
 	else
-		temp = NULL;	// shut up compiler
+		temp = nullptr;	// shut up compiler
 		
 // add the entire text of the file
 	Cbuf_AddText (text);
@@ -516,11 +516,10 @@ void Cmd_Alias_f (void)
 
 typedef struct cmd_function_s
 {
-	struct cmd_function_s	*next;
-	char					*name;
-	xcommand_t				function;
+	struct cmd_function_s *next;
+	std::string            name;
+	xcommand_t             function;
 } cmd_function_t;
-
 
 static	int			cmd_argc;
 static	char		*cmd_argv[MAX_STRING_TOKENS];
@@ -585,7 +584,7 @@ char *Cmd_MacroExpandString (char *text)
 	if (len >= MAX_STRING_CHARS)
 	{
 		Com_Printf ("Line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
-		return NULL;
+		return nullptr;
 	}
 
 	count = 0;
@@ -611,7 +610,7 @@ char *Cmd_MacroExpandString (char *text)
 		if (len >= MAX_STRING_CHARS)
 		{
 			Com_Printf ("Expanded line exceeded %i chars, discarded.\n", MAX_STRING_CHARS);
-			return NULL;
+			return nullptr;
 		}
 
 		strncpy (temporary, scan, i);
@@ -628,14 +627,14 @@ char *Cmd_MacroExpandString (char *text)
 		if (++count == 100)
 		{
 			Com_Printf ("Macro expansion loop, discarded.\n");
-			return NULL;
+			return nullptr;
 		}
 	}
 
 	if (inquote)
 	{
 		Com_Printf ("Line has unmatched quote, discarded.\n");
-		return NULL;
+		return nullptr;
 	}
 
 	return scan;
@@ -734,31 +733,31 @@ void Cmd_TokenizeString (char *text, qboolean macroExpand)
 Cmd_AddCommand
 ============
 */
-void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
+void Cmd_AddCommand( const char *cmd_name, xcommand_t function )
 {
-	cmd_function_t	*cmd;
-	
-// fail if the command is a variable name
-	if (Cvar_VariableString(cmd_name)[0])
+	cmd_function_t *cmd;
+
+	// fail if the command is a variable name
+	if ( Cvar_VariableString( cmd_name )[ 0 ] )
 	{
-		Com_Printf ("Cmd_AddCommand: %s already defined as a var\n", cmd_name);
+		Com_Printf( "Cmd_AddCommand: %s already defined as a var\n", cmd_name );
 		return;
 	}
-	
-// fail if the command already exists
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
+
+	// fail if the command already exists
+	for ( cmd = cmd_functions; cmd; cmd = cmd->next )
 	{
-		if (!strcmp (cmd_name, cmd->name))
+		if ( cmd->name == cmd_name )
 		{
-			Com_Printf ("Cmd_AddCommand: %s already defined\n", cmd_name);
+			Com_Printf( "Cmd_AddCommand: %s already defined\n", cmd_name );
 			return;
 		}
 	}
 
-	cmd = static_cast< cmd_function_t * >( Z_Malloc( sizeof( cmd_function_t ) ) );
-	cmd->name = cmd_name;
+	cmd           = static_cast< cmd_function_t * >( Z_Malloc( sizeof( cmd_function_t ) ) );
+	cmd->name     = cmd_name;
 	cmd->function = function;
-	cmd->next = cmd_functions;
+	cmd->next     = cmd_functions;
 	cmd_functions = cmd;
 }
 
@@ -767,20 +766,18 @@ void	Cmd_AddCommand (char *cmd_name, xcommand_t function)
 Cmd_RemoveCommand
 ============
 */
-void	Cmd_RemoveCommand (char *cmd_name)
+void	Cmd_RemoveCommand ( const char *cmd_name )
 {
-	cmd_function_t	*cmd, **back;
-
-	back = &cmd_functions;
-	while (1)
+	cmd_function_t **back = &cmd_functions;
+	while (true)
 	{
-		cmd = *back;
+		cmd_function_t *cmd = *back;
 		if (!cmd)
 		{
 			Com_Printf ("Cmd_RemoveCommand: %s not added\n", cmd_name);
 			return;
 		}
-		if (!strcmp (cmd_name, cmd->name))
+		if (!strcmp (cmd_name, cmd->name.c_str()))
 		{
 			*back = cmd->next;
 			Z_Free (cmd);
@@ -795,13 +792,11 @@ void	Cmd_RemoveCommand (char *cmd_name)
 Cmd_Exists
 ============
 */
-qboolean	Cmd_Exists (char *cmd_name)
+qboolean	Cmd_Exists ( const char *cmd_name)
 {
-	cmd_function_t	*cmd;
-
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
+	for ( const cmd_function_t *cmd = cmd_functions ; cmd ; cmd=cmd->next)
 	{
-		if (!strcmp (cmd_name,cmd->name))
+		if (!strcmp (cmd_name,cmd->name.c_str()))
 			return true;
 	}
 
@@ -849,57 +844,58 @@ Cmd_CompleteCommand
 }*/
 
 // Knightmare - added command auto-complete
-char			retval[256];
-char *Cmd_CompleteCommand (char *partial)
+char        retval[ 256 ];
+const char *Cmd_CompleteCommand( const char *partial )
 {
 	cmd_function_t	*cmd;
-	int				len,i,o,p;
+	int                  i;
 	cmdalias_t		*a;
 	cvar_t			*cvar;
-	char			*pmatch[1024];
+	const char			*pmatch[1024];
 	qboolean		diff = false;
 	
-	len = (int)strlen(partial);
-	
+	int len = ( int ) strlen( partial );
 	if (!len)
-		return NULL;
+		return nullptr;
 		
 // check for exact match
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
-		if (!Q_stricmp (partial,cmd->name))
-			return cmd->name;
+		if (!Q_strcasecmp (partial,cmd->name.c_str()))
+			return cmd->name.c_str();
 	for (a=cmd_alias ; a ; a=a->next)
-		if (!Q_stricmp (partial, a->name))
+		if (!Q_strcasecmp (partial, a->name))
 			return a->name;
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!Q_stricmp (partial,cvar->name))
+		if (!Q_strcasecmp (partial,cvar->name))
 			return cvar->name;
 
 	for (i=0; i<1024; i++)
-		pmatch[i]=NULL;
+		pmatch[i] = nullptr;
 	i=0;
 
 // check for partial match
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	//	if (!_strnicmp (partial, cmd->name, len)) {
-		if (!Q_strncasecmp (partial, cmd->name, len)) {
-			pmatch[i]=cmd->name;
+		if (!Q_strncasecmp (partial, cmd->name.c_str(), len)) {
+			pmatch[i]=cmd->name.c_str();
 			i++;
 		}
 	for (a=cmd_alias ; a ; a=a->next)
 	//	if (!_strnicmp (partial, a->name, len)) {
-		if (!Q_strncasecmp (partial, a->name, len)) {
+		if (!Q_strncasecmp ( partial, a->name, len ) ) {
 			pmatch[i]=a->name;
 			i++;
 		}
 	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
 	//	if (!_strnicmp (partial, cvar->name, len)) {
-		if (!Q_strncasecmp (partial, cvar->name, len)) {
+		if (!Q_strncasecmp ( partial, cvar->name, len ) ) {
 			pmatch[i]=cvar->name;
 			i++;
 		}
 
 	if (i) {
+		int p;
+		int o;
 		if (i == 1)
 			return pmatch[0];
 
@@ -925,24 +921,20 @@ char *Cmd_CompleteCommand (char *partial)
 		return retval;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-qboolean Cmd_IsComplete (char *command)
+qboolean Cmd_IsComplete ( const char *command)
 {
-	cmd_function_t	*cmd;
-	cmdalias_t		*a;
-	cvar_t			*cvar;
-			
-// check for exact match
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
-		if (!Q_stricmp (command,cmd->name))
+	// check for exact match
+	for ( const cmd_function_t *cmd = cmd_functions ; cmd ; cmd=cmd->next)
+		if (!Q_strcasecmp (command,cmd->name.c_str()))
 			return true;
-	for (a=cmd_alias ; a ; a=a->next)
-		if (!Q_stricmp (command, a->name))
+	for ( const cmdalias_t *a = cmd_alias ; a ; a=a->next)
+		if (!Q_strcasecmp (command, a->name))
 			return true;
-	for (cvar=cvar_vars ; cvar ; cvar=cvar->next)
-		if (!Q_stricmp (command,cvar->name))
+	for ( const cvar_t *cvar = cvar_vars ; cvar ; cvar=cvar->next)
+		if (!Q_strcasecmp (command,cvar->name))
 			return true;
 
 	return false;
@@ -970,7 +962,7 @@ void	Cmd_ExecuteString (char *text)
 	// check functions
 	for (cmd=cmd_functions ; cmd ; cmd=cmd->next)
 	{
-		if (!Q_strcasecmp (cmd_argv[0],cmd->name))
+		if (!Q_strcasecmp (cmd_argv[0],cmd->name.c_str()))
 		{
 			if (!cmd->function)
 			{	// forward to server command
@@ -1010,15 +1002,13 @@ void	Cmd_ExecuteString (char *text)
 Cmd_List_f
 ============
 */
-void Cmd_List_f (void)
+void Cmd_List_f()
 {
-	cmd_function_t	*cmd;
-	int				i;
+	int i = 0;
+	for ( cmd_function_t *cmd = cmd_functions; cmd; cmd = cmd->next, i++ )
+		Com_Printf( "%s\n", cmd->name.c_str() );
 
-	i = 0;
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next, i++)
-		Com_Printf ("%s\n", cmd->name);
-	Com_Printf ("%i commands\n", i);
+	Com_Printf( "%i commands\n", i );
 }
 
 /*
@@ -1026,15 +1016,15 @@ void Cmd_List_f (void)
 Cmd_Init
 ============
 */
-void Cmd_Init (void)
+void Cmd_Init()
 {
-//
-// register our commands
-//
-	Cmd_AddCommand ("cmdlist",Cmd_List_f);
-	Cmd_AddCommand ("exec",Cmd_Exec_f);
-	Cmd_AddCommand ("echo",Cmd_Echo_f);
-	Cmd_AddCommand ("alias",Cmd_Alias_f);
-	Cmd_AddCommand ("wait", Cmd_Wait_f);
+	//
+	// register our commands
+	//
+	Cmd_AddCommand( "cmdlist", Cmd_List_f );
+	Cmd_AddCommand( "exec", Cmd_Exec_f );
+	Cmd_AddCommand( "echo", Cmd_Echo_f );
+	Cmd_AddCommand( "alias", Cmd_Alias_f );
+	Cmd_AddCommand( "wait", Cmd_Wait_f );
 }
 

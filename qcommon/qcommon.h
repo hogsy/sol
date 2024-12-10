@@ -245,8 +245,8 @@ typedef struct sizebuf_s
 void SZ_Init (sizebuf_t *buf, byte *data, int length);
 void SZ_Clear (sizebuf_t *buf);
 void *SZ_GetSpace (sizebuf_t *buf, int length);
-void SZ_Write (sizebuf_t *buf, void *data, int length);
-void SZ_Print (sizebuf_t *buf, char *data);	// strcats onto the sizebuf
+void SZ_Write (sizebuf_t *buf, const void *data, int length);
+void SZ_Print (sizebuf_t *buf, const char *data);	// strcats onto the sizebuf
 
 //============================================================================
 
@@ -262,7 +262,7 @@ void MSG_WriteShort (sizebuf_t *sb, int c);
 void MSG_WriteLong (sizebuf_t *sb, int c);
 void MSG_WriteFloat (sizebuf_t *sb, float f);
 void MSG_WriteFloatAsShort (sizebuf_t *sb, float f);	// Knightmare added
-void MSG_WriteString (sizebuf_t *sb, char *s);
+void MSG_WriteString (sizebuf_t *sb, const char *s);
 void MSG_WriteCoord (sizebuf_t *sb, float f);
 void MSG_WritePos (sizebuf_t *sb, vec3_t pos);
 void MSG_WriteAngle8 (sizebuf_t *sb, float f);
@@ -325,13 +325,13 @@ extern	float	LittleFloat (float l);
 int	COM_Argc (void);
 char *COM_Argv (int arg);	// range and null checked
 void COM_ClearArgv (int arg);
-int COM_CheckParm (char *parm);
+int COM_CheckParm ( const char *parm);
 void COM_AddParm (char *parm);
 
 void COM_Init (void);
 void COM_InitArgv (int argc, char **argv);
 
-char *CopyString (char *in);
+char *CopyString (const char *in);
 
 void StripHighBits (char *string, int highbits);
 void ExpandNewLines (char *string);
@@ -347,7 +347,7 @@ char *Com_ParseSteamLibraryFolders (const char *fileContents, size_t contentsLen
 
 //============================================================================
 
-void Info_Print (char *s);
+void Info_Print ( const char *s);
 
 
 /* crc.h */
@@ -598,7 +598,7 @@ The game starts with a Cbuf_AddText ("exec quake.rc\n"); Cbuf_Execute ();
 void Cbuf_Init (void);
 // allocates an initial text buffer that will grow as needed
 
-void Cbuf_AddText (char *text);
+void Cbuf_AddText (const char *text);
 // as new commands are generated from the console or keybindings,
 // the text is added to the end of the command buffer.
 
@@ -642,18 +642,18 @@ typedef void (*xcommand_t) (void);
 
 void	Cmd_Init (void);
 
-void	Cmd_AddCommand (char *cmd_name, xcommand_t function);
+void	Cmd_AddCommand ( const char *cmd_name, xcommand_t function );
 // called by the init functions of other parts of the program to
 // register commands and functions to call for them.
 // The cmd_name is referenced later, so it should not be in temp memory
 // if function is NULL, the command will be forwarded to the server
 // as a clc_stringcmd instead of executed locally
-void	Cmd_RemoveCommand (char *cmd_name);
+void	Cmd_RemoveCommand ( const char *cmd_name );
 
-qboolean Cmd_Exists (char *cmd_name);
+qboolean Cmd_Exists ( const char *cmd_name);
 // used by the cvar code to check for cvar / command name overlap
 
-char 	*Cmd_CompleteCommand (char *partial);
+const char *Cmd_CompleteCommand( const char *partial );
 // attempts to match a partial command for automatic command line completion
 // returns NULL if nothing fits
 
@@ -701,67 +701,67 @@ interface from being ambiguous.
 
 extern	cvar_t	*cvar_vars;
 
-cvar_t *Cvar_Get (char *var_name, char *value, int flags);
+cvar_t *Cvar_Get ( const char *var_name, const char *value, int flags );
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
 
-cvar_t 	*Cvar_Set (char *var_name, char *value);
+cvar_t 	*Cvar_Set ( const char *var_name, const char *value);
 // will create the variable if it doesn't exist
 
-cvar_t *Cvar_ForceSet (char *var_name, char *value);
+cvar_t *Cvar_ForceSet ( const char *var_name, const char *value);
 // will set the variable even if NOSET or LATCH
 
-cvar_t 	*Cvar_FullSet (char *var_name, char *value, int flags);
+cvar_t 	*Cvar_FullSet ( const char *var_name, const char *value, int flags);
 
 
-void	Cvar_SetValue (char *var_name, float value);
+void	Cvar_SetValue ( const char *var_name, float value);
 // expands value to a string and calls Cvar_Set
 
 void Cvar_SetInteger (char *var_name, int integer);
 // expands value to a string and calls Cvar_Set
 
-void	Cvar_SetModified (char *var_name, qboolean value);
+void	Cvar_SetModified ( const char *var_name, qboolean value);
 // sets modified attribute of cvar
 
-float Cvar_ClampValue (cvar_t *var, float min, float max);
+float Cvar_ClampValue ( const cvar_t *var, float min, float max);
 // clamps cvar to range, expands value to a string and calls Cvar_Set
 
-int Cvar_ClampInteger (cvar_t *var, int min, int max);
+int Cvar_ClampInteger ( const cvar_t *var, int min, int max);
 // clamps cvar to range, expands value to a string and calls Cvar_Set
 
-float	Cvar_VariableValue (char *var_name);
+float	Cvar_VariableValue ( const char *var_name);
 // returns 0 if not defined or non numeric
 
-int Cvar_VariableInteger (char *var_name);
+int Cvar_VariableInteger ( const char *var_name);
 // returns 0 if not defined or non numeric
 
-char	*Cvar_VariableString (char *var_name);
+char	*Cvar_VariableString ( const char *var_name);
 // returns an empty string if not defined
 
 // Knightmare added
-float Cvar_DefaultValue (char *var_name);
+float Cvar_DefaultValue ( const char *var_name);
 // returns 0 if not defined or non numeric
 
-int		Cvar_DefaultInteger (char *var_name);
+int		Cvar_DefaultInteger ( const char *var_name);
 // returns 0 if not defined or non numeric
 
-char	*Cvar_DefaultString (char *var_name);
+char	*Cvar_DefaultString ( const char *var_name);
 // returns an empty string if not defined
 
-cvar_t *Cvar_SetToDefault (char *var_name);
+cvar_t *Cvar_SetToDefault ( const char *var_name);
 // resets cvar to default value
 
-cvar_t	*Cvar_ForceSetToDefault (char *var_name);
+cvar_t	*Cvar_ForceSetToDefault ( const char *var_name);
 // resets cvar to default value even if NOSET or LATCH
 
-void Cvar_SetDescription (char *var_name, char *description);
+void Cvar_SetDescription ( const char *var_name, const char *description );
 // sets description string of given cvar
 
-qboolean Cvar_IsModified (char *var_name);
+qboolean Cvar_IsModified ( const char *var_name);
 // returns true if modified field is set
 
-char 	*Cvar_CompleteVariable (char *partial);
+char 	*Cvar_CompleteVariable ( const char *partial);
 // attempts to match a partial variable name for command line completion
 // returns NULL if nothing fits
 
@@ -908,7 +908,7 @@ CMODEL
 
 #include "../qcommon/qfiles.h"
 
-cmodel_t	*CM_LoadMap (char *name, qboolean clientload, unsigned *checksum);
+cmodel_t	*CM_LoadMap ( const char *name, qboolean clientload, unsigned *checksum );
 cmodel_t	*CM_InlineModel (char *name);	// *1, *2, etc
 
 int			CM_NumClusters (void);
@@ -1111,16 +1111,16 @@ MISC
 
 void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush)(int, char*));
 void		Com_EndRedirect (void);
-void 		Com_Printf (char *fmt, ...);
-void 		Com_DPrintf (char *fmt, ...);
-void 		Com_Error (int code, char *fmt, ...);
+void 		Com_Printf (const char *fmt, ...);
+void 		Com_DPrintf (const char *fmt, ...);
+void 		Com_Error (int code, const char *fmt, ...);
 void 		Com_Quit (void);
 
 int			Com_ServerState (void);		// this should have just been a cvar...
 void		Com_SetServerState (int state);
 
 unsigned	Com_BlockChecksum (void *buffer, int length);
-byte		COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
+byte		COM_BlockSequenceCRCByte ( const byte *base, int length, int sequence);
 
 float	frand (void);	// 0 ti 1
 float	crand (void);	// -1 to 1
@@ -1239,7 +1239,7 @@ void Con_Print (char *text);
 void SCR_BeginLoadingPlaque (void);
 
 void SV_Init (void);
-void SV_Shutdown (char *finalmsg, qboolean reconnect);
+void SV_Shutdown ( const char *finalmsg, qboolean reconnect);
 void SV_Frame (int msec);
 
 #endif // __QCOMMON_H

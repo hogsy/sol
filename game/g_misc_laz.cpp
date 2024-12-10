@@ -410,9 +410,9 @@ void SP_target_precipitation (edict_t *ent)
 			bufSize = strlen(ent->usermodel)+10;
 			buffer = static_cast<char*>(gi.TagMalloc(bufSize, TAG_LEVEL));
 			if (strstr(ent->usermodel,".sp2"))
-				Com_sprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
+				snprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
 			else
-				Com_sprintf (buffer, bufSize, "models/%s", ent->usermodel);
+				snprintf (buffer, bufSize, "models/%s", ent->usermodel);
 			ent->usermodel = buffer;
 		}
 
@@ -630,9 +630,9 @@ void SP_target_fountain (edict_t *ent)
 		bufSize = strlen(ent->usermodel)+10;
 		buffer = static_cast<char*>(gi.TagMalloc(bufSize, TAG_LEVEL));
 		if (strstr(ent->usermodel,".sp2"))
-			Com_sprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
+			snprintf (buffer, bufSize, "sprites/%s", ent->usermodel);
 		else
-			Com_sprintf (buffer, bufSize, "models/%s", ent->usermodel);
+			snprintf (buffer, bufSize, "models/%s", ent->usermodel);
 		ent->usermodel = buffer;
 	}
 
@@ -703,8 +703,8 @@ int PatchDeadSoldier (void)
 	if (!*gamedir->string)
 		return 0;	// we're in baseq2
 
-//	Com_sprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
-	Com_sprintf (tempname, sizeof(tempname), DEADSOLDIER_MODEL);
+//	snprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
+	snprintf (tempname, sizeof(tempname), DEADSOLDIER_MODEL);
 	SavegameDirRelativePath (tempname, outfilename, sizeof(outfilename));
 	if (outfile = fopen (outfilename, "rb"))
 	{
@@ -717,27 +717,27 @@ int PatchDeadSoldier (void)
 	for (j = 0; j < NUM_SKINS; j++)
 		memset (skins[j], 0, MAX_SKINNAME);
 
-	Com_sprintf (skins[0],  sizeof(skins[0]), "models/deadbods/dude/dead1.pcx");
-	Com_sprintf (skins[1],	sizeof(skins[1]), "players/male/cipher.pcx");
-	Com_sprintf (skins[2],	sizeof(skins[2]), "players/male/claymore.pcx");
-	Com_sprintf (skins[3],	sizeof(skins[3]), "players/male/flak.pcx");
-	Com_sprintf (skins[4],	sizeof(skins[4]), "players/male/grunt.pcx");
-	Com_sprintf (skins[5],	sizeof(skins[5]), "players/male/howitzer.pcx");
-	Com_sprintf (skins[6],	sizeof(skins[6]), "players/male/major.pcx");
-	Com_sprintf (skins[7],	sizeof(skins[7]), "players/male/nightops.pcx");
-	Com_sprintf (skins[8],	sizeof(skins[8]), "players/male/pointman.pcx");
-	Com_sprintf (skins[9],	sizeof(skins[9]), "players/male/psycho.pcx");
-	Com_sprintf (skins[10],	sizeof(skins[10]), "players/male/rampage.pcx");
-	Com_sprintf (skins[11], sizeof(skins[11]), "players/male/razor.pcx");
-	Com_sprintf (skins[12], sizeof(skins[12]), "players/male/recon.pcx");
-	Com_sprintf (skins[13], sizeof(skins[13]), "players/male/scout.pcx");
-	Com_sprintf (skins[14], sizeof(skins[14]), "players/male/sniper.pcx");
-	Com_sprintf (skins[15], sizeof(skins[15]), "players/male/viper.pcx");
+	snprintf (skins[0],  sizeof(skins[0]), "models/deadbods/dude/dead1.pcx");
+	snprintf (skins[1],	sizeof(skins[1]), "players/male/cipher.pcx");
+	snprintf (skins[2],	sizeof(skins[2]), "players/male/claymore.pcx");
+	snprintf (skins[3],	sizeof(skins[3]), "players/male/flak.pcx");
+	snprintf (skins[4],	sizeof(skins[4]), "players/male/grunt.pcx");
+	snprintf (skins[5],	sizeof(skins[5]), "players/male/howitzer.pcx");
+	snprintf (skins[6],	sizeof(skins[6]), "players/male/major.pcx");
+	snprintf (skins[7],	sizeof(skins[7]), "players/male/nightops.pcx");
+	snprintf (skins[8],	sizeof(skins[8]), "players/male/pointman.pcx");
+	snprintf (skins[9],	sizeof(skins[9]), "players/male/psycho.pcx");
+	snprintf (skins[10],	sizeof(skins[10]), "players/male/rampage.pcx");
+	snprintf (skins[11], sizeof(skins[11]), "players/male/razor.pcx");
+	snprintf (skins[12], sizeof(skins[12]), "players/male/recon.pcx");
+	snprintf (skins[13], sizeof(skins[13]), "players/male/scout.pcx");
+	snprintf (skins[14], sizeof(skins[14]), "players/male/sniper.pcx");
+	snprintf (skins[15], sizeof(skins[15]), "players/male/viper.pcx");
 
 	// load original model
-//	Com_sprintf (infilename, sizeof(infilename), "baseq2/%s", DEADSOLDIER_MODEL);
+//	snprintf (infilename, sizeof(infilename), "baseq2/%s", DEADSOLDIER_MODEL);
 	// Knightmare- use basedir for compatibility on all platforms
-	Com_sprintf (infilename, sizeof(infilename), "%s/baseq2/%s", basedir->string, DEADSOLDIER_MODEL);
+	snprintf (infilename, sizeof(infilename), "%s/baseq2/%s", basedir->string, DEADSOLDIER_MODEL);
 	if ( !(infile = fopen (infilename, "rb")) )
 	{
 		// If file doesn't exist on user's hard disk, it must be in 
@@ -751,7 +751,7 @@ int PatchDeadSoldier (void)
 
 	//	fpak = fopen ("baseq2/pak0.pak", "rb");
 		// Knightmare- use basedir for compatibility on all platforms
-		Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", basedir->string);
+		snprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", basedir->string);
 		fpak = fopen (pakfile, "rb");
 		if (!fpak)
 		{
@@ -759,7 +759,7 @@ int PatchDeadSoldier (void)
 			char	pakfile[MAX_OSPATH];
 
 			cddir = gi.cvar("cddir", "", 0);
-			Com_sprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
+			snprintf (pakfile, sizeof(pakfile), "%s/baseq2/pak0.pak", cddir->string);
 			fpak = fopen (pakfile, "rb");
 			if (!fpak)
 			{
@@ -774,7 +774,7 @@ int PatchDeadSoldier (void)
 		for (k=0; k<numitems && !data; k++)
 		{
 			fread (&pakitem, 1, sizeof(pak_item_t), fpak);
-			if ( !Q_stricmp(pakitem.name, DEADSOLDIER_MODEL) )
+			if ( !Q_stricmp( pakitem.name, DEADSOLDIER_MODEL ) )
 			{
 				fseek (fpak ,pakitem.start, SEEK_SET);
 				fread (&model, sizeof(dmdl_t), 1, fpak);
@@ -823,19 +823,19 @@ int PatchDeadSoldier (void)
 	model.ofs_end    += newoffset;
 	
 	// save new model
-/*	Com_sprintf (outfilename, sizeof(outfilename), "%s/models", gamedir->string);	// make some dirs if needed
+/*	snprintf (outfilename, sizeof(outfilename), "%s/models", gamedir->string);	// make some dirs if needed
 	_mkdir (outfilename);
 	Q_strncatz (outfilename, sizeof(outfilename), "/deadbods");
 	_mkdir (outfilename);
 	Q_strncatz (outfilename, sizeof(outfilename), "/dude");
 	_mkdir (outfilename);
-	Com_sprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
+	snprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
 	p = strstr(outfilename,"/tris.md2");
 	*p = 0;
 	_mkdir (outfilename);
-	Com_sprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
+	snprintf (outfilename, sizeof(outfilename), "%s/%s", gamedir->string, DEADSOLDIER_MODEL);
 */	
-	Com_sprintf (tempname, sizeof(tempname), DEADSOLDIER_MODEL);
+	snprintf (tempname, sizeof(tempname), DEADSOLDIER_MODEL);
 	SavegameDirRelativePath (tempname, outfilename, sizeof(outfilename));
 	CreatePath (outfilename);
 

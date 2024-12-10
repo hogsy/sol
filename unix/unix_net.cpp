@@ -132,21 +132,17 @@ qboolean	NET_CompareBaseAdr (netadr_t a, netadr_t b)
 	return false;
 }
 
-char	*NET_AdrToString (netadr_t a)
+char *NET_AdrToString( netadr_t a )
 {
-	static	char	s[64];
-	
-	Com_sprintf (s, sizeof(s), "%i.%i.%i.%i:%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3], ntohs(a.port));
-
+	static char s[ 64 ];
+	snprintf( s, sizeof( s ), "%i.%i.%i.%i:%i", a.ip[ 0 ], a.ip[ 1 ], a.ip[ 2 ], a.ip[ 3 ], ntohs( a.port ) );
 	return s;
 }
 
-char	*NET_BaseAdrToString (netadr_t a)
+char *NET_BaseAdrToString( netadr_t a )
 {
-	static	char	s[64];
-	
-	Com_sprintf (s, sizeof(s), "%i.%i.%i.%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
-
+	static char s[ 64 ];
+	snprintf( s, sizeof( s ), "%i.%i.%i.%i", a.ip[ 0 ], a.ip[ 1 ], a.ip[ 2 ], a.ip[ 3 ] );
 	return s;
 }
 
@@ -434,8 +430,8 @@ void NET_OpenIP (void)
 {
 	cvar_t	*port, *ip;
 
-	port = Cvar_Get ("port", va("%i", PORT_SERVER), CVAR_NOSET);
-	ip = Cvar_Get ("ip", "localhost", CVAR_NOSET);
+	port = Cvar_Get ( "port", va( "%i", PORT_SERVER ), CVAR_NOSET );
+	ip = Cvar_Get ( "ip", "localhost", CVAR_NOSET );
 
 	if (!ip_sockets[NS_SERVER]) {
 		ip_sockets[NS_SERVER] = NET_Socket (ip->string, port->value);
@@ -534,10 +530,10 @@ int NET_Socket (char *net_interface, int port)
 		return 0;
 	}
 
-	if (!net_interface || !net_interface[0] || !Q_stricmp(net_interface, "localhost"))
+	if (!net_interface || !net_interface[0] || !Q_stricmp( net_interface, "localhost" ) )
 		address.sin_addr.s_addr = INADDR_ANY;
 	else
-		NET_StringToSockaddr (net_interface, (struct sockaddr *)&address);
+		NET_StringToSockaddr (net_interface, reinterpret_cast< sockaddr * >( &address ) );
 
 	if (port == PORT_ANY)
 		address.sin_port = 0;
@@ -546,7 +542,7 @@ int NET_Socket (char *net_interface, int port)
 
 	address.sin_family = AF_INET;
 
-	if( bind (newsocket, (void *)&address, sizeof(address)) == -1)
+	if( bind (newsocket, reinterpret_cast< sockaddr * >( &address ), sizeof(address)) == -1)
 	{
 		Com_Printf ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
 		close (newsocket);

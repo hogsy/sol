@@ -982,7 +982,7 @@ void MakronSpawn (edict_t *self)
 	SP_monster_makron_put (self);
 
 	// Knightmare- gross hack for map6 of COS3- don't jump
-	if (Q_stricmp(level.mapname, "grinsp3f") == 0)
+	if (Q_stricmp( level.mapname, "grinsp3f" ) == 0)
 		return;
 
 	// jump at player

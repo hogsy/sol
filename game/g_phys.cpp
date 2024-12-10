@@ -144,7 +144,7 @@ edict_t	*SV_TestEntityPosition (edict_t *ent)
 		// Lazarus - work around for players/monsters standing on dead monsters causing
 		// those monsters to gib when rotating brush models are in the vicinity
 		if ( (ent->svflags & SVF_DEADMONSTER) && (trace.ent->client || (trace.ent->svflags & SVF_MONSTER)))
-			return NULL;
+			return nullptr;
 
 		// Lazarus - return a bit more useful info than simply "g_edicts"
 		if (trace.ent)
@@ -153,7 +153,7 @@ edict_t	*SV_TestEntityPosition (edict_t *ent)
 			return world;
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
 
@@ -234,7 +234,7 @@ void SV_Impact (edict_t *e1, trace_t *trace)
 		e1->touch (e1, e2, &trace->plane, trace->surface);
 	
 	if (e2->touch && e2->solid != SOLID_NOT)
-		e2->touch (e2, e1, NULL, NULL);
+		e2->touch (e2, e1, nullptr, nullptr );
 }
 
 
@@ -311,7 +311,7 @@ retry:
 	
 	time_left = time;
 
-	ent->groundentity = NULL;
+	ent->groundentity = nullptr;
 	for (bumpcount=0 ; bumpcount<numbumps ; bumpcount++)
 	{
 		for (i=0 ; i<3 ; i++)
@@ -510,7 +510,7 @@ retry:
 	VectorScale(maxs,0.5,maxs);
 	VectorNegate(maxs,mins);
 
-	ent->groundentity = NULL;
+	ent->groundentity = nullptr;
 
 	for (bumpcount=0 ; bumpcount<numbumps ; bumpcount++)
 	{
@@ -1177,7 +1177,7 @@ qboolean SV_Push (edict_t *pusher, vec3_t move, vec3_t amove)
 			
 			// may have pushed them off an edge
 			if (check->groundentity != pusher)
-				check->groundentity = NULL;
+				check->groundentity = nullptr;
 
 			// Lazarus - don't block movewith trains with a rider - they may end up
 			//           being stuck, but that beats a small pitch or roll causing
@@ -1221,7 +1221,7 @@ qboolean SV_Push (edict_t *pusher, vec3_t move, vec3_t amove)
 				gi.linkentity (check);
 				// Lazarus: Move check riders, and riders of riders, and... well, you get the pic
 				VectorAdd(move,move2,move3);
-				MoveRiders(check,NULL,move3,amove,turn);
+				MoveRiders(check, nullptr, move3,amove,turn);
 				// impact?
 				continue;
 			}
@@ -1327,7 +1327,7 @@ void SV_Physics_Pusher (edict_t *ent)
 		}
 	}
 	if (pushed_p > &pushed[MAX_EDICTS-1])
-		gi.error (ERR_FATAL, "pushed_p > &pushed[MAX_EDICTS-1], memory corrupted");
+		gi.error ( nullptr, "pushed_p > &pushed[MAX_EDICTS-1], memory corrupted");
 
 	if (part && !part->attracted)
 	{
@@ -1469,12 +1469,12 @@ void SV_Physics_Toss (edict_t *ent)
 		wasonground = true;
 
 	if (ent->velocity[2] > 0)
-		ent->groundentity = NULL;
+		ent->groundentity = nullptr;
 
 	// check for the groundentity going away
 	if (ent->groundentity)
 		if (!ent->groundentity->inuse)
-			ent->groundentity = NULL;
+			ent->groundentity = nullptr;
 
 	// Lazarus: conveyor
 	if (ent->groundentity && (ent->groundentity->movetype == MOVETYPE_CONVEYOR))
@@ -1584,7 +1584,7 @@ void SV_Physics_Toss (edict_t *ent)
 			ent->waterlevel = 0;
 
 		// tpp... don't do sounds for the camera
-		if (Q_stricmp(ent->classname,"chasecam"))
+		if (Q_stricmp( ent->classname.c_str(), "chasecam" ) )
 		{
 		if (!wasinwater && isinwater)
 			gi.positioned_sound (old_origin, g_edicts, CHAN_AUTO, gi.soundindex("misc/h2ohit1.wav"), 1, 1, 0);
@@ -1831,7 +1831,7 @@ void SV_Physics_Step (edict_t *ent)
 		if (ent->waterlevel < 3) {
 			point[2] = ent->absmax[2];
 			end[2]   = ent->absmin[2];
-			tr = gi.trace(point,NULL,NULL,end,ent,MASK_WATER);
+			tr = gi.trace(point, nullptr, nullptr, end,ent,MASK_WATER);
 			waterlevel = tr.endpos[2];
 		}
 		else {
@@ -2044,7 +2044,7 @@ void SV_Physics_Step (edict_t *ent)
 	}
 
 	// Knightmare- also do func_breakaways
-	else if ( (ent->movetype == MOVETYPE_PUSHABLE) || !strcmp(ent->classname, "func_breakaway") )
+	else if ( (ent->movetype == MOVETYPE_PUSHABLE) || !strcmp(ent->classname.c_str(), "func_breakaway") )
 	{
 		// We run touch function for non-moving func_pushables every frame
 		// to see if they are touching, for example, a trigger_mass
@@ -2124,7 +2124,7 @@ int SV_VehicleMove (edict_t *ent, float time, int mask)
 	VectorNegate(maxs,mins);
 	mins[2] += 1;
 
-	ent->groundentity = NULL;
+	ent->groundentity = nullptr;
 
 	ignore = ent;
 	VectorCopy(origin,start);
@@ -2174,7 +2174,7 @@ retry:
 				// vehicle
 				vec3_t	forward, left, f1, l1, drive, offset;
 
-				AngleVectors(ent->s.angles, forward, left, NULL);
+				AngleVectors(ent->s.angles, forward, left, nullptr );
 				VectorScale(forward,ent->move_origin[0],f1);
 				VectorScale(left,ent->move_origin[1],l1);
 				VectorAdd(ent->s.origin,f1,drive);
@@ -2236,7 +2236,7 @@ not_allsolid:
 			break;
 		}
 
-		if (trace.ent->classname)
+		if (!trace.ent->classname.empty())
 		{
 			if (ent->owner && (trace.ent->svflags & (SVF_MONSTER | SVF_DEADMONSTER)))
 			{
@@ -2491,16 +2491,16 @@ trace_t SV_DebrisEntity (edict_t *ent, vec3_t push)
 		}
 		// Knightmare- if one func_breakaway lands on another one resting on
 		// something other than the world, transfer force to the entity below it.
-		else if (trace.ent && trace.ent->classname
-			&& !strcmp(trace.ent->classname, "func_breakaway") && trace.ent->solid == SOLID_BBOX)
+		else if (trace.ent && !trace.ent->classname.empty()
+			&& !strcmp(trace.ent->classname.c_str(), "func_breakaway") && trace.ent->solid == SOLID_BBOX)
 		{
 			vec3_t	newstart, newend;
 			trace_t	newtrace;
 			edict_t	*other;
 
 			other = trace.ent;
-			while (other && other->classname
-				&& !strcmp(other->classname, "func_breakaway") && other->solid == SOLID_BBOX)
+			while (other && !other->classname.empty()
+				&& !strcmp(other->classname.c_str(), "func_breakaway") && other->solid == SOLID_BBOX)
 			{
 				VectorCopy (other->s.origin, newstart);
 				VectorAdd (newstart, push, newend);
@@ -2550,12 +2550,12 @@ void SV_Physics_Debris (edict_t *ent)
         return;
 
 	if (ent->velocity[2] > 0)
-		ent->groundentity = NULL;
+		ent->groundentity = nullptr;
 
 	// check for the groundentity going away
 	if (ent->groundentity)
 		if (!ent->groundentity->inuse)
-			ent->groundentity = NULL;
+			ent->groundentity = nullptr;
 
 	// if onground, return without moving
 	if ( ent->groundentity )
@@ -2675,7 +2675,7 @@ G_RunEntity
 */
 void G_RunEntity (edict_t *ent)
 {
-	if (level.freeze && Q_stricmp(ent->classname, "chasecam"))
+	if (level.freeze && Q_stricmp( ent->classname.c_str(), "chasecam" ) )
 		return;
 
 	if (ent->prethink)
@@ -2683,7 +2683,7 @@ void G_RunEntity (edict_t *ent)
 
 	onconveyor = false;
 	wasonground = false;
-	blocker = NULL;
+	blocker = nullptr;
 
 	switch ( (int)ent->movetype)
 	{

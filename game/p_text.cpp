@@ -129,11 +129,11 @@ void Text_Update(edict_t *ent)
 
 	if (!(hnd->flags & 2))
 	{
-		Com_sprintf (string, sizeof(string), "xv %d yv %d picn %s ",
+		snprintf (string, sizeof(string), "xv %d yv %d picn %s ",
 			x0, y0, hnd->background_image);
 	}
 	else // Knightmare- we NEED to have a placeholder image here
-		Com_sprintf (string, sizeof(string), "xv %d yv %d picn blank ", x0, y0);
+		snprintf (string, sizeof(string), "xv %d yv %d picn blank ", x0, y0);
 	xlast = 9999;
 
 	for (i = 0, p = hnd->lines; i < hnd->page_length+2; i++, p++)
@@ -166,7 +166,7 @@ void Text_Update(edict_t *ent)
 		if (strlen(t))
 		{
 		//	sprintf(string + strlen(string), "yv %d ", y0 + 24 + i * 8);
-			Com_sprintf (string + strlen(string), sizeof(string)-strlen(string), "yv %d ", y0 + 24 + i * 8);
+			snprintf (string + strlen(string), sizeof(string)-strlen(string), "yv %d ", y0 + 24 + i * 8);
 			if (align == TEXT_CENTER)
 				x = x0 + 20 + (hnd->page_width-1-(int)strlen(t))*4;
 			else if (align == TEXT_RIGHT)
@@ -176,16 +176,16 @@ void Text_Update(edict_t *ent)
 			if (x != xlast)
 			{
 			//	sprintf(string + strlen(string), "xv %d ",x);
-				Com_sprintf (string + strlen(string), sizeof(string)-strlen(string), "xv %d ",x);
+				snprintf (string + strlen(string), sizeof(string)-strlen(string), "xv %d ",x);
 				xlast = x;
 			}
 			if (alt) {
 			//	sprintf(string + strlen(string), "string2 \"%s\" ", t);
-				Com_sprintf (string + strlen(string), sizeof(string)-strlen(string), "string2 \"%s\" ", t);
+				snprintf (string + strlen(string), sizeof(string)-strlen(string), "string2 \"%s\" ", t);
 			}
 			else {
 			//	sprintf(string + strlen(string), "string \"%s\" ", t);
-				Com_sprintf (string + strlen(string), sizeof(string)-strlen(string), "string \"%s\" ", t);
+				snprintf (string + strlen(string), sizeof(string)-strlen(string), "string \"%s\" ", t);
 			}
 		}
 		alt = false;
@@ -270,7 +270,7 @@ void Do_Text_Display (edict_t *activator, int flags, char *message)
 		byte	*readbuffer;
 		
 	//	sprintf(textname,"maps/%s", message);
-		Com_sprintf (textname, sizeof(textname), "maps/%s", message);
+		snprintf (textname, sizeof(textname), "maps/%s", message);
 
 		textsize = gi.LoadFile(textname, (void **)&readbuffer);
 		if (textsize < 2) // file not found
@@ -312,15 +312,15 @@ void Do_Text_Display (edict_t *activator, int flags, char *message)
 		}
 	*/
 		if (strlen(gamedir->string))
-			Com_sprintf (filename, sizeof(filename), "%s/%s", basedir->string, gamedir->string);
+			snprintf (filename, sizeof(filename), "%s/%s", basedir->string, gamedir->string);
 		else
-			Com_sprintf (filename, sizeof(filename), "%s/baseq2", basedir->string);
+			snprintf (filename, sizeof(filename), "%s/baseq2", basedir->string);
 
 		// First check for existence of text file in pak0.pak -> pak9.pak
 		in_pak = false;
 		for (i=0; i<=9 && !in_pak; i++)
 		{
-			Com_sprintf (pakfile, sizeof(pakfile), "%s/pak%d.pak", filename, i);
+			snprintf (pakfile, sizeof(pakfile), "%s/pak%d.pak", filename, i);
 			if (NULL != (f = fopen(pakfile, "rb")))
 			{
 				num = (int)fread(&pakheader,1,sizeof(pak_header_t),f);
@@ -333,7 +333,7 @@ void Do_Text_Display (edict_t *activator, int flags, char *message)
 					{
 						numitems = pakheader.dsize/sizeof(pak_item_t);
 					//	sprintf(textname,"maps/%s",message);
-						Com_sprintf (textname, sizeof(textname), "maps/%s", message);
+						snprintf (textname, sizeof(textname), "maps/%s", message);
 						fseek(f, pakheader.dstart, SEEK_SET);
 						for (k=0; k<numitems && !in_pak; k++)
 						{
@@ -759,16 +759,15 @@ void Use_Target_Text(edict_t *self, edict_t *other, edict_t *activator)
 	
 	Text_Close(activator);
 
-	Do_Text_Display(activator, self->spawnflags, self->message);
+	Do_Text_Display(activator, self->spawnflags, self->message.data());
 
 }
 
 void SP_target_text(edict_t *self)
 {
-	if (!self->message)
+	if (self->message.empty())
 	{
-		gi.dprintf("target_text with no message at %s\n",
-			vtos(self->s.origin));
+		gi.dprintf("target_text with no message at %s\n", vtos(self->s.origin));
 		G_FreeEdict (self);
 		return;
 	}

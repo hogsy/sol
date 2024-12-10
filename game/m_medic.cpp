@@ -73,9 +73,9 @@ void medic_deadmonster_think (edict_t *self)
 				}
 			}
 			else
-				deadmonster->monsterinfo.healer = NULL;
+				deadmonster->monsterinfo.healer = nullptr;
 		}
-		deadmonster->owner = NULL;
+		deadmonster->owner = nullptr;
 	}
 	G_FreeEdict(self);
 }
@@ -112,9 +112,9 @@ void DeleteBadMedic (edict_t *self)
 	if (monster)
 	{
 		if (self->monsterinfo.badMedic1)
-			monster->monsterinfo.badMedic1 = NULL;
+			monster->monsterinfo.badMedic1 = nullptr;
 		if (self->monsterinfo.badMedic2)
-			monster->monsterinfo.badMedic2 = NULL;
+			monster->monsterinfo.badMedic2 = nullptr;
 	}
 	G_FreeEdict(self);
 }
@@ -130,7 +130,7 @@ void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mar
 	if ( (mark) && (self->enemy) && (self->enemy->inuse) )
 	{
 		if ((self->enemy->monsterinfo.badMedic1) && (self->enemy->monsterinfo.badMedic1->inuse)
-			&& (!strncmp(self->enemy->monsterinfo.badMedic1->classname, "monster_medic", 13)) )
+			&& (!strncmp(self->enemy->monsterinfo.badMedic1->classname.c_str(), "monster_medic", 13)) )
 			self->enemy->monsterinfo.badMedic2 = self;
 		else
 			self->enemy->monsterinfo.badMedic1 = self;
@@ -160,7 +160,7 @@ void abortHeal (edict_t *self, qboolean change_frame, qboolean gib, qboolean mar
 	if ((self->oldenemy) && (self->oldenemy->inuse))
 		self->enemy = self->oldenemy;
 	else
-		self->enemy = NULL;
+		self->enemy = nullptr;
 
 	self->monsterinfo.medicTries = 0;
 }
@@ -180,10 +180,10 @@ qboolean embedded (edict_t *ent)
 
 edict_t *medic_FindDeadMonster (edict_t *self)
 {
-	edict_t	*ent = NULL;
-	edict_t	*best = NULL;
+	edict_t	*ent = nullptr;
+	edict_t	*best = nullptr;
 
-	while ((ent = findradius(ent, self->s.origin, 1024)) != NULL)
+	while ((ent = findradius(ent, self->s.origin, 1024)) != nullptr )
 	{
 		if (ent == self)
 			continue;
@@ -224,7 +224,7 @@ edict_t *medic_FindDeadMonster (edict_t *self)
 		self->monsterinfo.aiflags |= AI_MEDIC;
 		self->monsterinfo.aiflags &= ~AI_MEDIC_PATROL;
 		self->monsterinfo.medicTries = 0;
-		self->movetarget = self->goalentity = NULL;
+		self->movetarget = self->goalentity = nullptr;
 		self->enemy->monsterinfo.healer = self;
 		self->timestamp = level.time + MEDIC_TRY_TIME;
 		FoundTarget (self);
@@ -239,8 +239,8 @@ edict_t *medic_FindDeadMonster (edict_t *self)
 
 void medic_StopPatrolling (edict_t *self)
 {
-	self->goalentity = NULL;
-	self->movetarget = NULL;
+	self->goalentity = nullptr;
+	self->movetarget = nullptr;
 	self->monsterinfo.aiflags &= ~AI_MEDIC_PATROL;
 	if (!(self->monsterinfo.aiflags & AI_MEDIC))
 	{
@@ -263,7 +263,7 @@ void medic_StopPatrolling (edict_t *self)
 
 void medic_NextPatrolPoint (edict_t *self, edict_t *hint)
 {
-	edict_t		*next=NULL;
+	edict_t		*next = nullptr;
 	edict_t		*e;
 	vec3_t		dir;
 	qboolean	switch_paths=false;
@@ -274,9 +274,9 @@ void medic_NextPatrolPoint (edict_t *self, edict_t *hint)
 //		return;
 
 	if (self->goalentity == hint)
-		self->goalentity = NULL;
+		self->goalentity = nullptr;
 	if (self->movetarget == hint)
-		self->movetarget = NULL;
+		self->movetarget = nullptr;
 	if (!(self->monsterinfo.aiflags & AI_MEDIC))
 	{
 		if (medic_FindDeadMonster(self))
@@ -315,19 +315,17 @@ void medic_NextPatrolPoint (edict_t *self, edict_t *hint)
 	// search for *another* visible hint_path chain and use it if it's reasonably close
 	if (switch_paths && hint_chain_count > 1)
 	{
-		edict_t	*e;
-		edict_t	*alternate=NULL;
+		edict_t	*alternate = nullptr;
 		float	dist;
 		vec3_t	dir;
-		int		i;
 		float	bestdistance=512;
 
-		for(i=game.maxclients+1; i<globals.num_edicts; i++)
+		for( int i = game.maxclients + 1; i<globals.num_edicts; i++)
 		{
-			e = &g_edicts[i];
+			edict_t *e = &g_edicts[ i ];
 			if (!e->inuse)
 				continue;
-			if (Q_stricmp(e->classname,"hint_path"))
+			if (Q_stricmp( e->classname.c_str(), "hint_path" ) )
 				continue;
 			if (next && (e->hint_chain_id == next->hint_chain_id))
 				continue;
@@ -391,7 +389,7 @@ void medic_idle (edict_t *self)
 		&& ((self->monsterinfo.trail_time > 0) || medic_test) )
 	{
 		edict_t	*e;
-		edict_t	*hint=NULL;
+		edict_t	*hint = nullptr;
 		float	dist;
 		vec3_t	dir;
 		int		i;
@@ -402,7 +400,7 @@ void medic_idle (edict_t *self)
 			e = &g_edicts[i];
 			if (!e->inuse)
 				continue;
-			if (Q_stricmp(e->classname,"hint_path"))
+			if (Q_stricmp( e->classname.c_str(), "hint_path" ) )
 				continue;
 			if (!visible(self,e))
 				continue;
@@ -450,98 +448,187 @@ void medic_sight (edict_t *self, edict_t *other)
 mframe_t medic_frames_stand [] =
 {
 	ai_stand, 0, medic_idle,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
+	ai_stand, 0,
+                nullptr,
 
 };
-mmove_t medic_move_stand = {FRAME_wait1, FRAME_wait90, medic_frames_stand, NULL};
+mmove_t medic_move_stand = {FRAME_wait1, FRAME_wait90, medic_frames_stand, nullptr };
 
 void medic_stand (edict_t *self)
 {
@@ -551,20 +638,19 @@ void medic_stand (edict_t *self)
 
 mframe_t medic_frames_walk [] =
 {
-	ai_walk, 6.2,	NULL,
-	ai_walk, 18.1,  NULL,
-	ai_walk, 1,		NULL,
-	ai_walk, 9,		NULL,
-	ai_walk, 10,	NULL,
-	ai_walk, 9,		NULL,
-	ai_walk, 11,	NULL,
-	ai_walk, 11.6,  NULL,
-	ai_walk, 2,		NULL,
-	ai_walk, 9.9,	NULL,
-	ai_walk, 14,	NULL,
-	ai_walk, 9.3,	NULL
-};
-mmove_t medic_move_walk = {FRAME_walk1, FRAME_walk12, medic_frames_walk, NULL};
+	ai_walk, 6.2, nullptr,
+	ai_walk, 18.1, nullptr,
+	ai_walk, 1, nullptr,
+	ai_walk, 9, nullptr,
+	ai_walk, 10, nullptr,
+	ai_walk, 9, nullptr,
+	ai_walk, 11, nullptr,
+	ai_walk, 11.6, nullptr,
+	ai_walk, 2, nullptr,
+	ai_walk, 9.9, nullptr,
+	ai_walk, 14, nullptr,
+	ai_walk, 9.3, nullptr };
+mmove_t medic_move_walk = {FRAME_walk1, FRAME_walk12, medic_frames_walk, nullptr };
 
 void medic_walk (edict_t *self)
 {
@@ -574,15 +660,15 @@ void medic_walk (edict_t *self)
 
 mframe_t medic_frames_run [] =
 {
-	ai_run, 18,		NULL,
-	ai_run, 22.5,	NULL,
-	ai_run, 25.4,	NULL,
-	ai_run, 23.4,	NULL,
-	ai_run, 24,		NULL,
-	ai_run, 35.6,	NULL
-	
+	ai_run, 18, nullptr,
+	ai_run, 22.5, nullptr,
+	ai_run, 25.4, nullptr,
+	ai_run, 23.4, nullptr,
+	ai_run, 24, nullptr,
+	ai_run, 35.6, nullptr
+
 };
-mmove_t medic_move_run = {FRAME_run1, FRAME_run6, medic_frames_run, NULL};
+mmove_t medic_move_run = {FRAME_run1, FRAME_run6, medic_frames_run, nullptr };
 
 void medic_run (edict_t *self)
 {
@@ -601,35 +687,33 @@ void medic_run (edict_t *self)
 
 mframe_t medic_frames_pain1 [] =
 {
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL
-};
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr };
 mmove_t medic_move_pain1 = {FRAME_paina1, FRAME_paina8, medic_frames_pain1, medic_run};
 
 mframe_t medic_frames_pain2 [] =
 {
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL
-};
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr };
 mmove_t medic_move_pain2 = {FRAME_painb1, FRAME_painb15, medic_frames_pain2, medic_run};
 
 void medic_pain (edict_t *self, edict_t *other, float kick, int damage)
@@ -672,7 +756,7 @@ void medic_fire_blaster (edict_t *self)
 	else
 		effect = 0;
 
-	AngleVectors (self->s.angles, forward, right, NULL);
+	AngleVectors (self->s.angles, forward, right, nullptr );
 	G_ProjectSource (self->s.origin, monster_flash_offset[MZ2_MEDIC_BLASTER_1], forward, right, start);
 
 	VectorCopy (self->enemy->s.origin, end);
@@ -711,37 +795,36 @@ void medic_dead (edict_t *self)
 
 mframe_t medic_frames_death [] =
 {
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL,
-	ai_move, 0, NULL
-};
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr,
+	ai_move, 0, nullptr };
 mmove_t medic_move_death = {FRAME_death1, FRAME_death30, medic_frames_death, medic_dead};
 
 void medic_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
@@ -752,7 +835,7 @@ void medic_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage
 
 	// if we had a pending patient, free him up for another medic
 	if ((self->enemy) && (self->enemy->owner == self))
-		self->enemy->owner = NULL;
+		self->enemy->owner = nullptr;
 
 	// check for gib
 	if (self->health <= self->gib_health && !(self->spawnflags & SF_MONSTER_NOGIB))
@@ -809,23 +892,22 @@ void medic_duck_up (edict_t *self)
 
 mframe_t medic_frames_duck [] =
 {
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
 	ai_move, -1,	medic_duck_down,
 	ai_move, -1,	medic_duck_hold,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
 	ai_move, -1,	medic_duck_up,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL,
-	ai_move, -1,	NULL
-};
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr,
+	ai_move, -1, nullptr };
 mmove_t medic_move_duck = {FRAME_duck1, FRAME_duck16, medic_frames_duck, medic_run};
 
 void medic_dodge (edict_t *self, edict_t *attacker, float eta)
@@ -841,10 +923,10 @@ void medic_dodge (edict_t *self, edict_t *attacker, float eta)
 
 mframe_t medic_frames_attackHyperBlaster [] =
 {
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
 	ai_charge, 0,	medic_fire_blaster,
 	ai_charge, 0,	medic_fire_blaster,
 	ai_charge, 0,	medic_fire_blaster,
@@ -871,19 +953,19 @@ void medic_continue (edict_t *self)
 
 mframe_t medic_frames_attackBlaster [] =
 {
-	ai_charge, 0,	NULL,
-	ai_charge, 5,	NULL,
-	ai_charge, 5,	NULL,
-	ai_charge, 3,	NULL,
-	ai_charge, 2,	NULL,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
+	ai_charge, 0, nullptr,
+	ai_charge, 5, nullptr,
+	ai_charge, 5, nullptr,
+	ai_charge, 3, nullptr,
+	ai_charge, 2, nullptr,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
 	ai_charge, 0,	medic_fire_blaster,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	NULL,
-	ai_charge, 0,	medic_fire_blaster,	
-	ai_charge, 0,	NULL,
+	ai_charge, 0, nullptr,
+	ai_charge, 0, nullptr,
+	ai_charge, 0,	medic_fire_blaster,
+	ai_charge, 0, nullptr,
 	ai_charge, 0,	medic_continue	// Change to medic_continue... Else, go to frame 32
 };
 mmove_t medic_move_attackBlaster = {FRAME_attack1, FRAME_attack14, medic_frames_attackBlaster, medic_run};
@@ -926,8 +1008,8 @@ void medic_cable_attack (edict_t *self)
 	}
 
 	// Knightmare- don't heal insanes or actors or critters
-	if (!strcmp (self->enemy->classname, "misc_insane") || !strcmp (self->enemy->classname, "misc_actor")
-		|| !strcmp (self->enemy->classname, "monster_mutant") || !strcmp (self->enemy->classname, "monster_flipper")) 
+	if (!strcmp (self->enemy->classname.c_str(), "misc_insane") || !strcmp (self->enemy->classname.c_str(), "misc_actor")
+		|| !strcmp (self->enemy->classname.c_str(), "monster_mutant") || !strcmp (self->enemy->classname.c_str(), "monster_flipper"))
 	{
 		//gi.dprintf ("medic_cable_attack: not healing insane or actor or critter\n");
 		abortHeal (self, true, false, true);
@@ -951,7 +1033,7 @@ void medic_cable_attack (edict_t *self)
 		return;
 	}
 
-	AngleVectors (self->s.angles, f, r, NULL);
+	AngleVectors (self->s.angles, f, r, nullptr );
 	VectorCopy (medic_cable_offsets[self->s.frame - FRAME_attack42], offset);
 	G_ProjectSource (self->s.origin, offset, f, r, start);
 
@@ -978,7 +1060,7 @@ void medic_cable_attack (edict_t *self)
 	}
 
 	// check for min/max pitch
-	// Rogue takes this out... makes medic more likely to heal and 
+	// Rogue takes this out... makes medic more likely to heal and
 	// comments say "doesn't look bad when it fails"... we'll see
 /*	vectoangles (dir, angles);
 	if (angles[0] < -180)
@@ -986,7 +1068,7 @@ void medic_cable_attack (edict_t *self)
 	if (fabs(angles[0]) > 45)
 		return; */
 
-	tr = gi.trace (start, NULL, NULL, self->enemy->s.origin, self, MASK_SHOT);
+	tr = gi.trace (start, nullptr, nullptr, self->enemy->s.origin, self, MASK_SHOT);
 	if (tr.fraction != 1.0 && tr.ent != self->enemy)
 	{
 		if (tr.ent == world)
@@ -1015,10 +1097,10 @@ void medic_cable_attack (edict_t *self)
 	{
 		self->enemy->spawnflags &= SF_MONSTER_NOGIB;
 		self->enemy->monsterinfo.aiflags = 0;
-		self->enemy->target = NULL;
-		self->enemy->targetname = NULL;
-		self->enemy->combattarget = NULL;
-		self->enemy->deathtarget = NULL;
+		self->enemy->target = nullptr;
+		self->enemy->targetname = nullptr;
+		self->enemy->combattarget = nullptr;
+		self->enemy->deathtarget = nullptr;
 		self->enemy->owner = self;
 
 		// Knightmare- check for obstruction of monster bbox
@@ -1034,7 +1116,7 @@ void medic_cable_attack (edict_t *self)
 			abortHeal (self, true, true, false);
 			return;
 		}
-		else if ( strncmp(self->enemy->classname, "player", 6) != 0 )	// Phatman: Prevent player_noise spawn function error
+		else if ( strncmp(self->enemy->classname.c_str(), "player", 6) != 0 )	// Phatman: Prevent player_noise spawn function error
 		{
 			// Lazarus: reset initially dead monsters to use the INVERSE of their
 			// initial health, and force gib_health to default value
@@ -1055,12 +1137,12 @@ void medic_cable_attack (edict_t *self)
 				M_FliesOff(self->enemy);
 
 			ED_CallSpawn (self->enemy);
-			self->enemy->monsterinfo.healer = NULL;
-			self->enemy->owner = NULL;
+			self->enemy->monsterinfo.healer = nullptr;
+			self->enemy->owner = nullptr;
 
 			// Knightmare- disable deadmonster_think
 			if (self->enemy->postthink)
-				self->enemy->postthink = NULL;
+				self->enemy->postthink = nullptr;
 
 			if (self->enemy->think)
 			{
@@ -1077,9 +1159,9 @@ void medic_cable_attack (edict_t *self)
 			}
 			else
 			{
-				// Lazarus: this should make oblivious monsters 
+				// Lazarus: this should make oblivious monsters
 				// find player again
-				self->enemy->enemy = NULL;
+				self->enemy->enemy = nullptr;
 			}
 		}
 	}
@@ -1129,15 +1211,15 @@ void medic_hook_retract (edict_t *self)
 
 mframe_t medic_frames_attackCable [] =
 {
-	ai_move, 2,		NULL,
-	ai_move, 3,		NULL,
-	ai_move, 5,		NULL,
-	ai_move, 4.4,	NULL,
-	ai_charge, 4.7,	NULL,
-	ai_charge, 5,	NULL,
-	ai_charge, 6,	NULL,
-	ai_charge, 4,	NULL,
-	ai_charge, 0,	NULL,
+	ai_move, 2, nullptr,
+	ai_move, 3, nullptr,
+	ai_move, 5, nullptr,
+	ai_move, 4.4, nullptr,
+	ai_charge, 4.7, nullptr,
+	ai_charge, 5, nullptr,
+	ai_charge, 6, nullptr,
+	ai_charge, 4, nullptr,
+	ai_charge, 0, nullptr,
 	ai_move, 0,		medic_hook_launch,
 	ai_move, 0,		medic_cable_attack,
 	ai_move, 0,		medic_cable_attack,
@@ -1149,15 +1231,14 @@ mframe_t medic_frames_attackCable [] =
 	ai_move, 0,		medic_cable_attack,
 	ai_move, 0,		medic_cable_attack,
 	ai_move, -15,	medic_hook_retract,
-	ai_move, -1.5,	NULL,
-	ai_move, -1.2,	NULL,
-	ai_move, -3,	NULL,
-	ai_move, -2,	NULL,
-	ai_move, 0.3,	NULL,
-	ai_move, 0.7,	NULL,
-	ai_move, 1.2,	NULL,
-	ai_move, 1.3,	NULL
-};
+	ai_move, -1.5, nullptr,
+	ai_move, -1.2, nullptr,
+	ai_move, -3, nullptr,
+	ai_move, -2, nullptr,
+	ai_move, 0.3, nullptr,
+	ai_move, 0.7, nullptr,
+	ai_move, 1.2, nullptr,
+	ai_move, 1.3, nullptr };
 mmove_t medic_move_attackCable = {FRAME_attack33, FRAME_attack60, medic_frames_attackCable, medic_run};
 
 
@@ -1209,7 +1290,7 @@ qboolean medic_checkattack (edict_t *self)
 			self->timestamp = 0;
 			return false;
 		}
-		
+
 		// if our target went away
 		if ( (!self->enemy) || (!self->enemy->inuse) ) {
 			abortHeal (self, true, false, false);
@@ -1233,12 +1314,12 @@ qboolean medic_checkattack (edict_t *self)
 		}
 		// Lazarus 1.6.2.3: if point-to-point vector from cable to
 		// target is blocked by a solid
-		AngleVectors (self->s.angles, forward, right, NULL);
+		AngleVectors (self->s.angles, forward, right, nullptr );
 		// Offset [8] has the largest displacement to the left... not a sure
 		// thing but this one should be the most severe test.
 		VectorCopy (medic_cable_offsets[8], offset);
 		G_ProjectSource (self->s.origin, offset, forward, right, start);
-		tr = gi.trace(start,NULL,NULL,self->enemy->s.origin,self,MASK_SHOT|MASK_WATER);
+		tr = gi.trace(start, nullptr, nullptr, self->enemy->s.origin,self,MASK_SHOT|MASK_WATER);
 		if (tr.fraction < 1.0 && tr.ent != self->enemy)
 			return false;
 		medic_attack(self);
@@ -1249,7 +1330,7 @@ qboolean medic_checkattack (edict_t *self)
 	if ((self->enemy) && (self->enemy->svflags & SVF_MONSTER))
 	{
 		self->enemy = self->oldenemy;
-		self->oldenemy = NULL;
+		self->oldenemy = nullptr;
 		if (self->enemy && self->enemy->inuse)
 		{
 			if (visible(self,self->enemy))
@@ -1310,7 +1391,7 @@ void SP_monster_medic (edict_t *self)
 		PatchMonsterModel("models/monsters/medic/tris.md2");
 		self->s.skinnum = self->style * 2;
 	}
-	
+
 	self->s.modelindex = gi.modelindex ("models/monsters/medic/tris.md2");
 	VectorSet (self->mins, -24, -24, -24);
 	VectorSet (self->maxs, 24, 24, 32);
@@ -1331,7 +1412,7 @@ void SP_monster_medic (edict_t *self)
 	self->monsterinfo.run = medic_run;
 	self->monsterinfo.dodge = medic_dodge;
 	self->monsterinfo.attack = medic_attack;
-	self->monsterinfo.melee = NULL;
+	self->monsterinfo.melee = nullptr;
 	self->monsterinfo.sight = medic_sight;
 	self->monsterinfo.idle = medic_idle;
 	self->monsterinfo.search = medic_search;
@@ -1360,7 +1441,7 @@ void SP_monster_medic (edict_t *self)
 	if (self->health < 0)
 	{
 		mmove_t	*deathmoves[] = {&medic_move_death,
-								 NULL};
+		                          nullptr };
 		M_SetDeath (self, (mmove_t **)&deathmoves);
 	}
 	self->monsterinfo.scale = MODEL_SCALE;

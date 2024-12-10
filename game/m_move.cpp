@@ -131,20 +131,20 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	vec3_t		dir;
 	vec_t		dist;
 	vec_t		g1, g2;
-	edict_t		*grenade = NULL;
-	edict_t		*target = NULL;
+	edict_t		*grenade = nullptr;
+	edict_t		*target = nullptr;
 
 	// try the move	
 	VectorCopy (ent->s.origin, oldorg);
 	VectorAdd (ent->s.origin, move, neworg);
 
-	AngleVectors(ent->s.angles,forward,NULL,up);
+	AngleVectors(ent->s.angles,forward, nullptr, up);
 	if(ent->enemy)
 		target = ent->enemy;
 	else if(ent->movetarget)
 		target = ent->movetarget;
 	else
-		target = NULL;
+		target = nullptr;
 
 	// flying monsters don't step up
 	if ( ent->flags & (FL_SWIM | FL_FLY) )
@@ -345,14 +345,14 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	//          other problem (maybe even this grenade)
 	if(!(ent->monsterinfo.aiflags & AI_CHASE_THING))
 	{
-		grenade = NULL;
-		while( (grenade=findradius(grenade,neworg,128)) != NULL)
+		grenade = nullptr;
+		while( (grenade=findradius(grenade,neworg,128)) != nullptr )
 		{
 			if(!grenade->inuse)
 				continue;
-			if(!grenade->classname)
+			if(grenade->classname.empty())
 				continue;
-			if(!Q_stricmp(grenade->classname,"grenade") || !Q_stricmp(grenade->classname,"hgrenade"))
+			if(!Q_stricmp( grenade->classname.c_str(), "grenade" ) || !Q_stricmp( grenade->classname.c_str(), "hgrenade" ) )
 			{
 				VectorSubtract(grenade->s.origin,oldorg,dir);
 				g1 = VectorLength(dir);
@@ -379,9 +379,9 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 			e = &g_edicts[i];
 			if(!e->inuse)
 				continue;
-			if(!e->classname)
+			if(e->classname.empty())
 				continue;
-			if(Q_stricmp(e->classname,"target_laser"))
+			if(Q_stricmp( e->classname.c_str(), "target_laser" ) )
 				continue;
 			if(e->svflags & SVF_NOCLIENT)
 				continue;
@@ -392,7 +392,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 			// Check to see if monster is ALREADY in the path of this laser.
 			// If so, allow the move so he can get out.
 			VectorMA(e->s.origin,2048,e->movedir,laser_end);
-			laser_trace = gi.trace(e->s.origin,NULL,NULL,laser_end,NULL,CONTENTS_SOLID|CONTENTS_MONSTER);
+			laser_trace = gi.trace(e->s.origin, nullptr, nullptr, laser_end, nullptr, CONTENTS_SOLID|CONTENTS_MONSTER);
 			if(laser_trace.ent == ent)
 				continue;
 			VectorCopy(laser_trace.endpos,laser_end);
@@ -429,7 +429,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 				if(delta > dist) delta = dist;
 				VectorMA(e->s.origin,    -delta,dir,laser_start);
 				VectorMA(e->s.old_origin,-delta,dir,laser_end);
-				laser_trace = gi.trace(laser_start,NULL,NULL,laser_end,world,CONTENTS_SOLID|CONTENTS_MONSTER);
+				laser_trace = gi.trace(laser_start, nullptr, nullptr, laser_end,world,CONTENTS_SOLID|CONTENTS_MONSTER);
 				if(laser_trace.ent == ent)
 					return false;
 				delta += 16;
@@ -459,7 +459,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 				gi.linkentity (ent);
 				G_TouchTriggers (ent);
 			}
-			ent->groundentity = NULL;
+			ent->groundentity = nullptr;
 			return true;
 		}
 		return false;		// walked off an edge

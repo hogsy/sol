@@ -166,7 +166,7 @@ void BeginIntermission (edict_t *targ)
 	VectorCopy (ent->s.origin, level.intermission_origin);
 	VectorCopy (ent->s.angles, level.intermission_angle);
 	// Knightmare- letterboxing
-	if (!strcmp(ent->classname, "info_player_intermission"))
+	if (!strcmp(ent->classname.c_str(), "info_player_intermission"))
 		level.intermission_letterbox = (ent->spawnflags & 1);
 	else
 		level.intermission_letterbox = false;
@@ -265,7 +265,7 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 			tag = NULL;
 		if (tag)
 		{
-			Com_sprintf (entry, sizeof(entry),
+			snprintf (entry, sizeof(entry),
 				"xv %i yv %i picn %s ",x+32, y, tag);
 			j = (int)strlen(entry);
 			if (stringlength + j > 1024)
@@ -276,7 +276,7 @@ void DeathmatchScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
-		Com_sprintf (entry, sizeof(entry),
+		snprintf (entry, sizeof(entry),
 			"client %i %i %i %i %i %i ",
 			x, y, sorted[i], cl->resp.score, cl->ping, (level.framenum - cl->resp.enterframe)/600);
 		j = (int)strlen(entry);
@@ -363,12 +363,12 @@ void HelpComputer (edict_t *ent)
 	// send the layout
 	if (world->effects & FX_WORLDSPAWN_NOHELP)
 	{
-		Com_sprintf (string, sizeof(string),
+		snprintf (string, sizeof(string),
 			"xv %d yv %d picn help ",(int)(world->bleft[0]),(int)(world->bleft[1]));
 	}
 	else
 	{
-		Com_sprintf (string, sizeof(string),
+		snprintf (string, sizeof(string),
 			"xv 32 yv 8 picn help "			// background
 			"xv 202 yv 12 string2 \"%s\" "		// skill
 			"xv 0 yv 24 cstring2 \"%s\" "		// level name

@@ -502,7 +502,7 @@ void CMod_LoadVisibility (lump_t *l)
 CMod_LoadEntityString
 =================
 */
-void CMod_LoadEntityString (lump_t *l, char *name)
+void CMod_LoadEntityString (lump_t *l, const char *name)
 {
 	int		nameLen;
 
@@ -563,16 +563,15 @@ CM_LoadMap
 Loads in the map and all submodels
 ==================
 */
-cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
+cmodel_t *CM_LoadMap ( const char *name, qboolean clientload, unsigned *checksum )
 {
 	unsigned		*buf;
 	int				i;
 	dheader_t		header;
-	int				length;
 	static unsigned	last_checksum;
 
-	map_noareas = Cvar_Get ("map_noareas", "0", 0);
-	Cvar_SetDescription ("map_noareas", "Areaportal disable option.  Disables areaportals when set to 1.");
+	map_noareas = Cvar_Get ( "map_noareas", "0", 0 );
+	Cvar_SetDescription ( "map_noareas", "Areaportal disable option.  Disables areaportals when set to 1." );
 
 	if (  !strcmp (map_name, name) && (clientload || !Cvar_VariableValue ("flushmap")) )
 	{
@@ -607,7 +606,7 @@ cmodel_t *CM_LoadMap (char *name, qboolean clientload, unsigned *checksum)
 	//
 	// load the file
 	//
-	length = FS_LoadFile (name, (void **)&buf);
+	int length = FS_LoadFile( name, reinterpret_cast< void ** >( &buf ) );
 	if (!buf)
 		Com_Error (ERR_DROP, "Couldn't load %s", name);
 

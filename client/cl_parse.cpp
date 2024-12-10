@@ -212,13 +212,13 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 
 	if (cl_noskins->integer || *s == 0)
 	{
-		Com_sprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
-		Com_sprintf (weapon_filename, sizeof(weapon_filename), "players/male/weapon.md2");
-		Com_sprintf (skin_filename, sizeof(skin_filename), "players/male/grunt.pcx");
-		Com_sprintf (ci->iconname, sizeof(ci->iconname), "/players/male/grunt_i.pcx");
-		ci->model = R_RegisterModel (model_filename);
+		snprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
+		snprintf (weapon_filename, sizeof(weapon_filename), "players/male/weapon.md2");
+		snprintf (skin_filename, sizeof(skin_filename), "players/male/grunt.pcx");
+		snprintf (ci->iconname, sizeof(ci->iconname), "/players/male/grunt_i.pcx");
+		ci->model = R_RegisterModel ( model_filename );
 		memset(ci->weaponmodel, 0, sizeof(ci->weaponmodel));
-		ci->weaponmodel[0] = R_RegisterModel (weapon_filename);
+		ci->weaponmodel[0] = R_RegisterModel ( weapon_filename );
 		ci->skin = R_RegisterSkin (skin_filename);
 		ci->icon = R_DrawFindPic (ci->iconname);
 	}
@@ -239,32 +239,32 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 		Q_strncpyz (skin_name, sizeof(skin_name), s + strlen(model_name) + 1);
 
 		// model file
-		Com_sprintf (model_filename, sizeof(model_filename), "players/%s/tris.md2", model_name);
-		ci->model = R_RegisterModel (model_filename);
+		snprintf (model_filename, sizeof(model_filename), "players/%s/tris.md2", model_name);
+		ci->model = R_RegisterModel ( model_filename );
 		if (!ci->model)
 		{
 		//	strncpy(model_name, "male");
 			Q_strncpyz(model_name, sizeof(model_name), "male");
-			Com_sprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
-			ci->model = R_RegisterModel (model_filename);
+			snprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
+			ci->model = R_RegisterModel ( model_filename );
 		}
 
 		// skin file
-		Com_sprintf (skin_filename, sizeof(skin_filename), "players/%s/%s.pcx", model_name, skin_name);
+		snprintf (skin_filename, sizeof(skin_filename), "players/%s/%s.pcx", model_name, skin_name);
 		ci->skin = R_RegisterSkin (skin_filename);
 
 		// if we don't have the skin and the model wasn't male,
 		// see if the male has it (this is for CTF's skins)
- 		if (!ci->skin && Q_stricmp(model_name, "male"))
+ 		if (!ci->skin && Q_stricmp( model_name, "male" ) )
 		{
 			// change model to male
 		//	strncpy(model_name, "male");
 			Q_strncpyz(model_name, sizeof(model_name), "male");
-			Com_sprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
-			ci->model = R_RegisterModel (model_filename);
+			snprintf (model_filename, sizeof(model_filename), "players/male/tris.md2");
+			ci->model = R_RegisterModel ( model_filename );
 
 			// see if the skin exists for the male model
-			Com_sprintf (skin_filename, sizeof(skin_filename), "players/%s/%s.pcx", model_name, skin_name);
+			snprintf (skin_filename, sizeof(skin_filename), "players/%s/%s.pcx", model_name, skin_name);
 			ci->skin = R_RegisterSkin (skin_filename);
 		}
 
@@ -272,25 +272,25 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 		// it, so default to grunt
 		if (!ci->skin) {
 			// see if the skin exists for the male model
-			Com_sprintf (skin_filename, sizeof(skin_filename), "players/%s/grunt.pcx", model_name, skin_name);
+			snprintf (skin_filename, sizeof(skin_filename), "players/%s/grunt.pcx", model_name, skin_name);
 			ci->skin = R_RegisterSkin (skin_filename);
 		}
 
 		// weapon file
 		for (i = 0; i < num_cl_weaponmodels; i++) {
-			Com_sprintf (weapon_filename, sizeof(weapon_filename), "players/%s/%s", model_name, cl_weaponmodels[i]);
-			ci->weaponmodel[i] = R_RegisterModel(weapon_filename);
+			snprintf (weapon_filename, sizeof(weapon_filename), "players/%s/%s", model_name, cl_weaponmodels[i]);
+			ci->weaponmodel[i] = R_RegisterModel( weapon_filename );
 			if (!ci->weaponmodel[i] && strcmp(model_name, "cyborg") == 0) {
 				// try male
-				Com_sprintf (weapon_filename, sizeof(weapon_filename), "players/male/%s", cl_weaponmodels[i]);
-				ci->weaponmodel[i] = R_RegisterModel(weapon_filename);
+				snprintf (weapon_filename, sizeof(weapon_filename), "players/male/%s", cl_weaponmodels[i]);
+				ci->weaponmodel[i] = R_RegisterModel( weapon_filename );
 			}
 			if (!cl_vwep->integer)
 				break; // only one when vwep is off
 		}
 
 		// icon file
-		Com_sprintf (ci->iconname, sizeof(ci->iconname), "/players/%s/%s_i.pcx", model_name, skin_name);
+		snprintf (ci->iconname, sizeof(ci->iconname), "/players/%s/%s_i.pcx", model_name, skin_name);
 		ci->icon = R_DrawFindPic (ci->iconname);
 	}
 
@@ -392,8 +392,8 @@ void CL_PlayBackgroundTrack (void)
 	// using a named audio track intead of numbered
 	if (strlen(cl.configstrings[CS_CDTRACK]) > 2)
 	{
-		Com_sprintf (name, sizeof(name), "music/%s.ogg", cl.configstrings[CS_CDTRACK]);
-		Com_sprintf (name2, sizeof(name2), "music/%s.ogg_json", cl.configstrings[CS_CDTRACK]);	// Also check .ogg_json file
+		snprintf (name, sizeof(name), "music/%s.ogg", cl.configstrings[CS_CDTRACK]);
+		snprintf (name2, sizeof(name2), "music/%s.ogg_json", cl.configstrings[CS_CDTRACK]);	// Also check .ogg_json file
 		if ( (FS_LoadFile(name, NULL) != -1) || (FS_LoadFile(name2, NULL) != -1) )
 		{
 			CDAudio_Stop ();
@@ -412,7 +412,7 @@ void CL_PlayBackgroundTrack (void)
 	}
 
 	// If an OGG file exists play it, otherwise fall back to CD audio
-	Com_sprintf (name, sizeof(name), "music/track%02i.ogg", CL_MissionPackCDTrack(track));
+	snprintf (name, sizeof(name), "music/track%02i.ogg", CL_MissionPackCDTrack(track));
 	if ( (FS_LoadFile(name, NULL) != -1) && cl_ogg_music->integer )
 		S_StartBackgroundTrack (name, name);
 	else
@@ -534,7 +534,7 @@ void CL_ParseConfigString (void)
 	{
 		if (cl.refresh_prepped)
 		{
-			cl.model_draw[i-CS_MODELS] = R_RegisterModel (cl.configstrings[i]);
+			cl.model_draw[i-CS_MODELS] = R_RegisterModel ( cl.configstrings[ i ] );
 			if (cl.configstrings[i][0] == '*')
 				cl.model_clip[i-CS_MODELS] = CM_InlineModel (cl.configstrings[i]);
 			else

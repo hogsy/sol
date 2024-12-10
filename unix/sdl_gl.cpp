@@ -358,7 +358,7 @@ void HandleEvents (void)
 	SDL_Event evt;
 
 	if (!in_doubleclicktime)
-		in_doubleclicktime = Cvar_Get ("in_doubleclicktime", "0.5", 0);
+		in_doubleclicktime = Cvar_Get ( "in_doubleclicktime", "0.5", 0 );
 
 	multiclicktime = (int)(1000.0f * in_doubleclicktime->value);
 

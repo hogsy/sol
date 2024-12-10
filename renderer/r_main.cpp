@@ -463,7 +463,7 @@ void R_SetFarZ (float skyDistance)
 					// not total size of skybox
 	r_farZ = farZ;	// save to global var
 
-	VID_Printf (PRINT_DEVELOPER, "farz now set to %g\n", farZ);
+	VID_Printf ( PRINT_DEVELOPER, "farz now set to %g\n", farZ );
 
 	R_InitSkyBoxInfo ();		// reset skybox data
 }
@@ -672,7 +672,7 @@ void R_RenderView (refdef_t *fd)
 	r_newrefdef = *fd;
 
 	if (!r_worldmodel && !( r_newrefdef.rdflags & RDF_NOWORLDMODEL ) )
-		VID_Error (ERR_DROP, "R_RenderView: NULL worldmodel");
+		VID_Error ( ERR_DROP, "R_RenderView: NULL worldmodel" );
 
 	if (r_speeds->integer)
 	{
@@ -785,13 +785,13 @@ void R_ShowSpeeds (void)
 	for (i=0; i<lines; i++)
 	{
 		switch (i) {
-			case 0:	Com_sprintf (buf, sizeof(buf), "%5i wcall", c_brush_calls); n = (int)strlen(buf); break;
-			case 1:	Com_sprintf (buf, sizeof(buf), "%5i wsurf", c_brush_surfs); n = (int)strlen(buf); break;
-			case 2:	Com_sprintf (buf, sizeof(buf), "%5i wpoly", c_brush_polys); n = (int)strlen(buf); break;
-			case 3: Com_sprintf (buf, sizeof(buf), "%5i epoly", c_alias_polys); n = (int)strlen(buf); break;
-			case 4: Com_sprintf (buf, sizeof(buf), "%5i ppoly", c_part_polys); n = (int)strlen(buf); break;
-		//	case 5: Com_sprintf (buf, sizeof(buf), "%5i tex  ", c_visible_textures); n = (int)strlen(buf); break;
-		//	case 6: Com_sprintf (buf, sizeof(buf), "%5i lmaps", c_visible_lightmaps); n = (int)strlen(buf); break;
+			case 0:	snprintf (buf, sizeof(buf), "%5i wcall", c_brush_calls); n = (int)strlen(buf); break;
+			case 1:	snprintf (buf, sizeof(buf), "%5i wsurf", c_brush_surfs); n = (int)strlen(buf); break;
+			case 2:	snprintf (buf, sizeof(buf), "%5i wpoly", c_brush_polys); n = (int)strlen(buf); break;
+			case 3: snprintf (buf, sizeof(buf), "%5i epoly", c_alias_polys); n = (int)strlen(buf); break;
+			case 4: snprintf (buf, sizeof(buf), "%5i ppoly", c_part_polys); n = (int)strlen(buf); break;
+		//	case 5: snprintf (buf, sizeof(buf), "%5i tex  ", c_visible_textures); n = (int)strlen(buf); break;
+		//	case 6: snprintf (buf, sizeof(buf), "%5i lmaps", c_visible_lightmaps); n = (int)strlen(buf); break;
 			default: break;
 		}
 		if (scr_netgraph_pos->integer)
@@ -944,18 +944,18 @@ void AssertCvarRange (cvar_t *var, float min, float max, qboolean isInteger)
 
 	if (isInteger && ((int)var->value != var->integer))
 	{
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Warning: cvar '%s' must be an integer (%f)\n", var->name, var->value);
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Warning: cvar '%s' must be an integer (%f)\n", var->name, var->value );
 		Cvar_Set (var->name, va("%d", var->integer));
 	}
 
 	if (var->value < min)
 	{
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Warning: cvar '%s' is out of range (%f < %f)\n", var->name, var->value, min);
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Warning: cvar '%s' is out of range (%f < %f)\n", var->name, var->value, min );
 		Cvar_Set (var->name, va("%f", min));
 	}
 	else if (var->value > max)
 	{
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"Warning: cvar '%s' is out of range (%f > %f)\n", var->name, var->value, max);
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "Warning: cvar '%s' is out of range (%f > %f)\n", var->name, var->value, max );
 		Cvar_Set (var->name, va("%f", max));
 	}
 }
@@ -964,333 +964,337 @@ void AssertCvarRange (cvar_t *var, float min, float max, qboolean isInteger)
 void R_Register (void)
 {
 	// added Psychospaz's console font size option
-	con_font_size = Cvar_Get ("con_font_size", "8", CVAR_ARCHIVE);
+	con_font_size = Cvar_Get ( "con_font_size", "8", CVAR_ARCHIVE );
 //	Cvar_SetDescription ("con_font_size", "Sets size of console font.  Values > 8 are larger than default, < 8 are smaller.");
-	con_font = Cvar_Get ("con_font", "default", CVAR_ARCHIVE);
-	Cvar_SetDescription ("con_font", "Sets name of font image for console text.");
-	scr_font = Cvar_Get ("scr_font", "default", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_font", "Sets name of font image for HUD text.");
-	ui_font = Cvar_Get ("ui_font", "default", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_font", "Sets name of font image for menu text.");
-	alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
+	con_font = Cvar_Get ( "con_font", "default", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "con_font", "Sets name of font image for console text." );
+	scr_font = Cvar_Get ( "scr_font", "default", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_font", "Sets name of font image for HUD text." );
+	ui_font = Cvar_Get ( "ui_font", "default", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_font", "Sets name of font image for menu text." );
+	alt_text_color = Cvar_Get ( "alt_text_color", "2", CVAR_ARCHIVE );
 //	Cvar_SetDescription ("alt_text_color", "Sets color of high-bit highlighted text.");
 
-	scr_netgraph_pos = Cvar_Get ("netgraph_pos", "0", CVAR_ARCHIVE);
+	scr_netgraph_pos = Cvar_Get ( "netgraph_pos", "0", CVAR_ARCHIVE );
 
 	gl_driver = Cvar_Get( "gl_driver", "opengl32", CVAR_ARCHIVE );
-	Cvar_SetDescription ("gl_driver", "Sets driver for OpenGL.  This should stay as \"opengl32\".");
+	Cvar_SetDescription ( "gl_driver", "Sets driver for OpenGL.  This should stay as \"opengl32\"." );
 	gl_allow_software = Cvar_Get( "gl_allow_software", "0", 0 );
-	Cvar_SetDescription ("gl_allow_software", "Whether to allow software implementations of OpenGL.");
-	r_clear = Cvar_Get ("r_clear", "0", 0);
-	Cvar_SetDescription ("r_clear", "Enables clearing of the screen to prevent HOM effects.");
+	Cvar_SetDescription ( "gl_allow_software", "Whether to allow software implementations of OpenGL." );
+	r_clear = Cvar_Get ( "r_clear", "0", 0 );
+	Cvar_SetDescription ( "r_clear", "Enables clearing of the screen to prevent HOM effects." );
 
 	r_lefthand = Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );
-	r_norefresh = Cvar_Get ("r_norefresh", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_norefresh", "Disables rendering of viewport when set to 1.");
-	r_fullbright = Cvar_Get ("r_fullbright", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_fullbright", "Enables fullbright rendering (no lighting).");
-	r_drawentities = Cvar_Get ("r_drawentities", "1", 0);
-	Cvar_SetDescription ("r_drawentities", "Enables drawing of entities.");
-	r_drawflares = Cvar_Get ("r_drawflares", "1", 0);
-	Cvar_SetDescription ("r_drawflares", "Enables drawing of Kex flares.");
-	r_drawworld = Cvar_Get ("r_drawworld", "1", CVAR_CHEAT);
-	Cvar_SetDescription ("r_drawworld", "Enables drawing of the world.");
-	r_novis = Cvar_Get ("r_novis", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_novis", "Disables use of VIS tables when set to 1.");
-	r_nocull = Cvar_Get ("r_nocull", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_nocull", "Disables culling of nodes and bmodels when set to 1.");
-	r_lerpmodels = Cvar_Get ("r_lerpmodels", "1", 0);
-	Cvar_SetDescription ("r_lerpmodels", "Enables frame interpolation of models.");
-	r_ignorehwgamma = Cvar_Get ("r_ignorehwgamma", "0", CVAR_ARCHIVE);	// hardware gamma
-	Cvar_SetDescription ("r_ignorehwgamma", "Disables hardware gamma control when set to 1.");
-	r_displayrefresh = Cvar_Get ("r_displayrefresh", "0", CVAR_ARCHIVE); // refresh rate control
-	Cvar_SetDescription ("r_displayrefresh", "Sets display refresh rate.");
+	r_norefresh = Cvar_Get ( "r_norefresh", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_norefresh", "Disables rendering of viewport when set to 1." );
+	r_fullbright = Cvar_Get ( "r_fullbright", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_fullbright", "Enables fullbright rendering (no lighting)." );
+	r_drawentities = Cvar_Get ( "r_drawentities", "1", 0 );
+	Cvar_SetDescription ( "r_drawentities", "Enables drawing of entities." );
+	r_drawflares = Cvar_Get ( "r_drawflares", "1", 0 );
+	Cvar_SetDescription ( "r_drawflares", "Enables drawing of Kex flares." );
+	r_drawworld = Cvar_Get ( "r_drawworld", "1", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_drawworld", "Enables drawing of the world." );
+	r_novis = Cvar_Get ( "r_novis", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_novis", "Disables use of VIS tables when set to 1." );
+	r_nocull = Cvar_Get ( "r_nocull", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_nocull", "Disables culling of nodes and bmodels when set to 1." );
+	r_lerpmodels = Cvar_Get ( "r_lerpmodels", "1", 0 );
+	Cvar_SetDescription ( "r_lerpmodels", "Enables frame interpolation of models." );
+	r_ignorehwgamma = Cvar_Get ( "r_ignorehwgamma", "0", CVAR_ARCHIVE );	// hardware gamma
+	Cvar_SetDescription ( "r_ignorehwgamma", "Disables hardware gamma control when set to 1." );
+	r_displayrefresh = Cvar_Get ( "r_displayrefresh", "0", CVAR_ARCHIVE ); // refresh rate control
+	Cvar_SetDescription ( "r_displayrefresh", "Sets display refresh rate." );
 	AssertCvarRange (r_displayrefresh, 0, 500, true);
-	r_speeds = Cvar_Get ("r_speeds", "0", 0);
-	Cvar_SetDescription ("r_speeds", "Enables output of rendering surface/polygon total for surfaces, entities, and particles.");
+	r_speeds = Cvar_Get ( "r_speeds", "0", 0 );
+	Cvar_SetDescription ( "r_speeds", "Enables output of rendering surface/polygon total for surfaces, entities, and particles." );
 
 	// lerped dlights on models
-	r_dlights_normal = Cvar_Get("r_dlights_normal", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_dlights_normal", "Enables surface clipping of dynamic lights.");
+	r_dlights_normal = Cvar_Get( "r_dlights_normal", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_dlights_normal", "Enables surface clipping of dynamic lights." );
 	r_model_shading = Cvar_Get( "r_model_shading", "2", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_model_shading", "Enables shading on alias models.  Accepted values are 0, 1, 2, or 3.");
+	Cvar_SetDescription ( "r_model_shading", "Enables shading on alias models.  Accepted values are 0, 1, 2, or 3." );
 	r_model_dlights = Cvar_Get( "r_model_dlights", "8", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_model_dlights", "Sets maximum number of dynamic lights for a model.");
-	r_model_minlight = Cvar_Get ("r_model_minlight", "0.02", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_model_minlight", "Sets minimum light level for alias model rendering.");
-	r_entity_doublelight  = Cvar_Get ("r_entity_doublelight", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_entity_doublelight", "Enables original glitchy double-lighting of models.  This is a sort-of-exploit, but is not considered a cheat.");
+	Cvar_SetDescription ( "r_model_dlights", "Sets maximum number of dynamic lights for a model." );
+	r_model_minlight = Cvar_Get ( "r_model_minlight", "0.02", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_model_minlight", "Sets minimum light level for alias model rendering." );
+	r_entity_doublelight  = Cvar_Get ( "r_entity_doublelight", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_entity_doublelight", "Enables original glitchy double-lighting of models.  This is a sort-of-exploit, but is not considered a cheat." );
 
-	r_lightlevel = Cvar_Get ("r_lightlevel", "0", 0);
-	Cvar_SetDescription ("r_lightlevel", "Hack to send player's light level to server.  This is overwritten every render frame.");
-	r_rgbscale = Cvar_Get ("r_rgbscale", "2", CVAR_ARCHIVE);	// Vic's RGB brightening
-	Cvar_SetDescription ("r_rgbscale", "Sets RGB scaling factor.  Accepted values are 1,  2, or 4.");
+	r_lightlevel = Cvar_Get ( "r_lightlevel", "0", 0 );
+	Cvar_SetDescription ( "r_lightlevel", "Hack to send player's light level to server.  This is overwritten every render frame." );
+	r_rgbscale = Cvar_Get ( "r_rgbscale", "2", CVAR_ARCHIVE );	// Vic's RGB brightening
+	Cvar_SetDescription ( "r_rgbscale", "Sets RGB scaling factor.  Accepted values are 1,  2, or 4." );
 
-	r_waterwave = Cvar_Get ("r_waterwave", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_waterwave", "Sets amplitude of water waves.");
-	r_caustics = Cvar_Get ("r_caustics", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_caustics", "Enables rendering of underwater caustic effect.  0 = disabled, 1 = normal, 2 = fragment warp.");
-	r_glows = Cvar_Get ("r_glows", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_glows", "Enables rendering of texture glow layers.");
+	r_waterwave = Cvar_Get ( "r_waterwave", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_waterwave", "Sets amplitude of water waves." );
+	r_caustics = Cvar_Get ( "r_caustics", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_caustics", "Enables rendering of underwater caustic effect.  0 = disabled, 1 = normal, 2 = fragment warp." );
+	r_glows = Cvar_Get ( "r_glows", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_glows", "Enables rendering of texture glow layers." );
 //	r_nosubimage = Cvar_Get( "r_nosubimage", "0", 0 );	// unused
 
 	// correct trasparent sorting
-	r_transrendersort = Cvar_Get ("r_transrendersort", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_transrendersort", "Enables sorting of transparent entities and particles.");
-	r_particle_lighting = Cvar_Get ("r_particle_lighting", "1.0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_particle_lighting", "Lighting scale for particles.");
-	r_particledistance = Cvar_Get ("r_particledistance", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_particledistance", "Sets maximum distance for rendering particle effects. 0 = no limit.");
-	r_particle_overdraw = Cvar_Get ("r_particle_overdraw", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_particle_overdraw", "Enables redrawing of particles over translucent surfaces.");
-	r_particle_min = Cvar_Get ("r_particle_min", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_particle_min", "Sets minimum clipping distance for particle rendering.");
-	r_particle_max = Cvar_Get ("r_particle_max", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_particle_max", "Sets maximum clipping distance for particle rendering.");
+	r_transrendersort = Cvar_Get ( "r_transrendersort", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_transrendersort", "Enables sorting of transparent entities and particles." );
+	r_particle_lighting = Cvar_Get ( "r_particle_lighting", "1.0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_particle_lighting", "Lighting scale for particles." );
+	r_particledistance = Cvar_Get ( "r_particledistance", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_particledistance", "Sets maximum distance for rendering particle effects. 0 = no limit." );
+	r_particle_overdraw = Cvar_Get ( "r_particle_overdraw", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_particle_overdraw", "Enables redrawing of particles over translucent surfaces." );
+	r_particle_min = Cvar_Get ( "r_particle_min", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_particle_min", "Sets minimum clipping distance for particle rendering." );
+	r_particle_max = Cvar_Get ( "r_particle_max", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_particle_max", "Sets maximum clipping distance for particle rendering." );
 
-	r_modulate = Cvar_Get ("r_modulate", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_modulate", "Sets brightness scale for lightmaps.");
+	r_modulate = Cvar_Get ( "r_modulate", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_modulate", "Sets brightness scale for lightmaps." );
 	r_log = Cvar_Get( "r_log", "0", 0 );
-	Cvar_SetDescription ("r_log", "Enables logging of OpenGL API calls.");
+	Cvar_SetDescription ( "r_log", "Enables logging of OpenGL API calls." );
 	r_bitdepth = Cvar_Get( "r_bitdepth", "0", 0 );
-	Cvar_SetDescription ("r_bitdepth", "Sets color bit depth.  0 = desktop setting.");
+	Cvar_SetDescription ( "r_bitdepth", "Sets color bit depth.  0 = desktop setting." );
 #if defined(__APPLE__) || (MACOSX)
 	r_mode = Cvar_Get( "r_mode", "0", CVAR_ARCHIVE );
 #else
 	r_mode = Cvar_Get( "r_mode", "6", CVAR_ARCHIVE );
 #endif // __APPLE__ || MACOSX
-	Cvar_SetDescription ("r_mode", "Sets enumerated video mode for renderer.  -1 = custom mode.");
+	Cvar_SetDescription ( "r_mode", "Sets enumerated video mode for renderer.  -1 = custom mode." );
 #ifdef _WIN32	// desktop-resolution display mode
 	r_mode_desktop = Cvar_Get( "r_mode_desktop", "0", CVAR_ARCHIVE );
 	Cvar_SetDescription ("r_mode_desktop", "Enables setting borderless window mode to current desktop size (including multiple monitors).  Experimental.");
 #endif
-	r_lightmap = Cvar_Get ("r_lightmap", "0", 0);
-	Cvar_SetDescription ("r_lightmap", "Enables lightmap-only world rendering.");
-	r_shadows = Cvar_Get ("r_shadows", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shadows", "Enables rendering of shadows.  0 = none, 1 = planar, 2 = dynamic planar, 3 = projection.");
-	r_shadowalpha = Cvar_Get ("r_shadowalpha", "0.4", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shadowalpha", "Sets opacity of shadows.");
-	r_shadowrange  = Cvar_Get ("r_shadowrange", "768", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shadowrange", "Sets maximum range for shadow rendering.");
-	r_shadowvolumes = Cvar_Get ("r_shadowvolumes", "0", CVAR_CHEAT );
-	Cvar_SetDescription ("r_shadowvolumes", "Enables rendering of shadow volumes for debugging.");
-	r_shadow_self = Cvar_Get ("r_shadow_self", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shadow_self", "Enables self-shadowing of models.");
-	r_shadow_zfail = Cvar_Get ("r_shadow_zfail", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shadow_zfail", "Enables z-fail shadow rendering method.  0 = z-pass shadows.");
-	r_stencil = Cvar_Get ("r_stencil", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_stencil", "Enables use of stencil buffer.");
+	r_lightmap = Cvar_Get ( "r_lightmap", "0", 0 );
+	Cvar_SetDescription ( "r_lightmap", "Enables lightmap-only world rendering." );
+	r_shadows = Cvar_Get ( "r_shadows", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_shadows", "Enables rendering of shadows.  0 = none, 1 = planar, 2 = dynamic planar, 3 = projection." );
+	r_shadowalpha = Cvar_Get ( "r_shadowalpha", "0.4", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_shadowalpha", "Sets opacity of shadows." );
+	r_shadowrange  = Cvar_Get ( "r_shadowrange", "768", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_shadowrange", "Sets maximum range for shadow rendering." );
+	r_shadowvolumes = Cvar_Get ( "r_shadowvolumes", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_shadowvolumes", "Enables rendering of shadow volumes for debugging." );
+	r_shadow_self = Cvar_Get ( "r_shadow_self", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_shadow_self", "Enables self-shadowing of models." );
+	r_shadow_zfail = Cvar_Get ( "r_shadow_zfail", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_shadow_zfail", "Enables z-fail shadow rendering method.  0 = z-pass shadows." );
+	r_stencil = Cvar_Get ( "r_stencil", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_stencil", "Enables use of stencil buffer." );
 
-	r_dynamic = Cvar_Get ("r_dynamic", "1", 0);
-	Cvar_SetDescription ("r_dynamic", "Enables dynamic lights.");
-	r_nobind = Cvar_Get ("r_nobind", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_nobind", "Disables binding of textures for performance testing.");
+	r_dynamic = Cvar_Get ( "r_dynamic", "1", 0 );
+	Cvar_SetDescription ( "r_dynamic", "Enables dynamic lights." );
+	r_nobind = Cvar_Get ( "r_nobind", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_nobind", "Disables binding of textures for performance testing." );
 //	r_round_down = Cvar_Get ("r_round_down", "1", 0);	// unused
-	r_picmip = Cvar_Get ("r_picmip", "0", 0);
-	Cvar_SetDescription ("r_picmip", "Sets maximum size for textures.  0 = no limit, 1 = 1024, 2 = 512, 3 = 256, 4 = 128.");
-	r_skymip = Cvar_Get ("r_skymip", "0", 0);
-	Cvar_SetDescription ("r_skymip", "Enables scaling down of skybox textures by a factor of 2.");
-	r_showtris = Cvar_Get ("r_showtris", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_showtris", "Enables drawing of triangle outlines.  0 = disabled, 1 = no depth testing, 2 = depth testing enabled.");
-	r_showbbox = Cvar_Get ("r_showbbox", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_showbbox", "Enables drawing of model culling bounding boxes.");
-	r_showbbox_entity = Cvar_Get ("r_showbbox_entity", "0", CVAR_CHEAT);
-	Cvar_SetDescription ("r_showbbox_entity", "Enables drawing of solid entity bounding boxes.");
-	r_ztrick = Cvar_Get ("r_ztrick", "0", 0);
-	Cvar_SetDescription ("r_ztrick", "Enables the skipping of clearing the depth buffer before each render frame.");
-	r_finish = Cvar_Get ("r_finish", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_finish", "Enables the delaying of view rendering until all buffered GL operations are complete.");
-	r_cull = Cvar_Get ("r_cull", "1", 0);
-	Cvar_SetDescription ("r_cull", "Enables backface culling.");
-	r_polyblend = Cvar_Get ("r_polyblend", "1", 0);
-	Cvar_SetDescription ("r_polyblend", "Enables view blending.");
-	r_flashblend = Cvar_Get ("r_flashblend", "0", 0);
-	Cvar_SetDescription ("r_flashblend", "Enables drawing of dynamic lights as glows instead of dynamicly lighting surfaces.");
+	r_picmip = Cvar_Get ( "r_picmip", "0", 0 );
+	Cvar_SetDescription ( "r_picmip", "Sets maximum size for textures.  0 = no limit, 1 = 1024, 2 = 512, 3 = 256, 4 = 128." );
+	r_skymip = Cvar_Get ( "r_skymip", "0", 0 );
+	Cvar_SetDescription ( "r_skymip", "Enables scaling down of skybox textures by a factor of 2." );
+	r_showtris = Cvar_Get ( "r_showtris", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_showtris", "Enables drawing of triangle outlines.  0 = disabled, 1 = no depth testing, 2 = depth testing enabled." );
+	r_showbbox = Cvar_Get ( "r_showbbox", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_showbbox", "Enables drawing of model culling bounding boxes." );
+	r_showbbox_entity = Cvar_Get ( "r_showbbox_entity", "0", CVAR_CHEAT );
+	Cvar_SetDescription ( "r_showbbox_entity", "Enables drawing of solid entity bounding boxes." );
+	r_ztrick = Cvar_Get ( "r_ztrick", "0", 0 );
+	Cvar_SetDescription ( "r_ztrick", "Enables the skipping of clearing the depth buffer before each render frame." );
+	r_finish = Cvar_Get ( "r_finish", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_finish", "Enables the delaying of view rendering until all buffered GL operations are complete." );
+	r_cull = Cvar_Get ( "r_cull", "1", 0 );
+	Cvar_SetDescription ( "r_cull", "Enables backface culling." );
+	r_polyblend = Cvar_Get ( "r_polyblend", "1", 0 );
+	Cvar_SetDescription ( "r_polyblend", "Enables view blending." );
+	r_flashblend = Cvar_Get ( "r_flashblend", "0", 0 );
+	Cvar_SetDescription ( "r_flashblend", "Enables drawing of dynamic lights as glows instead of dynamicly lighting surfaces." );
 //	r_playermip = Cvar_Get ("r_playermip", "0", 0);	// unused
 	r_monolightmap = Cvar_Get( "r_monolightmap", "0", 0 );
-	Cvar_SetDescription ("r_monolightmap", "Enables monochrome lightmaps.");
+	Cvar_SetDescription ( "r_monolightmap", "Enables monochrome lightmaps." );
 
 	r_anisotropic = Cvar_Get( "r_anisotropic", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_anisotropic", "Sets level of anisotropic filtering.");
+	Cvar_SetDescription ( "r_anisotropic", "Sets level of anisotropic filtering." );
 	r_anisotropic_avail = Cvar_Get( "r_anisotropic_avail", "0", 0 );
-	Cvar_SetDescription ("r_anisotropic_avail", "The level of anisotropic filtering supported by the GL driver.");
+	Cvar_SetDescription ( "r_anisotropic_avail", "The level of anisotropic filtering supported by the GL driver." );
 
-	r_font_upscale = Cvar_Get ("r_font_upscale", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_font_upscale", "Enables upscaling of 128x128 fonts.");
-	r_scrap_upscale = Cvar_Get ("r_scrap_upscale", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_scrap_upscale", "Enables upscaling of the atlassed scrap image.");
+	r_font_upscale = Cvar_Get ( "r_font_upscale", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_font_upscale", "Enables upscaling of 128x128 fonts." );
+	r_scrap_upscale = Cvar_Get ( "r_scrap_upscale", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_scrap_upscale", "Enables upscaling of the atlassed scrap image." );
 
 	r_nvfog_dist = Cvar_Get( "r_nvfog_dist", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_nvfog_dist", "Enables use of nVidia distance fog.");
+	Cvar_SetDescription ( "r_nvfog_dist", "Enables use of nVidia distance fog." );
 	r_nvfog_dist_mode = Cvar_Get( "r_nvfog_dist_mode", "GL_EYE_RADIAL_NV", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_nvfog_dist_mode", "Sets nVidia distance fog mode.  Accepted values are GL_EYE_PLANE_ABSOLUTE_NV, GL_EYE_PLANE, and GL_EYE_RADIAL_NV.");
+	Cvar_SetDescription ( "r_nvfog_dist_mode", "Sets nVidia distance fog mode.  Accepted values are GL_EYE_PLANE_ABSOLUTE_NV, GL_EYE_PLANE, and GL_EYE_RADIAL_NV." );
 
 	// changed default texture mode to bilinear
 	r_texturemode = Cvar_Get( "r_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_texturemode", "Sets texture filtering mode.  Accepted values are GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_LINEAR_MIPMAP_LINEAR.");
+	Cvar_SetDescription ( "r_texturemode", "Sets texture filtering mode.  Accepted values are GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_LINEAR_MIPMAP_LINEAR." );
 //	r_texturealphamode = Cvar_Get( "r_texturealphamode", "default", CVAR_ARCHIVE );
 //	r_texturesolidmode = Cvar_Get( "r_texturesolidmode", "default", CVAR_ARCHIVE );
 	r_lockpvs = Cvar_Get( "r_lockpvs", "0", 0 );
-	Cvar_SetDescription ("r_lockpvs", "Enables locking of PVS to current viewpoint for testing map VIS.");
+	Cvar_SetDescription ( "r_lockpvs", "Enables locking of PVS to current viewpoint for testing map VIS." );
 
 //	r_vertex_arrays = Cvar_Get( "r_vertex_arrays", "1", CVAR_ARCHIVE );	// unused
 
 //	gl_ext_palettedtexture = Cvar_Get( "gl_ext_palettedtexture", "0", CVAR_ARCHIVE );
 //	gl_ext_pointparameters = Cvar_Get( "gl_ext_pointparameters", "1", CVAR_ARCHIVE );
 //	r_ext_swapinterval = Cvar_Get( "r_ext_swapinterval", "1", CVAR_ARCHIVE );	// unused
-	r_ext_draw_range_elements = Cvar_Get("r_ext_draw_range_elements", "1", CVAR_ARCHIVE /*| CVAR_LATCH*/);
-	Cvar_SetDescription ("r_ext_draw_range_elements", "Enables use of glDrawRangeElements().");
+	r_ext_draw_range_elements = Cvar_Get( "r_ext_draw_range_elements", "1", CVAR_ARCHIVE
+	                                      /*| CVAR_LATCH*/ );
+	Cvar_SetDescription ( "r_ext_draw_range_elements", "Enables use of glDrawRangeElements()." );
 	r_ext_compiled_vertex_array = Cvar_Get( "r_ext_compiled_vertex_array", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_ext_compiled_vertex_array", "Enables use of compiled vertex arrays.");
-	r_arb_texturenonpoweroftwo  = Cvar_Get("r_arb_texturenonpoweroftwo", "1", CVAR_ARCHIVE /*| CVAR_LATCH*/);
-	Cvar_SetDescription ("r_arb_texturenonpoweroftwo", "Enables support for non-power-of-2 textures.");
-	r_nonpoweroftwo_mipmaps = Cvar_Get("r_nonpoweroftwo_mipmaps", "1", CVAR_ARCHIVE /*| CVAR_LATCH*/);
-	Cvar_SetDescription ("r_nonpoweroftwo_mipmaps", "Enables support for non-power-of-2 mipmaps.  This is not correctly supported by some drivers and may produce incorrect mipmaps.");
-	r_sgis_generatemipmap = Cvar_Get("r_sgis_generatemipmap", "1", CVAR_ARCHIVE /*| CVAR_LATCH*/);
-	Cvar_SetDescription ("r_sgis_generatemipmap", "Enables driver-based mipmap generation.  Set to 0 if you encounter corrupt or missing mipmaps.");
+	Cvar_SetDescription ( "r_ext_compiled_vertex_array", "Enables use of compiled vertex arrays." );
+	r_arb_texturenonpoweroftwo  = Cvar_Get( "r_arb_texturenonpoweroftwo", "1", CVAR_ARCHIVE
+	                                       /*| CVAR_LATCH*/ );
+	Cvar_SetDescription ( "r_arb_texturenonpoweroftwo", "Enables support for non-power-of-2 textures." );
+	r_nonpoweroftwo_mipmaps = Cvar_Get( "r_nonpoweroftwo_mipmaps", "1", CVAR_ARCHIVE
+	                                    /*| CVAR_LATCH*/ );
+	Cvar_SetDescription ( "r_nonpoweroftwo_mipmaps", "Enables support for non-power-of-2 mipmaps.  This is not correctly supported by some drivers and may produce incorrect mipmaps." );
+	r_sgis_generatemipmap = Cvar_Get( "r_sgis_generatemipmap", "1", CVAR_ARCHIVE
+	                                  /*| CVAR_LATCH*/ );
+	Cvar_SetDescription ( "r_sgis_generatemipmap", "Enables driver-based mipmap generation.  Set to 0 if you encounter corrupt or missing mipmaps." );
 
-	r_newlightmapformat = Cvar_Get("r_newlightmapformat", "1", CVAR_ARCHIVE);	// whether to use new lightmap format
-	Cvar_SetDescription ("r_newlightmapformat", "Enables modern, more efficient BGRA format for lightmaps.");
+	r_newlightmapformat = Cvar_Get( "r_newlightmapformat", "1", CVAR_ARCHIVE );	// whether to use new lightmap format
+	Cvar_SetDescription ( "r_newlightmapformat", "Enables modern, more efficient BGRA format for lightmaps." );
 
 	// added Vic's RGB brightening
-	r_ext_mtexcombine = Cvar_Get ("r_ext_mtexcombine", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_ext_mtexcombine", "Enables OpenGL register combiners.");
+	r_ext_mtexcombine = Cvar_Get ( "r_ext_mtexcombine", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_ext_mtexcombine", "Enables OpenGL register combiners." );
 
 	// Echon's two-sided stenciling
-	r_stencilTwoSide = Cvar_Get ("r_stencilTwoSide", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_stencilTwoSide", "Enables two-sided stenciling for projection shadows.");
+	r_stencilTwoSide = Cvar_Get ( "r_stencilTwoSide", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_stencilTwoSide", "Enables two-sided stenciling for projection shadows." );
 
-	r_arb_fragment_program = Cvar_Get ("r_arb_fragment_program", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_arb_fragment_program", "Enables use of ARB fragment programs.");
-	r_arb_vertex_program = Cvar_Get ("r_arb_vertex_program", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_arb_vertex_program", "Enables use of ARB vertex programs.");
+	r_arb_fragment_program = Cvar_Get ( "r_arb_fragment_program", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_arb_fragment_program", "Enables use of ARB fragment programs." );
+	r_arb_vertex_program = Cvar_Get ( "r_arb_vertex_program", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_arb_vertex_program", "Enables use of ARB vertex programs." );
 
-	r_arb_vertex_buffer_object = Cvar_Get ("r_arb_vertex_buffer_object", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("r_arb_vertex_buffer_object", "Enables use of ARB vertex buffer objects.");
+	r_arb_vertex_buffer_object = Cvar_Get ( "r_arb_vertex_buffer_object", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_arb_vertex_buffer_object", "Enables use of ARB vertex buffer objects." );
 
 	// allow disabling the nVidia water warp
 	r_pixel_shader_warp = Cvar_Get( "r_pixel_shader_warp", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_pixel_shader_warp", "Enables pixel shader water warp effect.");
+	Cvar_SetDescription ( "r_pixel_shader_warp", "Enables pixel shader water warp effect." );
 
 	// allow disabling of lightmaps on trans surfaces
 	r_trans_lighting = Cvar_Get( "r_trans_lighting", "2", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_trans_lighting", "Enables lighting on translucent surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap.");
+	Cvar_SetDescription ( "r_trans_lighting", "Enables lighting on translucent surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap." );
 
 	// allow disabling of lighting on warp surfaces
 	r_warp_lighting = Cvar_Get( "r_warp_lighting", "2", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_warp_lighting", "Enables lighting on warp/water surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap (if available).");
+	Cvar_SetDescription ( "r_warp_lighting", "Enables lighting on warp/water surfaces. 0 = disabled, 1 = vertex lighting, 2 = lightmap (if available)." );
 
 	// allow adjustment of lighting sampling offset
 	r_warp_lighting_sample_offset = Cvar_Get( "r_warp_lighting_sample_offset", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_warp_lighting_sample_offset", "Sets offset sampling distance for vertex light sampling.");
+	Cvar_SetDescription ( "r_warp_lighting_sample_offset", "Sets offset sampling distance for vertex light sampling." );
 
 	// allow loading of lightmaps on warp surfaces
 	r_load_warp_lightmaps = Cvar_Get( "r_load_warp_lightmaps", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_load_warp_lightmaps", "Enables loading of lightmaps on warp surfaces for Q2 BSPs (version 38).");
+	Cvar_SetDescription ( "r_load_warp_lightmaps", "Enables loading of lightmaps on warp surfaces for Q2 BSPs (version 38)." );
 
 	// allow disabling of trans33+trans66 surface flag combining
 	r_solidalpha = Cvar_Get( "r_solidalpha", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_solidalpha", "Enables rendering of solid alphas (1.0f) when both trans33 and trans66 flags are set.");
-	
+	Cvar_SetDescription ( "r_solidalpha", "Enables rendering of solid alphas (1.0f) when both trans33 and trans66 flags are set." );
+
 	// allow disabling of backwards alias model roll
 	r_entity_fliproll = Cvar_Get( "r_entity_fliproll", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_entity_fliproll", "Enables reversing of backwards entity roll.");
+	Cvar_SetDescription ( "r_entity_fliproll", "Enables reversing of backwards entity roll." );
 
 	// allow selection of nullmodel
-	r_old_nullmodel = Cvar_Get( "r_old_nullmodel", "0", CVAR_ARCHIVE );	
-	Cvar_SetDescription ("r_old_nullmodel", "Enables reversing of backwards entity roll.");
+	r_old_nullmodel = Cvar_Get( "r_old_nullmodel", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_old_nullmodel", "Enables reversing of backwards entity roll." );
 
 	// lighting scale for menu modelviews
-	r_modelview_lightscale = Cvar_Get( "r_modelview_lightscale", "0.8", CVAR_ARCHIVE );	
-	Cvar_SetDescription ("r_modelview_lightscale", "Sets lighting scale for models displayed in menus.  1.0 = fully bright, 0.0 = fully dark.");
+	r_modelview_lightscale = Cvar_Get( "r_modelview_lightscale", "0.8", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "r_modelview_lightscale", "Sets lighting scale for models displayed in menus.  1.0 = fully bright, 0.0 = fully dark." );
 
 	// allow disabling of OpenGL occlusion test for flares
 	r_occlusion_test = Cvar_Get( "r_occlusion_test", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_occlusion_test", "Enables use of occlusion testing for flares.");
+	Cvar_SetDescription ( "r_occlusion_test", "Enables use of occlusion testing for flares." );
 
 	// added Psychospaz's envmapping
 	r_glass_envmaps = Cvar_Get( "r_glass_envmaps", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_glass_envmaps", "Enables environment maps on transparent surfaces.");
+	Cvar_SetDescription ( "r_glass_envmaps", "Enables environment maps on transparent surfaces." );
 //	r_trans_surf_sorting = Cvar_Get( "r_trans_surf_sorting", "0", CVAR_ARCHIVE );	// unused
 
 	r_shelltype = Cvar_Get( "r_shelltype", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_shelltype", "Sets render type for entity color shells.  0 = solid, 1 = flowing, 2 = envmap.");
+	Cvar_SetDescription ( "r_shelltype", "Sets render type for entity color shells.  0 = solid, 1 = flowing, 2 = envmap." );
 
 	r_ext_texture_compression = Cvar_Get( "r_ext_texture_compression", "0", CVAR_ARCHIVE ); // Heffo - ARB Texture Compression
-	Cvar_SetDescription ("r_ext_texture_compression", "Enables ARB texure compression.");
+	Cvar_SetDescription ( "r_ext_texture_compression", "Enables ARB texure compression." );
 
 	r_lightcutoff = Cvar_Get( "r_lightcutoff", "0", CVAR_ARCHIVE );	//** DMP dynamic light cutoffnow variable
-	Cvar_SetDescription ("r_lightcutoff", "Sets cutoff distance for dynamic lights.  Lower = smoother.  Higher = faster.");
+	Cvar_SetDescription ( "r_lightcutoff", "Sets cutoff distance for dynamic lights.  Lower = smoother.  Higher = faster." );
 
 	r_debug_media = Cvar_Get( "r_debug_media", "0", 0 );		// enables output of generated textures as .tga on startup
-	Cvar_SetDescription ("r_debug_media", "Enables output of generated textures as .tga on renderer startup.");
+	Cvar_SetDescription ( "r_debug_media", "Enables output of generated textures as .tga on renderer startup." );
 
 	r_screenshot_format = Cvar_Get( "r_screenshot_format", "jpg", CVAR_ARCHIVE );			// determines screenshot format
-	Cvar_SetDescription ("r_screenshot_format", "Sets the image format for screenshots.  Accepted values are tga, jpg, and png.");
+	Cvar_SetDescription ( "r_screenshot_format", "Sets the image format for screenshots.  Accepted values are tga, jpg, and png." );
 //	r_screenshot_jpeg = Cvar_Get( "r_screenshot_jpeg", "1", CVAR_ARCHIVE );					// Heffo - JPEG Screenshots
 	r_screenshot_jpeg_quality = Cvar_Get( "r_screenshot_jpeg_quality", "100", CVAR_ARCHIVE );	// Heffo - JPEG Screenshots
-	Cvar_SetDescription ("r_screenshot_jpeg_quality", "Sets the image quality for JPEG screenshots.  Accepted values are 1-100.");
+	Cvar_SetDescription ( "r_screenshot_jpeg_quality", "Sets the image quality for JPEG screenshots.  Accepted values are 1-100." );
 	r_screenshot_gamma_correct = Cvar_Get( "r_screenshot_gamma_correct", "0", CVAR_ARCHIVE );	// gamma correction for screenshots
-	Cvar_SetDescription ("r_screenshot_gamma_correct", "Enables gamma correction of screenshots.");
+	Cvar_SetDescription ( "r_screenshot_gamma_correct", "Enables gamma correction of screenshots." );
 	r_screenshot_use_mapname = Cvar_Get( "r_screenshot_use_mapname", "0", CVAR_ARCHIVE );	// screenshot filename contains mapname
-	Cvar_SetDescription ("r_screenshot_use_mapname", "Enables mapname in screenshot filenames.");
+	Cvar_SetDescription ( "r_screenshot_use_mapname", "Enables mapname in screenshot filenames." );
 
 //	r_motionblur = Cvar_Get( "r_motionblur", "0", CVAR_ARCHIVE );	// motion blur
 
 	r_drawbuffer = Cvar_Get( "r_drawbuffer", "GL_BACK", 0 );
-	Cvar_SetDescription ("r_drawbuffer", "Sets draw buffer type.  Accepted values are GL_BACK and GL_FRONT.");
+	Cvar_SetDescription ( "r_drawbuffer", "Sets draw buffer type.  Accepted values are GL_BACK and GL_FRONT." );
 	r_swapinterval = Cvar_Get( "r_swapinterval", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_swapinterval", "Enables video sync.");
+	Cvar_SetDescription ( "r_swapinterval", "Enables video sync." );
 
 	r_saturatelighting = Cvar_Get( "r_saturatelighting", "0", 0 );
-	Cvar_SetDescription ("r_saturatelighting", "Enables additive blend of lightmaps in single-texture rendering mode.");
+	Cvar_SetDescription ( "r_saturatelighting", "Enables additive blend of lightmaps in single-texture rendering mode." );
 
 	r_3dlabs_broken = Cvar_Get( "r_3dlabs_broken", "1", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_3dlabs_broken", "Enables CDS hack for broken 3DLabs drivers.");
+	Cvar_SetDescription ( "r_3dlabs_broken", "Enables CDS hack for broken 3DLabs drivers." );
 
 	vid_fullscreen = Cvar_Get( "vid_fullscreen", "0", CVAR_ARCHIVE );
 //	Cvar_SetDescription ("vid_fullscreen", "Enables fullscreen video mode.");
-	Cvar_SetDescription ("vid_fullscreen", "Sets fullscreen or borderless video mode.  0 = windowed, 1 = fullscreen, 2 = borderless");	// borderless support
+	Cvar_SetDescription ( "vid_fullscreen", "Sets fullscreen or borderless video mode.  0 = windowed, 1 = fullscreen, 2 = borderless" );	// borderless support
 	vid_gamma = Cvar_Get( "vid_gamma", "0.8", CVAR_ARCHIVE ); // was 1.0
-	Cvar_SetDescription ("vid_gamma", "Screen brightness value.  Uses inverse scale.");
+	Cvar_SetDescription ( "vid_gamma", "Screen brightness value.  Uses inverse scale." );
 	vid_ref = Cvar_Get( "vid_ref", "gl", CVAR_ARCHIVE );
-	Cvar_SetDescription ("vid_ref", "Video renderer module in use.  This is always set to \"gl\" in KMQuake2.");
+	Cvar_SetDescription ( "vid_ref", "Video renderer module in use.  This is always set to \"gl\" in KMQuake2." );
 
 	// Changable color for r_clearcolor (enabled by gl_clar)
 	r_clearcolor_r = Cvar_Get( "r_clearcolor_r", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_r", "Sets red component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ( "r_clearcolor_r", "Sets red component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1." );
 	r_clearcolor_g = Cvar_Get( "r_clearcolor_g", "0.5", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_g", "Sets green component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ( "r_clearcolor_g", "Sets green component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1." );
 	r_clearcolor_b = Cvar_Get( "r_clearcolor_b", "0.5", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_clearcolor_b", "Sets blue component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1.");
+	Cvar_SetDescription ( "r_clearcolor_b", "Sets blue component (normalized) of background color used with r_clear set to 1.  Accepted values are 0-1." );
 
 	r_bloom = Cvar_Get( "r_bloom", "0", CVAR_ARCHIVE );	// BLOOMS
-	Cvar_SetDescription ("r_bloom", "Enables bloom postprocess effect.");
+	Cvar_SetDescription ( "r_bloom", "Enables bloom postprocess effect." );
 
 	r_celshading = Cvar_Get( "r_celshading", "0", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_celshading", "Enables cel shaded rendering of models.");
+	Cvar_SetDescription ( "r_celshading", "Enables cel shaded rendering of models." );
 	r_celshading_width = Cvar_Get( "r_celshading_width", "4", CVAR_ARCHIVE );
-	Cvar_SetDescription ("r_celshading_width", "Sets width in pixels of cel shading outlines.");
+	Cvar_SetDescription ( "r_celshading_width", "Sets width in pixels of cel shading outlines." );
 
-	r_skydistance = Cvar_Get("r_skydistance", "18400", CVAR_ARCHIVE); // variable sky range
-	Cvar_SetDescription ("r_skydistance", "Sets render distance of skybox.  Larger values mean a longer visible distance areas with the skybox visible.");
-	r_fog_skyratio = Cvar_Get("r_fog_skyratio", "-1", CVAR_ARCHIVE);	// variable sky fog ratio
-	Cvar_SetDescription ("r_fog_skyratio", "Sets ratio of fog far distance for skyboxes versus standard world surfaces.  -1 = auto.");
-	r_subdivide_size = Cvar_Get("r_subdivide_size", "64", CVAR_ARCHIVE);	// chop size for warp surfaces
-	Cvar_SetDescription ("r_subdivide_size", "Sets subdivision size of warp surfaces.  Requires vid_restart for changes to take effect.");
+	r_skydistance = Cvar_Get( "r_skydistance", "18400", CVAR_ARCHIVE ); // variable sky range
+	Cvar_SetDescription ( "r_skydistance", "Sets render distance of skybox.  Larger values mean a longer visible distance areas with the skybox visible." );
+	r_fog_skyratio = Cvar_Get( "r_fog_skyratio", "-1", CVAR_ARCHIVE );	// variable sky fog ratio
+	Cvar_SetDescription ( "r_fog_skyratio", "Sets ratio of fog far distance for skyboxes versus standard world surfaces.  -1 = auto." );
+	r_subdivide_size = Cvar_Get( "r_subdivide_size", "64", CVAR_ARCHIVE );	// chop size for warp surfaces
+	Cvar_SetDescription ( "r_subdivide_size", "Sets subdivision size of warp surfaces.  Requires vid_restart for changes to take effect." );
 
 //	r_saturation = Cvar_Get( "r_saturation", "1.0", CVAR_ARCHIVE );	//** DMP saturation setting (.89 good for nvidia)
 
-	Cmd_AddCommand ("imagelist", R_ImageList_f);
-	Cmd_AddCommand ("screenshot", R_ScreenShot_f);
-	Cmd_AddCommand ("screenshot_silent", R_ScreenShot_Silent_f);
-	Cmd_AddCommand ("screenshot_tga", R_ScreenShot_TGA_f);
-	Cmd_AddCommand ("screenshot_jpg", R_ScreenShot_JPG_f);
+	Cmd_AddCommand ( "imagelist", R_ImageList_f );
+	Cmd_AddCommand ( "screenshot", R_ScreenShot_f );
+	Cmd_AddCommand ( "screenshot_silent", R_ScreenShot_Silent_f );
+	Cmd_AddCommand ( "screenshot_tga", R_ScreenShot_TGA_f );
+	Cmd_AddCommand ( "screenshot_jpg", R_ScreenShot_JPG_f );
 #ifdef PNG_SUPPORT
-	Cmd_AddCommand ("screenshot_png", R_ScreenShot_PNG_f);
+	Cmd_AddCommand ( "screenshot_png", R_ScreenShot_PNG_f );
 #endif	// PNG_SUPPORT
-	Cmd_AddCommand ("modellist", Mod_Modellist_f);
-	Cmd_AddCommand ("gl_strings", GL_Strings_f);
+	Cmd_AddCommand ( "modellist", Mod_Modellist_f );
+	Cmd_AddCommand ( "gl_strings", GL_Strings_f );
 //	Cmd_AddCommand ("resetvertexlights", R_ResetVertextLights_f);
 }
 
@@ -1307,7 +1311,7 @@ qboolean R_SetMode (void)
 
 	if ( vid_fullscreen->modified && !glConfig.allowCDS )
 	{
-		VID_Printf (PRINT_ALL, "R_SetMode() - CDS not allowed with this driver\n" );
+		VID_Printf ( PRINT_ALL, "R_SetMode() - CDS not allowed with this driver\n" );
 		Cvar_SetValue( "vid_fullscreen", !vid_fullscreen->integer );
 		vid_fullscreen->modified = false;
 	}
@@ -1335,7 +1339,7 @@ qboolean R_SetMode (void)
 		{
 			Cvar_SetValue( "vid_fullscreen", 0);
 			vid_fullscreen->modified = false;
-			VID_Printf (PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n" );
+			VID_Printf ( PRINT_ALL, "ref_gl::R_SetMode() - fullscreen unavailable in this mode\n" );
 			if ( ( err = GLimp_SetMode( &vid.width, &vid.height, r_mode->integer, dt_windowed ) ) == rserr_ok )
 				return true;
 		}
@@ -1343,7 +1347,7 @@ qboolean R_SetMode (void)
 		{
 			Cvar_SetValue( "vid_fullscreen", 0);
 			vid_fullscreen->modified = false;
-			VID_Printf (PRINT_ALL, "R_SetMode() - borderless window unavailable in this mode\n" );
+			VID_Printf ( PRINT_ALL, "R_SetMode() - borderless window unavailable in this mode\n" );
 			if ( ( err = GLimp_SetMode( &vid.width, &vid.height, r_mode->integer, dt_windowed ) ) == rserr_ok )
 				return true;
 		}
@@ -1351,13 +1355,13 @@ qboolean R_SetMode (void)
 		{
 			Cvar_SetValue( "r_mode", glState.prev_mode );
 			r_mode->modified = false;
-			VID_Printf (PRINT_ALL, "ref_gl::R_SetMode() - invalid mode\n" );
+			VID_Printf ( PRINT_ALL, "ref_gl::R_SetMode() - invalid mode\n" );
 		}
 
 		// try setting it back to something safe
 		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, glState.prev_mode, dt_windowed ) ) != rserr_ok )
 		{
-			VID_Printf (PRINT_ALL, "ref_gl::R_SetMode() - could not revert to safe mode\n" );
+			VID_Printf ( PRINT_ALL, "ref_gl::R_SetMode() - could not revert to safe mode\n" );
 			return false;
 		}
 	}
@@ -1389,12 +1393,12 @@ qboolean R_CheckGLExtensions (char *reason)
 		qglClientActiveTextureARB = dllClientActiveTexture = (void *) qwglGetProcAddress( "glClientActiveTexture" );
 		qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2f" );
 		if ( !qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB ) {
-			VID_Printf (PRINT_ALL, "...OpenGL multitexture not found, checking for GL_ARB_multitexture\n" );
+			VID_Printf ( PRINT_ALL, "...OpenGL multitexture not found, checking for GL_ARB_multitexture\n" );
 		}
 		else {
-			VID_Printf (PRINT_ALL, "...using OpenGL multitexture\n" );
+			VID_Printf ( PRINT_ALL, "...using OpenGL multitexture\n" );
 			qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glConfig.max_texunits);
-			VID_Printf (PRINT_ALL, "...GL_MAX_TEXTURE_UNITS: %i\n", glConfig.max_texunits);
+			VID_Printf ( PRINT_ALL, "...GL_MAX_TEXTURE_UNITS: %i\n", glConfig.max_texunits );
 			ogl_multitexture_found = true;
 		}
 	}
@@ -1412,14 +1416,14 @@ qboolean R_CheckGLExtensions (char *reason)
 			qglMultiTexCoord2fARB = dllMultiTexCoord2f = (void *) qwglGetProcAddress( "glMultiTexCoord2fARB" );
 			if ( !qglMultiTexCoord2fARB || !qglActiveTextureARB || !qglClientActiveTextureARB ) {
 				QGL_Shutdown();
-				VID_Printf (PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
+				VID_Printf ( PRINT_ALL, "R_Init() - GL_ARB_multitexture functions not implemented in driver!\n" );
 				memcpy (reason, "GL_ARB_multitexture not properly implemented in driver!\0", 55);
 				return false;
 			}
 			else {
-				VID_Printf (PRINT_ALL, "...using GL_ARB_multitexture\n" );
+				VID_Printf ( PRINT_ALL, "...using GL_ARB_multitexture\n" );
 				qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glConfig.max_texunits);
-				VID_Printf (PRINT_ALL, "...GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits);
+				VID_Printf ( PRINT_ALL, "...GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits );
 				arb_multitexture_found = true;
 			}
 		}
@@ -1427,7 +1431,7 @@ qboolean R_CheckGLExtensions (char *reason)
 	if ( !ogl_multitexture_found && !arb_multitexture_found )
 	{
 		QGL_Shutdown();
-        VID_Printf (PRINT_ALL, "R_Init() - OpenGL multitexture and GL_ARB_multitexture not found\n" );
+        VID_Printf ( PRINT_ALL, "R_Init() - OpenGL multitexture and GL_ARB_multitexture not found\n" );
 		memcpy (reason, "OpenGL multitexture and GL_ARB_multitexture not supported by driver!\0", 44);
 		return false;
 	}
@@ -1436,7 +1440,7 @@ qboolean R_CheckGLExtensions (char *reason)
 	// GL_EXT_compiled_vertex_array
 	// GL_SGI_compiled_vertex_array
 	glConfig.extCompiledVertArray = false;
-	if ( Q_StrScanToken(glConfig.extensions_string, "GL_EXT_compiled_vertex_array", false ) || 
+	if ( Q_StrScanToken(glConfig.extensions_string, "GL_EXT_compiled_vertex_array", false ) ||
 		 Q_StrScanToken(glConfig.extensions_string, "GL_SGI_compiled_vertex_array", false ) )
 	{
 		if (r_ext_compiled_vertex_array->integer)
@@ -1470,14 +1474,14 @@ qboolean R_CheckGLExtensions (char *reason)
 			if ( !qglDrawRangeElements )
 				qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElementsEXT");
 			if ( !qglDrawRangeElements )
-				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "glDrawRangeElements not properly supported!\n");
+				VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "glDrawRangeElements not properly supported!\n" );
 			else {
-				VID_Printf (PRINT_ALL, "...using glDrawRangeElements\n");
+				VID_Printf ( PRINT_ALL, "...using glDrawRangeElements\n" );
 				glConfig.drawRangeElements = true;
 			}
 		}
 		else
-			VID_Printf (PRINT_ALL, "...ignoring glDrawRangeElements\n");
+			VID_Printf ( PRINT_ALL, "...ignoring glDrawRangeElements\n" );
 	}
 	else if ( Q_StrScanToken(glConfig.extensions_string, "GL_EXT_draw_range_elements", false ) )
 	{
@@ -1487,33 +1491,33 @@ qboolean R_CheckGLExtensions (char *reason)
 			if ( !qglDrawRangeElements )
 				qglDrawRangeElements = dllDrawRangeElements = (void *) qwglGetProcAddress("glDrawRangeElements");
 			if ( !qglDrawRangeElements )
-				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_EXT_draw_range_elements not properly supported!\n");
+				VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "GL_EXT_draw_range_elements not properly supported!\n" );
 			else {
-				VID_Printf (PRINT_ALL, "...enabling GL_EXT_draw_range_elements\n");
+				VID_Printf ( PRINT_ALL, "...enabling GL_EXT_draw_range_elements\n" );
 				glConfig.drawRangeElements = true;
 			}
 		}
 		else
-			VID_Printf (PRINT_ALL, "...ignoring GL_EXT_draw_range_elements\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_EXT_draw_range_elements\n" );
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_EXT_draw_range_elements not found\n" );
+		VID_Printf ( PRINT_ALL, "...GL_EXT_draw_range_elements not found\n" );
 
 	// GL_ARB_texture_non_power_of_two
 	glConfig.arbTextureNonPowerOfTwo = false;
 	if ( Q_StrScanToken( glConfig.extensions_string, "GL_ARB_texture_non_power_of_two", false ) )
 	{
 		if (r_arb_texturenonpoweroftwo->integer) {
-			VID_Printf (PRINT_ALL, "...using GL_ARB_texture_non_power_of_two\n");
+			VID_Printf ( PRINT_ALL, "...using GL_ARB_texture_non_power_of_two\n" );
 			glConfig.arbTextureNonPowerOfTwo = true;
 		}
 		else {
-			VID_Printf (PRINT_ALL, "...ignoring GL_ARB_texture_non_power_of_two\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_ARB_texture_non_power_of_two\n" );
 		}
 
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_ARB_texture_non_power_of_two not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_ARB_texture_non_power_of_two not found\n" );
 
 #ifdef _WIN32
 	// WGL_EXT_swap_control
@@ -1543,7 +1547,7 @@ qboolean R_CheckGLExtensions (char *reason)
 		VID_Printf (PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
 
 	if ( !qglColorTableEXT &&
-		Q_StrScanToken( glConfig.extensions_string, "GL_EXT_paletted_texture", false ) && 
+		Q_StrScanToken( glConfig.extensions_string, "GL_EXT_paletted_texture", false ) &&
 		Q_StrScanToken( glConfig.extensions_string, "GL_EXT_shared_texture_palette", false ) )
 	{
 		if (gl_ext_palettedtexture->integer)
@@ -1576,10 +1580,10 @@ qboolean R_CheckGLExtensions (char *reason)
 			qglUnmapBufferARB = (void *) qwglGetProcAddress( "glUnmapBufferARB" );
 		}
 		else*/
-			VID_Printf (PRINT_ALL, "...ignoring GL_ARB_vertex_buffer_object\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_ARB_vertex_buffer_object\n" );
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_ARB_vertex_buffer_object not found\n" );
+		VID_Printf ( PRINT_ALL, "...GL_ARB_vertex_buffer_object not found\n" );
 
 	// GL_ARB_texture_env_combine - Vic
 	glConfig.mtexcombine = false;
@@ -1587,14 +1591,14 @@ qboolean R_CheckGLExtensions (char *reason)
 	{
 		if (r_ext_mtexcombine->integer)
 		{
-			VID_Printf (PRINT_ALL, "...using GL_ARB_texture_env_combine\n");
+			VID_Printf ( PRINT_ALL, "...using GL_ARB_texture_env_combine\n" );
 			glConfig.mtexcombine = true;
 		}
 		else
-			VID_Printf (PRINT_ALL, "..ignoring GL_ARB_texture_env_combine\n");
+			VID_Printf ( PRINT_ALL, "..ignoring GL_ARB_texture_env_combine\n" );
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_ARB_texture_env_combine not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_ARB_texture_env_combine not found\n" );
 
 #if 0
 	// GL_EXT_texture_env_combine - Vic
@@ -1619,11 +1623,11 @@ qboolean R_CheckGLExtensions (char *reason)
 	glConfig.extStencilWrap = false;
 	if ( Q_StrScanToken( glConfig.extensions_string, "GL_EXT_stencil_wrap", false ) )
 	{
-		VID_Printf (PRINT_ALL, "...using GL_EXT_stencil_wrap\n");
+		VID_Printf ( PRINT_ALL, "...using GL_EXT_stencil_wrap\n" );
 		glConfig.extStencilWrap = true;
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_EXT_stencil_wrap not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_EXT_stencil_wrap not found\n" );
 
 	// GL_ATI_separate_stencil - Barnes
 	glConfig.atiSeparateStencil = false;
@@ -1634,11 +1638,11 @@ qboolean R_CheckGLExtensions (char *reason)
 			qglStencilOpSeparateATI = (void *) qwglGetProcAddress("glStencilOpSeparateATI");
 			qglStencilFuncSeparateATI = (void *) qwglGetProcAddress("glStencilFuncSeparateATI");
 			if (!qglStencilOpSeparateATI) {
-				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_ATI_separate_stencil not properly supported!\n");
+				VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "GL_ATI_separate_stencil not properly supported!\n" );
 				qglStencilOpSeparateATI = NULL;
 			}
 			else {
-				VID_Printf (PRINT_ALL, "...using GL_ATI_separate_stencil\n");
+				VID_Printf ( PRINT_ALL, "...using GL_ATI_separate_stencil\n" );
 				glConfig.atiSeparateStencil = true;
 			}
 	//	}
@@ -1646,7 +1650,7 @@ qboolean R_CheckGLExtensions (char *reason)
 	//		VID_Printf (PRINT_ALL, "...ignoring GL_ATI_separate_stencil\n");
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_ATI_separate_stencil not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_ATI_separate_stencil not found\n" );
 
 	// GL_EXT_stencil_two_side - Echon
 	glConfig.extStencilTwoSide = false;
@@ -1656,11 +1660,11 @@ qboolean R_CheckGLExtensions (char *reason)
 	//	{
 			qglActiveStencilFaceEXT = (void *) qwglGetProcAddress( "glActiveStencilFaceEXT" );
 			if (!qglActiveStencilFaceEXT) {
-				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_EXT_stencil_two_side not properly supported!\n");
+				VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "GL_EXT_stencil_two_side not properly supported!\n" );
 				qglActiveStencilFaceEXT = NULL;
 			}
 			else {
-				VID_Printf (PRINT_ALL, "...using GL_EXT_stencil_two_side\n");
+				VID_Printf ( PRINT_ALL, "...using GL_EXT_stencil_two_side\n" );
 				glConfig.extStencilTwoSide = true;
 			}
 	//	}
@@ -1668,7 +1672,7 @@ qboolean R_CheckGLExtensions (char *reason)
 	//		VID_Printf (PRINT_ALL, "...ignoring GL_EXT_stencil_two_side\n");
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_EXT_stencil_two_side not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_EXT_stencil_two_side not found\n" );
 
 	// GL_ARB_fragment_program
 	glConfig.arb_fragment_program = false;
@@ -1704,17 +1708,17 @@ qboolean R_CheckGLExtensions (char *reason)
 				|| !qglGetProgramEnvParameterdvARB || !qglGetProgramEnvParameterfvARB
 				|| !qglGetProgramLocalParameterdvARB  || !qglGetProgramLocalParameterfvARB
 				|| !qglGetProgramivARB || !qglGetProgramStringARB || !qglIsProgramARB)
-				VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_ARB_fragment_program not properly supported!\n");
+				VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "GL_ARB_fragment_program not properly supported!\n" );
 			else {
-				VID_Printf (PRINT_ALL, "...using GL_ARB_fragment_program\n");
+				VID_Printf ( PRINT_ALL, "...using GL_ARB_fragment_program\n" );
 				glConfig.arb_fragment_program = true;
 			}
 		}
 		else
-			VID_Printf (PRINT_ALL, "...ignoring GL_ARB_fragment_program\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_ARB_fragment_program\n" );
 	}
 	else
-		VID_Printf (PRINT_ALL, "...GL_ARB_fragment_program not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_ARB_fragment_program not found\n" );
 
 	// GL_ARB_vertex_program
 	glConfig.arb_vertex_program = false;
@@ -1730,17 +1734,17 @@ qboolean R_CheckGLExtensions (char *reason)
 				qglGetVertexAttribPointervARB	= (void *) qwglGetProcAddress( "glGetVertexAttribPointervARB" );
 				if (!qglGetVertexAttribdvARB || !qglGetVertexAttribfvARB
 					|| !qglGetVertexAttribivARB || !qglGetVertexAttribPointervARB)
-					VID_Printf (PRINT_ALL, "..." S_COLOR_RED "GL_ARB_vertex_program not properly supported!\n");
+					VID_Printf ( PRINT_ALL, "..." S_COLOR_RED "GL_ARB_vertex_program not properly supported!\n" );
 				else {
-					VID_Printf (PRINT_ALL, "...using GL_ARB_vertex_program\n");
+					VID_Printf ( PRINT_ALL, "...using GL_ARB_vertex_program\n" );
 					glConfig.arb_vertex_program = true;
 				}
 			}
 			else
-				VID_Printf (PRINT_ALL, "...ignoring GL_ARB_vertex_program\n");
+				VID_Printf ( PRINT_ALL, "...ignoring GL_ARB_vertex_program\n" );
 		}
 		else
-			VID_Printf (PRINT_ALL, "...GL_ARB_vertex_program not found\n");
+			VID_Printf ( PRINT_ALL, "...GL_ARB_vertex_program not found\n" );
 	}
 
 	R_Compile_ARB_Programs ();
@@ -1775,12 +1779,12 @@ qboolean R_CheckGLExtensions (char *reason)
 		qglGetQueryObjectuiv = (void *) qwglGetProcAddress( "glGetQueryObjectuiv" );
 		if ( !qglGenQueries || !qglDeleteQueries || !qglIsQuery || !qglBeginQuery ||
 			!qglEndQuery || !qglGetQueryiv || !qglGetQueryObjectiv || !qglGetQueryObjectuiv ) {
-			VID_Printf (PRINT_ALL, "...OpenGL occlusion query not found, checking for GL_ARB_occlusion_query\n" );
+			VID_Printf ( PRINT_ALL, "...OpenGL occlusion query not found, checking for GL_ARB_occlusion_query\n" );
 		}
 		else {
-			VID_Printf (PRINT_ALL, "...using OpenGL occlusion query\n" );
+			VID_Printf ( PRINT_ALL, "...using OpenGL occlusion query\n" );
 			qglGetQueryiv (GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig.queryBitsSupported);
-			VID_Printf (PRINT_ALL, "...GL_QUERY_COUNTER_BITS: %i\n", glConfig.queryBitsSupported);
+			VID_Printf ( PRINT_ALL, "...GL_QUERY_COUNTER_BITS: %i\n", glConfig.queryBitsSupported );
 			glConfig.occlusionQuery = true;
 			ogl_occlusion_query_found = true;
 		}
@@ -1804,37 +1808,37 @@ qboolean R_CheckGLExtensions (char *reason)
 			qglGetQueryObjectuiv = (void *) qwglGetProcAddress( "glGetQueryObjectuivARB" );
 			if ( !qglGenQueries || !qglDeleteQueries || !qglIsQuery || !qglBeginQuery ||
 				!qglEndQuery || !qglGetQueryiv || !qglGetQueryObjectiv || !qglGetQueryObjectuiv ) {
-				VID_Printf (PRINT_ALL, "...GL_ARB_occlusion_query functions not implemented in driver!\n" );
+				VID_Printf ( PRINT_ALL, "...GL_ARB_occlusion_query functions not implemented in driver!\n" );
 			}
 			else {
-				VID_Printf (PRINT_ALL, "...using GL_ARB_occlusion_query\n" );
+				VID_Printf ( PRINT_ALL, "...using GL_ARB_occlusion_query\n" );
 				qglGetQueryiv (GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS_ARB, &glConfig.queryBitsSupported);
-				VID_Printf (PRINT_ALL, "...GL_QUERY_COUNTER_BITS_ARB: %i\n", glConfig.queryBitsSupported);
+				VID_Printf ( PRINT_ALL, "...GL_QUERY_COUNTER_BITS_ARB: %i\n", glConfig.queryBitsSupported );
 				glConfig.occlusionQuery = true;
 				arb_occlusion_query_found = true;
 			}
 		}
 	}
 	if ( !ogl_occlusion_query_found && !arb_occlusion_query_found ) {
-		VID_Printf (PRINT_ALL, "OpenGL occlusion query and GL_ARB_occlusion_query not found.  Kex flares will be rendered conventionally.\n" );
+		VID_Printf ( PRINT_ALL, "OpenGL occlusion query and GL_ARB_occlusion_query not found.  Kex flares will be rendered conventionally.\n" );
 	}
 
 	// GL_EXT_texture_filter_anisotropic - NeVo
 	glConfig.anisotropic = false;
 	if ( Q_StrScanToken( glConfig.extensions_string, "GL_EXT_texture_filter_anisotropic", false ) )
 	{
-		VID_Printf (PRINT_ALL,"...using GL_EXT_texture_filter_anisotropic\n" );
+		VID_Printf ( PRINT_ALL, "...using GL_EXT_texture_filter_anisotropic\n" );
 		glConfig.anisotropic = true;
 		qglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig.max_anisotropy);
 		Cvar_SetValue("r_anisotropic_avail", glConfig.max_anisotropy);
 	}
 	else
 	{
-		VID_Printf (PRINT_ALL,"..GL_EXT_texture_filter_anisotropic not found\n" );
+		VID_Printf ( PRINT_ALL, "..GL_EXT_texture_filter_anisotropic not found\n" );
 		glConfig.anisotropic = false;
 		glConfig.max_anisotropy = 0.0;
 		Cvar_SetValue("r_anisotropic_avail", 0.0);
-	} 
+	}
 
 	// GL_NV_fog_distance
 	glConfig.nvFogAvailable = false;
@@ -1844,17 +1848,17 @@ qboolean R_CheckGLExtensions (char *reason)
 		if (r_nvfog_dist->integer)
 		{
 			glConfig.nvFogAvailable = true;
-			VID_Printf (PRINT_ALL, "...using GL_NV_fog_distance\n");
+			VID_Printf ( PRINT_ALL, "...using GL_NV_fog_distance\n" );
 		}
 		else
 		{
-			VID_Printf (PRINT_ALL, "...ignoring GL_NV_fog_distance\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_NV_fog_distance\n" );
 			Cvar_Set ("r_nvfog_dist", "0");
 		}
 	}
 	else
 	{
-		VID_Printf (PRINT_ALL, "...GL_NV_fog_distance not found\n");
+		VID_Printf ( PRINT_ALL, "...GL_NV_fog_distance not found\n" );
 		Cvar_Set ("r_nvfog_dist", "0");
 	}
 
@@ -1862,17 +1866,17 @@ qboolean R_CheckGLExtensions (char *reason)
 	if ( Q_StrScanToken( glConfig.extensions_string, "GL_SGIS_generate_mipmap", false ) )
 	{
 		if (r_sgis_generatemipmap->integer) {
-			VID_Printf (PRINT_ALL, "...using GL_SGIS_generate_mipmap\n" );
+			VID_Printf ( PRINT_ALL, "...using GL_SGIS_generate_mipmap\n" );
 			glState.sgis_mipmap = true;
 		}
 		else {
-			VID_Printf (PRINT_ALL, "...ignoring GL_SGIS_generate_mipmap\n");
+			VID_Printf ( PRINT_ALL, "...ignoring GL_SGIS_generate_mipmap\n" );
 			glState.sgis_mipmap = false;
 		}
 	}
 	else
 	{
-		VID_Printf (PRINT_ALL, "...GL_SGIS_generate_mipmap not found\n" );
+		VID_Printf ( PRINT_ALL, "...GL_SGIS_generate_mipmap not found\n" );
 		glState.sgis_mipmap = false;
 	}
 
@@ -1881,18 +1885,18 @@ qboolean R_CheckGLExtensions (char *reason)
 	{
 		if(!r_ext_texture_compression->integer)
 		{
-			VID_Printf (PRINT_ALL, "...ignoring GL_ARB_texture_compression\n" );
+			VID_Printf ( PRINT_ALL, "...ignoring GL_ARB_texture_compression\n" );
 			glState.texture_compression = false;
 		}
 		else
 		{
-			VID_Printf (PRINT_ALL, "...using GL_ARB_texture_compression\n" );
+			VID_Printf ( PRINT_ALL, "...using GL_ARB_texture_compression\n" );
 			glState.texture_compression = true;
 		}
 	}
 	else
 	{
-		VID_Printf(PRINT_ALL, "...GL_ARB_texture_compression not found\n");
+		VID_Printf( PRINT_ALL, "...GL_ARB_texture_compression not found\n" );
 		glState.texture_compression = false;
 		Cvar_Set("r_ext_texture_compression", "0");
 	}
@@ -1930,7 +1934,7 @@ R_Init
 ===============
 */
 qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
-{	
+{
 	char renderer_buffer[1000];
 	char vendor_buffer[1000];
 	int		err;
@@ -1954,16 +1958,16 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 
 #if defined (_WIN32) || (__APPLE__) || (MACOSX) || (__linux__)
 	// output system info
-	VID_Printf (PRINT_ALL, "OS: %s\n", Cvar_VariableString("sys_osVersion"));
-	VID_Printf (PRINT_ALL, "CPU: %s\n", Cvar_VariableString("sys_cpuString"));
-	VID_Printf (PRINT_ALL, "RAM: %s MB (%s MB accessible)\n", Cvar_VariableString("sys_ramMegs"), Cvar_VariableString("sys_ramMegs_perApp"));
+	VID_Printf ( PRINT_ALL, "OS: %s\n", Cvar_VariableString( "sys_osVersion" ) );
+	VID_Printf ( PRINT_ALL, "CPU: %s\n", Cvar_VariableString( "sys_cpuString" ) );
+	VID_Printf ( PRINT_ALL, "RAM: %s MB (%s MB accessible)\n", Cvar_VariableString( "sys_ramMegs" ), Cvar_VariableString( "sys_ramMegs_perApp" ) );
 #endif
 
 	// initialize our QGL dynamic bindings
 	if ( !QGL_Init( gl_driver->string ) )
 	{
 		QGL_Shutdown();
-        VID_Printf (PRINT_ALL, "R_Init() - could not load \"%s\"\n", gl_driver->string );
+        VID_Printf ( PRINT_ALL, "R_Init() - could not load \"%s\"\n", gl_driver->string );
 		memcpy (reason, "Init of QGL dynamic bindings Failed!\0", 37);
 		return false;
 	}
@@ -1983,7 +1987,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	if ( !R_SetMode () )
 	{
 		QGL_Shutdown();
-        VID_Printf (PRINT_ALL, "R_Init() - could not R_SetMode()\n" );
+        VID_Printf ( PRINT_ALL, "R_Init() - could not R_SetMode()\n" );
 		memcpy (reason, "Creation of the window/context set-up Failed!\0", 46);
 		return false;
 	}
@@ -1995,19 +1999,19 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 	// get our various GL strings
 	//
 	glConfig.vendor_string = qglGetString (GL_VENDOR);
-	VID_Printf (PRINT_ALL, "GL_VENDOR: %s\n", glConfig.vendor_string );
+	VID_Printf ( PRINT_ALL, "GL_VENDOR: %s\n", glConfig.vendor_string );
 	glConfig.renderer_string = qglGetString (GL_RENDERER);
-	VID_Printf (PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
+	VID_Printf ( PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
 	glConfig.version_string = qglGetString (GL_VERSION);
 //	sscanf(glConfig.version_string, "%d.%d.%d", &glConfig.version_major, &glConfig.version_minor, &glConfig.version_release);
 	if (sscanf(glConfig.version_string, "%d.%d.%d", &glConfig.version_major, &glConfig.version_minor, &glConfig.version_release) == EOF) {
-		VID_Printf (PRINT_ALL, S_COLOR_YELLOW"R_Init: invalid GL_VERSION string reported by driver!\n");
+		VID_Printf ( PRINT_ALL, S_COLOR_YELLOW "R_Init: invalid GL_VERSION string reported by driver!\n" );
 	}
-	VID_Printf (PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
+	VID_Printf ( PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
 
 	// Knighmare- added max texture size
 	qglGetIntegerv(GL_MAX_TEXTURE_SIZE,&glConfig.max_texsize);
-	VID_Printf (PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %i\n", glConfig.max_texsize );
+	VID_Printf ( PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %i\n", glConfig.max_texsize );
 
 	glConfig.extensions_string = qglGetString (GL_EXTENSIONS);
 //	VID_Printf (PRINT_DEVELOPER, "GL_EXTENSIONS: %s\n", glConfig.extensions_string );
@@ -2017,7 +2021,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 		unsigned	line = 0;
 		size_t		extLen;
 
-		VID_Printf (PRINT_DEVELOPER, "GL_EXTENSIONS: " );
+		VID_Printf ( PRINT_DEVELOPER, "GL_EXTENSIONS: " );
 		extString = (char *)glConfig.extensions_string;
 		extLen = strlen(extString);
 		p = extString;
@@ -2028,12 +2032,12 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 				break;
 			line++;
 			if ((line % 2) == 0)
-				VID_Printf (PRINT_DEVELOPER, "%s\n", extTok );
+				VID_Printf ( PRINT_DEVELOPER, "%s\n", extTok );
 			else
-				VID_Printf (PRINT_DEVELOPER, "%s ", extTok );
+				VID_Printf ( PRINT_DEVELOPER, "%s ", extTok );
 		}
 		if ((line % 2) != 0)
-			VID_Printf (PRINT_DEVELOPER, "\n" );
+			VID_Printf ( PRINT_DEVELOPER, "\n" );
 	}
 
 //	strncpy(renderer_buffer, glConfig.renderer_string);
@@ -2073,7 +2077,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 		if (glConfig.rendType == GLREND_PERMEDIA2)
 		{
 			Cvar_Set( "r_monolightmap", "A" );
-			VID_Printf (PRINT_ALL, "...using r_monolightmap 'a'\n" );
+			VID_Printf ( PRINT_ALL, "...using r_monolightmap 'a'\n" );
 		}
 		else
 			Cvar_Set( "r_monolightmap", "0" );
@@ -2103,22 +2107,22 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 		glConfig.allowCDS = true;
 
 	if (glConfig.allowCDS)
-		VID_Printf (PRINT_ALL, "...allowing CDS\n" );
+		VID_Printf ( PRINT_ALL, "...allowing CDS\n" );
 	else
-		VID_Printf (PRINT_ALL, "...disabling CDS\n" );
+		VID_Printf ( PRINT_ALL, "...disabling CDS\n" );
 
 	// If using one of the mini-drivers, a Voodoo w/ WickedGL, or pre-1.2 driver,
 	// use the texture formats determined by gl_texturesolidmode and gl_texturealphamode.
-	if ( Q_stricmp(gl_driver->string, "opengl32") || glConfig.rendType == GLREND_VOODOO
+	if ( Q_stricmp( gl_driver->string, "opengl32" ) || glConfig.rendType == GLREND_VOODOO
 		|| (glConfig.version_major < 2 && glConfig.version_minor < 2)
 		|| (!r_newlightmapformat || !r_newlightmapformat->integer) )
 	{
-		VID_Printf (PRINT_ALL, "...using legacy lightmap format\n" );
+		VID_Printf ( PRINT_ALL, "...using legacy lightmap format\n" );
 		glConfig.newLMFormat = false;
 	}
 	else
 	{
-		VID_Printf (PRINT_ALL, "...using new lightmap format\n" );
+		VID_Printf ( PRINT_ALL, "...using new lightmap format\n" );
 		glConfig.newLMFormat = true;
 	}
 
@@ -2160,7 +2164,7 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 
 	err = qglGetError();
 	if ( err != GL_NO_ERROR )
-		VID_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
+		VID_Printf ( PRINT_ALL, "glGetError() = 0x%x\n", err );
 
 	return true;
 }
@@ -2172,7 +2176,7 @@ R_ClearState
 ===============
 */
 void R_ClearState (void)
-{	
+{
 	R_SetFogVars (false, 0, 0, 0, 0, 0, 0, 0);	// clear fog effets
 	R_InitSkyBoxInfo ();						// reset skybox data
 	GL_EnableMultitexture (false);
@@ -2192,14 +2196,14 @@ void GL_Strings_f (void)
 	unsigned	line = 0;
 	size_t		extLen;
 
-	VID_Printf (PRINT_ALL, "GL_VENDOR: %s\n", glConfig.vendor_string );
-	VID_Printf (PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
-	VID_Printf (PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
-	VID_Printf (PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %i\n", glConfig.max_texsize );
-	VID_Printf (PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits);
+	VID_Printf ( PRINT_ALL, "GL_VENDOR: %s\n", glConfig.vendor_string );
+	VID_Printf ( PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
+	VID_Printf ( PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
+	VID_Printf ( PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %i\n", glConfig.max_texsize );
+	VID_Printf ( PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %i\n", glConfig.max_texunits );
 //	VID_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", glConfig.extensions_string );
 	// print extensions 2 to a line
-	VID_Printf (PRINT_ALL, "GL_EXTENSIONS: " );
+	VID_Printf ( PRINT_ALL, "GL_EXTENSIONS: " );
 	extString = (char *)glConfig.extensions_string;
 	extLen = strlen(extString);
 	p = extString;
@@ -2210,12 +2214,12 @@ void GL_Strings_f (void)
 			break;
 		line++;
 		if ((line % 2) == 0)
-			VID_Printf (PRINT_ALL, "%s\n", extTok );
+			VID_Printf ( PRINT_ALL, "%s\n", extTok );
 		else
-			VID_Printf (PRINT_ALL, "%s ", extTok );
+			VID_Printf ( PRINT_ALL, "%s ", extTok );
 	}
 	if ((line % 2) != 0)
-		VID_Printf (PRINT_ALL, "\n" );
+		VID_Printf ( PRINT_ALL, "\n" );
 }
 
 
@@ -2225,17 +2229,17 @@ R_Shutdown
 ===============
 */
 void R_Shutdown (void)
-{	
-	Cmd_RemoveCommand ("modellist");
-	Cmd_RemoveCommand ("screenshot");
-	Cmd_RemoveCommand ("screenshot_silent");
-	Cmd_RemoveCommand ("screenshot_tga");
-	Cmd_RemoveCommand ("screenshot_jpg");
+{
+	Cmd_RemoveCommand ( "modellist" );
+	Cmd_RemoveCommand ( "screenshot" );
+	Cmd_RemoveCommand ( "screenshot_silent" );
+	Cmd_RemoveCommand ( "screenshot_tga" );
+	Cmd_RemoveCommand ( "screenshot_jpg" );
 #ifdef PNG_SUPPORT
-	Cmd_RemoveCommand ("screenshot_png");
+	Cmd_RemoveCommand ( "screenshot_png" );
 #endif	// PNG_SUPPORT
-	Cmd_RemoveCommand ("imagelist");
-	Cmd_RemoveCommand ("gl_strings");
+	Cmd_RemoveCommand ( "imagelist" );
+	Cmd_RemoveCommand ( "gl_strings" );
 //	Cmd_RemoveCommand ("resetvertexlights");
 
 	// free saveshot buffer
@@ -2308,7 +2312,7 @@ void R_BeginFrame( float camera_separation )
 	{	// FIXME: only restart if CDS is required
 		cvar_t	*ref;
 
-		ref = Cvar_Get ("vid_ref", "gl", 0);
+		ref = Cvar_Get ( "vid_ref", "gl", 0 );
 		ref->modified = true;
 	}
 
@@ -2329,13 +2333,13 @@ void R_BeginFrame( float camera_separation )
 	if (glConfig.nvFogAvailable && r_nvfog_dist_mode->modified)
 	{
 		r_nvfog_dist_mode->modified = false;
-		if ( !Q_stricmp (r_nvfog_dist_mode->string, "GL_EYE_PLANE_ABSOLUTE_NV") ) {
+		if ( !Q_stricmp ( r_nvfog_dist_mode->string, "GL_EYE_PLANE_ABSOLUTE_NV" ) ) {
 			glConfig.nvFogMode = (int)GL_EYE_PLANE_ABSOLUTE_NV;
 		}
-		else if ( !Q_stricmp (r_nvfog_dist_mode->string, "GL_EYE_PLANE") ) {
+		else if ( !Q_stricmp ( r_nvfog_dist_mode->string, "GL_EYE_PLANE" ) ) {
 			glConfig.nvFogMode = (int)GL_EYE_PLANE;
 		}
-		else if ( !Q_stricmp (r_nvfog_dist_mode->string, "GL_EYE_RADIAL_NV") ) {
+		else if ( !Q_stricmp ( r_nvfog_dist_mode->string, "GL_EYE_RADIAL_NV" ) ) {
 			glConfig.nvFogMode = (int)GL_EYE_RADIAL_NV;
 		}
 		else {
@@ -2378,9 +2382,9 @@ void R_BeginFrame( float camera_separation )
 			float g;
 
 			g = 2.00 * ( 0.8 - ( vid_gamma->value - 0.5 ) ) + 1.0F;
-			Com_sprintf( envbuffer, sizeof(envbuffer), "SSTV2_GAMMA=%f", g );
+			snprintf( envbuffer, sizeof(envbuffer), "SSTV2_GAMMA=%f", g );
 			putenv( envbuffer );
-			Com_sprintf( envbuffer, sizeof(envbuffer), "SST_GAMMA=%f", g );
+			snprintf( envbuffer, sizeof(envbuffer), "SST_GAMMA=%f", g );
 			putenv( envbuffer );
 		}
 		UpdateGammaRamp ();

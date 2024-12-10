@@ -68,7 +68,7 @@ void ReadTextureSurfaceAssignments (void)
 
 	num_texsurfs = 0;
 
-	Com_sprintf (filename, sizeof(filename), "texsurfs.txt");
+	snprintf (filename, sizeof(filename), "texsurfs.txt");
 	FS_LoadFile (filename, (void **)&footstep_data);
 	parsedata = footstep_data;
 	if (!footstep_data) return;
@@ -92,7 +92,7 @@ void ReadTextureSurfaceAssignments (void)
 
 	num_texsurfs = 0;
 
-	Com_sprintf (filename, sizeof(filename), "texsurfs.txt");
+	snprintf (filename, sizeof(filename), "texsurfs.txt");
 	FS_FOpenFile (filename, &f);
 	if (!f) return;
 	while (fgets(line, sizeof(line), f) && num_texsurfs < MAX_TEX_SURF)

@@ -319,7 +319,7 @@ qboolean ACEIT_IsReachable (edict_t *self,vec3_t goal);
 qboolean ACEIT_ChangeWeapon (edict_t *ent, gitem_t *item);
 qboolean ACEIT_CanUseArmor (gitem_t *item, edict_t *other);
 float	 ACEIT_ItemNeed (edict_t *self, int item);
-int		 ACEIT_ClassnameToIndex (char *classname);
+int		 ACEIT_ClassnameToIndex ( const char *classname);
 void     ACEIT_BuildItemNodeTable (qboolean rebuild);
 
 // acebot_movement.c protos
@@ -360,7 +360,7 @@ void     ACESP_SetName (edict_t *bot, char *name, char *skin, char *team);
 void     ACESP_SpawnBot (char *team, char *name, char *skin, char *userinfo);
 void     ACESP_ReAddBots (void);
 void     ACESP_RemoveBot (char *name);
-void	 safe_cprintf (edict_t *ent, int printlevel, char *fmt, ...);
+void	 safe_cprintf ( edict_t *ent, int printlevel, const char *fmt, ... );
 void     safe_centerprintf (edict_t *ent, char *fmt, ...);
 void     safe_bprintf (int printlevel, char *fmt, ...);
 void     debug_printf (char *fmt, ...);

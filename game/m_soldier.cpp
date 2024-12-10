@@ -1254,17 +1254,17 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 // Knightmare- added soundcache function
 void monster_soldier_x_soundcache (edict_t *self)
 {
-	if (strcmp(self->classname, "monster_soldier_light") == 0)
+	if (strcmp(self->classname.c_str(), "monster_soldier_light") == 0)
 	{
 		sound_pain_light = gi.soundindex ("soldier/solpain2.wav");
 		sound_death_light =	gi.soundindex ("soldier/soldeth2.wav");
 	}
-	else if (strcmp(self->classname, "monster_soldier") == 0)
+	else if (strcmp(self->classname.c_str(), "monster_soldier") == 0)
 	{
 		sound_pain = gi.soundindex ("soldier/solpain1.wav");
 		sound_death = gi.soundindex ("soldier/soldeth1.wav");
 	}
-	else if (strcmp(self->classname, "monster_soldier_ss") == 0)
+	else if (strcmp(self->classname.c_str(), "monster_soldier_ss") == 0)
 	{
 		sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");
 		sound_death_ss = gi.soundindex ("soldier/soldeth3.wav");

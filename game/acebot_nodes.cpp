@@ -761,7 +761,7 @@ void ACEND_SaveNodes (void)
 	SavegameDirRelativePath ("nav", dirname, sizeof(dirname)); 
 //	_mkdir (dirname);
 	CreatePath (dirname);
-	Com_sprintf (tempname, sizeof(tempname), "nav/%s.nod", level.mapname);
+	snprintf (tempname, sizeof(tempname), "nav/%s.nod", level.mapname);
 	SavegameDirRelativePath (tempname, filename, sizeof(filename));
 //	Q_strncpyz(filename, sizeof(filename), "ace\\nav\\");
 //	Q_strncatz(filename, sizeof(filename), level.mapname);
@@ -800,7 +800,7 @@ void ACEND_LoadNodes (void)
 	int		version;
 
 	// Knightmare- rewote this
-	Com_sprintf (tempname, sizeof(tempname), "nav/%s.nod", level.mapname);
+	snprintf (tempname, sizeof(tempname), "nav/%s.nod", level.mapname);
 #ifdef KMQUAKE2_ENGINE_MOD	// look in fs_savegamedir first
 	SavegameDirRelativePath (tempname, filename, sizeof(filename));
 	if ((pIn = fopen(filename, "rb" )) == NULL)

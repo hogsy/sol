@@ -966,7 +966,7 @@ static void SCR_ShowFPS (void)
 
 	SCR_InitHudScale ();
 
-	Com_sprintf (fpsText, sizeof(fpsText), S_COLOR_BOLD S_COLOR_SHADOW"%3ifps", scr_fps);
+	snprintf (fpsText, sizeof(fpsText), S_COLOR_BOLD S_COLOR_SHADOW"%3ifps", scr_fps);
 
 	// leave space for 3-digit frag counter
 	scrLeft = SCREEN_WIDTH;
@@ -1231,11 +1231,11 @@ void SCR_DrawCenterString (void)
 			if (start[l] == '\n' || !start[l])
 				break;
 
-		Com_sprintf (line, sizeof(line), "");
+		snprintf (line, sizeof(line), "");
 		for (j=0 ; j<l ; j++)
 		{
 			
-			Com_sprintf (line, sizeof(line), "%s%c", line, start[j]);
+			snprintf (line, sizeof(line), "%s%c", line, start[j]);
 			
 			if (!remaining--)
 				return;
@@ -1470,7 +1470,7 @@ void SCR_DumpStatusLayout_f (void)
 		return;
 	}
 
-	Com_sprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
+	snprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
 
 	FS_CreatePath (name);
 	f = fopen (name, "w");
@@ -1482,7 +1482,7 @@ void SCR_DumpStatusLayout_f (void)
 
 	// statusbar layout is in multiple configstrings
 	// starting at CS_STATUSBAR and ending at CS_AIRACCEL
-	Com_sprintf (formatLine, sizeof(formatLine), "\nFormatted Dump\n--------------\n");
+	snprintf (formatLine, sizeof(formatLine), "\nFormatted Dump\n--------------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	fwrite(&buffer, 1, bufcount, f);
@@ -1518,7 +1518,7 @@ void SCR_DumpStatusLayout_f (void)
 	bufcount = 0;
 
 	// write out the raw dump
-	Com_sprintf (formatLine, sizeof(formatLine), "\nRaw Dump\n--------\n");
+	snprintf (formatLine, sizeof(formatLine), "\nRaw Dump\n--------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	fwrite(&buffer, 1, bufcount, f);
@@ -1537,12 +1537,12 @@ void SCR_DumpStatusLayout_f (void)
 	}
 
 	// write out the stat values for debugging
-	Com_sprintf (formatLine, sizeof(formatLine), "\nStat Values\n-----------\n");
+	snprintf (formatLine, sizeof(formatLine), "\nStat Values\n-----------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	for (i=0; i<MAX_STATS; i++)
 	{
-		Com_sprintf (statLine, sizeof(statLine), "%i: %i\n", i, cl.frame.playerstate.stats[i]);
+		snprintf (statLine, sizeof(statLine), "%i: %i\n", i, cl.frame.playerstate.stats[i]);
 		// prevent overflow of buffer
 		if ( (bufcount + strlen(statLine)) >= sizeof(buffer) ) {
 			fwrite(&buffer, 1, bufcount, f);
@@ -1557,12 +1557,12 @@ void SCR_DumpStatusLayout_f (void)
 	bufcount = 0;
 
 	// write out CS_GENERAL for stat_string tokens
-	Com_sprintf (formatLine, sizeof(formatLine), "\nGeneral Configstrings\n---------------------\n");
+	snprintf (formatLine, sizeof(formatLine), "\nGeneral Configstrings\n---------------------\n");
 	Q_strncatz (buffer, sizeof(buffer), formatLine);
 	bufcount += (int)strlen(formatLine);
 	for (i = cs_general; i < (cs_general + MAX_GENERAL); i++)
 	{
-		Com_sprintf (formatLine, sizeof(formatLine), "%i: %s\n", i, cl.configstrings[i]);
+		snprintf (formatLine, sizeof(formatLine), "%i: %s\n", i, cl.configstrings[i]);
 		// prevent overflow of buffer
 		if ( (bufcount + strlen(formatLine)) >= sizeof(buffer) ) {
 			fwrite(&buffer, 1, bufcount, f);
@@ -1603,7 +1603,7 @@ void SCR_DumpGeneralLayout_f (void)
 		return;
 	}
 
-	Com_sprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
+	snprintf (name, sizeof(name), "%s/%s.txt", FS_Savegamedir(), Cmd_Argv(1));	// was FS_Gamedir()
 
 	FS_CreatePath (name);
 	f = fopen (name, "w");
@@ -1651,99 +1651,99 @@ SCR_Init
 */
 void SCR_Init (void)
 {
-	cl_drawfps = Cvar_Get ("cl_drawfps", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_drawfps", "Enables drawing of FPS counter on the screen.");
-	cl_drawhud = Cvar_Get ("cl_drawhud", "1", CVAR_ARCHIVE);;	// HUD disable cvar
-	Cvar_SetDescription ("cl_drawhud", "Toggles drawing of HUD.");
-	cl_demomessage = Cvar_Get ("cl_demomessage", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_demomessage", "Enables display of \"Running Demo\" message when a demo is playing.");
+	cl_drawfps = Cvar_Get ( "cl_drawfps", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_drawfps", "Enables drawing of FPS counter on the screen." );
+	cl_drawhud = Cvar_Get ( "cl_drawhud", "1", CVAR_ARCHIVE );;	// HUD disable cvar
+	Cvar_SetDescription ( "cl_drawhud", "Toggles drawing of HUD." );
+	cl_demomessage = Cvar_Get ( "cl_demomessage", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_demomessage", "Enables display of \"Running Demo\" message when a demo is playing." );
 //	cl_loadpercent = Cvar_Get ("cl_loadpercent", "0", CVAR_ARCHIVE);	// unused
-	cl_hud = Cvar_Get ("cl_hud", "default", CVAR_ARCHIVE|CVAR_NOSET);
-	Cvar_SetDescription ("cl_hud", "The currently loaded HUD script.  Cannot be set from console, use the \"sethud\" command to change this.");
-	cl_hud_variant = Cvar_Get ("cl_hud_variant", "default", CVAR_ARCHIVE);
-	Cvar_SetDescription ("cl_hud_variant", "Overrides CS_HUDVARIANT to set the layout variant of the currently loaded HUD script.  Change from \"default\" if you need a specific game mode.  Leading '*' will be skipped.");
+	cl_hud = Cvar_Get ( "cl_hud", "default", CVAR_ARCHIVE | CVAR_NOSET );
+	Cvar_SetDescription ( "cl_hud", "The currently loaded HUD script.  Cannot be set from console, use the \"sethud\" command to change this." );
+	cl_hud_variant = Cvar_Get ( "cl_hud_variant", "default", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "cl_hud_variant", "Overrides CS_HUDVARIANT to set the layout variant of the currently loaded HUD script.  Change from \"default\" if you need a specific game mode.  Leading '*' will be skipped." );
 
-	scr_viewsize = Cvar_Get ("viewsize", "100", CVAR_ARCHIVE);
-	Cvar_SetDescription ("viewsize", "Draw size of screen in percent, from 40 to 100.");
-	scr_conspeed = Cvar_Get ("scr_conspeed", "3", 0);
-	Cvar_SetDescription ("scr_conspeed", "Scrolling speed of the console.");
-	scr_conalpha = Cvar_Get ("scr_conalpha", "0.5", CVAR_ARCHIVE);		// Psychospaz's transparent console
-	Cvar_SetDescription ("scr_conalpha", "Opacity of console background.");
-	scr_newconback = Cvar_Get ("scr_newconback", "0", CVAR_ARCHIVE);	// whether to use new console background
-	Cvar_SetDescription ("scr_newconback", "Toggles use of new console background.");
-	scr_oldconbar = Cvar_Get ("scr_oldconbar", "1", CVAR_ARCHIVE);		// whether to draw bottom bar on old console
-	Cvar_SetDescription ("scr_oldconbar", "Toggles drawing of solid color bottom bar on console with standard conback image.");
+	scr_viewsize = Cvar_Get ( "viewsize", "100", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "viewsize", "Draw size of screen in percent, from 40 to 100." );
+	scr_conspeed = Cvar_Get ( "scr_conspeed", "3", 0 );
+	Cvar_SetDescription ( "scr_conspeed", "Scrolling speed of the console." );
+	scr_conalpha = Cvar_Get ( "scr_conalpha", "0.5", CVAR_ARCHIVE );		// Psychospaz's transparent console
+	Cvar_SetDescription ( "scr_conalpha", "Opacity of console background." );
+	scr_newconback = Cvar_Get ( "scr_newconback", "0", CVAR_ARCHIVE );	// whether to use new console background
+	Cvar_SetDescription ( "scr_newconback", "Toggles use of new console background." );
+	scr_oldconbar = Cvar_Get ( "scr_oldconbar", "1", CVAR_ARCHIVE );		// whether to draw bottom bar on old console
+	Cvar_SetDescription ( "scr_oldconbar", "Toggles drawing of solid color bottom bar on console with standard conback image." );
 //	scr_conheight = Cvar_Get ("scr_conheight", "0.5", CVAR_ARCHIVE);	// how far the console drops down
-	scr_letterbox = Cvar_Get ("scr_letterbox", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_letterbox", "Enables letterbox effect for cameras and cutscenes.");
+	scr_letterbox = Cvar_Get ( "scr_letterbox", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_letterbox", "Enables letterbox effect for cameras and cutscenes." );
 //	scr_showturtle = Cvar_Get ("scr_showturtle", "0", 0);	// unused
-	scr_showpause = Cvar_Get ("scr_showpause", "1", 0);
-	Cvar_SetDescription ("scr_showpause", "Toggles drawing of pause plaque.");
-	scr_centertime = Cvar_Get ("scr_centertime", "3.5", 0);	// increased for fade
-	Cvar_SetDescription ("scr_centertime", "Time in seconds for centerprints to fade away.");
+	scr_showpause = Cvar_Get ( "scr_showpause", "1", 0 );
+	Cvar_SetDescription ( "scr_showpause", "Toggles drawing of pause plaque." );
+	scr_centertime = Cvar_Get ( "scr_centertime", "3.5", 0 );	// increased for fade
+	Cvar_SetDescription ( "scr_centertime", "Time in seconds for centerprints to fade away." );
 //	scr_printspeed = Cvar_Get ("scr_printspeed", "8", 0);	// unused
 
-	scr_netgraph = Cvar_Get ("netgraph", "0", 0);
-	Cvar_SetDescription ("netgraph", "Enables drawing of network activity graph.");
-	scr_netgraph_pos = Cvar_Get ("netgraph_pos", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("netgraph_pos", "Sets draw position of network activity graph.  0 = bottom right, 1 = bottom left.");
-	scr_timegraph = Cvar_Get ("timegraph", "0", 0);
-	Cvar_SetDescription ("timegraph", "Enables drawing of frame time graph.");
-	scr_debuggraph = Cvar_Get ("debuggraph", "0", 0);		// does not show anything
-	Cvar_SetDescription ("debuggraph", "Enables drawing of debug graph.");
+	scr_netgraph = Cvar_Get ( "netgraph", "0", 0 );
+	Cvar_SetDescription ( "netgraph", "Enables drawing of network activity graph." );
+	scr_netgraph_pos = Cvar_Get ( "netgraph_pos", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "netgraph_pos", "Sets draw position of network activity graph.  0 = bottom right, 1 = bottom left." );
+	scr_timegraph = Cvar_Get ( "timegraph", "0", 0 );
+	Cvar_SetDescription ( "timegraph", "Enables drawing of frame time graph." );
+	scr_debuggraph = Cvar_Get ( "debuggraph", "0", 0 );		// does not show anything
+	Cvar_SetDescription ( "debuggraph", "Enables drawing of debug graph." );
 //	scr_graphheight = Cvar_Get ("graphheight", "32", 0);	// unused
-	scr_graphscale = Cvar_Get ("graphscale", "1", 0);
-	Cvar_SetDescription ("graphscale", "Sets vertical scale of activity graph.");
-	scr_graphshift = Cvar_Get ("graphshift", "0", 0);
-	Cvar_SetDescription ("graphshift", "Sets vertical shift of activity graph.");
+	scr_graphscale = Cvar_Get ( "graphscale", "1", 0 );
+	Cvar_SetDescription ( "graphscale", "Sets vertical scale of activity graph." );
+	scr_graphshift = Cvar_Get ( "graphshift", "0", 0 );
+	Cvar_SetDescription ( "graphshift", "Sets vertical shift of activity graph." );
 //	scr_drawall = Cvar_Get ("scr_drawall", "0", 0);	// unused
 
-	crosshair = Cvar_Get ("crosshair", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair", "Sets crosshair image.  0 = no crosshair");
-	crosshair_scale = Cvar_Get ("crosshair_scale", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_scale", "Sets crosshair size.  Min = 0.25, Max = 15.");
-	crosshair_red = Cvar_Get ("crosshair_red", "255", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_red", "Sets red color component of crosshair.");
-	crosshair_green = Cvar_Get ("crosshair_green", "255", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_green", "Sets green color component of crosshair.");
-	crosshair_blue = Cvar_Get ("crosshair_blue", "255", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_blue", "Sets blue color component of crosshair.");
-	crosshair_alpha = Cvar_Get ("crosshair_alpha", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_alpha", "Sets base opacity of crosshair.");
-	crosshair_pulse = Cvar_Get ("crosshair_pulse", "0.25", CVAR_ARCHIVE);
-	Cvar_SetDescription ("crosshair_pulse", "Sets opacity pulse amplitude of crosshair.");
+	crosshair = Cvar_Get ( "crosshair", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair", "Sets crosshair image.  0 = no crosshair" );
+	crosshair_scale = Cvar_Get ( "crosshair_scale", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_scale", "Sets crosshair size.  Min = 0.25, Max = 15." );
+	crosshair_red = Cvar_Get ( "crosshair_red", "255", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_red", "Sets red color component of crosshair." );
+	crosshair_green = Cvar_Get ( "crosshair_green", "255", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_green", "Sets green color component of crosshair." );
+	crosshair_blue = Cvar_Get ( "crosshair_blue", "255", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_blue", "Sets blue color component of crosshair." );
+	crosshair_alpha = Cvar_Get ( "crosshair_alpha", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_alpha", "Sets base opacity of crosshair." );
+	crosshair_pulse = Cvar_Get ( "crosshair_pulse", "0.25", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "crosshair_pulse", "Sets opacity pulse amplitude of crosshair." );
 
-	scr_simple_loadscreen = Cvar_Get ("scr_simple_loadscreen", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_simple_loadscreen", "Toggles use of simplified load screen.  Value of 0 enables Quake2Max-style verbose load screen.");
+	scr_simple_loadscreen = Cvar_Get ( "scr_simple_loadscreen", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_simple_loadscreen", "Toggles use of simplified load screen.  Value of 0 enables Quake2Max-style verbose load screen." );
 
-	scr_surroundlayout = Cvar_Get ("scr_surroundlayout", "1", CVAR_ARCHIVE);	// whether to keep HUD/menu elements on center screen in triple-wide video modes
-	Cvar_SetDescription ("scr_surroundlayout", "Enables use of triple-monitor surround layout with all HUD/menu graphics on center monitor.");
-	scr_surroundleft = Cvar_Get ("scr_surroundleft", "0.333333333333", CVAR_ARCHIVE);		// left placement of HUD/menu elements on center screen in triple-wide video modes
-	Cvar_SetDescription ("scr_surroundleft", "Changes left boundary for center monitor in triple-monitor surround layout.  Only change if you have a surround setup with different size monitors.");
-	scr_surroundright = Cvar_Get ("scr_surroundright", "0.666666666667", CVAR_ARCHIVE);		// right placement of HUD/menu elements on center screen in triple-wide video modes
-	Cvar_SetDescription ("scr_surroundright", "Changes right boundary for center monitor in triple-monitor surround layout.  Only change if you have a surround setup with different size monitors.");
-	scr_surroundthreshold = Cvar_Get ("scr_surroundthreshold", "3.6", CVAR_ARCHIVE);		// minimum aspect ratio to trigger surround layout
-	Cvar_SetDescription ("scr_surroundthreshold", "Sets minimum aspect ratio to trigger triple-monitor surround layout scaling.");
+	scr_surroundlayout = Cvar_Get ( "scr_surroundlayout", "1", CVAR_ARCHIVE );	// whether to keep HUD/menu elements on center screen in triple-wide video modes
+	Cvar_SetDescription ( "scr_surroundlayout", "Enables use of triple-monitor surround layout with all HUD/menu graphics on center monitor." );
+	scr_surroundleft = Cvar_Get ( "scr_surroundleft", "0.333333333333", CVAR_ARCHIVE );		// left placement of HUD/menu elements on center screen in triple-wide video modes
+	Cvar_SetDescription ( "scr_surroundleft", "Changes left boundary for center monitor in triple-monitor surround layout.  Only change if you have a surround setup with different size monitors." );
+	scr_surroundright = Cvar_Get ( "scr_surroundright", "0.666666666667", CVAR_ARCHIVE );		// right placement of HUD/menu elements on center screen in triple-wide video modes
+	Cvar_SetDescription ( "scr_surroundright", "Changes right boundary for center monitor in triple-monitor surround layout.  Only change if you have a surround setup with different size monitors." );
+	scr_surroundthreshold = Cvar_Get ( "scr_surroundthreshold", "3.6", CVAR_ARCHIVE );		// minimum aspect ratio to trigger surround layout
+	Cvar_SetDescription ( "scr_surroundthreshold", "Sets minimum aspect ratio to trigger triple-monitor surround layout scaling." );
 
-	scr_hudsize = Cvar_Get ("scr_hudsize", "5", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_hudsize", "Sets scale for default (server-set) HUD.");
-	scr_hudalpha = Cvar_Get ("scr_hudalpha", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_hudalpha", "Sets opacity of HUD.");
-	scr_hudsqueezedigits = Cvar_Get ("scr_hudsqueezedigits", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("scr_hudsqueezedigits", "Enables display of 4 and 5-digit numbers on HUD.");
+	scr_hudsize = Cvar_Get ( "scr_hudsize", "5", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_hudsize", "Sets scale for default (server-set) HUD." );
+	scr_hudalpha = Cvar_Get ( "scr_hudalpha", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_hudalpha", "Sets opacity of HUD." );
+	scr_hudsqueezedigits = Cvar_Get ( "scr_hudsqueezedigits", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "scr_hudsqueezedigits", "Enables display of 4 and 5-digit numbers on HUD." );
 
 //
 // register our commands
 //
-	Cmd_AddCommand ("timerefresh", SCR_TimeRefresh_f);
-	Cmd_AddCommand ("loading", SCR_Loading_f);
-	Cmd_AddCommand ("sizeup", SCR_SizeUp_f);
-	Cmd_AddCommand ("sizedown", SCR_SizeDown_f);
-	Cmd_AddCommand ("sky", SCR_Sky_f);
-	Cmd_AddCommand ("skyclouds", SCR_SkyClouds_f);
-	Cmd_AddCommand ("sethud", SCR_SetHud_f);
-	Cmd_AddCommand ("dumpstatuslayout", SCR_DumpStatusLayout_f);
-	Cmd_AddCommand ("dumpgenerallayout", SCR_DumpGeneralLayout_f);
+	Cmd_AddCommand ( "timerefresh", SCR_TimeRefresh_f );
+	Cmd_AddCommand ( "loading", SCR_Loading_f );
+	Cmd_AddCommand ( "sizeup", SCR_SizeUp_f );
+	Cmd_AddCommand ( "sizedown", SCR_SizeDown_f );
+	Cmd_AddCommand ( "sky", SCR_Sky_f );
+	Cmd_AddCommand ( "skyclouds", SCR_SkyClouds_f );
+	Cmd_AddCommand ( "sethud", SCR_SetHud_f );
+	Cmd_AddCommand ( "dumpstatuslayout", SCR_DumpStatusLayout_f );
+	Cmd_AddCommand ( "dumpgenerallayout", SCR_DumpGeneralLayout_f );
 
 	SCR_InitScreenScale ();
 	SCR_InitHudScale ();
@@ -1763,15 +1763,15 @@ void SCR_Shutdown (void)
 	if (!scr_initialized)
 		return;
 
-	Cmd_RemoveCommand ("timerefresh");
-	Cmd_RemoveCommand ("loading");
-	Cmd_RemoveCommand ("sizeup");
-	Cmd_RemoveCommand ("sizedown");
-	Cmd_RemoveCommand ("sky");
-	Cmd_RemoveCommand ("skyclouds");
-	Cmd_RemoveCommand ("sethud");
-	Cmd_RemoveCommand ("dumpstatuslayout");
-	Cmd_RemoveCommand ("dumpgenerallayout");
+	Cmd_RemoveCommand ( "timerefresh" );
+	Cmd_RemoveCommand ( "loading" );
+	Cmd_RemoveCommand ( "sizeup" );
+	Cmd_RemoveCommand ( "sizedown" );
+	Cmd_RemoveCommand ( "sky" );
+	Cmd_RemoveCommand ( "skyclouds" );
+	Cmd_RemoveCommand ( "sethud" );
+	Cmd_RemoveCommand ( "dumpstatuslayout" );
+	Cmd_RemoveCommand ( "dumpgenerallayout" );
 
 	CL_FreeHud ();
 
@@ -2036,7 +2036,7 @@ void SCR_DrawLoading (void)
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 		//	SCR_DrawPic (-64, 0, SCREEN_WIDTH+128, SCREEN_HEIGHT, ALIGN_CENTER, false, va("/levelshots/%s_widescreen.pcx", mapfile), 1.0);
 			// Draw at native aspect, don't stretch to 16:9 or wider
-			Com_sprintf (picName, sizeof(picName), "/levelshots/%s_widescreen.pcx", mapfile);
+			snprintf (picName, sizeof(picName), "/levelshots/%s_widescreen.pcx", mapfile);
 			SCR_GetPicPosWidth (picName, &picX, &picW);
 			SCR_DrawPic (picX, 0, picW, SCREEN_HEIGHT, ALIGN_CENTER, false, picName, 1.0);
 			haveMapPic = true;
@@ -2504,8 +2504,8 @@ void SCR_TouchPics (void)
 			Cvar_SetInteger ("crosshair", 1);
 		}
 
-	//	Com_sprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", (int)(crosshair->value));
-		Com_sprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", crosshair->integer);
+	//	snprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", (int)(crosshair->value));
+		snprintf (crosshair_pic, sizeof(crosshair_pic), "ch%i", crosshair->integer);
 		R_DrawGetPicSize (&crosshair_width, &crosshair_height, crosshair_pic);
 		if (!crosshair_width)
 			crosshair_pic[0] = 0;

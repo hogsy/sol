@@ -64,7 +64,7 @@ void SubdividePolygon (int numverts, float *verts)
 	float	lightmap_total_s, lightmap_total_t;	// added for lightmaps
 
 	if (numverts > 60)
-		VID_Error (ERR_DROP, "numverts = %i", numverts);
+		VID_Error ( ERR_DROP, "numverts = %i", numverts );
 
 	BoundPoly (numverts, verts, mins, maxs);
 
@@ -203,7 +203,7 @@ void R_SubdivideSurface (msurface_t *surf)
 
 	// clamp r_subdivide_size to a reasonable range
 	if (!r_subdivide_size)
-		r_subdivide_size = Cvar_Get("r_subdivide_size", "64", 0);	// chop size for warp surfaces
+		r_subdivide_size = Cvar_Get( "r_subdivide_size", "64", 0 );	// chop size for warp surfaces
 	if ((r_subdivide_size->value < 64.0f) || (r_subdivide_size->value > 512.0f))
 		Cvar_SetValue( "r_subdivide_size", 64);
 

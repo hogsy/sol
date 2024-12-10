@@ -146,13 +146,13 @@ static qboolean Sys_DetectOS (char *osString, int osStringSize)
 	line = malloc (sizeof(char) * lineSize);
 	while ( getdelim(&line, &lineSize, '\n', osFile) != -1 )
 	{
-		if ( !Q_strncasecmp(line, "NAME=", 5) ) {
+		if ( !Q_strncasecmp( line, "NAME=", 5 ) ) {
 			Q_strncpyz (osNameBuf, sizeof(osNameBuf), line);
 			bufLen = strlen(osNameBuf);
 			if (osNameBuf[bufLen-1] == '\n')
 				osNameBuf[bufLen-1] = 0;
 		}
-		if ( !Q_strncasecmp(line, "VERSION=", 8) ) {
+		if ( !Q_strncasecmp( line, "VERSION=", 8 ) ) {
 			Q_strncpyz (osVersionBuf, sizeof(osVersionBuf), line);
 			bufLen = strlen(osVersionBuf);
 			if (osVersionBuf[bufLen-1] == '\n')
@@ -215,25 +215,25 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 	line = malloc (sizeof(char) * lineSize);
 	while ( getdelim(&line, &lineSize, '\n', cpuFile) != -1 )
 	{
-		if ( !Q_strncasecmp(line, "model name", 10) ) {
+		if ( !Q_strncasecmp( line, "model name", 10 ) ) {
 			Q_strncpyz (mdlNameBuf, sizeof(mdlNameBuf), line);
 			bufLen = strlen(mdlNameBuf);
 			if (mdlNameBuf[bufLen-1] == '\n')
 				mdlNameBuf[bufLen-1] = 0;
 		}
-		if ( !Q_strncasecmp(line, "cpu MHz", 7) ) {
+		if ( !Q_strncasecmp( line, "cpu MHz", 7 ) ) {
 			Q_strncpyz (mhzBuf, sizeof(mhzBuf), line);
 			bufLen = strlen(mhzBuf);
 			if (mhzBuf[bufLen-1] == '\n')
 				mhzBuf[bufLen-1] = 0;
 		}
-		if ( !Q_strncasecmp(line, "flags", 5) ) {
+		if ( !Q_strncasecmp( line, "flags", 5 ) ) {
 			Q_strncpyz (flagsBuf, sizeof(flagsBuf), line);
 			bufLen = strlen(flagsBuf);
 			if (flagsBuf[bufLen-1] == '\n')
 				flagsBuf[bufLen-1] = 0;
 		}
-		if ( !Q_strncasecmp(line, "processor", 9) )
+		if ( !Q_strncasecmp( line, "processor", 9 ) )
 			numLogicalProcessors++;
 
 		// parse CPU speed for each logical processor
@@ -348,7 +348,7 @@ static qboolean Sys_DetectRAM (char *memString, int memStringSize, char *memStri
 	line = malloc (sizeof(char) * lineSize);
 	while ( getdelim(&line, &lineSize, '\n', memFile) != -1 )
 	{
-		if ( !Q_strncasecmp(line, "MemTotal:", 9) ) {
+		if ( !Q_strncasecmp( line, "MemTotal:", 9 ) ) {
 			Q_strncpyz (memTotalBuf, sizeof(memTotalBuf), line);
 			bufLen = strlen(memTotalBuf);
 			if (memTotalBuf[bufLen-1] == '\n')
@@ -389,33 +389,33 @@ void Sys_Init (void)
 	// Detect OS version
 	if ( Sys_DetectOS (osString, sizeof(osString)) ) {
 		Com_Printf ("OS: %s\n", osString);
-		sys_osVersion = Cvar_Get ("sys_osVersion", osString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_osVersion = Cvar_Get ( "sys_osVersion", osString, CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 	else {
 		Com_Printf ("Couldn't detect OS info\n");
-		sys_osVersion = Cvar_Get ("sys_osVersion", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_osVersion = Cvar_Get ( "sys_osVersion", "Unknown", CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 
 	// Detect CPU
 	if ( Sys_DetectCPU (cpuString, sizeof(cpuString)) ) {
 		Com_Printf ("CPU: %s\n", cpuString);
-		sys_cpuString = Cvar_Get ("sys_cpuString", cpuString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_cpuString = Cvar_Get ( "sys_cpuString", cpuString, CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 	else {
 		Com_Printf ("Unknown CPU found\n");
-		sys_cpuString = Cvar_Get ("sys_cpuString", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_cpuString = Cvar_Get ( "sys_cpuString", "Unknown", CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 
 	// Detect physical memory
 	if ( Sys_DetectRAM (memString, sizeof(memString), memStringAcc, sizeof(memStringAcc)) ) {
 		Com_Printf ("Memory: %s MB (%s MB accessible)\n", memString, memStringAcc);
-		sys_ramMegs = Cvar_Get ("sys_ramMegs", memString, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
-		sys_ramMegs_perApp = Cvar_Get ("sys_ramMegs_perApp", memStringAcc, CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_ramMegs = Cvar_Get ( "sys_ramMegs", memString, CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
+		sys_ramMegs_perApp = Cvar_Get ( "sys_ramMegs_perApp", memStringAcc, CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 	else {
 		Com_Printf ("Unknown amount of memory\n");
-		sys_ramMegs = Cvar_Get ("sys_ramMegs", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
-		sys_ramMegs_perApp = Cvar_Get ("sys_ramMegs_perApp", "Unknown", CVAR_NOSET|CVAR_LATCH|CVAR_SAVE_IGNORE);
+		sys_ramMegs = Cvar_Get ( "sys_ramMegs", "Unknown", CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
+		sys_ramMegs_perApp = Cvar_Get ( "sys_ramMegs_perApp", "Unknown", CVAR_NOSET | CVAR_LATCH | CVAR_SAVE_IGNORE );
 	}
 #endif	// defined (__linux__)
 // end system info detection
@@ -935,7 +935,7 @@ int main (int argc, char **argv)
 
 	fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 
-	nostdout = Cvar_Get("nostdout", "0", 0);
+	nostdout = Cvar_Get( "nostdout", "0", 0 );
 	if (!nostdout->value) {
 		fcntl(0, F_SETFL, fcntl (0, F_GETFL, 0) | FNDELAY);
 	//	printf ("Linux Quake II -- Version %0.3f\n", KMQUAKE2_VERSION);

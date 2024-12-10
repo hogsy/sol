@@ -170,7 +170,7 @@ void R_ClipSkyPolygon (int nump, vec3_t vecs, int stage)
 	int		i, j;
 
 	if (nump > MAX_CLIP_VERTS-2)
-		VID_Error (ERR_DROP, "R_ClipSkyPolygon: MAX_CLIP_VERTS");
+		VID_Error ( ERR_DROP, "R_ClipSkyPolygon: MAX_CLIP_VERTS" );
 	if (stage == 6)
 	{	// fully clipped, so draw it
 		R_DrawSkyPolygon (nump, vecs);
@@ -821,7 +821,7 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 			Cvar_SetInteger("r_picmip", r_picmip->integer + r_skymip->integer);
 		}
 
-		Com_sprintf (pathname, sizeof(pathname), "env/%s%s.tga", r_skyInfo.skyBoxName, suf[i]);
+		snprintf (pathname, sizeof(pathname), "env/%s%s.tga", r_skyInfo.skyBoxName, suf[i]);
 		r_skyInfo.sky_images[i] = R_FindImage (pathname, it_sky);
 		if ( !r_skyInfo.sky_images[i] )
 			r_skyInfo.sky_images[i] = glMedia.noTexture;
@@ -848,7 +848,7 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 	// set cloud texture
 	if ( cloudName && (cloudName[0] != 0) ) {
 		Q_strncpyz (r_skyInfo.cloudName, sizeof(r_skyInfo.cloudName), cloudName);
-		Com_sprintf (pathname, sizeof(pathname), "env/%s.tga", r_skyInfo.cloudName, suf[i]);
+		snprintf (pathname, sizeof(pathname), "env/%s.tga", r_skyInfo.cloudName, suf[i]);
 		r_skyInfo.cloud_image = R_FindImage (pathname, it_sky);
 		if ( !r_skyInfo.cloud_image )
 			r_skyInfo.cloud_image = glMedia.noTexture;
@@ -866,10 +866,10 @@ void R_SetSky (const char *skyName, const char *cloudName, float rotate, vec3_t 
 	// set r_farZ
 	R_SetFarZ ( R_GetSkyDistance() );
 
-	VID_Printf (PRINT_DEVELOPER, "R_SetSky: skyName '%s' cloudName '%s' rotate %.2f axis (%.2f %.2f %.2f) distance %.0f\n", 
-				skyName, cloudName, rotate, axis[0], axis[1], axis[2], distance);
-	VID_Printf (PRINT_DEVELOPER, "  lightningFreq %.2f cloudDir (%.2f %.2f) cloudTile (%.2f %.2f %.2f)\n",
-				lightningFreq, cloudDir[0], cloudDir[1], cloudTile[0], cloudTile[1], cloudTile[2]);
-	VID_Printf (PRINT_DEVELOPER, "  cloudSpeed (%.2f %.2f %.2f) cloudAlpha (%.2f %.2f %.2f)\n",
-				cloudSpeed[0], cloudSpeed[1], cloudSpeed[2], cloudAlpha[0], cloudAlpha[1], cloudAlpha[2]);
+	VID_Printf ( PRINT_DEVELOPER, "R_SetSky: skyName '%s' cloudName '%s' rotate %.2f axis (%.2f %.2f %.2f) distance %.0f\n",
+	            skyName, cloudName, rotate, axis[ 0 ], axis[ 1 ], axis[ 2 ], distance );
+	VID_Printf ( PRINT_DEVELOPER, "  lightningFreq %.2f cloudDir (%.2f %.2f) cloudTile (%.2f %.2f %.2f)\n",
+	            lightningFreq, cloudDir[ 0 ], cloudDir[ 1 ], cloudTile[ 0 ], cloudTile[ 1 ], cloudTile[ 2 ] );
+	VID_Printf ( PRINT_DEVELOPER, "  cloudSpeed (%.2f %.2f %.2f) cloudAlpha (%.2f %.2f %.2f)\n",
+	            cloudSpeed[ 0 ], cloudSpeed[ 1 ], cloudSpeed[ 2 ], cloudAlpha[ 0 ], cloudAlpha[ 1 ], cloudAlpha[ 2 ] );
 }

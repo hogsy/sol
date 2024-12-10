@@ -550,7 +550,7 @@ qboolean check_shot_blocked (edict_t *monster, float chance_attack)
 		return false;
 
 	// special case for parasite
-	if (strcmp(monster->classname, "monster_parasite") == 0)
+	if (strcmp(monster->classname.c_str(), "monster_parasite") == 0)
 	{
 		trace_t	trace;
 		vec3_t	forward, right, start, end, probeOffset;
@@ -616,7 +616,7 @@ qboolean check_plat_blocked (edict_t *monster, float moveDist)
 
 	// check if monster is already on a plat
 	if (monster->groundentity && monster->groundentity != world
-		&& strcmp(monster->groundentity->classname, "func_plat") == 0)
+		&& strcmp(monster->groundentity->classname.c_str(), "func_plat") == 0)
 		platform = monster->groundentity;
 
 	// if monster isn't, check to see if it will step onto one with this move
@@ -629,7 +629,7 @@ qboolean check_plat_blocked (edict_t *monster, float moveDist)
 
 		stepTrace = gi.trace(point1, vec3_origin, vec3_origin, point2, monster, MASK_MONSTERSOLID);
 		if (stepTrace.fraction < 1 && !stepTrace.startsolid && !stepTrace.allsolid
-			&& strcmp(stepTrace.ent->classname, "func_plat") == 0)
+			&& strcmp(stepTrace.ent->classname.c_str(), "func_plat") == 0)
 			platform = stepTrace.ent;
 	}
 

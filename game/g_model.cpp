@@ -224,9 +224,9 @@ void SP_model_spawn (edict_t *ent)
 			else
 			{
 				if (strstr(ent->usermodel,"tris.md2"))
-					Com_sprintf (modelname, sizeof(modelname), "players/%s", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "players/%s", ent->usermodel);
 				else
-					Com_sprintf (modelname, sizeof(modelname), "players/%s/tris.md2", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "players/%s/tris.md2", ent->usermodel);
 				ent->s.modelindex = gi.modelindex(modelname);
 			}
 		}
@@ -235,16 +235,16 @@ void SP_model_spawn (edict_t *ent)
 			if (strstr(ent->usermodel, ".sp2")) {
 				// Knightmare- check for "sprites/" already in path
 				if ( !strncmp(ent->usermodel, "sprites/", 8) )
-					Com_sprintf (modelname, sizeof(modelname), "%s", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "%s", ent->usermodel);
 				else
-					Com_sprintf (modelname, sizeof(modelname), "sprites/%s", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "sprites/%s", ent->usermodel);
 			}
 			else {
 				// Knightmare- check for "models/" already in path
 				if ( !strncmp(ent->usermodel, "models/", 7) )
-					Com_sprintf (modelname, sizeof(modelname), "%s", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "%s", ent->usermodel);
 				else
-					Com_sprintf (modelname, sizeof(modelname), "models/%s", ent->usermodel);
+					snprintf (modelname, sizeof(modelname), "models/%s", ent->usermodel);
 			}
 			ent->s.modelindex = gi.modelindex (modelname);
 		}
@@ -271,7 +271,7 @@ void SP_model_spawn (edict_t *ent)
 
 	if (ent->spawnflags & TOGGLE)
 	{	// Knightmare- allow starting off (but not for model_train)
-		if ( (strcmp(ent->classname, "model_train") != 0) && (ent->delay != 0) ) {
+		if ( (strcmp(ent->classname.c_str(), "model_train") != 0) && (ent->delay != 0) ) {
 			ent->delay = 1;
 			ent->svflags |= SVF_NOCLIENT;
 		}

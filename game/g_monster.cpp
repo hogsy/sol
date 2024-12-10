@@ -63,7 +63,7 @@ void FadeDieSink (edict_t *ent)
 
 qboolean M_SetDeath (edict_t *self, mmove_t **deathmoves)
 {
-	mmove_t	*move = NULL;
+	mmove_t	*move = nullptr;
 	mmove_t *dmove;
 
 	if (self->health > 0)
@@ -291,7 +291,7 @@ void M_CheckGround (edict_t *ent)
 
 	if (ent->velocity[2] > 100)
 	{
-		ent->groundentity = NULL;
+		ent->groundentity = nullptr;
 		return;
 	}
 
@@ -305,7 +305,7 @@ void M_CheckGround (edict_t *ent)
 	// check steepness
 	if ( trace.plane.normal[2] < 0.7 && !trace.startsolid)
 	{
-		ent->groundentity = NULL;
+		ent->groundentity = nullptr;
 		return;
 	}
 
@@ -529,7 +529,7 @@ void M_MoveFrame (edict_t *self)
 	// Lazarus: For live monsters weaker than gladiator who aren't already running from
 	//          something, evade live grenades on the ground.
 	if ( (self->health > 0) && (self->max_health < 400) && !(self->monsterinfo.aiflags & AI_CHASE_THING) && self->monsterinfo.run
-		&& !((Q_stricmp(self->classname, "misc_insane") == 0) && (self->moreflags & FL2_CRUCIFIED)) )	// Knightmare- crucified insanes don't evade
+		&& !((Q_stricmp( self->classname.c_str(), "misc_insane" ) == 0) && (self->moreflags & FL2_CRUCIFIED)) )	// Knightmare- crucified insanes don't evade
 		Grenade_Evade (self);
 
 	move = self->monsterinfo.currentmove;
@@ -635,8 +635,8 @@ void monster_use (edict_t *self, edict_t *other, edict_t *activator)
 			self->spawnflags &= ~SF_MONSTER_GOODGUY;
 		}
 		self->monsterinfo.aiflags &= ~(AI_GOOD_GUY + AI_FOLLOW_LEADER);
-		if (self->dmgteam && !Q_stricmp(self->dmgteam,"player"))
-			self->dmgteam = NULL;
+		if (self->dmgteam && !Q_stricmp( self->dmgteam, "player" ) )
+			self->dmgteam = nullptr;
 	}
 
 // delay reaction so if the monster is teleported, its sound is still heard
@@ -666,10 +666,10 @@ void monster_triggered_spawn (edict_t *self)
 		if (!(self->enemy->flags & FL_DISGUISED))
 			FoundTarget (self);
 		else
-			self->enemy = NULL;
+			self->enemy = nullptr;
 	}
 	else
-		self->enemy = NULL;
+		self->enemy = nullptr;
 }
 
 void monster_triggered_spawn_use (edict_t *self, edict_t *other, edict_t *activator)
@@ -728,7 +728,7 @@ void monster_death_use (edict_t *self)
 	if (self->item)
 	{
 		Drop_Item (self, self->item);
-		self->item = NULL;
+		self->item = nullptr;
 	}
 
 	if (self->deathtarget)
@@ -892,12 +892,12 @@ void monster_start_go (edict_t *self)
 		qboolean	fixup;
 		edict_t		*target;
 
-		target = NULL;
+		target = nullptr;
 		notcombat = false;
 		fixup = false;
-		while ((target = G_Find (target, FOFS(targetname), self->target)) != NULL)
+		while ((target = G_Find (target, FOFS(targetname), self->target)) != nullptr )
 		{
-			if (strcmp(target->classname, "point_combat") == 0)
+			if (strcmp(target->classname.c_str(), "point_combat") == 0)
 			{
 				self->combattarget = self->target;
 				fixup = true;
@@ -910,7 +910,7 @@ void monster_start_go (edict_t *self)
 		if (notcombat && self->combattarget)
 			gi.dprintf("%s at %s has target with mixed types\n", self->classname, vtos(self->s.origin));
 		if (fixup)
-			self->target = NULL;
+			self->target = nullptr;
 	}
 
 	// validate combattarget
@@ -918,10 +918,10 @@ void monster_start_go (edict_t *self)
 	{
 		edict_t		*target;
 
-		target = NULL;
-		while ((target = G_Find (target, FOFS(targetname), self->combattarget)) != NULL)
+		target = nullptr;
+		while ((target = G_Find (target, FOFS(targetname), self->combattarget)) != nullptr )
 		{
-			if (strcmp(target->classname, "point_combat") != 0)
+			if (strcmp(target->classname.c_str(), "point_combat") != 0)
 			{
 				gi.dprintf("%s at (%i %i %i) has a bad combattarget %s : %s at (%i %i %i)\n",
 					self->classname, (int)self->s.origin[0], (int)self->s.origin[1], (int)self->s.origin[2],
@@ -937,11 +937,11 @@ void monster_start_go (edict_t *self)
 		if (!self->movetarget)
 		{
 			gi.dprintf ("%s can't find target %s at %s\n", self->classname, self->target, vtos(self->s.origin));
-			self->target = NULL;
+			self->target = nullptr;
 			self->monsterinfo.pausetime = 100000000;
 			self->monsterinfo.stand (self);
 		}
-		else if (strcmp (self->movetarget->classname, "path_corner") == 0)
+		else if (strcmp (self->movetarget->classname.c_str(), "path_corner") == 0)
 		{
 			// Lazarus: Don't wipe out target for trigger spawned monsters
 			//          that aren't triggered yet
@@ -949,12 +949,12 @@ void monster_start_go (edict_t *self)
 				VectorSubtract (self->goalentity->s.origin, self->s.origin, v);
 				self->ideal_yaw = self->s.angles[YAW] = vectoyaw(v);
 				self->monsterinfo.walk (self);
-				self->target = NULL;
+				self->target = nullptr;
 			}
 		}
 		else
 		{
-			self->goalentity = self->movetarget = NULL;
+			self->goalentity = self->movetarget = nullptr;
 			self->monsterinfo.pausetime = 100000000;
 			self->monsterinfo.stand (self);
 		}
@@ -1082,15 +1082,15 @@ void InitiallyDead (edict_t *self)
 
 void HintTestNext (edict_t *self, edict_t *hint)
 {
-	edict_t		*next=NULL;
+	edict_t		*next = nullptr;
 	edict_t		*e;
 	vec3_t		dir;
 
 	self->monsterinfo.aiflags &= ~AI_HINT_TEST;
 	if (self->goalentity == hint)
-		self->goalentity = NULL;
+		self->goalentity = nullptr;
 	if (self->movetarget == hint)
-		self->movetarget = NULL;
+		self->movetarget = nullptr;
 	if (self->monsterinfo.pathdir == 1)
 	{
 		if (hint->hint_chain)
@@ -1147,7 +1147,7 @@ void HintTestNext (edict_t *self, edict_t *hint)
 int HintTestStart (edict_t *self)
 {
 	edict_t	*e;
-	edict_t	*hint=NULL;
+	edict_t	*hint = nullptr;
 	float	dist;
 	vec3_t	dir;
 	int		i;
@@ -1161,7 +1161,7 @@ int HintTestStart (edict_t *self)
 			e = &g_edicts[i];
 			if (!e->inuse)
 				continue;
-			if (Q_stricmp(e->classname, "hint_path"))
+			if (Q_stricmp( e->classname.c_str(), "hint_path" ) )
 				continue;
 			if (!visible(self, e))
 				continue;
@@ -1182,7 +1182,7 @@ int HintTestStart (edict_t *self)
 			self->monsterinfo.pathdir = 1;
 		VectorSubtract(hint->s.origin, self->s.origin, dir);
 		self->ideal_yaw = vectoyaw(dir);
-		self->enemy = self->oldenemy = NULL;
+		self->enemy = self->oldenemy = nullptr;
 		self->goalentity = self->movetarget = hint;
 		self->monsterinfo.pausetime = 0;
 		self->monsterinfo.aiflags |= AI_HINT_TEST;

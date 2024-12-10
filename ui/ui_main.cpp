@@ -222,7 +222,7 @@ void UI_Precache (void)
 	R_DrawFindPic ("/pics/m_main_quit_sel.pcx");
 	R_DrawFindPic ("/pics/m_main_plaque.pcx");
 	R_DrawFindPic ("/pics/m_main_logo.pcx");
-	R_RegisterModel ("models/ui/quad_cursor.md2");
+	R_RegisterModel ( "models/ui/quad_cursor.md2" );
 
 	// menu banners
 	R_DrawFindPic ("/pics/m_banner_game.pcx");
@@ -267,29 +267,29 @@ void UI_Init (void)
 {
 	// init this cvar here so UI_Print can use it
 	if (!alt_text_color)
-		alt_text_color = Cvar_Get ("alt_text_color", "2", CVAR_ARCHIVE);
+		alt_text_color = Cvar_Get ( "alt_text_color", "2", CVAR_ARCHIVE );
 
-	ui_sensitivity = Cvar_Get ("ui_sensitivity", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_sensitivity", "Sets sensitvity of mouse in menus.");
-	ui_background_alpha = Cvar_Get ("ui_background_alpha", "0.6", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_background_alpha", "Sets opacity of background menu image when ingame.");
-	ui_debug_itembounds = Cvar_Get ("ui_debug_itembounds", "0", 0);
-	Cvar_SetDescription ("ui_debug_itembounds", "Shows mouse interaction bounds of menu controls.");
-	ui_item_rotate = Cvar_Get ("ui_item_rotate", "0", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_item_rotate", "Reverses direction of mouse click rotation for menu lists.");
-	ui_cursor_scale = Cvar_Get ("ui_cursor_scale", "0.4", 0);
-	Cvar_SetDescription ("ui_cursor_scale", "Sets scale for drawing the menu mouse cursor.");
-	ui_new_textbox = Cvar_Get ("ui_new_textbox", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_new_textbox", "Toggles use of new text box image.  Setting this to 0 uses old font-based tiles.");
-	ui_new_textfield = Cvar_Get ("ui_new_textfield", "1", CVAR_ARCHIVE);
-	Cvar_SetDescription ("ui_new_textfield", "Toggles use of new text field image.  Setting this to 0 uses old font-based tiles.");
+	ui_sensitivity = Cvar_Get ( "ui_sensitivity", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_sensitivity", "Sets sensitvity of mouse in menus." );
+	ui_background_alpha = Cvar_Get ( "ui_background_alpha", "0.6", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_background_alpha", "Sets opacity of background menu image when ingame." );
+	ui_debug_itembounds = Cvar_Get ( "ui_debug_itembounds", "0", 0 );
+	Cvar_SetDescription ( "ui_debug_itembounds", "Shows mouse interaction bounds of menu controls." );
+	ui_item_rotate = Cvar_Get ( "ui_item_rotate", "0", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_item_rotate", "Reverses direction of mouse click rotation for menu lists." );
+	ui_cursor_scale = Cvar_Get ( "ui_cursor_scale", "0.4", 0 );
+	Cvar_SetDescription ( "ui_cursor_scale", "Sets scale for drawing the menu mouse cursor." );
+	ui_new_textbox = Cvar_Get ( "ui_new_textbox", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_new_textbox", "Toggles use of new text box image.  Setting this to 0 uses old font-based tiles." );
+	ui_new_textfield = Cvar_Get ( "ui_new_textfield", "1", CVAR_ARCHIVE );
+	Cvar_SetDescription ( "ui_new_textfield", "Toggles use of new text field image.  Setting this to 0 uses old font-based tiles." );
 	// Temp cvars for setting color1 in player config menu
-	ui_player_railred = Cvar_Get ("ui_player_railred", "20", 0);
-	Cvar_SetDescription ("ui_player_railred", "Temp cvar for setting red color component of player's railgun trail.  Values range 0-255.");
-	ui_player_railgreen = Cvar_Get ("ui_player_railgreen", "48", 0);
-	Cvar_SetDescription ("ui_player_railgreen", "Temp cvar for setting green color component of player's railgun trail.  Values range 0-255.");
-	ui_player_railblue = Cvar_Get ("ui_player_railblue", "176", 0);
-	Cvar_SetDescription ("ui_player_railblue", "Temp cvar for setting blue color component of player's railgun trail.  Values range 0-255.");
+	ui_player_railred = Cvar_Get ( "ui_player_railred", "20", 0 );
+	Cvar_SetDescription ( "ui_player_railred", "Temp cvar for setting red color component of player's railgun trail.  Values range 0-255." );
+	ui_player_railgreen = Cvar_Get ( "ui_player_railgreen", "48", 0 );
+	Cvar_SetDescription ( "ui_player_railgreen", "Temp cvar for setting green color component of player's railgun trail.  Values range 0-255." );
+	ui_player_railblue = Cvar_Get ( "ui_player_railblue", "176", 0 );
+	Cvar_SetDescription ( "ui_player_railblue", "Temp cvar for setting blue color component of player's railgun trail.  Values range 0-255." );
 
 	UI_GetVideoInfo ();		// build video mode list
 	UI_LoadFontNames ();	// load font list
@@ -304,29 +304,29 @@ void UI_Init (void)
 
 	UI_Precache ();		// precache images
 
-	Cmd_AddCommand ("menu_main", Menu_Main_f);
-	Cmd_AddCommand ("menu_game", Menu_Game_f);
-		Cmd_AddCommand ("menu_loadgame", Menu_LoadGame_f);
-		Cmd_AddCommand ("menu_savegame", Menu_SaveGame_f);
-		Cmd_AddCommand ("menu_credits", Menu_Credits_f );
-	Cmd_AddCommand ("menu_multiplayer", Menu_Multiplayer_f );
-		Cmd_AddCommand ("menu_joinserver", Menu_JoinServer_f);
-			Cmd_AddCommand ("menu_addressbook", Menu_AddressBook_f);
-		Cmd_AddCommand ("menu_startserver", Menu_StartServer_f);
-			Cmd_AddCommand ("menu_dmoptions", Menu_DMOptions_f);
-		Cmd_AddCommand ("menu_playerconfig", Menu_PlayerConfig_f);
-		Cmd_AddCommand ("menu_downloadoptions", Menu_DownloadOptions_f);
-	Cmd_AddCommand ("menu_video", Menu_Video_f);
-		Cmd_AddCommand ("menu_video_advanced", Menu_Video_Advanced_f);
-	Cmd_AddCommand ("menu_mods", Menu_Mods_f);
-	Cmd_AddCommand ("menu_options", Menu_Options_f);
-		Cmd_AddCommand ("menu_sound", Menu_Options_Sound_f);
-		Cmd_AddCommand ("menu_controls", Menu_Options_Controls_f);
-			Cmd_AddCommand ("menu_keys", Menu_Keys_f);
-		Cmd_AddCommand ("menu_screen", Menu_Options_Screen_f);
-		Cmd_AddCommand ("menu_effects", Menu_Options_Effects_f);
-		Cmd_AddCommand ("menu_interface", Menu_Options_Interface_f);
-	Cmd_AddCommand ("menu_quit", Menu_Quit_f);
+	Cmd_AddCommand ( "menu_main", Menu_Main_f );
+	Cmd_AddCommand ( "menu_game", Menu_Game_f );
+		Cmd_AddCommand ( "menu_loadgame", Menu_LoadGame_f );
+		Cmd_AddCommand ( "menu_savegame", Menu_SaveGame_f );
+		Cmd_AddCommand ( "menu_credits", Menu_Credits_f );
+	Cmd_AddCommand ( "menu_multiplayer", Menu_Multiplayer_f );
+		Cmd_AddCommand ( "menu_joinserver", Menu_JoinServer_f );
+			Cmd_AddCommand ( "menu_addressbook", Menu_AddressBook_f );
+		Cmd_AddCommand ( "menu_startserver", Menu_StartServer_f );
+			Cmd_AddCommand ( "menu_dmoptions", Menu_DMOptions_f );
+		Cmd_AddCommand ( "menu_playerconfig", Menu_PlayerConfig_f );
+		Cmd_AddCommand ( "menu_downloadoptions", Menu_DownloadOptions_f );
+	Cmd_AddCommand ( "menu_video", Menu_Video_f );
+		Cmd_AddCommand ( "menu_video_advanced", Menu_Video_Advanced_f );
+	Cmd_AddCommand ( "menu_mods", Menu_Mods_f );
+	Cmd_AddCommand ( "menu_options", Menu_Options_f );
+		Cmd_AddCommand ( "menu_sound", Menu_Options_Sound_f );
+		Cmd_AddCommand ( "menu_controls", Menu_Options_Controls_f );
+			Cmd_AddCommand ( "menu_keys", Menu_Keys_f );
+		Cmd_AddCommand ( "menu_screen", Menu_Options_Screen_f );
+		Cmd_AddCommand ( "menu_effects", Menu_Options_Effects_f );
+		Cmd_AddCommand ( "menu_interface", Menu_Options_Interface_f );
+	Cmd_AddCommand ( "menu_quit", Menu_Quit_f );
 
 	ui_initialized = true;
 }
@@ -353,29 +353,29 @@ void UI_Shutdown (void)
 	UI_FreeMapList ();
 	UI_FreePlayerModels ();
 
-	Cmd_RemoveCommand ("menu_main");
-	Cmd_RemoveCommand ("menu_game");
-	Cmd_RemoveCommand ("menu_loadgame");
-	Cmd_RemoveCommand ("menu_savegame");
-	Cmd_RemoveCommand ("menu_credits");
-	Cmd_RemoveCommand ("menu_multiplayer");
-	Cmd_RemoveCommand ("menu_joinserver");
-	Cmd_RemoveCommand ("menu_addressbook");
-	Cmd_RemoveCommand ("menu_startserver");
-	Cmd_RemoveCommand ("menu_dmoptions");
-	Cmd_RemoveCommand ("menu_playerconfig");
-	Cmd_RemoveCommand ("menu_downloadoptions");
-	Cmd_RemoveCommand ("menu_video");
-	Cmd_RemoveCommand ("menu_video_advanced");
-	Cmd_RemoveCommand ("menu_mods");
-	Cmd_RemoveCommand ("menu_options");
-	Cmd_RemoveCommand ("menu_sound");
-	Cmd_RemoveCommand ("menu_controls");
-	Cmd_RemoveCommand ("menu_keys");
-	Cmd_RemoveCommand ("menu_screen");
-	Cmd_RemoveCommand ("menu_effects");
-	Cmd_RemoveCommand ("menu_interface");
-	Cmd_RemoveCommand ("menu_quit");
+	Cmd_RemoveCommand ( "menu_main" );
+	Cmd_RemoveCommand ( "menu_game" );
+	Cmd_RemoveCommand ( "menu_loadgame" );
+	Cmd_RemoveCommand ( "menu_savegame" );
+	Cmd_RemoveCommand ( "menu_credits" );
+	Cmd_RemoveCommand ( "menu_multiplayer" );
+	Cmd_RemoveCommand ( "menu_joinserver" );
+	Cmd_RemoveCommand ( "menu_addressbook" );
+	Cmd_RemoveCommand ( "menu_startserver" );
+	Cmd_RemoveCommand ( "menu_dmoptions" );
+	Cmd_RemoveCommand ( "menu_playerconfig" );
+	Cmd_RemoveCommand ( "menu_downloadoptions" );
+	Cmd_RemoveCommand ( "menu_video" );
+	Cmd_RemoveCommand ( "menu_video_advanced" );
+	Cmd_RemoveCommand ( "menu_mods" );
+	Cmd_RemoveCommand ( "menu_options" );
+	Cmd_RemoveCommand ( "menu_sound" );
+	Cmd_RemoveCommand ( "menu_controls" );
+	Cmd_RemoveCommand ( "menu_keys" );
+	Cmd_RemoveCommand ( "menu_screen" );
+	Cmd_RemoveCommand ( "menu_effects" );
+	Cmd_RemoveCommand ( "menu_interface" );
+	Cmd_RemoveCommand ( "menu_quit" );
 
 	ui_initialized = false;
 }

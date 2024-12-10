@@ -80,10 +80,8 @@ void *Hunk_Begin (size_t maxsize)
 	prot |= PROT_MAX(prot);
 #endif
 
-	membase = mmap(0, maxhunksize, prot,
-			flags, -1, 0);
-
-	if ((membase == NULL) || (membase == (byte *)-1))
+	membase = static_cast< byte * >( mmap( nullptr, maxhunksize, prot, flags, -1, 0 ) );
+	if ((membase == nullptr ) || (membase == (byte *)-1))
 	{
 		Sys_Error("unable to virtual allocate %d bytes", maxsize);
 	}
@@ -112,7 +110,7 @@ void *Hunk_Alloc (size_t size)
 
 size_t Hunk_End (void)
 {
-	byte *n = NULL;
+	byte *n = nullptr;
 
 #if defined(__linux__)
 	n = (byte *)mremap(membase, maxhunksize, curhunksize + sizeof(size_t), 0);
@@ -280,7 +278,7 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 //	COM_FilePath (path, findbase, sizeof(filebase));
 	Q_strncpyz(findbase, sizeof(findbase), path);
 
-	if ((p = strrchr(findbase, '/')) != NULL) {
+	if ((p = strrchr(findbase, '/')) != nullptr ) {
 		*p = 0;
 		Q_strncpyz(findpattern, sizeof(findpattern), p + 1);
 	} else
@@ -289,47 +287,47 @@ char *Sys_FindFirst (char *path, unsigned musthave, unsigned canhave)
 	if (strcmp(findpattern, "*.*") == 0)
 		Q_strncpyz(findpattern, sizeof(findpattern), "*");
 	
-	if ((fdir = opendir(findbase)) == NULL)
-		return NULL;
-	while ((d = readdir(fdir)) != NULL)
+	if ((fdir = opendir(findbase)) == nullptr )
+		return nullptr;
+	while ((d = readdir(fdir)) != nullptr )
 	{
 		if (!*findpattern || glob_match(findpattern, d->d_name)){
 		//	if (*findpattern)
 		//		printf("%s matched %s\n", findpattern, d->d_name);
 			if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
-				Com_sprintf (findpath, sizeof(findpath), "%s/%s", findbase, d->d_name);
+				snprintf (findpath, sizeof(findpath), "%s/%s", findbase, d->d_name);
 				return findpath;
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 char *Sys_FindNext (unsigned musthave, unsigned canhave)
 {
 	struct dirent *d;
 
-	if (fdir == NULL)
-		return NULL;
-	while ((d = readdir(fdir)) != NULL)
+	if (fdir == nullptr )
+		return nullptr;
+	while ((d = readdir(fdir)) != nullptr )
 	{
 		if (!*findpattern || glob_match(findpattern, d->d_name)) {
 		//	if (*findpattern)
 		//		printf("%s matched %s\n", findpattern, d->d_name);
 			if (CompareAttributes(findbase, d->d_name, musthave, canhave)) {
-				Com_sprintf (findpath, sizeof(findpath), "%s/%s", findbase, d->d_name);
+				snprintf (findpath, sizeof(findpath), "%s/%s", findbase, d->d_name);
 				return findpath;
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Sys_FindClose (void)
 {
-	if (fdir != NULL)
+	if (fdir != nullptr )
 		closedir(fdir);
-	fdir = NULL;
+	fdir = nullptr;
 }
 
 
