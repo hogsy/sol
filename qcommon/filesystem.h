@@ -34,8 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../unix/zip/zip.h"
 #endif // _WIN32
 
-#define BASEDIRNAME				"baseq2"
-
 #define MAX_HANDLES				32
 #define MAX_READ				0x10000
 #define MAX_WRITE				0x10000

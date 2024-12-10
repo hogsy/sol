@@ -1425,53 +1425,56 @@ gitem_t *CTFWhat_Flag (edict_t *ent)
 }
 
 // Called from PlayerDie, to drop the flag from a dying player
-void CTFDeadDropFlag (edict_t *self)
+void CTFDeadDropFlag( edict_t *self )
 {
 	edict_t *dropped = NULL;
 
-	if (!ctf->value)
+	if ( !ctf->value )
 		return;
 
-	if (self->client->pers.inventory[ITEM_INDEX(flag1_item)])
+	if ( self->client->pers.inventory[ ITEM_INDEX( flag1_item ) ] )
 	{
-		dropped = Drop_Item(self, flag1_item);
-		self->client->pers.inventory[ITEM_INDEX(flag1_item)] = 0;
-		safe_bprintf(PRINT_HIGH, "%s lost the %s flag!\n",
-			self->client->pers.netname, CTFTeamName(CTF_TEAM1));
-		if (dropped) {
-			dropped->think = CTFDropFlagThink;
+		dropped                                                  = Drop_Item( self, flag1_item );
+		self->client->pers.inventory[ ITEM_INDEX( flag1_item ) ] = 0;
+		safe_bprintf( PRINT_HIGH, "%s lost the %s flag!\n",
+		              self->client->pers.netname, CTFTeamName( CTF_TEAM1 ) );
+		if ( dropped )
+		{
+			dropped->think     = CTFDropFlagThink;
 			dropped->nextthink = level.time + CTF_AUTO_FLAG_RETURN_TIMEOUT;
-			dropped->touch = CTFDropFlagTouch;
+			dropped->touch     = CTFDropFlagTouch;
 		}
 	}
-	if (self->client->pers.inventory[ITEM_INDEX(flag2_item)])
+	if ( self->client->pers.inventory[ ITEM_INDEX( flag2_item ) ] )
 	{
-		dropped = Drop_Item(self, flag2_item);
-		self->client->pers.inventory[ITEM_INDEX(flag2_item)] = 0;
-		safe_bprintf(PRINT_HIGH, "%s lost the %s flag!\n",
-			self->client->pers.netname, CTFTeamName(CTF_TEAM2));
-		if (dropped) {
-			dropped->think = CTFDropFlagThink;
+		dropped                                                  = Drop_Item( self, flag2_item );
+		self->client->pers.inventory[ ITEM_INDEX( flag2_item ) ] = 0;
+		safe_bprintf( PRINT_HIGH, "%s lost the %s flag!\n",
+		              self->client->pers.netname, CTFTeamName( CTF_TEAM2 ) );
+		if ( dropped )
+		{
+			dropped->think     = CTFDropFlagThink;
 			dropped->nextthink = level.time + CTF_AUTO_FLAG_RETURN_TIMEOUT;
-			dropped->touch = CTFDropFlagTouch;
+			dropped->touch     = CTFDropFlagTouch;
 		}
 	}
 	// Knightmare added
-	if (self->client->pers.inventory[ITEM_INDEX(flag3_item)])
+	if ( self->client->pers.inventory[ ITEM_INDEX( flag3_item ) ] )
 	{
-		dropped = Drop_Item(self, flag3_item);
-		self->client->pers.inventory[ITEM_INDEX(flag3_item)] = 0;
-		safe_bprintf(PRINT_HIGH, "%s lost the %s flag!\n",
-			self->client->pers.netname, CTFTeamName(CTF_TEAM3));
-		if (dropped) {
-			dropped->think = CTFDropFlagThink;
+		dropped                                                  = Drop_Item( self, flag3_item );
+		self->client->pers.inventory[ ITEM_INDEX( flag3_item ) ] = 0;
+		safe_bprintf( PRINT_HIGH, "%s lost the %s flag!\n",
+		              self->client->pers.netname, CTFTeamName( CTF_TEAM3 ) );
+		if ( dropped )
+		{
+			dropped->think     = CTFDropFlagThink;
 			dropped->nextthink = level.time + CTF_AUTO_FLAG_RETURN_TIMEOUT;
-			dropped->touch = CTFDropFlagTouch;
+			dropped->touch     = CTFDropFlagTouch;
 		}
 	}
 }
 
-qboolean CTFDrop_Flag (edict_t *ent, gitem_t *item)
+void CTFDrop_Flag( edict_t *ent, gitem_t *item )
 {
 	edict_t *dropped = NULL;
 
@@ -1482,7 +1485,7 @@ qboolean CTFDrop_Flag (edict_t *ent, gitem_t *item)
 			safe_cprintf(ent, PRINT_HIGH, "Only llamas drop flags.\n");
 		else
 			safe_cprintf(ent, PRINT_HIGH, "Winners don't drop flags.\n");
-		return false;
+		return;
 	}
 	else
 	{
@@ -1537,7 +1540,7 @@ qboolean CTFDrop_Flag (edict_t *ent, gitem_t *item)
 				dropped->owner = ent; 
 			}
 		}
-		return true;
+		return;
 	}
 }
 

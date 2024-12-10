@@ -33,6 +33,100 @@ add_definitions(-DGIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DGIT_COMMIT_COUNT="${GIT_COMMIT_COUNT}")
 add_definitions(-DGIT_BRANCH="${GIT_BRANCH}")
 
+set(SOL_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${SOL_OUTPUT_DIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${SOL_OUTPUT_DIR}")
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${SOL_OUTPUT_DIR})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${SOL_OUTPUT_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${SOL_OUTPUT_DIR})
+endforeach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+
+add_library(SolGame STATIC
+        game/acebot_ai.c
+        game/acebot_cmds.c
+        game/acebot_compress.c
+        game/acebot_items.c
+        game/acebot_movement.c
+        game/acebot_nodes.c
+        game/acebot_spawn.c
+
+        game/g_ai.c
+        game/g_camera.c
+        game/g_chase.c
+        game/g_cmds.c
+        game/g_combat.c
+        game/g_crane.c
+        game/g_ctf.c
+        game/g_fog.c
+        game/g_func.c
+        game/g_items.c
+        game/g_jetpack.c
+        game/g_lights.c
+        game/g_lock.c
+        game/g_main.c
+        game/g_misc.c
+        game/g_misc_kex.c
+        game/g_misc_laz.c
+        game/g_model.c
+        game/g_monster.c
+        game/g_moreai.c
+        game/g_mtrain.c
+        game/g_patchmonstermodels.c
+        game/g_patchplayermodels.c
+        game/g_pendulum.c
+        game/g_phys.c
+        game/g_reflect.c
+        game/g_save.c
+        game/g_spawn.c
+        game/g_svcmds.c
+        game/g_target.c
+        game/g_thing.c
+        game/g_tracktrain.c
+        game/g_trigger.c
+        game/g_turret.c
+        game/g_utils.c
+        game/g_vehicle.c
+        game/g_weapon.c
+        game/km_cvar.c
+        game/m_actor.c
+        game/m_actor_weap.c
+        game/m_berserk.c
+        game/m_boss2.c
+        game/m_boss3.c
+        game/m_boss31.c
+        game/m_boss32.c
+        game/m_brain.c
+        game/m_chick.c
+        game/m_flash.c
+        game/m_flipper.c
+        game/m_float.c
+        game/m_flyer.c
+        game/m_gladiator.c
+        game/m_gunner.c
+        game/m_hover.c
+        game/m_infantry.c
+        game/m_insane.c
+        game/m_medic.c
+        game/m_move.c
+        game/m_mutant.c
+        game/m_parasite.c
+        game/m_soldier.c
+        game/m_supertank.c
+        game/m_tank.c
+        game/p_chase.c
+        game/p_client.c
+        game/p_hud.c
+        game/p_menu.c
+        game/p_text.c
+        game/p_trail.c
+        game/p_view.c
+        game/p_weapon.c
+        game/q_shared.c
+)
+
 if (WIN32)
     message("TODO")
 else ()
@@ -175,4 +269,4 @@ add_executable(SolEngine WIN32
         qcommon/wildcard.c
 )
 
-target_link_libraries(SolEngine m vorbisfile z png jpeg SDL2)
+target_link_libraries(SolEngine SolGame m vorbisfile z png jpeg SDL2)

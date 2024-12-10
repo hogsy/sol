@@ -1,0 +1,3 @@
+[submodule "bin/base"]
+	path = bin/base
+	url = ../sol-content.git

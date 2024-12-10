@@ -2207,8 +2207,8 @@ From Q2E
 */
 int Q_SortStrcmp (const void *arg1, const void *arg2)
 {
-	const char *a = (const char *)arg1;
-	const char *b = (const char *)arg2;
+	const char *a = *(const char **)arg1;
+	const char *b = *(const char **)arg2;
 	return Q_strcmp(a, b);
 }
 

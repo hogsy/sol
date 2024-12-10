@@ -34,8 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	VERSION			0.20 // was 3.21
 #define	VERSION_UPDATE	8
 
-#define	BASEDIRNAME	"baseq2"
-#define	Q1_MAINDIRNAME	"id1"
+#define BASEDIRNAME    "base"
+#define Q1_MAINDIRNAME "id1"
 
 // Savegame subdir varies by CPU architecture
 // This prevents comingling different binary save formats
