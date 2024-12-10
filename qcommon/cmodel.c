@@ -74,8 +74,8 @@ mapsurface_t	map_surfaces[MAX_MAP_TEXINFO];
 int			numplanes;
 cplane_t	map_planes[MAX_MAP_PLANES+6];		// extra for box hull
 
-int			numnodes;
-cnode_t		map_nodes[MAX_MAP_NODES+6];		// extra for box hull
+static int     numnodes;
+static cnode_t map_nodes[ MAX_MAP_NODES + 6 ];// extra for box hull
 
 int			numleafs = 1;	// allow leaf funcs to be called without a map
 cleaf_t		map_leafs[MAX_MAP_LEAFS];

@@ -48,11 +48,9 @@ cvar_t	*instantweap;
 cvar_t	*password;
 cvar_t	*spectator_password;
 cvar_t	*needpass;
-cvar_t	*maxclients;
 cvar_t	*maxspectators;
 cvar_t	*maxentities;
 cvar_t	*g_select_empty;
-cvar_t	*dedicated;
 
 cvar_t	*filterban;
 
@@ -83,7 +81,6 @@ cvar_t	*actorchicken;
 cvar_t	*actorjump;
 cvar_t	*actorscram;
 cvar_t	*alert_sounds;
-cvar_t	*allow_download;
 cvar_t	*allow_fog;			// Set to 0 for no fog
 
 // set to 0 to bypass target_changelevel clear inventory flag
@@ -92,19 +89,12 @@ cvar_t	*allow_clear_inventory;
 
 cvar_t	*bounce_bounce;
 cvar_t	*bounce_minv;
-cvar_t	*cd_loopcount;
-cvar_t	*cl_gun;
 cvar_t	*cl_thirdperson; // Knightmare added
 cvar_t	*corpse_fade;
 cvar_t	*corpse_fadetime;
-cvar_t	*crosshair;
-cvar_t	*developer;
 cvar_t	*footstep_sounds;
-cvar_t	*fov;
 cvar_t	*gl_clear;
-cvar_t	*gl_driver;
 cvar_t	*gl_driver_fog;
-cvar_t	*hand;
 cvar_t	*jetpack_weenie;
 cvar_t	*joy_pitchsensitivity;
 cvar_t	*joy_yawsensitivity;
@@ -119,17 +109,13 @@ cvar_t	*lazarus_pitch;
 cvar_t	*lazarus_yaw;
 cvar_t	*lights;
 cvar_t	*lightsmin;
-cvar_t	*m_pitch;
-cvar_t	*m_yaw;
 cvar_t	*monsterjump;
 cvar_t	*readout;
 cvar_t	*rocket_strafe;
 cvar_t	*rotate_distance;
-cvar_t	*s_primary;
 cvar_t	*shift_distance;
 cvar_t	*sv_maxgibs;
 cvar_t	*turn_rider;
-cvar_t	*vid_ref;
 cvar_t	*zoomrate;
 cvar_t	*zoomsnap;
 
@@ -268,34 +254,6 @@ game_export_t *GetGameAPI (game_import_t *import)
 
 	return &globals;
 }
-
-#ifndef GAME_HARD_LINKED
-// this is only here so the functions in q_shared.c and q_shwin.c can link
-void Sys_Error (const char *error, ...)
-{
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, error);
-	Q_vsnprintf (text, sizeof(text), error, argptr);
-	va_end (argptr);
-
-	gi.error (ERR_FATAL, "%s", text);
-}
-
-void Com_Printf (char *msg, ...)
-{
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, msg);
-	Q_vsnprintf (text, sizeof(text), msg, argptr);
-	va_end (argptr);
-
-	gi.dprintf ("%s", text);
-}
-
-#endif
 
 /*
 =================

@@ -621,8 +621,11 @@ void Sys_UnloadGame (void)
 {
 	if (game_library) 
 		SDL_UnloadObject (game_library);
+
 	game_library = NULL;
 }
+
+extern struct game_export_t *GetGameAPI( struct game_import_t *import );
 
 /*
 =================
@@ -631,86 +634,15 @@ Sys_GetGameAPI
 Loads the game dll
 =================
 */
-void *Sys_GetGameAPI (void *parms)
+void *Sys_GetGameAPI( void *parms )
 {
-	void	*(*GetGameAPI) (void *);
-	char	name[MAX_OSPATH];
-	char	curpath[MAX_OSPATH];
-	char	*path;
+	setreuid( getuid(), getuid() );
+	setegid( getgid() );
 
-#ifdef __APPLE__
-	// KMQ2 MacOSX port uses the Fruitz of Dojo plug system.  So this will go unused.
-	#define LIB_SUFFIX "dylib"
-#else
-	#define LIB_SUFFIX "so"
-#endif
+	if ( game_library )
+		Com_Error( ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame" );
 
-	// Knightmare- changed game library name for better cohabitation
-#if defined (_M_X64) || defined (_M_AMD64) || defined (__x86_64__)
-	const char *gamename = "kmq2gamex64." LIB_SUFFIX;
-#elif defined (__i386__)
-	const char *gamename = "kmq2gamei386." LIB_SUFFIX;
-#elif defined (__ia64__)
-	const char *gamename = "kmq2gameia64." LIB_SUFFIX;
-#elif defined (__alpha__)
-	const char *gamename = "kmq2gameaxp." LIB_SUFFIX;
-#elif defined (__arm__)
-	const char *gamename = "kmq2gamearm32." LIB_SUFFIX;
-#elif defined (__aarch64__)
-	const char *gamename = "kmq2gamearm64." LIB_SUFFIX;
-#elif defined (__powerpc__)
-	const char *gamename = "kmq2gameppc." LIB_SUFFIX;
-#elif defined (__sparc__)
-	const char *gamename = "kmq2gamesparc." LIB_SUFFIX;
-#else
-#error Unknown arch
-#endif
-
-	setreuid (getuid(), getuid());
-	setegid (getgid());
-
-	if (game_library)
-		Com_Error (ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame");
-
-	getcwd (curpath, sizeof(curpath));
-
-	Com_Printf ("------- Loading %s -------\n", gamename);
-
-	// now run through the search paths
-	path = NULL;
-	while (1)
-	{
-	//	path = FS_NextPath (path);
-		path = FS_NextGamePath (path);
-		if ( !path )
-			return NULL;		// couldn't find one anywhere
-	//	Com_sprintf (name, sizeof(name), "%s/%s/%s", curpath, path, gamename);
-		if (path[0] == '/') {
-			// Path is rooted, override curpath
-			Com_sprintf (name, sizeof(name), "%s/%s", path, gamename);
-		}
-		else {
-			Com_sprintf (name, sizeof(name), "%s/%s/%s", curpath, path, gamename);
-		}
-		game_library = SDL_LoadObject (name);
-		if (game_library)
-		{
-			Com_Printf ("LoadLibrary (%s)\n", name);
-			break;
-		}
-		else {
-			Com_Printf ("%s\n", SDL_GetError());
-		}
-	}
-
-	GetGameAPI = (void *)SDL_LoadFunction (game_library, "GetGameAPI");
-	if ( !GetGameAPI )
-	{
-		Sys_UnloadGame ();		
-		return NULL;
-	}
-
-	return GetGameAPI (parms);
+	return GetGameAPI( parms );
 }
 
 /*****************************************************************************/
@@ -963,7 +895,7 @@ int main (int argc, char **argv)
 	saved_euid = geteuid();
 	seteuid (getuid());
 
-	printf ("\n");	
+	printf ("\n");
 	printf ("========= Initialization =================\n");
 	printf (SOL_ENGINE_NAME " v%u.%u (%s) %s %s\n", SOL_ENGINE_VERSION_MAJOR, SOL_ENGINE_VERSION_MINOR, GIT_COMMIT_COUNT, CPUSTRING, COMPILETYPE_STRING);
 	printf ("Linux Port by QuDos\n");

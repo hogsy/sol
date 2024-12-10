@@ -513,7 +513,7 @@ char *skinnames[] = {
 	0
 };
 
-int listSize (char* list[])
+static int listSize (char* list[])
 {
 	int i=0;
 	while (list[i]) i++;

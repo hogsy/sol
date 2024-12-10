@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<CodeBlocks_workspace_file>
-	<Workspace title="kmquake2 workspace">
-		<Project filename="kmquake2.cbp" />
-		<Project filename="lazarus.cbp" />
-		<Project filename="extractfuncs.cbp" />
-	</Workspace>
-</CodeBlocks_workspace_file>
