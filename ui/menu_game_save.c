@@ -103,7 +103,7 @@ void Menu_SaveGame_Init (void)
 	s_savegame_gamelist.generic.flags		= QMF_NOLOOP;
 	s_savegame_gamelist.generic.x			= x - 4*MENU_FONT_SIZE;
 	s_savegame_gamelist.generic.y			= y;
-	s_savegame_gamelist.itemNames			= ui_savegame_names;
+	s_savegame_gamelist.itemNames			= (const char **)ui_savegame_names;
 	s_savegame_gamelist.itemWidth			= 33;	// was 34
 	s_savegame_gamelist.itemHeight			= 2;	// was 1
 	s_savegame_gamelist.items_y				= 11;	// was 20

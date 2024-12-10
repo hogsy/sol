@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderer/r_local.h"
 #include "unixquake.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "unix_glw.h"
 
 

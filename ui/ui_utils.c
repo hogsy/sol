@@ -699,7 +699,7 @@ char **UI_LoadAssetList (char *dir, char *nameMask, char *firstItem, int *return
 		}
 		curItem = p;
 
-		if ( !UI_ItemInAssetList(curItem, nItemNames, list) )
+		if ( !UI_ItemInAssetList(curItem, nItemNames, (const char **)list) )
 		{
 			// frontInsert not needed due to sorting in FS_GetFileList()
 			UI_InsertInAssetList (list, curItem, nItemNames, 1, false);	// start=1 so first item stays first!
@@ -1966,7 +1966,7 @@ void UI_BuildModList (void)
 		else
 			Q_strncpyz (modFormatedName, sizeof(modFormatedName), modName);
 
-		if ( !UI_ItemInAssetList(modDir, count, ui_mod_values) )
+		if ( !UI_ItemInAssetList(modDir, count, (const char **)ui_mod_values) )
 		{
 			UI_InsertInAssetList (ui_mod_names, modFormatedName, count, 1, false);	// start=1 so first item stays first!
 			UI_InsertInAssetList (ui_mod_values, modDir, count, 1, false);	// start=1 so first item stays first!
@@ -2769,7 +2769,7 @@ void UI_LoadArenas (void)
 
 		p = arenafiles[i];
 
-		if ( !UI_ItemInAssetList(p, narenanames, tmplist) ) // check if already in list
+		if ( !UI_ItemInAssetList(p, narenanames, (const char **)tmplist) ) // check if already in list
 		{
 			if (UI_ParseArenaFromFile (p, shortname, longname, gametypes, MAX_TOKEN_CHARS))
 			{

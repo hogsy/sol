@@ -20,12 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__APPLE__)
-#error You shouldn't be including this file on non-Linux platforms
-#endif
+#pragma once
 
-#ifndef __UNIX_GLW_H__
-#define __UNIX_GLW_H__
+#if !defined(__linux__) && !defined(__FreeBSD__) && !defined(__APPLE__)
+#error "You shouldn't be including this file on non-Linux platforms"
+#endif
 
 typedef struct
 {
@@ -38,5 +37,3 @@ typedef struct
 extern glwstate_t glw_state;
 
 extern cvar_t	*in_doubleclicktime;	// reset time for double click
-
-#endif	// __UNIX_GLW_H__

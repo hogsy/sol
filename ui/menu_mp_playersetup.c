@@ -94,13 +94,13 @@ static void Menu_PlayerModelCallback (void *unused)
 	mNum = s_playerconfig_model_box.curValue;
 
 	// update skin picker
-	s_playerconfig_skin_box.itemNames = ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_box.itemNames = (const char **)ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_box.curValue = 0;
 	UI_InitMenuItem (&s_playerconfig_skin_box);
 
 	// update skin listview
-	s_playerconfig_skin_display.itemNames = ui_pmi[mNum].skinDisplayNames;
-	s_playerconfig_skin_display.imageNames = ui_pmi[mNum].skinIconNames;
+	s_playerconfig_skin_display.itemNames = (const char **)ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_display.imageNames = (const char **)ui_pmi[mNum].skinIconNames;
 	s_playerconfig_skin_display.curValue = 0;
 	UI_InitMenuItem (&s_playerconfig_skin_display);
 
@@ -340,7 +340,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_model_box.backColor[2]		= 0;
 	s_playerconfig_model_box.backColor[3]		= 224;
 	s_playerconfig_model_box.curValue			= mNum;
-	s_playerconfig_model_box.itemNames			= ui_pmnames;
+	s_playerconfig_model_box.itemNames			= (const char **)ui_pmnames;
 	s_playerconfig_model_box.generic.callback	= Menu_PlayerModelCallback;
 
 	s_playerconfig_skin_box.generic.type		= MTYPE_COMBOBOX;
@@ -362,7 +362,7 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_box.backColor[2]		= 0;
 	s_playerconfig_skin_box.backColor[3]		= 224;
 	s_playerconfig_skin_box.curValue			= sNum;
-	s_playerconfig_skin_box.itemNames			= ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_box.itemNames			= (const char **)ui_pmi[mNum].skinDisplayNames;
 	s_playerconfig_skin_box.generic.callback	= Menu_PlayerSkinCallback;
 
 	s_playerconfig_handedness_box.generic.type		= MTYPE_COMBOBOX;
@@ -542,8 +542,8 @@ void Menu_PlayerConfig_Init (void)
 	s_playerconfig_skin_display.backColor[3]		= 255;
 	s_playerconfig_skin_display.background			= "/gfx/ui/widgets/listbox_background.pcx";
 	s_playerconfig_skin_display.curValue			= sNum;
-	s_playerconfig_skin_display.itemNames			= ui_pmi[mNum].skinDisplayNames;
-	s_playerconfig_skin_display.imageNames			= ui_pmi[mNum].skinIconNames;
+	s_playerconfig_skin_display.itemNames			= (const char **)ui_pmi[mNum].skinDisplayNames;
+	s_playerconfig_skin_display.imageNames			= (const char **)ui_pmi[mNum].skinIconNames;
 	s_playerconfig_skin_display.generic.callback	= Menu_PlayerSkinViewCallback;
 
 	s_playerconfig_back_action.generic.type			= MTYPE_ACTION;

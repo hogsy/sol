@@ -1,0 +1,153 @@
+cmake_minimum_required(VERSION 3.23)
+project(Sol
+        DESCRIPTION "KMQuake2 fork for use in the development of Sol."
+        HOMEPAGE_URL "https://hogsy.me/"
+        LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+if (WIN32)
+    message("TODO")
+else ()
+    set(SOL_SYSTEM_SOURCES
+            unix/sdl_gl.c
+            unix/sdl_snd.c
+            unix/unix_cd.c
+            unix/unix_glob.c
+            unix/unix_input.c
+            unix/unix_main.c
+            unix/unix_net.c
+            unix/unix_qgl.c
+            unix/unix_qsh.c
+            #unix/unix_snd.c
+            unix/unix_vid.c
+
+            unix/zip/ioapi.c
+            unix/zip/unzip.c
+            unix/zip/zip.c
+    )
+endif ()
+
+add_executable(SolEngine WIN32
+        ${SOL_SYSTEM_SOURCES}
+
+        client/cl_cin.c
+        client/cl_cinematic.c
+        client/cl_console.c
+        client/cl_download.c
+        client/cl_effects.c
+        client/cl_ents.c
+        client/cl_event.c
+        client/cl_http.c
+        client/cl_hud.c
+        client/cl_hud_script.c
+        client/cl_input.c
+        client/cl_keys.c
+        client/cl_lights.c
+        client/cl_loc.c
+        client/cl_main.c
+        client/cl_parse.c
+        client/cl_particle.c
+        client/cl_predict.c
+        client/cl_qcurl.c
+        client/cl_screen.c
+        client/cl_string.c
+        client/cl_tempent.c
+        client/cl_utils.c
+        client/cl_view.c
+        client/snd_dma.c
+        client/snd_mem.c
+        client/snd_mix.c
+        client/snd_stream.c
+        client/x86.c
+
+        server/sv_ccmds.c
+        server/sv_ents.c
+        server/sv_game.c
+        server/sv_init.c
+        server/sv_main.c
+        #server/sv_null.c
+        server/sv_send.c
+        server/sv_user.c
+        server/sv_world.c
+
+        ui/menu_apply_changes.c
+        ui/menu_credits.c
+        ui/menu_defaults_confirm.c
+        ui/menu_game.c
+        ui/menu_game_load.c
+        ui/menu_game_save.c
+        ui/menu_main.c
+        ui/menu_mods.c
+        ui/menu_mp_addressbook.c
+        ui/menu_mp_dmoptions.c
+        ui/menu_mp_download.c
+        ui/menu_mp_joinserver.c
+        ui/menu_mp_playersetup.c
+        ui/menu_mp_startserver.c
+        ui/menu_multiplayer.c
+        ui/menu_options.c
+        ui/menu_options_controls.c
+        ui/menu_options_effects.c
+        ui/menu_options_interface.c
+        ui/menu_options_keys.c
+        ui/menu_options_screen.c
+        ui/menu_options_sound.c
+        ui/menu_quit.c
+        ui/menu_video.c
+        ui/menu_video_advanced.c
+        ui/ui_draw.c
+        ui/ui_main.c
+        ui/ui_menu.c
+        ui/ui_mouse.c
+        ui/ui_utils.c
+        ui/ui_widgets.c
+
+        renderer/r_alias.c
+        renderer/r_alias_md2.c
+        renderer/r_alias_misc.c
+        renderer/r_arb_program.c
+        renderer/r_backend.c
+        renderer/r_beam.c
+        renderer/r_bloom.c
+        #renderer/r_cin.c
+        renderer/r_draw.c
+        renderer/r_entity.c
+        renderer/r_fog.c
+        renderer/r_fragment.c
+        renderer/r_glstate.c
+        renderer/r_image.c
+        renderer/r_light.c
+        #renderer/r_lightmap.c
+        renderer/r_main.c
+        renderer/r_misc.c
+        renderer/r_model.c
+        renderer/r_particle.c
+        renderer/r_sky.c
+        renderer/r_sprite.c
+        renderer/r_surface.c
+        renderer/r_surface_singletex.c
+        renderer/r_upscale.c
+        renderer/r_utils.c
+        renderer/r_vlights.c
+        renderer/r_warp.c
+
+        game/m_flash.c
+        game/q_shared.c
+
+        qcommon/cmd.c
+        qcommon/cmodel.c
+        qcommon/common.c
+        qcommon/crc.c
+        qcommon/cvar.c
+        qcommon/filesystem.c
+        qcommon/json_parse.c
+        qcommon/md4.c
+        qcommon/net_chan.c
+        qcommon/pmove.c
+        qcommon/wildcard.c
+)
+
+target_link_libraries(SolEngine m vorbisfile z png jpeg SDL2)

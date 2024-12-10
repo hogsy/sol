@@ -306,8 +306,8 @@ void Menu_Video_Init (void)
 	s_mode_list.generic.header		= "mode        aspect";
 	s_mode_list.generic.x			= x;
 	s_mode_list.generic.y			= y;
-	s_mode_list.itemNames			= ui_resolution_names;
-	s_mode_list.itemValues			= ui_video_modes;
+	s_mode_list.itemNames			= (const char **)ui_resolution_names;
+	s_mode_list.itemValues			= (const char **)ui_video_modes;
 	s_mode_list.items_y				= 12;
 	s_mode_list.itemWidth			= 20;
 	s_mode_list.itemSpacing			= 1;
@@ -453,8 +453,8 @@ void Menu_Video_Init (void)
 	s_aniso_box.generic.x			= x;
 	s_aniso_box.generic.y			= y += 1.5*MENU_LINE_SIZE;
 	s_aniso_box.generic.name		= "anisotropic filter";
-	s_aniso_box.itemNames			= ui_aniso_names;
-	s_aniso_box.itemValues			= ui_aniso_values;
+	s_aniso_box.itemNames			= (const char **)ui_aniso_names;
+	s_aniso_box.itemValues			= (const char **)ui_aniso_values;
 	s_aniso_box.items_y				= 5;
 	s_aniso_box.itemWidth			= 4;
 	s_aniso_box.itemSpacing			= 1;

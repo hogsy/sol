@@ -1332,7 +1332,7 @@ char **FS_FindFiles (const char *path, const char *extension, int *num)
 				name = pak->files[i].name;
 				if (nFound < (MAX_FIND_FILES-1))
 				{
-					if (!FS_ItemInList(name, nFound, tmpList)) // check if already in list
+					if (!FS_ItemInList(name, nFound, (const char **)tmpList)) // check if already in list
 					{
 						tmpList[nFound] = strdup(name);
 						nFound++;
@@ -1366,7 +1366,7 @@ char **FS_FindFiles (const char *path, const char *extension, int *num)
 				name = itemFiles[i] + strlen(search->path) + 1; // skip over search path and /
 				if (nFound < (MAX_FIND_FILES-1))
 				{
-					if (!FS_ItemInList(name, nFound, tmpList)) // check if already in list
+					if (!FS_ItemInList(name, nFound, (const char **)tmpList)) // check if already in list
 					{
 						tmpList[nFound] = strdup(name);
 						nFound++;
@@ -1431,7 +1431,7 @@ char **FS_FilteredFindFiles (const char *pattern, int *num)
 				name = pak->files[i].name;
 				if (nFound < (MAX_FIND_FILES-1))
 				{
-					if (!FS_ItemInList(name, nFound, tmpList)) // check if already in list
+					if (!FS_ItemInList(name, nFound, (const char **)tmpList)) // check if already in list
 					{
 						tmpList[nFound] = strdup(name);
 						nFound++;
@@ -1457,7 +1457,7 @@ char **FS_FilteredFindFiles (const char *pattern, int *num)
 				name = itemFiles[i] + strlen(search->path) + 1; // skip over search path and /
 				if (nFound < (MAX_FIND_FILES-1))
 				{
-					if (!FS_ItemInList(name, nFound, tmpList)) // check if already in list
+					if (!FS_ItemInList(name, nFound, (const char **)tmpList)) // check if already in list
 					{
 						tmpList[nFound] = strdup(name);
 						nFound++;

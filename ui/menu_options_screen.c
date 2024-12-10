@@ -208,9 +208,9 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_crosshair_box.underImgColor[2]			= 0;
 	s_options_screen_crosshair_box.underImgColor[3]			= 255;
 	s_options_screen_crosshair_box.background				= "/gfx/ui/widgets/listbox_background2.pcx";
-	s_options_screen_crosshair_box.itemNames				= ui_crosshair_names;
-	s_options_screen_crosshair_box.itemValues				= ui_crosshair_values;
-	s_options_screen_crosshair_box.imageNames				= ui_crosshair_display_names;
+	s_options_screen_crosshair_box.itemNames				= (const char **)ui_crosshair_names;
+	s_options_screen_crosshair_box.itemValues				= (const char **)ui_crosshair_values;
+	s_options_screen_crosshair_box.imageNames				= (const char **)ui_crosshair_display_names;
 	s_options_screen_crosshair_box.imageColors				= ui_crosshair_display_colors;
 	s_options_screen_crosshair_box.curValue					= UI_GetIndexForStringValue(s_options_screen_crosshair_box.itemValues, Cvar_VariableString("crosshair"));
 	s_options_screen_crosshair_box.generic.cvar				= "crosshair";
@@ -368,8 +368,8 @@ void Menu_Options_Screen_Init (void)
 	s_options_screen_scripted_hud_box.generic.x				= x;
 	s_options_screen_scripted_hud_box.generic.y				= y += 2*MENU_LINE_SIZE;
 	s_options_screen_scripted_hud_box.generic.name			= "HUD script";
-	s_options_screen_scripted_hud_box.itemNames				= ui_hud_names;
-	s_options_screen_scripted_hud_box.itemValues			= ui_hud_names;
+	s_options_screen_scripted_hud_box.itemNames				= (const char **)ui_hud_names;
+	s_options_screen_scripted_hud_box.itemValues			= (const char **)ui_hud_names;
 	s_options_screen_scripted_hud_box.items_y				= 10;
 	s_options_screen_scripted_hud_box.itemWidth				= 18;
 	s_options_screen_scripted_hud_box.itemSpacing			= 1;

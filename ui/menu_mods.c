@@ -87,7 +87,7 @@ void Menu_Mods_Init (void)
 	s_mods_list.generic.header			= "";
 	s_mods_list.generic.x				= x - 2*MENU_FONT_SIZE;
 	s_mods_list.generic.y				= y;
-	s_mods_list.itemNames				= ui_mod_names;
+	s_mods_list.itemNames				= (const char **)ui_mod_names;
 //	s_mods_list.itemValues				= ui_mod_values;
 	s_mods_list.itemWidth				= UI_MODS_LIST_WIDTH;
 	s_mods_list.itemHeight				= 1;

@@ -251,7 +251,7 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	//
 	// load the file
 	//
-	modfilelen = FS_LoadFile (mod->name, &buf);
+	modfilelen = FS_LoadFile (mod->name, (void*)&buf);
 	if (!buf)
 	{
 		if (crash)
@@ -723,7 +723,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 	else
 	{	// Try loading .wal_json if .wal fails
 		Com_sprintf (path, sizeof(path), "textures/%s.wal_json", name);
-		size = FS_LoadFile (path, &data);
+		size = FS_LoadFile (path, (void*)&data);
 		jsonStr = (char *)data;
 		if (jsonStr)
 		{
@@ -1836,7 +1836,7 @@ void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 	COM_StripExtension (mod->name, scriptname, sizeof(scriptname));
 //	strncat (scriptname, ".script");
 	Q_strncatz (scriptname, sizeof(scriptname), ".script");
-	buf_size = FS_LoadFile (scriptname, &buf);
+	buf_size = FS_LoadFile (scriptname, (void*)&buf);
 
 	if (buf_size < 1)
 		return;

@@ -181,8 +181,8 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_confont_box.generic.x				= x;
 	s_options_interface_confont_box.generic.y				= y += 2*MENU_LINE_SIZE;
 	s_options_interface_confont_box.generic.name			= "console font";
-	s_options_interface_confont_box.itemNames				= ui_font_names;
-	s_options_interface_confont_box.itemValues				= ui_font_names;
+	s_options_interface_confont_box.itemNames				= (const char **)ui_font_names;
+	s_options_interface_confont_box.itemValues				= (const char **)ui_font_names;
 	s_options_interface_confont_box.items_y					= 10;
 	s_options_interface_confont_box.itemWidth				= 16;
 	s_options_interface_confont_box.itemSpacing				= 1;
@@ -232,8 +232,8 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_uifont_box.generic.x				= x;
 	s_options_interface_uifont_box.generic.y				= y += 1.2*MENU_LINE_SIZE;
 	s_options_interface_uifont_box.generic.name				= "menu font";
-	s_options_interface_uifont_box.itemNames				= ui_font_names;
-	s_options_interface_uifont_box.itemValues				= ui_font_names;
+	s_options_interface_uifont_box.itemNames				= (const char **)ui_font_names;
+	s_options_interface_uifont_box.itemValues				= (const char **)ui_font_names;
 	s_options_interface_uifont_box.items_y					= 10;
 	s_options_interface_uifont_box.itemWidth				= 16;
 	s_options_interface_uifont_box.itemSpacing				= 1;
@@ -255,8 +255,8 @@ void Options_Interface_MenuInit (void)
 	s_options_interface_scrfont_box.generic.x				= x;
 	s_options_interface_scrfont_box.generic.y				= y += 1.5*MENU_LINE_SIZE;
 	s_options_interface_scrfont_box.generic.name			= "HUD font";
-	s_options_interface_scrfont_box.itemNames				= ui_font_names;
-	s_options_interface_scrfont_box.itemValues				= ui_font_names;
+	s_options_interface_scrfont_box.itemNames				= (const char **)ui_font_names;
+	s_options_interface_scrfont_box.itemValues				= (const char **)ui_font_names;
 	s_options_interface_scrfont_box.items_y					= 10;
 	s_options_interface_scrfont_box.itemWidth				= 16;
 	s_options_interface_scrfont_box.itemSpacing				= 1;

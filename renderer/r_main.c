@@ -2038,11 +2038,11 @@ qboolean R_Init ( void *hinstance, void *hWnd, char *reason )
 
 //	strncpy(renderer_buffer, glConfig.renderer_string);
 	Q_strncpyz (renderer_buffer, sizeof(renderer_buffer), glConfig.renderer_string);
-	strlwr(renderer_buffer);
+	Q_strlwr(renderer_buffer);
 
 //	strncpy(vendor_buffer, glConfig.vendor_string);
 	Q_strncpyz (vendor_buffer, sizeof(vendor_buffer), glConfig.vendor_string);
-	strlwr(vendor_buffer);
+	Q_strlwr(vendor_buffer);
 
 	// find out the renderer model
 	if ( strstr(vendor_buffer, "nvidia") ) {

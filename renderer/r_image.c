@@ -535,7 +535,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 		return;
 
 	// load file
-	FS_LoadFile (filename, &data);
+	FS_LoadFile (filename, (void*)&data);
 	if (!data)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
@@ -1248,13 +1248,13 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	}
 
 	if ( png_sig_cmp(raw, 0, 4) ) {
-		FS_FreeFile ((void *)raw);
+		FS_FreeFile (raw);
 		return;
 	}
 
 	png = png_create_read_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
 	if (!png) { 
-		FS_FreeFile ((void *)raw);
+		FS_FreeFile (raw);
 		return;
 	}
 
@@ -1262,7 +1262,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 
 	if (!pnginfo) {
 		png_destroy_read_struct (&png, &pnginfo, 0);
-		FS_FreeFile ((void *)raw);
+		FS_FreeFile (raw);
 		return;
 	}
 
@@ -1284,7 +1284,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		VID_Printf (PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename);
 		png_destroy_read_struct (&png, &pnginfo, 0);
 		R_DestroyPNG (false);
-		FS_FreeFile ((void *)raw);
+		FS_FreeFile (raw);
 		return;
 	}
 
@@ -1342,7 +1342,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	}
 
 	R_DestroyPNG (true);
-	FS_FreeFile ((void *)raw);
+	FS_FreeFile (raw);
 }
 
 
@@ -1450,7 +1450,7 @@ void jpg_null (j_decompress_ptr cinfo)
 {
 }
 
-unsigned char jpg_fill_input_buffer (j_decompress_ptr cinfo)
+boolean jpg_fill_input_buffer (j_decompress_ptr cinfo)
 {
     VID_Printf (PRINT_ALL, "Premature end of JPEG data\n");
     return 1;
@@ -2995,7 +2995,7 @@ void Draw_GetQuakePalette (void)
 	byte			*pal;
 	qboolean		useDefaultPal = false;
 
-	len = FS_LoadFile ("gfx/palette.lmp", &pal);
+	len = FS_LoadFile ("gfx/palette.lmp", (void*)&pal);
 	if ( !pal ) {
 		VID_Printf (PRINT_DEVELOPER, "gfx/palette.lmp not found, using internal default\n");
 		useDefaultPal = true;

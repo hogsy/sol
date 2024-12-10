@@ -72,7 +72,7 @@ void M_RefreshMapList (maptype_t maptype)
 	// reset startmap if it's in the part of the list that changed
 	if (s_startmap_list.curValue >= ui_svr_listfile_nummaps)
 		s_startmap_list.curValue = 0;
-	s_startmap_list.itemNames = ui_svr_mapnames;
+	s_startmap_list.itemNames = (const char**)ui_svr_mapnames;
 	UI_InitMenuItem (&s_startmap_list);
 }
 
@@ -222,7 +222,7 @@ void Menu_StartServer_Init (void)
 	s_startmap_list.generic.x			= x;
 	s_startmap_list.generic.y			= y;
 	s_startmap_list.generic.name		= "initial map";
-	s_startmap_list.itemNames			= ui_svr_mapnames;
+	s_startmap_list.itemNames			= (const char **)ui_svr_mapnames;
 	s_startmap_list.generic.callback	= M_StartmapChangeFunc;
 	s_startmap_list.itemWidth			= 40;
 	s_startmap_list.itemHeight			= 2;

@@ -5,7 +5,7 @@
 #include "../client/client.h"
 #include "../ui/ui_local.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "unix_glw.h"
 
 glwstate_t glw_state;

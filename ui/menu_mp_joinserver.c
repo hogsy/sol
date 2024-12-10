@@ -145,7 +145,7 @@ void Menu_JoinServer_Init (void)
 	s_joinserver_serverlist.generic.header			= "connect to...";
 	s_joinserver_serverlist.generic.x				= x - 16*MENU_FONT_SIZE;
 	s_joinserver_serverlist.generic.y				= y += 3*MENU_LINE_SIZE;
-	s_joinserver_serverlist.itemNames				= ui_serverlist_names;
+	s_joinserver_serverlist.itemNames				= (const char **)ui_serverlist_names;
 	s_joinserver_serverlist.curValue				= -1;
 	s_joinserver_serverlist.itemWidth				= 64;
 	s_joinserver_serverlist.itemHeight				= 1;

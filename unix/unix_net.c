@@ -60,7 +60,6 @@ typedef struct
 loopback_t	loopbacks[2];
 int			ip_sockets[2];
 int			ipx_sockets[2];
-int			server_port; // added for r1ch fix
 
 int NET_Socket (char *net_interface, int port);
 char *NET_ErrorString (void);
@@ -439,7 +438,6 @@ void NET_OpenIP (void)
 	ip = Cvar_Get ("ip", "localhost", CVAR_NOSET);
 
 	if (!ip_sockets[NS_SERVER]) {
-		server_port = port;	// added for r1ch fix
 		ip_sockets[NS_SERVER] = NET_Socket (ip->string, port->value);
 	}
 	if (!ip_sockets[NS_CLIENT])

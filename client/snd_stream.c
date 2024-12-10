@@ -127,7 +127,7 @@ static int ovc_close (void *datasource)
 }
 
 
-static int /*long*/ ovc_tell (void *datasource)
+static long ovc_tell (void *datasource)
 {
 	bgTrack_t	*track = (bgTrack_t *)datasource;
 
@@ -803,7 +803,7 @@ void S_OGG_LoadFileList (void)
 
 		path = list[i];
 
-		jsonSize = FS_LoadFile (path, &jsonData);
+		jsonSize = FS_LoadFile (path, (void*)&jsonData);
 		jsonStr = (char *)jsonData;
 		if (jsonStr)
 		{

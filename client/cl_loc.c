@@ -81,9 +81,9 @@ void CL_LoadLoc (void)
 	Q_strncpyz (mapname, sizeof(mapname), cl.configstrings[CS_MODELS + 1] + 5);	// skip "maps/"
 	mapname[strlen(mapname) - 4] = 0;	// remove ".bsp"
 	Com_sprintf (filename, sizeof(filename), "locs/%s.loc", mapname);
-	
+
 	// load file and check buffer and size
-	fSize = FS_LoadFile (filename, &buf);
+	fSize = FS_LoadFile (filename, (void*)&buf);
 	if (!buf) {
 		Com_DPrintf("CL_LoadLoc: Couldn't load %s\n", filename);
 		return;
@@ -267,7 +267,7 @@ int CL_LocIndex (vec3_t origin)
 			continue;
 
 		VectorSubtract(origin, locations[i].origin, diff);
-		
+
         //dist = sqrt(diff[0]*diff[0] + diff[1]*diff[1] + diff[2]*diff[2]); // FourthX fix, wtf was this other guy thinking?!?
 		dist = diff[0]*diff[0] + diff[1]*diff[1] + diff[2]*diff[2]; // jit - small optimization
 		// (sqrt unnecessary w/relative distances: if dist1 < dist2 then dist1^2 < dist2^2)
@@ -302,7 +302,7 @@ void CL_LocDelete (void)
 	{
 		locations[index].used = false;
         Com_Printf("Location '%s' deleted.\n", locations[index].name);                // Xile reworked.
-	}  
+	}
 	else
 	{
 		Com_Printf("Warning: No location to delete!\n");
@@ -325,7 +325,7 @@ void CL_LocAdd (char *name)
 	Q_strncpyz (locations[index].name, sizeof(locations[index].name), name);
 	locations[index].used = true;
 
-	Com_Printf("Location '%s' added at (%.3f %.3f %.3f). Loc #%d.\n", locations[index].name, 
+	Com_Printf("Location '%s' added at (%.3f %.3f %.3f). Loc #%d.\n", locations[index].name,
 		locations[index].origin[0],
 		locations[index].origin[1],
 		locations[index].origin[2],

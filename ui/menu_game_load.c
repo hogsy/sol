@@ -117,7 +117,7 @@ void Menu_LoadGame_Init (void)
 	s_loadgame_gamelist.generic.flags		= QMF_NOLOOP;
 	s_loadgame_gamelist.generic.x			= x - 4*MENU_FONT_SIZE;
 	s_loadgame_gamelist.generic.y			= y;
-	s_loadgame_gamelist.itemNames			= ui_loadgame_names;
+	s_loadgame_gamelist.itemNames			= (const char **)ui_loadgame_names;
 	s_loadgame_gamelist.itemWidth			= 33;	// was 34
 	s_loadgame_gamelist.itemHeight			= 2;	// was 1
 	s_loadgame_gamelist.items_y				= 11;	// was 21

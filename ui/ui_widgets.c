@@ -3374,7 +3374,7 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 	}
 
 	if ( t->fileName && (strlen(t->fileName) > 0)
-		&& (count = FS_LoadFile (t->fileName, &t->fileBuffer)) != -1 )
+		&& (count = FS_LoadFile (t->fileName, (void*)&t->fileBuffer)) != -1 )
 	{
 		p = t->fileBuffer;
 		for (n = 0; n < 255; n++)
@@ -3397,7 +3397,7 @@ void UI_MenuTextScroll_Setup (menuTextScroll_s *t)
 				break;
 		}
 		lineIndex[++n] = 0;
-		t->scrollText = lineIndex;
+		t->scrollText = (const char **)lineIndex;
 		t->initialized = true;
 	}
 	else if (t->scrollText != NULL)
