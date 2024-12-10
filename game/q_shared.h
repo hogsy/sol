@@ -63,8 +63,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //#define DISABLE_FOG
 #endif // __APPLE__ || MACOSX
 
-typedef unsigned char 		byte;
-typedef enum {false, true}	qboolean;
+typedef unsigned char byte;
+
+#if !defined( __cplusplus )
+typedef enum
+{
+	false,
+	true
+} qboolean;
+#else
+typedef unsigned int qboolean;
+#endif
 
 // 64-bit integer definitions
 #ifdef _WIN32 
