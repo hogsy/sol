@@ -34,7 +34,7 @@ qboolean	newconback_found = false;	// whether to draw Q3-style console
 extern	char	key_lines[32][MAXCMDLINE];
 extern	int		edit_line;
 extern	int		key_linepos;
-		
+
 
 /*
 ================
@@ -86,7 +86,7 @@ void Con_ToggleConsole_f (void)
 
 	//	UI_ForceMenuOff ();
 	//	if (cls.key_dest != key_menu)
-		if (Cvar_VariableValue ("maxclients") == 1 
+		if (Cvar_VariableValue ("maxclients") == 1
 			&& Com_ServerState () && cls.key_dest != key_menu)
 				Cvar_Set ("paused", "0");
 	}
@@ -94,9 +94,9 @@ void Con_ToggleConsole_f (void)
 	{
 		cls.consoleActive = true; // Knightmare added
 	//	UI_ForceMenuOff ();
-	//	cls.key_dest = key_console;	
+	//	cls.key_dest = key_console;
 
-		if (Cvar_VariableValue ("maxclients") == 1 
+		if (Cvar_VariableValue ("maxclients") == 1
 			&& Com_ServerState () && cls.key_dest != key_menu)
 			Cvar_Set ("paused", "1");
 	}
@@ -138,7 +138,7 @@ void Con_Clear_f (void)
 	memset (con.text, ' ', CON_TEXTSIZE);
 }
 
-						
+
 /*
 ================
 Con_Dump_f
@@ -204,7 +204,7 @@ void Con_Dump_f (void)
 	fclose (f);
 }
 
-						
+
 /*
 ================
 Con_ClearNotify
@@ -213,12 +213,12 @@ Con_ClearNotify
 void Con_ClearNotify (void)
 {
 	int		i;
-	
+
 	for (i=0 ; i<NUM_CON_TIMES ; i++)
 		con.times[i] = 0;
 }
 
-						
+
 /*
 ================
 Con_MessageMode_f
@@ -297,7 +297,7 @@ void Con_CheckResize (void)
 			numlines = con.totallines;
 
 		numchars = oldwidth;
-	
+
 		if (con.linewidth < numchars)
 			numchars = con.linewidth;
 
@@ -337,7 +337,7 @@ void Con_Init (void)
 	Cvar_SetDescription ("con_font_size", "Sets size of console font.  Values > 8 are larger than default, while values < 8 are smaller.");
 
 	Con_CheckResize ();
-	
+
 //
 // register our commands
 //
@@ -404,23 +404,23 @@ qboolean Con_StringSetParams (char modifier, char *colorCode, qboolean *bold, qb
 			return true;
 		case 'B':
 		case 'b':
-			if (*bold) 
+			if (*bold)
 				*bold = false;
-			else 
+			else
 				*bold = true;
 			return true;
 		case 'S':
 		case 's':
-			if (*shadow) 
-				*shadow = false; 
-			else 
+			if (*shadow)
+				*shadow = false;
+			else
 				*shadow = true;
 			return true;
 		case 'I':
 		case 'i':
-			if (*italic) 
-				*italic = false; 
-			else 
+			if (*italic)
+				*italic = false;
+			else
 				*italic = true;
 			return true;
 		case COLOR_RED:
@@ -440,7 +440,7 @@ qboolean Con_StringSetParams (char modifier, char *colorCode, qboolean *bold, qb
 			*alt = true;
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -549,7 +549,7 @@ void Con_Print (char *txt)
 			con.current--;
 			cr = false;
 		}
-		
+
 		if (!con.x)
 		{
 			Con_Linefeed (colorCode, bold, shadow, italic, alt);
@@ -593,7 +593,7 @@ void Con_Print (char *txt)
 				con.x = 0;
 			break;
 		}
-		
+
 	}
 }
 
@@ -653,21 +653,21 @@ void Con_DrawInput (void)
 		return;*/		// don't draw anything (always draw if not active)
 
 	text = key_lines[edit_line];
-	
+
 // add the cursor frame
 	if (con.backedit)
 		text[key_linepos] = ' ';
 	else
 		text[key_linepos] = 10+((int)(cls.realtime>>8)&1);
-	
+
 // fill out remainder with spaces
 	for (i=key_linepos+1 ; i< con.linewidth ; i++)
 		text[i] = ' ';
-		
+
 //	prestep if horizontally scrolling
 	if (key_linepos >= con.linewidth)
 		text += 1 + key_linepos - con.linewidth;
-		
+
 // draw it
 	y = con.vislines-FONT_SIZE*2; // was 16
 
@@ -751,7 +751,7 @@ void Con_DrawNotify (void)
 		}
 
 		if (!chat_backedit) {
-		//	Com_sprintf (output, sizeof(output), "%s%c", output, 10+((int)(cls.realtime>>8)&1) );		
+		//	Com_sprintf (output, sizeof(output), "%s%c", output, 10+((int)(cls.realtime>>8)&1) );
 			addch[0] = 10+((int)(cls.realtime>>8)&1);
 			addch[1] = '\0';
 			Q_strncatz (output, sizeof(output), addch);
@@ -791,7 +791,7 @@ void Con_DrawNotify (void)
 				continue;
 
 			text = con.text + (i % con.totallines)*con.linewidth;
-			
+
 			alpha = 255 * sqrt( (1.0-time/(con_notifytime->value*1000.0+1.0)) * (((float)v+8.0)) / (8.0*lines) );
 		//	alpha = (1-time/(con_notifytime->value*1000.0+2)) * (255*(v+16)) / (4*lines);
 			if (alpha < 0) alpha = 0;
@@ -855,7 +855,7 @@ void Con_DrawDownloadProgress (float conLeft, float conWidth, float conLineHeigh
 //	strncat(dlbar, ": ");
 	Q_strncatz(dlbar, sizeof(dlbar), ": ");
 	i = (int)strlen(dlbar);
-	
+
 	// init solid color download bar
 	graph_x = (i+1)*FONT_SIZE;
 	graph_y = con.vislines - (int)(FONT_SIZE*1.5) - (int)conLineHeight; // was -12
@@ -977,7 +977,11 @@ void Con_DrawConsole (float frac, qboolean trans)
 	}
 
 	// changed to "KMQuake2 vx.xx cpuarch"
-	Com_sprintf (version, sizeof(version), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT"KMQuake2 v%4.2fu%d %s", VERSION, VERSION_UPDATE, CPUSTRING);
+	Com_sprintf( version, sizeof( version ), S_COLOR_BOLD S_COLOR_SHADOW S_COLOR_ALT SOL_ENGINE_NAME " v%u.%u (%s) %s",
+	             SOL_ENGINE_VERSION_MAJOR,
+	             SOL_ENGINE_VERSION_MINOR,
+	             GIT_COMMIT_COUNT,
+	             CPUSTRING );
 
 	Con_DrawString ((int)(conLeft+conWidth)-FONT_SIZE*(stringLen((const char *)&version))-3, y-(int)(1.25*FONT_SIZE), version, FONT_CONSOLE, 255);
 
@@ -996,11 +1000,11 @@ void Con_DrawConsole (float frac, qboolean trans)
 		// draw arrows to show the buffer is backscrolled
 		for (x = 0; x < con.linewidth; x+=4)
 			R_DrawChar ((int)conLeft + (x+1)*FONT_SIZE, y, '^', FONT_CONSOLE, CON_FONT_SCALE, 255, 0, 0, 255, false, ((x+4)>=con.linewidth) );
-	
+
 		y -= FONT_SIZE;
 		rows--;
 	}
-	
+
 	row = con.display;
 	for (i=0; i<rows; i++, y-=FONT_SIZE, row--)
 	{
@@ -1008,7 +1012,7 @@ void Con_DrawConsole (float frac, qboolean trans)
 			break;
 		if (con.current - row >= con.totallines)
 			break;		// past scrollback wrap point
-			
+
 		text = con.text + (row % con.totallines)*con.linewidth;
 
 		Com_sprintf (output, sizeof(output), "");

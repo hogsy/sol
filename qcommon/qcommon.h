@@ -26,6 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../game/q_shared.h"
 
+#define SOL_ENGINE_NAME          "Sol Engine"
+#define SOL_ENGINE_VERSION_MAJOR 0
+#define SOL_ENGINE_VERSION_MINOR 1
+#define SOL_ENGINE_VERSION_PATCH 0
+
 #define	VERSION			0.20 // was 3.21
 #define	VERSION_UPDATE	8
 
@@ -415,7 +420,7 @@ enum svc_ops_e
 	svc_stufftext,				// [string] stuffed into client's console buffer, should be \n terminated
 	svc_serverdata,				// [long] protocol ...
 	svc_configstring,			// [short] [string]
-	svc_spawnbaseline,		
+	svc_spawnbaseline,
 	svc_centerprint,			// [string] to put in center of the screen
 	svc_download,				// [short] size [size bytes]
 	svc_playerinfo,				// variable
@@ -435,7 +440,7 @@ enum svc_ops_e
 enum clc_ops_e
 {
 	clc_bad,
-	clc_nop, 		
+	clc_nop,
 	clc_move,				// [[usercmd_t]
 	clc_userinfo,			// [[userinfo string]
 	clc_stringcmd			// [string] message

@@ -28,20 +28,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <limits.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>
-#include <sys/wait.h>
-#include <sys/mman.h>
 #include <errno.h>
 #include <dlfcn.h>		// needed for GCC to avoid dlopen errors
-#include <sys/resource.h>
 
 #include <SDL2/SDL.h>
 
@@ -971,10 +965,9 @@ int main (int argc, char **argv)
 
 	printf ("\n");	
 	printf ("========= Initialization =================\n");
-	printf ("KMQuake2 -- Version %4.2fu%d %s %s\n", VERSION, VERSION_UPDATE, CPUSTRING, COMPILETYPE_STRING);
+	printf (SOL_ENGINE_NAME " v%u.%u (%s) %s %s\n", SOL_ENGINE_VERSION_MAJOR, SOL_ENGINE_VERSION_MINOR, GIT_COMMIT_COUNT, CPUSTRING, COMPILETYPE_STRING);
 	printf ("Linux Port by QuDos\n");
 	printf ("SDL2 Port by flibitijibibo\n");
-	printf ("http://qudos.quakedev.com/\n");
 	printf ("Compiled: "__DATE__" -- "__TIME__"\n");
 	printf ("==========================================\n\n");
 
