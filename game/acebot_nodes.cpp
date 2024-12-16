@@ -709,7 +709,7 @@ void ACEND_ResolveAllPaths (void)
 	int		i, from, to;
 	int		num=0;
 	
-	safe_bprintf(PRINT_HIGH,"Resolving all paths...");
+	safe_bprintf( PRINT_HIGH, "Resolving all paths..." );
 
 	for (from=0; from<numnodes; from++)
 	for (to=0; to<numnodes; to++)
@@ -730,7 +730,7 @@ void ACEND_ResolveAllPaths (void)
 		}
 	}
 
-	safe_bprintf(PRINT_MEDIUM,"done (%d updated)\n",num);
+	safe_bprintf( PRINT_MEDIUM, "done (%d updated)\n", num );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -754,7 +754,7 @@ void ACEND_SaveNodes (void)
 	// Resolve paths
 	ACEND_ResolveAllPaths();
 
-	safe_bprintf(PRINT_MEDIUM, "Saving node table...");
+	safe_bprintf( PRINT_MEDIUM, "Saving node table..." );
 
 	// Knightmare- rewrote this to use fs_savegamedir
 	// create nav dir if needed
@@ -784,7 +784,7 @@ void ACEND_SaveNodes (void)
 
 	fclose(pOut);
 	
-	safe_bprintf(PRINT_MEDIUM,"done.\n");
+	safe_bprintf( PRINT_MEDIUM, "done.\n" );
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -814,9 +814,9 @@ void ACEND_LoadNodes (void)
 		if ((pIn = fopen(filename, "rb" )) == NULL)
 		{
 			// Create item table
-			safe_bprintf(PRINT_MEDIUM, "ACE: No node file found, creating new one...");
+			safe_bprintf( PRINT_MEDIUM, "ACE: No node file found, creating new one..." );
 			ACEIT_BuildItemNodeTable(false);
-			safe_bprintf(PRINT_MEDIUM, "done.\n");
+			safe_bprintf( PRINT_MEDIUM, "done.\n" );
 			return; 
 		}
 	}
@@ -826,7 +826,7 @@ void ACEND_LoadNodes (void)
 	
 	if (version == 1) 
 	{
-		safe_bprintf(PRINT_MEDIUM,"ACE: Loading node table...");
+		safe_bprintf( PRINT_MEDIUM, "ACE: Loading node table..." );
 
 		fread(&numnodes, sizeof(int), 1, pIn); // read count
 		fread(&num_items, sizeof(int) ,1, pIn); // read facts count
@@ -845,13 +845,13 @@ void ACEND_LoadNodes (void)
 	else
 	{
 		// Create item table
-		safe_bprintf(PRINT_MEDIUM, "ACE: No node file found, creating new one...");
+		safe_bprintf( PRINT_MEDIUM, "ACE: No node file found, creating new one..." );
 		ACEIT_BuildItemNodeTable(false);
-		safe_bprintf(PRINT_MEDIUM, "done.\n");
+		safe_bprintf( PRINT_MEDIUM, "done.\n" );
 		return; // bail
 	}
 	
-	safe_bprintf(PRINT_MEDIUM, "done.\n");
+	safe_bprintf( PRINT_MEDIUM, "done.\n" );
 	
 	ACEIT_BuildItemNodeTable(true);
 

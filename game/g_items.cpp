@@ -87,14 +87,14 @@ void item_die (edict_t *self,edict_t *inflictor, edict_t *attacker, int damage, 
 	// flags are important
 	if (strcmp(self->classname.c_str(), "item_flag_team1") == 0) {
 		CTFResetFlag(CTF_TEAM1); // this will free self!
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM1));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM1 ) );
 		return;
 	}
 	if (strcmp(self->classname.c_str(), "item_flag_team2") == 0) {
 		CTFResetFlag(CTF_TEAM2); // this will free self!
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM1));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM1 ) );
 		return;
 	}
 	// techs are important too

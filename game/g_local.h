@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "p_menu.h"
 #include "p_text.h"
 #include "km_cvar.h"
+
+#include <memory>
 #define JETPACK_MOD
 
 // the "gameversion" client command will print this plus compile date
@@ -1721,6 +1723,7 @@ struct gclient_s
 
 #define NUM_ACTOR_SOUNDS   13
 
+class Entity;
 struct edict_s
 {
 	entity_state_t	s;
@@ -1752,6 +1755,8 @@ struct edict_s
 
 	// DO NOT MODIFY ANYTHING ABOVE THIS, THE SERVER
 	// EXPECTS THE FIELDS IN THAT ORDER!
+
+	Entity *classInstance;
 
 	//================================
 	entity_id	class_id;			// Lazarus: Added in lieu of doing string comparisons

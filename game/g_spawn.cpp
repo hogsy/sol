@@ -553,7 +553,6 @@ Finds the spawn function for the entity and calls it
 */
 void ED_CallSpawn (edict_t *ent)
 {
-	spawn_t	*s;
 	gitem_t	*item;
 	int		i;
 
@@ -583,7 +582,7 @@ void ED_CallSpawn (edict_t *ent)
 	}
 
 	// check normal spawn functions
-	for (s=spawns ; s->name ; s++)
+	for ( const spawn_t *s = spawns ; s->name ; s++)
 	{
 		if (!strcmp(s->name, ent->classname.c_str()))
 		{	// found it
@@ -1523,24 +1522,10 @@ removeflags:
 	}
 
 	// Knightmare- unload the alias script file
-	if (alias_data) { // If no alias file was loaded, don't bother
-#ifdef KMQUAKE2_ENGINE_MOD // use new engine function instead
-		gi.FreeFile(alias_data);
-#else
-//		if (alias_from_pak)
-			gi.TagFree(alias_data);
-//		else
-//			free(&alias_data);
-#endif
+	if ( alias_data )
+	{// If no alias file was loaded, don't bother
+		gi.FreeFile( alias_data );
 	}
-
-	// Knightmare- unload the replacement entity data
-/*	if (newents) // If no alias file was loaded, don't bother
-#ifdef KMQUAKE2_ENGINE_MOD // use new engine function instead
-		gi.FreeFile(newents);
-#else
-		free(&newents);
-#endif*/
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
 

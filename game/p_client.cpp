@@ -322,7 +322,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		}
 		if (message)
 		{
-			safe_bprintf (PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message);
+			safe_bprintf ( PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message );
 			if (deathmatch->value)
 				self->client->resp.score--;
 			self->enemy = NULL;
@@ -419,7 +419,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			}
 			if (message)
 			{
-				safe_bprintf (PRINT_MEDIUM,"%s %s %s%s\n", self->client->pers.netname, message, attacker->client->pers.netname, message2);
+				safe_bprintf ( PRINT_MEDIUM, "%s %s %s%s\n", self->client->pers.netname, message, attacker->client->pers.netname, message2 );
 				if (deathmatch->value)
 				{
 					if (ff)
@@ -658,7 +658,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		}
 		if (message)
 		{
-			safe_bprintf (PRINT_MEDIUM,"%s %s %s%s\n", self->client->pers.netname, message, attacker->common_name, message2);
+			safe_bprintf ( PRINT_MEDIUM, "%s %s %s%s\n", self->client->pers.netname, message, attacker->common_name, message2 );
 			if (coop->value)
 				self->client->resp.score--;
 			self->enemy = NULL;
@@ -667,7 +667,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		// end Knightmare
 	}
 
-	safe_bprintf (PRINT_MEDIUM,"%s died.\n", self->client->pers.netname);
+	safe_bprintf ( PRINT_MEDIUM, "%s died.\n", self->client->pers.netname );
 	if (deathmatch->value)
 		self->client->resp.score--;
 }
@@ -1732,9 +1732,9 @@ void spectator_respawn (edict_t *ent)
 	ent->client->respawn_time = level.time;
 
 	if (ent->client->pers.spectator)
-		safe_bprintf (PRINT_HIGH, "%s has moved to the sidelines\n", ent->client->pers.netname);
+		safe_bprintf ( PRINT_HIGH, "%s has moved to the sidelines\n", ent->client->pers.netname );
 	else
-		safe_bprintf (PRINT_HIGH, "%s joined the game\n", ent->client->pers.netname);
+		safe_bprintf ( PRINT_HIGH, "%s joined the game\n", ent->client->pers.netname );
 }
 
 //==============================================================
@@ -2079,7 +2079,7 @@ void ClientBeginDeathmatch (edict_t *ent)
 		gi.multicast (ent->s.origin, MULTICAST_PVS);
 	}
 
-	safe_bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
+	safe_bprintf ( PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname );
 
 // ACEBOT_ADD
 	safe_centerprintf(ent,"\n======================================\nACE Bot II Mod\n\n'sv addbot' to add a new bot.\n'sv removebot <name>' to remove bot.\n'sv dmpause' to pause the game.\n'sv savenodes' to save level path data.\n======================================\n\n");
@@ -2169,7 +2169,7 @@ void ClientBegin (edict_t *ent)
 			gi.WriteByte (MZ_LOGIN);
 			gi.multicast (ent->s.origin, MULTICAST_PVS);
 
-			safe_bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
+			safe_bprintf ( PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname );
 		}
 	}
 
@@ -2433,7 +2433,7 @@ void ClientDisconnect (edict_t *ent)
 	if (ent->client->textdisplay)
 		Text_Close(ent);
 
-	safe_bprintf (PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname);
+	safe_bprintf ( PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname );
 
 // ACEBOT_ADD
 	ACEIT_PlayerRemoved(ent);

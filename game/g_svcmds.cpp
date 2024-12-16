@@ -304,12 +304,12 @@ void	ServerCommand (void)
 	else if (Q_stricmp ( cmd, "acedebug" ) == 0)
  		if (strcmp(gi.argv(2),"on")==0)
 		{
-			safe_bprintf (PRINT_MEDIUM, "ACE: Debug Mode On\n");
+			safe_bprintf ( PRINT_MEDIUM, "ACE: Debug Mode On\n" );
 			debug_mode = true;
 		}
 		else
 		{
-			safe_bprintf (PRINT_MEDIUM, "ACE: Debug Mode Off\n");
+			safe_bprintf ( PRINT_MEDIUM, "ACE: Debug Mode Off\n" );
 			debug_mode = false;
 		}
 
@@ -317,7 +317,7 @@ void	ServerCommand (void)
 	{
 		if (!deathmatch->value) // Knightmare added
 		{
-			safe_bprintf (PRINT_MEDIUM, "ACE: Can only spawn bots in deathmatch mode.\n");
+			safe_bprintf ( PRINT_MEDIUM, "ACE: Can only spawn bots in deathmatch mode.\n" );
 			return;
 		}
 		if (ctf->value) // name, skin, team
@@ -355,7 +355,7 @@ void	ServerCommand (void)
 					continue;
 				player->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 			}
-			safe_bprintf (PRINT_HIGH, "Game unpaused\n");
+			safe_bprintf ( PRINT_HIGH, "Game unpaused\n" );
 		}
 	}
 	else

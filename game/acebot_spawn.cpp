@@ -183,10 +183,10 @@ void ACESP_HoldSpawn (edict_t *self)
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 	if (ctf->value)
-	safe_bprintf (PRINT_MEDIUM, "%s joined the %s team.\n",
-		self->client->pers.netname, CTFTeamName(self->client->resp.ctf_team));
+	safe_bprintf ( PRINT_MEDIUM, "%s joined the %s team.\n",
+		              self->client->pers.netname, CTFTeamName( self->client->resp.ctf_team ) );
 	else
-		safe_bprintf (PRINT_MEDIUM, "%s entered the game\n", self->client->pers.netname);
+		safe_bprintf ( PRINT_MEDIUM, "%s entered the game\n", self->client->pers.netname );
 
 }
 
@@ -449,10 +449,10 @@ void ACESP_LoadBotInfo (void)
 	GameDirRelativePath ("bots.cfg", filename, sizeof(filename));
 	if ((pIn = fopen(filename, "rb" )) == NULL)
 	{
-		safe_bprintf (PRINT_MEDIUM,"ACE: No bots.cfg file found, using default bots.\n");
+		safe_bprintf ( PRINT_MEDIUM, "ACE: No bots.cfg file found, using default bots.\n" );
 		return; // bail
 	}
-	safe_bprintf (PRINT_MEDIUM,"ACE: Loading bot data...");
+	safe_bprintf ( PRINT_MEDIUM, "ACE: Loading bot data..." );
 
 	while (fgets(line, sizeof(line), pIn) && num_botinfo < MAX_BOTS)
 	{
@@ -474,7 +474,7 @@ void ACESP_LoadBotInfo (void)
 		num_botinfo++;
 	}
 //	gi.dprintf ("Number of bots loaded: %d\n\n", num_botinfo);
-	safe_bprintf (PRINT_MEDIUM, "done.\n");
+	safe_bprintf ( PRINT_MEDIUM, "done.\n" );
 	fclose(pIn);
 }
 
@@ -624,7 +624,7 @@ void ACESP_SpawnBot (char *team, char *name, char *skin, char *userinfo)
 	
 	if (!bot)
 	{
-		safe_bprintf (PRINT_MEDIUM, "Server is full, increase Maxclients.\n");
+		safe_bprintf ( PRINT_MEDIUM, "Server is full, increase Maxclients.\n" );
 		return;
 	}
 
@@ -755,7 +755,7 @@ void ACESP_RemoveBot (char *name)
 				freed = true;
 				ACEIT_PlayerRemoved (bot);
 
-				safe_bprintf (PRINT_MEDIUM, "%s removed\n", bot->client->pers.netname);
+				safe_bprintf ( PRINT_MEDIUM, "%s removed\n", bot->client->pers.netname );
 				// Knightmare- decrement this bot name's counter and exit loop
 				if (Q_stricmp( name, "all" ) )
 				{
@@ -773,7 +773,7 @@ void ACESP_RemoveBot (char *name)
 	}
 
 	if ( !freed )	
-		safe_bprintf (PRINT_MEDIUM, "%s not found\n", name);
+		safe_bprintf ( PRINT_MEDIUM, "%s not found\n", name );
 	// Knightmare- removed this
 	//ACESP_SaveBots(); // Save them again
 }

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // g_utils.c -- misc utility functions for game module
 
 #include "g_local.h"
+#include "entity/entity.h"
 
 
 void G_ProjectSource (const vec3_t point, const vec3_t distance, const vec3_t forward, const vec3_t right, vec3_t result)
@@ -476,9 +477,8 @@ angles and bad trails.
 edict_t *G_Spawn ()
 {
 	int			i;
-	edict_t		*e;
 
-	e = &g_edicts[(int)maxclients->value+1];
+	edict_t *e = &g_edicts[ ( int ) maxclients->value + 1 ];
 	for ( i=maxclients->value+1 ; i<globals.num_edicts ; i++, e++)
 	{
 		// the first couple seconds of server time can involve a lot of
@@ -529,7 +529,8 @@ void G_FreeEdict (edict_t *ed)
 	if (ed->speaker) // recursively remove train's speaker entity
 		G_FreeEdict (ed->speaker);
 
-	gi.unlinkentity (ed);		// unlink from world
+	gi.unlinkentity( ed );// unlink from world
+	delete ed->classInstance;
 
 	// Lazarus: In SP we no longer reserve slots for bodyque's
 	if (deathmatch->value || coop->value)
@@ -562,10 +563,10 @@ void G_FreeEdict (edict_t *ed)
 	if (!(ed->flags & FL_REFLECT))
 		DeleteReflection(ed,-1);
 
-	memset (ed, 0, sizeof(*ed));
+	memset( ed, 0, sizeof( *ed ) );
 	ed->classname = "freed";
-	ed->freetime = level.time;
-	ed->inuse = false;
+	ed->freetime  = level.time;
+	ed->inuse     = false;
 }
 
 /*

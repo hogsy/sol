@@ -434,7 +434,7 @@ void use_target_changelevel (edict_t *self, edict_t *other, edict_t *activator)
 	if (deathmatch->value)
 	{
 		if (activator && activator->client)
-			safe_bprintf (PRINT_HIGH, "%s exited the level.\n", activator->client->pers.netname);
+			safe_bprintf ( PRINT_HIGH, "%s exited the level.\n", activator->client->pers.netname );
 	}
 
 	if (activator->client)

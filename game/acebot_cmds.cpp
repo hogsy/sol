@@ -104,7 +104,7 @@ qboolean ACECM_Commands (edict_t *ent)
 	else if (Q_stricmp ( cmd, "findnode" ) == 0 && debug_mode)
 	{
 		node = ACEND_FindClosestReachableNode(ent,NODE_DENSITY, NODE_ALL);
-		safe_bprintf(PRINT_MEDIUM,"node: %d type: %d x: %f y: %f z %f\n",node,nodes[node].type,nodes[node].origin[0],nodes[node].origin[1],nodes[node].origin[2]);
+		safe_bprintf( PRINT_MEDIUM, "node: %d type: %d x: %f y: %f z %f\n", node, nodes[ node ].type, nodes[ node ].origin[ 0 ], nodes[ node ].origin[ 1 ], nodes[ node ].origin[ 2 ] );
 	}
 
 	else if (Q_stricmp ( cmd, "movenode" ) == 0 && debug_mode)
@@ -113,7 +113,7 @@ qboolean ACECM_Commands (edict_t *ent)
 		nodes[node].origin[0] = atof(gi.argv(2));
 		nodes[node].origin[1] = atof(gi.argv(3));
 		nodes[node].origin[2] = atof(gi.argv(4));
-		safe_bprintf(PRINT_MEDIUM,"node: %d moved to x: %f y: %f z %f\n",node, nodes[node].origin[0],nodes[node].origin[1],nodes[node].origin[2]);
+		safe_bprintf( PRINT_MEDIUM, "node: %d moved to x: %f y: %f z %f\n", node, nodes[ node ].origin[ 0 ], nodes[ node ].origin[ 1 ], nodes[ node ].origin[ 2 ] );
 	}
 
 	else
@@ -132,16 +132,16 @@ void ACECM_Store (void)
 }
 
 ///////////////////////////////////////////////////////////////////////
-// These routines are bot safe print routines, all id code needs to be 
-// changed to these so the bots do not blow up on messages sent to them. 
-// Do a find and replace on all code that matches the below criteria. 
+// These routines are bot safe print routines, all id code needs to be
+// changed to these so the bots do not blow up on messages sent to them.
+// Do a find and replace on all code that matches the below criteria.
 //
 // (Got the basic idea from Ridah)
-//	
+//
 //  change: gi.cprintf to safe_cprintf
 //  change: gi.bprintf to safe_bprintf
 //  change: gi.centerprintf to safe_centerprintf
-// 
+//
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ void debug_printf (char *fmt, ...)
 	int		len;
 	va_list	argptr;
 	edict_t	*cl_ent;
-	
+
 	va_start (argptr, fmt);
 	len = Q_vsnprintf (bigbuffer, sizeof(bigbuffer), fmt, argptr);
 	va_end (argptr);
@@ -207,11 +207,11 @@ void safe_centerprintf (edict_t *ent, char *fmt, ...)
 
 	if (!ent->inuse || ent->is_bot)
 		return;
-	
+
 	va_start (argptr, fmt);
 	len = Q_vsnprintf (bigbuffer, sizeof(bigbuffer), fmt, argptr);
 	va_end (argptr);
-	
+
 //	gi.centerprintf(ent, bigbuffer);
 	gi.centerprintf(ent, "%s", bigbuffer);
 }
@@ -219,7 +219,7 @@ void safe_centerprintf (edict_t *ent, char *fmt, ...)
 ///////////////////////////////////////////////////////////////////////
 // botsafe bprintf
 ///////////////////////////////////////////////////////////////////////
-void safe_bprintf (int printlevel, char *fmt, ...)
+void safe_bprintf ( int printlevel, const char *fmt, ... )
 {
 	int i;
 	char	bigbuffer[0x10000];

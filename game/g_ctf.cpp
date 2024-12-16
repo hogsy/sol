@@ -958,9 +958,9 @@ void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 		// attacker is on the same team as the flag carrier and
 		// fragged a guy who hurt our flag carrier
 		attacker->client->resp.score += CTF_CARRIER_DANGER_PROTECT_BONUS;
-		safe_bprintf(PRINT_MEDIUM, "%s defends %s's flag carrier against an agressive enemy\n",
-			attacker->client->pers.netname,
-			CTFTeamName(attacker->client->resp.ctf_team));
+		safe_bprintf( PRINT_MEDIUM, "%s defends %s's flag carrier against an agressive enemy\n",
+		              attacker->client->pers.netname,
+		              CTFTeamName( attacker->client->resp.ctf_team ) );
 		if (attacker->client->resp.ghost)
 			attacker->client->resp.ghost->carrierdef++;
 		return;
@@ -1016,13 +1016,13 @@ void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 		// we defended the base flag
 		attacker->client->resp.score += CTF_FLAG_DEFENSE_BONUS;
 		if (flag->solid == SOLID_NOT)
-			safe_bprintf(PRINT_MEDIUM, "%s defends the %s base.\n",
-				attacker->client->pers.netname,
-				CTFTeamName(attacker->client->resp.ctf_team));
+			safe_bprintf( PRINT_MEDIUM, "%s defends the %s base.\n",
+			              attacker->client->pers.netname,
+			              CTFTeamName( attacker->client->resp.ctf_team ) );
 		else
-			safe_bprintf(PRINT_MEDIUM, "%s defends the %s flag.\n",
-				attacker->client->pers.netname,
-				CTFTeamName(attacker->client->resp.ctf_team));
+			safe_bprintf( PRINT_MEDIUM, "%s defends the %s flag.\n",
+			              attacker->client->pers.netname,
+			              CTFTeamName( attacker->client->resp.ctf_team ) );
 		if (attacker->client->resp.ghost)
 			attacker->client->resp.ghost->basedef++;
 		return;
@@ -1036,9 +1036,9 @@ void CTFFragBonuses (edict_t *targ, edict_t *inflictor, edict_t *attacker)
 			VectorLength(v2) < CTF_ATTACKER_PROTECT_RADIUS ||
 			loc_CanSee(carrier, targ) || loc_CanSee(carrier, attacker)) {
 			attacker->client->resp.score += CTF_CARRIER_PROTECT_BONUS;
-			safe_bprintf(PRINT_MEDIUM, "%s defends the %s's flag carrier.\n",
-				attacker->client->pers.netname,
-				CTFTeamName(attacker->client->resp.ctf_team));
+			safe_bprintf( PRINT_MEDIUM, "%s defends the %s's flag carrier.\n",
+			              attacker->client->pers.netname,
+			              CTFTeamName( attacker->client->resp.ctf_team ) );
 			if (attacker->client->resp.ghost)
 				attacker->client->resp.ghost->carrierdef++;
 			return;
@@ -1214,15 +1214,15 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 				// ScarFace- double capture detection
 				if (captures == 2) { // other gets 40 frag bonus
 					other->client->resp.score += CTF_DOUBLE_CAPTURE_BONUS;
-					safe_bprintf(PRINT_HIGH, "%s captured the %s and %s flags for a double capture!\n",
-							other->client->pers.netname, CTFTeamName(CTFFlagTeam(enemy_flag_item1)),
-							CTFTeamName(CTFFlagTeam(enemy_flag_item2)) );
+					safe_bprintf( PRINT_HIGH, "%s captured the %s and %s flags for a double capture!\n",
+					              other->client->pers.netname, CTFTeamName( CTFFlagTeam( enemy_flag_item1 ) ),
+					              CTFTeamName( CTFFlagTeam( enemy_flag_item2 ) ) );
 				}
 				else { // other gets 15 frag bonus
 					other->client->resp.score += CTF_CAPTURE_BONUS;
 					if (captured_flag_item != nullptr )
-						safe_bprintf(PRINT_HIGH, "%s captured the %s flag!\n",
-							other->client->pers.netname, CTFTeamName(CTFFlagTeam(captured_flag_item)) );
+						safe_bprintf( PRINT_HIGH, "%s captured the %s flag!\n",
+						              other->client->pers.netname, CTFTeamName( CTFFlagTeam( captured_flag_item ) ) );
 				}
 
 				// ScarFace- support for 2-carrier double capture in 3Team CTF mode
@@ -1238,8 +1238,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 						&& other != ctfgame.team1_last_flag_capturer)
 					{
 						if (captured_flag_item != nullptr )
-							safe_bprintf(PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
-								other->client->pers.netname, CTFTeamName(CTFFlagTeam(captured_flag_item)) );
+							safe_bprintf( PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
+							              other->client->pers.netname, CTFTeamName( CTFFlagTeam( captured_flag_item ) ) );
 						other->client->resp.score += 5;
 						if (ctfgame.team1_last_flag_capturer && ctfgame.team1_last_flag_capturer->client)
 							ctfgame.team1_last_flag_capturer->client->resp.score += 5;
@@ -1260,8 +1260,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 						&& other != ctfgame.team2_last_flag_capturer)
 					{
 						if (captured_flag_item != nullptr )
-							safe_bprintf(PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
-								other->client->pers.netname, CTFTeamName(CTFFlagTeam(captured_flag_item)) );
+							safe_bprintf( PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
+							              other->client->pers.netname, CTFTeamName( CTFFlagTeam( captured_flag_item ) ) );
 						other->client->resp.score += 5;
 						if (ctfgame.team2_last_flag_capturer && ctfgame.team2_last_flag_capturer->client)
 							ctfgame.team2_last_flag_capturer->client->resp.score += 5;
@@ -1282,8 +1282,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 						&& other != ctfgame.team3_last_flag_capturer)
 					{
 						if (captured_flag_item != nullptr )
-							safe_bprintf(PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
-								other->client->pers.netname, CTFTeamName(CTFFlagTeam(captured_flag_item)) );
+							safe_bprintf( PRINT_HIGH, "%s captured the %s flag for a double capture!\n",
+							              other->client->pers.netname, CTFTeamName( CTFFlagTeam( captured_flag_item ) ) );
 						other->client->resp.score += 5;
 						if (ctfgame.team3_last_flag_capturer && ctfgame.team3_last_flag_capturer->client)
 							ctfgame.team3_last_flag_capturer->client->resp.score += 5;
@@ -1315,11 +1315,11 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 							player->client->resp.score += captures*CTF_TEAM_BONUS;
 						// award extra points for capture assists
 						if (player->client->resp.ctf_lastreturnedflag + CTF_RETURN_FLAG_ASSIST_TIMEOUT > level.time) {
-							safe_bprintf(PRINT_HIGH, "%s gets an assist for returning the flag!\n", player->client->pers.netname);
+							safe_bprintf( PRINT_HIGH, "%s gets an assist for returning the flag!\n", player->client->pers.netname );
 							player->client->resp.score += CTF_RETURN_FLAG_ASSIST_BONUS;
 						}
 						if (player->client->resp.ctf_lastfraggedcarrier + CTF_FRAG_CARRIER_ASSIST_TIMEOUT > level.time) {
-							safe_bprintf(PRINT_HIGH, "%s gets an assist for fragging the flag carrier!\n", player->client->pers.netname);
+							safe_bprintf( PRINT_HIGH, "%s gets an assist for fragging the flag carrier!\n", player->client->pers.netname );
 							player->client->resp.score += CTF_FRAG_CARRIER_ASSIST_BONUS;
 						}
 					}
@@ -1329,8 +1329,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 		}
 
 		// hey, its not home.  return it by teleporting it back
-		safe_bprintf(PRINT_HIGH, "%s returned the %s flag!\n",
-			other->client->pers.netname, CTFTeamName(ctf_team));
+		safe_bprintf( PRINT_HIGH, "%s returned the %s flag!\n",
+		              other->client->pers.netname, CTFTeamName( ctf_team ) );
 		other->client->resp.score += CTF_RECOVERY_BONUS;
 		other->client->resp.ctf_lastreturnedflag = level.time;
 		gi.sound (ent, CHAN_RELIABLE+CHAN_NO_PHS_ADD+CHAN_VOICE, gi.soundindex("ctf/flagret.wav"), 1, ATTN_NONE, 0);
@@ -1350,8 +1350,8 @@ qboolean CTFPickup_Flag (edict_t *ent, edict_t *other)
 		return false;
 	}
 
-	safe_bprintf(PRINT_HIGH, "%s got the %s flag!\n",
-		other->client->pers.netname, CTFTeamName(ctf_team));
+	safe_bprintf( PRINT_HIGH, "%s got the %s flag!\n",
+	              other->client->pers.netname, CTFTeamName( ctf_team ) );
 	other->client->resp.score += CTF_FLAG_BONUS;
 
 	other->client->pers.inventory[ITEM_INDEX(flag_item)] = 1;
@@ -1405,21 +1405,21 @@ gitem_t *CTFWhat_Flag (edict_t *ent)
 	if (strcmp(ent->classname.c_str(), "item_flag_team1") == 0)
 	{
 		CTFResetFlag(CTF_TEAM1);
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM1));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM1 ) );
 	}
 	else if (strcmp(ent->classname.c_str(), "item_flag_team2") == 0)
 	{
 		CTFResetFlag(CTF_TEAM2);
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM2));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM2 ) );
 	}
 	// Knightmare added
 	else if (strcmp(ent->classname.c_str(), "item_flag_team3") == 0)
 	{
 		CTFResetFlag(CTF_TEAM3);
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM3));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM3 ) );
 	}
 }
 
@@ -1492,7 +1492,7 @@ void CTFDrop_Flag( edict_t *ent, gitem_t *item )
 		{
 			dropped = Drop_Item(ent, flag1_item);
 			ent->client->pers.inventory[ITEM_INDEX(flag1_item)] = 0;
-			safe_bprintf(PRINT_HIGH, "%s dropped the RED flag!\n", ent->client->pers.netname);
+			safe_bprintf( PRINT_HIGH, "%s dropped the RED flag!\n", ent->client->pers.netname );
 			if (dropped) {
 				// hack the velocity to make it bounce random
 				dropped->velocity[0] = (rand() % 600) - 300;
@@ -1509,7 +1509,7 @@ void CTFDrop_Flag( edict_t *ent, gitem_t *item )
 		{
 			dropped = Drop_Item(ent, flag2_item);
 			ent->client->pers.inventory[ITEM_INDEX(flag2_item)] = 0;
-			safe_bprintf(PRINT_HIGH, "%s dropped the BLUE flag!\n", ent->client->pers.netname);
+			safe_bprintf( PRINT_HIGH, "%s dropped the BLUE flag!\n", ent->client->pers.netname );
 			if (dropped) {
 				// hack the velocity to make it bounce random
 				dropped->velocity[0] = (rand() % 600) - 300;
@@ -1526,7 +1526,7 @@ void CTFDrop_Flag( edict_t *ent, gitem_t *item )
 		{
 			dropped = Drop_Item(ent, flag3_item);
 			ent->client->pers.inventory[ITEM_INDEX(flag3_item)] = 0;
-			safe_bprintf(PRINT_HIGH, "%s dropped the GREEN flag!\n", ent->client->pers.netname);
+			safe_bprintf( PRINT_HIGH, "%s dropped the GREEN flag!\n", ent->client->pers.netname );
 			if (dropped) {
 				// hack the velocity to make it bounce random
 				dropped->velocity[0] = (rand() % 600) - 300;
@@ -2443,8 +2443,8 @@ void CTFTeam_f (edict_t *ent)
 		// hold in place briefly
 		ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
 		ent->client->ps.pmove.pm_time = 14;
-		safe_bprintf(PRINT_HIGH, "%s joined the %s team.\n",
-			ent->client->pers.netname, CTFTeamName(desired_team));
+		safe_bprintf( PRINT_HIGH, "%s joined the %s team.\n",
+		              ent->client->pers.netname, CTFTeamName( desired_team ) );
 		return;
 	}
 
@@ -2456,8 +2456,8 @@ void CTFTeam_f (edict_t *ent)
 
 	ent->client->resp.score = 0;
 
-	safe_bprintf(PRINT_HIGH, "%s changed to the %s team.\n",
-		ent->client->pers.netname, CTFTeamName(desired_team));
+	safe_bprintf( PRINT_HIGH, "%s changed to the %s team.\n",
+	              ent->client->pers.netname, CTFTeamName( desired_team ) );
 }
 
 /*
@@ -4179,10 +4179,10 @@ qboolean CTFBeginElection (edict_t *ent, elect_t type, char *msg)
 	Q_strncpyz(ctfgame.emsg, sizeof(ctfgame.emsg), msg);
 
 	// tell everyone
-	safe_bprintf(PRINT_CHAT, "%s\n", ctfgame.emsg);
-	safe_bprintf(PRINT_HIGH, "Type YES or NO to vote on this request.\n");
-	safe_bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
-		(int)(ctfgame.electtime - level.time));
+	safe_bprintf( PRINT_CHAT, "%s\n", ctfgame.emsg );
+	safe_bprintf( PRINT_HIGH, "Type YES or NO to vote on this request.\n" );
+	safe_bprintf( PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
+	              ( int ) ( ctfgame.electtime - level.time ) );
 
 	return true;
 }
@@ -4310,58 +4310,58 @@ void CTFStartMatch (void)
 void CTFEndMatch (void)
 {
 	ctfgame.match = MATCH_POST;
-	safe_bprintf(PRINT_CHAT, "MATCH COMPLETED!\n");
+	safe_bprintf( PRINT_CHAT, "MATCH COMPLETED!\n" );
 
 	CTFCalcScores();
 
-	safe_bprintf(PRINT_HIGH, "RED TEAM:  %d captures, %d points\n",
-		ctfgame.team1, ctfgame.total1);
-	safe_bprintf(PRINT_HIGH, "BLUE TEAM:  %d captures, %d points\n",
-		ctfgame.team2, ctfgame.total2);
+	safe_bprintf( PRINT_HIGH, "RED TEAM:  %d captures, %d points\n",
+	              ctfgame.team1, ctfgame.total1 );
+	safe_bprintf( PRINT_HIGH, "BLUE TEAM:  %d captures, %d points\n",
+	              ctfgame.team2, ctfgame.total2 );
 
 	if (ttctf->value) // Knightmare added
 	{
-		safe_bprintf(PRINT_HIGH, "GREEN TEAM:  %d captures, %d points\n",
-			ctfgame.team3, ctfgame.total3);
+		safe_bprintf( PRINT_HIGH, "GREEN TEAM:  %d captures, %d points\n",
+		              ctfgame.team3, ctfgame.total3 );
 
 		if (ctfgame.team1 > ctfgame.team2 && ctfgame.team1 > ctfgame.team3)
-			safe_bprintf(PRINT_CHAT, "RED team won over the BLUE and GREEN teams by %d CAPTURES!\n",
-				ctfgame.team1 - (ctfgame.team2 > ctfgame.team3)? ctfgame.team2:ctfgame.team3);
+			safe_bprintf( PRINT_CHAT, "RED team won over the BLUE and GREEN teams by %d CAPTURES!\n",
+			              ctfgame.team1 - ( ctfgame.team2 > ctfgame.team3 ) ? ctfgame.team2 : ctfgame.team3 );
 		else if (ctfgame.team2 > ctfgame.team1 && ctfgame.team2 > ctfgame.team3)
-			safe_bprintf(PRINT_CHAT, "BLUE team won over the RED and GREEN teams by %d CAPTURES!\n",
-				ctfgame.team2 - (ctfgame.team1 > ctfgame.team3)? ctfgame.team1:ctfgame.team3);
+			safe_bprintf( PRINT_CHAT, "BLUE team won over the RED and GREEN teams by %d CAPTURES!\n",
+			              ctfgame.team2 - ( ctfgame.team1 > ctfgame.team3 ) ? ctfgame.team1 : ctfgame.team3 );
 		else if (ctfgame.team3 > ctfgame.team1 && ctfgame.team3 > ctfgame.team2)
-			safe_bprintf(PRINT_CHAT, "GREEN team won over the RED and BLUE teams by %d CAPTURES!\n",
-				ctfgame.team3 - (ctfgame.team1 > ctfgame.team2)? ctfgame.team1:ctfgame.team2);
+			safe_bprintf( PRINT_CHAT, "GREEN team won over the RED and BLUE teams by %d CAPTURES!\n",
+			              ctfgame.team3 - ( ctfgame.team1 > ctfgame.team2 ) ? ctfgame.team1 : ctfgame.team2 );
 		// frag tie breaker
 		else if (ctfgame.total1 > ctfgame.total2 && ctfgame.total1 > ctfgame.total3)
-			safe_bprintf(PRINT_CHAT, "RED team won over the BLUE and GREEN teams by %d POINTS!\n",
-				ctfgame.total1 - (ctfgame.total2 > ctfgame.total3)?ctfgame.total2:ctfgame.total3);
+			safe_bprintf( PRINT_CHAT, "RED team won over the BLUE and GREEN teams by %d POINTS!\n",
+			              ctfgame.total1 - ( ctfgame.total2 > ctfgame.total3 ) ? ctfgame.total2 : ctfgame.total3 );
 		else if (ctfgame.total2 > ctfgame.total1 && ctfgame.total2 > ctfgame.total3)
-			safe_bprintf(PRINT_CHAT, "BLUE team won over the RED and GREEN teams by %d POINTS!\n",
-				ctfgame.total2 - (ctfgame.total1 > ctfgame.total3)?ctfgame.total1:ctfgame.total3);
+			safe_bprintf( PRINT_CHAT, "BLUE team won over the RED and GREEN teams by %d POINTS!\n",
+			              ctfgame.total2 - ( ctfgame.total1 > ctfgame.total3 ) ? ctfgame.total1 : ctfgame.total3 );
 		else if (ctfgame.total3 > ctfgame.total1 && ctfgame.total3 > ctfgame.total2)
-			safe_bprintf(PRINT_CHAT, "GREEN team won over the RED and BLUE teams by %d POINTS!\n",
-				ctfgame.total3 - (ctfgame.total1 > ctfgame.total2)?ctfgame.total1:ctfgame.total2);
+			safe_bprintf( PRINT_CHAT, "GREEN team won over the RED and BLUE teams by %d POINTS!\n",
+			              ctfgame.total3 - ( ctfgame.total1 > ctfgame.total2 ) ? ctfgame.total1 : ctfgame.total2 );
 		else
-			safe_bprintf(PRINT_CHAT, "TIE GAME!\n");
+			safe_bprintf( PRINT_CHAT, "TIE GAME!\n" );
 	}
 	else
 	{
 		if (ctfgame.team1 > ctfgame.team2)
-			safe_bprintf(PRINT_CHAT, "RED team won over the BLUE team by %d CAPTURES!\n",
-				ctfgame.team1 - ctfgame.team2);
+			safe_bprintf( PRINT_CHAT, "RED team won over the BLUE team by %d CAPTURES!\n",
+			              ctfgame.team1 - ctfgame.team2 );
 		else if (ctfgame.team2 > ctfgame.team1)
-			safe_bprintf(PRINT_CHAT, "BLUE team won over the RED team by %d CAPTURES!\n",
-				ctfgame.team2 - ctfgame.team1);
+			safe_bprintf( PRINT_CHAT, "BLUE team won over the RED team by %d CAPTURES!\n",
+			              ctfgame.team2 - ctfgame.team1 );
 		else if (ctfgame.total1 > ctfgame.total2) // frag tie breaker
-			safe_bprintf(PRINT_CHAT, "RED team won over the BLUE team by %d POINTS!\n",
-				ctfgame.total1 - ctfgame.total2);
+			safe_bprintf( PRINT_CHAT, "RED team won over the BLUE team by %d POINTS!\n",
+			              ctfgame.total1 - ctfgame.total2 );
 		else if (ctfgame.total2 > ctfgame.total1)
-			safe_bprintf(PRINT_CHAT, "BLUE team won over the RED team by %d POINTS!\n",
-				ctfgame.total2 - ctfgame.total1);
+			safe_bprintf( PRINT_CHAT, "BLUE team won over the RED team by %d POINTS!\n",
+			              ctfgame.total2 - ctfgame.total1 );
 		else
-			safe_bprintf(PRINT_CHAT, "TIE GAME!\n");
+			safe_bprintf( PRINT_CHAT, "TIE GAME!\n" );
 	}
 	EndDMLevel();
 }
@@ -4389,13 +4389,13 @@ void CTFWinElection (void)
 
 	case ELECT_ADMIN :
 		ctfgame.etarget->client->resp.admin = true;
-		safe_bprintf(PRINT_HIGH, "%s has become an admin.\n", ctfgame.etarget->client->pers.netname);
+		safe_bprintf( PRINT_HIGH, "%s has become an admin.\n", ctfgame.etarget->client->pers.netname );
 		safe_cprintf( ctfgame.etarget, PRINT_HIGH, "Type 'admin' to access the adminstration menu.\n" );
 		break;
 
 	case ELECT_MAP :
-		safe_bprintf(PRINT_HIGH, "%s is warping to level %s.\n",
-			ctfgame.etarget->client->pers.netname, ctfgame.elevel);
+		safe_bprintf( PRINT_HIGH, "%s is warping to level %s.\n",
+			          ctfgame.etarget->client->pers.netname, ctfgame.elevel );
 	//	strncpy (level.forcemap, ctfgame.elevel, sizeof(level.forcemap) - 1);
 		Q_strncpyz(level.forcemap, sizeof(level.forcemap), ctfgame.elevel);
 		EndDMLevel();
@@ -4427,9 +4427,9 @@ void CTFVoteYes (edict_t *ent)
 		CTFWinElection();
 		return;
 	}
-	safe_bprintf(PRINT_HIGH, "%s\n", ctfgame.emsg);
-	safe_bprintf(PRINT_CHAT, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
-		(int)(ctfgame.electtime - level.time));
+	safe_bprintf( PRINT_HIGH, "%s\n", ctfgame.emsg );
+	safe_bprintf( PRINT_CHAT, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
+	              ( int ) ( ctfgame.electtime - level.time ) );
 }
 
 void CTFVoteNo (edict_t *ent)
@@ -4449,9 +4449,9 @@ void CTFVoteNo (edict_t *ent)
 
 	ent->client->resp.voted = true;
 
-	safe_bprintf(PRINT_HIGH, "%s\n", ctfgame.emsg);
-	safe_bprintf(PRINT_CHAT, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
-		(int)(ctfgame.electtime - level.time));
+	safe_bprintf( PRINT_HIGH, "%s\n", ctfgame.emsg );
+	safe_bprintf( PRINT_CHAT, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
+	              ( int ) ( ctfgame.electtime - level.time ) );
 }
 
 void CTFReady (edict_t *ent)
@@ -4476,7 +4476,7 @@ void CTFReady (edict_t *ent)
 	}
 
 	ent->client->resp.ready = true;
-	safe_bprintf(PRINT_HIGH, "%s is ready.\n", ent->client->pers.netname);
+	safe_bprintf( PRINT_HIGH, "%s is ready.\n", ent->client->pers.netname );
 
 	t1 = t2 = 0;
 	for (j = 0, i = 1; i <= maxclients->value; i++) {
@@ -4492,7 +4492,7 @@ void CTFReady (edict_t *ent)
 	}
 	if (!j && t1 && t2) {
 		// everyone has commited
-		safe_bprintf(PRINT_CHAT, "All players have commited.  Match starting\n");
+		safe_bprintf( PRINT_CHAT, "All players have commited.  Match starting\n" );
 		ctfgame.match = MATCH_PREGAME;
 		ctfgame.matchtime = level.time + matchstarttime->value;
 		ctfgame.countdown = false;
@@ -4518,10 +4518,10 @@ void CTFNotReady (edict_t *ent)
 	}
 
 	ent->client->resp.ready = false;
-	safe_bprintf(PRINT_HIGH, "%s is no longer ready.\n", ent->client->pers.netname);
+	safe_bprintf( PRINT_HIGH, "%s is no longer ready.\n", ent->client->pers.netname );
 
 	if (ctfgame.match == MATCH_PREGAME) {
-		safe_bprintf(PRINT_CHAT, "Match halted.\n");
+		safe_bprintf( PRINT_CHAT, "Match halted.\n" );
 		ctfgame.match = MATCH_SETUP;
 		ctfgame.matchtime = level.time + matchsetuptime->value * 60;
 	}
@@ -4560,8 +4560,8 @@ void CTFGhost (edict_t *ent)
 			ent->svflags = 0;
 			ent->flags &= ~FL_GODMODE;
 			PutClientInServer(ent);
-			safe_bprintf(PRINT_HIGH, "%s has been reinstated to %s team.\n",
-				ent->client->pers.netname, CTFTeamName(ent->client->resp.ctf_team));
+			safe_bprintf( PRINT_HIGH, "%s has been reinstated to %s team.\n",
+			              ent->client->pers.netname, CTFTeamName( ent->client->resp.ctf_team ) );
 			return;
 		}
 	}
@@ -4726,8 +4726,8 @@ void CTFJoinTeam (edict_t *ent, int desired_team)
 	// hold in place briefly
 	ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
 	ent->client->ps.pmove.pm_time = 14;
-	safe_bprintf(PRINT_HIGH, "%s joined the %s team.\n",
-		ent->client->pers.netname, CTFTeamName(desired_team));
+	safe_bprintf( PRINT_HIGH, "%s joined the %s team.\n",
+	              ent->client->pers.netname, CTFTeamName( desired_team ) );
 
 	if (ctfgame.match == MATCH_SETUP) {
 		safe_centerprintf(ent,	"***********************\n"
@@ -5193,7 +5193,7 @@ qboolean CTFCheckRules (void)
 	edict_t *ent;
 
 	if (ctfgame.election != ELECT_NONE && ctfgame.electtime <= level.time) {
-		safe_bprintf(PRINT_CHAT, "Election timed out and has been cancelled.\n");
+		safe_bprintf( PRINT_CHAT, "Election timed out and has been cancelled.\n" );
 		ctfgame.election = ELECT_NONE;
 	}
 
@@ -5328,7 +5328,7 @@ qboolean CTFCheckRules (void)
 	if (capturelimit->value &&
 		(ctfgame.team1 >= capturelimit->value ||
 		ctfgame.team2 >= capturelimit->value)) {
-		safe_bprintf (PRINT_HIGH, "Capturelimit hit.\n");
+		safe_bprintf ( PRINT_HIGH, "Capturelimit hit.\n" );
 		return true;
 	}
 	return false;
@@ -5460,8 +5460,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	int i;
 
 	if (settings->matchlen != matchtime->value) {
-		safe_bprintf(PRINT_HIGH, "%s changed the match length to %d minutes.\n",
-			ent->client->pers.netname, settings->matchlen);
+		safe_bprintf( PRINT_HIGH, "%s changed the match length to %d minutes.\n",
+		              ent->client->pers.netname, settings->matchlen );
 		if (ctfgame.match == MATCH_GAME) {
 			// in the middle of a match, change it on the fly
 			ctfgame.matchtime = (ctfgame.matchtime - matchtime->value*60) + settings->matchlen*60;
@@ -5471,8 +5471,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->matchsetuplen != matchsetuptime->value) {
-		safe_bprintf(PRINT_HIGH, "%s changed the match setup time to %d minutes.\n",
-			ent->client->pers.netname, settings->matchsetuplen);
+		safe_bprintf( PRINT_HIGH, "%s changed the match setup time to %d minutes.\n",
+		              ent->client->pers.netname, settings->matchsetuplen );
 		if (ctfgame.match == MATCH_SETUP) {
 			// in the middle of a match, change it on the fly
 			ctfgame.matchtime = (ctfgame.matchtime - matchsetuptime->value*60) + settings->matchsetuplen*60;
@@ -5482,8 +5482,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->matchstartlen != matchstarttime->value) {
-		safe_bprintf(PRINT_HIGH, "%s changed the match start time to %d seconds.\n",
-			ent->client->pers.netname, settings->matchstartlen);
+		safe_bprintf( PRINT_HIGH, "%s changed the match start time to %d seconds.\n",
+		              ent->client->pers.netname, settings->matchstartlen );
 		if (ctfgame.match == MATCH_PREGAME) {
 			// in the middle of a match, change it on the fly
 			ctfgame.matchtime = (ctfgame.matchtime - matchstarttime->value) + settings->matchstartlen;
@@ -5493,8 +5493,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->weaponsstay != !!((int)dmflags->value & DF_WEAPONS_STAY)) {
-		safe_bprintf(PRINT_HIGH, "%s turned %s weapons stay.\n",
-			ent->client->pers.netname, settings->weaponsstay ? "on" : "off");
+		safe_bprintf( PRINT_HIGH, "%s turned %s weapons stay.\n",
+		              ent->client->pers.netname, settings->weaponsstay ? "on" : "off" );
 		i = (int)dmflags->value;
 		if (settings->weaponsstay)
 			i |= DF_WEAPONS_STAY;
@@ -5505,8 +5505,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->instantitems != !!((int)dmflags->value & DF_INSTANT_ITEMS)) {
-		safe_bprintf(PRINT_HIGH, "%s turned %s instant items.\n",
-			ent->client->pers.netname, settings->instantitems ? "on" : "off");
+		safe_bprintf( PRINT_HIGH, "%s turned %s instant items.\n",
+		              ent->client->pers.netname, settings->instantitems ? "on" : "off" );
 		i = (int)dmflags->value;
 		if (settings->instantitems)
 			i |= DF_INSTANT_ITEMS;
@@ -5517,8 +5517,8 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->quaddrop != !!((int)dmflags->value & DF_QUAD_DROP)) {
-		safe_bprintf(PRINT_HIGH, "%s turned %s quad drop.\n",
-			ent->client->pers.netname, settings->quaddrop ? "on" : "off");
+		safe_bprintf( PRINT_HIGH, "%s turned %s quad drop.\n",
+		              ent->client->pers.netname, settings->quaddrop ? "on" : "off" );
 		i = (int)dmflags->value;
 		if (settings->quaddrop)
 			i |= DF_QUAD_DROP;
@@ -5529,15 +5529,15 @@ void CTFAdmin_SettingsApply (edict_t *ent, pmenuhnd_t *p)
 	}
 
 	if (settings->instantweap != !!((int)instantweap->value)) {
-		safe_bprintf(PRINT_HIGH, "%s turned %s instant weapons.\n",
-			ent->client->pers.netname, settings->instantweap ? "on" : "off");
+		safe_bprintf( PRINT_HIGH, "%s turned %s instant weapons.\n",
+		              ent->client->pers.netname, settings->instantweap ? "on" : "off" );
 		snprintf (st, sizeof(st), "%d", (int)settings->instantweap);
 		gi.cvar_set("instantweap", st);
 	}
 
 	if (settings->matchlock != !!((int)matchlock->value)) {
-		safe_bprintf(PRINT_HIGH, "%s turned %s match lock.\n",
-			ent->client->pers.netname, settings->matchlock ? "on" : "off");
+		safe_bprintf( PRINT_HIGH, "%s turned %s match lock.\n",
+		              ent->client->pers.netname, settings->matchlock ? "on" : "off" );
 		snprintf (st, sizeof(st), "%d", (int)settings->matchlock);
 		gi.cvar_set("matchlock", st);
 	}
@@ -5713,7 +5713,7 @@ void CTFAdmin_MatchSet (edict_t *ent, pmenuhnd_t *p)
 
 	if (ctfgame.match == MATCH_SETUP)
 	{
-		safe_bprintf(PRINT_CHAT, "Match has been forced to start.\n");
+		safe_bprintf( PRINT_CHAT, "Match has been forced to start.\n" );
 		ctfgame.match = MATCH_PREGAME;
 		ctfgame.matchtime = level.time + matchstarttime->value;
 		gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex("misc/talk1.wav"), 1, ATTN_NONE, 0);
@@ -5721,7 +5721,7 @@ void CTFAdmin_MatchSet (edict_t *ent, pmenuhnd_t *p)
 	}
 	else if (ctfgame.match == MATCH_GAME)
 	{
-		safe_bprintf(PRINT_CHAT, "Match has been forced to terminate.\n");
+		safe_bprintf( PRINT_CHAT, "Match has been forced to terminate.\n" );
 		ctfgame.match = MATCH_SETUP;
 		ctfgame.matchtime = level.time + matchsetuptime->value * 60;
 		CTFResetAllPlayers ();
@@ -5745,7 +5745,7 @@ void CTFAdmin_Reset (edict_t *ent, pmenuhnd_t *p)
 	PMenu_Close(ent);
 
 	// go back to normal mode
-	safe_bprintf(PRINT_CHAT, "Match mode has been terminated, reseting to normal game.\n");
+	safe_bprintf( PRINT_CHAT, "Match mode has been terminated, reseting to normal game.\n" );
 	ctfgame.match = MATCH_NONE;
 	gi.cvar_set("competition", "1");
 	CTFResetAllPlayers ();
@@ -5807,7 +5807,7 @@ void CTFAdmin (edict_t *ent)
 	if (gi.argc() > 1 && admin_password->string && *admin_password->string &&
 		!ent->client->resp.admin && strcmp(admin_password->string, gi.argv(1)) == 0) {
 		ent->client->resp.admin = true;
-		safe_bprintf(PRINT_HIGH, "%s has become an admin.\n", ent->client->pers.netname);
+		safe_bprintf( PRINT_HIGH, "%s has become an admin.\n", ent->client->pers.netname );
 		safe_cprintf( ent, PRINT_HIGH, "Type 'admin' to access the adminstration menu.\n" );
 	}
 
@@ -5994,8 +5994,8 @@ void CTFWarp (edict_t *ent)
 
 	if (ent->client->resp.admin)
 	{
-		safe_bprintf(PRINT_HIGH, "%s is warping to level %s.\n",
-			ent->client->pers.netname, gi.argv(1));
+		safe_bprintf( PRINT_HIGH, "%s is warping to level %s.\n",
+		              ent->client->pers.netname, gi.argv( 1 ) );
 	//	strncpy (level.forcemap, gi.argv(1), sizeof(level.forcemap) - 1);
 		Q_strncpyz(level.forcemap, sizeof(level.forcemap), gi.argv(1));
 		EndDMLevel ();

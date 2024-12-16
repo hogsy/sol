@@ -674,21 +674,21 @@ void BecomeExplosion1 (edict_t *self)
 	//flags are important
 	if (strcmp(self->classname.c_str(), "item_flag_team1") == 0) {
 		CTFResetFlag(CTF_TEAM1); // this will free self!
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM1));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM1 ) );
 		return;
 	}
 	if (strcmp(self->classname.c_str(), "item_flag_team2") == 0) {
 		CTFResetFlag(CTF_TEAM2); // this will free self!
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM2));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM2 ) );
 		return;
 	}
 	// Knightmare added
 	if (strcmp(self->classname.c_str(), "item_flag_team3") == 0) {
 		CTFResetFlag(CTF_TEAM3); // this will free self!
-		safe_bprintf(PRINT_HIGH, "The %s flag has returned!\n",
-			CTFTeamName(CTF_TEAM3));
+		safe_bprintf( PRINT_HIGH, "The %s flag has returned!\n",
+		              CTFTeamName( CTF_TEAM3 ) );
 		return;
 	}
 	// techs are important too

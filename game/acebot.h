@@ -362,7 +362,7 @@ void     ACESP_ReAddBots (void);
 void     ACESP_RemoveBot (char *name);
 void	 safe_cprintf ( edict_t *ent, int printlevel, const char *fmt, ... );
 void     safe_centerprintf (edict_t *ent, char *fmt, ...);
-void     safe_bprintf (int printlevel, char *fmt, ...);
+void     safe_bprintf ( int printlevel, const char *fmt, ... );
 void     debug_printf (char *fmt, ...);
 
 #endif
