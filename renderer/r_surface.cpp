@@ -627,7 +627,7 @@ The BSP tree is waled front to back, so unwinding the chain
 of alpha_surfaces will draw back to front, giving proper ordering.
 ================
 */
-void R_DrawAllAlphaSurfaces (void)
+void R_DrawAllAlphaSurfaces ()
 {
 	msurface_t	*s;
 //	surfaceHandle_t	*h;
@@ -660,7 +660,7 @@ void R_DrawAllAlphaSurfaces (void)
 	GL_DepthMask (true);
 
 //	r_dup_alpha_surfaces = NULL;
-	r_alpha_surfaces = NULL;
+	r_alpha_surfaces = nullptr;
 }
 
 
@@ -689,7 +689,7 @@ void R_UpdateSurfaceLightmap (msurface_t *surf)
 		rect_t		*rect = &gl_lms.lightrect[surf->lightmaptexturenum];
 
 		base += (surf->light_t * LM_BLOCK_WIDTH) + surf->light_s;
-		R_BuildLightMap (surf, (void *)base, LM_BLOCK_WIDTH*LIGHTMAP_BYTES);
+		R_BuildLightMap (surf, reinterpret_cast< byte * >( base ), LM_BLOCK_WIDTH*LIGHTMAP_BYTES);
 		R_SetCacheState (surf);
 		gl_lms.modified[surf->lightmaptexturenum] = true;
 
@@ -793,7 +793,7 @@ void R_DrawTextureChains (int renderflags)
 		for (s = image->texturechain; s; s=s->texturechain) {
 			R_DrawLightmappedSurface (s, !R_SurfsAreBatchable(s, s->texturechain));
 		}
-		image->texturechain = NULL;
+		image->texturechain = nullptr;
 	}
 
 #ifdef WARP_LIGHTMAPS
@@ -809,7 +809,7 @@ void R_DrawTextureChains (int renderflags)
 		for (s = image->warp_lm_texturechain; s; s=s->texturechain) {
 			R_DrawWarpSurface (s, 1.0, !R_SurfsAreBatchable(s, s->texturechain)); 
 		}
-		image->warp_lm_texturechain = NULL;
+		image->warp_lm_texturechain = nullptr;
 	}
 #endif	// WARP_LIGHTMAPS
 
@@ -829,7 +829,7 @@ void R_DrawTextureChains (int renderflags)
 			R_BuildVertexLight (s);
 			R_DrawWarpSurface (s, 1.0, !R_SurfsAreBatchable(s, s->texturechain)); 
 		}
-		image->warp_texturechain = NULL;
+		image->warp_texturechain = nullptr;
 	}
 	GL_TexEnv (GL_REPLACE);
 }
@@ -1292,7 +1292,7 @@ void R_DrawInlineBModel (entity_t *e, int causticflag)
 #endif	// WARP_LIGHTMAPS
 				R_UpdateSurfaceLightmap (psurf);
 #endif	// BATCH_LM_UPDATES
-			psurf->entity = NULL;
+			psurf->entity = nullptr;
 			psurf->flags &= ~SURF_MASK_CAUSTIC; // clear old caustics
 			if ( psurf->texinfo->flags & (SURF_TRANS33|SURF_TRANS66) )
 			{	// add to the translucent chain
@@ -1512,9 +1512,9 @@ void R_AddWorldSurface (msurface_t *surf)
 {
 	image_t		*image;
 
-	surf->entity = NULL;
+	surf->entity = nullptr;
 
-	surf->entity = NULL;
+	surf->entity = nullptr;
 
 #ifdef BATCH_LM_UPDATES
 #ifdef WARP_LIGHTMAPS
@@ -1806,11 +1806,10 @@ R_BuildPolygonFromSurface
 */
 void R_BuildPolygonFromSurface (msurface_t *surf)
 {
-	int			i, lindex, lnumverts;
+	int          lnumverts;
 	medge_t		*pedges, *r_pedge;
 	int			vertpage;
 	float		*vec;
-	float		s, t;
 	glpoly_t	*poly;
 	vec3_t		total;
 
@@ -1824,16 +1823,16 @@ void R_BuildPolygonFromSurface (msurface_t *surf)
 	//
 	// draw texture
 	//
-	poly = Hunk_Alloc (sizeof(glpoly_t) + (lnumverts-4) * sizeof(mpolyvertex_t));
+	poly = static_cast< glpoly_t * >( Hunk_Alloc( sizeof( glpoly_t ) + ( lnumverts - 4 ) * sizeof( mpolyvertex_t ) ) );
 	poly->next = surf->polys;
 	poly->flags = surf->flags;
 	surf->polys = poly;
 	poly->numverts = lnumverts;
 	poly->vertexlightset = false;
 
-	for (i=0; i<lnumverts; i++)
+	for ( int i = 0; i<lnumverts; i++)
 	{
-		lindex = currentmodel->surfedges[surf->firstedge + i];
+		int lindex = currentmodel->surfedges[ surf->firstedge + i ];
 
 		if (lindex > 0)
 		{
@@ -1848,10 +1847,10 @@ void R_BuildPolygonFromSurface (msurface_t *surf)
 		//
 		// texture coordinates
 		//
-		s = DotProduct (vec, surf->texinfo->vecs[0]) + surf->texinfo->vecs[0][3];
+		float s = DotProduct( vec, surf->texinfo->vecs[ 0 ] ) + surf->texinfo->vecs[ 0 ][ 3 ];
 		s /= surf->texinfo->texWidth; //surf->texinfo->image->width; changed to Q2E hack
 
-		t = DotProduct (vec, surf->texinfo->vecs[1]) + surf->texinfo->vecs[1][3];
+		float t = DotProduct( vec, surf->texinfo->vecs[ 1 ] ) + surf->texinfo->vecs[ 1 ][ 3 ];
 		t /= surf->texinfo->texHeight; //surf->texinfo->image->height; changed to Q2E hack
 		
 		VectorAdd (total, vec, total);
@@ -1963,7 +1962,6 @@ void R_BuildVertexLight (msurface_t *surf)
 {
 	vec3_t			color, point;
 	int				i;
-	glpoly_t		*poly;
 	mpolyvertex_t	*v;
 
 	if (surf->flags & SURF_DRAWTURB)
@@ -1974,7 +1972,7 @@ void R_BuildVertexLight (msurface_t *surf)
 	if (!surf->polys)
 		return;
 
-	for (poly=surf->polys; poly; poly=poly->next)
+	for ( glpoly_t *poly = surf->polys; poly; poly=poly->next)
 	{
 		if (/*glState.resetVertexLights ||*/ !poly->vertexlightset)
 		{	

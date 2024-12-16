@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 // q_shared.h -- included first by ALL program modules
 
+#pragma once
+
 #ifdef _MSC_VER	// _WIN32
 // unknown pragmas are SUPPOSED to be ignored, but....
 #pragma warning(disable : 4244)     // MIPS
@@ -44,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ctime>
 #include <climits>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -100,7 +103,7 @@ __inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list 
 
 #ifdef KMQUAKE2_ENGINE_MOD
 #define NEW_ENTITY_STATE_MEMBERS
-#define NEW_PLAYER_STATE_MEMBERS
+//#define NEW_PLAYER_STATE_MEMBERS
 // enable to build exe with 24-bit coordinate transmission
 // changes pmove origin size in game DLLs
 #define LARGE_MAP_SIZE
@@ -472,9 +475,9 @@ char	*va(const char *format, ...);
 #define	MAX_INFO_VALUE		64
 #define	MAX_INFO_STRING		512
 
-char *Info_ValueForKey (char *s, char *key);
-void Info_RemoveKey (char *s, char *key);
-void Info_SetValueForKey (char *s, char *key, char *value);
+char *Info_ValueForKey (char *s, const char *key);
+void Info_RemoveKey ( char *s, const char *key );
+void Info_SetValueForKey ( char *s, const char *key, const char *value );
 qboolean Info_Validate (char *s);
 
 /*
@@ -507,7 +510,7 @@ size_t	Hunk_End (void);
 /*
 ** pass in an attribute mask of things you wish to REJECT
 */
-char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
+char	*Sys_FindFirst ( const char *path, unsigned musthave, unsigned canthave );
 char	*Sys_FindNext ( unsigned musthave, unsigned canthave );
 void	Sys_FindClose (void);
 

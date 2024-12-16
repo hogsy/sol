@@ -293,7 +293,7 @@ R_Compile_ARB_Programs
 void R_Compile_ARB_Programs (void)
 {
 	int			i, error_pos;
-	const char	*errors;
+	const GLubyte *errors;
 	
 	if (!glConfig.arb_fragment_program) // not supported/enabled
 		return;

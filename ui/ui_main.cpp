@@ -71,11 +71,11 @@ void UI_Draw (void)
 	if (cl.cinematictime > 0 || cls.state == ca_disconnected)
 	{
 		if ( (ui_menuState.menu->background != NULL) && (strlen(ui_menuState.menu->background) > 0)
-			&& R_DrawFindPic ((char *)ui_menuState.menu->background) ) {
+			&& R_DrawFindPic ( ( char * ) ui_menuState.menu->background ) ) {
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, (char *)ui_menuState.menu->background, 1.0f);
 		}
-		else if ( R_DrawFindPic(UI_BACKGROUND_NAME) ) {
+		else if ( R_DrawFindPic( UI_BACKGROUND_NAME ) ) {
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, true, 0, 0, 0, 255);
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, 1.0f);
 		}
@@ -85,9 +85,9 @@ void UI_Draw (void)
 	else
 	{	// ingame menu uses alpha
 		if ( (ui_menuState.menu->background != NULL) && (strlen(ui_menuState.menu->background) > 0)
-			&& R_DrawFindPic ((char *)ui_menuState.menu->background) ) 
+			&& R_DrawFindPic ( ( char * ) ui_menuState.menu->background ) ) 
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, (char *)ui_menuState.menu->background, ui_background_alpha->value);
-		else if ( R_DrawFindPic(UI_BACKGROUND_NAME) )
+		else if ( R_DrawFindPic( UI_BACKGROUND_NAME ) )
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, true, UI_BACKGROUND_NAME, ui_background_alpha->value);
 		else
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH, true, 0, 0, 0, (int)(ui_background_alpha->value*255));
@@ -179,17 +179,17 @@ void UI_Precache (void)
 //	char	scratch[80];
 
 	// general images
-	R_DrawFindPic (LOADSCREEN_NAME); 
-	R_DrawFindPic (UI_BACKGROUND_NAME); 
-	R_DrawFindPic (UI_NOSCREEN_NAME); 
+	R_DrawFindPic ( LOADSCREEN_NAME ); 
+	R_DrawFindPic ( UI_BACKGROUND_NAME ); 
+	R_DrawFindPic ( UI_NOSCREEN_NAME ); 
 
 	// loadscreen images
-	R_DrawFindPic ("/pics/loading.pcx");
-	R_DrawFindPic ("/pics/loading_bar.pcx");
-	R_DrawFindPic ("/pics/downloading.pcx");
-	R_DrawFindPic ("/pics/downloading_bar.pcx");
-	R_DrawFindPic ("/pics/loading_led1.pcx");
-	R_DrawFindPic ("/pics/pause.pcx");
+	R_DrawFindPic ( "/pics/loading.pcx" );
+	R_DrawFindPic ( "/pics/loading_bar.pcx" );
+	R_DrawFindPic ( "/pics/downloading.pcx" );
+	R_DrawFindPic ( "/pics/downloading_bar.pcx" );
+	R_DrawFindPic ( "/pics/loading_led1.pcx" );
+	R_DrawFindPic ( "/pics/pause.pcx" );
 
 	// cursors
 //	R_DrawFindPic (UI_MOUSECURSOR_MAIN_PIC);
@@ -197,10 +197,10 @@ void UI_Precache (void)
 //	R_DrawFindPic (UI_MOUSECURSOR_CLICK_PIC);
 //	R_DrawFindPic (UI_MOUSECURSOR_OVER_PIC);
 //	R_DrawFindPic (UI_MOUSECURSOR_TEXT_PIC);
-	R_DrawFindPic (UI_MOUSECURSOR_PIC);
-	R_DrawFindPic (UI_ITEMCURSOR_DEFAULT_PIC);
-	R_DrawFindPic (UI_ITEMCURSOR_KEYBIND_PIC);
-	R_DrawFindPic (UI_ITEMCURSOR_BLINK_PIC);
+	R_DrawFindPic ( UI_MOUSECURSOR_PIC );
+	R_DrawFindPic ( UI_ITEMCURSOR_DEFAULT_PIC );
+	R_DrawFindPic ( UI_ITEMCURSOR_KEYBIND_PIC );
+	R_DrawFindPic ( UI_ITEMCURSOR_BLINK_PIC );
 
 /*	for (i = 0; i < NUM_MAINMENU_CURSOR_FRAMES; i++) {
 		Com_sprintf (scratch, sizeof(scratch), "/pics/m_cursor%d.pcx", i);
@@ -208,53 +208,53 @@ void UI_Precache (void)
 	} */
 
 	// main menu items
-	R_DrawFindPic ("/pics/m_main_game.pcx");
-	R_DrawFindPic ("/pics/m_main_game_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_multiplayer.pcx");
-	R_DrawFindPic ("/pics/m_main_multiplayer_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_options.pcx");
-	R_DrawFindPic ("/pics/m_main_options_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_video.pcx");
-	R_DrawFindPic ("/pics/m_main_video_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_mods.pcx");
-	R_DrawFindPic ("/pics/m_main_mods_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_quit.pcx");
-	R_DrawFindPic ("/pics/m_main_quit_sel.pcx");
-	R_DrawFindPic ("/pics/m_main_plaque.pcx");
-	R_DrawFindPic ("/pics/m_main_logo.pcx");
+	R_DrawFindPic ( "/pics/m_main_game.pcx" );
+	R_DrawFindPic ( "/pics/m_main_game_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_multiplayer.pcx" );
+	R_DrawFindPic ( "/pics/m_main_multiplayer_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_options.pcx" );
+	R_DrawFindPic ( "/pics/m_main_options_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_video.pcx" );
+	R_DrawFindPic ( "/pics/m_main_video_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_mods.pcx" );
+	R_DrawFindPic ( "/pics/m_main_mods_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_quit.pcx" );
+	R_DrawFindPic ( "/pics/m_main_quit_sel.pcx" );
+	R_DrawFindPic ( "/pics/m_main_plaque.pcx" );
+	R_DrawFindPic ( "/pics/m_main_logo.pcx" );
 	R_RegisterModel ( "models/ui/quad_cursor.md2" );
 
 	// menu banners
-	R_DrawFindPic ("/pics/m_banner_game.pcx");
-	R_DrawFindPic ("/pics/m_banner_load_game.pcx");
-	R_DrawFindPic ("/pics/m_banner_save_game.pcx");
-	R_DrawFindPic ("/pics/m_banner_multiplayer.pcx");
-	R_DrawFindPic ("/pics/m_banner_join_server.pcx");
-	R_DrawFindPic ("/pics/m_banner_addressbook.pcx");
-	R_DrawFindPic ("/pics/m_banner_start_server.pcx");
-	R_DrawFindPic ("/pics/m_banner_plauer_setup.pcx"); // typo for image name is id's fault
-	R_DrawFindPic ("/pics/m_banner_options.pcx");
-	R_DrawFindPic ("/pics/m_banner_customize.pcx");
-	R_DrawFindPic ("/pics/m_banner_video.pcx");
-	R_DrawFindPic ("/pics/m_banner_mods.pcx");
-	R_DrawFindPic ("/pics/quit.pcx");
-	R_DrawFindPic ("/pics/areyousure.pcx");
+	R_DrawFindPic ( "/pics/m_banner_game.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_load_game.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_save_game.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_multiplayer.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_join_server.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_addressbook.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_start_server.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_plauer_setup.pcx" ); // typo for image name is id's fault
+	R_DrawFindPic ( "/pics/m_banner_options.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_customize.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_video.pcx" );
+	R_DrawFindPic ( "/pics/m_banner_mods.pcx" );
+	R_DrawFindPic ( "/pics/quit.pcx" );
+	R_DrawFindPic ( "/pics/areyousure.pcx" );
 //	R_DrawFindPic ("/pics/yn.pcx");
 
 	// GUI elements
-	R_DrawFindPic ("/gfx/ui/widgets/listbox_background.pcx");
-	R_DrawFindPic (UI_CHECKBOX_PIC);
-	R_DrawFindPic (UI_FIELD_PIC);
-	R_DrawFindPic (UI_TEXTBOX_PIC);
-	R_DrawFindPic (UI_SLIDER_PIC);
-	R_DrawFindPic (UI_ARROWS_PIC);
-	R_DrawFindPic (UI_SCROLLKNOB_PIC);
+	R_DrawFindPic ( "/gfx/ui/widgets/listbox_background.pcx" );
+	R_DrawFindPic ( UI_CHECKBOX_PIC );
+	R_DrawFindPic ( UI_FIELD_PIC );
+	R_DrawFindPic ( UI_TEXTBOX_PIC );
+	R_DrawFindPic ( UI_SLIDER_PIC );
+	R_DrawFindPic ( UI_ARROWS_PIC );
+	R_DrawFindPic ( UI_SCROLLKNOB_PIC );
 
 	// Playerconfig menu elements
 //	R_DrawFindPic (UI_CUSTOMCOLOR_PIC);
 //	R_DrawFindPic (UI_SOLIDWHITE_PIC);
-	R_DrawFindPic (UI_RAILCORE_PIC);
-	R_DrawFindPic (UI_RAILSPIRAL_PIC);
+	R_DrawFindPic ( UI_RAILCORE_PIC );
+	R_DrawFindPic ( UI_RAILSPIRAL_PIC );
 }
 
 

@@ -40,7 +40,7 @@ void S_BeginRegistration (void);
 struct sfx_s *S_RegisterSound (char *sample);
 void S_EndRegistration (void);
 
-struct sfx_s *S_FindName (char *name, qboolean create);
+struct sfx_s *S_FindName ( const char *name, qboolean create );
 
 // the sound code makes callbacks to the client for entitiy position
 // information, so entities can be dynamically re-spatialized

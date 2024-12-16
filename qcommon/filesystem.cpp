@@ -96,7 +96,7 @@ void FS_FilePath (const char *path, char *dst, int dstSize)
 }
 
 
-char *type_extensions[] =
+static const char *type_extensions[] =
 {
 	"bsp",
 	"mdl",
@@ -482,32 +482,30 @@ FS_FOpenFileAppend
 Returns file size or -1 on error
 =================
 */
-int FS_FOpenFileAppend (fsHandle_t *handle)
+int FS_FOpenFileAppend( fsHandle_t *handle )
 {
-	char	path[MAX_OSPATH];
-
-//	FS_CreatePath(handle->name);
+	//	FS_CreatePath(handle->name);
 	// include game path, but check for leading /
-	if (handle->name[0] == '/')
-		FS_CreatePath (va("%s%s", fs_savegamedir, handle->name));	// was fs_gamedir
+	if ( handle->name[ 0 ] == '/' )
+		FS_CreatePath( va( "%s%s", fs_savegamedir, handle->name ) );// was fs_gamedir
 	else
-		FS_CreatePath (va("%s/%s", fs_savegamedir, handle->name));	// was fs_gamedir
+		FS_CreatePath( va( "%s/%s", fs_savegamedir, handle->name ) );// was fs_gamedir
 
-	snprintf(path, sizeof(path), "%s/%s", fs_savegamedir, handle->name);	// was fs_gamedir
+	const std::string path = fs_savegamedir + std::string( "/" ) + handle->name;
 
-	handle->file = fopen(path, "ab");
-	if (handle->file)
+	handle->file = fopen( path.c_str(), "ab" );
+	if ( handle->file )
 	{
-	//	if (fs_debug->value)
-		if (fs_debug->integer)
-			Com_Printf("FS_FOpenFileAppend: %s\n", path);
+		//	if (fs_debug->value)
+		if ( fs_debug->integer )
+			Com_Printf( "FS_FOpenFileAppend: %s\n", path.c_str() );
 
-		return FS_FileLength(handle->file);
+		return FS_FileLength( handle->file );
 	}
 
-//	if (fs_debug->value)
-	if (fs_debug->integer)
-		Com_Printf("FS_FOpenFileAppend: couldn't open %s\n", path);
+	//	if (fs_debug->value)
+	if ( fs_debug->integer )
+		Com_Printf( "FS_FOpenFileAppend: couldn't open %s\n", path.c_str() );
 
 	return -1;
 }
@@ -520,31 +518,29 @@ FS_FOpenFileWrite
 Always returns 0 or -1 on error
 =================
 */
-int FS_FOpenFileWrite (fsHandle_t *handle)
+int FS_FOpenFileWrite( fsHandle_t *handle )
 {
-	char	path[MAX_OSPATH];
-
-//	FS_CreatePath(handle->name);
+	//	FS_CreatePath(handle->name);
 	// include game path, but check for leading /
-	if (handle->name[0] == '/')
-		FS_CreatePath (va("%s%s", fs_savegamedir, handle->name));	// was fs_gamedir
+	if ( handle->name[ 0 ] == '/' )
+		FS_CreatePath( va( "%s%s", fs_savegamedir, handle->name ) );// was fs_gamedir
 	else
-		FS_CreatePath (va("%s/%s", fs_savegamedir, handle->name));	// was fs_gamedir
+		FS_CreatePath( va( "%s/%s", fs_savegamedir, handle->name ) );// was fs_gamedir
 
-	snprintf(path, sizeof(path), "%s/%s", fs_savegamedir, handle->name);	// was fs_gamedir
+	const std::string path = fs_savegamedir + std::string( "/" ) + handle->name;
 
-	handle->file = fopen(path, "wb");
-	if (handle->file)
+	handle->file = fopen( path.c_str(), "wb" );
+	if ( handle->file )
 	{
-	//	if (fs_debug->value)
-		if (fs_debug->integer)
-			Com_Printf("FS_FOpenFileWrite: %s\n", path);
+		//	if (fs_debug->value)
+		if ( fs_debug->integer )
+			Com_Printf( "FS_FOpenFileWrite: %s\n", path.c_str() );
 		return 0;
 	}
 
-//	if (fs_debug->value)
-	if (fs_debug->integer)
-		Com_Printf("FS_FOpenFileWrite: couldn't open %s\n", path);
+	//	if (fs_debug->value)
+	if ( fs_debug->integer )
+		Com_Printf( "FS_FOpenFileWrite: couldn't open %s\n", path.c_str() );
 
 	return -1;
 }
@@ -561,27 +557,23 @@ and PK3).
 */
 int FS_FOpenFileRead (fsHandle_t *handle)
 {
-	fsSearchPath_t	*search;
-	fsPack_t		*pack;
-	char			path[MAX_OSPATH];
-	unsigned int	hash;
 	int				i;
-	unsigned int	typeFlag;
 
 	// Knightmare- hack global vars for autodownloads
-	file_from_protected_pak = 0;			// from Yamagi Q2
-	file_from_pak = 0;
-	file_from_pk3 = 0;
-	snprintf(last_pk3_name, sizeof(last_pk3_name), "\0");
-	hash = Com_HashFileName(handle->name, 0, false);
-	typeFlag = FS_TypeFlagForPakItem(handle->name);
+	file_from_protected_pak = 0;// from Yamagi Q2
+	file_from_pak           = 0;
+	file_from_pk3           = 0;
+	last_pk3_name[ 0 ]      = '\0';
+
+	unsigned int hash     = Com_HashFileName( handle->name, 0, false );
+	unsigned int typeFlag = FS_TypeFlagForPakItem( handle->name );
 
 	// Search through the path, one element at a time
-	for (search = fs_searchPaths; search; search = search->next)
+	for ( fsSearchPath_t *search = fs_searchPaths; search; search = search->next)
 	{
 		if (search->pack)
 		{	// Search inside a pack file
-			pack = search->pack;
+			fsPack_t *pack = search->pack;
 
 			// skip if pack doesn't contain this type of file
 			if ((typeFlag != 0)) {
@@ -630,7 +622,7 @@ int FS_FOpenFileRead (fsHandle_t *handle)
 					{	// PK3
 						file_from_pk3 = 1; // Knightmare added
 						file_from_protected_pak = pack->isProtectedPak ? 1 : 0;		// from Yamagi Q2
-						snprintf(last_pk3_name, sizeof(last_pk3_name), strrchr(pack->name, '/')+1); // Knightmare added
+						snprintf(last_pk3_name, sizeof(last_pk3_name), "%s", strrchr(pack->name, '/')+1); // Knightmare added
 						handle->zip = static_cast< unzFile * >( unzOpen( pack->name ) );
 						if (handle->zip)
 						{
@@ -651,20 +643,20 @@ int FS_FOpenFileRead (fsHandle_t *handle)
 			}
 		}
 		else
-		{	// Search in a directory tree
-			snprintf(path, sizeof(path), "%s/%s", search->path, handle->name);
+		{
+			const std::string path = search->path + std::string( "/" ) + handle->name;
 
-			handle->file = fopen(path, "rb");
-			if (handle->file)
-			{	// Found it!
-				Q_strncpyz(fs_fileInPath, sizeof(fs_fileInPath), search->path);
+			handle->file = fopen( path.c_str(), "rb" );
+			if ( handle->file )
+			{// Found it!
+				Q_strncpyz( fs_fileInPath, sizeof( fs_fileInPath ), search->path );
 				fs_fileInPack = false;
 
-			//	if (fs_debug->value)
-				if (fs_debug->integer)
-					Com_Printf("FS_FOpenFileRead: %s (found in %s)\n", handle->name, search->path);
+				//	if (fs_debug->value)
+				if ( fs_debug->integer )
+					Com_Printf( "FS_FOpenFileRead: %s (found in %s)\n", handle->name, search->path );
 
-				return FS_FileLength(handle->file);
+				return FS_FileLength( handle->file );
 			}
 		}
 	}
@@ -794,37 +786,36 @@ Opens files directly from inside a specified zip file,
 bypassing the pak/searchpath system, and looking only in the current gamedir.
 =================
 */
-int FS_FOpenCompressedFileWrite (fsHandle_t *handle, const char *zipName, const char *fileName, qboolean add)
+int FS_FOpenCompressedFileWrite( fsHandle_t *handle, const char *zipName, const char *fileName, qboolean add )
 {
-	char		path[MAX_OSPATH];
-	int			append;
+	int append;
 
-//	FS_CreatePath (va("%s", zipName));
+	//	FS_CreatePath (va("%s", zipName));
 	// include game path, but check for leading /
-	if (*zipName == '/')
-		FS_CreatePath (va("%s%s", fs_savegamedir, zipName));	// was fs_gamedir
+	if ( *zipName == '/' )
+		FS_CreatePath( va( "%s%s", fs_savegamedir, zipName ) );// was fs_gamedir
 	else
-		FS_CreatePath (va("%s/%s", fs_savegamedir, zipName));	// was fs_gamedir
+		FS_CreatePath( va( "%s/%s", fs_savegamedir, zipName ) );// was fs_gamedir
 
-	snprintf(path, sizeof(path), "%s/%s", fs_savegamedir, zipName);	// was fs_gamedir
+	const std::string path = fs_savegamedir + std::string( "/" ) + zipName;
 
-	append = add ? (FS_SaveFileExists (zipName) ? 2 : 0) : 0;	// was FS_LocalFileExists()
-	handle->writeZip = static_cast< zipFile * >( zipOpen( path, append ) );
-	if (handle->writeZip)
+	append           = add ? ( FS_SaveFileExists( zipName ) ? 2 : 0 ) : 0;// was FS_LocalFileExists()
+	handle->writeZip = static_cast< zipFile * >( zipOpen( path.c_str(), append ) );
+	if ( handle->writeZip )
 	{
-		if (zipOpenNewFileInZip(handle->writeZip, fileName, nullptr, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION) == ZIP_OK)
+		if ( zipOpenNewFileInZip( handle->writeZip, fileName, nullptr, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION ) == ZIP_OK )
 		{
-		//	if (fs_debug->value)
-			if (fs_debug->integer)
-				Com_Printf("FS_FOpenCompressedFileWrite: %s/%s\n", path, fileName);
+			//	if (fs_debug->value)
+			if ( fs_debug->integer )
+				Com_Printf( "FS_FOpenCompressedFileWrite: %s/%s\n", path.c_str(), fileName );
 			return 0;
 		}
-		zipClose(handle->writeZip, nullptr );
+		zipClose( handle->writeZip, nullptr );
 	}
 
-//	if (fs_debug->value)
-	if (fs_debug->integer)
-		Com_Printf("FS_FOpenCompressedFileWrite: couldn't open %s/%s\n", path, fileName);
+	//	if (fs_debug->value)
+	if ( fs_debug->integer )
+		Com_Printf( "FS_FOpenCompressedFileWrite: couldn't open %s/%s\n", path.c_str(), fileName );
 
 	return -1;
 }
@@ -841,7 +832,6 @@ bypassing the pak system.
 */
 int FS_FOpenCompressedFileRead (fsHandle_t *handle, const char *zipName, const char *fileName)
 {
-	char			path[MAX_OSPATH];
 	unz_file_info	info;
 
 	// Search through the path, one element at a time
@@ -849,8 +839,9 @@ int FS_FOpenCompressedFileRead (fsHandle_t *handle, const char *zipName, const c
 	{
 		if (!search->pack) // Search only in a directory tree
 		{
-			snprintf(path, sizeof(path), "%s/%s", search->path, zipName);
-			handle->zip = static_cast< unzFile * >( unzOpen( path ) );
+			const std::string path = search->path + std::string("/") + zipName;
+
+			handle->zip = static_cast< unzFile * >( unzOpen( path.c_str() ) );
 			if (handle->zip)
 			{
 				if (unzLocateFile(handle->zip, fileName, 2) == UNZ_OK)
@@ -2950,20 +2941,14 @@ void FS_Startup (void)
 FS_CopyConfigsToSavegameDir
 =================
 */
-void FS_CopyConfigsToSavegameDir (void)
+void FS_CopyConfigsToSavegameDir ()
 {
-	FILE	*kmq2ConfigFile;
-	char	cfgPattern[MAX_OSPATH];
-	char	*srcCfgPath;
-	char	dstCfgPath[MAX_OSPATH];
-	char	*cfgName;
-
 	// check if fs_savegamedir and fs_gamedir are the same, so we don't try to copy the files over each other
 	if (!Q_stricmp( FS_SaveGameDir(), fs_gamedir ) )
 		return;
 
 	// check if kmq2config.cfg exists in FS_SaveGameDir() so we can skip copying
-	kmq2ConfigFile = fopen(va("%s/kmq2config.cfg", FS_SaveGameDir()), "rb");
+	FILE *kmq2ConfigFile = fopen( va( "%s/kmq2config.cfg", FS_SaveGameDir() ), "rb" );
 	if (kmq2ConfigFile != nullptr )
 	{
 		fclose (kmq2ConfigFile);
@@ -2973,28 +2958,31 @@ void FS_CopyConfigsToSavegameDir (void)
 	// create savegamedir if it doesn't yet exist
 	FS_CreatePath (va("%s/", fs_savegamedir));
 
-	snprintf (cfgPattern, sizeof(cfgPattern), "%s/*.cfg", fs_gamedir);
-	for (srcCfgPath = Sys_FindFirst(cfgPattern, 0, SFF_SUBDIR|SFF_HIDDEN|SFF_SYSTEM);
-		srcCfgPath != nullptr;
-		srcCfgPath = Sys_FindNext (0, SFF_SUBDIR|SFF_HIDDEN|SFF_SYSTEM))
+	const std::string cfgPattern = fs_gamedir + std::string( "/*.cfg" );
+	for ( char *srcCfgPath = Sys_FindFirst( cfgPattern.c_str(), 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM );
+	      srcCfgPath != nullptr;
+	      srcCfgPath = Sys_FindNext( 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM ) )
 	{
-		cfgName = strrchr(srcCfgPath, '/');
-		if (cfgName == nullptr ) {
+		char  dstCfgPath[ MAX_OSPATH ];
+		char *cfgName = strrchr( srcCfgPath, '/' );
+		if ( cfgName == nullptr )
+		{
 			continue;
 		}
-		++cfgName;	// move to after the '/'
+		++cfgName;// move to after the '/'
 		// Don't copy default.cfg, autoexec.cfg, or configs written by other engines
 		// TODO: keep this up to date!
 		// config.cfg, aprconfig.cfg, bqconfig.cfg, eglcfg.cfg, maxconfig.cfg, q2config.cfg, q2b_config.cfg, q2econfig.cfg, xpconfig.cfg, yq2.cfg
-	/*	if ( (strstr(cfgName, "config.cfg") && (Q_stricmp(cfgName, "kmq2config.cfg") != 0)) ||
+		/*	if ( (strstr(cfgName, "config.cfg") && (Q_stricmp(cfgName, "kmq2config.cfg") != 0)) ||
 			!Q_stricmp(cfgName, "default.cfg") || !Q_stricmp(cfgName, "autoexec.cfg") ||
 			!Q_stricmp(cfgName, "eglcfg.cfg") || !Q_stricmp(cfgName, "yq2.cfg") ) { */
 		// Only copy kmq2config.cfg
-		if (Q_stricmp( cfgName, "kmq2config.cfg" ) != 0) {
+		if ( Q_stricmp( cfgName, "kmq2config.cfg" ) != 0 )
+		{
 			continue;
 		}
-		snprintf (dstCfgPath, sizeof(dstCfgPath), "%s/%s", FS_SaveGameDir(), cfgName);
-		FS_CopyFile (srcCfgPath, dstCfgPath);
+		snprintf( dstCfgPath, sizeof( dstCfgPath ), "%s/%s", FS_SaveGameDir(), cfgName );
+		FS_CopyFile( srcCfgPath, dstCfgPath );
 	}
 	Sys_FindClose();
 }
@@ -3748,27 +3736,15 @@ Executes default.cfg and kmq2config.cfg
 Encapsulated to avoid redundancy
 =================
 */
-void FS_ExecConfigs (qboolean unbind)
+void FS_ExecConfigs( qboolean unbind )
 {
-//	char	*cfgfile;
-
-	if (unbind) {
-		Cbuf_AddText ("unbindall\n");
-	}
-	Cbuf_AddText ("exec default.cfg\n");
-	Cbuf_AddText ("exec kmq2config.cfg\n");
-
-	// Look for kmq2config.cfg, if not there, try config.cfg
-	// Removed because some settings in existing config.cfgs may cause problems
-/*	FS_LoadFile ("kmq2config.cfg", (void **)&cfgfile);
-	if (cfgfile)
+	if ( unbind )
 	{
-		Cbuf_AddText ("exec kmq2config.cfg\n");
-		FS_FreeFile (cfgfile);
+		Cbuf_AddText( "unbindall\n" );
 	}
-	else
-		Cbuf_AddText ("exec config.cfg\n");
-*/
+
+	Cbuf_AddText( "exec default.cfg\n" );
+	Cbuf_AddText( "exec kmq2config.cfg\n" );
 }
 
 
@@ -3898,50 +3874,46 @@ qboolean FS_ItemInList (const char *check, int num, const char **list)
 FS_Dir_f
 ================
 */
-void FS_Dir_f (void)
+void FS_Dir_f()
 {
-	char	*path = nullptr;
-	char	findname[1024];
-	char	wildcard[1024] = "*.*";
-	char	**dirnames;
-	int		ndirs;
+	const char *path             = nullptr;
+	char        wildcard[ 1024 ] = "*.*";
+	char      **dirnames;
+	int         ndirs;
 
 	if ( Cmd_Argc() != 1 )
 	{
-	//	strncpy(wildcard, Cmd_Argv(1));
-		Q_strncpyz (wildcard, sizeof(wildcard), Cmd_Argv(1));
+		//	strncpy(wildcard, Cmd_Argv(1));
+		Q_strncpyz( wildcard, sizeof( wildcard ), Cmd_Argv( 1 ) );
 	}
 
 	while ( ( path = FS_NextPath( path ) ) != nullptr )
 	{
-		char *tmp = findname;
-
-		snprintf( findname, sizeof(findname), "%s/%s", path, wildcard );
-
+		std::string findname = path + std::string( "/" ) + wildcard;
+		char       *tmp      = findname.data();
 		while ( *tmp != 0 )
 		{
 			if ( *tmp == '\\' )
 				*tmp = '/';
 			tmp++;
 		}
+
 		Com_Printf( "Directory of %s\n", findname );
 		Com_Printf( "----\n" );
 
-		if ( ( dirnames = FS_ListFiles( findname, &ndirs, 0, 0 ) ) != nullptr )
+		if ( ( dirnames = FS_ListFiles( findname.c_str(), &ndirs, 0, 0 ) ) != nullptr )
 		{
-			int i;
-
-			for ( i = 0; i < ndirs-1; i++ )
+			for ( int i = 0; i < ndirs - 1; i++ )
 			{
-				if ( strrchr( dirnames[i], '/' ) )
-					Com_Printf( "%s\n", strrchr( dirnames[i], '/' ) + 1 );
+				if ( strrchr( dirnames[ i ], '/' ) )
+					Com_Printf( "%s\n", strrchr( dirnames[ i ], '/' ) + 1 );
 				else
-					Com_Printf( "%s\n", dirnames[i] );
+					Com_Printf( "%s\n", dirnames[ i ] );
 
-				free( dirnames[i] );
+				free( dirnames[ i ] );
 			}
 			free( dirnames );
 		}
 		Com_Printf( "\n" );
-	};
+	}
 }

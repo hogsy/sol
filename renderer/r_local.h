@@ -812,7 +812,7 @@ char	*va(char *format, ...);
 void	R_RefreshFont (fontslot_t font);
 void	R_RefreshAllFonts (void);
 void	R_DrawInitLocal (void);
-void	R_DrawGetPicSize (int *w, int *h, char *name);
+void	R_DrawGetPicSize (int *w, int *h, const char *name);
 float	R_CharMapScale (void);
 void	R_InitChars (void);
 void	R_FlushChars (fontslot_t font);
@@ -820,9 +820,9 @@ void	R_DrawChar (float x, float y, int num, fontslot_t font, float scale,
 			int red, int green, int blue, int alpha, qboolean italic, qboolean last);
 void	R_DrawString (float x, float y, const char *string, fontslot_t font, float scale, 
 				int red, int green, int blue, int alpha, qboolean italic, qboolean shadow);
-image_t	*R_DrawFindPic (char *name);
-void	R_DrawGetPicSize (int *w, int *h, char *pic);
-void	R_DrawPic (drawStruct_t *ds);
+image_t	*R_DrawFindPic ( const char *name );
+void	R_DrawGetPicSize (int *w, int *h, const char *pic);
+void	R_DrawPic ( const drawStruct_t *ds);
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
 void	R_DrawFadeScreen (void);
 void	R_DrawCameraEffect (void);

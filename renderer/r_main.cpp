@@ -981,7 +981,7 @@ void R_Register (void)
 	Cvar_SetDescription ( "gl_driver", "Sets driver for OpenGL.  This should stay as \"opengl32\"." );
 	gl_allow_software = Cvar_Get( "gl_allow_software", "0", 0 );
 	Cvar_SetDescription ( "gl_allow_software", "Whether to allow software implementations of OpenGL." );
-	r_clear = Cvar_Get ( "r_clear", "0", 0 );
+	r_clear = Cvar_Get ( "r_clear", "1", 0 );
 	Cvar_SetDescription ( "r_clear", "Enables clearing of the screen to prevent HOM effects." );
 
 	r_lefthand = Cvar_Get( "hand", "0", CVAR_USERINFO | CVAR_ARCHIVE );

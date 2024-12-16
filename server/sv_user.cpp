@@ -579,7 +579,7 @@ void SV_ShowServerinfo_f (void)
 		p++;
 	}
 
-	SV_ClientPrintf (sv_client, PRINT_HIGH, "%s\n", s);
+	SV_ClientPrintf ( sv_client, PRINT_HIGH, "%s\n", s );
 	// end r1ch fix
 }
 

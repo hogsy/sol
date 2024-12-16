@@ -304,11 +304,11 @@ void SCR_ScaleCoords (float *x, float *y, float *w, float *h, scralign_t align)
 		break;
 	case ALIGN_LETTERBOX:
 		// special case: video mode (eyefinity?) is wider than object
-		if ( w != NULL && h != NULL && ((float)viddef.width / (float)viddef.height > *w / *h) )
+		if ( w != nullptr && h != nullptr && ((float)viddef.width / (float)viddef.height > *w / *h) )
 		{
 			tmp_h = *h;
 			vertscale = viddef.height / tmp_h;
-			if (x != NULL && w != NULL) {
+			if (x != nullptr && w != nullptr ) {
 				tmp_x = *x;
 				tmp_w = *w;
 				*x = tmp_x * lb_xscale - (0.5 * (tmp_w * vertscale - tmp_w * lb_xscale));
@@ -324,7 +324,7 @@ void SCR_ScaleCoords (float *x, float *y, float *w, float *h, scralign_t align)
 		{
 			if (x)
 				*x *= xscale;
-			if (y != NULL && h != NULL)  {
+			if (y != nullptr && h != nullptr )  {
 				tmp_y = *y;
 				tmp_h = *h;
 				*y = tmp_y * yscale - (0.5 * (tmp_h * xscale - tmp_h * yscale));
@@ -656,7 +656,7 @@ void SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offs
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
-	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	SCR_ScaleCoords ( nullptr, nullptr, &scaledOffset[0], &scaledOffset[1], align);
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
@@ -676,7 +676,7 @@ SCR_DrawOffsetPicST
 Coordinates are 640*480 virtual values
 =================
 */
-void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, char *pic)
+void SCR_DrawOffsetPicST (float x, float y, float width, float height, const vec2_t offset, const vec4_t texCorners, scralign_t align, qboolean roundOut, const color_t color, char *pic)
 {
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
@@ -684,7 +684,7 @@ void SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t of
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
-	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	SCR_ScaleCoords ( nullptr, nullptr, &scaledOffset[0], &scaledOffset[1], align);
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
@@ -714,7 +714,7 @@ void SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offs
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
-	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	SCR_ScaleCoords ( nullptr, nullptr, &scaledOffset[0], &scaledOffset[1], align);
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
@@ -745,7 +745,7 @@ void SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offs
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
-	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	SCR_ScaleCoords ( nullptr, nullptr, &scaledOffset[0], &scaledOffset[1], align);
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
@@ -774,11 +774,11 @@ void SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset
 	vec4_t			outColor;
 	vec2_t			scaledOffset;
 	drawStruct_t	ds = { 0 };
-	qboolean		useMask = ( (maskPic != NULL) && (strlen(maskPic) > 0) );
+	qboolean		useMask = ( (maskPic != nullptr ) && (strlen(maskPic) > 0) );
 
 	Vector2Copy (offset, scaledOffset);
 	SCR_ScaleCoords (&x, &y, &width, &height, align);
-	SCR_ScaleCoords (NULL, NULL, &scaledOffset[0], &scaledOffset[1], align);
+	SCR_ScaleCoords ( nullptr, nullptr, &scaledOffset[0], &scaledOffset[1], align);
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (roundOut) {
 		x = floor(x);	y = floor(y);	width = ceil(width);	height = ceil(height);
@@ -811,7 +811,7 @@ void SCR_DrawPicUnscaled (int x, int y, int width, int height, vec2_t offset, ve
 {
 	vec4_t			outColor;
 	drawStruct_t	ds = { 0 };
-	qboolean		useMask = ( (maskPic != NULL) && (strlen(maskPic) > 0) );
+	qboolean		useMask = ( (maskPic != nullptr ) && (strlen(maskPic) > 0) );
 
 	Vector4Set (outColor, (float)color[0]*DIV255, (float)color[1]*DIV255, (float)color[2]*DIV255, (float)color[3]*DIV255);
 	if (additive) {
@@ -868,7 +868,7 @@ void SCR_DrawChar (float x, float y, scralign_t align, int num, fontslot_t font,
 {
 	float	scale = SCR_GetScreenScale();
 
-	SCR_ScaleCoords (&x, &y, NULL, NULL, align);
+	SCR_ScaleCoords (&x, &y, nullptr, nullptr, align);
 	R_DrawChar(x, y, num, font, scale, red, green, blue, alpha, italic, last);
 }
 
@@ -883,7 +883,7 @@ void SCR_DrawSizedChar (float x, float y, int size, scralign_t align, int num, f
 {
 	float	scale = SCR_ScaledScreen((float)size / (float)MENU_FONT_SIZE);	// SCR_GetScreenScale()
 
-	SCR_ScaleCoords (&x, &y, NULL, NULL, align);
+	SCR_ScaleCoords (&x, &y, nullptr, nullptr, align);
 	R_DrawChar (x, y, num, font, scale, red, green, blue, alpha, italic, last);
 }
 
@@ -896,7 +896,7 @@ Coordinates are 640*480 virtual values
 */
 void SCR_DrawString (float x, float y, int size, scralign_t align, const char *string, fontslot_t font, int alpha)
 {
-	SCR_ScaleCoords (&x, &y, NULL, NULL, align);
+	SCR_ScaleCoords (&x, &y, nullptr, nullptr, align);
 	CL_DrawStringGeneric (x, y, string, font, alpha, size, SCALETYPE_MENU, false);
 }
 
@@ -970,7 +970,7 @@ static void SCR_ShowFPS (void)
 
 	// leave space for 3-digit frag counter
 	scrLeft = SCREEN_WIDTH;
-	SCR_ScaleCoords (&scrLeft, NULL, NULL, NULL, ALIGN_STRETCH);
+	SCR_ScaleCoords (&scrLeft, nullptr, nullptr, nullptr, ALIGN_STRETCH);
 	fragsSize = SCR_GetHudScale() * 3 * (HUD_CHAR_WIDTH+2);
 //	x = (viddef.width - stringLen(fpsText)*MENU_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
 	x = (scrLeft - stringLen(fpsText)*MENU_FONT_SIZE*SCR_GetScreenScale() - max(fragsSize, SCR_ScaledScreen(68)));
@@ -1064,7 +1064,7 @@ void SCR_DrawDebugGraph (void)
 
 	scrLeft = 0;
 	scrWidth = SCREEN_WIDTH;
-	SCR_ScaleCoords (&scrLeft, NULL, &scrWidth, NULL, ALIGN_STRETCH);
+	SCR_ScaleCoords (&scrLeft, nullptr, &scrWidth, nullptr, ALIGN_STRETCH);
 	scrRight = scrLeft + scrWidth;
 
 	if (scr_netgraph_pos->integer == 0) // bottom right
@@ -2019,7 +2019,7 @@ void SCR_DrawLoading (void)
 		mapfile[strlen(mapfile)-4] = 0;		// cut off ".bsp"
 
 		// show saveshot here
-		if (scr_load_saveshot && (strlen(scr_load_saveshot) > 8) && R_DrawFindPic(scr_load_saveshot))
+		if (scr_load_saveshot && (strlen(scr_load_saveshot) > 8) && R_DrawFindPic( scr_load_saveshot ) )
 		{
 			float	screenAspect = (float)viddef.width / (float)viddef.height;
 
@@ -2031,7 +2031,7 @@ void SCR_DrawLoading (void)
 			haveMapPic = true;
 		}
 		// else try levelshot
-		else if (/*widescreen &&*/ R_DrawFindPic(va("/levelshots/%s_widescreen.pcx", mapfile)))
+		else if (/*widescreen &&*/ R_DrawFindPic( va( "/levelshots/%s_widescreen.pcx", mapfile ) ) )
 		{
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 		//	SCR_DrawPic (-64, 0, SCREEN_WIDTH+128, SCREEN_HEIGHT, ALIGN_CENTER, false, va("/levelshots/%s_widescreen.pcx", mapfile), 1.0);
@@ -2041,14 +2041,14 @@ void SCR_DrawLoading (void)
 			SCR_DrawPic (picX, 0, picW, SCREEN_HEIGHT, ALIGN_CENTER, false, picName, 1.0);
 			haveMapPic = true;
 		}
-		else if (R_DrawFindPic(va("/levelshots/%s.pcx", mapfile))) {
+		else if (R_DrawFindPic( va( "/levelshots/%s.pcx", mapfile ) ) ) {
 			// Draw at 4:3 aspect, don't stretch to 16:9 or wider
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 			SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, false, va("/levelshots/%s.pcx", mapfile), 1.0); // was ALIGN_STRETCH
 			haveMapPic = true;
 		}
 		// else fall back on loadscreen
-		else if (R_DrawFindPic(LOADSCREEN_NAME)) {
+		else if (R_DrawFindPic( LOADSCREEN_NAME ) ) {
 			SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 		//	SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, false, LOADSCREEN_NAME, 1.0);
 			SCR_GetPicPosWidth (LOADSCREEN_NAME, &picX, &picW);
@@ -2060,7 +2060,7 @@ void SCR_DrawLoading (void)
 
 		isMap = true;
 	}
-	else if (R_DrawFindPic(LOADSCREEN_NAME)) {
+	else if (R_DrawFindPic( LOADSCREEN_NAME ) ) {
 		SCR_DrawFill (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_STRETCH_ALL, false, 0, 0, 0, 255);
 	//	SCR_DrawPic (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, ALIGN_CENTER, false, LOADSCREEN_NAME, 1.0);
 		SCR_GetPicPosWidth (LOADSCREEN_NAME, &picX, &picW);
@@ -2371,7 +2371,7 @@ SCR_EndLoadingPlaque
 void SCR_EndLoadingPlaque (void)
 {
 	// make loading saveshot null here
-	scr_load_saveshot = NULL;
+	scr_load_saveshot = nullptr;
 	cls.disable_screen = 0;
 	scr_draw_loading = 0; // Knightmare added
 	Con_ClearNotify ();

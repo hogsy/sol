@@ -31,7 +31,7 @@ SV_FindIndex
 
 ================
 */
-int SV_FindIndex (char *name, int start, int max, qboolean create)
+static int SV_FindIndex (const char *name, int start, int max, qboolean create)
 {
 	int		i;
 	
@@ -76,17 +76,17 @@ int SV_FindIndex (char *name, int start, int max, qboolean create)
 }
 
 
-int SV_ModelIndex (char *name)
+int SV_ModelIndex ( const char *name )
 {
 	return SV_FindIndex (name, CS_MODELS, MAX_MODELS, true);
 }
 
-int SV_SoundIndex (char *name)
+int SV_SoundIndex ( const char *name )
 {
 	return SV_FindIndex (name, CS_SOUNDS, MAX_SOUNDS, true);
 }
 
-int SV_ImageIndex (char *name)
+int SV_ImageIndex ( const char *name )
 {
 	return SV_FindIndex (name, CS_IMAGES, MAX_IMAGES, true);
 }
@@ -101,31 +101,29 @@ to the clients -- only the fields that differ from the
 baseline will be transmitted
 ================
 */
-void SV_CreateBaseline (void)
+static void SV_CreateBaseline()
 {
-	edict_t			*svent;
-	int				entnum;	
-
-	for (entnum = 1; entnum < ge->num_edicts ; entnum++)
+	for ( auto &svent : g_edicts )
 	{
-		svent = EDICT_NUM(entnum);
-		if (!svent->inuse)
+		if ( !svent->inuse )
 			continue;
-		if (!svent->s.modelindex && !svent->s.sound && !svent->s.effects)
+		if ( !svent->s.modelindex && !svent->s.sound && !svent->s.effects )
 			continue;
-		svent->s.number = entnum;
+
+		const int entnum = NUM_FOR_EDICT( svent.get() );
+		svent->s.number  = entnum;
 
 		//
 		// take current state as baseline
 		//
-		VectorCopy (svent->s.origin, svent->s.old_origin);
-	//	sv.baselines[entnum] = svent->s;
+		VectorCopy( svent->s.origin, svent->s.old_origin );
+		//	sv.baselines[entnum] = svent->s;
 		// Knightmare- do manual copy instead of implicit memcpy
-		memset (&sv.baselines[entnum], 0, sizeof(centity_state_t));
-		memcpy (&sv.baselines[entnum], &svent->s, sizeof(entity_state_t));
+		memset( &sv.baselines[ entnum ], 0, sizeof( centity_state_t ) );
+		memcpy( &sv.baselines[ entnum ], &svent->s, sizeof( entity_state_t ) );
 
 		// set centity_state_t added fields- bbox, Q3 model player frames, etc
-		SV_SetEntStateAddedFields (svent, &sv.baselines[entnum]);
+		SV_SetEntStateAddedFields( svent.get(), &sv.baselines[ entnum ] );
 		// end Knightmare
 	}
 }
@@ -296,7 +294,7 @@ void SV_SpawnServer (char *server, char *spawnpoint, server_state_t serverstate,
 	{
 		snprintf (sv.configstrings[CS_MODELS+1+i], sizeof(sv.configstrings[CS_MODELS+1+i]),
 			"*%i", i);
-		sv.models[i+1] = CM_InlineModel (sv.configstrings[CS_MODELS+1+i]);
+		sv.models[i+1] = CM_InlineModel ( sv.configstrings[ CS_MODELS + 1 + i ] );
 	}
 
 	//
@@ -338,7 +336,7 @@ SV_InitGame
 A brand new game has been started
 ==============
 */
-void PF_Configstring (int index, char *val);
+void PF_Configstring ( int index, const char *val );
 
 void SV_InitGame (void)
 {
@@ -415,11 +413,11 @@ void SV_InitGame (void)
 
 	// init game
 	SV_InitGameProgs ();
-//	for (i = 0; i < maxclients->value; i++)
+
 	for ( int i = 0; i < maxclients->integer; i++ )
 	{
-		edict_t *ent           = EDICT_NUM( i + 1 );
-		ent->s.number          = i + 1;
+		edict_t *ent           = g_edicts.emplace_back( new edict_t ).get();
+		ent->s.number          = g_edicts.size();
 		svs.clients[ i ].edict = ent;
 		memset( &svs.clients[ i ].lastcmd, 0, sizeof( svs.clients[ i ].lastcmd ) );
 	}

@@ -136,7 +136,7 @@ SV_ClearWorld
 
 ===============
 */
-void SV_ClearWorld (void)
+void SV_ClearWorld()
 {
 	memset (sv_areanodes, 0, sizeof(sv_areanodes));
 	sv_numareanodes = 0;
@@ -154,8 +154,10 @@ void SV_UnlinkEdict (edict_t *ent)
 {
 	if (!ent->area.prev)
 		return;		// not linked in anywhere
+
 	RemoveLink (&ent->area);
-	ent->area.prev = ent->area.next = NULL;
+
+	ent->area.prev = ent->area.next = nullptr;
 }
 
 
@@ -168,19 +170,16 @@ SV_LinkEdict
 #define MAX_TOTAL_ENT_LEAFS		128
 void SV_LinkEdict (edict_t *ent)
 {
-	areanode_t	*node;
 	int			leafs[MAX_TOTAL_ENT_LEAFS];
 	int			clusters[MAX_TOTAL_ENT_LEAFS];
-	int			num_leafs;
 	int			i, j;
-	int			area;
 	int			topnode;
 
 	if (ent->area.prev)
 		SV_UnlinkEdict (ent);	// unlink from old position
-		
-	if (ent == ge->edicts)
-		return;		// don't add the world
+
+	if ( ent == g_edicts[ 0 ].get() )
+		return;// don't add the world
 
 	if (!ent->inuse)
 		return;
@@ -203,17 +202,16 @@ void SV_LinkEdict (edict_t *ent)
 	if (ent->solid == SOLID_BSP && 
 	(ent->s.angles[0] || ent->s.angles[1] || ent->s.angles[2]) )
 	{	// expand for rotation
-		float		max, v;
 		int			i;
 
-		max = 0;
+		float max = 0;
 		for (i=0 ; i<3 ; i++)
 		{
-			v =fabs( ent->mins[i]);
-			if (v > max)
+			float v = std::fabs( ent->mins[ i ] );
+			if ( v > max )
 				max = v;
-			v =fabs( ent->maxs[i]);
-			if (v > max)
+			v = std::fabs( ent->maxs[ i ] );
+			if ( v > max )
 				max = v;
 		}
 		for (i=0 ; i<3 ; i++)
@@ -243,14 +241,14 @@ void SV_LinkEdict (edict_t *ent)
 	ent->areanum2 = 0;
 
 	//get all leafs, including solids
-	num_leafs = CM_BoxLeafnums (ent->absmin, ent->absmax,
-		leafs, MAX_TOTAL_ENT_LEAFS, &topnode);
+	int num_leafs = CM_BoxLeafnums( ent->absmin, ent->absmax,
+	                                leafs, MAX_TOTAL_ENT_LEAFS, &topnode );
 
 	// set areas
 	for (i=0 ; i<num_leafs ; i++)
 	{
 		clusters[i] = CM_LeafCluster (leafs[i]);
-		area = CM_LeafArea (leafs[i]);
+		int area    = CM_LeafArea( leafs[ i ] );
 		if (area)
 		{	// doors may legally straggle two areas,
 			// but nothing should evern need more than that
@@ -306,8 +304,8 @@ void SV_LinkEdict (edict_t *ent)
 		return;
 
 // find the first node that the ent's box crosses
-	node = sv_areanodes;
-	while (1)
+	areanode_t *node = sv_areanodes;
+	while (true)
 	{
 		if (node->axis == -1)
 			break;
@@ -336,11 +334,7 @@ SV_AreaEdicts_r
 */
 void SV_AreaEdicts_r (areanode_t *node)
 {
-	link_t		*l, *next, *start;
-	edict_t		*check;
-	int			count;
-
-	count = 0;
+	link_t *next, *start;
 
 	// touch linked edicts
 	if (area_type == AREA_SOLID)
@@ -349,10 +343,10 @@ void SV_AreaEdicts_r (areanode_t *node)
 		start = &node->trigger_edicts;
 
 //	for (l=start->next  ; l != start ; l = next)
-	for (l = start->next; l && (l != start); l = next)	// Knightmare- catch null 'l' pointer
+	for ( link_t *l = start->next; l && (l != start); l = next)	// Knightmare- catch null 'l' pointer
 	{
 		next = l->next;
-		check = EDICT_FROM_AREA(l);
+		edict_t *check = EDICT_FROM_AREA( l );
 
 		if (check->solid == SOLID_NOT)
 			continue;		// deactivated
@@ -412,32 +406,24 @@ int SV_AreaEdicts (vec3_t mins, vec3_t maxs, edict_t **list,
 SV_PointContents
 =============
 */
-int SV_PointContents (vec3_t p)
+int SV_PointContents( vec3_t p )
 {
-	static edict_t	*touch[MAX_EDICTS];	// Knightmare- made static due to stack size
-	edict_t			*hit;
-	int				i, num;
-	int				contents, c2;
-	int				headnode;
-	float			*angles;
+	static edict_t *touch[ MAX_EDICTS ];// Knightmare- made static due to stack size
+	int             c2;
 
 	// get base contents from world
-	contents = CM_PointContents (p, sv.models[1]->headnode);
+	int contents = CM_PointContents( p, sv.models[ 1 ]->headnode );
 
 	// or in contents from all the other entities
-	num = SV_AreaEdicts (p, p, touch, MAX_EDICTS, AREA_SOLID);
+	int num = SV_AreaEdicts( p, p, touch, MAX_EDICTS, AREA_SOLID );
 
-	for (i=0 ; i<num ; i++)
+	for ( int i = 0; i < num; i++ )
 	{
-		hit = touch[i];
+		edict_t *hit = touch[ i ];
 
 		// might intersect, so do an exact clip
-		headnode = SV_HullForEntity (hit);
-		angles = hit->s.angles;
-		if (hit->solid != SOLID_BSP)
-			angles = vec3_origin;	// boxes don't rotate
-
-		c2 = CM_TransformedPointContents (p, headnode, hit->s.origin, hit->s.angles);
+		const int headnode = SV_HullForEntity( hit );
+		c2                 = CM_TransformedPointContents( p, headnode, hit->s.origin, hit->s.angles );
 
 		contents |= c2;
 	}
@@ -619,7 +605,7 @@ trace_t SV_Trace (vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, edict_t *p
 
 	// clip to world
 	clip.trace = CM_BoxTrace (start, end, mins, maxs, 0, contentmask);
-	clip.trace.ent = ge->edicts;
+	clip.trace.ent = g_edicts[ 0 ].get();
 	if (clip.trace.fraction == 0)
 		return clip.trace;		// blocked by the world
 

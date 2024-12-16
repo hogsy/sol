@@ -128,10 +128,10 @@ parses /etc/os-release
 */
 static qboolean Sys_DetectOS (char *osString, int osStringSize)
 {
-	char		*line = NULL, *equalsTok = NULL;
+	char		*line = nullptr, *equalsTok = nullptr;
 	char		osNameBuf[128] = {0}, osVersionBuf[128] = {0};
 	char		osName[64] = {0}, osVersion[64] = {0};
-	FILE		*osFile = NULL;
+	FILE		*osFile = nullptr;
 	size_t		lineSize = 128, bufLen, stringLen;
 
 	if ( !osString || (osStringSize <= 0) )
@@ -143,7 +143,7 @@ static qboolean Sys_DetectOS (char *osString, int osStringSize)
 		return false;
 	}
 
-	line = malloc (sizeof(char) * lineSize);
+	line = static_cast< char * >( malloc( sizeof( char ) * lineSize ) );
 	while ( getdelim(&line, &lineSize, '\n', osFile) != -1 )
 	{
 		if ( !Q_strncasecmp( line, "NAME=", 5 ) ) {
@@ -164,7 +164,7 @@ static qboolean Sys_DetectOS (char *osString, int osStringSize)
 
 	// parse OS name
 	equalsTok = strstr(osNameBuf, "=");
-	if (equalsTok != NULL) {
+	if (equalsTok != nullptr ) {
 		Q_strncpyz (osString, osStringSize, equalsTok + 2);
 		stringLen = strlen(osString);
 		if (osString[stringLen-1] == '\"')
@@ -177,7 +177,7 @@ static qboolean Sys_DetectOS (char *osString, int osStringSize)
 
 	// parse OS version
 	equalsTok = strstr(osVersionBuf, "=");
-	if (equalsTok != NULL) {
+	if (equalsTok != nullptr ) {
 		Q_strncatz (osString, osStringSize, va(" %s", equalsTok + 2));
 		stringLen = strlen(osString);
 		if (osString[stringLen-1] == '\"')
@@ -195,9 +195,9 @@ parses /proc/cpuinfo
 */
 static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 {
-	char		*line = NULL, *colonTok = NULL;
+	char		*line = nullptr, *colonTok = nullptr;
 	char		mdlNameBuf[128] = {0}, mhzBuf[128] = {0}, flagsBuf[2048] = {0};
-	FILE		*cpuFile = NULL;
+	FILE		*cpuFile = nullptr;
 	size_t		lineSize = 1024, bufLen;
 	int			numLogicalProcessors =  0;
 	float		speed = 0.0f, speedTmp;
@@ -212,7 +212,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 		return false;
 	}
 
-	line = malloc (sizeof(char) * lineSize);
+	line = static_cast< char * >( malloc( sizeof( char ) * lineSize ) );
 	while ( getdelim(&line, &lineSize, '\n', cpuFile) != -1 )
 	{
 		if ( !Q_strncasecmp( line, "model name", 10 ) ) {
@@ -239,7 +239,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 		// parse CPU speed for each logical processor
 		// this prevents reporting the speed of an idle core
 		colonTok = strstr(mhzBuf, ": ");
-		if (colonTok != NULL) {
+		if (colonTok != nullptr ) {
 			speedTmp = atof(colonTok + 2);
 			if (speedTmp > speed)
 				speed = speedTmp;
@@ -250,7 +250,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 
 	// parse CPU name
 	colonTok = strstr(mdlNameBuf, ": ");
-	if (colonTok != NULL) {
+	if (colonTok != nullptr ) {
 		Q_strncpyz (cpuString, cpuStringSize, colonTok + 2);
 	}
 	else {	// no model name
@@ -273,7 +273,7 @@ static qboolean Sys_DetectCPU (char *cpuString, int cpuStringSize)
 
 	// Get extended instruction sets supported
 	colonTok = strstr(flagsBuf, ": ");
-	if (colonTok != NULL)
+	if (colonTok != nullptr )
 	{
 		hasMMX = Q_StrScanToken(colonTok, "mmx", false);
 		hasMMXExt = Q_StrScanToken(colonTok, "mmxext", false);
@@ -330,9 +330,9 @@ parses /proc/meminfo
 */
 static qboolean Sys_DetectRAM (char *memString, int memStringSize, char *memStringAcc, int memStringAccSize)
 {
-	char			*line = NULL;
+	char			*line = nullptr;
 	char			memTotalBuf[64] = {0};
-	FILE			*memFile = NULL;
+	FILE			*memFile = nullptr;
 	size_t			lineSize = 128, bufLen;
 	unsigned int	memTotal_kb, memTotal_mb, memTotalAcc_mb;
 
@@ -345,7 +345,7 @@ static qboolean Sys_DetectRAM (char *memString, int memStringSize, char *memStri
 		return false;
 	}
 
-	line = malloc (sizeof(char) * lineSize);
+	line = static_cast< char * >( malloc( sizeof( char ) * lineSize ) );
 	while ( getdelim(&line, &lineSize, '\n', memFile) != -1 )
 	{
 		if ( !Q_strncasecmp( line, "MemTotal:", 9 ) ) {
@@ -488,26 +488,26 @@ char *Sys_ConsoleInput(void)
 	struct	timeval timeout;
 
 	if (!dedicated || !dedicated->value)
-		return NULL;
+		return nullptr;
 
 	if (!stdin_active)
-		return NULL;
+		return nullptr;
 
 	FD_ZERO(&fdset);
 	FD_SET(0, &fdset); // stdin
 	timeout.tv_sec = 0;
 	timeout.tv_usec = 0;
-	if (select (1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET(0, &fdset))
-		return NULL;
+	if (select (1, &fdset, nullptr, nullptr, &timeout) == -1 || !FD_ISSET(0, &fdset))
+		return nullptr;
 
 	len = read (0, text, sizeof(text));
 	if (len == 0) { // eof!
 		stdin_active = false;
-		return NULL;
+		return nullptr;
 	}
 
 	if (len < 1)
-		return NULL;
+		return nullptr;
 	text[len-1] = 0;	// rip off the /n and terminate
 
 	return text;
@@ -531,7 +531,7 @@ void *Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **lib
 {
 	void	*hLibrary, *funcPtr;
 
-	*libHandle = NULL;
+	*libHandle = nullptr;
 
 #ifdef USE_SANITIZER
 	hLibrary = dlopen (libPath, RTLD_LAZY | RTLD_NODELETE);
@@ -541,21 +541,21 @@ void *Sys_LoadLibrary (const char *libPath, const char *initFuncName, void **lib
 
 	if ( !hLibrary ) {
 		Com_DPrintf("Sys_LoadLibrary: failure on %s, dlopen returned %s\n", libPath, dlerror());
-		return NULL;
+		return nullptr;
 	}
 
-	if (initFuncName != NULL)
+	if (initFuncName != nullptr )
 	{
 		funcPtr = dlsym (hLibrary, initFuncName);
 
 		if ( !funcPtr ) {
 			Com_DPrintf("Sys_LoadLibrary: failure in %s on %s, dlclose returned %s\n", libPath, initFuncName, dlerror());
 			dlclose (hLibrary);
-			return NULL;
+			return nullptr;
 		}
 	}
 	else {
-		funcPtr = NULL;
+		funcPtr = nullptr;
 	}
 
 	*libHandle = hLibrary;
@@ -591,7 +591,7 @@ From Yamagi Q2
 */
 void *Sys_GetProcAddress (void *libHandle, const char *initFuncName)
 {
-	if (libHandle == NULL)
+	if (libHandle == nullptr )
 	{
 #ifdef RTLD_DEFAULT
 		return dlsym(RTLD_DEFAULT, initFuncName);
@@ -617,15 +617,15 @@ static void *game_library;
 Sys_UnloadGame
 =================
 */
-void Sys_UnloadGame (void)
+void Sys_UnloadGame ()
 {
 	if (game_library) 
 		SDL_UnloadObject (game_library);
 
-	game_library = NULL;
+	game_library = nullptr;
 }
 
-extern struct game_export_t *GetGameAPI( struct game_import_t *import );
+extern struct game_export_t *GetGameAPI( const struct game_import_t *import );
 
 /*
 =================
@@ -642,17 +642,17 @@ void *Sys_GetGameAPI( void *parms )
 	if ( game_library )
 		Com_Error( ERR_FATAL, "Sys_GetGameAPI without Sys_UnloadingGame" );
 
-	return GetGameAPI( parms );
+	return GetGameAPI( static_cast< game_import_t * >( parms ) );
 }
 
 /*****************************************************************************/
 
-void Sys_AppActivate (void)
+void Sys_AppActivate ()
 {
 }
 
-void HandleEvents(void);
-void Sys_SendKeyEvents (void)
+void HandleEvents();
+void Sys_SendKeyEvents ()
 {
 #ifndef DEDICATED_ONLY
 	HandleEvents();
@@ -685,9 +685,9 @@ void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibr
 	char		folderPath[MAX_OSPATH];
 	size_t		readLen;
 	size_t		fileSize;
-	char		*fileContents = NULL;
-	char		*gameInstallPath = NULL;
-	FILE		*libraryFoldersFile = NULL;
+	char		*fileContents = nullptr;
+	char		*gameInstallPath = nullptr;
+	FILE		*libraryFoldersFile = nullptr;
 
 	if ( !path || (pathSize < 1) || !steamLibraryPath || (steamLibraryPath[0] == 0) || !steamAppID || (steamAppID[0] == 0) )
 		return;
@@ -714,11 +714,11 @@ void Sys_GetSteamInstallPath (char *path, size_t pathSize, const char *steamLibr
 	fileSize = ftell(libraryFoldersFile);
 	fseek (libraryFoldersFile, 0L, SEEK_SET);
 
-	fileContents = Z_Malloc(fileSize + 1);
+	fileContents = static_cast< char * >( Z_Malloc( fileSize + 1 ) );
 
 	readLen = fread (fileContents, 1, fileSize, libraryFoldersFile);
 	fclose (libraryFoldersFile);
-	libraryFoldersFile = NULL;
+	libraryFoldersFile = nullptr;
 
 	if (readLen != fileSize) {
 		Com_Printf ("Error %lu reading libraryfolders.vdf\n", errno);
@@ -846,7 +846,7 @@ const char* Sys_DownloadDir (void)
 void Init_ExeDir (const char* argv0)
 {
 	char *basedir = SDL_GetBasePath();
-	if (basedir == NULL)
+	if (basedir == nullptr )
 	{
 		/* Oh well. */
 		memset(exe_dir, 0, sizeof(exe_dir));
@@ -862,9 +862,9 @@ void Init_ExeDir (const char* argv0)
 
 void Sys_InitPrefDir (void)
 {
-	char *pp = SDL_GetPrefPath(NULL, SAVENAME);
+	char *pp = SDL_GetPrefPath( nullptr, SAVENAME);
 
-	if (pp != NULL)
+	if (pp != nullptr )
 	{
 		Q_strncpyz(pref_dir, sizeof(pref_dir), pp);
 		Q_strncpyz(download_dir, sizeof(download_dir), pp);
@@ -900,33 +900,8 @@ int main (int argc, char **argv)
 	printf (SOL_ENGINE_NAME " v%u.%u (%s) %s %s\n", SOL_ENGINE_VERSION_MAJOR, SOL_ENGINE_VERSION_MINOR, GIT_COMMIT_COUNT, CPUSTRING, COMPILETYPE_STRING);
 	printf ("Linux Port by QuDos\n");
 	printf ("SDL2 Port by flibitijibibo\n");
-	printf ("Compiled: "__DATE__" -- "__TIME__"\n");
+	printf ("Compiled: " __DATE__ " -- " __TIME__ "\n");
 	printf ("==========================================\n\n");
-
-	// Knightmare- set minimum stack size of 16MB
-/*	printf ("Checking stack size...");
-	result = getrlimit(RLIMIT_STACK, &rl);
-	if (result == 0)
-	{
-		if (rl.rlim_cur < minStackSize)
-		{
-			printf (" succeeded.\nIncreasing stack size to %i...", minStackSize);
-			rl.rlim_cur = minStackSize;
-			result = setrlimit(RLIMIT_STACK, &rl);
-			if (result != 0) {
-				printf (" failed!\nsetrlimit() returned result of %i.\n", result);
-			}
-			else {
-				printf (" succeeded.\n");
-			}
-		}
-		else {
-			printf (" succeeded.  Stack size is sufficient.\n");
-		}
-	}
-	else {
-		printf (" failed!\ngetrlimit() returned result of %i.\n", result);
-	} */
 
 	// Knightmare- init exe dir
 	Init_ExeDir (argv[0]);

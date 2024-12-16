@@ -569,6 +569,8 @@ void CL_ParseMuzzleFlash2 (void)
 		modifier &= ~128;
 	}
 
+	return;
+
 	// locate the origin
 	AngleVectors (cl_entities[ent].current.angles, forward, right, NULL);
 	origin[0] = cl_entities[ent].current.origin[0] + forward[0] * monster_flash_offset[flash_number][0] + right[0] * monster_flash_offset[flash_number][1];

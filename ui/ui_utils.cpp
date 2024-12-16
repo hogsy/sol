@@ -2239,7 +2239,7 @@ void UI_ValidateSaveshots (void)
 			//	snprintf(shotname, sizeof(shotname), "/save/kmq2save%03i/shot.jpg", i);
 				snprintf(shotname, sizeof(shotname), "/%s/kmq2save%03i/shot.jpg", ARCH_SAVEDIR, i);
 			}
-			if (R_DrawFindPic(shotname))
+			if (R_DrawFindPic( shotname ) )
 				ui_saveshot_valid[i] = true;
 			else
 				ui_saveshot_valid[i] = false;
@@ -2336,7 +2336,7 @@ void UI_InitSavegameData (void)
 	UI_ValidateSaveshots ();	// register saveshots
 
 	// register null saveshot, this is only done once
-	if ( R_DrawFindPic(UI_NOSCREEN_NAME) )
+	if ( R_DrawFindPic( UI_NOSCREEN_NAME ) )
 		ui_saveshot_valid[UI_MAX_SAVEGAMES] = true;
 	else
 		ui_saveshot_valid[UI_MAX_SAVEGAMES] = false;
@@ -3138,7 +3138,7 @@ void UI_BuildStartSeverLevelshotTables (void)
 
 		// register null levelshot
 		if (ui_svr_mapshotvalid[i][ui_svr_maplist_sizes[i]] == M_UNSET) {	
-			if (R_DrawFindPic(UI_NOSCREEN_NAME))
+			if (R_DrawFindPic( UI_NOSCREEN_NAME ) )
 				ui_svr_mapshotvalid[i][ui_svr_maplist_sizes[i]] = M_FOUND;
 			else
 				ui_svr_mapshotvalid[i][ui_svr_maplist_sizes[i]] = M_MISSING;
@@ -3184,7 +3184,7 @@ char *UI_UpdateStartSeverLevelshot (int index)
 
 	if (ui_svr_mapshotvalid[ui_svr_maptype][index] == M_UNSET) { // init levelshot
 		snprintf(mapshotname, sizeof(mapshotname), "/levelshots/%s.pcx", startmap);
-		if (R_DrawFindPic(mapshotname))
+		if (R_DrawFindPic( mapshotname ) )
 			ui_svr_mapshotvalid[ui_svr_maptype][index] = M_FOUND;
 		else
 			ui_svr_mapshotvalid[ui_svr_maptype][index] = M_MISSING;

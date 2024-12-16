@@ -2428,7 +2428,7 @@ Searches the string for the given
 key and returns the associated value, or an empty string.
 ===============
 */
-char *Info_ValueForKey (char *s, char *key)
+char *Info_ValueForKey (char *s, const char *key)
 {
 	char	pkey[512];
 	static	char value[2][512];	// use two buffers so compares
@@ -2470,7 +2470,7 @@ char *Info_ValueForKey (char *s, char *key)
 	}
 }
 
-void Info_RemoveKey (char *s, char *key)
+void Info_RemoveKey ( char *s, const char *key )
 {
 	if (strstr (key, "\\"))
 	{
@@ -2534,7 +2534,7 @@ qboolean Info_Validate (char *s)
 	return true;
 }
 
-void Info_SetValueForKey (char *s, char *key, char *value)
+void Info_SetValueForKey ( char *s, const char *key, const char *value )
 {
 	char	newi[MAX_INFO_STRING ];
 

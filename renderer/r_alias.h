@@ -54,6 +54,8 @@ typedef struct
 } maliastag_t;
 
 typedef enum {
+	WAVEFORM_INVALID = -1,
+
 	WAVEFORM_SIN,
 	WAVEFORM_TRIANGLE,
 	WAVEFORM_SQUARE,

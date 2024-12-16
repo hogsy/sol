@@ -2117,7 +2117,7 @@ void UI_MenuImage_Setup (menuImage_s *i)
 	{
 		i->numAnimFrames = max(i->numAnimFrames, 1);
 		for (idx = 0; idx < i->numAnimFrames; idx++)
-			R_DrawFindPic (va(i->animTemplate, idx));
+			R_DrawFindPic ( va( i->animTemplate, idx ) );
 		i->animTimeScale = min(max(i->animTimeScale, 0.01f), 0.25f);		// anim speed must be between 100 and 4 fps
 		i->start_time = cls.realtime;
 		i->isAnimated = true;

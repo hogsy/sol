@@ -99,7 +99,7 @@ void SV_DropClient (client_t *drop)
 	if (drop->download)
 	{
 		FS_FreeFile (drop->download);
-		drop->download = NULL;
+		drop->download = nullptr;
 	}
 
 	// r1ch: fix for mods that don't clean score
@@ -121,7 +121,7 @@ Given an netadr_t, returns the matching client.
 */
 client_t *GetClientFromAdr (netadr_t address)
 {
-	client_t	*cl = NULL;
+	client_t	*cl = nullptr;
 	int			i;
 	qboolean	found = false;
 
@@ -135,7 +135,7 @@ client_t *GetClientFromAdr (netadr_t address)
 	if (found)
 		return cl;
 	else // don't return non-matching client
-		return NULL;
+		return nullptr;
 }
 
 
@@ -152,7 +152,7 @@ void SV_DropClientFromAdr (netadr_t address)
 
 	if (!drop)	return; // make sure we have a client to drop
 
-	SV_BroadcastPrintf (PRINT_HIGH, "dropping client %s\n", drop->name);
+	SV_BroadcastPrintf ( PRINT_HIGH, "dropping client %s\n", drop->name );
 
 	SV_DropClient (drop);
 
@@ -170,9 +170,9 @@ From R1Q2
 void SV_KickClient (client_t *cl, const char *reason, const char *cprintf)
 {
 	if (reason && cl->state == cs_spawned && cl->name[0])
-		SV_BroadcastPrintf (PRINT_HIGH, "%s was dropped: %s\n", cl->name, reason);
+		SV_BroadcastPrintf ( PRINT_HIGH, "%s was dropped: %s\n", cl->name, reason );
 	if (cprintf)
-		SV_ClientPrintf (cl, PRINT_HIGH, "%s", cprintf);
+		SV_ClientPrintf ( cl, PRINT_HIGH, "%s", cprintf );
 	Com_Printf ("Dropping %s, %s.\n", cl->name, reason ? reason : "SV_KickClient");
 	SV_DropClient (cl);
 }
@@ -191,7 +191,7 @@ void SV_CleanClient (client_t *drop)
 	if (drop->download)
 	{
 		Z_Free (drop->download);
-		drop->download = NULL;
+		drop->download = nullptr;
 	}
 }
 
@@ -268,7 +268,7 @@ SVC_Ack
 
 ================
 */
-void SVC_Ack (void)
+void SVC_Ack ()
 {
 	Com_Printf ("Ping acknowledge from %s\n", NET_AdrToString(net_from));
 }
@@ -292,22 +292,20 @@ void SVC_Info (void)
 
 	version = atoi (Cmd_Argv(1));
 
-	if (version != PROTOCOL_VERSION)
-	{	// According to r1ch, this can be used to make servers endlessly ping each other
-	//	snprintf (string, sizeof(string), "%s: wrong version\n", hostname->string, sizeof(string));
+	if ( version != PROTOCOL_VERSION )
+	{   // According to r1ch, this can be used to make servers endlessly ping each other
+		//	snprintf (string, sizeof(string), "%s: wrong version\n", hostname->string, sizeof(string));
 		return;
 	}
-	else
-	{
-		count = 0;
+
+	count = 0;
 	//	for (i=0 ; i<maxclients->value ; i++)
-		for (i=0 ; i<maxclients->integer ; i++)
-			if (svs.clients[i].state >= cs_connected)
-				count++;
+	for ( i = 0; i < maxclients->integer; i++ )
+		if ( svs.clients[ i ].state >= cs_connected )
+			count++;
 
 	//	snprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, (int)maxclients->value);
-		snprintf (string, sizeof(string), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, maxclients->integer);
-	}
+	snprintf( string, sizeof( string ), "%16s %8s %2i/%2i\n", hostname->string, sv.name, count, maxclients->integer );
 
 	Netchan_OutOfBandPrint (NS_SERVER, net_from, "info\n%s", string);
 }
@@ -437,7 +435,7 @@ void SVC_DirectConnect (void)
 	userinfo[sizeof(userinfo) - 1] = 0;
 
 	// force the IP key/value pair so the game can filter based on ip
-	Info_SetValueForKey (userinfo, "ip", NET_AdrToString(net_from));
+	Info_SetValueForKey ( userinfo, "ip", NET_AdrToString( net_from ) );
 
 	// attractloop servers are ONLY for local clients
 	if (sv.attractloop)
@@ -511,8 +509,7 @@ void SVC_DirectConnect (void)
 	}
 
 	// find a client slot
-	newcl = NULL;
-//	for (i=0,cl=svs.clients ; i<maxclients->value ; i++,cl++)
+	newcl = nullptr;
 	for (i=0,cl=svs.clients ; i<maxclients->integer ; i++,cl++)
 	{
 		if (cl->state == cs_free)
@@ -692,14 +689,13 @@ Updates the cl->ping variables
 */
 void SV_CalcPings (void)
 {
-	int			i, j;
-	client_t	*cl;
+#if 0//TODO
 	int			total, count;
 
 //	for (i=0 ; i<maxclients->value ; i++)
-	for (i=0 ; i<maxclients->integer ; i++)
+	for ( int i = 0 ; i<maxclients->integer ; i++)
 	{
-		cl = &svs.clients[i];
+		client_t *cl = &svs.clients[ i ];
 		if (cl->state != cs_spawned )
 			continue;
 
@@ -712,7 +708,7 @@ void SV_CalcPings (void)
 
 		total = 0;
 		count = 0;
-		for (j=0 ; j<LATENCY_COUNTS ; j++)
+		for ( int j = 0 ; j<LATENCY_COUNTS ; j++)
 		{
 			if (cl->frame_latency[j] > 0)
 			{
@@ -732,6 +728,7 @@ void SV_CalcPings (void)
 		// let the game dll know about the ping
 		cl->edict->client->ping = cl->ping;
 	}
+#endif
 }
 
 
@@ -865,7 +862,7 @@ void SV_CheckTimeouts (void)
 		{
 			// r1ch fix: only message if they spawned (less spam plz)
 			if (cl->state == cs_spawned && cl->name[0])
-				SV_BroadcastPrintf (PRINT_HIGH, "%s timed out\n", cl->name);
+				SV_BroadcastPrintf ( PRINT_HIGH, "%s timed out\n", cl->name );
 			SV_DropClient (cl); 
 			cl->state = cs_free;	// don't bother with zombie state
 		}
@@ -880,18 +877,13 @@ This has to be done before the world logic, because
 player processing happens outside RunWorldFrame
 ================
 */
-void SV_PrepWorldFrame (void)
+void SV_PrepWorldFrame()
 {
-	edict_t	*ent;
-	int		i;
-
-	for (i=0 ; i<ge->num_edicts ; i++, ent++)
+	for ( auto &i : g_edicts )
 	{
-		ent = EDICT_NUM(i);
 		// events only last for a single message
-		ent->s.event = 0;
+		i->s.event = 0;
 	}
-
 }
 
 

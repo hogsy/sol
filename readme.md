@@ -14,6 +14,21 @@ Don't expect anything to work. It's probably not going to build under Windows fo
 
 At some stage I'll make a Trello board public where you can follow progress, but for now it's probably too early for that.
 
+### The Good... 😁
+
+- CMake (depending on whom you ask)
+- Building under Unix/Linux + GCC
+- Code has been migrated to C++
+- Entity framework has been restructured to be object-oriented
+- There's no longer a limit on how many entities you can have
+
+### The Bad... 😔
+
+- Doesn't build for Windows, and certainly not with MSVC
+- Multiplayer doesn't work, but I don't need it
+- Saves are going to be absolutely broken for now
+- Many entities need to be reintroduced
+
 ## Credits 📖
 
 - Mark "hogsy" S. (Programmer)

@@ -3150,7 +3150,7 @@ qboolean QGL_Init (const char *dllname)
 	SDL_FreeSurface(icon);
 #endif
 	glw_state.glContext = SDL_GL_CreateContext(glw_state.glWindow);
-	SDL_SetRelativeMouseMode (SDL_TRUE);
+	SDL_SetRelativeMouseMode (SDL_FALSE);
 
 	glConfig.allowCDS = true;
 	glConfig.have_stencil = true;

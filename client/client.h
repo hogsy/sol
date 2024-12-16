@@ -743,7 +743,7 @@ void	R_BeginRegistration (char *map);
 void	R_EndRegistration (void);
 struct model_s *R_RegisterModel ( const char *name );
 struct image_s *R_RegisterSkin (char *name);
-struct image_s *R_DrawFindPic (char *name);
+struct image_s *R_DrawFindPic ( const char *name );
 qboolean R_RegistrationIsActive (void);
 qboolean R_ModelIsValid (struct model_s *model);
 
@@ -764,8 +764,8 @@ void	R_DrawString (float x, float y, const char *string, fontslot_t font, float 
 					int red, int green, int blue, int alpha, qboolean italic, qboolean shadow);
 
 float	R_CharMapScale (void); // Knightmare added char scaling from Quake2Max
-void	R_DrawGetPicSize (int *w, int *h, char *name);	// will return 0 0 if not found
-void	R_DrawPic (drawStruct_t *ds);
+void	R_DrawGetPicSize (int *w, int *h, const char *name);	// will return 0 0 if not found
+void	R_DrawPic ( const drawStruct_t *ds);
 
 void	R_DrawFill (int x, int y, int w, int h, int red, int green, int blue, int alpha);
 void	R_DrawFadeScreen (void);

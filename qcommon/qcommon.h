@@ -909,7 +909,7 @@ CMODEL
 #include "../qcommon/qfiles.h"
 
 cmodel_t	*CM_LoadMap ( const char *name, qboolean clientload, unsigned *checksum );
-cmodel_t	*CM_InlineModel (char *name);	// *1, *2, etc
+cmodel_t	*CM_InlineModel ( const char *name );	// *1, *2, etc
 
 int			CM_NumClusters (void);
 int			CM_NumInlineModels (void);

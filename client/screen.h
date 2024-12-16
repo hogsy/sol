@@ -321,7 +321,7 @@ void	SCR_DrawScaledPic (float x, float y, float scale, qboolean centerCoords, qb
 void	SCR_DrawLegacyPic (float x, float y, float scale, char *pic, float alpha);
 void	SCR_DrawColoredPic (float x, float y, float width, float height, scralign_t align, qboolean roundOut, color_t color, char *pic);
 void	SCR_DrawOffsetPic (float x, float y, float width, float height, vec2_t offset, scralign_t align, qboolean roundOut, color_t color, char *pic);
-void	SCR_DrawOffsetPicST (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, scralign_t align, qboolean roundOut, color_t color, char *pic);
+void	SCR_DrawOffsetPicST (float x, float y, float width, float height, const vec2_t offset, const vec4_t texCorners, scralign_t align, qboolean roundOut, const color_t color, char *pic);
 void	SCR_DrawScrollPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic);
 void	SCR_DrawMaskedPic (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, char *pic, char *maskPic);
 void	SCR_DrawPicFull (float x, float y, float width, float height, vec2_t offset, vec4_t texCorners, vec2_t scroll, scralign_t align, qboolean roundOut, color_t color, qboolean additive, char *pic, char *maskPic);

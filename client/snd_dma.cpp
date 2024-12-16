@@ -238,10 +238,9 @@ S_FindName
 
 ==================
 */
-sfx_t *S_FindName (char *name, qboolean create)
+sfx_t *S_FindName ( const char *name, qboolean create )
 {
 	int		i;
-	sfx_t	*sfx;
 
 	if (!name)
 		Com_Error (ERR_FATAL, "S_FindName: NULL\n");
@@ -259,7 +258,7 @@ sfx_t *S_FindName (char *name, qboolean create)
 		}
 
 	if (!create)
-		return NULL;
+		return nullptr;
 
 	// find a free sfx
 	for (i=0 ; i < num_sfx ; i++)
@@ -274,7 +273,7 @@ sfx_t *S_FindName (char *name, qboolean create)
 		num_sfx++;
 	}
 	
-	sfx = &known_sfx[i];
+	sfx_t *sfx = &known_sfx[ i ];
 	memset (sfx, 0, sizeof(*sfx));
 //	strncpy (sfx->name, name);
 	Q_strncpyz (sfx->name, sizeof(sfx->name), name);
@@ -346,9 +345,9 @@ sfx_t *S_RegisterSound (char *name)
 	sfx_t	*sfx;
 
 	if (!sound_started)
-		return NULL;
+		return nullptr;
 
-	sfx = S_FindName (name, true);
+	sfx = S_FindName ( name, true );
 	sfx->registration_sequence = s_registration_sequence;
 
 	if (!s_registering)
@@ -458,7 +457,7 @@ channel_t *S_PickChannel(int entnum, int entchannel)
    }
 
 	if (first_to_die == -1)
-		return NULL;
+		return nullptr;
 
 	ch = &channels[first_to_die];
 	memset (ch, 0, sizeof(*ch));
@@ -559,7 +558,7 @@ playsound_t *S_AllocPlaysound (void)
 
 	ps = s_freeplays.next;
 	if (ps == &s_freeplays)
-		return NULL;		// no free playsounds
+		return nullptr;		// no free playsounds
 
 	// unlink from freelist
 	ps->prev->next = ps->next;
@@ -676,7 +675,7 @@ struct sfx_s *S_RegisterSexedSound (centity_state_t *ent, char *base)
 
 	// see if we already know of the model specific sound
 	snprintf (sexedFilename, sizeof(sexedFilename), "#players/%s/%s", model, base+1);
-	sfx = S_FindName (sexedFilename, false);
+	sfx = S_FindName ( sexedFilename, false );
 
 	if (!sfx)
 	{
@@ -809,7 +808,7 @@ void S_StartLocalSound (char *sound)
 		Com_Printf ("S_StartLocalSound: can't cache %s\n", sound);
 		return;
 	}
-	S_StartSound (NULL, cl.playernum+1, 0, sfx, 1, 1, 0);
+	S_StartSound ( nullptr, cl.playernum+1, 0, sfx, 1, 1, 0);
 }
 
 
@@ -1144,7 +1143,7 @@ void S_Update (vec3_t origin, vec3_t forward, vec3_t right, vec3_t up)
 	VectorCopy(right, listener_right);
 	VectorCopy(up, listener_up);
 
-	combine = NULL;
+	combine = nullptr;
 
 	// update spatialization for dynamic sounds	
 	ch = channels;
@@ -1291,7 +1290,7 @@ void S_Play(void)
 		//	strncpy(name, Cmd_Argv(i));
 			Q_strncpyz (name, sizeof(name), Cmd_Argv(i));
 		sfx = S_RegisterSound(name);
-		S_StartSound(NULL, cl.playernum+1, 0, sfx, 1.0, 1.0, 0);
+		S_StartSound( nullptr, cl.playernum+1, 0, sfx, 1.0, 1.0, 0);
 		i++;
 	}
 }

@@ -26,35 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 //
-// MD2 format info
-//
-typedef struct
-{
-	int		ident;
-	int		version;
-
-	int		skinwidth;
-	int		skinheight;
-	int		framesize;	// byte size of each frame
-
-	int		num_skins;
-	int		num_xyz;
-	int		num_st;		// greater than num_xyz for seams
-	int		num_tris;
-	int		num_glcmds;	// dwords in strip/fan command list
-	int		num_frames;
-
-	int		ofs_skins;	// each skin is a MAX_SKINNAME string
-	int		ofs_st;		// byte offset from start for stverts
-	int		ofs_tris;	// offset for dtriangles
-	int		ofs_frames;	// offset for first frame
-	int		ofs_glcmds;	
-	int		ofs_end;	// end of file
-
-} dmdl_t;
-
-
-//
 // Entity ID enum
 //
 typedef enum

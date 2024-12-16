@@ -127,7 +127,7 @@ Writes a delta update of an centity_state_t list to the message.
 */
 void SV_EmitPacketEntities (client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 {
-	centity_state_t	*oldent = NULL, *newent = NULL;
+	centity_state_t	*oldent = nullptr, *newent = nullptr;
 	int		oldindex, newindex;
 	int		oldnum, newnum;
 	int		from_num_entities;
@@ -147,6 +147,7 @@ void SV_EmitPacketEntities (client_frame_t *from, client_frame_t *to, sizebuf_t 
 
 	newindex = 0;
 	oldindex = 0;
+#if 0//TODO
 	while (newindex < to->num_entities || oldindex < from_num_entities)
 	{
 		if (newindex >= to->num_entities)
@@ -204,6 +205,7 @@ void SV_EmitPacketEntities (client_frame_t *from, client_frame_t *to, sizebuf_t 
 			continue;
 		}
 	}
+#endif
 
 	MSG_WriteShort (msg, 0);	// end of packetentities
 
@@ -502,13 +504,13 @@ void SV_WriteFrameToClient (client_t *client, sizebuf_t *msg)
 
 	if (client->lastframe <= 0)
 	{	// client is asking for a retransmit
-		oldframe = NULL;
+		oldframe = nullptr;
 		lastframe = -1;
 	}
 	else if (sv.framenum - client->lastframe >= (UPDATE_BACKUP - 3) )
 	{	// client hasn't gotten a good message through in a long time
 	//	Com_Printf ("%s: Delta request from out-of-date packet.\n", client->name);
-		oldframe = NULL;
+		oldframe = nullptr;
 		lastframe = -1;
 	}
 	else
@@ -567,7 +569,7 @@ void SV_FatPVS (vec3_t org)
 		maxs[i] = org[i] + 8;
 	}
 
-	count = CM_BoxLeafnums (mins, maxs, leafs, 64, NULL);
+	count = CM_BoxLeafnums (mins, maxs, leafs, 64, nullptr );
 	if (count < 1)
 		Com_Error (ERR_FATAL, "SV_FatPVS: count < 1");
 	longs = (CM_NumClusters()+31)>>5;
@@ -654,9 +656,9 @@ copies off the playerstat and areabits.
 */
 void SV_BuildClientFrame (client_t *client)
 {
+#if 0//TODO
 	int		e, i;
 	vec3_t	org;
-	edict_t	*ent;
 	edict_t	*clent;
 	client_frame_t	*frame;
 	centity_state_t	*state;
@@ -704,10 +706,8 @@ void SV_BuildClientFrame (client_t *client)
 
 	c_fullsend = 0;
 
-	for (e=1 ; e<ge->num_edicts ; e++)
+	for ( auto &ent : g_edicts )
 	{
-		ent = EDICT_NUM(e);
-
 		// ignore ents without visible models
 		if (ent->svflags & SVF_NOCLIENT)
 			continue;
@@ -718,7 +718,7 @@ void SV_BuildClientFrame (client_t *client)
 			continue;
 
 		// ignore if not touching a PV leaf
-		if (ent != clent)
+		if (ent.get() != clent)
 		{
 			// check area
 			if (!CM_AreasConnected (clientarea, ent->areanum))
@@ -807,12 +807,13 @@ void SV_BuildClientFrame (client_t *client)
 			state->solid = 0;
 
 		// set centity_state_t added fields- bbox, Q3 model player frames, etc
-		SV_SetEntStateAddedFields (ent, state);
+		SV_SetEntStateAddedFields (ent.get(), state);
 		// end Knightmare
 
 		svs.next_client_entities++;
 		frame->num_entities++;
 	}
+#endif
 }
 
 
@@ -848,7 +849,7 @@ void SV_RecordDemoMessage (void)
 
 	e = 1;
 	ent = EDICT_NUM(e);
-	while (e < ge->num_edicts) 
+	while (e < g_edicts.size())
 	{
 		// ignore ents without visible models unless they have an effect
 		if (ent->inuse &&

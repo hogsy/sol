@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // g_local.h -- local definitions for game module
 
+#pragma once
+
 #ifdef _WIN32
 #include <malloc.h>
 #include <direct.h>
@@ -39,19 +41,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "p_menu.h"
 #include "p_text.h"
 #include "km_cvar.h"
+
+#include <memory>
 #define JETPACK_MOD
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"lazarus"
-
-// protocol bytes that can be directly added to messages
-#define	svc_muzzleflash		1
-#define	svc_muzzleflash2	2
-#define	svc_temp_entity		3
-#define	svc_layout			4
-#define	svc_inventory		5
-#define	svc_stufftext		11
-#define	svc_lazarus_fog		21
 
 //==================================================================
 
@@ -669,6 +664,8 @@ typedef struct
 // the time after the monster_duck_up in all of the animation sequences
 #define	DUCK_INTERVAL	0.5
 
+#include "game_entity_manager.h"
+
 extern	game_locals_t	game;
 extern	level_locals_t	level;
 extern	game_import_t	gi;
@@ -741,7 +738,7 @@ extern int lastgibframe;
 
 extern	int	meansOfDeath;
 
-extern	edict_t			*g_edicts;
+extern std::vector< std::unique_ptr< edict_t > > g_edicts;
 
 #define	FOFS(x) (size_t)&(((edict_t *)0)->x)	// Knightmare- was int
 #define	STOFS(x) (size_t)&(((spawn_temp_t *)0)->x)	// Knightmare- was int
@@ -864,7 +861,7 @@ extern	int		max_modelindex;
 extern	int		max_soundindex;
 
 
-#define world	(&g_edicts[0])
+#define world	(g_edicts[0].get())
 
 // item spawnflags
 #define ITEM_TRIGGER_SPAWN		0x00000001
@@ -1115,7 +1112,7 @@ void EndDMLevel (void);
 //
 void ThrowHead (edict_t *self, const char *gibname, int frame, int skinnum, int damage, int type);
 void ThrowClientHead (edict_t *self, int damage);
-void ThrowGib (edict_t *self, char *gibname, int frame, int skinnum, int damage, int type);
+void ThrowGib (edict_t *self, const char *gibname, int frame, int skinnum, int damage, int type);
 void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin, int frame, int skin, int effects);
 void BecomeExplosion1(edict_t *self);
 void barrel_delay (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
@@ -1168,7 +1165,7 @@ void M_FliesOff (edict_t *self);
 void M_FliesOn (edict_t *self);
 void M_CheckGround (edict_t *ent);
 qboolean M_SetDeath (edict_t *ent,mmove_t **moves);
-int  PatchMonsterModel (char *model);
+int  PatchMonsterModel ( const char *model );
 
 //
 // g_patchplayermodels.c
@@ -1253,17 +1250,15 @@ void	G_UseTargets (edict_t *ent, edict_t *activator);
 void	G_SetMovedir (vec3_t angles, vec3_t movedir);
 void	G_SetMovedir2 (vec3_t angles, vec3_t movedir);	// Knightmare added
 mmove_t	*G_NewCustomAnim (void);	// Knightmare- util func for custom anims
-void	G_InitEdict (edict_t *e);
-edict_t	*G_Spawn (void);
 void	G_FreeEdict (edict_t *e);
 void	G_TouchTriggers (edict_t *ent);
 void	G_TouchSolids (edict_t *ent);
 char	*G_CopyString ( const char *in);
-void	stuffcmd(edict_t *ent,char *command);
+void	stuffcmd( edict_t *ent, const char *command );
 float	*tv (float x, float y, float z);
 char	*vtos (vec3_t v);
 float vectoyaw (vec3_t vec);
-qboolean point_infront (edict_t *self, vec3_t point);
+qboolean point_infront (edict_t *self, const vec3_t point);
 void AnglesNormalize(vec3_t vec);
 float SnapToEights(float x);
 
@@ -1723,31 +1718,34 @@ struct gclient_s
 
 struct edict_s
 {
-	entity_state_t	s;
-	struct gclient_s	*client;	// NULL if not a player
+	edict_s() = default;
+	virtual ~edict_s() = default;
+
+	entity_state_t	s{};
+	gclient_s	*client{};	// NULL if not a player
 									// the server expects the first part
 									// of gclient_s to be a player_state_t
 									// but the rest of it is opaque
 
-	qboolean	inuse;
-	int			linkcount;
+	qboolean	inuse{};
+	int			linkcount{};
 
 	// FIXME: move these fields to a server private sv_entity_t
-	link_t		area;				// linked to a division node or leaf
+	link_t		area{};				// linked to a division node or leaf
 
-	int			num_clusters;		// if -1, use headnode instead
-	int			clusternums[MAX_ENT_CLUSTERS];
-	int			headnode;			// unused if num_clusters != -1
-	int			areanum, areanum2;
+	int			num_clusters{};		// if -1, use headnode instead
+	int			clusternums[MAX_ENT_CLUSTERS]{};
+	int			headnode{};			// unused if num_clusters != -1
+	int			areanum{}, areanum2{};
 
 	//================================
 
-	int			svflags;
-	vec3_t		mins, maxs;
-	vec3_t		absmin, absmax, size;
+	int			svflags{};
+	vec3_t		mins{}, maxs{};
+	vec3_t		absmin{}, absmax{}, size{};
 	solid_t		solid;
-	int			clipmask;
-	edict_t		*owner;
+	int			clipmask{};
+	edict_t		*owner{};
 
 
 	// DO NOT MODIFY ANYTHING ABOVE THIS, THE SERVER
@@ -1757,351 +1755,351 @@ struct edict_s
 	entity_id	class_id;			// Lazarus: Added in lieu of doing string comparisons
 									// on classnames.
 
-	int			movetype;
-	int			oldmovetype;	// Knightmare added
-	int			flags;
+	int			movetype{};
+	int			oldmovetype{};	// Knightmare added
+	int			flags{};
 
-	char		*model;
-	float		freetime;			// sv.time when the object was freed
+	char		*model{};
+	float		freetime{};			// sv.time when the object was freed
 
 	//
 	// only used locally in game, not by server
 	//
 	std::string message;
-	char       *key_message;// Lazarus: used from tremor_trigger_key
+	char       *key_message{};// Lazarus: used from tremor_trigger_key
 	std::string classname;
-	int         spawnflags;
+	int         spawnflags{};
 
-	float		timestamp;
+	float		timestamp{};
 
-	float		angle;			// set in qe3, -1 = up, -2 = down
-	char		*target;
-	char		*targetname;
-	char		*killtarget;
-	char		*team;
-	char		*pathtarget;
-	char		*deathtarget;
-	char		*combattarget;
-	edict_t		*target_ent;
+	float		angle{};			// set in qe3, -1 = up, -2 = down
+	char		*target{};
+	char		*targetname{};
+	char		*killtarget{};
+	char		*team{};
+	char		*pathtarget{};
+	char		*deathtarget{};
+	char		*combattarget{};
+	edict_t		*target_ent{};
 
-	float		speed, accel, decel;
-	vec3_t		movedir;
-	vec3_t		pos1, pos2;
-	vec3_t		pos0;	// Knightmare- initial position for secret doors
+	float		speed{}, accel{}, decel{};
+	vec3_t		movedir{};
+	vec3_t		pos1{}, pos2{};
+	vec3_t		pos0{};	// Knightmare- initial position for secret doors
 
-	vec3_t		velocity;
-	vec3_t		avelocity;
-	vec3_t		old_velocity, relative_velocity, relative_avelocity; // Knightmare added
+	vec3_t		velocity{};
+	vec3_t		avelocity{};
+	vec3_t		old_velocity{}, relative_velocity{}, relative_avelocity{}; // Knightmare added
 
-	int			mass;
-	float		air_finished;
-	float		gravity;		// per entity gravity multiplier (1.0 is normal)
+	int			mass{};
+	float		air_finished{};
+	float		gravity{};		// per entity gravity multiplier (1.0 is normal)
 								// use for lowgrav artifact, flares
 
-	edict_t		*goalentity;
-	edict_t		*movetarget;
-	float		yaw_speed;
-	float		ideal_yaw;
+	edict_t		*goalentity{};
+	edict_t		*movetarget{};
+	float		yaw_speed{};
+	float		ideal_yaw{};
 
-	char		*common_name;
+	char		*common_name{};
 
 	// Lazarus: for rotating brush models:
-	float		pitch_speed;
-	float		roll_speed;
-	float		ideal_pitch;
-	float		ideal_roll;
-	float		roll;
+	float		pitch_speed{};
+	float		roll_speed{};
+	float		ideal_pitch{};
+	float		ideal_roll{};
+	float		roll{};
 
-	float		nextthink;
-	void		(*prethink) (edict_t *ent);
-	void		(*think)(edict_t *self);
-	void		(*postthink) (edict_t *ent); // Knightmare added
-	void		(*blocked)(edict_t *self, edict_t *other);	// move to moveinfo?
-	void		(*touch)(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf);
-	void		(*use)(edict_t *self, edict_t *other, edict_t *activator);
-	void		(*pain)(edict_t *self, edict_t *other, float kick, int damage);
-	void		(*die)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
+	float		nextthink{};
+	void		(*prethink) (edict_t *ent){};
+	void		(*think)(edict_t *self){};
+	void		(*postthink) (edict_t *ent){}; // Knightmare added
+	void		(*blocked)(edict_t *self, edict_t *other){};	// move to moveinfo?
+	void		(*touch)(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){};
+	void		(*use)(edict_t *self, edict_t *other, edict_t *activator){};
+	void		(*pain)(edict_t *self, edict_t *other, float kick, int damage){};
+	void		(*die)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point){};
 
-	void		(*play)(edict_t *self, edict_t *activator);
+	void		(*play)(edict_t *self, edict_t *activator){};
 
-	float		touch_debounce_time;		// are all these legit?  do we need more/less of them?
-	float		pain_debounce_time;
-	float		damage_debounce_time;
-	float		gravity_debounce_time;		// used by item_ movement commands to prevent
+	float		touch_debounce_time{};		// are all these legit?  do we need more/less of them?
+	float		pain_debounce_time{};
+	float		damage_debounce_time{};
+	float		gravity_debounce_time{};		// used by item_ movement commands to prevent
 											// monsters from dropping to floor
-	float		fly_sound_debounce_time;	// move to clientinfo
-	float		last_move_time;
+	float		fly_sound_debounce_time{};	// move to clientinfo
+	float		last_move_time{};
 
-	int			health;
-	int			max_health;
-	int			gib_health;
-	int			deadflag;
-	qboolean	show_hostile;
+	int			health{};
+	int			max_health{};
+	int			gib_health{};
+	int			deadflag{};
+	qboolean	show_hostile{};
 
 	// Lazarus: health2 and mass2 are passed from jorg to makron health and mass
-	int			health2;
-	int			mass2;
+	int			health2{};
+	int			mass2{};
 
-	float		powerarmor_time;
+	float		powerarmor_time{};
 
-	char		*map;			// target_changelevel
+	char		*map{};			// target_changelevel
 
-	int			viewheight;		// height above origin where eyesight is determined
-	int			takedamage;
-	int			dmg;
-	int			radius_dmg;
-	float		dmg_radius;
-	int			sounds;			//make this a spawntemp var?
-	int			count;
+	int			viewheight{};		// height above origin where eyesight is determined
+	int			takedamage{};
+	int			dmg{};
+	int			radius_dmg{};
+	float		dmg_radius{};
+	int			sounds{};			//make this a spawntemp var?
+	int			count{};
 
-	edict_t		*chain;
-	edict_t		*enemy;
-	edict_t		*oldenemy;
-	edict_t		*activator;
-	edict_t		*groundentity;
-	int			groundentity_linkcount;
-	edict_t		*teamchain;
-	edict_t		*teammaster;
+	edict_t		*chain{};
+	edict_t		*enemy{};
+	edict_t		*oldenemy{};
+	edict_t		*activator{};
+	edict_t		*groundentity{};
+	int			groundentity_linkcount{};
+	edict_t		*teamchain{};
+	edict_t		*teammaster{};
 
-	edict_t		*mynoise;		// can go in client only
-	edict_t		*mynoise2;
+	edict_t		*mynoise{};		// can go in client only
+	edict_t		*mynoise2{};
 
-	int			noise_index;
-	int			noise_index2;
-	float		volume;
-	float		attenuation;
+	int			noise_index{};
+	int			noise_index2{};
+	float		volume{};
+	float		attenuation{};
 
 	// timing variables
-	float		wait;
-	float		delay;			// before firing targets
-	float		random;
+	float		wait{};
+	float		delay{};			// before firing targets
+	float		random{};
 	// Lazarus: laser timing
-	float		starttime;
-	float		endtime;
+	float		starttime{};
+	float		endtime{};
 
-	float		teleport_time;
+	float		teleport_time{};
 
-	int			watertype;
-	int			waterlevel;
-	int			old_watertype;
+	int			watertype{};
+	int			waterlevel{};
+	int			old_watertype{};
 
-	vec3_t		move_origin;
-	vec3_t		move_angles;
+	vec3_t		move_origin{};
+	vec3_t		move_angles{};
 
 	// move this to clientinfo?
-	int			light_level;
+	int			light_level{};
 
-	int			style;			// also used as areaportal number
+	int			style{};			// also used as areaportal number
 
-	gitem_t		*item;			// for bonus items
+	gitem_t		*item{};			// for bonus items
 
 	// common data blocks
-	moveinfo_t		moveinfo;
-	monsterinfo_t	monsterinfo;
+	moveinfo_t		moveinfo{};
+	monsterinfo_t	monsterinfo{};
 
-	float		goal_frame;
+	float		goal_frame{};
 
 	// various Lazarus additions follow:
 
-	edict_t		*turret;		// player-controlled turret
-	edict_t		*child;			// "real" infantry guy, child of remote turret_driver
-	vec_t		base_radius;	// Lazarus: used to project "viewpoint" of TRACK turret
+	edict_t		*turret{};		// player-controlled turret
+	edict_t		*child{};			// "real" infantry guy, child of remote turret_driver
+	vec_t		base_radius{};	// Lazarus: used to project "viewpoint" of TRACK turret
 								// out past base
 
 	// Mappack - for the sprite/model spawner
-	char		*usermodel;
-	int			startframe;
-	int			framenumbers;
-	int			solidstate;
+	char		*usermodel{};
+	int			startframe{};
+	int			framenumbers{};
+	int			solidstate{};
 	// Lazarus: changed from rendereffect to renderfx and effects, and now uses
 	//          real constants which can be combined.
 //	int			rendereffect;
-	int			renderfx;
-	int         effects;
-	int			skinnum;
-	vec3_t		bleft;
-	vec3_t		tright;
+	int			renderfx{};
+	int         effects{};
+	int			skinnum{};
+	vec3_t		bleft{};
+	vec3_t		tright{};
 
 	// tpp
-	int			chasedist1;
-    int			chasedist2;
-    edict_t		*crosshair;
+	int			chasedist1{};
+    int			chasedist2{};
+    edict_t		*crosshair{};
 	// end tpp
 
 	// item identification
-	char		*datafile;
+	char		*datafile{};
 
 	// func_pushable
-	vec3_t      oldvelocity;    // Added for TREMOR to figure falling damage
-	vec3_t      offset;         // Added for TREMOR - offset from func_pushable to pusher
-	float       density;
-	float		bob;            // bobbing in water amplitude
-	float		duration;
-	int			bobframe;
-	int			bounce_me;		// 0 for no bounce, 1 to bounce, 2 if velocity should not be clipped
+	vec3_t      oldvelocity{};    // Added for TREMOR to figure falling damage
+	vec3_t      offset{};         // Added for TREMOR - offset from func_pushable to pusher
+	float       density{};
+	float		bob{};            // bobbing in water amplitude
+	float		duration{};
+	int			bobframe{};
+	int			bounce_me{};		// 0 for no bounce, 1 to bounce, 2 if velocity should not be clipped
 								// this is solely used by func_pushable for now
 	// Knightmare- added for func_door_secret
-	float		width;
-	float		length;
-	float		side;
+	float		width{};
+	float		length{};
+	float		side{};
 	// end Knightmare
 
-	vec3_t      origin_offset;  // used to help locate brush models w/o origin brush
-	vec3_t		org_mins, org_maxs;
-	vec3_t		org_angles;
-	int			org_movetype;
-	int			axis;
+	vec3_t      origin_offset{};  // used to help locate brush models w/o origin brush
+	vec3_t		org_mins{}, org_maxs{};
+	vec3_t		org_angles{};
+	int			org_movetype{};
+	int			axis{};
 
 	// crane
-	qboolean    busy;
-	qboolean	attracted;
-	int         crane_increment;
-	int         crane_dir;
-	edict_t     *crane_control;
-	edict_t     *crane_onboard_control;
-	edict_t     *crane_beam;
-	edict_t     *crane_hoist;
-	edict_t     *crane_hook;
-	edict_t     *crane_cargo;
-	edict_t		*crane_cable;
-	edict_t     *crane_light;
-	vec_t       crane_bonk;
+	qboolean    busy{};
+	qboolean	attracted{};
+	int         crane_increment{};
+	int         crane_dir{};
+	edict_t     *crane_control{};
+	edict_t     *crane_onboard_control{};
+	edict_t     *crane_beam{};
+	edict_t     *crane_hoist{};
+	edict_t     *crane_hook{};
+	edict_t     *crane_cargo{};
+	edict_t		*crane_cable{};
+	edict_t     *crane_light{};
+	vec_t       crane_bonk{};
 
-	edict_t     *speaker;       // moving speaker that eliminates the need
+	edict_t     *speaker{};       // moving speaker that eliminates the need
 	                            // for origin brushes with brush models
-	edict_t     *vehicle;       // generic drivable vehicle
-	char		*idle_noise;
-	float		radius;
-	vec3_t		org_size;		// Initial size of the vehicle bounding box,
+	edict_t     *vehicle{};       // generic drivable vehicle
+	char		*idle_noise{};
+	float		radius{};
+	vec3_t		org_size{};		// Initial size of the vehicle bounding box,
 
-	vec3_t		fog_color;
-	int			fog_model;
-	float		fog_near;
-	float		fog_far;
-	float		fog_density;
-	int			fog_index;
-	int			fogclip;		// only used by worldspawn to indicate whether gl_clear
+	vec3_t		fog_color{};
+	int			fog_model{};
+	float		fog_near{};
+	float		fog_far{};
+	float		fog_density{};
+	int			fog_index{};
+	int			fogclip{};		// only used by worldspawn to indicate whether gl_clear
 								// should be forced to a good value for fog obscuration
 								// of HOM
 
-	edict_t		*movewith_next;
-	char		*movewith;
-	edict_t		*movewith_ent;
-	vec3_t		movewith_offset;
-	vec3_t		parent_attach_angles;
-	vec3_t		child_attach_angles;	// Knightmare added
-	vec3_t		aim_point;				// Knightmare- safe aim vector for gunner grenades
-	qboolean	do_not_rotate;
+	edict_t		*movewith_next{};
+	char		*movewith{};
+	edict_t		*movewith_ent{};
+	vec3_t		movewith_offset{};
+	vec3_t		parent_attach_angles{};
+	vec3_t		child_attach_angles{};	// Knightmare added
+	vec3_t		aim_point{};				// Knightmare- safe aim vector for gunner grenades
+	qboolean	do_not_rotate{};
 
 	// monster AI
-	char		*dmgteam;
+	char		*dmgteam{};
 
 	// turret
-	char		*destroytarget;
-	char		*viewmessage;
-	char		*followtarget;
+	char		*destroytarget{};
+	char		*viewmessage{};
+	char		*followtarget{};
 
 	// spycam
-	edict_t		*viewer;
+	edict_t		*viewer{};
 
 	// monster power armor
-	int			powerarmor;
-	int			powerarmortype;
+	int			powerarmor{};
+	int			powerarmortype{};
 
 	// MOVETYPE_PUSH rider angles
-	int			turn_rider;
+	int			turn_rider{};
 
 	// selected brush models will move their origin to
 	// the origin of this entity:
-	char		*move_to;
+	char		*move_to{};
 
 	// newtargetname used ONLY by target_change and target_bmodel_spawner.
-	char		*newtargetname;
+	char		*newtargetname{};
 
 	// source of target_clone's model
-	char		*source;
+	char		*source{};
 
-	char		*musictrack;	// Knightmare- for specifying OGG or CD track
+	char		*musictrack{};	// Knightmare- for specifying OGG or CD track
 
 	// if true, brush models will move directly to Move_Done
 	// at Move_Final rather than slowing down.
-	qboolean	smooth_movement;
+	qboolean	smooth_movement{};
 
-	int			in_mud;
+	int			in_mud{};
 
-	int			actor_sound_index[NUM_ACTOR_SOUNDS];
-	int			actor_gunframe;
-	int			actor_current_weapon;		// Index into weapon[]
-	int			actor_weapon[2];
-	int			actor_model_index[2];
-	float		actor_crouch_time;
-	qboolean	actor_id_model;
-	vec3_t		muzzle;						// Offset from origin to gun muzzle
-	vec3_t		muzzle2;					// Offset to left weapon (must have SF | 128)
+	int			actor_sound_index[NUM_ACTOR_SOUNDS]{};
+	int			actor_gunframe{};
+	int			actor_current_weapon{};		// Index into weapon[]
+	int			actor_weapon[2]{};
+	int			actor_model_index[2]{};
+	float		actor_crouch_time{};
+	qboolean	actor_id_model{};
+	vec3_t		muzzle{};						// Offset from origin to gun muzzle
+	vec3_t		muzzle2{};					// Offset to left weapon (must have SF | 128)
 
-	vec3_t		color;						// target_fade
-	float		alpha;
-	float		fadein;
-	float		holdtime;
-	float		fadeout;
+	vec3_t		color{};						// target_fade
+	float		alpha{};
+	float		fadein{};
+	float		holdtime{};
+	float		fadeout{};
 
-	int			owner_id;					// These are used ONLY for ents that
-	int			id;							// change maps via trigger_transition
-	int			last_attacked_framenum;		// Used to turn off chicken mode
+	int			owner_id{};					// These are used ONLY for ents that
+	int			id{};							// change maps via trigger_transition
+	int			last_attacked_framenum{};		// Used to turn off chicken mode
 
 	// tracktrain
-	char		*target2;
-	edict_t		*prevpath;
+	char		*target2{};
+	edict_t		*prevpath{};
 
 	// spline train
-	edict_t		*from;
-	edict_t		*to;
+	edict_t		*from{};
+	edict_t		*to{};
 
-	edict_t		*next_grenade;				// Used to build a list of active grenades
-	edict_t		*prev_grenade;
+	edict_t		*next_grenade{};				// Used to build a list of active grenades
+	edict_t		*prev_grenade{};
 
 	// FMOD
-	int			*stream;	// Actually a FSOUND_STREAM * or FMUSIC_MODULE *
-	int			channel;
+	int			*stream{};	// Actually a FSOUND_STREAM * or FMUSIC_MODULE *
+	int			channel{};
 
 	// gib type - specifies folder where gib models are found.
-	int			gib_type;
-	int			blood_type;
+	int			gib_type{};
+	int			blood_type{};
 
-	int			moreflags;
+	int			moreflags{};
 
 	// actor muzzle flash
-	edict_t		*flash;
+	edict_t		*flash{};
 
 	// Psychospaz reflections
-	edict_t		*reflection[6];
+	edict_t		*reflection[6]{};
 
-	int			plat2flags;
-	vec3_t		gravityVector;
-	edict_t		*bad_area;
-	edict_t		*hint_chain;
-	edict_t		*monster_hint_chain;
-	edict_t		*target_hint_chain;
-	int			hint_chain_id;
+	int			plat2flags{};
+	vec3_t		gravityVector{};
+	edict_t		*bad_area{};
+	edict_t		*hint_chain{};
+	edict_t		*monster_hint_chain{};
+	edict_t		*target_hint_chain{};
+	int			hint_chain_id{};
 
 // ACEBOT_ADD
-	qboolean is_bot;
-	qboolean is_jumping;
+	qboolean is_bot{};
+	qboolean is_jumping{};
 
 	// For movement
-	vec3_t move_vector;
-	float next_move_time;
-	float wander_timeout;
-	float suicide_timeout;
+	vec3_t move_vector{};
+	float next_move_time{};
+	float wander_timeout{};
+	float suicide_timeout{};
 
 	// For node code
-	int current_node; // current node
-	int goal_node; // current goal node
-	int next_node; // the node that will take us one step closer to our goal
-	int node_timeout;
-	int last_node;
-	int tries;
-	int state;
+	int current_node{}; // current node
+	int goal_node{}; // current goal node
+	int next_node{}; // the node that will take us one step closer to our goal
+	int node_timeout{};
+	int last_node{};
+	int tries{};
+	int state{};
 // ACEBOT_END
 
 };

@@ -90,7 +90,7 @@ mleaf_t *Mod_PointInLeaf (vec3_t p, model_t *model)
 			node = node->children[1];
 	}
 
-	return NULL;	// never reached
+	return nullptr;	// never reached
 }
 
 
@@ -367,10 +367,10 @@ void Mod_LoadLighting (lump_t *l)
 {
 	if (!l->filelen)
 	{
-		loadmodel->lightdata = NULL;
+		loadmodel->lightdata = nullptr;
 		return;
 	}
-	loadmodel->lightdata = Hunk_Alloc ( l->filelen);
+	loadmodel->lightdata = static_cast< byte * >( Hunk_Alloc( l->filelen ) );
 	memcpy (loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
 }
 
@@ -386,10 +386,10 @@ void Mod_LoadVisibility (lump_t *l)
 
 	if (!l->filelen)
 	{
-		loadmodel->vis = NULL;
+		loadmodel->vis = nullptr;
 		return;
 	}
-	loadmodel->vis = Hunk_Alloc ( l->filelen);
+	loadmodel->vis = static_cast< dvis_t * >( Hunk_Alloc( l->filelen ) );
 	memcpy (loadmodel->vis, mod_base + l->fileofs, l->filelen);
 
 	loadmodel->vis->numclusters = LittleLong (loadmodel->vis->numclusters);
@@ -698,7 +698,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 	color_t			json_color = {0};
 	int				size;
 	byte			*data;
-	char			*jsonStr = NULL;
+	char			*jsonStr = nullptr;
 	qboolean		json_parsed = false;
 
 	snprintf (path, sizeof(path), "textures/%s.wal", name);
@@ -707,7 +707,7 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 		return;
 
 	FS_LoadFile (path, (void **)&mt); // load .wal file
-	if (mt != NULL)
+	if (mt != nullptr )
 	{
 		*width = LittleLong (mt->width); // grab size from wal
 		*height = LittleLong (mt->height);
@@ -730,8 +730,8 @@ static void Mod_GetWalSize (const char *name, int *width, int *height)
 				Mod_AddToWalSizeList (name, *width, *height); // add to list
 			}
 			FS_FreeFile (data);
-			data = NULL;
-			jsonStr = NULL;
+			data = nullptr;
+			jsonStr = nullptr;
 		}
 
 		if ( !json_parsed ) {
@@ -777,7 +777,7 @@ void Mod_LoadTexinfo (lump_t *l)
 		if (next > 0)
 			out->next = loadmodel->texinfo + next;
 		else
-		    out->next = NULL;
+		    out->next = nullptr;
 
 		Q_strncpyz (textureName, sizeof(textureName), in->texture);
 		// Force texture name to lowercase for Unix builds
@@ -905,8 +905,8 @@ void Mod_LoadFaces (lump_t *l)
 	int			planenum, side;
 	int			ti;
 	// Knightmare added
-	dface_t		*testFace = NULL;
-	mtexinfo_t	*testTexinfo = NULL;
+	dface_t		*testFace = nullptr;
+	mtexinfo_t	*testTexinfo = nullptr;
 	int			num_warp_zero_lightofs = 0;
 	qboolean	bad_warp_lightmaps = false;
 	// end Knightmare
@@ -957,7 +957,7 @@ void Mod_LoadFaces (lump_t *l)
 		out->firstedge = LittleLong(in->firstedge);
 		out->numedges = LittleShort(in->numedges);
 		out->flags = 0;
-		out->polys = NULL;
+		out->polys = nullptr;
 
 		planenum = LittleShort(in->planenum);
 		side = LittleShort(in->side);
@@ -979,7 +979,7 @@ void Mod_LoadFaces (lump_t *l)
 			out->styles[i] = in->styles[i];
 		i = LittleLong(in->lightofs);
 		if (i == -1)
-			out->samples = NULL;
+			out->samples = nullptr;
 		else
 			out->samples = loadmodel->lightdata + i;
 
@@ -991,7 +991,7 @@ void Mod_LoadFaces (lump_t *l)
 #ifdef WARP_LIGHTMAPS
 			// Knightmare- create lightmaps if surface has light data and has properly subdivided size
 			if ( ((loadmodel->bspFeatures & BSPF_WARPLIGHTMAPS) || ( r_load_warp_lightmaps->integer && !bad_warp_lightmaps ))
-				&& (out->samples != NULL)
+				&& (out->samples != nullptr )
 				&& ((out->extents[0]>>4)+1 <= LM_BLOCK_WIDTH)
 				&& ((out->extents[1]>>4)+1 <= LM_BLOCK_HEIGHT) )
 			{
@@ -1008,7 +1008,7 @@ void Mod_LoadFaces (lump_t *l)
 					out->extents[i] = (WORLD_SIZE*2);	// was 16384
 					out->texturemins[i] = -WORLD_SIZE;	// was -8192
 				} */
-				out->samples = NULL;
+				out->samples = nullptr;
 				out->isLightmapped = false;
 			}
 
@@ -1099,7 +1099,7 @@ void Mod_LoadNodes (lump_t *l)
 		}
 	}
 
-	Mod_SetParent (loadmodel->nodes, NULL);	// sets nodes and leafs
+	Mod_SetParent (loadmodel->nodes, nullptr );	// sets nodes and leafs
 }
 
 /*
@@ -1492,7 +1492,7 @@ md3 skin protoshaders
 */
 qboolean Mod_ParseWaveFunc (char **data, waveForm_t *out)
 {
-	char *tok=NULL;
+	char *tok = nullptr;
 
 	if (!*data || !out) return false;
 
@@ -1512,7 +1512,7 @@ qboolean Mod_ParseWaveFunc (char **data, waveForm_t *out)
 	else if (!Q_strcasecmp(tok, "noise"))
 		*out = WAVEFORM_NOISE;
 	else {
-		*out = -1;
+		*out = WAVEFORM_INVALID;
 		return false;
 	}
 	return true;
@@ -1526,7 +1526,7 @@ md3 skin protoshaders
 */
 qboolean Mod_ParseFloat (char **data, float *outnum, qboolean normalized)
 {
-	char *token=NULL;
+	char *token = nullptr;
 
 	if (!*data || !outnum) return false;
 
@@ -1548,7 +1548,7 @@ skin protoshaders
 */
 void Mod_ParseModelScript (maliasskin_t *skin, char **data, char *dataStart, int dataSize, char *meshname, int skinnum, char *scriptname)
 {
-	char	*token=NULL, *token2=NULL;
+	char	*token = nullptr, *token2 = nullptr;
 	char	glowname[MD3_MAX_PATH];
 	int		i;
 	renderparms_t *skinParms = &skin->renderparms;
@@ -1816,22 +1816,20 @@ md3 skin protoshaders
 void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 {
 	char		scriptname[MAX_QPATH];
-	char		*buf, *parse_data, *token=NULL, *token2=NULL;
-	int			buf_size, i, j; //, k;
-	qboolean	skinname_found;
-	renderparms_t	*skinParms;
+	char		*buf, *parse_data, *token = nullptr, *token2 = nullptr;
+	int              i, j; //, k;
 
 	// set defaults
 	for (i=0; i < aliasmod->num_meshes; i++)
 		for (j=0; j < aliasmod->meshes[i].num_skins; j++) {
 			Mod_SetRenderParmsDefaults (&aliasmod->meshes[i].skins[j].renderparms);
-			aliasmod->meshes[i].skins[j].glowimage = NULL;
+			aliasmod->meshes[i].skins[j].glowimage = nullptr;
 		}
 
 	COM_StripExtension (mod->name, scriptname, sizeof(scriptname));
 //	strncat (scriptname, ".script");
 	Q_strncatz (scriptname, sizeof(scriptname), ".script");
-	buf_size = FS_LoadFile (scriptname, (void*)&buf);
+	int buf_size = FS_LoadFile( scriptname, reinterpret_cast< void ** >( &buf ) );
 
 	if (buf_size < 1)
 		return;
@@ -1842,10 +1840,10 @@ void Mod_LoadModelScript (model_t *mod, maliasmodel_t *aliasmod)
 	{
 		for (j=0; j<aliasmod->meshes[i].num_skins; j++)
 		{
-			skinParms = &aliasmod->meshes[i].skins[j].renderparms;
+			//renderparms_t *skinParms = &aliasmod->meshes[ i ].skins[ j ].renderparms;
 
 			// search the script file for that meshname
-			skinname_found = false;
+			qboolean skinname_found = false;
 			parse_data = buf;  // copy data postion
 			while (parse_data < (buf + buf_size))
 			{
@@ -2337,7 +2335,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 	int					numFramesInitial, numFrames;
 	size_t				skinStride, frameStride;
 	dmdl_t				*pinModel;
-	dmdl_frame_t		*pinFrame, **pinFrameList = NULL;
+	dmdl_frame_t		*pinFrame, **pinFrameList = nullptr;
 	dmdl_triangle_t		*pinTri;
 	dmdl_stvert_t		*pinSTVert;
 	dmdl_trivertx_t		*pinTriVertx;
@@ -2709,7 +2707,7 @@ void Mod_LoadAliasMDLModel (model_t *mod, void *buffer)
 //		VID_Printf (PRINT_ALL, "Mod_LoadAliasMDLModel: model %s has trans mesh\n", mod->name);
 
 	Z_Free (pinFrameList);
-	pinFrameList = NULL;
+	pinFrameList = nullptr;
 
 	mod->usingModChunk = true;
 	mod->type = mod_alias;
@@ -3855,9 +3853,9 @@ qboolean R_ModelIsValid (struct model_s *model)
 	{
 	case mod_alias:
 	case mod_sprite:
-		return ((model->skins[0][0] != NULL) && (model->extradata != NULL));
+		return ((model->skins[0][0] != nullptr ) && (model->extradata != nullptr ) );
 	case mod_brush:
-		return ((model->numframes == 2) && (model->extradata != NULL));
+		return ((model->numframes == 2) && (model->extradata != nullptr ) );
 	default:
 		return false;
 	}

@@ -65,7 +65,7 @@ SV_ClientPrintf
 Sends text across to be displayed if the level passes
 =================
 */
-void SV_ClientPrintf (client_t *cl, int level, char *fmt, ...)
+void SV_ClientPrintf ( client_t *cl, int level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		string[1024];
@@ -90,7 +90,7 @@ SV_BroadcastPrintf
 Sends text to all active clients
 =================
 */
-void SV_BroadcastPrintf (int level, char *fmt, ...)
+void SV_BroadcastPrintf ( int level, const char *fmt, ... )
 {
 	va_list		argptr;
 	char		string[2048];
@@ -565,7 +565,7 @@ void SV_SendClientMessages (void)
 		{
 			SZ_Clear (&c->netchan.message);
 			SZ_Clear (&c->datagram);
-			SV_BroadcastPrintf (PRINT_HIGH, "%s overflowed\n", c->name);
+			SV_BroadcastPrintf ( PRINT_HIGH, "%s overflowed\n", c->name );
 			SV_DropClient (c);
 		}
 

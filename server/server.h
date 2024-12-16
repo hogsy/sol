@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // server.h
 
+#pragma once
+
 //#define	PARANOID			// speed sapping error checking
 
 #include "../qcommon/qcommon.h"
@@ -68,9 +70,10 @@ typedef struct
 	qboolean	timedemo;		// don't time sync
 } server_t;
 
-#define EDICT_NUM(n) ((edict_t *)((byte *)ge->edicts + ge->edict_size*(n)))
-#define NUM_FOR_EDICT(e) ( ((byte *)(e)-(byte *)ge->edicts ) / ge->edict_size)
-
+#define EDICT_NUM( n )     ( g_edicts.at( n - 1 ).get() )
+#define NUM_FOR_EDICT( e ) ( std::distance( g_edicts.begin(),                               \
+	                                        std::find_if( g_edicts.begin(), g_edicts.end(), \
+	                                                      [ & ]( const std::unique_ptr< edict_t > &ptr ) { return ptr.get() == ( e ); } ) ) )
 
 typedef enum
 {
@@ -162,7 +165,7 @@ typedef struct
 	qboolean		initialized;				// sv_init has completed
 	int				realtime;					// always increasing, no clamping, etc
 
-	char			mapcmd[MAX_TOKEN_CHARS];	// ie: *intro.cin+base 
+	char			mapcmd[MAX_TOKEN_CHARS];	// ie: *intro.cin+base
 
 	int				spawncount;					// incremented each server start
 												// used to check late spawns
@@ -226,9 +229,9 @@ client_t *GetClientFromAdr (netadr_t address); //Knightmare added
 void SV_DropClient (client_t *drop);
 void SV_DropClientFromAdr (netadr_t address); // Knightmare added
 
-int SV_ModelIndex (char *name);
-int SV_SoundIndex (char *name);
-int SV_ImageIndex (char *name);
+int SV_ModelIndex ( const char *name );
+int SV_SoundIndex ( const char *name );
+int SV_ImageIndex ( const char *name );
 
 void SV_WriteClientdataToMessage (client_t *client, sizebuf_t *msg);
 
@@ -245,14 +248,14 @@ void Master_Packet (void);
 //
 // sv_init.c
 //
-void SV_InitGame (void);
+void SV_InitGame ();
 void SV_Map (qboolean attractloop, const char *levelstring, qboolean loadgame);
 
 
 //
 // sv_phys.c
 //
-void SV_PrepWorldFrame (void);
+void SV_PrepWorldFrame ();
 
 //
 // sv_send.c
@@ -271,8 +274,8 @@ void SV_Multicast (vec3_t origin, multicast_t to);
 void SV_StartSound (vec3_t origin, edict_t *entity, int channel,
 					int soundindex, float volume,
 					float attenuation, float timeofs);
-void SV_ClientPrintf (client_t *cl, int level, char *fmt, ...);
-void SV_BroadcastPrintf (int level, char *fmt, ...);
+void SV_ClientPrintf ( client_t *cl, int level, const char *fmt, ... );
+void SV_BroadcastPrintf ( int level, const char *fmt, ... );
 void SV_BroadcastCommand ( const char *fmt, ... );
 
 //

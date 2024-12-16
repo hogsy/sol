@@ -47,6 +47,11 @@ void PF_Unicast (edict_t *ent, qboolean reliable)
 	if ( (p < 1) || (p > maxclients->integer) )
 		return;
 
+	if ( ent->client == nullptr )
+	{
+		return;
+	}
+
 	client = svs.clients + (p-1);
 
 	// r1ch: trap bad writes from game dll
@@ -77,7 +82,7 @@ PF_dprintf
 Debug print to server console
 ===============
 */
-void PF_dprintf (char *fmt, ...)
+static void PF_dprintf (const char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
@@ -98,7 +103,7 @@ PF_cprintf
 Print to a single client
 ===============
 */
-void PF_cprintf (edict_t *ent, int level, char *fmt, ...)
+static void PF_cprintf (edict_t *ent, int level, const char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
@@ -118,7 +123,7 @@ void PF_cprintf (edict_t *ent, int level, char *fmt, ...)
 	va_end (argptr);
 
 	if (ent)
-		SV_ClientPrintf (svs.clients+(n-1), level, "%s", msg);
+		SV_ClientPrintf ( svs.clients + ( n - 1 ), level, "%s", msg );
 	else
 		Com_Printf ("%s", msg);
 }
@@ -131,7 +136,7 @@ PF_centerprintf
 centerprint to a single client
 ===============
 */
-void PF_centerprintf (edict_t *ent, char *fmt, ...)
+static void PF_centerprintf (edict_t *ent, const char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
@@ -160,7 +165,7 @@ PF_error
 Abort the server with a game error
 ===============
 */
-void PF_error (char *fmt, ...)
+static void PF_error (const char *fmt, ...)
 {
 	char		msg[1024];
 	va_list		argptr;
@@ -181,7 +186,7 @@ PF_setmodel
 Also sets mins and maxs for inline bmodels
 =================
 */
-void PF_setmodel (edict_t *ent, char *name)
+static void PF_setmodel (edict_t *ent, const char *name)
 {
 	int		i;
 	cmodel_t	*mod;
@@ -189,7 +194,7 @@ void PF_setmodel (edict_t *ent, char *name)
 	if (!name)
 		Com_Error (ERR_DROP, "PF_setmodel: NULL");
 
-	i = SV_ModelIndex (name);
+	i = SV_ModelIndex ( name );
 		
 //	ent->model = name;
 	ent->s.modelindex = i;
@@ -211,7 +216,7 @@ PF_Configstring
 
 ===============
 */
-void PF_Configstring (int index, char *val)
+void PF_Configstring ( int index, const char *val )
 {
 	size_t	len, maxlen;
 	char	*dest;
@@ -251,15 +256,15 @@ void PF_Configstring (int index, char *val)
 
 
 
-void PF_WriteChar (int c) {MSG_WriteChar (&sv.multicast, c);}
-void PF_WriteByte (int c) {MSG_WriteByte (&sv.multicast, c);}
-void PF_WriteShort (int c) {MSG_WriteShort (&sv.multicast, c);}
-void PF_WriteLong (int c) {MSG_WriteLong (&sv.multicast, c);}
-void PF_WriteFloat (float f) {MSG_WriteFloat (&sv.multicast, f);}
-void PF_WriteString (char *s) {MSG_WriteString (&sv.multicast, s);}
-void PF_WritePos (vec3_t pos) {MSG_WritePos (&sv.multicast, pos);}
-void PF_WriteDir (vec3_t dir) {MSG_WriteDir (&sv.multicast, dir);}
-void PF_WriteAngle (float f) {MSG_WriteAngle (&sv.multicast, f);}
+static void PF_WriteChar (int c) {MSG_WriteChar (&sv.multicast, c);}
+static void PF_WriteByte (int c) {MSG_WriteByte (&sv.multicast, c);}
+static void PF_WriteShort (int c) {MSG_WriteShort (&sv.multicast, c);}
+static void PF_WriteLong (int c) {MSG_WriteLong (&sv.multicast, c);}
+static void PF_WriteFloat (float f) {MSG_WriteFloat (&sv.multicast, f);}
+static void PF_WriteString (const char *s) {MSG_WriteString (&sv.multicast, s);}
+static void PF_WritePos (vec3_t pos) {MSG_WritePos (&sv.multicast, pos);}
+static void PF_WriteDir (vec3_t dir) {MSG_WriteDir (&sv.multicast, dir);}
+static void PF_WriteAngle (float f) {MSG_WriteAngle (&sv.multicast, f);}
 
 
 /*
@@ -439,7 +444,7 @@ void SV_InitGameProgs (void)
 	import.SetAreaPortalState = CM_SetAreaPortalState;
 	import.AreasConnected = CM_AreasConnected;
 
-	ge = (game_export_t *)Sys_GetGameAPI (&import);
+	ge = static_cast< game_export_t * >( Sys_GetGameAPI( &import ) );
 
 	if (!ge)
 		Com_Error (ERR_DROP, "failed to load game DLL");

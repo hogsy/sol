@@ -259,10 +259,10 @@ void CL_RegisterTEntModels (void)
 	// Xatrix
 //	R_RegisterModel ("models/objects/blaser/tris.md2");
 
-	R_DrawFindPic ("w_machinegun");
-	R_DrawFindPic ("a_bullets");
-	R_DrawFindPic ("i_health");
-	R_DrawFindPic ("a_grenades");
+	R_DrawFindPic ( "w_machinegun" );
+	R_DrawFindPic ( "a_bullets" );
+	R_DrawFindPic ( "i_health" );
+	R_DrawFindPic ( "a_grenades" );
 }	
 
 

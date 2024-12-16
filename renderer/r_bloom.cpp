@@ -162,9 +162,7 @@ R_Bloom_InitBackUpTexture
 */
 void R_Bloom_InitBackUpTexture (int width, int height)
 {
-	byte	*data;
-	
-	data = Z_Malloc(width * height * 4);
+	byte *data = static_cast< byte * >( Z_Malloc( width * height * 4 ) );
 	memset (data, 0, width * height * 4);
 
 //	r_screenbackuptexture_size = width;
@@ -181,7 +179,7 @@ void R_Bloom_InitBackUpTexture (int width, int height)
 R_Bloom_InitEffectTexture
 =================
 */
-void R_Bloom_InitEffectTexture (void)
+void R_Bloom_InitEffectTexture ()
 {
 	byte	*data;
 	float	bloomsizecheck;

@@ -287,10 +287,9 @@ void R_DrawString (float x, float y, const char *string, fontslot_t font, float 
 R_DrawFindPic
 =============
 */
-image_t	*R_DrawFindPic (char *name)
+image_t	*R_DrawFindPic ( const char *name )
 {
 	image_t *gl;
-	char	fullname[MAX_QPATH];
 
 	// paths with a leading slash or containg a '.' aren't relative to pics/
 	if ( (name[0] == '/') || (name[0] == '\\') ) {
@@ -300,6 +299,7 @@ image_t	*R_DrawFindPic (char *name)
 		gl = R_FindImage (name, it_pic);
 	}
 	else {
+		char fullname[ MAX_QPATH ];
 		snprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
 		gl = R_FindImage (fullname, it_pic);
 	}
@@ -317,11 +317,9 @@ image_t	*R_DrawFindPic (char *name)
 R_DrawGetPicSize
 =============
 */
-void R_DrawGetPicSize (int *w, int *h, char *pic)
+void R_DrawGetPicSize (int *w, int *h, const char *pic)
 {
-	image_t *gl;
-
-	gl = R_DrawFindPic (pic);
+	const image_t *gl = R_DrawFindPic( pic );
 	if (!gl)
 	{
 		*w = *h = -1;
@@ -338,20 +336,20 @@ void R_DrawGetPicSize (int *w, int *h, char *pic)
 R_DrawPic
 =============
 */
-void R_DrawPic (drawStruct_t *ds)
+void R_DrawPic ( const drawStruct_t *ds)
 {
 	int				i, w, h;
 	float			scale_x, scale_y;
 	vec4_t			texCoords;
 	vec2_t			texCoord[4], scrollTexCoord[4], verts[4];
-	image_t			*image = NULL, *maskImage = NULL;
+	image_t			*image = nullptr, *maskImage = nullptr;
 	renderparms_t	drawParms;
 	qboolean		masked = false;
 
 	if ( !ds || !ds->pic )	// catch null pointers
 		return;
 
-	image = R_DrawFindPic (ds->pic);
+	image = R_DrawFindPic ( ds->pic );
 	if (!image) {
 		VID_Printf ( PRINT_DEVELOPER, "Can't find pic: %s\n", ds->pic );	// was PRINT_ALL
 		return;
@@ -385,11 +383,11 @@ void R_DrawPic (drawStruct_t *ds)
 	drawParms.tcmod.scroll_y = ds->scroll[1];
 
 	// masked image option
-	if ( (ds->flags & DSFLAG_MASKED) && (ds->maskPic != NULL) && glConfig.mtexcombine )
+	if ( (ds->flags & DSFLAG_MASKED) && (ds->maskPic != nullptr ) && glConfig.mtexcombine )
 	{
-		maskImage = R_DrawFindPic (ds->maskPic);
+		maskImage = R_DrawFindPic ( ds->maskPic );
 
-		if (maskImage != NULL)
+		if (maskImage != nullptr )
 		{
 		//	VID_Printf (PRINT_DEVELOPER, "Drawing pic with mask: %s\n", pic);
 			masked = true;
@@ -652,8 +650,8 @@ void R_DrawCameraEffect (void)
 	vec3_t			verts[4];
 	tcmodParms_t	cameraParms;
 
-	image[0] = R_DrawFindPic ("/gfx/2d/screenstatic.tga");
-	image[1] = R_DrawFindPic ("/gfx/2d/scanlines.tga");
+	image[0] = R_DrawFindPic ( "/gfx/2d/screenstatic.tga" );
+	image[1] = R_DrawFindPic ( "/gfx/2d/scanlines.tga" );
 
 	if (!image[0] || !image[1])
 		return;

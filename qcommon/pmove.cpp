@@ -82,6 +82,7 @@ void SetSpeedMax (void)
 		return;
 	}
 
+#if defined(NEW_PLAYER_STATE_MEMBERS)
 	if (clientstate->maxspeed)
 		pm_maxspeed = clientstate->maxspeed;
 	else
@@ -107,6 +108,7 @@ void SetSpeedMax (void)
 		pm_stopspeed = clientstate->stopspeed;
 	else
 		pm_stopspeed = DEFAULT_STOPSPEED;
+#endif
 }
 
 

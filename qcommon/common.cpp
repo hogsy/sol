@@ -666,7 +666,7 @@ Can delta from either a baseline or a previous packet_entity
 */
 void MSG_WriteDeltaEntity (centity_state_t *from, centity_state_t *to, sizebuf_t *msg, qboolean force, qboolean newentity)
 {
-	unsigned int	bits, bits2;
+	unsigned int bits2;
 
 	if (!to->number)
 		Com_Error (ERR_FATAL, "Unset entity number");
@@ -674,7 +674,7 @@ void MSG_WriteDeltaEntity (centity_state_t *from, centity_state_t *to, sizebuf_t
 		Com_Error (ERR_FATAL, "Entity number >= MAX_EDICTS");
 
 // send an update
-	bits = bits2 = 0;
+	unsigned int bits = bits2 = 0;
 
 	if (to->number >= 256)
 		bits |= U_NUMBER16;		// number8 is implicit otherwise

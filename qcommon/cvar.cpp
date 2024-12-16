@@ -992,7 +992,7 @@ char	*Cvar_BitInfo (int bit)
 				}
 			}
 
-			Info_SetValueForKey (info, var->name, var->string);
+			Info_SetValueForKey ( info, var->name, var->string );
 		}
 	}
 	return info;

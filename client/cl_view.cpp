@@ -559,7 +559,7 @@ void CL_PrepRefresh (void)
 		{
 			cl.model_draw[i] = R_RegisterModel ( cl.configstrings[ CS_MODELS + i ] );
 			if (pname[0] == '*')
-				cl.model_clip[i] = CM_InlineModel (cl.configstrings[CS_MODELS+i]);
+				cl.model_clip[i] = CM_InlineModel ( cl.configstrings[ CS_MODELS + i ] );
 			else
 				cl.model_clip[i] = NULL;
 		}
@@ -580,7 +580,7 @@ void CL_PrepRefresh (void)
 
 	for (i=1; i<max_images && cl.configstrings[cs_images+i][0]; i++)
 	{
-		cl.image_precache[i] = R_DrawFindPic (cl.configstrings[cs_images+i]);
+		cl.image_precache[i] = R_DrawFindPic ( cl.configstrings[ cs_images + i ] );
 		Sys_SendKeyEvents ();	// pump message loop
 		// increment load percent
 		cls.loadingPercent += 15.0f/(float)max;		// was += 20.0f/(float)max
@@ -674,13 +674,8 @@ float CalcFov (float fov_x, float width, float height)
 	float	a;
 	float	x;
 
-	if (fov_x < 1 || fov_x > 179)
-		Com_Error (ERR_DROP, "Bad fov: %f", fov_x);
-
 	x = width/tan(fov_x/360*M_PI);
-
 	a = atan (height/x);
-
 	a = a*360/M_PI;
 
 	return a;

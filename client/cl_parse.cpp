@@ -220,7 +220,7 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 		memset(ci->weaponmodel, 0, sizeof(ci->weaponmodel));
 		ci->weaponmodel[0] = R_RegisterModel ( weapon_filename );
 		ci->skin = R_RegisterSkin (skin_filename);
-		ci->icon = R_DrawFindPic (ci->iconname);
+		ci->icon = R_DrawFindPic ( ci->iconname );
 	}
 	else
 	{
@@ -291,7 +291,7 @@ void CL_LoadClientinfo (clientinfo_t *ci, char *s)
 
 		// icon file
 		snprintf (ci->iconname, sizeof(ci->iconname), "/players/%s/%s_i.pcx", model_name, skin_name);
-		ci->icon = R_DrawFindPic (ci->iconname);
+		ci->icon = R_DrawFindPic ( ci->iconname );
 	}
 
 	// must have loaded all data types to be valud
@@ -536,7 +536,7 @@ void CL_ParseConfigString (void)
 		{
 			cl.model_draw[i-CS_MODELS] = R_RegisterModel ( cl.configstrings[ i ] );
 			if (cl.configstrings[i][0] == '*')
-				cl.model_clip[i-CS_MODELS] = CM_InlineModel (cl.configstrings[i]);
+				cl.model_clip[i-CS_MODELS] = CM_InlineModel ( cl.configstrings[ i ] );
 			else
 				cl.model_clip[i-CS_MODELS] = NULL;
 		}
@@ -549,7 +549,7 @@ void CL_ParseConfigString (void)
 	else if ( (i >= cs_images) && (i < cs_images+max_images) ) // Knightmare- was MAX_IMAGES
 	{
 		if (cl.refresh_prepped)
-			cl.image_precache[i-cs_images] = R_DrawFindPic (cl.configstrings[i]);
+			cl.image_precache[i-cs_images] = R_DrawFindPic ( cl.configstrings[ i ] );
 	}
 	else if ( (i >= cs_playerskins) && (i < cs_playerskins+MAX_CLIENTS) )
 	{
