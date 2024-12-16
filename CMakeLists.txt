@@ -44,7 +44,7 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${SOL_OUTPUT_DIR})
 endforeach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 
-add_library(SolGame STATIC
+add_library(SolGame OBJECT
         game/acebot_ai.cpp
         game/acebot_cmds.cpp
         game/acebot_compress.cpp
