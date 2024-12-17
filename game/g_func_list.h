@@ -1059,7 +1059,6 @@
 {"LoadAliasData", (byte *)LoadAliasData},
 {"ED_SetDefaultFields", (byte *)ED_SetDefaultFields},
 {"ReInitialize_Entity", (byte *)ReInitialize_Entity},
-{"ED_CallSpawn", (byte *)ED_CallSpawn},
 {"ReadLevel", (byte *)ReadLevel},
 {"WriteLevel", (byte *)WriteLevel},
 {"ReadLevelLocals", (byte *)ReadLevelLocals},

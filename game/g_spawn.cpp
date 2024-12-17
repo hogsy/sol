@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
+#include "entity/entity.h"
 #include "entity/entity_manager.h"
 
 void SP_item_health (edict_t *self);
@@ -552,7 +553,7 @@ ED_CallSpawn
 Finds the spawn function for the entity and calls it
 ===============
 */
-void ED_CallSpawn (edict_t *ent)
+void ED_CallSpawn( edict_t *ent, const EntityManager::SpawnVariables &variables )
 {
 	gitem_t	*item;
 	int		i;
@@ -570,7 +571,14 @@ void ED_CallSpawn (edict_t *ent)
 	//          before G_SetMoveDir wipes 'em out
 	VectorCopy(ent->s.angles, ent->org_angles);
 
+	if ( ent->classInstance != nullptr )
+	{
+		ent->classInstance->Spawn( variables );
+		//TODO: should just return here, and let it all be handled by our new system instead
+	}
+
 	// check item spawn functions
+	//TODO: get rid of this
 	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
 	{
 		if (!item->classname)
@@ -583,6 +591,7 @@ void ED_CallSpawn (edict_t *ent)
 	}
 
 	// check normal spawn functions
+	//TODO: get rid of this
 	for ( const spawn_t *s = spawns ; s->name ; s++)
 	{
 		if (!strcmp(s->name, ent->classname.c_str()))
@@ -591,16 +600,21 @@ void ED_CallSpawn (edict_t *ent)
 			return;
 		}
 	}
+
 	gi.dprintf ("%s doesn't have a spawn function\n", ent->classname);
 	G_FreeEdict(ent);
 }
 
 void ReInitialize_Entity (edict_t *ent)
 {
-	spawn_t	*s;
+	if ( ent->classInstance != nullptr )
+	{
+		//TODO: how do we want to handle spawn variables here... ???
+		ent->classInstance->Spawn( EntityManager::SpawnVariables() );
+	}
 
 	// check normal spawn functions
-	for (s=spawns; s->name; s++)
+	for ( spawn_t *s = spawns; s->name; s++)
 	{
 		if (!strcmp(s->name, ent->classname.c_str()))
 		{	// found it
@@ -615,29 +629,25 @@ void ReInitialize_Entity (edict_t *ent)
 ED_NewString
 =============
 */
-static char *ED_NewString (const char *string)
+static char *ED_NewString( const char *string )
 {
-	char	*newb, *new_p;
-	int		i,l;
+	int l = ( int ) strlen( string ) + 1;
 
-	l = (int)strlen(string) + 1;
+	char *newb  = static_cast< char * >( gi.TagMalloc( l, TAG_LEVEL ) );
+	char *new_p = newb;
 
-	newb = static_cast<char*>(gi.TagMalloc (l, TAG_LEVEL));
-
-	new_p = newb;
-
-	for (i=0 ; i< l ; i++)
+	for ( int i = 0; i < l; i++ )
 	{
-		if (string[i] == '\\' && i < l-1)
+		if ( string[ i ] == '\\' && i < l - 1 )
 		{
 			i++;
-			if (string[i] == 'n')
+			if ( string[ i ] == 'n' )
 				*new_p++ = '\n';
 			else
 				*new_p++ = '\\';
 		}
 		else
-			*new_p++ = string[i];
+			*new_p++ = string[ i ];
 	}
 
 	return newb;
@@ -760,134 +770,6 @@ ALIAS SCRIPT LOADING
 ==============================================================================
 */
 
-#ifndef KMQUAKE2_ENGINE_MOD
-/*
-====================
-ReadTextFile
-
-Called from LoadAliasData to try
-loading script file from disk.
-====================
-*/
-char *ReadTextFile (char *filename, int *size)
-{
-    FILE *fp;
-    char *filestring = NULL;
-    int len;
-
-    fp = fopen(filename, "r");
-    if (!fp)
-		return NULL;
-
-    fseek(fp, 0, SEEK_END);
-    len = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    filestring = gi.TagMalloc(len + 1, TAG_LEVEL);
-    if (!filestring)
-	{
-		fclose(fp);
-		return NULL;
-    }
-
-    len = fread(filestring, 1, len, fp);
-	*size = len;
-    filestring[len] = 0;
-
-    fclose(fp);
-
-    return filestring;
-}
-
-/*
-====================
-LoadAliasFile
-
-Tries to load script file from
-disk, and then from a pak file.
-====================
-*/
-qboolean LoadAliasFile (char *name)
-{
-	char aliasfilename[MAX_OSPATH] = "";
-
-	alias_from_pak = false;
-
-	GameDirRelativePath (name, aliasfilename, sizeof(aliasfilename));
-    alias_data = ReadTextFile(aliasfilename, &alias_data_size);
-
-	// If file doesn't exist on hard disk, it must be in a pak file
-	if (!alias_data)
-	{
-		cvar_t			*basedir, *gamedir;
-		char			gamepath[256];
-		char			pakfile[256];
-		char			textname[128];
-		int				i, k, num, numitems;
-		qboolean		in_pak = false;
-		FILE			*fpak;
-		pak_header_t	pakheader;
-		pak_item_t		pakitem;
-
-		basedir = gi.cvar("basedir", "", 0);
-		gamedir = gi.cvar("gamedir", "", 0);
-		Com_sprintf (textname, sizeof(textname), name);
-
-		if (strlen(gamedir->string))
-		//	Q_strncpyz(gamepath, sizeof(gamepath), gamedir->string);
-			Com_sprintf (gamepath, sizeof(gamepath), "%s/%s", basedir->string, gamedir->string);
-		else
-		//	Q_strncpyz(gamepath, sizeof(gamepath), basedir->string);
-			Com_sprintf (gamepath, sizeof(gamepath), "%s/baseq2", basedir->string);
-
-		// check all pakfiles in current gamedir
-		for (i=0; i<10; i++)
-		{
-			Com_sprintf (pakfile, sizeof(pakfile), "%s/pak%d.pak", gamepath, i);
-			if (NULL != (fpak = fopen(pakfile, "rb")))
-			{
-				num = fread(&pakheader, 1, sizeof(pak_header_t), fpak);
-				if (num >= sizeof(pak_header_t))
-				{
-					if (pakheader.id[0] == 'P' &&
-						pakheader.id[1] == 'A' &&
-						pakheader.id[2] == 'C' &&
-						pakheader.id[3] == 'K'   )
-					{
-						numitems = pakheader.dsize / sizeof(pak_item_t);
-						fseek(fpak, pakheader.dstart, SEEK_SET);
-						for (k=0; k<numitems && !in_pak; k++)
-						{
-							fread(&pakitem, 1, sizeof(pak_item_t), fpak);
-							if (!Q_stricmp(pakitem.name,textname))
-							{
-								in_pak = true;
-								fseek(fpak, pakitem.start, SEEK_SET);
-								alias_data = gi.TagMalloc(pakitem.size + 1, TAG_LEVEL);
-								if (!alias_data) {
-									fclose(fpak);
-									gi.dprintf("LoadAliasData: Memory allocation failure for entalias.dat\n");
-									return false;
-								}
-								alias_data_size = fread(alias_data, 1, pakitem.size, fpak);
-								alias_data[pakitem.size] = 0; // put end marker
-								alias_from_pak = true;
-							}
-						}
-					}
-				}
-				fclose(fpak);
-			}
-		}
-	}
-
-	if (!alias_data)
-		return false;
-
-	return true;
-}
-#endif
-
 /*
 ====================
 LoadAliasData
@@ -898,18 +780,12 @@ or from a pak file in the game dir.
 */
 void LoadAliasData (void)
 {
-#ifdef KMQUAKE2_ENGINE_MOD // use new engine file loading function instead
 	// try per-level script file
 	alias_data_size = gi.LoadFile(va("ext_data/entalias/%s.alias", level.mapname), (void **)&alias_data);
 	if (alias_data_size < 2) // file not found, try global file
 		alias_data_size = gi.LoadFile("ext_data/entalias.def", (void **)&alias_data);
 	if (alias_data_size < 2) // file still not found, try old filename
 		alias_data_size = gi.LoadFile("scripts/entalias.dat", (void **)&alias_data);
-#else
-	if (!LoadAliasFile(va("ext_data/entalias/%s.alias", level.mapname)))
-		if (!LoadAliasFile("ext_data/entalias.def"))
-			LoadAliasFile("scripts/entalias.dat");
-#endif
 }
 
 /*
@@ -924,24 +800,19 @@ Returns true if an alias was loaded for the given entity.
 */
 qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 {
-	qboolean	classname_found, alias_found, alias_loaded;
 	char		*search_data;
 	char		*search_token;
 	char		entclassname[256];
-	char		keyname[256];
-	int			braceLevel;
 
-	classname_found = false;
-	alias_found	= false;
-	alias_loaded = false;
-	braceLevel = 0;
+	qboolean classname_found = false;
+	qboolean alias_loaded    = false;
 
 	if (!alias_data) // If no alias file was loaded, don't bother
 		return false;
 
 	search_data = data;  // copy entity data postion
 	// go through all the dictionary pairs looking for the classname
-	while (1)
+	while (true)
 	{	// parse keyname
 		search_token = COM_Parse (&search_data);
 		if (!search_data)
@@ -966,6 +837,8 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 	// then search the entalias.def file for that classname
 	if (classname_found)
 	{
+		int      braceLevel  = 0;
+		qboolean alias_found = false;
 		search_data = alias_data;	// copy alias data postion
  		while (search_data < (alias_data + alias_data_size))
 		{
@@ -1003,7 +876,8 @@ qboolean ED_ParseEntityAlias (char *data, edict_t *ent)
 			// go through all the dictionary pairs
 			while (search_data < (alias_data + alias_data_size))
 			{
-			// parse key
+				char keyname[ 256 ];
+				// parse key
 				search_token = COM_Parse (&search_data);
 				if (!search_data) {
 					gi.dprintf ("ED_ParseEntityAlias: EOF without closing brace\n");
@@ -1044,7 +918,7 @@ Parses an edict out of the given string, returning the new position
 ed should be a properly initialized empty edict.
 ====================
 */
-static char *ED_ParseEdict( char *data, edict_t *ent )
+static char *ED_ParseEdict( char *data, edict_t *ent, EntityManager::SpawnVariables &variables )
 {
 	memset( &st, 0, sizeof( st ) );
 
@@ -1054,7 +928,6 @@ static char *ED_ParseEdict( char *data, edict_t *ent )
 	// Knightmare- look for and load an alias for this ent
 	const qboolean alias_loaded = ED_ParseEntityAlias( data, ent );
 
-	EntityManager::SpawnVariables variables;
 	if ( !EntityManager::ParseSpawnVariables( &data, variables ) )
 	{
 		gi.error( "Failed to parse spawn variables!" );
@@ -1111,22 +984,21 @@ Precaches inventory for all players transitioning
 across maps in SP and coop.
 ============
 */
-void G_PrecachePlayerInventories (void)
+void G_PrecachePlayerInventories ()
 {
-	int			i, j;
 	gclient_t	*client = nullptr;
 	gitem_t		*item = nullptr;
 
 	if (deathmatch->value)	// not needed in DM/CTF
 		return;
 
-	for (i = 0; i < game.maxclients; i++)
+	for ( int i = 0; i < game.maxclients; i++)
 	{
 		if (&game.clients[i] != nullptr )
 		{
 		//	gi.dprintf ("PrecachePlayerInventories(): precaching for client %i\n", i);
 			client = &game.clients[i];
-			for (j = 0; j < game.num_items; j++)
+			for ( int j = 0; j < game.num_items; j++)
 			{
 				if (client->pers.inventory[j] > 0) {
 					item = &itemlist[j];
@@ -1148,14 +1020,13 @@ G_FixTeams
 Borrowed from Rogue source
 ================
 */
-void G_FixTeams (void)
+void G_FixTeams ()
 {
 	edict_t	*e, *e2;
 	int		i, j;
-	int		c, c2;
 
-	c = 0;
-	c2 = 0;
+	int c = 0;
+	int c2 = 0;
 	for (i=1, e=g_edicts+i ; i < globals.num_edicts ; i++,e++)
 	{
 		if (!e->inuse)
@@ -1214,12 +1085,11 @@ All but the last will have the teamchain field set to the next one
 */
 void G_FindTeams ()
 {
-	edict_t	*e, *e2, *chain;
+	edict_t	*e, *e2;
 	int		i, j;
-	int		c, c2;
 
-	c = 0;
-	c2 = 0;
+	int c  = 0;
+	int c2 = 0;
 	for (i=1, e=g_edicts+i ; i < globals.num_edicts ; i++,e++)
 	{
 		if (!e->inuse)
@@ -1235,7 +1105,7 @@ void G_FindTeams ()
 			continue;
 		if (!e->classname.empty() && !Q_stricmp( e->classname.c_str(), "target_clone" ) )
 			continue;
-		chain = e;
+		edict_t *chain = e;
 		e->teammaster = e;
 		c++;
 		c2++;
@@ -1276,16 +1146,14 @@ void LoadTransitionEnts()
 	if (game.transition_ents)
 	{
 		char		t_file[MAX_OSPATH];
-		int			i, j;
-		FILE		*f;
+		int			i;
 		vec3_t		v_spawn;
 		edict_t		*ent;
-		edict_t		*spawn;
 
 		VectorClear (v_spawn);
 		if (strlen(game.spawnpoint))
 		{
-			spawn = G_Find( nullptr, FOFS(targetname), game.spawnpoint);
+			edict_t *spawn = G_Find( nullptr, FOFS( targetname ), game.spawnpoint );
 			while (spawn)
 			{
 				if (!Q_stricmp ( spawn->classname.c_str(), "info_player_start" ) )
@@ -1297,7 +1165,7 @@ void LoadTransitionEnts()
 			}
 		}
 		trans_ent_filename (t_file, sizeof(t_file));
-		f = fopen(t_file, "rb");
+		FILE *f = fopen( t_file, "rb" );
 		if (!f)
 			gi.error("LoadTransitionEnts: Cannot open %s\n", t_file);
 		else
@@ -1335,7 +1203,7 @@ void LoadTransitionEnts()
 						// We KNOW owners precede owned ents in the
 						// list because of the way it was constructed
 						ent->owner = nullptr;
-						for (j=game.maxclients+1; j<globals.num_edicts && !ent->owner; j++)
+						for ( int j = game.maxclients + 1; j<globals.num_edicts && !ent->owner; j++)
 						{
 							if (ent->owner_id == g_edicts[j].id)
 								ent->owner = &g_edicts[j];
@@ -1367,7 +1235,7 @@ void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint
 
 	if (developer->value)
 		gi.dprintf("====== SpawnEntities ========\n");
-	float skill_level = floor( skill->value );
+	float skill_level = floorf( skill->value );
 	if (skill_level < 0)
 		skill_level = 0;
 	if (skill_level > 3)
@@ -1428,7 +1296,7 @@ void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint
 	//gi.dprintf ("Size of alias data: %i\n", alias_data_size);
 
 // parse ents
-	while (1)
+	while (true)
 	{
 		// parse the opening brace
 		char *com_token = COM_Parse( &entities );
@@ -1442,7 +1310,16 @@ void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint
 		else
 			ent = G_Spawn ();
 
-		entities = ED_ParseEdict (entities, ent);
+		EntityManager::SpawnVariables variables;
+		entities = ED_ParseEdict( entities, ent, variables );
+
+		// attempt to create the new entity class instance here
+		const std::string &classname = variables.at( "classname" ).value;
+		ent->classInstance           = EntityManager::CreateEntity( ent, classname );
+		if ( ent->classInstance == nullptr )
+		{
+			gi.dprintf( "Failed to create entity class instance (%s)\n", classname.c_str() );
+		}
 
 		// yet another map hack
 		if (!Q_stricmp( level.mapname, "command" ) && !Q_stricmp( ent->classname.c_str(), "trigger_once" ) && !Q_stricmp( ent->model, "*27" ) )
@@ -1588,18 +1465,6 @@ removeflags:
 		if (ent->movewith_ent)
 			movewith_init (ent->movewith_ent);
 	}
-
-/*	for(i=1, ent=g_edicts+i; i < globals.num_edicts; i++, ent++)
-	{
-		gi.dprintf("%s:%s - movewith=%s, movewith_ent=%s:%s, movewith_next=%s:%s\n====================\n",
-			ent->classname, (ent->targetname ? ent->targetname : "noname"),
-			(ent->movewith ? ent->movewith : "N/A"),
-			(ent->movewith_ent ? ent->movewith_ent->classname : "N/A"),
-			(ent->movewith_ent ? (ent->movewith_ent->targetname ? ent->movewith_ent->targetname : "noname") : "N/A"),
-			(ent->movewith_next ? ent->movewith_next->classname : "N/A"),
-			(ent->movewith_next ? (ent->movewith_next->targetname ? ent->movewith_next->targetname : "noname") : "N/A"));
-
-	} */
 
 	if (game.transition_ents)
 		LoadTransitionEnts ();

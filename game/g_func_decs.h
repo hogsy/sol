@@ -1059,7 +1059,6 @@ extern qboolean ED_ParseEntityAlias ( char * data , edict_t * ent ) ;
 extern void LoadAliasData ( void ) ;
 extern void ED_SetDefaultFields ( edict_t * ent ) ;
 extern void ReInitialize_Entity ( edict_t * ent ) ;
-extern void ED_CallSpawn ( edict_t * ent ) ;
 extern void ReadLevel ( char * filename ) ;
 extern void WriteLevel ( char * filename ) ;
 extern void ReadLevelLocals ( FILE * f ) ;

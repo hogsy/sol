@@ -41,7 +41,6 @@ public:
 	}
 
 	static Entity *CreateEntity( edict_t *edict, const std::string &classname );
-	static void    SpawnEntity( edict_t *edict, const std::string &classname, const SpawnVariables &variables );
 
 private:
 	EntityManager()  = default;

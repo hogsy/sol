@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "p_menu.h"
 #include "p_text.h"
 #include "km_cvar.h"
+#include "entity/entity_manager.h"
 
 #include <memory>
 #define JETPACK_MOD
@@ -1197,7 +1198,7 @@ void ReflectTrail (int type, vec3_t start, vec3_t end, int red, int green, int b
 //
 // g_spawn.c
 //
-void ED_CallSpawn (edict_t *ent);
+void ED_CallSpawn( edict_t *ent, const EntityManager::SpawnVariables &variables = EntityManager::SpawnVariables() );
 void ReInitialize_Entity (edict_t *ent);
 void G_PrecachePlayerInventories (void);	// Knightmare added
 void G_SoundcacheEntities (void);			// Knightmare added

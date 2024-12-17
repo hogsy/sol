@@ -55,20 +55,8 @@ Entity *EntityManager::CreateEntity( edict_t *edict, const std::string &classnam
 	const auto spawn = classRegistry.find( classname );
 	if ( spawn == classRegistry.end() )
 	{
-		gi.dprintf( "Unknown entity class \"%s\"!\n", classname.c_str() );
 		return nullptr;
 	}
 
 	return spawn->second( edict );
-}
-
-void EntityManager::SpawnEntity( edict_t *edict, const std::string &classname, const SpawnVariables &variables )
-{
-	Entity *entity = CreateEntity( edict, classname );
-	if ( entity == nullptr )
-	{
-		return;
-	}
-
-	entity->Spawn( variables );
 }
