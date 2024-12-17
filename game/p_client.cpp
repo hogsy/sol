@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 #include "m_player.h"
+#include "entity/entity.h"
+#include "entity/entity_player.h"
 
 #define MUD1BASE 0.20
 #define MUD1AMP  0.08
@@ -41,14 +43,13 @@ void player_pain (edict_t *self, edict_t *other, float kick, int damage)
 }
 
 
-qboolean IsFemale (edict_t *ent)
+qboolean IsFemale ( const edict_t *ent)
 {
-	char		*info;
 
 	if (!ent->client)
 		return false;
 
-	info = Info_ValueForKey (ent->client->pers.userinfo, "gender");
+	char *info = Info_ValueForKey( ent->client->pers.userinfo, "gender" );
 	if (info[0] == 'f' || info[0] == 'F')
 		return true;
 	if (strstr(info, "crakhor")) // Knightmare added
@@ -56,14 +57,13 @@ qboolean IsFemale (edict_t *ent)
 	return false;
 }
 
-qboolean IsNeutral (edict_t *ent)
+qboolean IsNeutral ( const edict_t *ent)
 {
-	char		*info;
 
 	if (!ent->client)
 		return false;
 
-	info = Info_ValueForKey (ent->client->pers.userinfo, "gender");
+	const char *info = Info_ValueForKey( ent->client->pers.userinfo, "gender" );
 	if (strstr(info, "crakhor")) // Knightmare added
 		return false;
 	if (info[0] != 'f' && info[0] != 'F' && info[0] != 'm' && info[0] != 'M')
@@ -74,8 +74,8 @@ qboolean IsNeutral (edict_t *ent)
 void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 {
 	int			mod;
-	char		*message;
-	char		*message2;
+	const char		*message;
+	const char		*message2;
 	qboolean	ff;
 
 	if (coop->value && attacker->client)
@@ -85,7 +85,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	{
 		ff = meansOfDeath & MOD_FRIENDLY_FIRE;
 		mod = meansOfDeath & ~MOD_FRIENDLY_FIRE;
-		message = NULL;
+		message = nullptr;
 		message2 = "";
 
 		switch (mod)
@@ -170,7 +170,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			safe_bprintf ( PRINT_MEDIUM, "%s %s.\n", self->client->pers.netname, message );
 			if (deathmatch->value)
 				self->client->resp.score--;
-			self->enemy = NULL;
+			self->enemy = nullptr;
 			return;
 		}
 
@@ -506,7 +506,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			safe_bprintf ( PRINT_MEDIUM, "%s %s %s%s\n", self->client->pers.netname, message, attacker->common_name, message2 );
 			if (coop->value)
 				self->client->resp.score--;
-			self->enemy = NULL;
+			self->enemy = nullptr;
 			return;
 		}
 		// end Knightmare
@@ -534,13 +534,13 @@ void TossClientWeapon (edict_t *self)
 
 
 	if (! self->client->pers.inventory[self->client->ammo_index] )
-		item = NULL;
+		item = nullptr;
 	if (item && (strcmp (item->pickup_name, "Blaster") == 0))
-		item = NULL;
+		item = nullptr;
 	if (item && (strcmp (item->pickup_name, "Grapple") == 0))
-		item = NULL;
+		item = nullptr;
 	if (item && (strcmp (item->pickup_name, "No Weapon") == 0))
-		item = NULL;
+		item = nullptr;
 	// Knightmare- don't drop homing rocket launcher (null model error), drop rocket launcher instead
 	if (item && (strcmp (item->pickup_name, "Homing Rocket Launcher") == 0))
 		item = FindItem("Rocket Launcher");
@@ -1002,7 +1002,7 @@ void InitClientPersistant (gclient_t *client, int style)
 {
 	memset (&client->pers, 0, sizeof(client->pers));
 
-	client->homing_rocket = NULL;
+	client->homing_rocket = nullptr;
 	SelectStartWeapon (client, style);
 
 	client->pers.health			= 100;
@@ -1029,7 +1029,7 @@ void InitClientPersistant (gclient_t *client, int style)
 	// Lazarus
 	client->zooming = 0;
 	client->zoomed = false;
-	client->spycam = NULL;
+	client->spycam = nullptr;
 	client->pers.spawn_landmark = false;
 	client->pers.spawn_levelchange = false;
 
@@ -1167,11 +1167,11 @@ edict_t *SelectRandomDeathmatchSpawnPoint (void)
 	int		selection;
 	float	range, range1, range2;
 
-	spot = NULL;
+	spot = nullptr;
 	range1 = range2 = 99999;
-	spot1 = spot2 = NULL;
+	spot1 = spot2 = nullptr;
 
-	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL)
+	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != nullptr )
 	{
 		count++;
 		range = PlayersRangeFromSpot(spot);
@@ -1188,11 +1188,11 @@ edict_t *SelectRandomDeathmatchSpawnPoint (void)
 	}
 
 	if (!count)
-		return NULL;
+		return nullptr;
 
 	if (count <= 2)
 	{
-		spot1 = spot2 = NULL;
+		spot1 = spot2 = nullptr;
 	}
 	// Lazarus: This is wrong. If there is no spot1 or spot2, all spots should
 	// be valid.
@@ -1206,7 +1206,7 @@ edict_t *SelectRandomDeathmatchSpawnPoint (void)
 
 	selection = rand() % count;
 
-	spot = NULL;
+	spot = nullptr;
 	do
 	{
 		spot = G_Find (spot, FOFS(classname), "info_player_deathmatch");
@@ -1230,10 +1230,10 @@ edict_t *SelectFarthestDeathmatchSpawnPoint (void)
 	edict_t	*spot;
 
 
-	spot = NULL;
-	bestspot = NULL;
+	spot = nullptr;
+	bestspot = nullptr;
 	bestdistance = 0;
-	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL)
+	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != nullptr )
 	{
 		bestplayerdistance = PlayersRangeFromSpot (spot);
 
@@ -1251,7 +1251,7 @@ edict_t *SelectFarthestDeathmatchSpawnPoint (void)
 
 	// if there is a player just spawned on each and every start spot
 	// we have no choice to turn one into a telefrag meltdown
-	spot = G_Find (NULL, FOFS(classname), "info_player_deathmatch");
+	spot = G_Find ( nullptr, FOFS(classname), "info_player_deathmatch");
 
 	return spot;
 }
@@ -1268,23 +1268,23 @@ edict_t *SelectDeathmatchSpawnPoint (void)
 edict_t *SelectCoopSpawnPoint (edict_t *ent)
 {
 	int		index;
-	edict_t	*spot = NULL;
+	edict_t	*spot = nullptr;
 	char	*target;
 
 	index = ent->client - game.clients;
 
 	// player 0 starts in normal player spawn point
 	if (!index)
-		return NULL;
+		return nullptr;
 
-	spot = NULL;
+	spot = nullptr;
 
 	// assume there are four coop spots at each spawnpoint
 	while (1)
 	{
 		spot = G_Find (spot, FOFS(classname), "info_player_coop");
 		if (!spot)
-			return NULL;	// we didn't have enough...
+			return nullptr;	// we didn't have enough...
 
 		target = spot->targetname;
 		if (!target)
@@ -1309,7 +1309,7 @@ Chooses a player start, deathmatch start, coop start, etc
 */
 void	SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles, int *style, int *health)
 {
-	edict_t	*spot = NULL;
+	edict_t	*spot = nullptr;
 
 	if (deathmatch->value) {
 //ZOID
@@ -1325,7 +1325,7 @@ void	SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles, int *style, i
 	// find a single player start spot
 	if (!spot)
 	{
-		while ((spot = G_Find (spot, FOFS(classname), "info_player_start")) != NULL)
+		while ((spot = G_Find (spot, FOFS(classname), "info_player_start")) != nullptr )
 		{
 			if (!game.spawnpoint[0] && !spot->targetname)
 				break;
@@ -1455,13 +1455,13 @@ void respawn (edict_t *self)
 	// tpp
 	if (self->crosshair)
 		G_FreeEdict(self->crosshair);
-	self->crosshair = NULL;
+	self->crosshair = nullptr;
 	if (self->client->oldplayer)
 		G_FreeEdict (self->client->oldplayer);
-	self->client->oldplayer = NULL;
+	self->client->oldplayer = nullptr;
 	if (self->client->chasecam)
 		G_FreeEdict (self->client->chasecam);
-	self->client->chasecam = NULL;
+	self->client->chasecam = nullptr;
 	// end tpp
 
 	if (deathmatch->value || coop->value)
@@ -1594,16 +1594,11 @@ a deathmatch.
 */
 void PutClientInServer (edict_t *ent)
 {
-	extern	int			nostatus;
-	vec3_t				mins = {-16, -16, -24};
-	vec3_t				maxs = {16, 16, 32};
-	int					index = 0;
-	vec3_t				spawn_origin, spawn_angles, spawn_viewangles;
-	gclient_t			*client = NULL;
+	gclient_t			*client = nullptr;
 	int		i;
 	// tpp
 	int					chasetoggle = 0;
-	gitem_t				*newweapon = NULL;
+	gitem_t				*newweapon = nullptr;
     char				userinfo[MAX_INFO_STRING];
 	// end tpp
 	qboolean			spawn_landmark = false;
@@ -1613,17 +1608,18 @@ void PutClientInServer (edict_t *ent)
 	int					spawn_anim_end = 0;
 	int					spawn_pm_flags = 0;
 	int					spawn_style = 0;
-	int					spawn_health = 0;
 	client_persistant_t	saved;
 	client_respawn_t	resp;
 
-	// find a spawn point
-	// do it before setting health back up, so farthest
-	// ranging doesn't count this client
-	SelectSpawnPoint (ent, spawn_origin, spawn_angles, &spawn_style, &spawn_health);
+	int index   = ent - g_edicts - 1;
+	ent->client = &game.clients[ index ];
+	client      = ent->client;
 
-	index = ent-g_edicts-1;
-	client = ent->client;
+	// setup the entity class instance representing a player, and spawn them in
+	ent->classInstance = EntityManager::CreateEntity( ent, "player" );
+	assert( ent->classInstance != nullptr );
+	ent->classInstance->Spawn( EntityManager::SpawnVariables() );
+
 	// tpp
 	chasetoggle = client->pers.chasetoggle;
     // end tpp
@@ -1636,6 +1632,7 @@ void PutClientInServer (edict_t *ent)
 	client->pers.spawn_landmark = false;
 	client->pers.spawn_levelchange = false;
 
+#if 0//TODO
 	if (spawn_landmark)
 	{
 		spawn_origin[2] -= 9;
@@ -1645,35 +1642,10 @@ void PutClientInServer (edict_t *ent)
 		VectorCopy(client->pers.spawn_velocity,ent->velocity);
 		spawn_pm_flags = client->pers.spawn_pm_flags;
 	}
+#endif
 
-	// deathmatch wipes most client data every spawn
-	if (deathmatch->value)
-	{
-		char		userinfo[MAX_INFO_STRING];
+	memset( &resp, 0, sizeof( resp ) );
 
-		resp = client->resp;
-		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
-		InitClientPersistant (client, spawn_style);
-		ClientUserinfoChanged (ent, userinfo);
-	}
-	else if (coop->value)
-	{
-	//	int			n;
-		char		userinfo[MAX_INFO_STRING];
-
-		resp = client->resp;
-		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
-		resp.coop_respawn.game_helpchanged = client->pers.game_helpchanged;
-		resp.coop_respawn.helpchanged = client->pers.helpchanged;
-		client->pers = resp.coop_respawn;
-		ClientUserinfoChanged (ent, userinfo);
-		if (resp.score > client->pers.score)
-			client->pers.score = resp.score;
-	}
-	else
-	{
-		memset (&resp, 0, sizeof(resp));
-	}
 	// tpp
 	// A bug in Q2 that you couldn't see without thirdpp
 	memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
@@ -1698,59 +1670,21 @@ void PutClientInServer (edict_t *ent)
 	// copy some data from the client to the entity
 	FetchClientEntData (ent);
 
-	// Lazarus: Starting health < max. Presumably player was hurt in a crash
-	if ( (spawn_health > 0) && !deathmatch->value && !coop->value)
-		ent->health = min(ent->health, spawn_health);
-
-	// clear entity values
-	ent->groundentity = NULL;
-	ent->client = &game.clients[index];
-	ent->takedamage = DAMAGE_AIM;
-	ent->movetype = MOVETYPE_WALK;
-	ent->viewheight = 22;
-	ent->inuse = true;
-	ent->classname = "player";
-	ent->mass = 200;
-	ent->solid = SOLID_BBOX;
-	ent->deadflag = DEAD_NO;
-	ent->air_finished = level.time + 12;
-	ent->clipmask = MASK_PLAYERSOLID;
-	ent->model = "players/male/tris.md2";
-	ent->pain = player_pain;
-	ent->die = player_die;
-	ent->waterlevel = 0;
-	ent->watertype = 0;
-	ent->flags &= ~FL_NO_KNOCKBACK;
-	ent->svflags &= ~SVF_DEADMONSTER;
-	// tpp
-	ent->svflags &= ~SVF_NOCLIENT;
-	// turn on prediction
-	ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
-	// end tpp
-	ent->client->spycam = NULL;
-	ent->client->camplayer = NULL;
-
 // ACEBOT_ADD
 	ent->is_bot = false;
 	ent->last_node = -1;
 	ent->is_jumping = false;
 // ACEBOT_END
 
-	VectorCopy (mins, ent->mins);
-	VectorCopy (maxs, ent->maxs);
-
-	if (!spawn_landmark)
-		VectorClear (ent->velocity);
-
 	// clear playerstate values
-	memset (&ent->client->ps, 0, sizeof(client->ps));
+	memset( &ent->client->ps, 0, sizeof( client->ps ) );
 
 	if (spawn_landmark)
 		client->ps.pmove.pm_flags = spawn_pm_flags;
 
-	client->ps.pmove.origin[0] = spawn_origin[0]*8;
-	client->ps.pmove.origin[1] = spawn_origin[1]*8;
-	client->ps.pmove.origin[2] = spawn_origin[2]*8;
+	client->ps.pmove.origin[ 0 ] = ent->s.origin[ 0 ] * 8;
+	client->ps.pmove.origin[ 1 ] = ent->s.origin[ 1 ] * 8;
+	client->ps.pmove.origin[ 2 ] = ent->s.origin[ 2 ] * 8;
 
 	if (deathmatch->value && ((int)dmflags->value & DF_FIXED_FOV))
 	{
@@ -1790,33 +1724,21 @@ void PutClientInServer (edict_t *ent)
 	// sknum is player num and weapon number
 	// weapon number will be added in changeweapon
 	ent->s.skinnum = ent - g_edicts - 1;
-
 	ent->s.frame = 0;
-	VectorCopy (spawn_origin, ent->s.origin);
-	ent->s.origin[2] += 1;	// make sure off ground
-	VectorCopy (ent->s.origin, ent->s.old_origin);
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
 	{
-		client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - client->resp.cmd_angles[i]);
+		client->ps.pmove.delta_angles[i] = ANGLE2SHORT(ent->s.angles[i] - client->resp.cmd_angles[i]);
 	}
 
-	ent->s.angles[PITCH] = ent->s.angles[ROLL]  = 0;
-	ent->s.angles[YAW]   = spawn_angles[YAW];
-	if (spawn_landmark)
-	{
-		VectorCopy(spawn_viewangles, client->ps.viewangles);
-	//	client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
-	}
-	else
-		VectorCopy(ent->s.angles, client->ps.viewangles);
+	VectorCopy(ent->s.angles, client->ps.viewangles);
 	VectorCopy (client->ps.viewangles, client->v_angle);
 
 	// spawn a spectator
 	if (client->pers.spectator)
 	{
-		client->chase_target = NULL;
+		client->chase_target = nullptr;
 
 		client->resp.spectator = true;
 
@@ -1859,7 +1781,7 @@ void PutClientInServer (edict_t *ent)
 		int	i;
 
 		client->pers.lastweapon  = client->pers.weapon;
-		client->newweapon        = NULL;
+		client->newweapon        = nullptr;
 		client->machinegun_shots = 0;
 		i = ((client->pers.weapon->weapmodel & 0xff) << 8);
 		ent->s.skinnum = (ent - g_edicts - 1) | i;
@@ -1883,7 +1805,9 @@ void PutClientInServer (edict_t *ent)
 
 	// Paril's fix for this getting reset after map changes
 	if (!ent->client->pers.connected)
+	{
 		ent->client->pers.connected = true;
+	}
 }
 
 /*
@@ -1896,10 +1820,6 @@ deathmatch mode, so clear everything out before starting them.
 */
 void ClientBeginDeathmatch (edict_t *ent)
 {
-// ACEBOT_ADD
-	//static char current_map[55];
-// ACEBOT_END
-
 	G_InitEdict (ent);
 
 	InitClientResp (ent->client);
@@ -2263,6 +2183,10 @@ void ClientDisconnect (edict_t *ent)
 	if (!ent->client)
 		return;
 
+	auto *player = dynamic_cast< Player * >( ent->classInstance );
+	assert( player != nullptr );
+	player->OnDisconnect();
+
 	// tpp
 	if (ent->client->chasetoggle)
 		ChasecamRemove(ent,OPTION_OFF);
@@ -2278,8 +2202,6 @@ void ClientDisconnect (edict_t *ent)
 	if (ent->client->textdisplay)
 		Text_Close(ent);
 
-	safe_bprintf ( PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname );
-
 // ACEBOT_ADD
 	ACEIT_PlayerRemoved(ent);
 // ACEBOT_END
@@ -2289,25 +2211,11 @@ void ClientDisconnect (edict_t *ent)
 	CTFDeadDropTech(ent);
 //ZOID
 
-	// send effect
-	gi.WriteByte (svc_muzzleflash);
-	gi.WriteShort (ent-g_edicts);
-	gi.WriteByte (MZ_LOGOUT);
-	gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-	gi.unlinkentity (ent);
-	ent->s.modelindex = 0;
-	ent->solid = SOLID_NOT;
-	ent->inuse = false;
-	ent->classname = "disconnected";
-	ent->client->pers.connected = false;
-
 	if (ent->client->spycam)
 		camera_off(ent);
 
 	playernum = ent-g_edicts-1;
 	gi.configstring (CS_PLAYERSKINS+playernum, "");
-
 }
 
 
@@ -2372,8 +2280,8 @@ float PM_CmdScale( usercmd_t *cmd ) {
 void RemovePush(edict_t *ent)
 {
 	ent->client->push->s.sound = 0;
-	ent->client->push->activator = NULL;
-	ent->client->push = NULL;
+	ent->client->push->activator = nullptr;
+	ent->client->push = nullptr;
 	ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 	// If tpp is NOT always on, and auto-switch for func_pushables IS on,
 	// and we're currently in third-person view, switch it off
@@ -2435,7 +2343,7 @@ void ClientSpycam (edict_t *ent)
 	{
 		camera->flags &= ~FL_ROBOT;
 		if (camera->viewer == ent)
-			camera->viewer = NULL;
+			camera->viewer = nullptr;
 		if (client->ucmd.sidemove > 0)
 			camera = G_FindNextCamera(camera, client->monitor);
 		else
@@ -2459,9 +2367,9 @@ void ClientSpycam (edict_t *ent)
 			if (camera->monsterinfo.aiflags & AI_FOLLOW_LEADER)
 			{
 				camera->monsterinfo.aiflags &= ~AI_FOLLOW_LEADER;
-				camera->monsterinfo.old_leader  = NULL;
-				camera->monsterinfo.leader      = NULL;
-				camera->movetarget = camera->goalentity = NULL;
+				camera->monsterinfo.old_leader  = nullptr;
+				camera->monsterinfo.leader      = nullptr;
+				camera->movetarget = camera->goalentity = nullptr;
 				camera->monsterinfo.stand(camera);
 			}
 		}
@@ -2471,7 +2379,7 @@ void ClientSpycam (edict_t *ent)
 	else
 		is_actor = false;
 	if (camera->enemy && (camera->enemy->deadflag || !camera->enemy->inuse))
-		camera->enemy = NULL;
+		camera->enemy = nullptr;
 	AngleVectors (camera->s.angles, forward, left, up);
 
 	if (is_actor && !camera->enemy)
@@ -2515,7 +2423,7 @@ void ClientSpycam (edict_t *ent)
 				camera->monsterinfo.aiflags &= ~(AI_CHICKEN | AI_STAND_GROUND);
 				camera->monsterinfo.pausetime = 0;
 				camera->movetarget = camera->goalentity = thing;
-				camera->monsterinfo.old_leader = NULL;
+				camera->monsterinfo.old_leader = nullptr;
 				camera->monsterinfo.leader = thing;
 				VectorSubtract (thing->s.origin, camera->s.origin, dir);
 				camera->ideal_yaw = vectoyaw(dir);
@@ -2531,9 +2439,9 @@ void ClientSpycam (edict_t *ent)
 			else if (thing)
 			{
 				camera->monsterinfo.aiflags &= ~AI_CHASE_THING;
-				camera->movetarget = camera->goalentity = NULL;
+				camera->movetarget = camera->goalentity = nullptr;
 				G_FreeEdict (thing);
-				camera->vehicle = NULL;
+				camera->vehicle = nullptr;
 				actor_stand(camera);
 			}
 		}
@@ -2544,9 +2452,9 @@ void ClientSpycam (edict_t *ent)
 			if (thing)
 			{
 				camera->monsterinfo.aiflags &= ~AI_CHASE_THING;
-				camera->movetarget = camera->goalentity = NULL;
+				camera->movetarget = camera->goalentity = nullptr;
 				G_FreeEdict (thing);
-				camera->vehicle = NULL;
+				camera->vehicle = nullptr;
 				actor_stand(camera);
 			}
 		}
@@ -2567,7 +2475,7 @@ void ClientSpycam (edict_t *ent)
 				camera->velocity[2] = 250;
 				camera->monsterinfo.savemove = camera->monsterinfo.currentmove;
 				actor_jump(camera);
-				camera->groundentity = NULL;
+				camera->groundentity = nullptr;
 			}
 			else if ((client->ucmd.upmove < 0) && (camera->groundentity) && !(camera->monsterinfo.aiflags & AI_CROUCH))
 			{
@@ -2645,7 +2553,7 @@ void ClientSpycam (edict_t *ent)
 						vec3_t	angles;
 						vec3_t	end, f;
 						VectorSet (angles, 0, camera->ideal_yaw, 0);
-						AngleVectors (angles, f, NULL, NULL);
+						AngleVectors (angles, f, nullptr, nullptr );
 						VectorMA (camera->s.origin, WORLD_SIZE, f, end);	// was 8192
 						tr = gi.trace(camera->s.origin, camera->mins, camera->maxs, end, camera, MASK_SOLID);
 						VectorCopy (tr.endpos, camera->vehicle->s.origin);
@@ -2686,20 +2594,20 @@ void ClientSpycam (edict_t *ent)
 					if (!camera->enemy)
 					{
 						edict_t	*target;
-						target = LookingAt(ent, 0, NULL, NULL);
+						target = LookingAt(ent, 0, nullptr, nullptr );
 						if ( target && target->takedamage && (target != client->camplayer) )
 						{
 							if (camera->vehicle)
 							{
 								// Currently following "thing" - turn that off
 								camera->monsterinfo.aiflags &= ~AI_CHASE_THING;
-								camera->movetarget = camera->goalentity = NULL;
+								camera->movetarget = camera->goalentity = nullptr;
 								G_FreeEdict (camera->vehicle);
-								camera->vehicle = NULL;
+								camera->vehicle = nullptr;
 							}
 							camera->enemy = target;
 							actor_fire(camera);
-							camera->enemy = NULL;
+							camera->enemy = nullptr;
 							if (camera->monsterinfo.aiflags & AI_HOLD_FRAME)
 								camera->monsterinfo.attack_finished = level.time + FRAMETIME;
 							else
@@ -2724,7 +2632,7 @@ void ClientSpycam (edict_t *ent)
 	VectorMA (start,           -camera->move_origin[1], left,    start);
 	VectorMA (start,            camera->move_origin[2], up,      start);
 
-	tr = gi.trace(camera->s.origin, NULL, NULL, start, camera, MASK_SOLID);
+	tr = gi.trace(camera->s.origin, nullptr, nullptr, start, camera, MASK_SOLID);
 	if (tr.fraction < 1.0)
 	{
 		VectorSubtract(tr.endpos,camera->s.origin,dir);
@@ -2899,9 +2807,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					if (viewing->monsterinfo.aiflags & AI_FOLLOW_LEADER)
 					{
 						viewing->monsterinfo.aiflags    &= ~AI_FOLLOW_LEADER;
-						viewing->monsterinfo.old_leader  = NULL;
-						viewing->monsterinfo.leader      = NULL;
-						viewing->movetarget				 = viewing->goalentity = NULL;
+						viewing->monsterinfo.old_leader  = nullptr;
+						viewing->monsterinfo.leader      = nullptr;
+						viewing->movetarget				 = viewing->goalentity = nullptr;
 						viewing->monsterinfo.stand (viewing);
 					}
 					else
@@ -3226,7 +3134,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if ( pm.groundentity )		// are we on ground
 				if ( Jet_AvoidGround(ent) )	// then lift us if possible
-					pm.groundentity = NULL;		// now we are no longer on ground
+					pm.groundentity = nullptr;		// now we are no longer on ground
 		}
 #endif
 
@@ -3235,7 +3143,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			vec3_t	point;
 			vec3_t	end;
-			
+
 			vec3_t	deltapos, deltavel;
 			float	frac;
 
@@ -3257,11 +3165,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			{
 				trace_t	tr;
 				float	dist;
-				
+
 				VectorCopy(oldorigin,point);
 				point[2] += ent->maxs[2];
 				end[0] = point[0]; end[1] = point[1]; end[2] = oldorigin[2] + ent->mins[2];
-				tr = gi.trace(point,NULL,NULL,end,ent,CONTENTS_WATER);
+				tr = gi.trace(point, nullptr, nullptr, end,ent,CONTENTS_WATER);
 				dist = point[2] - tr.endpos[2];
 				// frac = waterlevel 1 frac at dist=32 or more,
 				//      = waterlevel 3 frac at dist=10 or less
@@ -3388,7 +3296,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 						continue;	// duplicated
 					if (!other->touch)
 						continue;
-					other->touch (other, ent, NULL, NULL);
+					other->touch (other, ent, nullptr, nullptr );
 			}
 		}
 	}
@@ -3406,7 +3314,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		ent->client->backpedaling = true;
 	else
 		ent->client->backpedaling = false;
-	// CDawg end here! 
+	// CDawg end here!
 
 
 	// fire weapon from final position if needed
@@ -3421,7 +3329,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			client->latched_buttons = 0;
 
 			if (client->chase_target) {
-				client->chase_target = NULL;
+				client->chase_target = nullptr;
 				client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 			} else
 				GetChaseTarget(ent);
@@ -3462,7 +3370,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 
-	if (client->push != NULL)
+	if (client->push != nullptr )
 	{
 		if (client->use &&
 			( (ucmd->forwardmove != 0) || (ucmd->sidemove != 0) ) )
@@ -3528,13 +3436,13 @@ void ClientBeginServerFrame (edict_t *ent)
 			// tpp
 	        if (ent->crosshair)
 				G_FreeEdict(ent->crosshair);
-			ent->crosshair = NULL;
+			ent->crosshair = nullptr;
 			if (ent->client->oldplayer)
 				G_FreeEdict (ent->client->oldplayer);
-			ent->client->oldplayer = NULL;
+			ent->client->oldplayer = nullptr;
 			if (ent->client->chasecam)
 				G_FreeEdict (ent->client->chasecam);
-			ent->client->chasecam = NULL;
+			ent->client->chasecam = nullptr;
 			// end tpp
 
 			// in deathmatch, only wait for attack button

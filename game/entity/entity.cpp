@@ -17,7 +17,29 @@ void Entity::SetSolid( const solid_t solid ) const
 	edict->solid = solid;
 }
 
+void Entity::SetOrigin( const vec3_t &origin ) const
+{
+	VectorCopy( edict->s.origin, edict->s.old_origin );
+	VectorCopy( origin, edict->s.origin );
+}
+
+void Entity::SetAngles( const vec3_t &angles ) const
+{
+	VectorCopy( angles, edict->s.angles );
+}
+
+void Entity::SetSize( const vec3_t &mins, const vec3_t &maxs ) const
+{
+	VectorCopy( mins, edict->mins );
+	VectorCopy( maxs, edict->maxs );
+}
+
 void Entity::Link() const
 {
 	gi.linkentity( edict );
+}
+
+void Entity::Unlink() const
+{
+	gi.unlinkentity( edict );
 }

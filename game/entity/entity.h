@@ -27,7 +27,13 @@ public:
 	void SetModel( const std::string &path ) const;
 	void SetSolid( solid_t solid ) const;
 
+	void SetOrigin( const vec3_t &origin ) const;
+	void SetAngles( const vec3_t &angles ) const;
+
+	void SetSize( const vec3_t &mins, const vec3_t &maxs ) const;
+
 	void Link() const;
+	void Unlink() const;
 
 protected:
 	edict_t *edict{};

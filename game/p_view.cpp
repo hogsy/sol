@@ -42,7 +42,7 @@ SV_CalcRoll
 
 ===============
 */
-float SV_CalcRoll (vec3_t angles, vec3_t velocity)
+static float SV_CalcRoll (vec3_t angles, vec3_t velocity)
 {
 	float	sign;
 	float	side;
@@ -71,7 +71,7 @@ P_DamageFeedback
 Handles color blends and view kicks
 ===============
 */
-void P_DamageFeedback (edict_t *player)
+static void P_DamageFeedback (edict_t *player)
 {
 	gclient_t	*client;
 	float	side;
@@ -222,7 +222,7 @@ Auto pitching on slopes?
 
 ===============
 */
-void SV_CalcViewOffset (edict_t *ent)
+static void SV_CalcViewOffset (edict_t *ent)
 {
 	float		*angles;
 	float		bob;
@@ -366,7 +366,7 @@ void SV_CalcViewOffset (edict_t *ent)
 SV_CalcGunOffset
 ==============
 */
-void SV_CalcGunOffset (edict_t *ent)
+static void SV_CalcGunOffset (edict_t *ent)
 {
 	int		i;
 	float	delta;
@@ -418,7 +418,7 @@ void SV_CalcGunOffset (edict_t *ent)
 SV_AddBlend
 =============
 */
-void SV_AddBlend (float r, float g, float b, float a, float *v_blend)
+static void SV_AddBlend (float r, float g, float b, float a, float *v_blend)
 {
 	float	a2, a3;
 
@@ -439,7 +439,7 @@ void SV_AddBlend (float r, float g, float b, float a, float *v_blend)
 SV_CalcBlend
 =============
 */
-void SV_CalcBlend (edict_t *ent)
+static void SV_CalcBlend (edict_t *ent)
 {
 	int		contents;
 	vec3_t	vieworg;
@@ -594,7 +594,7 @@ P_SlamDamage
 Serves same purpose as P_FallingDamage, but detects wall impacts
 =================
 */
-void P_SlamDamage (edict_t *ent)
+static void P_SlamDamage (edict_t *ent)
 {
 	float	delta;
 	int		damage;
@@ -653,7 +653,7 @@ void P_SlamDamage (edict_t *ent)
 P_FallingDamage
 =================
 */
-void P_FallingDamage (edict_t *ent)
+static void P_FallingDamage (edict_t *ent)
 {
 	float	delta;
 	int		damage;
@@ -769,7 +769,7 @@ void P_FallingDamage (edict_t *ent)
 P_WorldEffects
 =============
 */
-void P_WorldEffects (void)
+static void P_WorldEffects ()
 {
 	qboolean	breather;
 	qboolean	envirosuit;
@@ -957,7 +957,7 @@ void P_WorldEffects (void)
 G_SetClientEffects
 ===============
 */
-void G_SetClientEffects (edict_t *ent)
+static void G_SetClientEffects (edict_t *ent)
 {
 	int		pa_type;
 	int		remaining;
@@ -1112,7 +1112,7 @@ void G_SetClientEvent (edict_t *ent)
 G_SetClientSound
 ===============
 */
-void G_SetClientSound (edict_t *ent)
+static void G_SetClientSound (edict_t *ent)
 {
 	const char	*weap;
 
@@ -1175,7 +1175,7 @@ qboolean PlayerOnFloor (edict_t *player)
 G_SetClientFrame
 ===============
 */
-void G_SetClientFrame (edict_t *ent)
+static void G_SetClientFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	qboolean	duck, run;
@@ -1371,6 +1371,7 @@ void ClientEndServerFrame (edict_t *ent)
 		ent->s.angles[PITCH] = (-360 + ent->client->v_angle[PITCH])/3;
 	else
 		ent->s.angles[PITCH] = ent->client->v_angle[PITCH]/3;
+
 	ent->s.angles[YAW] = ent->client->v_angle[YAW];
 	ent->s.angles[ROLL] = 0;
 	ent->s.angles[ROLL] = SV_CalcRoll (ent->s.angles, ent->velocity)*4;
@@ -1379,7 +1380,7 @@ void ClientEndServerFrame (edict_t *ent)
 	// calculate speed and cycle to be used for
 	// all cyclic walking effects
 	//
-	xyspeed = sqrt(ent->velocity[0]*ent->velocity[0] + ent->velocity[1]*ent->velocity[1]);
+	xyspeed = std::sqrt(ent->velocity[0]*ent->velocity[0] + ent->velocity[1]*ent->velocity[1]);
 
 	if (xyspeed < 5)
 	{

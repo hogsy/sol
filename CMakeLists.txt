@@ -47,6 +47,7 @@ endforeach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
 add_library(SolGame OBJECT
         game/entity/entity.cpp
         game/entity/entity_manager.cpp
+        game/entity/entity_player.cpp
         game/entity/entity_player_start.cpp
 
         game/acebot_ai.cpp
