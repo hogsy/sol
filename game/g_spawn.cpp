@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
+#include "entity/entity_manager.h"
 
 void SP_item_health (edict_t *self);
 void SP_item_health_small (edict_t *self);
@@ -614,7 +615,7 @@ void ReInitialize_Entity (edict_t *ent)
 ED_NewString
 =============
 */
-char *ED_NewString (char *string)
+static char *ED_NewString (const char *string)
 {
 	char	*newb, *new_p;
 	int		i,l;
@@ -650,7 +651,7 @@ Takes a key/value pair and sets the binary values
 in an edict
 ===============
 */
-void ED_ParseField( char *key, char *value, edict_t *ent )
+static void ED_ParseField( const char *key, const char *value, edict_t *ent )
 {
 	byte  *b;
 	float  v;
@@ -1043,71 +1044,60 @@ Parses an edict out of the given string, returning the new position
 ed should be a properly initialized empty edict.
 ====================
 */
-char *ED_ParseEdict (char *data, edict_t *ent)
+static char *ED_ParseEdict( char *data, edict_t *ent )
 {
-	qboolean	init;
-	char		keyname[256];
-	char		*com_token;
-	// Knightmare added
-	qboolean	alias_loaded = false;
-
-	init = false;
-	memset (&st, 0, sizeof(st));
+	memset( &st, 0, sizeof( st ) );
 
 	// Knightmare- set field defaults
-	ED_SetDefaultFields (ent);
+	ED_SetDefaultFields( ent );
 
 	// Knightmare- look for and load an alias for this ent
-	alias_loaded = ED_ParseEntityAlias (data, ent);
+	const qboolean alias_loaded = ED_ParseEntityAlias( data, ent );
 
-// go through all the dictionary pairs
-	while (1)
+	EntityManager::SpawnVariables variables;
+	if ( !EntityManager::ParseSpawnVariables( &data, variables ) )
 	{
-	// parse key
-		com_token = COM_Parse (&data);
-		if (com_token[0] == '}')
-			break;
-		if (!data)
-			gi.error ("ED_ParseEntity: EOF without closing brace");
-
-		Q_strncpyz (keyname, sizeof(keyname), com_token);
-
-	// parse value
-		com_token = COM_Parse (&data);
-		if (!data)
-			gi.error ("ED_ParseEntity: EOF without closing brace");
-
-		if (com_token[0] == '}')
-			gi.error ("ED_ParseEntity: closing brace without data");
-
-		init = true;
-
-	// Knightmare: check for _clientonly here
-		if (!strcmp(keyname, "_clientonly"))
-		{
-			int val = atoi(com_token);
-
-			// value of 2 or higher = remove, 1 = server-side bbox clip only
-			if (val > 1)
-				G_FreeEdict (ent);
-			else if (val == 1)
-				ent->svflags |= SVF_NOCLIENT;
-		}
-
-	// keynames with a leading underscore are used for utility comments,
-	// and are immediately discarded by quake
-		if (keyname[0] == '_')
-			continue;
-
-		// Knightmare- if the classname was replaced by an alias, don't load it back
-		if (alias_loaded && !strcmp(keyname, "classname"))
-			continue;
-
-		ED_ParseField (keyname, com_token, ent);
+		gi.error( "Failed to parse spawn variables!" );
 	}
 
-	if (!init)
-		memset (ent, 0, sizeof(*ent));
+	if ( auto i = variables.find( "_clientonly" ); i != variables.end() )
+	{
+		int value = std::stoi( i->second.value );
+		if ( value > 1 )
+		{
+			G_FreeEdict( ent );
+		}
+		else if ( value == 1 )
+		{
+			ent->svflags |= SVF_NOCLIENT;
+		}
+
+		// remove it, because we've handled it here
+		variables.erase( i );
+	}
+
+	//TODO: eventually get rid of this...
+	qboolean init = false;
+	for ( auto &i : variables )
+	{
+		//TODO: what the fuck is the point of this?
+		init = true;
+
+		// Knightmare- if the classname was replaced by an alias, don't load it back
+		if ( alias_loaded && i.second.key == "classname" )
+		{
+			continue;
+		}
+
+		const char *key   = i.second.key.c_str();
+		const char *value = i.second.value.c_str();
+		ED_ParseField( key, value, ent );
+	}
+
+	if ( !init )
+	{
+		memset( ent, 0, sizeof( *ent ) );
+	}
 
 	return data;
 }
@@ -1371,20 +1361,13 @@ Creates a server's entity / program execution context by
 parsing textual entity definitions out of an ent file.
 ==============
 */
-void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
+void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint)
 {
-	edict_t		*ent;
-	int			inhibit;
-	char		*com_token;
 	int			i;
-	float		skill_level;
-	extern int	max_modelindex;
-	extern int	max_soundindex;
-	extern int	lastgibframe;
 
 	if (developer->value)
 		gi.dprintf("====== SpawnEntities ========\n");
-	skill_level = floor (skill->value);
+	float skill_level = floor( skill->value );
 	if (skill_level < 0)
 		skill_level = 0;
 	if (skill_level > 3)
@@ -1414,8 +1397,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	for (i=0 ; i<game.maxclients ; i++)
 		g_edicts[i+1].client = game.clients + i;
 
-	ent = nullptr;
-	inhibit = 0;
+	edict_t *ent     = nullptr;
+	int inhibit = 0;
 
 	// Knightmare- set maptype for pack-specific changes
 	if ( IsIdMap() ) {
@@ -1448,7 +1431,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	while (1)
 	{
 		// parse the opening brace
-		com_token = COM_Parse (&entities);
+		char *com_token = COM_Parse( &entities );
 		if (!entities)
 			break;
 		if (com_token[0] != '{')
@@ -1458,6 +1441,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			ent = g_edicts;
 		else
 			ent = G_Spawn ();
+
 		entities = ED_ParseEdict (entities, ent);
 
 		// yet another map hack

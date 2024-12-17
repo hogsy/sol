@@ -32,7 +32,7 @@ public:
 	};
 	typedef std::map< std::string, SpawnVariable > SpawnVariables;
 
-	static bool ParseSpawnVariables( char *buf, SpawnVariables &variables );
+	static bool ParseSpawnVariables( char **buf, SpawnVariables &variables );
 
 	static EntityManager *GetInstance()
 	{

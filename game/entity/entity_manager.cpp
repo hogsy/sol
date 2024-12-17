@@ -6,17 +6,17 @@
 
 std::map< std::string, EntityManager::constructor > EntityManager::classRegistry __attribute__( ( init_priority( 1000 ) ) );
 
-bool EntityManager::ParseSpawnVariables( char *buf, SpawnVariables &variables )
+bool EntityManager::ParseSpawnVariables( char **buf, SpawnVariables &variables )
 {
 	while ( true )
 	{
-		char *token = COM_Parse( &buf );
+		char *token = COM_Parse( buf );
 		if ( *token == '}' )
 		{
 			break;
 		}
 
-		if ( buf == nullptr )
+		if ( *buf == nullptr )
 		{
 			gi.dprintf( "EOF without closing brace!\n" );
 			return false;
@@ -24,8 +24,8 @@ bool EntityManager::ParseSpawnVariables( char *buf, SpawnVariables &variables )
 
 		std::string key = token;
 
-		token = COM_Parse( &buf );
-		if ( buf == nullptr )
+		token = COM_Parse( buf );
+		if ( *buf == nullptr )
 		{
 			gi.dprintf( "EOF without closing brace!\n" );
 			return false;

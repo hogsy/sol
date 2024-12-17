@@ -132,7 +132,7 @@ cvar_t	*g_showlogic;			// Knightmare added
 // Knightmare- simulated pause for deathmatch
 qboolean	paused;	
 
-void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
+void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
 qboolean ClientConnect (edict_t *ent, char *userinfo);
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);

@@ -1445,7 +1445,7 @@ char *COM_SkipWhiteSpace (char *data_p, qboolean *hasNewLines)
 	while ((c = *data_p) <= ' ')
 	{
 		if (!c)
-			return NULL;
+			return nullptr;
 
 		if (c == '\n') {
 		//	com_parseLine++;
@@ -1523,7 +1523,7 @@ char *COM_Parse (char **data_p)
 	
 	if (!data)
 	{
-		*data_p = NULL;
+		*data_p = nullptr;
 		return "";
 	}
 		
@@ -1533,7 +1533,7 @@ skipwhite:
 	{
 		if (c == 0)
 		{
-			*data_p = NULL;
+			*data_p = nullptr;
 			return "";
 		}
 		data++;
@@ -1614,7 +1614,7 @@ char *COM_ParseExt (char **data_p, qboolean allowNewLines)
 
 	// Make sure incoming data is valid
 	if (!data) {
-		*data_p = NULL;
+		*data_p = nullptr;
 		return com_token;
 	}
 
@@ -1622,7 +1622,7 @@ char *COM_ParseExt (char **data_p, qboolean allowNewLines)
 	{	// Skip whitespace
 		data = COM_SkipWhiteSpace (data, &hasNewLines);
 		if (!data) {
-			*data_p = NULL;
+			*data_p = nullptr;
 			return com_token;
 		}
 
@@ -2098,7 +2098,7 @@ qboolean Q_StrScanToken (const char *string, const char *findToken, qboolean isC
 
 	if ( !string || !findToken ) 
 		return false;
-	if ( (strchr(findToken, ' ') != NULL) || (findToken[0] == 0) )
+	if ( (strchr(findToken, ' ') != nullptr ) || (findToken[0] == 0) )
 		return false;
 
 	const char *strPos = string;
@@ -2156,14 +2156,14 @@ int Q_strncmp (const char *string1, const char *string2, int n)
 {
 	int		c1, c2;
 
-	if (string1 == NULL)
+	if (string1 == nullptr )
 	{
-		if (string2 == NULL)
+		if (string2 == nullptr )
 			return 0;
 		else
 			return -1;
 	}
-	else if (string2 == NULL)
+	else if (string2 == nullptr )
 		return 1;
 
 	do
