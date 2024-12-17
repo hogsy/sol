@@ -387,8 +387,8 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 	int		dataByte, runLength;
 	byte	*out, *pix;
 
-	*pic = NULL;
-	*palette = NULL;
+	*pic = nullptr;
+	*palette = nullptr;
 
 	//
 	// load the file
@@ -470,7 +470,7 @@ void LoadPCX (const char *filename, byte **pic, byte **palette, int *width, int 
 	{
 		VID_Printf ( PRINT_DEVELOPER, "PCX file %s was malformed", filename );
 		free (*pic);
-		*pic = NULL;
+		*pic = nullptr;
 	}
 
 	FS_FreeFile (pcx);
@@ -526,7 +526,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 	int				realrow, truerow, baserow, interleave, origin;
 	int				pixel_size, map_idx, RLE_count, RLE_flag;
 	size_t			picSize;
-	qboolean		isColorMapped, RL_encoded; 
+	qboolean		isColorMapped, RL_encoded;
 	TargaHeader		header;
 	byte			tmp[2], r, g, b, a, j, k, l;
 	byte			*data, *pdata, *dst, *ColorMap;
@@ -608,7 +608,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
    r = g = b = a = l = 0;
 
    // if required, read the color map information
-   ColorMap = NULL;
+   ColorMap = nullptr;
    isColorMapped = ( (header.image_type == TGA_Map) || (header.image_type == TGA_RLEMap) /*|| (header.image_type == TGA_CompMap) || (header.image_type == TGA_CompMap4)*/ )
 					&& (header.colormap_type == 1);
    if ( isColorMapped )
@@ -789,7 +789,7 @@ void R_LoadTGA (const char *filename, byte **pic, int *width, int *height)
 				if (isColorMapped)
 					free (ColorMap);
 				free (pic);
-				*pic = NULL;
+				*pic = nullptr;
 				FS_FreeFile (data);
 			//	VID_Error ( ERR_DROP, "Illegal pixel_size '%d' in file '%s'\n", pixel_size, filename );
 				VID_Printf ( PRINT_ALL, "R_LoadTGA (%s): Illegal pixel_size '%d'\n", filename, pixel_size );
@@ -827,7 +827,7 @@ PixEncode:
 
 	if (isColorMapped)
 		free (ColorMap);
-   
+
 	FS_FreeFile (data);
 }
 
@@ -868,7 +868,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 	targa_header.id_length = *buf_p++;
 	targa_header.colormap_type = *buf_p++;
 	targa_header.image_type = *buf_p++;
-	
+
 	tmp[0] = buf_p[0];
 	tmp[1] = buf_p[1];
 	targa_header.colormap_index = LittleShort ( *((short *)tmp) );
@@ -896,7 +896,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	if (targa_header.image_type != 2 
+	if (targa_header.image_type != 2
 		&& targa_header.image_type != 10) {
 	//	VID_Error (ERR_DROP, "R_LoadTGA: Only type 2 and 10 targa RGB images supported\n");
 		VID_Printf (PRINT_ALL, "R_LoadTGA: %s has wrong image format; only type 2 and 10 targa RGB images supported.\n", name);
@@ -904,7 +904,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	if (targa_header.colormap_type !=0 
+	if (targa_header.colormap_type !=0
 		|| (targa_header.pixel_size!=32 && targa_header.pixel_size!=24)) {
 	//	VID_Error (ERR_DROP, "R_LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
 		VID_Printf (PRINT_ALL, "R_LoadTGA: %s has wrong image format; only 32 or 24 bit images supported (no colormaps).\n", name);
@@ -926,7 +926,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 
 	if (targa_header.id_length != 0)
 		buf_p += targa_header.id_length;  // skip TARGA image comment
-	
+
 	if (targa_header.image_type==2) {  // Uncompressed, RGB images
 		for(row=rows-1; row>=0; row--) {
 			pixbuf = targa_rgba + row*columns*4;
@@ -934,7 +934,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 				unsigned char red,green,blue,alphabyte;
 				switch (targa_header.pixel_size) {
 					case 24:
-							
+
 							blue = *buf_p++;
 							green = *buf_p++;
 							red = *buf_p++;
@@ -979,7 +979,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 								alphabyte = *buf_p++;
 								break;
 					}
-	
+
 					for(j=0;j<packetSize;j++) {
 						*pixbuf++=red;
 						*pixbuf++=green;
@@ -1027,7 +1027,7 @@ void R_LoadTGA (const char *name, byte **pic, int *width, int *height)
 							else
 								goto breakOut;
 							pixbuf = targa_rgba + row*columns*4;
-						}						
+						}
 					}
 				}
 			}
@@ -1054,13 +1054,13 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 	size_t	imageSize, c;
 	char	checkname[MAX_OSPATH];
 	byte	*buffer;
-	FILE	*file = NULL;
-	
+	FILE	*file = nullptr;
+
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 4) ) {
 	//	VID_Printf (PRINT_ALL, "R_WriteTGA: bad parms\n");
 		return;
 	}
-	
+
 	imageSize = width * height * nBytes;
 	nBits = (nBytes == 4) ? 32 : 24;
 
@@ -1094,7 +1094,7 @@ void R_WriteTGA (byte *rawImage, int width, int height, int nBytes, const char *
 		}
 
 		file = fopen (checkname, "wb");
-		if (file != NULL) {
+		if (file != nullptr ) {
 			fwrite (buffer, 1, c, file);
 			fclose (file);
 		}
@@ -1127,7 +1127,7 @@ From Quake2Max
 #define PNG_GRAYFUNC_1_2_4_to_8(a)	png_set_expand_gray_1_2_4_to_8(a)
 #endif
 
-typedef struct png_handle_s 
+typedef struct png_handle_s
 {
 	char	*tmpBuf;
 	int		tmpi;
@@ -1136,7 +1136,7 @@ typedef struct png_handle_s
 	int /*long*/	fRowBytes;		// DL Added 30/05/2000
 	double	fGamma;			// DL Added 07/06/2000
 	double	fScreenGamma;	// DL Added 07/06/2000
-	char	*fRowPtrs;		// DL Changed for consistancy 30/05/2000  
+	char	*fRowPtrs;		// DL Changed for consistancy 30/05/2000
 	char	*data;			// property data: pByte read fData;
 	char	*title;
 	char	*author;
@@ -1153,44 +1153,44 @@ typedef struct png_handle_s
 	int		transparent;
 } png_handle_t;
 
-png_handle_t	*r_png_handle = NULL;
+png_handle_t	*r_png_handle = nullptr;
 
-void R_InitializePNGData (void) 
+void R_InitializePNGData (void)
 {
 	size_t /*long*/*cvaluep; //ub
 	int /*long*/	y;
 
 	// Initialize Data and RowPtrs
-	if (r_png_handle->data) 
+	if (r_png_handle->data)
 	{
 		free (r_png_handle->data);
-		r_png_handle->data = NULL;
+		r_png_handle->data = nullptr;
 	}
-	if (r_png_handle->fRowPtrs) 
+	if (r_png_handle->fRowPtrs)
 	{
 		free (r_png_handle->fRowPtrs);
-		r_png_handle->fRowPtrs = NULL;
+		r_png_handle->fRowPtrs = nullptr;
 	}
 	r_png_handle->data = malloc(r_png_handle->height * r_png_handle->fRowBytes ); // DL Added 30/5/2000
 	r_png_handle->fRowPtrs = malloc(sizeof(void*) * r_png_handle->height);
 
-	if ( (r_png_handle->data) && (r_png_handle->fRowPtrs) ) 
+	if ( (r_png_handle->data) && (r_png_handle->fRowPtrs) )
 	{
-		cvaluep = (size_t /*long*/*)r_png_handle->fRowPtrs;    
+		cvaluep = (size_t /*long*/*)r_png_handle->fRowPtrs;
 		for (y=0; y < r_png_handle->height; y++)
 		{
-			cvaluep[y] = (size_t /*long*/)r_png_handle->data + ( y * (size_t /*long*/)r_png_handle->fRowBytes ); // DL Added 08/07/2000      
+			cvaluep[y] = (size_t /*long*/)r_png_handle->data + ( y * (size_t /*long*/)r_png_handle->fRowBytes ); // DL Added 08/07/2000
 		}
 	}
 }
 
-void R_CreatePNG (void) 
+void R_CreatePNG (void)
 {
 	if (r_png_handle)
 		return;
 	r_png_handle = malloc(sizeof(png_handle_t));
-	r_png_handle->data    = NULL;
-	r_png_handle->fRowPtrs = NULL;
+	r_png_handle->data    = nullptr;
+	r_png_handle->fRowPtrs = nullptr;
 	r_png_handle->height  = 0;
 	r_png_handle->width   = 0;
 	r_png_handle->colorType = PNG_COLOR_TYPE_RGBA;	// was PNG_COLOR_TYPE_RGB
@@ -1199,24 +1199,24 @@ void R_CreatePNG (void)
 	r_png_handle->filter = PNG_FILTER_TYPE_DEFAULT;
 }
 
-void R_DestroyPNG (qboolean keepData) 
-{  
-	if (!r_png_handle) 
+void R_DestroyPNG (qboolean keepData)
+{
+	if (!r_png_handle)
 		return;
-	if (r_png_handle->data && !keepData) 
+	if (r_png_handle->data && !keepData)
 		free (r_png_handle->data);
-	if (r_png_handle->fRowPtrs) 
+	if (r_png_handle->fRowPtrs)
 		free (r_png_handle->fRowPtrs);
 	free (r_png_handle);
-	r_png_handle = NULL;
+	r_png_handle = nullptr;
 }
 
 void PNGAPI R_ReadPNGData (png_structp png, png_bytep data, png_size_t length)	// called by libpng
 {
 	int	i;
 
-	for (i=0; i<length; i++) 
-		data[i] = r_png_handle->tmpBuf[r_png_handle->tmpi++];    // give pnglib a some more bytes  
+	for (i=0; i<length; i++)
+		data[i] = r_png_handle->tmpBuf[r_png_handle->tmpi++];    // give pnglib a some more bytes
 }
 
 
@@ -1225,7 +1225,7 @@ void PNGAPI R_ReadPNGData (png_structp png, png_bytep data, png_size_t length)	/
 R_LoadPNG
 ==============
 */
-void R_LoadPNG (const char *filename, byte **pic, int *width, int *height) 
+void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 {
 	png_structp	png;
 	png_infop	pnginfo;
@@ -1233,7 +1233,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	int			len;
 	byte		*raw;
 
-	*pic = NULL;
+	*pic = nullptr;
 
 	if ( !filename || (filename[0] == '\0') )
 		return;
@@ -1252,8 +1252,8 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		return;
 	}
 
-	png = png_create_read_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
-	if (!png) { 
+	png = png_create_read_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	if (!png) {
 		FS_FreeFile (raw);
 		return;
 	}
@@ -1261,7 +1261,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	pnginfo = png_create_info_struct (png);
 
 	if (!pnginfo) {
-		png_destroy_read_struct (&png, &pnginfo, 0);
+		png_destroy_read_struct (&png, &pnginfo, nullptr);
 		FS_FreeFile (raw);
 		return;
 	}
@@ -1271,7 +1271,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	R_CreatePNG (); // creates the r_png_handle struct
 
 	r_png_handle->tmpBuf = raw; //buf = whole file content
-	r_png_handle->tmpi = 0; 
+	r_png_handle->tmpi = 0;
 	png_set_read_fn (png, ioBuffer, R_ReadPNGData);
 	png_read_info (png, pnginfo);
 
@@ -1282,13 +1282,13 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	// conversion of non-RGB types to RGBA is not working, so exclude them for now
 	if ( (r_png_handle->colorType != PNG_COLOR_TYPE_RGB) && (r_png_handle->colorType != PNG_COLOR_TYPE_RGB_ALPHA) ) {
 		VID_Printf ( PRINT_DEVELOPER, "R_LoadPNG (%s): png type is non-RGB, non-RGBA, aborting load\n", filename );
-		png_destroy_read_struct (&png, &pnginfo, 0);
+		png_destroy_read_struct (&png, &pnginfo, nullptr);
 		R_DestroyPNG (false);
 		FS_FreeFile (raw);
 		return;
 	}
 
-	if (r_png_handle->colorType == PNG_COLOR_TYPE_PALETTE)  
+	if (r_png_handle->colorType == PNG_COLOR_TYPE_PALETTE)
 		png_set_palette_to_rgb (png);
 	if ( (r_png_handle->colorType == PNG_COLOR_TYPE_GRAY) && (r_png_handle->bitDepth < 8) )
 	//	png_set_gray_1_2_4_to_8 (png);
@@ -1299,7 +1299,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 		png_set_tRNS_to_alpha (png);
 
 	// hax: expand 24bit to 32bit
-//	if (r_png_handle->bitDepth == 8 && r_png_handle->colorType == PNG_COLOR_TYPE_RGB) 
+//	if (r_png_handle->bitDepth == 8 && r_png_handle->colorType == PNG_COLOR_TYPE_RGB)
 //		png_set_filler (png,255, PNG_FILLER_AFTER);
 
 	// Expand grayscale to RGB
@@ -1325,7 +1325,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 
 	png_read_end (png, pnginfo); // read last information chunks
 
-	png_destroy_read_struct (&png, &pnginfo, 0);
+	png_destroy_read_struct (&png, &pnginfo, nullptr);
 
 	// only load 32 bit by now...
 	if (r_png_handle->bitDepth == 8) {
@@ -1337,7 +1337,7 @@ void R_LoadPNG (const char *filename, byte **pic, int *width, int *height)
 	}
 	else {
 		VID_Printf ( PRINT_DEVELOPER, "R_LoadPNG (%s): Bad png color depth\n", filename );
-		*pic = NULL;
+		*pic = nullptr;
 		free (r_png_handle->data);
 	}
 
@@ -1358,7 +1358,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	int			i, colorType;
 	size_t		imageSize;
 	char		checkname[MAX_OSPATH];
-	FILE		*file = NULL;
+	FILE		*file = nullptr;
 	png_structp	png_sptr;
 	png_infop	png_infoptr;
 	void		*lineptr;
@@ -1367,7 +1367,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	//	VID_Printf (PRINT_ALL, "R_WritePNG: bad parms\n");
 		return;
 	}
-	
+
 	imageSize = width * height * nBytes;
 
 	if (relativePath)
@@ -1380,23 +1380,23 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 	}
 	if ( !file )
 	{
-		png_sptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+		png_sptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		if ( !png_sptr ) {
-			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n" ); 
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create PNG struct\n" );
 			return;
 		}
 
 		png_infoptr = png_create_info_struct (png_sptr);
 		if ( !png_infoptr ) {
-			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n" ); 
+			png_destroy_write_struct (&png_sptr, nullptr);
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't create info struct\n" );
 			return;
 		}
 
 		if ( setjmp(png_jmpbuf(png_sptr)) ) {
 			png_destroy_info_struct (png_sptr, &png_infoptr);
-			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: bad data\n" ); 
+			png_destroy_write_struct (&png_sptr, nullptr);
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: bad data\n" );
 			return;
 		}
 
@@ -1404,8 +1404,8 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 		file = fopen(checkname, "wb");
 		if ( !file ) {
 			png_destroy_info_struct (png_sptr, &png_infoptr);
-			png_destroy_write_struct (&png_sptr, 0);
-			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't open %s for writing\n", checkname ); 
+			png_destroy_write_struct (&png_sptr, nullptr);
+			VID_Printf ( PRINT_ALL, "R_ScreenShot_PNG: Couldn't open %s for writing\n", checkname );
 			return;
  		}
 
@@ -1424,7 +1424,7 @@ void R_WritePNG (byte *rawImage, int width, int height, int nBytes, const char *
 		// clean up
 		fclose (file);
 		png_destroy_info_struct (png_sptr, &png_infoptr);
-		png_destroy_write_struct (&png_sptr, 0);
+		png_destroy_write_struct (&png_sptr, nullptr);
 
 		// close File
 		fclose (file);
@@ -1461,7 +1461,7 @@ void jpg_skip_input_data (j_decompress_ptr cinfo, long num_bytes)
     cinfo->src->next_input_byte += (size_t) num_bytes;
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
 
-    if (cinfo->src->bytes_in_buffer < 0) 
+    if (cinfo->src->bytes_in_buffer < 0)
 		VID_Printf ( PRINT_ALL, "Premature end of JPEG data\n" );
 }
 
@@ -1502,7 +1502,7 @@ void R_LoadJPG (const char *filename, byte **pic, int *width, int *height)
 	{	// Knightmare- skip this unless developer >= 2 because it spams the console
 		if (developer->integer > 1)
 			VID_Printf ( PRINT_DEVELOPER, "R_LoadJPG (%s): Bad jpg file\n", filename );
-		return;	
+		return;
 	}
 
 	// Knightmare- check for bad data
@@ -1611,17 +1611,17 @@ void R_WriteJPG (byte *rawImage, int width, int height, int nBytes, const char *
 {
 	size_t						imageSize;
 	char						checkname[MAX_OSPATH];
-	FILE						*file = NULL;
+	FILE						*file = nullptr;
 	int							offset;
 	struct jpeg_compress_struct	cinfo;
 	struct jpeg_error_mgr		jerr;
 	JSAMPROW					s[1];
-	
+
 	if ( !rawImage || !filename || (width <= 0) || (height <= 0) || (nBytes < 3) || (nBytes > 3) ) {
 	//	VID_Printf (PRINT_ALL, "R_WriteJPG: bad parms\n");
 		return;
 	}
-	
+
 	imageSize = width * height * nBytes;
 
 	if (relativePath)
@@ -1718,7 +1718,7 @@ typedef struct
 void R_FloodFillSkin (byte *skin, int skinwidth, int skinheight, qboolean useQuakePalette)
 {
 	byte				fillcolor = *skin; // assume this is the pixel to fill
-	unsigned int		*palette = NULL;
+	unsigned int		*palette = nullptr;
 	floodfill_t			fifo[FLOODFILL_FIFO_SIZE];
 	int					inpt = 0, outpt = 0;
 	int					filledcolor = -1;
@@ -1780,37 +1780,37 @@ from DarkPlaces
 ================
 */
 
-void GL_ResampleTextureLerpLine (byte *in, byte *out, int inwidth, int outwidth) 
-{ 
+void GL_ResampleTextureLerpLine (byte *in, byte *out, int inwidth, int outwidth)
+{
 	int j, xi, oldx = 0, f, fstep, l1, l2, endx;
 
-	fstep = (int) (inwidth*65536.0f/outwidth); 
-	endx = (inwidth-1); 
-	for (j = 0,f = 0;j < outwidth;j++, f += fstep) 
-	{ 
-		xi = (int) f >> 16; 
-		if (xi != oldx) 
-		{ 
-			in += (xi - oldx) * 4; 
-			oldx = xi; 
-		} 
-		if (xi < endx) 
-		{ 
-			l2 = f & 0xFFFF; 
-			l1 = 0x10000 - l2; 
+	fstep = (int) (inwidth*65536.0f/outwidth);
+	endx = (inwidth-1);
+	for (j = 0,f = 0;j < outwidth;j++, f += fstep)
+	{
+		xi = (int) f >> 16;
+		if (xi != oldx)
+		{
+			in += (xi - oldx) * 4;
+			oldx = xi;
+		}
+		if (xi < endx)
+		{
+			l2 = f & 0xFFFF;
+			l1 = 0x10000 - l2;
 			*out++ = (byte) ((in[0] * l1 + in[4] * l2) >> 16);
-			*out++ = (byte) ((in[1] * l1 + in[5] * l2) >> 16); 
-			*out++ = (byte) ((in[2] * l1 + in[6] * l2) >> 16); 
-			*out++ = (byte) ((in[3] * l1 + in[7] * l2) >> 16); 
-		} 
-		else // last pixel of the line has no pixel to lerp to 
-		{ 
-			*out++ = in[0]; 
-			*out++ = in[1]; 
-			*out++ = in[2]; 
-			*out++ = in[3]; 
-		} 
-	} 
+			*out++ = (byte) ((in[1] * l1 + in[5] * l2) >> 16);
+			*out++ = (byte) ((in[2] * l1 + in[6] * l2) >> 16);
+			*out++ = (byte) ((in[3] * l1 + in[7] * l2) >> 16);
+		}
+		else // last pixel of the line has no pixel to lerp to
+		{
+			*out++ = in[0];
+			*out++ = in[1];
+			*out++ = in[2];
+			*out++ = in[3];
+		}
+	}
 }
 
 /*
@@ -1818,66 +1818,66 @@ void GL_ResampleTextureLerpLine (byte *in, byte *out, int inwidth, int outwidth)
 GL_ResampleTexture
 ================
 */
-void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata, int outwidth, int outheight) 
-{ 
+void GL_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata, int outwidth, int outheight)
+{
 	int i, j, yi, oldy, f, fstep, l1, l2, endy = (inheight-1);
-	
-	byte *inrow, *out, *row1, *row2; 
-	out = outdata; 
-	fstep = (int) (inheight*65536.0f/outheight); 
 
-	row1 = malloc(outwidth*4); 
-	row2 = malloc(outwidth*4); 
-	inrow = indata; 
-	oldy = 0; 
-	GL_ResampleTextureLerpLine (inrow, row1, inwidth, outwidth); 
-	GL_ResampleTextureLerpLine (inrow + inwidth*4, row2, inwidth, outwidth); 
-	for (i = 0, f = 0;i < outheight;i++,f += fstep) 
-	{ 
-		yi = f >> 16; 
-		if (yi != oldy) 
-		{ 
-			inrow = (byte *)indata + inwidth*4*yi; 
-			if (yi == oldy+1) 
-				memcpy(row1, row2, outwidth*4); 
-			else 
+	byte *inrow, *out, *row1, *row2;
+	out = outdata;
+	fstep = (int) (inheight*65536.0f/outheight);
+
+	row1 = malloc(outwidth*4);
+	row2 = malloc(outwidth*4);
+	inrow = indata;
+	oldy = 0;
+	GL_ResampleTextureLerpLine (inrow, row1, inwidth, outwidth);
+	GL_ResampleTextureLerpLine (inrow + inwidth*4, row2, inwidth, outwidth);
+	for (i = 0, f = 0;i < outheight;i++,f += fstep)
+	{
+		yi = f >> 16;
+		if (yi != oldy)
+		{
+			inrow = (byte *)indata + inwidth*4*yi;
+			if (yi == oldy+1)
+				memcpy(row1, row2, outwidth*4);
+			else
 				GL_ResampleTextureLerpLine (inrow, row1, inwidth, outwidth);
 
-			if (yi < endy) 
-				GL_ResampleTextureLerpLine (inrow + inwidth*4, row2, inwidth, outwidth); 
-			else 
-				memcpy(row2, row1, outwidth*4); 
-			oldy = yi; 
-		} 
-		if (yi < endy) 
-		{ 
-			l2 = f & 0xFFFF; 
-			l1 = 0x10000 - l2; 
-			for (j = 0;j < outwidth;j++) 
-			{ 
-				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16); 
-				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16); 
-				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16); 
-				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16); 
-			} 
-			row1 -= outwidth*4; 
-			row2 -= outwidth*4; 
-		} 
-		else // last line has no pixels to lerp to 
-		{ 
-			for (j = 0;j < outwidth;j++) 
-			{ 
-				*out++ = *row1++; 
-				*out++ = *row1++; 
-				*out++ = *row1++; 
-				*out++ = *row1++; 
-			} 
-			row1 -= outwidth*4; 
-		} 
-	} 
-	free (row1); 
-	free (row2); 
-} 
+			if (yi < endy)
+				GL_ResampleTextureLerpLine (inrow + inwidth*4, row2, inwidth, outwidth);
+			else
+				memcpy(row2, row1, outwidth*4);
+			oldy = yi;
+		}
+		if (yi < endy)
+		{
+			l2 = f & 0xFFFF;
+			l1 = 0x10000 - l2;
+			for (j = 0;j < outwidth;j++)
+			{
+				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16);
+				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16);
+				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16);
+				*out++ = (byte) ((*row1++ * l1 + *row2++ * l2) >> 16);
+			}
+			row1 -= outwidth*4;
+			row2 -= outwidth*4;
+		}
+		else // last line has no pixels to lerp to
+		{
+			for (j = 0;j < outwidth;j++)
+			{
+				*out++ = *row1++;
+				*out++ = *row1++;
+				*out++ = *row1++;
+				*out++ = *row1++;
+			}
+			row1 -= outwidth*4;
+		}
+	}
+	free (row1);
+	free (row2);
+}
 /*
 void GL_ResampleTexture (unsigned int *in, int inwidth, int inheight, unsigned int *out, int outwidth, int outheight)
 {
@@ -2102,14 +2102,14 @@ int NearestPowerOf2 (int size)
 	// NeVo - infinite loop bug-fix
 //	if (size == 1)
 	if (size < 2)	// FS: Better fix
-		return size; 
+		return size;
 
-	while (1) 
+	while (1)
 	{
 		i <<= 1;
 		if (size == i)
 			return i;
-		if ( (size > i) && (size < (i << 1)) ) 
+		if ( (size > i) && (size < (i << 1)) )
 		{
 			if (size >= ((i + (i << 1))/2))
 				return i << 1;
@@ -2129,7 +2129,7 @@ Returns has_alpha
 */
 qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t type)
 {
-	unsigned int	*scaled = NULL;
+	unsigned int	*scaled = nullptr;
 	int				scaled_width, scaled_height;
 	int				i, c, comp, idealImgRes = 256, upscaleFactor = 0;
 	qboolean		mipmap, hasAlpha, isNPOT, resampled = false;
@@ -2274,10 +2274,10 @@ qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t typ
 		if (glState.sgis_mipmap) {
 			qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, true);
 			qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
-		} 
+		}
 		else
 			gluBuild2DMipmaps (GL_TEXTURE_2D, comp, scaled_width, scaled_height, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
-	} 
+	}
 	else
 		qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 
@@ -2286,7 +2286,7 @@ qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t typ
 	if (mipmap)
 	{
 		int				mip_width, mip_height, miplevel = 0;
-		unsigned int	*mip_scaled = NULL;
+		unsigned int	*mip_scaled = nullptr;
 		qboolean		mip_resampled = false;
 
 /*		if (isNPOT)	// resample NPOT tetures to POT dimensions before mipping
@@ -2323,7 +2323,7 @@ qboolean GL_Upload32 (unsigned int *data, int width, int height, imagetype_t typ
 //	if (scaled_width != width || scaled_height != height)
 	if (resampled)
 		free (scaled);
-	scaled = NULL;
+	scaled = nullptr;
 
 	upload_width = scaled_width;	upload_height = scaled_height;
 
@@ -2348,8 +2348,8 @@ Returns has_alpha
 qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type, qboolean useQuakePalette)
 {
 //	unsigned int	trans[512*256];
-	unsigned int	*trans = NULL;	// Knightmare- changed to dynamic allocation
-	unsigned int	*palette = NULL;
+	unsigned int	*trans = nullptr;	// Knightmare- changed to dynamic allocation
+	unsigned int	*palette = nullptr;
 	int				i, s;
 	int				p;
 	qboolean		has_alpha;	// Knightmare added
@@ -2405,7 +2405,7 @@ qboolean GL_Upload8 (byte *data, int width, int height, imagetype_t type, qboole
 	has_alpha = GL_Upload32 (trans, width, height, type);
 
 	free (trans);
-	trans = NULL;
+	trans = nullptr;
 
 	return has_alpha;
 	// end Knightmare
@@ -2425,8 +2425,8 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 	image_t		*image;
 	int			i;
 	// Nexus'added vars
-	int			nameLen; 
-	char		refName[128]; 
+	int			nameLen;
+	char		refName[128];
 
 	// find a free image_t
 	for (i=0, image=gltextures ; i<numgltextures ; i++,image++)
@@ -2458,7 +2458,7 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 
 	// replacement scaling hack for TGA/JPEG HUD images and skins
 	// TODO: replace this with shaders as soon as they are supported
-	nameLen = (int)strlen(name); 
+	nameLen = (int)strlen(name);
 	Q_strncpyz (refName, sizeof(refName), name);
 
 	// Load .pcx for size refereence, check if we have a tga/jpg/png pic
@@ -2467,13 +2467,13 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 #else	// PNG_SUPPORT
 	if ( (nameLen >= 5) && ((type == it_pic) || (type == it_font)) && (!strcmp(refName+nameLen-4, ".tga") || !strcmp(refName+nameLen-4, ".jpg")) )
 #endif	// PNG_SUPPORT
-	{ 
+	{
 		byte	*pcxPic, *pcxPalette;
 		int		pcxWidth, pcxHeight;
 
 		refName[nameLen-3] = 'p'; refName[nameLen-2] = 'c'; refName[nameLen-1] = 'x';	// replace extension
 		LoadPCX (refName, &pcxPic, &pcxPalette, &pcxWidth, &pcxHeight);					// load .pcx file
-		
+
 		if ( pcxPic && (pcxWidth > 0) && (pcxHeight > 0) ) {
 			image->replace_scale_w = (float)pcxWidth / image->width;
 			image->replace_scale_h = (float)pcxHeight / image->height;
@@ -2482,7 +2482,7 @@ image_t *R_LoadPic (const char *name, byte *pic, int width, int height, imagetyp
 			free (pcxPic);
 		if (pcxPalette)
 			free (pcxPalette);
-	}	
+	}
 
 	// load little pics into the scrap
 	if ( (image->type == it_pic) && (bits == 8) && (image->width < 64) && (image->height < 64) )
@@ -2546,7 +2546,7 @@ image_t *R_LoadQuakePic (const char *name, byte *pic, int width, int height, ima
 {
 	image_t		*image;
 	int			i;
-	int			nameLen; 
+	int			nameLen;
 	char		replaceName[128];
 
 	// TGA/PNG/JPG auto-replace
@@ -2556,7 +2556,7 @@ image_t *R_LoadQuakePic (const char *name, byte *pic, int width, int height, ima
 		Q_strncpyz (replaceName, sizeof(replaceName), name);
 		replaceName[nameLen-3] = 't'; replaceName[nameLen-2] = 'g'; replaceName[nameLen-1] = 'a';
 		image = R_FindImage (replaceName, type);	// will automatically fall back to .png and .jpg
-		if (image != NULL) {
+		if (image != nullptr ) {
 			return image;
 		}
 	}
@@ -2696,7 +2696,7 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 	image_t		*image;
 
 	if ( !name || (name[0] == '\0') )
-		return NULL;
+		return nullptr;
 
 	FS_LoadFile (name, (void **)&mt);
 	if (!mt)
@@ -2704,7 +2704,7 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 		if (type == it_wall)
 			VID_Printf ( PRINT_ALL, "R_FindImage: can't load %s\n", name );
 	//	return glMedia.noTexture;
-		return NULL;
+		return nullptr;
 	}
 
 	width = LittleLong (mt->width);
@@ -2734,13 +2734,13 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	int				width, height;
 	unsigned int	hash;
 	char			nameBuf[MAX_OSPATH], s[MAX_OSPATH];
-	char			*name = NULL;
+	char			*name = nullptr;
 
 	if ( !rawName || (rawName[0] == '\0') )
-		return NULL;
+		return nullptr;
 	len = (int)strlen(rawName);
 	if (len < 5)
-		return NULL;
+		return nullptr;
 
 	// fix up bad image paths
 	Q_strncpyz (nameBuf, sizeof(nameBuf), rawName);
@@ -2773,7 +2773,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 			// fall back to png
 			Q_strncpyz (s, sizeof(s), name);
 			s[len-3]='p'; s[len-2]='n'; s[len-1]='g';
-			return R_FindImage(s,type);	
+			return R_FindImage(s,type);
 #else	// PNG_SUPPORT
 			// fall back to jpg
 			Q_strncpyz(s, sizeof(s), name);
@@ -2790,7 +2790,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 		}
 #endif	// PNG_SUPPORT
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	// MrG's automatic JPG & TGA loading
@@ -2807,8 +2807,8 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	//
 	// load the pic from disk
 	//
-	pic = NULL;
-	palette = NULL;
+	pic = nullptr;
+	palette = nullptr;
 
 	if ( !strcmp(name+len-4, ".pcx") )
 	{
@@ -2816,7 +2816,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 		if (pic)
 			image = R_LoadPic (name, pic, width, height, type, 8);
 		else
-			image = NULL;
+			image = nullptr;
 	}
 	else if ( !strcmp(name+len-4, ".wal") )
 	{
@@ -2863,13 +2863,19 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 		if (pic)
 			image = R_LoadPic(name, pic, width, height, type, 32);
 		else
-			image = NULL;
+			image = nullptr;
 	}
 	else
-		image = NULL;
+		image = nullptr;
 
 	if (!image)
+	{
+#if !defined( NDEBUG )
+		VID_Printf( PRINT_ALL, "Didn't find image (%s)!\n", name );
+#endif
+
 		R_AddToFailedImgList(name);
+	}
 
 	if (pic)
 		free (pic);
@@ -2906,21 +2912,21 @@ void R_FreeUnusedImages (void)
 	image_t	*image;
 
 	// never free notexture or particle textures
-	glMedia.noTexture->registration_sequence = registration_sequence;
-	glMedia.whiteTexture->registration_sequence = registration_sequence;
-	glMedia.distTextureARB->registration_sequence = registration_sequence;
+	glMedia.noTexture->registration_sequence       = registration_sequence;
+	glMedia.whiteTexture->registration_sequence    = registration_sequence;
+	glMedia.distTextureARB->registration_sequence  = registration_sequence;
 	glMedia.celShadeTexture->registration_sequence = registration_sequence;
 #ifdef ROQ_SUPPORT
 	glMedia.rawTexture->registration_sequence = registration_sequence;
-#endif // ROQ_SUPPORT
-	glMedia.envMapTexture->registration_sequence = registration_sequence;
-	glMedia.sphereMapTexture->registration_sequence = registration_sequence;
-	glMedia.shellTexture->registration_sequence = registration_sequence;
-	glMedia.flareTexture->registration_sequence = registration_sequence;
+#endif// ROQ_SUPPORT
+	glMedia.envMapTexture->registration_sequence       = registration_sequence;
+	glMedia.sphereMapTexture->registration_sequence    = registration_sequence;
+	glMedia.shellTexture->registration_sequence        = registration_sequence;
+	glMedia.flareTexture->registration_sequence        = registration_sequence;
 	glMedia.causticWaterTexture->registration_sequence = registration_sequence;
 	glMedia.causticSlimeTexture->registration_sequence = registration_sequence;
-	glMedia.causticLavaTexture->registration_sequence = registration_sequence;
-	glMedia.particleBeam->registration_sequence = registration_sequence;
+	glMedia.causticLavaTexture->registration_sequence  = registration_sequence;
+	glMedia.particleBeam->registration_sequence        = registration_sequence;
 
 	for (i=0; i<PARTICLE_TYPES; i++)
 		if (glMedia.particleTextures[i]) // don't mess with null ones silly :p
@@ -2966,7 +2972,7 @@ int Draw_GetPalette (void)
 		r = pal[i*3+0];
 		g = pal[i*3+1];
 		b = pal[i*3+2];
-		
+
 		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
 		d_8to24table[i] = LittleLong(v);
 	}

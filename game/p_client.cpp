@@ -1968,8 +1968,13 @@ void ClientBegin (edict_t *ent)
 		}
 	}
 
-	// make sure all view stuff is valid
-	ClientEndServerFrame (ent);
+	auto *player = dynamic_cast< Player * >( ent->classInstance );
+	if ( player == nullptr )
+	{
+		return;
+	}
+
+	player->OnEndServerFrame();
 }
 
 /*

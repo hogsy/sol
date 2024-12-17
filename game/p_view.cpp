@@ -224,17 +224,14 @@ Auto pitching on slopes?
 */
 static void SV_CalcViewOffset (edict_t *ent)
 {
-	float		*angles;
-	float		bob;
 	float		ratio;
-	float		delta;
 	vec3_t		v;
 
 
 //===================================
 
 	// base angles
-	angles = ent->client->ps.kick_angles;
+	float *angles = ent->client->ps.kick_angles;
 
 	// if dead, fix the angle and don't add any kick
 	if (ent->deadflag)
@@ -250,6 +247,7 @@ static void SV_CalcViewOffset (edict_t *ent)
 	}
 	else
 	{
+		float delta;
 		// add angles based on weapon kick
 
 		VectorCopy (ent->client->kick_angles, angles);
@@ -318,7 +316,7 @@ static void SV_CalcViewOffset (edict_t *ent)
 
 	// add bob height
 
-	bob = bobfracsin * xyspeed * bob_up->value;
+	float bob = bobfracsin * xyspeed * bob_up->value;
 	if (bob > 6)
 		bob = 6;
 //	gi.DebugGraph (bob *2, 255);
@@ -368,9 +366,6 @@ SV_CalcGunOffset
 */
 static void SV_CalcGunOffset (edict_t *ent)
 {
-	int		i;
-	float	delta;
-
 	// gun angles from bobbing
 	ent->client->ps.gunangles[ROLL] = xyspeed * bobfracsin * 0.005;
 	ent->client->ps.gunangles[YAW] = xyspeed * bobfracsin * 0.01;
@@ -381,35 +376,6 @@ static void SV_CalcGunOffset (edict_t *ent)
 	}
 
 	ent->client->ps.gunangles[PITCH] = xyspeed * bobfracsin * 0.005;
-
-	// gun angles from delta movement
-	for (i=0 ; i<3 ; i++)
-	{
-		delta = ent->client->oldviewangles[i] - ent->client->ps.viewangles[i];
-		if (delta > 180)
-			delta -= 360;
-		if (delta < -180)
-			delta += 360;
-		if (delta > 45)
-			delta = 45;
-		if (delta < -45)
-			delta = -45;
-		if (i == YAW)
-			ent->client->ps.gunangles[ROLL] += 0.1*delta;
-		ent->client->ps.gunangles[i] += 0.2 * delta;
-	}
-
-	// gun height
-	VectorClear (ent->client->ps.gunoffset);
-//	ent->ps->gunorigin[2] += bob;
-
-	// gun_x / gun_y / gun_z are development tools
-	for (i=0 ; i<3 ; i++)
-	{
-		ent->client->ps.gunoffset[i] += forward[i]*(gun_y->value);
-		ent->client->ps.gunoffset[i] += right[i]*gun_x->value;
-		ent->client->ps.gunoffset[i] += up[i]* (-gun_z->value);
-	}
 }
 
 
@@ -1325,25 +1291,9 @@ void WhatsIt(edict_t *ent)
 
 void ClientEndServerFrame (edict_t *ent)
 {
-	float	bobtime;
-	int		i;
 
 	current_player = ent;
 	current_client = ent->client;
-
-	//
-	// If the origin or velocity have changed since ClientThink(),
-	// update the pmove values.  This will happen when the client
-	// is pushed by a bmodel or kicked by an explosion.
-	// 
-	// If it wasn't updated here, the view position would lag a frame
-	// behind the body position when pushed -- "sinking into plats"
-	//
-	for (i=0 ; i<3 ; i++)
-	{
-		current_client->ps.pmove.origin[i] = ent->s.origin[i]*8.0;
-		current_client->ps.pmove.velocity[i] = ent->velocity[i]*8.0;
-	}
 
 	//
 	// If the end of unit layout is displayed, don't give
@@ -1358,19 +1308,11 @@ void ClientEndServerFrame (edict_t *ent)
 		return;
 	}
 
-	AngleVectors (ent->client->v_angle, forward, right, up);
+	AngleVectors( ent->client->v_angle, forward, right, up );
 
 	// burn from lava, etc
 	P_WorldEffects ();
 
-	//
-	// set model angles from view angles so other things in
-	// the world can tell which direction you are looking
-	//
-	if (ent->client->v_angle[PITCH] > 180)
-		ent->s.angles[PITCH] = (-360 + ent->client->v_angle[PITCH])/3;
-	else
-		ent->s.angles[PITCH] = ent->client->v_angle[PITCH]/3;
 
 	ent->s.angles[YAW] = ent->client->v_angle[YAW];
 	ent->s.angles[ROLL] = 0;
@@ -1404,7 +1346,7 @@ void ClientEndServerFrame (edict_t *ent)
 			bobmove = 0.0625;
 	}
 	
-	bobtime = (current_client->bobtime += bobmove);
+	float bobtime = ( current_client->bobtime += bobmove );
 
 	if (current_client->ps.pmove.pm_flags & PMF_DUCKED)
 		bobtime *= 4;
@@ -1415,7 +1357,7 @@ void ClientEndServerFrame (edict_t *ent)
 	if (ent->vehicle)
 		bobfracsin = 0.;
 	else
-		bobfracsin = fabs(sin(bobtime*M_PI));
+		bobfracsin = std::fabs(std::sin(bobtime*M_PI));
 
 	// detect hitting the floor
 	P_FallingDamage (ent);
@@ -1456,13 +1398,6 @@ void ClientEndServerFrame (edict_t *ent)
 	G_SetClientSound (ent);
 
 	G_SetClientFrame (ent);
-
-	VectorCopy (ent->velocity, ent->client->oldvelocity);
-	VectorCopy (ent->client->ps.viewangles, ent->client->oldviewangles);
-
-	// clear weapon kicks
-	VectorClear (ent->client->kick_origin);
-	VectorClear (ent->client->kick_angles);
 
 	// if the scoreboard is up, update it
 	if (!(level.framenum & 31))

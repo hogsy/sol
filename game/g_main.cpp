@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
+#include "entity/entity_player.h"
 
 game_locals_t	game;
 level_locals_t	level;
@@ -85,7 +86,7 @@ cvar_t	*allow_fog;			// Set to 0 for no fog
 
 // set to 0 to bypass target_changelevel clear inventory flag
 // because some user maps have this erroneously set
-cvar_t	*allow_clear_inventory; 
+cvar_t	*allow_clear_inventory;
 
 cvar_t	*bounce_bounce;
 cvar_t	*bounce_minv;
@@ -130,7 +131,7 @@ cvar_t	*g_nm_maphacks;			// Knightmare- enables hacks for Neil Manke's Q2 maps
 cvar_t	*g_showlogic;			// Knightmare added
 
 // Knightmare- simulated pause for deathmatch
-qboolean	paused;	
+qboolean	paused;
 
 void SpawnEntities ( const char *mapname, char *entities, const char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -271,8 +272,17 @@ void ClientEndServerFrames (void)
 	{
 		ent = g_edicts + 1 + i;
 		if (!ent->inuse || !ent->client)
+		{
 			continue;
-		ClientEndServerFrame (ent);
+		}
+
+		auto *player = dynamic_cast< Player * >( ent->classInstance );
+		if ( player == nullptr )
+		{
+			continue;
+		}
+
+		player->OnEndServerFrame();
 	}
 
 	//reflection stuff -- modified from psychospaz' original code
@@ -298,8 +308,8 @@ void ClientEndServerFrames (void)
 			if ( (ent->solid == SOLID_BSP) && (ent->movetype != MOVETYPE_PUSHABLE))
 				continue;
 			if (ent->client && (ent->client->resp.spectator || ent->health<=0 || ent->deadflag == DEAD_DEAD))
-				continue;		
-			AddReflection(ent);	
+				continue;
+			AddReflection(ent);
 		}
 	}
 }
@@ -399,7 +409,7 @@ void CheckNeedPass (void)
 
 	// if password or spectator_password has changed, update needpass
 	// as needed
-	if (password->modified || spectator_password->modified) 
+	if (password->modified || spectator_password->modified)
 	{
 		password->modified = spectator_password->modified = false;
 

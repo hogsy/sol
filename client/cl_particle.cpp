@@ -31,11 +31,11 @@ CL_RegisterParticleImages
 This initializes all particle images - mods play with this...
 ===============
 */
-void CL_RegisterParticleImages (void)
+void CL_RegisterParticleImages ()
 {
 	R_SetParticleImg (particle_solid,		"*whitetexture");				// only used for sparks
 	R_SetParticleImg (particle_generic,		"gfx/particles/basic.tga");
-	R_SetParticleImg (particle_smoke,		"gfx/particles/smoke.tga");
+	R_SetParticleImg (particle_smoke,		"gfx/particles/smoke.png");
 	R_SetParticleImg (particle_blood,		"gfx/particles/blood.tga");
 	R_SetParticleImg (particle_blooddrop,	"gfx/particles/blood_drop.tga");
 	R_SetParticleImg (particle_blooddrip,	"gfx/particles/blood_drip.tga");
@@ -62,24 +62,24 @@ void CL_RegisterParticleImages (void)
 	R_SetParticleImg (particle_rexplosion6,	"gfx/particles/r_explod_6.tga");
 	R_SetParticleImg (particle_rexplosion7,	"gfx/particles/r_explod_7.tga");
 
-	// disruptor explosion		
+	// disruptor explosion
 //	R_SetParticleImg (particle_dexplosion1,	"gfx/particles/d_explod_1.tga");
 //	R_SetParticleImg (particle_dexplosion2,	"gfx/particles/d_explod_2.tga");
 //	R_SetParticleImg (particle_dexplosion3,	"gfx/particles/d_explod_3.tga");
 
 	// decals
-	R_SetParticleImg (particle_bfgmark,		"gfx/decals/bfgmark.tga");
-	R_SetParticleImg (particle_burnmark,	"gfx/decals/burnmark.tga");
-	R_SetParticleImg (particle_blooddecal1,	"gfx/decals/blood_1.tga");
-	R_SetParticleImg (particle_blooddecal2,	"gfx/decals/blood_2.tga");
-	R_SetParticleImg (particle_blooddecal3,	"gfx/decals/blood_3.tga");
-	R_SetParticleImg (particle_blooddecal4,	"gfx/decals/blood_4.tga");
-	R_SetParticleImg (particle_blooddecal5,	"gfx/decals/blood_5.tga");
-	R_SetParticleImg (particle_shadow,		"gfx/decals/shadow.tga");
-	R_SetParticleImg (particle_bulletmark,	"gfx/decals/bulletmark.tga");
-	R_SetParticleImg (particle_trackermark,	"gfx/decals/trackermark.tga");
-	R_SetParticleImg (particle_acidmark,	"gfx/decals/acidmark.tga");
-//	R_SetParticleImg (particle_footprint,	"gfx/decals/footprint.tga");
+	R_SetParticleImg( particle_bfgmark, "gfx/decals/bfgmark.tga" );
+	R_SetParticleImg( particle_burnmark, "gfx/decals/burnmark.tga" );
+	R_SetParticleImg( particle_blooddecal1, "gfx/decals/flesh/blood1.png" );
+	R_SetParticleImg( particle_blooddecal2, "gfx/decals/flesh/blood2.png" );
+	R_SetParticleImg( particle_blooddecal3, "gfx/decals/flesh/blood3.png" );
+	R_SetParticleImg( particle_blooddecal4, "gfx/decals/flesh/blood4.png" );
+	R_SetParticleImg( particle_blooddecal5, "gfx/decals/flesh/blood5.png" );
+	R_SetParticleImg( particle_shadow, "gfx/decals/shadow.tga" );
+	R_SetParticleImg( particle_bulletmark, "gfx/decals/shot1.png" );
+	R_SetParticleImg( particle_trackermark, "gfx/decals/trackermark.tga" );
+	R_SetParticleImg( particle_acidmark, "gfx/decals/acidmark.tga" );
+	//	R_SetParticleImg (particle_footprint,	"gfx/decals/footprint.tga");
 }
 
 
@@ -220,9 +220,9 @@ void CL_ClipDecal (cparticle_t *part, float radius, float orient, vec3_t origin,
 	vec3_t	axis[3], verts[MAX_DECAL_VERTS];
 	int		numfragments, j, i;
 	markFragment_t *fr, fragments[MAX_FRAGMENTS_PER_DECAL];
-	
+
 	// invalid decal
-	if ( radius <= 0 || VectorCompare (dir, vec3_origin) ) 
+	if ( radius <= 0 || VectorCompare (dir, vec3_origin) )
 		return;
 
 	// calculate orientation matrix
@@ -231,14 +231,14 @@ void CL_ClipDecal (cparticle_t *part, float radius, float orient, vec3_t origin,
 	RotatePointAroundVector ( axis[2], axis[0], axis[1], orient );
 	CrossProduct ( axis[0], axis[2], axis[1] );
 
-	numfragments = R_MarkFragments (origin, axis, radius, MAX_DECAL_VERTS, verts, 
+	numfragments = R_MarkFragments (origin, axis, radius, MAX_DECAL_VERTS, verts,
 		MAX_FRAGMENTS_PER_DECAL, fragments);
 
 	if (!numfragments)
 		return;
 	if (numfragments > CL_NumFreeDecalPolys()) // not enough decalpolys free
 		return;
-	
+
 	VectorScale ( axis[1], 0.5f / radius, axis[1] );
 	VectorScale ( axis[2], 0.5f / radius, axis[2] );
 
@@ -293,7 +293,7 @@ cparticle_t *CL_SetupParticle (
 			float colorvel0,	float colorvel1,	float colorvel2,
 			float alpha,		float alphavel,
 			int	blendfunc_src,	int blendfunc_dst,
-			float size,			float sizevel,			
+			float size,			float sizevel,
 			int	image,
 			int flags,
 			void (*think)(cparticle_t *p, vec3_t org, vec3_t angle, float *alpha, float *size, int *image, float *time),
@@ -423,7 +423,7 @@ CL_ClearParticles
 void CL_ClearParticles (void)
 {
 	int		i;
-	
+
 	free_particles = &particles[0];
 	active_particles = NULL;
 
@@ -474,7 +474,7 @@ void CL_ClipParticleVelocity (vec3_t in, vec3_t normal, vec3_t out)
 {
 	float	backoff, change;
 	int		i;
-	
+
 	backoff = VectorLength(in)*0.25 + DotProduct (in, normal) * 3.0f;
 
 	for (i=0; i<3; i++)
@@ -500,7 +500,7 @@ void CL_ParticleBounceThink (cparticle_t *p, vec3_t org, vec3_t angle, float *al
 	clipsize = *size*0.5;
 	if (clipsize<0.25) clipsize = 0.25;
 	tr = CL_BrushTrace (p->oldorg, org, clipsize, MASK_SOLID); // was 1
-	
+
 	if (tr.fraction < 1)
 	{
 		CL_CalcPartVelocity(p, 1, time, velocity);
@@ -661,7 +661,7 @@ void CL_AddParticles (void)
 			color[i] = min(max(color[i], 0), 255);
 		//	if (color[i] > 255) color[i] = 255;
 		//	if (color[i] < 0) color[i] = 0;
-			
+
 			angle[i] = p->angle[i];
 			org[i] = p->org[i] + p->vel[i]*time + p->accel[i]*time2;
 		}
@@ -699,7 +699,7 @@ void CL_AddParticles (void)
 		}
 		else
 			V_AddParticle (org, angle, color, alpha, p->blendfunc_src, p->blendfunc_dst, size, image, flags);
-		
+
 		if (p->alphavel == INSTANT_PARTICLE)
 		{
 			p->alphavel = 0.0;

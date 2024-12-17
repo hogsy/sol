@@ -5,7 +5,8 @@
 
 void Player::Spawn( const EntityManager::SpawnVariables &variables )
 {
-	// a little strange for this one, but the variables will always be empty for a player
+	// a little strange for this one, but the spawn variables will always be empty for a player
+
 	assert( edict->client != nullptr );
 
 	edict->groundentity = nullptr;
@@ -62,6 +63,123 @@ void Player::OnDisconnect() const
 	edict->client->pers.connected = false;
 
 	Unlink();
+}
+
+void Player::UpdateGun()
+{
+	player_state_t *ps = GetPlayerState();
+
+	// gun angles from delta movement
+	for ( unsigned int i = 0; i < 3; ++i )
+	{
+		float delta = oldViewAngles[ i ] - ps->viewangles[ i ];
+		if ( delta > 180.0f )
+		{
+			delta -= 360.0f;
+		}
+		else if ( delta < -180.0f )
+		{
+			delta += 360.0f;
+		}
+
+		if ( delta > 45.0f )
+		{
+			delta = 45.0f;
+		}
+		else if ( delta < -45.0f )
+		{
+			delta = -45.0f;
+		}
+
+		if ( i == YAW )
+		{
+			ps->gunangles[ ROLL ] += 0.1f * delta;
+		}
+
+		ps->gunangles[ i ] += 0.2f * delta;
+	}
+
+	gclient_t *client = GetClient();
+	assert( client != nullptr );
+
+	vec3_t forward, right, up;
+	AngleVectors( client->v_angle, forward, right, up );
+
+	// gun height
+	VectorClear( ps->gunoffset );
+	for ( unsigned int i = 0; i < 3; ++i )
+	{
+		ps->gunoffset[ i ] += forward[ i ] * gun_y->value;
+		ps->gunoffset[ i ] += right[ i ] * gun_x->value;
+		ps->gunoffset[ i ] += up[ i ] * -gun_z->value;
+	}
+}
+
+void Player::UpdateView()
+{
+	gclient_t *client = GetClient();
+	assert( client != nullptr );
+
+	player_state_t *ps = GetPlayerState();
+	assert( ps != nullptr );
+
+	VectorCopy( client->ps.viewangles, oldViewAngles );
+
+	// add angles based on weapon kick
+	vec3_t angles;
+	VectorCopy( client->kick_angles, angles );
+
+	VectorClear( ps->viewoffset );
+	ps->viewoffset[ 2 ] += edict->viewheight;
+
+	// clear weapon kicks
+	VectorClear( client->kick_origin );
+	VectorClear( client->kick_angles );
+}
+
+void Player::UpdateStats()
+{
+	player_state_t *ps = GetPlayerState();
+	assert( ps != nullptr );
+
+	ps->stats[ STAT_HEALTH_ICON ] = level.pic_health;
+	ps->stats[ STAT_HEALTH ]      = edict->health;
+	ps->stats[ STAT_MAXHEALTH ]   = min( max( edict->max_health, 0 ), SHRT_MAX );
+}
+
+void Player::OnEndServerFrame()
+{
+	gclient_t *client = GetClient();
+	assert( client != nullptr );
+
+	player_state_t *ps = GetPlayerState();
+	assert( ps != nullptr );
+
+	UpdateStats();
+
+	// If the origin or velocity have changed since ClientThink(),
+	// update the pmove values.  This will happen when the client
+	// is pushed by a bmodel or kicked by an explosion.
+	//
+	// If it wasn't updated here, the view position would lag a frame
+	// behind the body position when pushed -- "sinking into plats"
+	for ( unsigned int i = 0; i < 3; ++i )
+	{
+		ps->pmove.origin[ i ]   = edict->s.origin[ i ] * 8.0f;
+		ps->pmove.velocity[ i ] = edict->velocity[ i ] * 8.0f;
+	}
+
+	UpdateView();
+	UpdateGun();
+
+	// set model angles from view angles so other things in
+	// the world can tell which direction you are looking
+
+	edict->s.angles[ PITCH ] = client->v_angle[ PITCH ] > 180.0f ? ( -360.0f + client->v_angle[ PITCH ] ) / 3.0f : client->v_angle[ PITCH ] / 3.0f;
+	edict->s.angles[ YAW ]   = client->v_angle[ YAW ];
+	edict->s.angles[ ROLL ]  = 0.0f;
+
+	VectorCopy( edict->velocity, client->oldvelocity );
 }
 
 void Player::SelectSpawnPoint() const

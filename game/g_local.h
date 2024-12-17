@@ -1595,7 +1595,6 @@ struct gclient_s
 	vec3_t		damage_blend;
 	vec3_t		v_angle;			// aiming direction
 	float		bobtime;			// so off-ground doesn't change it
-	vec3_t		oldviewangles;
 	vec3_t		oldvelocity;
 
 	float		next_drown_time;
