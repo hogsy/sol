@@ -222,9 +222,6 @@ extern void player_pain ( edict_t * self , edict_t * other , float kick , int da
 extern void SP_info_player_intermission ( edict_t * self ) ;
 extern void SP_info_player_coop ( edict_t * self ) ;
 extern void SP_info_player_deathmatch ( edict_t * self ) ;
-extern void SP_info_player_start ( edict_t * self ) ;
-extern void SP_CreateCoopSpots ( edict_t * self ) ;
-extern void SP_FixCoopSpots ( edict_t * self ) ;
 extern void CheckChasecam_Viewent ( edict_t * ent ) ;
 extern void Cmd_Chasecam_Toggle ( edict_t * ent ) ;
 extern void ChasecamTrack ( edict_t * ent ) ;

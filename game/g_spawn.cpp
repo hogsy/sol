@@ -30,11 +30,6 @@ void SP_item_health_small (edict_t *self);
 void SP_item_health_large (edict_t *self);
 void SP_item_health_mega (edict_t *self);
 
-void SP_info_player_start (edict_t *ent);
-void SP_info_player_deathmatch (edict_t *ent);
-void SP_info_player_coop (edict_t *ent);
-void SP_info_player_intermission (edict_t *ent);
-
 void SP_func_plat (edict_t *ent);
 void SP_func_plat2 (edict_t *ent);	// Knightmare added
 void SP_func_rotating (edict_t *ent);
@@ -251,10 +246,6 @@ spawn_t	spawns[] = {
 	{"item_health_large", SP_item_health_large},
 	{"item_health_mega", SP_item_health_mega},
 
-	{"info_player_start", SP_info_player_start},
-	{"info_player_deathmatch", SP_info_player_deathmatch},
-	{"info_player_coop", SP_info_player_coop},
-	{"info_player_intermission", SP_info_player_intermission},
 //ZOID
 	{"info_player_team1", SP_info_player_team1},
 	{"info_player_team2", SP_info_player_team2},
@@ -573,8 +564,9 @@ void ED_CallSpawn( edict_t *ent, const EntityManager::SpawnVariables &variables 
 
 	if ( ent->classInstance != nullptr )
 	{
+		assert( !variables.empty() );
 		ent->classInstance->Spawn( variables );
-		//TODO: should just return here, and let it all be handled by our new system instead
+		return;
 	}
 
 	// check item spawn functions
@@ -1378,7 +1370,7 @@ removeflags:
 			ent->spawnflags &= ~(SPAWNFLAG_NOT_EASY|SPAWNFLAG_NOT_MEDIUM|SPAWNFLAG_NOT_HARD|SPAWNFLAG_NOT_DEATHMATCH|SPAWNFLAG_NOT_COOP);
 		}
 
-		ED_CallSpawn (ent);
+		ED_CallSpawn (ent, variables);
 		ent->s.renderfx |= RF_IR_VISIBLE; // ir goggles flag
 	}
 

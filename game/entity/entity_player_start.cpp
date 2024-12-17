@@ -17,6 +17,38 @@ public:
 
 void PlayerStart::Spawn( const EntityManager::SpawnVariables &variables )
 {
+	const std::string &classname = variables.at( "classname" ).value;
+	if ( classname == "info_player_coop" )
+	{
+		if ( coop->value == 0.0f )
+		{
+			G_FreeEdict( edict );
+			return;
+		}
+
+		edict->class_id = ENTITY_INFO_PLAYER_COOP;
+	}
+	else if ( classname == "info_player_deathmatch" )
+	{
+		if ( deathmatch->value == 0.0f )
+		{
+			G_FreeEdict( edict );
+			return;
+		}
+
+		edict->class_id = ENTITY_INFO_PLAYER_DEATHMATCH;
+	}
+	else if ( classname == "info_player_intermission" )
+	{
+		edict->class_id = ENTITY_INFO_PLAYER_INTERMISSION;
+	}
+	else
+	{
+		edict->class_id = ENTITY_INFO_PLAYER_START;
+	}
 }
 
 REGISTER_ENTITY_CLASS( info_player_start, PlayerStart )
+REGISTER_ENTITY_CLASS( info_player_coop, PlayerStart )
+REGISTER_ENTITY_CLASS( info_player_deathmatch, PlayerStart )
+REGISTER_ENTITY_CLASS( info_player_intermission, PlayerStart )

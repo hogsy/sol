@@ -17,11 +17,19 @@ public:
 	explicit Entity( edict_t *edict );
 	virtual ~Entity() = default;
 
+	/**
+	 * Returns the internal classname (not to be confused with edict classname!)
+	 */
 	virtual const char *GetClassName() = 0;
 
 	virtual void Spawn( const EntityManager::SpawnVariables &variables ) = 0;
 
-private:
+	void SetModel( const std::string &path ) const;
+	void SetSolid( solid_t solid ) const;
+
+	void Link() const;
+
+protected:
 	edict_t *edict{};
 
 public:
