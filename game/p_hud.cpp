@@ -425,6 +425,7 @@ void Cmd_Help_f (edict_t *ent)
 //=======================================================================
 void WhatIsIt (edict_t *ent)
 {
+#if 0//TODO
 	float			range;
 	int				i, num;
 	static edict_t	*touch[MAX_EDICTS];	// Knightmare- made static due to stack size
@@ -483,6 +484,7 @@ void WhatIsIt (edict_t *ent)
 		ent->client->whatsit = best->item->pickup_name;
 		return;
 	}
+#endif
 }
 
 /*

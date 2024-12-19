@@ -1435,10 +1435,7 @@ and for each item in each client's inventory.
 */
 void PrecacheItem (gitem_t *it)
 {
-	char	*s, *start;
 	char	data[MAX_QPATH];
-	int		len;
-	gitem_t	*ammo;
 
 	if (!it)
 		return;
@@ -1455,23 +1452,23 @@ void PrecacheItem (gitem_t *it)
 	// parse everything for its ammo
 	if (it->ammo && it->ammo[0])
 	{
-		ammo = FindItem (it->ammo);
+		gitem_t *ammo = FindItem( it->ammo );
 		if (ammo != it)
 			PrecacheItem (ammo);
 	}
 
 	// parse the space seperated precache string for other items
-	s = it->precaches;
+	const char *s = it->precaches;
 	if (!s || !s[0])
 		return;
 
 	while (*s)
 	{
-		start = s;
+		const char *start = s;
 		while (*s && *s != ' ')
 			s++;
 
-		len = s-start;
+		int len = s - start;
 		if (len >= MAX_QPATH || len < 5)
 			gi.error ("PrecacheItem: %s has bad precache string", it->classname);
 		memcpy (data, start, len);
@@ -1818,7 +1815,7 @@ always owned, never in the world
 		CTFWeapon_Grapple,
 		"misc/w_pkup.wav",
                  nullptr, 0, 0,
-		"models/weapons/grapple/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_grapple",
 /* pickup */	"Grapple",
 		0,
@@ -1831,30 +1828,6 @@ always owned, never in the world
 /* precache */ "weapons/grapple/grfire.wav weapons/grapple/grpull.wav weapons/grapple/grhang.wav weapons/grapple/grreset.wav weapons/grapple/grhit.wav"
 	},
 
-/* weapon_blaster (.3 .3 1) (-16 -16 -16) (16 16 16)
-always owned, never in the world
-*/
-/*	{
-		"weapon_blaster",
-		NULL,
-		Use_Weapon,
-		NULL,
-		Weapon_Blaster,
-		"misc/w_pkup.wav",
-		NULL, 0, 0,
-		"models/weapons/v_blast/tris.md2",
-		"w_blaster",
-		"Blaster",
-		0,
-		0,
-		NULL,
-		IT_WEAPON|IT_STAY_COOP,
-		WEAP_BLASTER,
-		NULL,
-		0,
-		"weapons/blastf1a.wav misc/lasfly.wav"
-	}, */
-
 // DWH
 /*QUAKED weapon_blaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
@@ -1866,7 +1839,7 @@ always owned, never in the world
 		Weapon_Blaster,
 		"misc/w_pkup.wav",
 		"models/weapons/g_blast/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_blast/tris.md2",
+		"dev/models/weapons/v_test.md3",
 		"w_blaster",
 		"Blaster",
 		0,
@@ -1889,7 +1862,7 @@ always owned, never in the world
 		Weapon_Shotgun,
 		"misc/w_pkup.wav",
 		"models/weapons/g_shotg/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_shotg/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_shotgun",
 /* pickup */	"Shotgun",
 		0,
@@ -1912,7 +1885,7 @@ always owned, never in the world
 		Weapon_SuperShotgun,
 		"misc/w_pkup.wav",
 		"models/weapons/g_shotg2/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_shotg2/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_sshotgun",
 /* pickup */	"Super Shotgun",
 		0,
@@ -1935,7 +1908,7 @@ always owned, never in the world
 		Weapon_Machinegun,
 		"misc/w_pkup.wav",
 		"models/weapons/g_machn/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_machn/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_machinegun",
 /* pickup */	"Machinegun",
 		0,
@@ -1958,7 +1931,7 @@ always owned, never in the world
 		Weapon_Chaingun,
 		"misc/w_pkup.wav",
 		"models/weapons/g_chain/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_chain/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_chaingun",
 /* pickup */	"Chaingun",
 		0,
@@ -1981,7 +1954,7 @@ always owned, never in the world
 		Weapon_Grenade,
 		"misc/am_pkup.wav",
 		"models/items/ammo/grenades/medium/tris.md2", 0, 0,
-		"models/weapons/v_handgr/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"a_grenades",
 /* pickup */	"Grenades",
 /* width */		3,
@@ -2004,7 +1977,7 @@ always owned, never in the world
 		Weapon_GrenadeLauncher,
 		"misc/w_pkup.wav",
 		"models/weapons/g_launch/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_launch/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_glauncher",
 /* pickup */	"Grenade Launcher",
 		0,
@@ -2027,7 +2000,7 @@ always owned, never in the world
 		Weapon_RocketLauncher,
 		"misc/w_pkup.wav",
 		"models/weapons/g_rocket/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_rocket/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_rlauncher",
 /* pickup */	"Rocket Launcher",
 		0,
@@ -2050,7 +2023,7 @@ always owned, never in the world
 		Weapon_HyperBlaster,
 		"misc/w_pkup.wav",
 		"models/weapons/g_hyperb/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_hyperb/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_hyperblaster",
 /* pickup */	"HyperBlaster",
 		0,
@@ -2073,7 +2046,7 @@ always owned, never in the world
 		Weapon_Railgun,
 		"misc/w_pkup.wav",
 		"models/weapons/g_rail/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_rail/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_railgun",
 /* pickup */	"Railgun",
 		0,
@@ -2096,7 +2069,7 @@ always owned, never in the world
 		Weapon_BFG,
 		"misc/w_pkup.wav",
 		"models/weapons/g_bfg/tris.md2", 0, EF_ROTATE,
-		"models/weapons/v_bfg/tris.md2",
+		"dev/models/weapons/v_test.md3",
 /* icon */		"w_bfg",
 /* pickup */	"BFG10K",
 		0,
