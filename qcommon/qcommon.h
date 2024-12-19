@@ -1070,6 +1070,9 @@ qboolean	FS_ModType (const char *name);
 qboolean	FS_XatrixPath (void);
 qboolean	FS_RoguePath (void);
 
+std::string FS_GetExtension( const std::string &filename );
+std::string FS_SanitizePath( const std::string &path );
+
 /*
 ==============================================================
 

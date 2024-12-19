@@ -3945,3 +3945,28 @@ void FS_Dir_f (void)
 		Com_Printf( "\n" );
 	};
 }
+
+std::string FS_GetExtension( const std::string &filename )
+{
+	std::string::size_type pos = filename.find_last_of( '.' );
+	if ( pos == std::string::npos )
+	{
+		return "";
+	}
+
+	return filename.substr( pos + 1 );
+}
+
+std::string FS_SanitizePath( const std::string &path )
+{
+	std::string newPath = path;
+	for ( auto &i : newPath )
+	{
+		if ( i == '\\' )
+		{
+			i = '/';
+		}
+	}
+
+	return newPath;
+}

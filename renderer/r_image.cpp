@@ -2718,7 +2718,6 @@ image_t *R_LoadWal (const char *name, imagetype_t type)
 	return image;
 }
 
-
 /*
 ===============
 R_FindImage
@@ -2726,37 +2725,42 @@ R_FindImage
 Finds or loads the given image
 ===============
 */
-image_t	*R_FindImage (const char *rawName, imagetype_t type)
+image_t *R_FindImage( const char *rawName, imagetype_t type )
 {
-	image_t			*image;
-	int				i, len;
-	byte			*pic, *palette;
-	int				width, height;
-	unsigned int	hash;
-	char			nameBuf[MAX_OSPATH], s[MAX_OSPATH];
-	char			*name = nullptr;
+	image_t *image;
+	int      i;
+	byte    *pic, *palette;
+	int      width, height;
+	char     s[ MAX_OSPATH ];
 
-	if ( !rawName || (rawName[0] == '\0') )
+	if ( !rawName || ( rawName[ 0 ] == '\0' ) )
+	{
 		return nullptr;
-	len = (int)strlen(rawName);
-	if (len < 5)
-		return nullptr;
-
-	// fix up bad image paths
-	Q_strncpyz (nameBuf, sizeof(nameBuf), rawName);
-	len = (int)strlen(nameBuf);
-	for (i = 0; i < len; i++) {
-		if ( nameBuf[i] == '\\' )
-			nameBuf[i] = '/';
 	}
-	name = &nameBuf[0];
+
+	int len = ( int ) strlen( rawName );
+	if ( len < 5 )
+	{
+		return nullptr;
+	}
+
+	std::string path      = FS_SanitizePath( rawName );
+	std::string extension = FS_GetExtension( path );
+	// Fix some weird edge cases where files requested don't have extensions
+	//TODO: fix this at the source, rather than here!
+	if ( path[ 0 ] != '*' && extension.empty() )
+	{
+		path += ".png";
+	}
 
 	// look for it
-	hash = Com_HashFileName(name, 0, false);
-	for (i=0, image=gltextures; i<numgltextures; i++,image++)
+	const char  *name = path.c_str();
+	unsigned int hash = Com_HashFileName( name, 0, false );
+	for ( i = 0, image = gltextures; i < numgltextures; i++, image++ )
 	{
-		if (hash == image->hash) {	// compare hash first
-			if (!strcmp(name, image->name))
+		if ( hash == image->hash )
+		{// compare hash first
+			if ( !strcmp( name, image->name ) )
 			{
 				image->registration_sequence = registration_sequence;
 				return image;
@@ -2765,122 +2769,136 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 	}
 
 	// don't try again to load an image that just failed
-	if ( R_CheckImgFailed (name) )
+	if ( R_CheckImgFailed( name ) )
 	{
-		if ( !strcmp(name+len-4, ".tga") )
+		if ( extension == "tga" )
 		{
-#ifdef PNG_SUPPORT
 			// fall back to png
-			Q_strncpyz (s, sizeof(s), name);
-			s[len-3]='p'; s[len-2]='n'; s[len-1]='g';
-			return R_FindImage(s,type);
-#else	// PNG_SUPPORT
+			Q_strncpyz( s, sizeof( s ), name );
+			s[ len - 3 ] = 'p';
+			s[ len - 2 ] = 'n';
+			s[ len - 1 ] = 'g';
+			return R_FindImage( s, type );
+		}
+
+		if ( extension == "png" )
+		{
 			// fall back to jpg
-			Q_strncpyz(s, sizeof(s), name);
-			s[len-3]='j'; s[len-2]='p'; s[len-1]='g';
-			return R_FindImage(s,type);
-#endif	// PNG_SUPPORT
+			Q_strncpyz( s, sizeof( s ), name );
+			s[ len - 3 ] = 'j';
+			s[ len - 2 ] = 'p';
+			s[ len - 1 ] = 'g';
+			return R_FindImage( s, type );
 		}
-#ifdef PNG_SUPPORT
-		else if ( !strcmp(name+len-4, ".png") )
-		{	// fall back to jpg
-			Q_strncpyz (s, sizeof(s), name);
-			s[len-3]='j'; s[len-2]='p'; s[len-1]='g';
-			return R_FindImage(s,type);
-		}
-#endif	// PNG_SUPPORT
-		else
-			return nullptr;
+
+		return nullptr;
 	}
 
 	// MrG's automatic JPG & TGA loading
 	// search for TGAs or JPGs to replace .pcx and .wal images
-	if ( !strcmp(name+len-4, ".pcx") || !strcmp(name+len-4, ".wal") )
+	if ( extension == "pcx" || extension == "wal" )
 	{
-		Q_strncpyz (s, sizeof(s), name);
-		s[len-3]='t'; s[len-2]='g'; s[len-1]='a';
-		image = R_FindImage(s,type);
-		if (image)
+		Q_strncpyz( s, sizeof( s ), name );
+		s[ len - 3 ] = 't';
+		s[ len - 2 ] = 'g';
+		s[ len - 1 ] = 'a';
+		image        = R_FindImage( s, type );
+		if ( image )
+		{
 			return image;
+		}
 	}
 
 	//
 	// load the pic from disk
 	//
-	pic = nullptr;
+	pic     = nullptr;
 	palette = nullptr;
 
-	if ( !strcmp(name+len-4, ".pcx") )
+	if ( extension == "pcx" )
 	{
-		LoadPCX (name, &pic, &palette, &width, &height);
-		if (pic)
-			image = R_LoadPic (name, pic, width, height, type, 8);
+		LoadPCX( name, &pic, &palette, &width, &height );
+		if ( pic )
+		{
+			image = R_LoadPic( name, pic, width, height, type, 8 );
+		}
 		else
+		{
 			image = nullptr;
-	}
-	else if ( !strcmp(name+len-4, ".wal") )
-	{
-		image = R_LoadWal (name, type);
-	}
-	else if ( !strcmp(name+len-4, ".tga") )
-	{
-		R_LoadTGA (name, &pic, &width, &height);
-		if (pic)
-			image = R_LoadPic (name, pic, width, height, type, 32);
-#ifdef PNG_SUPPORT
-		else { // fall back to png
-			R_AddToFailedImgList(name);
-			Q_strncpyz (s, sizeof(s), name);
-			s[len-3]='p'; s[len-2]='n'; s[len-1]='g';
-			return R_FindImage(s,type);
-		}
-#else	// PNG_SUPPORT
-		else { // fall back to jpg
-			R_AddToFailedImgList(name);
-			Q_strncpyz(s, sizeof(s), name);
-			s[len-3]='j'; s[len-2]='p'; s[len-1]='g';
-			return R_FindImage(s,type);
-		}
-#endif	// PNG_SUPPORT
-	}
-#ifdef PNG_SUPPORT
-	else if ( !strcmp(name+len-4, ".png") )
-	{
-		R_LoadPNG (name, &pic, &width, &height);
-		if (pic)
-			image = R_LoadPic(name, pic, width, height, type, 32);
-		else { // fall back to jpg
-			R_AddToFailedImgList(name);
-			Q_strncpyz (s, sizeof(s), name);
-			s[len-3]='j'; s[len-2]='p'; s[len-1]='g';
-			return R_FindImage(s,type);
 		}
 	}
-#endif	// PNG_SUPPORT
-	else if ( !strcmp(name+len-4, ".jpg") ) // Heffo - JPEG support
+	else if ( extension == "wal" )
 	{
-		R_LoadJPG (name, &pic, &width, &height);
-		if (pic)
-			image = R_LoadPic(name, pic, width, height, type, 32);
+		image = R_LoadWal( name, type );
+	}
+	else if ( extension == "tga" )
+	{
+		R_LoadTGA( name, &pic, &width, &height );
+		if ( pic )
+		{
+			image = R_LoadPic( name, pic, width, height, type, 32 );
+		}
 		else
+		{// fall back to png
+			R_AddToFailedImgList( name );
+			Q_strncpyz( s, sizeof( s ), name );
+			s[ len - 3 ] = 'p';
+			s[ len - 2 ] = 'n';
+			s[ len - 1 ] = 'g';
+			return R_FindImage( s, type );
+		}
+	}
+	else if ( extension == "png" )
+	{
+		R_LoadPNG( name, &pic, &width, &height );
+		if ( pic )
+		{
+			image = R_LoadPic( name, pic, width, height, type, 32 );
+		}
+		else
+		{// fall back to jpg
+			R_AddToFailedImgList( name );
+			Q_strncpyz( s, sizeof( s ), name );
+			s[ len - 3 ] = 'j';
+			s[ len - 2 ] = 'p';
+			s[ len - 1 ] = 'g';
+			return R_FindImage( s, type );
+		}
+	}
+	else if ( extension == "jpg" )// Heffo - JPEG support
+	{
+		R_LoadJPG( name, &pic, &width, &height );
+		if ( pic )
+		{
+			image = R_LoadPic( name, pic, width, height, type, 32 );
+		}
+		else
+		{
 			image = nullptr;
+		}
 	}
 	else
+	{
 		image = nullptr;
+	}
 
-	if (!image)
+	if ( !image )
 	{
 #if !defined( NDEBUG )
 		VID_Printf( PRINT_ALL, "Didn't find image (%s)!\n", name );
 #endif
 
-		R_AddToFailedImgList(name);
+		R_AddToFailedImgList( name );
 	}
 
-	if (pic)
-		free (pic);
-	if (palette)
-		free (palette);
+	if ( pic )
+	{
+		free( pic );
+	}
+	if ( palette )
+	{
+		free( palette );
+	}
 
 	return image;
 }
@@ -2892,7 +2910,7 @@ image_t	*R_FindImage (const char *rawName, imagetype_t type)
 R_RegisterSkin
 ===============
 */
-struct image_s *R_RegisterSkin (char *name)
+image_s *R_RegisterSkin (char *name)
 {
 	return R_FindImage (name, it_skin);
 }
