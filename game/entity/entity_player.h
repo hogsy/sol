@@ -29,11 +29,16 @@ public:
 private:
 	void SelectSpawnPoint() const;
 
-	static constexpr vec3_t PLAYER_MINS        = { -16.0f, -16.0f, -24.0f };
-	static constexpr vec3_t PLAYER_MAXS        = { 16.0f, 16.0f, 32.0f };
-	static constexpr float  PLAYER_VIEW_HEIGHT = 22.0f;
+	static constexpr vec3_t PLAYER_MINS = { -16.0f, -16.0f, -24.0f };
+	static constexpr vec3_t PLAYER_MAXS = { 16.0f, 16.0f, 32.0f };
+
+	static constexpr float VIEW_HEIGHT     = 22.0f;
+	static constexpr float VIEW_MIN_HEIGHT = 5.0f;
+	static constexpr float VIEW_STIFFNESS  = 0.5f;
+	static constexpr float VIEW_DAMPENING  = 0.8f;
 
 	vec3_t oldViewAngles{};
 
 	float bobCycle{};
+	float springHeight{}, springVelocity{};
 };

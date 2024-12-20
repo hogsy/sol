@@ -12,7 +12,7 @@ void Player::Spawn( const EntityManager::SpawnVariables &variables )
 	edict->groundentity = nullptr;
 	edict->takedamage   = DAMAGE_AIM;
 	edict->movetype     = MOVETYPE_WALK;
-	edict->viewheight   = PLAYER_VIEW_HEIGHT;
+	edict->viewheight   = VIEW_HEIGHT;
 	edict->inuse        = true;
 	edict->classname    = "player";
 	edict->mass         = 200;
@@ -37,6 +37,8 @@ void Player::Spawn( const EntityManager::SpawnVariables &variables )
 	SelectSpawnPoint();
 
 	VectorClear( edict->velocity );
+
+	springHeight = VIEW_HEIGHT;
 }
 
 void Player::OnDisconnect() const
@@ -108,14 +110,15 @@ void Player::UpdateWeapon()
 	AngleVectors( client->v_angle, forward, right, up );
 
 	static constexpr float BASE_X_OFFSET = 5.0f;
-	static constexpr float BASE_Z_OFFSET = -15.0f;
+	static constexpr float BASE_Y_OFFSET = 2.0f;
+	static constexpr float BASE_Z_OFFSET = -10.0f;
 
 	// gun height
 	VectorClear( ps->gunoffset );
 	for ( unsigned int i = 0; i < 3; ++i )
 	{
-		ps->gunoffset[ i ] += forward[ i ] * gun_y->value;
 		ps->gunoffset[ i ] += right[ i ] * ( BASE_X_OFFSET + gun_x->value );
+		ps->gunoffset[ i ] += forward[ i ] * ( BASE_Y_OFFSET + gun_y->value );
 		ps->gunoffset[ i ] += up[ i ] * ( BASE_Z_OFFSET + -gun_z->value );
 	}
 }
@@ -128,13 +131,28 @@ void Player::UpdateView()
 	player_state_t *ps = GetPlayerState();
 	assert( ps != nullptr );
 
+	if ( edict->groundentity && client->jumping )
+	{
+		springVelocity += -16.0f;
+		client->jumping = false;
+	}
+
 	VectorCopy( client->ps.viewangles, oldViewAngles );
 
 	// add angles based on weapon kick
 	VectorCopy( client->kick_angles, ps->kick_angles );
 
+	// handle the view offset
 	VectorClear( ps->viewoffset );
-	ps->viewoffset[ 2 ] += edict->viewheight;
+	springVelocity += VIEW_STIFFNESS * ( edict->viewheight - springHeight ) - VIEW_DAMPENING * springVelocity;
+	springHeight += springVelocity;
+
+	bobCycle += std::sin( level.time * 0.5f ) * 0.05f;
+	ps->viewoffset[ 2 ] += springHeight + bobCycle;
+	if ( ps->viewoffset[ 2 ] < VIEW_MIN_HEIGHT )
+	{
+		ps->viewoffset[ 2 ] = VIEW_MIN_HEIGHT;
+	}
 
 	// clear weapon kicks
 	VectorClear( client->kick_origin );
@@ -169,8 +187,7 @@ void Player::OnEndServerFrame()
 	// behind the body position when pushed -- "sinking into plats"
 	for ( unsigned int i = 0; i < 3; ++i )
 	{
-		ps->pmove.origin[ i ]   = edict->s.origin[ i ] * 8.0f;
-		ps->pmove.velocity[ i ] = edict->velocity[ i ] * 8.0f;
+		ps->pmove.origin[ i ] = edict->s.origin[ i ] * 8.0f;
 	}
 
 	UpdateView();

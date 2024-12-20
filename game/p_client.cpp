@@ -2255,33 +2255,6 @@ void PrintPmove (pmove_t *pm)
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
-// DWH
-//==========================================================================
-// DWH: PM_CmdScale was ripped from Q3 source
-//==========================================================================
-float PM_CmdScale( usercmd_t *cmd ) {
-	int		max;
-	float	total;
-	float	scale;
-
-	max = abs( cmd->forwardmove );
-	if ( abs( cmd->sidemove ) > max ) {
-		max = abs( cmd->sidemove );
-	}
-	if ( abs( cmd->upmove ) > max ) {
-		max = abs( cmd->upmove );
-	}
-	if ( !max ) {
-		return 0;
-	}
-
-	total = sqrt( cmd->forwardmove * cmd->forwardmove
-		+ cmd->sidemove * cmd->sidemove + cmd->upmove * cmd->upmove );
-	scale = max / total;
-
-	return scale;
-}
-
 void RemovePush(edict_t *ent)
 {
 	ent->client->push->s.sound = 0;
@@ -3019,79 +2992,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.gravity = 0;
 
-#ifdef JETPACK_MOD
-		if ( client->jetpack )
-		{
-			if ( (ucmd->upmove != 0) || (ucmd->forwardmove != 0) || (ucmd->sidemove != 0) )
-			{
-				if (ucmd->upmove > 0 || !ent->groundentity)
-				{
-					if (!client->jetpack_thrusting)
-					{
-						gi.sound (ent, CHAN_AUTO, gi.soundindex("jetpack/rev.wav"), 1, ATTN_NORM, 0);
-						client->jetpack_start_thrust = level.framenum;
-					}
-					client->jetpack_thrusting = true;
-				}
-				else
-					client->jetpack_thrusting = false;
-			}
-			else
-				client->jetpack_thrusting = false;
-
-			if (client->jetpack_framenum + client->pers.inventory[fuel_index] > level.framenum)
-			{
-				if (jetpack_weenie->value)
-				{
-					Jet_ApplyJet (ent, ucmd);
-					if (client->jetpack_framenum < level.framenum)
-					{
-						if (!client->jetpack_infinite)
-							client->pers.inventory[fuel_index] -= 10;
-						client->jetpack_framenum = level.framenum + 10;
-					}
-				}
-				else
-				{
-					if (client->jetpack_thrusting)
-						Jet_ApplyJet( ent, ucmd );
-					if (client->jetpack_framenum <= level.framenum)
-					{
-						if (client->jetpack_thrusting)
-						{
-							if (!client->jetpack_infinite)
-								client->pers.inventory[fuel_index] -= 11;
-							client->jetpack_framenum = level.framenum + 10;
-						}
-						else
-						{
-							if (!client->jetpack_infinite)
-								client->pers.inventory[fuel_index]--;
-							client->jetpack_framenum = level.framenum + 10;
-						}
-					}
-					if (ucmd->upmove == 0)
-					{
-						// accelerate to 75% gravity in 2 seconds
-						float	gravity;
-						float	g_max = 0.75 * sv_gravity->value;
-
-						gravity = g_max * (level.framenum - client->jetpack_last_thrust)/20;
-						if (gravity > g_max) gravity = g_max;
-						client->ps.pmove.gravity = (short)gravity;
-					}
-					else
-						client->jetpack_last_thrust = level.framenum;
-				}
-			}
-			else
-			{
-				client->jetpack = false;
-				ent->s.frame = FRAME_jump2;	// reset from stand to avoid goofiness
-			}
-		}
-#endif    // #ifdef JETPACK_MOD
-
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
@@ -3134,15 +3034,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->resp.cmd_angles[0] = SHORT2ANGLE(ucmd->angles[0]);
 		client->resp.cmd_angles[1] = SHORT2ANGLE(ucmd->angles[1]);
 		client->resp.cmd_angles[2] = SHORT2ANGLE(ucmd->angles[2]);
-
-#ifdef JETPACK_MOD
-		if ( client->jetpack && jetpack_weenie->value )
-		{
-			if ( pm.groundentity )		// are we on ground
-				if ( Jet_AvoidGround(ent) )	// then lift us if possible
-					pm.groundentity = nullptr;		// now we are no longer on ground
-		}
-#endif
 
 // MUD - "correct" Pmove physics
 		if (pm.waterlevel && ent->in_mud)
