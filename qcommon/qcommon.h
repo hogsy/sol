@@ -272,6 +272,9 @@ void MSG_WriteDeltaUsercmd (sizebuf_t *sb, struct usercmd_s *from, struct usercm
 void MSG_WriteDeltaEntity (struct centity_state_s *from, struct centity_state_s *to, sizebuf_t *msg, qboolean force, qboolean newentity);
 void MSG_WriteDir (sizebuf_t *sb, vec3_t vector);
 
+void MSG_WriteVec2( sizebuf_t *msg, const vec2_t src );
+void MSG_WriteVec3( sizebuf_t *msg, const vec3_t src );
+void MSG_WriteVec4( sizebuf_t *msg, const vec4_t src );
 
 void	MSG_BeginReading (sizebuf_t *sb);
 
@@ -283,6 +286,10 @@ float	MSG_ReadFloat (sizebuf_t *sb);
 float	MSG_ReadFloatAsShort (sizebuf_t *msg_read);	// Knightmare added
 char	*MSG_ReadString (sizebuf_t *sb);
 char	*MSG_ReadStringLine (sizebuf_t *sb);
+
+void MSG_ReadVec2( sizebuf_t *msg, vec2_t dst );
+void MSG_ReadVec3( sizebuf_t *msg, vec3_t dst );
+void MSG_ReadVec4( sizebuf_t *msg, vec4_t dst );
 
 float	MSG_ReadCoord (sizebuf_t *sb);
 void	MSG_ReadPos (sizebuf_t *sb, vec3_t pos);

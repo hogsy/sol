@@ -65,11 +65,12 @@ void Player::OnDisconnect() const
 	Unlink();
 }
 
-void Player::UpdateGun()
+void Player::UpdateWeapon()
 {
 	player_state_t *ps = GetPlayerState();
 
 	// gun angles from delta movement
+#if 0
 	for ( unsigned int i = 0; i < 3; ++i )
 	{
 		float delta = oldViewAngles[ i ] - ps->viewangles[ i ];
@@ -98,6 +99,7 @@ void Player::UpdateGun()
 
 		ps->gunangles[ i ] += 0.2f * delta;
 	}
+#endif
 
 	gclient_t *client = GetClient();
 	assert( client != nullptr );
@@ -105,13 +107,16 @@ void Player::UpdateGun()
 	vec3_t forward, right, up;
 	AngleVectors( client->v_angle, forward, right, up );
 
+	static constexpr float BASE_X_OFFSET = 5.0f;
+	static constexpr float BASE_Z_OFFSET = -15.0f;
+
 	// gun height
 	VectorClear( ps->gunoffset );
 	for ( unsigned int i = 0; i < 3; ++i )
 	{
 		ps->gunoffset[ i ] += forward[ i ] * gun_y->value;
-		ps->gunoffset[ i ] += right[ i ] * gun_x->value;
-		ps->gunoffset[ i ] += up[ i ] * -gun_z->value;
+		ps->gunoffset[ i ] += right[ i ] * ( BASE_X_OFFSET + gun_x->value );
+		ps->gunoffset[ i ] += up[ i ] * ( BASE_Z_OFFSET + -gun_z->value );
 	}
 }
 
@@ -126,8 +131,7 @@ void Player::UpdateView()
 	VectorCopy( client->ps.viewangles, oldViewAngles );
 
 	// add angles based on weapon kick
-	vec3_t angles;
-	VectorCopy( client->kick_angles, angles );
+	VectorCopy( client->kick_angles, ps->kick_angles );
 
 	VectorClear( ps->viewoffset );
 	ps->viewoffset[ 2 ] += edict->viewheight;
@@ -170,7 +174,7 @@ void Player::OnEndServerFrame()
 	}
 
 	UpdateView();
-	UpdateGun();
+	UpdateWeapon();
 
 	// set model angles from view angles so other things in
 	// the world can tell which direction you are looking

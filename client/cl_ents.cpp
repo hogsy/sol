@@ -749,25 +749,20 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 		//
 		// parse the rest of the player_state_t
 		//
+
 		if (flags & PS_VIEWOFFSET)
 		{
-			state->viewoffset[0] = MSG_ReadChar (&net_message) * 0.25;
-			state->viewoffset[1] = MSG_ReadChar (&net_message) * 0.25;
-			state->viewoffset[2] = MSG_ReadChar (&net_message) * 0.25;
+			MSG_ReadVec3( &net_message, state->viewoffset );
 		}
 
-		if (flags & PS_VIEWANGLES)
+		if ( flags & PS_VIEWANGLES )
 		{
-			state->viewangles[0] = MSG_ReadAngle16 (&net_message);
-			state->viewangles[1] = MSG_ReadAngle16 (&net_message);
-			state->viewangles[2] = MSG_ReadAngle16 (&net_message);
+			MSG_ReadVec3( &net_message, state->viewangles );
 		}
 
 		if (flags & PS_KICKANGLES)
 		{
-			state->kick_angles[0] = MSG_ReadChar (&net_message) * 0.25;
-			state->kick_angles[1] = MSG_ReadChar (&net_message) * 0.25;
-			state->kick_angles[2] = MSG_ReadChar (&net_message) * 0.25;
+			MSG_ReadVec3( &net_message, state->kick_angles );
 		}
 
 		if (flags & PS_WEAPONINDEX)
@@ -853,25 +848,20 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 		//
 		// parse the rest of the player_state_t
 		//
+
 		if (flags & PS_VIEWOFFSET)
 		{
-			state->viewoffset[0] = MSG_ReadChar (&net_message) * 0.25;
-			state->viewoffset[1] = MSG_ReadChar (&net_message) * 0.25;
-			state->viewoffset[2] = MSG_ReadChar (&net_message) * 0.25;
+			MSG_ReadVec3( &net_message, state->viewoffset );
 		}
 
-		if (flags & PS_VIEWANGLES)
+		if (flags & PS_VIEWANGLES )
 		{
-			state->viewangles[0] = MSG_ReadAngle16 (&net_message);
-			state->viewangles[1] = MSG_ReadAngle16 (&net_message);
-			state->viewangles[2] = MSG_ReadAngle16 (&net_message);
+			MSG_ReadVec3( &net_message, state->viewangles );
 		}
 
 		if (flags & PS_KICKANGLES)
 		{
-			state->kick_angles[0] = MSG_ReadChar (&net_message) * 0.25;
-			state->kick_angles[1] = MSG_ReadChar (&net_message) * 0.25;
-			state->kick_angles[2] = MSG_ReadChar (&net_message) * 0.25;
+			MSG_ReadVec3( &net_message, state->kick_angles );
 		}
 
 		// Knightmare- read as short

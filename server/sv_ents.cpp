@@ -354,11 +354,11 @@ void SV_WritePlayerstateToClient (client_frame_t *from, client_frame_t *to, size
 		MSG_WritePMCoord (msg, ps->pmove.origin[2]);
 	}
 
-	if (pflags & PS_M_VELOCITY)
+	if ( pflags & PS_M_VELOCITY )
 	{
-		MSG_WriteShort (msg, ps->pmove.velocity[0]);
-		MSG_WriteShort (msg, ps->pmove.velocity[1]);
-		MSG_WriteShort (msg, ps->pmove.velocity[2]);
+		MSG_WriteShort( msg, ps->pmove.velocity[ 0 ] );
+		MSG_WriteShort( msg, ps->pmove.velocity[ 1 ] );
+		MSG_WriteShort( msg, ps->pmove.velocity[ 2 ] );
 	}
 
 	if (pflags & PS_M_TIME)
@@ -380,25 +380,20 @@ void SV_WritePlayerstateToClient (client_frame_t *from, client_frame_t *to, size
 	//
 	// write the rest of the player_state_t
 	//
-	if (pflags & PS_VIEWOFFSET)
+
+	if ( pflags & PS_VIEWOFFSET )
 	{
-		MSG_WriteChar (msg, ps->viewoffset[0]*4);
-		MSG_WriteChar (msg, ps->viewoffset[1]*4);
-		MSG_WriteChar (msg, ps->viewoffset[2]*4);
+		MSG_WriteVec3( msg, ps->viewoffset );
 	}
 
-	if (pflags & PS_VIEWANGLES)
+	if ( pflags & PS_VIEWANGLES )
 	{
-		MSG_WriteAngle16 (msg, ps->viewangles[0]);
-		MSG_WriteAngle16 (msg, ps->viewangles[1]);
-		MSG_WriteAngle16 (msg, ps->viewangles[2]);
+		MSG_WriteVec3( msg, ps->viewangles );
 	}
 
-	if (pflags & PS_KICKANGLES)
+	if ( pflags & PS_KICKANGLES )
 	{
-		MSG_WriteChar (msg, ps->kick_angles[0]*4);
-		MSG_WriteChar (msg, ps->kick_angles[1]*4);
-		MSG_WriteChar (msg, ps->kick_angles[2]*4);
+		MSG_WriteVec3( msg, ps->kick_angles );
 	}
 
 	if (pflags & PS_WEAPONINDEX)	// Knightmare- send as short

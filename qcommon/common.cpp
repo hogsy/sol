@@ -380,6 +380,27 @@ void MSG_WriteFloat (sizebuf_t *sb, float f)
 	SZ_Write (sb, &dat.l, 4);
 }
 
+void MSG_WriteVec2( sizebuf_t *msg, const vec2_t src )
+{
+	MSG_WriteFloat( msg, src[ 0 ] );
+	MSG_WriteFloat( msg, src[ 1 ] );
+}
+
+void MSG_WriteVec3( sizebuf_t *msg, const vec3_t src )
+{
+	MSG_WriteFloat( msg, src[ 0 ] );
+	MSG_WriteFloat( msg, src[ 1 ] );
+	MSG_WriteFloat( msg, src[ 2 ] );
+}
+
+void MSG_WriteVec4( sizebuf_t *msg, const vec4_t src )
+{
+	MSG_WriteFloat( msg, src[ 0 ] );
+	MSG_WriteFloat( msg, src[ 1 ] );
+	MSG_WriteFloat( msg, src[ 2 ] );
+	MSG_WriteFloat( msg, src[ 3 ] );
+}
+
 // Knightmare added- for sending floats as nearest-integer shorts by rounding to nearest int first
 void MSG_WriteFloatAsShort (sizebuf_t *sb, float f)
 {
@@ -1070,6 +1091,27 @@ float MSG_ReadFloat (sizebuf_t *msg_read)
 	dat.l = LittleLong (dat.l);
 
 	return dat.f;	
+}
+
+void MSG_ReadVec2( sizebuf_t *msg, vec2_t dst )
+{
+	dst[ 0 ] = MSG_ReadFloat( msg );
+	dst[ 1 ] = MSG_ReadFloat( msg );
+}
+
+void MSG_ReadVec3( sizebuf_t *msg, vec3_t dst )
+{
+	dst[ 0 ] = MSG_ReadFloat( msg );
+	dst[ 1 ] = MSG_ReadFloat( msg );
+	dst[ 2 ] = MSG_ReadFloat( msg );
+}
+
+void MSG_ReadVec4( sizebuf_t *msg, vec4_t dst )
+{
+	dst[ 0 ] = MSG_ReadFloat( msg );
+	dst[ 1 ] = MSG_ReadFloat( msg );
+	dst[ 2 ] = MSG_ReadFloat( msg );
+	dst[ 3 ] = MSG_ReadFloat( msg );
 }
 
 // Knightmare added- for reading floats sent as shorts

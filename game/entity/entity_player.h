@@ -16,7 +16,7 @@ public:
 	void OnDisconnect() const;
 
 private:
-	void UpdateGun();
+	void UpdateWeapon();
 	void UpdateView();
 	void UpdateStats();
 
