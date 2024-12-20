@@ -720,11 +720,9 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 			state->pmove.origin[2] = MSG_ReadShort (&net_message);
 		}
 
-		if (flags & PS_M_VELOCITY)
+		if ( flags & PS_M_VELOCITY )
 		{
-			state->pmove.velocity[0] = MSG_ReadShort (&net_message);
-			state->pmove.velocity[1] = MSG_ReadShort (&net_message);
-			state->pmove.velocity[2] = MSG_ReadShort (&net_message);
+			MSG_ReadVec3( &net_message, state->pmove.velocity );
 		}
 
 		if (flags & PS_M_TIME)
@@ -821,9 +819,7 @@ void CL_ParsePlayerstate (frame_t *oldframe, frame_t *newframe)
 
 		if (flags & PS_M_VELOCITY)
 		{
-			state->pmove.velocity[0] = MSG_ReadShort (&net_message);
-			state->pmove.velocity[1] = MSG_ReadShort (&net_message);
-			state->pmove.velocity[2] = MSG_ReadShort (&net_message);
+			MSG_ReadVec3( &net_message, state->pmove.velocity );
 		}
 
 		if (flags & PS_M_TIME)

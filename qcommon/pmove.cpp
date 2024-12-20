@@ -1166,9 +1166,7 @@ void PM_SnapPosition (void)
 	// try all single bits first
 	static int jitterbits[8] = {0,4,1,2,3,5,6,7};
 
-	// snap velocity to eigths
-	for (i=0 ; i<3 ; i++)
-		pm->s.velocity[i] = (int)(pml.velocity[i]*8);
+	VectorCopy( pml.velocity, pm->s.velocity );
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -1344,9 +1342,7 @@ void Pmove (pmove_t *pmove)
 	pml.origin[1] = pm->s.origin[1]*0.125;
 	pml.origin[2] = pm->s.origin[2]*0.125;
 
-	pml.velocity[0] = pm->s.velocity[0]*0.125;
-	pml.velocity[1] = pm->s.velocity[1]*0.125;
-	pml.velocity[2] = pm->s.velocity[2]*0.125;
+	VectorCopy( pm->s.velocity, pml.velocity );
 
 	// save old org in case we get stuck
 	VectorCopy (pm->s.origin, pml.previous_origin);

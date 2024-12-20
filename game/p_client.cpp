@@ -3097,9 +3097,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		for (i=0 ; i<3 ; i++)
 		{
 			pm.s.origin[i] = ent->s.origin[i]*8;
-			// FIXME: make sure this short doesn't overflow
-			pm.s.velocity[i] = ent->velocity[i]*8;
 		}
+
+		VectorCopy( ent->velocity, pm.s.velocity );
 
 		if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
 		{
@@ -3122,11 +3122,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove = pm.s;
 		client->old_pmove = pm.s;
 
-		for (i=0 ; i<3 ; i++)
+		for ( i = 0; i < 3; i++ )
 		{
-			ent->s.origin[i] = pm.s.origin[i]*0.125;
-			ent->velocity[i] = pm.s.velocity[i]*0.125;
+			ent->s.origin[ i ] = pm.s.origin[ i ] * 0.125;
 		}
+
+		VectorCopy( pm.s.velocity, ent->velocity );
 		VectorCopy (pm.mins, ent->mins);
 		VectorCopy (pm.maxs, ent->maxs);
 
